@@ -217,42 +217,119 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function carregarTabelaCSV(dia, tarifario, opcao) {
-        const linhas = dadosCSVGlobal.split("\n").filter(l => l.trim());
-        const corpoTabela = document.querySelector("#tabelaHoraria tbody");
-        corpoTabela.innerHTML = "";
-        
-        document.querySelector("#subtituloTabela").textContent = `${tarifario} | ${opcao} | ${dia}`;
+function carregarTabelaCSV(dia, tarifario, opcao) {
+    const linhas = dadosCSVGlobal.split("\n").filter(l => l.trim());
+    const linhaTabelaIndex = linhas.findIndex(linha => linha.includes("TABELA_HORARIA"));
 
-        const linhasTabela = linhas.slice(linhas.findIndex(linha => linha.includes("TABELA_HORARIA")) + 1);
-
-        linhasTabela.forEach((linha, index) => {
-            const colunas = linha.split(",").map(c => c.trim());
-            if (colunas.length < 16) return;
-            const [csvDia, csvTarifario, csvOpcao, hora, omie, precoMedio] = colunas.slice(10, 16);
-
-            if (csvDia === dia && csvTarifario === tarifario && csvOpcao === opcao) {
-                const idInput = `consumo_${index}`;
-                const idCusto = `custo_${index}`;
-                const precoMedioValido = !isNaN(precoMedio) && precoMedio !== "" ? parseFloat(precoMedio).toFixed(5) : "";
-                const custoValido = precoMedioValido ? "0.0000" : "";
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${hora}</td>
-                    <td style="color: ${parseFloat(omie) < 0 ? 'red' : 'black'}">${omie}</td>
-                    <td style="color: ${parseFloat(precoMedioValido) < 0 ? 'red' : 'black'}">${precoMedioValido}</td>
-                    <td><input type="number" step="0.001" min="0" id="${idInput}" data-preco="${precoMedioValido}" data-custo-id="${idCusto}" class="input-consumo" ${precoMedioValido ? "" : "disabled"}></td>
-                    <td id="${idCusto}" style="color: ${parseFloat(custoValido) < 0 ? 'red' : 'black'}">${custoValido}</td>
-                `;
-                corpoTabela.appendChild(tr);
-            }
-        });
-        document.querySelectorAll(".input-consumo").forEach(input => {
-            input.addEventListener("input", atualizarTotais);
-        });
-        atualizarTotais();
+    const subtitulo = document.querySelector("#subtituloTabela");
+    if (subtitulo) {
+        subtitulo.textContent = `${tarifario} | ${opcao} | ${dia}`;
     }
+
+    if (linhaTabelaIndex === -1) {
+        console.error("Não foi possível encontrar 'TABELA_HORARIA' no CSV.");
+        return;
+    }
+
+    const linhasTabela = linhas.slice(linhaTabelaIndex + 1);
+    const corpoTabela = document.querySelector("#tabelaHoraria tbody");
+    corpoTabela.innerHTML = "";
+
+    // Arrays para guardar os valores para cálculo dos quartis
+    let omieValores = [];
+    let precoMedioValores = [];
+
+    // Primeiro, vamos apenas recolher os dados e os valores
+    const dadosParaTabela = [];
+    linhasTabela.forEach((linha) => {
+        const colunas = linha.split(",").map(c => c.trim());
+        if (colunas.length < 16) return;
+
+        const [csvDia, csvTarifario, csvOpcao, hora, omie, precoMedio] = colunas.slice(10, 16);
+
+        if (csvDia === dia && csvTarifario === tarifario && csvOpcao === opcao) {
+            const precoMedioValido = !isNaN(precoMedio) && precoMedio !== "" ? parseFloat(precoMedio) : null;
+            const omieValido = !isNaN(omie) ? parseFloat(omie) : null;
+
+            if (omieValido !== null) omieValores.push(omieValido);
+            if (precoMedioValido !== null) precoMedioValores.push(precoMedioValido);
+            
+            dadosParaTabela.push({ hora, omie, precoMedio, precoMedioValido });
+        }
+    });
+
+    // Função para calcular os quartis
+    const calcularQuartis = (valores) => {
+        if (valores.length === 0) return { q1: 0, q2: 0, q3: 0 };
+        valores.sort((a, b) => a - b);
+        const q1 = valores[Math.floor(valores.length / 4)];
+        const q2 = valores[Math.floor(valores.length / 2)];
+        const q3 = valores[Math.floor(valores.length * 3 / 4)];
+        return { q1, q2, q3 };
+    };
+
+    const quartisOmie = calcularQuartis(omieValores);
+    const quartisPrecoMedio = calcularQuartis(precoMedioValores);
+
+    // Função para devolver a COR CORRETA com base no quartil
+    const obterCorDeFundo = (valor, quartis) => {
+        if (valor === null) return 'white'; // Células sem valor ficam brancas
+        if (valor <= quartis.q1) return "#A9D08E"; // Verde (baixo)
+        if (valor <= quartis.q2) return "#E2EFDA"; // Verde claro (baixo-médio)
+        if (valor <= quartis.q3) return "#F9E79F"; // Amarelo (médio-alto)
+        return "#F5B7B1"; // Vermelho claro (alto)
+    };
+
+    // Agora, construímos a tabela com as cores certas
+    dadosParaTabela.forEach((dadosLinha, index) => {
+        const idInput = `consumo_${index}`;
+        const idCusto = `custo_${index}`;
+
+        const custoValido = dadosLinha.precoMedioValido !== null ? "0.0000" : "";
+        const precoMedioFormatado = dadosLinha.precoMedioValido !== null ? dadosLinha.precoMedioValido.toFixed(5) : "";
+
+        const tr = document.createElement('tr');
+
+        // Celula Hora
+        const tdHora = document.createElement('td');
+        tdHora.textContent = dadosLinha.hora;
+        tr.appendChild(tdHora);
+
+        // Celula OMIE
+        const tdOmie = document.createElement('td');
+        tdOmie.textContent = dadosLinha.omie;
+        tdOmie.style.backgroundColor = obterCorDeFundo(parseFloat(dadosLinha.omie), quartisOmie);
+        if (parseFloat(dadosLinha.omie) < 0) tdOmie.style.color = 'red';
+        tr.appendChild(tdOmie);
+
+        // Celula Preço Médio
+        const tdPrecoMedio = document.createElement('td');
+        tdPrecoMedio.textContent = precoMedioFormatado;
+        tdPrecoMedio.style.backgroundColor = obterCorDeFundo(dadosLinha.precoMedioValido, quartisPrecoMedio);
+        if (dadosLinha.precoMedioValido < 0) tdPrecoMedio.style.color = 'red';
+        tr.appendChild(tdPrecoMedio);
+
+        // Celula Consumo (Input)
+        const tdConsumo = document.createElement('td');
+        tdConsumo.innerHTML = `<input type="number" step="0.001" min="0" id="${idInput}" data-preco="${precoMedioFormatado}" data-custo-id="${idCusto}" class="input-consumo" ${precoMedioFormatado ? "" : "disabled"}>`;
+        tr.appendChild(tdConsumo);
+
+        // Celula Custo
+        const tdCusto = document.createElement('td');
+        tdCusto.id = idCusto;
+        tdCusto.textContent = custoValido;
+        if (parseFloat(custoValido) < 0) tdCusto.style.color = 'red';
+        tr.appendChild(tdCusto);
+
+        corpoTabela.appendChild(tr);
+    });
+
+    document.querySelectorAll(".input-consumo").forEach(input => {
+        input.addEventListener("input", atualizarTotais);
+    });
+
+    atualizarTotais();
+}
 
     function atualizarTotais() {
         let somaConsumo = 0;
