@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiago Felícia - Energia e Tarifários</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>Tiago Felícia</h1>
+        <p>Tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="autoconsumo.html">Autoconsumo</a>
+        </nav>
+
+    <main>
+        <section id="omie-tables">
+            <h2>Médias OMIE</h2>
+            <p class="subtitulo-tabela">€/MWh - Valores corrigidos para a hora de Portugal Continental</p>
+            <div class="table-container">
+              <table id="tabela-omie">
+                </table>
+            </div>
+
+            <h2>Média mensal e Futuros OMIP</h2>
+            <p class="subtitulo-tabela">€/MWh - Valores no último dia disponível</p>
+            <div class="table-container">
+              <table id="tabela-omip">
+                </table>
+            </div>
+        </section>
+
+        <section id="hourly-prices">
+            <h2>Preços Horários</h2>
+            <div class="dropdown-container">
+                <div class="dropdown-labels">
+                  <span>Dia</span>
+                  <span>Tarifário</span>
+                  <span>Opção Horária e Ciclo</span>
+                </div>
+                <div class="dropdowns">
+                  <select id="dropdownDia"></select>
+                  <select id="dropdownTarifario"></select>
+                  <select id="dropdownOpcao"></select>
+                </div>
+            </div>
+
+            <div id="container-chart" style="width: 100%; height: 400px;"></div>
+
+            <div style="text-align:center; margin: 20px;">
+                <label>
+                  <input type="checkbox" id="checkboxSimular" onchange="controlarTabela()"> Simular consumos horários?
+                </label>
+            </div>
+
+            <div id="tabelaContainer" style="display:none;">
+                <h3>Tabela Horária</h3>
+                <p id="subtituloTabela"></p>
+                <table id="tabelaHoraria" border="1">
+                  <thead>
+                    <tr>
+                      <th>Hora PT</th>
+                      <th>OMIE PT (€/MWh)</th>
+                      <th>Preço Médio (€/kWh)</th>
+                      <th>Consumo horário (kWh)</th>
+                      <th>Custo horário (€)</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="3"><b>Totais:</b></td>
+                      <td id="somaConsumo"></td>
+                      <td id="somaCusto"></td>
+                    </tr>
+                    <tr>
+                      <td colspan="4"><b>Média Ponderada (€/kWh):</b></td>
+                      <td id="mediaPonderada"></td>
+                    </tr>
+                  </tfoot>
+                </table>
+            </div>
+        </section>
+        
+        <section id="simulators">
+            <h2>Outros Simuladores</h2>
+            <p>Visite também o simulador de autoconsumo e as versões completas em Excel.</p>
+            <ul>
+                <li><a href="http://autoconsumo.tiagofelicia.pt/" target="_blank">Simulador para Autoconsumo (Web App)</a></li>
+                <li><a href="http://eletricidade.tiagofelicia.pt/" target="_blank">Simulador de Eletricidade Completo (Download Excel)</a></li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2025 Tiago Felícia | Siga o projeto nas redes sociais!</p>
+        </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
