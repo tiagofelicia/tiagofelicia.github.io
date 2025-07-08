@@ -257,3 +257,71 @@ footer {
 .footer-social-icon:hover {
     opacity: 1;
 }
+/* ================================== */
+/* Estilos para o Menu de Navegação Suspenso */
+/* ================================== */
+
+/* Remove estilos padrão da lista e ativa o flexbox */
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* Estilo para cada item principal do menu */
+nav > ul > li {
+    position: relative; /* Essencial para o posicionamento do dropdown */
+}
+
+/* Estilo para os links principais do menu */
+nav > ul > li > a {
+    display: block;
+    padding: 1em 20px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Adiciona uma seta para indicar que é um dropdown */
+nav > ul > li.dropdown > a::after {
+    content: ' ▾'; /* Seta para baixo */
+    font-size: 0.8em;
+}
+
+/* O conteúdo do dropdown (escondido por defeito) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #34495e;
+    min-width: 250px; /* Largura mínima do dropdown */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1; /* Garante que o dropdown fica por cima de outros elementos */
+    padding: 0;
+    border-radius: 0 0 5px 5px;
+}
+
+/* Links dentro do dropdown */
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    border-bottom: 1px solid #4a627a;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+/* Cor do link ao passar o rato por cima */
+.dropdown-content a:hover {
+    background-color: #4a627a;
+}
+
+/* Mostra o dropdown quando se passa o rato no item principal */
+nav > ul > li:hover > .dropdown-content {
+    display: block;
+}
