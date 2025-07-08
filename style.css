@@ -7,41 +7,51 @@ body {
     color: #333;
 }
 
-/* Estilo do Header com Flexbox para alinhar logo e texto */
+/* ================================== */
+/* Estilo do Header (versão com logo ao lado do título)      */
+/* ================================== */
+
+/* O header principal, que serve como um contentor */
 header {
     background-color: #2c3e50;
     color: white;
-    display: flex;
-    align-items: center;
+    padding: 20px;
+    display: flex; /* Usamos flex para centrar o bloco de conteúdo */
     justify-content: center;
-    padding: 15px 20px;
-    gap: 20px; /* Espaço entre o logo e o texto */
 }
 
-/* Estilo para a imagem do logo no header */
+/* O contentor do conteúdo do header (logo, título, subtitulo) */
+.header-content {
+    display: flex;
+    flex-direction: column; /* Organiza os itens em coluna: (logo+título) e depois o subtítulo */
+    align-items: flex-start; /* Alinha os itens à esquerda */
+}
+
+/* Novo contentor para o logo e o h1, para ficarem lado a lado */
+.header-title-container {
+    display: flex;
+    align-items: center; /* Alinha verticalmente o logo e o título */
+    gap: 15px; /* Espaço entre o logo e o texto "Tiago Felícia" */
+}
+
+/* Estilo do logo, com o tamanho reduzido */
 header .logo {
-    height: 70px; /* Pode ajustar a altura conforme o seu gosto */
-    width: auto;  /* Mantém a proporção da imagem */
+    height: 35px; /* Tamanho reduzido (aprox. 1/3 de 70-80px) */
+    width: auto;
 }
 
-/* Container para o texto do header */
-.header-text {
-    text-align: left;
-}
-
-/* Remove margens do título e parágrafo para um alinhamento mais limpo */
-.header-text h1,
-.header-text p {
+/* Estilos para o texto */
+.header-content h1 {
     margin: 0;
-    line-height: 1.2;
+    font-size: 2.2em; /* Pode ajustar o tamanho se desejar */
+    line-height: 1;
 }
 
-.header-text h1 {
-    font-size: 2em;
-}
-
-.header-text p {
+.header-content p {
+    margin: 5px 0 0 0; /* Margem no topo para separar do título */
+    padding-left: 50px; /* (altura do logo + gap) -> 35px + 15px */
     font-size: 1em;
+    color: #bdc3c7; /* Um cinzento claro para o subtítulo */
 }
 
 /* Estilos do Rodapé (mantido separado do header) */
