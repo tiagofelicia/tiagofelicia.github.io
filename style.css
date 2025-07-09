@@ -383,3 +383,36 @@ nav > ul > li:hover > .dropdown-content {
     margin: 20px auto; /* Centra a imagem com margens verticais */
     border-radius: 8px; /* Adiciona cantos arredondados */
 }
+/* ================================== */
+/* Estilos para o Sub-Menu Suspenso   */
+/* ================================== */
+
+/* O item de lista que contém um submenu */
+.submenu {
+    position: relative;
+}
+
+/* O conteúdo do submenu (escondido por defeito) */
+.submenu-content {
+    display: none;
+    position: absolute;
+    left: 100%; /* Posiciona o submenu à direita do item pai */
+    top: 0;      /* Alinha o topo do submenu com o topo do item pai */
+    background-color: #34495e; /* Mesma cor do dropdown principal */
+    min-width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 2; /* Z-index maior para ficar por cima de tudo */
+    border-radius: 0 5px 5px 5px;
+    border-left: 1px solid #4a627a;
+}
+
+/* Adiciona uma seta para a direita para indicar que há um submenu */
+.submenu > a::after {
+    content: ' ▸';
+    float: right; /* Flutua a seta para a direita */
+}
+
+/* Mostra o submenu quando se passa o rato por cima do item pai */
+.submenu:hover > .submenu-content {
+    display: block;
+}
