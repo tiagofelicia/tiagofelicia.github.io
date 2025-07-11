@@ -50,13 +50,14 @@
         .valor { font-weight: bold; font-size: 0.95em; }
         .card-principal { text-align: center; border-style: solid; }
         .valor-principal { font-size: 1.8em; font-weight: bold; color: #333; }
-        .card-futuros ul { margin: 0; padding: 0; list-style: none; font-size: 1em; }
+        .card-title-futuros { background-color: #495057; color: white; padding: 8px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
+        .card-futuros ul { margin: 0; padding: 0; list-style: none; font-size: 0.95em; }
         .card-futuros ul li { display: flex; justify-content: space-between; padding: 3px 0; }
-        .card-portugal { border-color: #007bff; border-width: 2px; }
-        .card-title-media-pt { font-size: 1em; text-align: center; margin: -10px -10px 10px -10px; padding: 8px 10px; background-color: #007bff; color: white; border-radius: 6px 6px 0 0; }
-        .card-espanha { border-color: #28a745; border-width: 2px; }
-        .card-title-media-es { font-size: 1em; text-align: center; margin: -10px -10px 10px -10px; padding: 8px 10px; background-color: #28a745; color: white; border-radius: 6px 6px 0 0; }
-        .label-vazio, .label-fora-vazio, .label-cheias, .label-ponta { padding: 3px 8px; border-radius: 12px; color: white; font-size: 0.85em; font-weight: 600; }
+        .card-portugal { border-color: #007bff; border-width: 5px; }
+        .card-title-media-pt { font-size: 1em; text-align: center; margin: -10px -10px 10px -10px; padding: 8px 10px; background-color: #007bff; color: white; border-radius: 2px 2px 0 0; }
+        .card-espanha { border-color: #28a745; border-width: 5px; }
+        .card-title-media-es { font-size: 1em; text-align: center; margin: -10px -10px 10px -10px; padding: 8px 10px; background-color: #28a745; color: white; border-radius: 2px 2px 0 0; }
+        .label-vazio, .label-fora-vazio, .label-cheias, .label-ponta { padding: 3px 8px; border-radius: 12px; color: white; font-size: 0.95em; font-weight: 600; }
         .card:has(.card-title-bd) .label-vazio { background-color: #C6E0B4; color: #000000; }
         .card:has(.card-title-bd) .label-fora-vazio { background-color: #E2EFDA; color: #000000; }
         .card:has(.card-title-bs) .label-vazio { background-color: #B4C6E7; color: #000000; }
@@ -67,7 +68,23 @@
         .card:has(.card-title-ts) .label-vazio { background-color: #F4B084; color: #000000; }
         .card:has(.card-title-ts) .label-cheias { background-color: #F8CBAD; color: #000000; }
         .card:has(.card-title-ts) .label-ponta { background-color: #FCE4D6; color: #000000; }
-        
+
+        /* === ESTILO SIMPLIFICADO PARA A REFERÊNCIA === */
+        .link-section {
+            text-align: center;
+            margin: 30px auto;
+        }
+        .link-section p {
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #555;
+            background-color: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0;
+        }
+
         .grafico-tabela-grid {
             display: grid;
             grid-template-columns: 1fr 3fr; 
@@ -185,7 +202,7 @@
          <div class="coluna">
             <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt">--,-- €</div> <p>Futuros do dia: <strong id="futuros-anterior-pt">--,-- €/MWh</strong> em <strong id="futuros-pt-data">--/--/----</strong></p> <div class="data-item"><span class="label">Máximo horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es">--,-- €</div><p>Futuros do dia: <strong id="futuros-anterior-es">--,-- €/MWh</strong> em <strong id="futuros-es-data">--/--/----</strong></p> <div class="data-item"><span class="label">Máximo horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
-            <div class="card card-futuros"> <ul> <li id="futuro-1-item"> <span id="futuros-1-label">Futuro 1</span> <strong id="futuros-1-valor">--,-- €</strong> </li> <li id="futuro-2-item"> <span id="futuros-2-label">Futuro 2</span> <strong id="futuros-2-valor">--,-- €</strong> </li> <li id="futuro-3-item"> <span id="futuros-3-label">Futuro 3</span> <strong id="futuros-3-valor">--,-- €</strong> </li> </ul> </div>
+            <div class="card card-futuros"> <h3 class="card-title-futuros">Futuros OMIP PT</h3> <ul> <li id="futuro-1-item"> <span id="futuros-1-label">Futuro 1</span> <strong id="futuros-1-valor">--,-- €</strong> </li> <li id="futuro-2-item"> <span id="futuros-2-label">Futuro 2</span> <strong id="futuros-2-valor">--,-- €</strong> </li> <li id="futuro-3-item"> <span id="futuros-3-label">Futuro 3</span> <strong id="futuros-3-valor">--,-- €</strong> </li> </ul> </div>
         </div>
         <div class="coluna">
             <div class="card"> <h3 class="card-title-bd">Bi-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-diario-fora-vazio">--,-- €</span></div> </div>
@@ -194,7 +211,9 @@
             <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
         </div>
     </div>
-
+    <div class="link-section">
+        <p>https://www.tiagofelicia.pt/omie-diario.html</p>
+    </div>
     <div class="grafico-tabela-grid">
         <div id="tabela-container" class="tabela-wrapper"></div>
         <div id="grafico-container"></div>
