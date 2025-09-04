@@ -147,15 +147,186 @@
             </ol>
             
             <h2>Perguntas Frequentes (FAQ)</h2>
-
-            <h3>De onde vêm os dados dos tarifários?</h3>
-            <p>Todos os dados dos tarifários são recolhidos a partir das informações públicas disponibilizadas pelos comercializadores. Os preços do mercado ibérico (OMIE) são obtidos de fontes oficiais para garantir a máxima precisão.</p>
             
-            <h3>O simulador é 100% preciso?</h3>
-            <p>O objetivo é ser o mais preciso possível. Para tarifários fixos, a precisão é muito elevada. A forma mais rigorosa de simulação é sempre através do carregamento do seu diagrama de carga da E-Redes.</p>
-
-            <h3>O que é um tarifário indexado?</h3>
-            <p>Um tarifário indexado tem um preço de energia que varia de acordo com o preço do mercado grossista (OMIE). Estes tarifários podem oferecer uma poupança significativa quando os preços de mercado estão baixos, mas também implicam um risco maior se os preços subirem.</p>
+            <details class="faq-item">
+                <summary><strong>De onde vêm os dados dos tarifários e dos preços de mercado (OMIE)?</strong></summary>
+                <div class="faq-content">
+                    <p>Todos os dados dos tarifários são recolhidos a partir das informações públicas disponibilizadas pelos comercializadores nos seus websites. Os preços do mercado ibérico (OMIE) e os perfis de consumo da E-Redes são obtidos de fontes oficiais para garantir a máxima precisão nos cálculos dos tarifários indexados. Os dados são atualizados regularmente para refletir as condições atuais do mercado.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Alguns tarifários têm um custo de energia diferente do site institucional, porquê?</strong></summary>
+                <div class="faq-content">
+                    <p>Alguns comercializadores não incluem o valor do financiamento da Tarifa Social de Eletricidade (TSE) no custo base da energia. Para que se possa comparar todos de forma igual, nesses casos, o custo da TSE é adicionado ao custo base. Para confirmar, passe o rato por cima do valor da energia na tabela para ver a decomposição detalhada do preço.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>O meu tarifário tem o mesmo nome, mas valores diferentes. Porquê?</strong></summary>
+                <div class="faq-content">
+                    <p>Muitos comercializadores alteram os valores nos seus tarifários, mas mantêm as mesmas denominações comerciais. Este simulador utiliza sempre os valores da versão mais recente do tarifário disponibilizada pelo comercializador.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>O simulador é 100% preciso?</strong></summary>
+                <div class="faq-content">
+                    <p>O objetivo é ser o mais preciso possível. Para tarifários <strong>fixos</strong>, a precisão é muito elevada. Para tarifários <strong>indexados</strong>, o custo final é uma estimativa baseada em médias e perfis de consumo (no caso de dados históricos). A forma mais rigorosa de simulação é sempre através do carregamento do seu <strong>diagrama de carga da E-Redes</strong>, pois utiliza o seu perfil de consumo real.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Porque é que o modo "Análise Detalhada" (com ficheiro E-Redes) é recomendado?</strong></summary>
+                <div class="faq-content">
+                    <p>Este modo utiliza o seu consumo real registado a cada 15 minutos. Isto permite um cálculo exato do custo para qualquer tipo de tarifário, incluindo os <strong>indexados quarto-horários (dinâmicos)</strong>. Além disso, só neste modo é possível fazer uma análise precisa da sua <strong>potência contratada</strong> e simular o impacto do <strong>autoconsumo</strong> com painéis solares fotovoltaicos.</p>
+                </div>
+            </details>
+            
+            <h3 class="faq-section-title">Dados e Períodos</h3>
+            
+            <details class="faq-item">
+                <summary><strong>Porque é que a simulação só está disponível a partir de 01/01/2025?</strong></summary>
+                <div class="faq-content">
+                    <p>A simulação está focada no ano de 2025 para garantir que os cálculos utilizam as Tarifas de Acesso às Redes (TAR) e outras taxas e impostos em vigor. O simulador ignora automaticamente quaisquer dados de consumo anteriores a esta data para garantir a relevância dos resultados.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Qual a diferença entre escolher um Mês e um Período de Datas manual?</strong></summary>
+                <div class="faq-content">
+                    <ul>
+                        <li><strong>Escolher um Mês:</strong> É a forma mais simples. O simulador seleciona automaticamente o primeiro e o último dia desse mês.</li>
+                        <li><strong>Selecionar Datas:</strong> Oferece total flexibilidade para analisar um período específico (uma semana, uma quinzena, etc.).</li>
+                    </ul>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Como são tratados os fins de semana e feriados nos ciclos horários?</strong></summary>
+                <div class="faq-content">
+                    <p>O simulador utiliza os ciclos horários oficiais definidos pela ERSE. Nos <strong>Ciclos Semanais</strong>, os fins de semana e feriados nacionais têm um tratamento específico (geralmente com mais horas em "Vazio"). Nos <strong>Ciclos Diários</strong>, a contagem das horas é a mesma para todos os dias.</p>
+                </div>
+            </details>
+            
+            <h3 class="faq-section-title">Funcionalidades do Simulador</h3>
+            
+            <details class="faq-item">
+                <summary><strong>O que significa a opção "Comparar custos entre diferentes Opções Horárias"?</strong></summary>
+                <div class="faq-content">
+                    <p>Ao ativar esta opção, o simulador recalcula o custo de cada tarifário para diferentes ciclos horários (Simples, Bi-Horário, etc.), usando os seus consumos. É útil para perceber se compensaria mudar de opção horária.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Como funciona a secção "O Meu Tarifário"?</strong></summary>
+                <div class="faq-content">
+                    <p>Esta secção permite-lhe introduzir os preços da sua fatura atual para comparar diretamente com todas as outras ofertas. É fundamental verificar na sua fatura se os preços que insere já incluem as <strong>TAR (Tarifas de Acesso às Redes)</strong>.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Para que serve a secção "Comparar outro Tarifário Personalizado?"</strong></summary>
+                <div class="faq-content">
+                    <p>Esta funcionalidade permite-lhe construir cenários hipotéticos com os seus próprios preços. É ideal para simular uma oferta que recebeu, testar o impacto de alterações de preços ou perceber qual seria o custo se o seu comercializador oferecesse uma opção horária diferente.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Como funciona a simulação de Autoconsumo?</strong></summary>
+                <div class="faq-content">
+                    <p>Ao ativar esta opção (no modo de diagrama de carga), o simulador estima a produção de um sistema fotovoltaico e subtrai-a do seu consumo. O resultado é um novo "consumo da rede", que mostra a poupança real que o autoconsumo pode gerar.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>A simulação de autoconsumo tem em conta os dias de chuva ou de sol?</strong></summary>
+                <div class="faq-content">
+                    <p>A simulação utiliza <strong>perfis de produção solar médios mensais</strong> para cada distrito, baseados em dados históricos do PVGIS. A produção estimada para um dia representa um "dia médio" para esse mês e região, já considerando a média de horas de sol e de nebulosidade.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Os valores OMIE para datas futuras são reais?</strong></summary>
+                <div class="faq-content">
+                    <p>Não. Os valores para datas futuras baseiam-se nos preços do mercado de futuros (OMIP), que representam a expectativa do mercado. Servem como a melhor estimativa disponível, mas não são uma garantia. A data de atualização destes valores está indicada no final da página.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Como são tratados descontos especiais como os do ACP ou Continente?</strong></summary>
+                <div class="faq-content">
+                    <p>Para a parceria <strong>Goldenergy/ACP</strong>, pode incluir a quota mensal no custo final. Para os tarifários <strong>Galp/Continente</strong>, o simulador calcula o desconto em Cartão Continente e subtrai-o ao custo total. Pode gerir estas opções em "Opções Adicionais de Simulação".</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>O que são as colunas "Custo com o seu Perfil Real (€)" e "Custo com Perfil Padrão ERSE (€)"?</strong></summary>
+                <div class="faq-content">
+                    <p>Esta análise compara o custo exato do seu consumo (Perfil Real) com o custo que teria se o seu consumo seguisse um perfil médio definido pela ERSE (Perfil Padrão). Uma diferença negativa (a verde) significa que o seu padrão de consumo é mais económico que a média.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>O que está incluído no "Total (€)"?</strong></summary>
+                <div class="faq-content">
+                    <p>Sim, o "Total (€)" é a sua fatura final estimada. Inclui o custo da energia e da potência, todas as taxas (CAV, DGEG, IEC), o IVA aplicado corretamente e quaisquer descontos ou acréscimos. Lembre-se que pode ver a decomposição detalhada de todos estes custos <strong>passando o rato por cima do valor na coluna 'Total (€)'</strong>.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Como posso encontrar rapidamente o que procuro na tabela?</strong></summary>
+                <div class="faq-content">
+                    <p>A tabela é interativa! Pode:</p>
+                    <ul>
+                        <li><strong>Ordenar:</strong> Clique no cabeçalho de qualquer coluna (ex: "Total (€)") para ordenar os resultados.</li>
+                        <li><strong>Filtrar:</strong> Use os filtros no topo da tabela para refinar a sua pesquisa.</li>
+                        <li><strong>Pesquisar:</strong> Use a pesquisa dentro das colunas "Comercializador" e "Tarifário" para encontrar uma oferta específica.</li>
+                    </ul>
+                </div>
+            </details>
+            
+            <h3 class="faq-section-title">Termos e Conceitos</h3>
+            
+            <details class="faq-item">
+                <summary><strong>O que é um tarifário indexado? É uma boa opção?</strong></summary>
+                <div class="faq-content">
+                    <p>Um tarifário indexado tem um preço de energia que varia com o mercado grossista (OMIE). Pode ser:</p>
+                    <ul>
+                        <li><strong>Indexado à Média:</strong> Baseia-se na média mensal dos preços OMIE.</li>
+                        <li><strong>Indexado Quarto-Horário (Dinâmico):</strong> O preço varia a cada hora (ou 15 minutos).</li>
+                    </ul>
+                    <p>Podem oferecer poupança com preços de mercado baixos, mas implicam maior risco se os preços subirem. São ideais para quem consegue adaptar o consumo às horas mais baratas.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>O que são as TAR (Tarifas de Acesso às Redes)?</strong></summary>
+                <div class="faq-content">
+                    <p>As TAR são tarifas reguladas pela ERSE que pagam pelo uso das infraestruturas elétricas. Todos os consumidores as pagam, independentemente do comercializador. O simulador lida com os casos em que as TAR estão incluídas ou separadas do preço da energia para garantir uma comparação justa.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>O que significa "Perfil de Consumo" (ex: Perfil A, B, C)?</strong></summary>
+                <div class="faq-content">
+                    <p>A ERSE agrupa os consumidores em perfis (A, B, C) que representam um padrão de consumo médio. No <strong>Modo Manual</strong>, o simulador usa estes perfis para estimar o custo dos tarifários indexados. No <strong>Modo Diagrama</strong>, este perfil não é necessário para o cálculo principal, pois são usados os seus dados reais.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Porque é que o simulador pergunta se a minha instalação é trifásica?</strong></summary>
+                <div class="faq-content">
+                    <p>O ficheiro da E-Redes regista a potência total da sua casa em médias de 15 minutos. Numa instalação <strong>trifásica</strong>, é possível que uma única fase tenha um pico de consumo muito elevado num curto espaço de tempo, fazendo o disjuntor disparar, mesmo que a potência total <em>média</em> nesses 15 minutos não ultrapasse o valor contratado. Assinalar que a sua instalação é trifásica permite que a análise de potência o alerte para este risco.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Como sei se a minha instalação é monofásica ou trifásica?</strong></summary>
+                <div class="faq-content">
+                    <p>Geralmente, instalações domésticas com potências contratadas até 6.9 kVA são monofásicas. Potências superiores são quase sempre trifásicas. Esta informação está disponível na sua fatura, no seu contador ou no balcão digital da E-Redes.</p>
+                </div>
+            </details>
             
             </article>
 
