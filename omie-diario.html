@@ -273,9 +273,58 @@
 <script>
     const csvUrl = "https://docs.google.com/spreadsheets/d/1goqE2sj--smB2hsw3TSC1u65y-Ind-zd/export?format=csv&id=1goqE2sj--smB2hsw3TSC1u65y-Ind-zd";
 
+    function formatarComEstiloNegativo(valor) {
+        let num = NaN;
+        let textoFormatado = '--,-- €';
+        const tipo = typeof valor;
+
+        if (tipo === 'number') {
+            num = valor;
+            textoFormatado = valor.toFixed(2).replace('.', ',') + ' €';
+        } else if (tipo === 'string') {
+            const valorLimpo = valor.replace('€', '').trim();
+            if (valorLimpo) {
+                num = parseFloat(valorLimpo.replace(',', '.'));
+                textoFormatado = valorLimpo.replace('.', ',') + ' €';
+            }
+        }
+
+        if (!isNaN(num) && num < 0) {
+            return `<span style="color: red;">${textoFormatado}</span>`;
+        }
+        return textoFormatado;
+    }
+
     function formatarValor(valor) { if (typeof valor !== 'string') return valor; const valorLimpo = valor.replace('€', '').trim(); return valorLimpo.replace('.', ',') + ' €'; }
     function getValueFromCell(cellRef, lines) { try { const colLetter = cellRef.match(/[A-Z]+/)[0]; const rowNum = parseInt(cellRef.match(/\d+/)[0], 10); const colIndex = colLetter.charCodeAt(0) - 'A'.charCodeAt(0); const rowIndex = rowNum - 1; const value = lines[rowIndex].split(',')[colIndex].trim(); return value || '--,-- €'; } catch (e) { return '--,-- €'; } }
-    function populateDashboard(lines) { const dataMap = { 'bh-diario-vazio': 'T25', 'bh-diario-fora-vazio': 'T26', 'bh-semanal-vazio': 'V25', 'bh-semanal-fora-vazio': 'V26', 'th-diario-vazio': 'T29', 'th-diario-cheias': 'T30', 'th-diario-ponta': 'T31', 'th-semanal-vazio': 'V29', 'th-semanal-cheias': 'V30', 'th-semanal-ponta': 'V31', 'media-pt': 'U34', 'media-es': 'V34', 'max-pt': 'U36', 'min-pt': 'U37', 'max-es': 'V36', 'min-es': 'V37', 'futuros-anterior-pt': 'T65', 'futuros-anterior-es': 'T69', 'futuros-pt-data': 'U65', 'futuros-es-data': 'U65','data-titulo-painel': 'T38' }; for (const id in dataMap) { const element = document.getElementById(id); if (element) { const valorOriginal = getValueFromCell(dataMap[id], lines); element.textContent = id.includes('data') ? valorOriginal : formatarValor(valorOriginal); } } const futurosMap = [ { labelCell: 'S66', valueCell: 'T66', itemId: 'futuro-1-item', labelId: 'futuros-1-label', valueId: 'futuros-1-valor' }, { labelCell: 'S67', valueCell: 'T67', itemId: 'futuro-2-item', labelId: 'futuros-2-label', valueId: 'futuros-2-valor' }, { labelCell: 'S68', valueCell: 'T68', itemId: 'futuro-3-item', labelId: 'futuros-3-label', valueId: 'futuros-3-valor' } ]; futurosMap.forEach(futuro => { const labelText = getValueFromCell(futuro.labelCell, lines); const itemElement = document.getElementById(futuro.itemId); if (labelText && labelText.trim() !== '' && labelText !== '--,-- €') { itemElement.style.display = ''; document.getElementById(futuro.labelId).textContent = labelText; document.getElementById(futuro.valueId).textContent = formatarValor(getValueFromCell(futuro.valueCell, lines)); } else { itemElement.style.display = 'none'; } }); }
+    
+    function populateDashboard(lines) { 
+        const dataMap = { 'bh-diario-vazio': 'T25', 'bh-diario-fora-vazio': 'T26', 'bh-semanal-vazio': 'V25', 'bh-semanal-fora-vazio': 'V26', 'th-diario-vazio': 'T29', 'th-diario-cheias': 'T30', 'th-diario-ponta': 'T31', 'th-semanal-vazio': 'V29', 'th-semanal-cheias': 'V30', 'th-semanal-ponta': 'V31', 'media-pt': 'U34', 'media-es': 'V34', 'max-pt': 'U36', 'min-pt': 'U37', 'max-es': 'V36', 'min-es': 'V37', 'futuros-anterior-pt': 'T65', 'futuros-anterior-es': 'T69', 'futuros-pt-data': 'U65', 'futuros-es-data': 'U65','data-titulo-painel': 'T38' }; 
+        for (const id in dataMap) { 
+            const element = document.getElementById(id); 
+            if (element) { 
+                const valorOriginal = getValueFromCell(dataMap[id], lines);
+                if (id.includes('data-titulo') || id.includes('data')) {
+                    element.textContent = valorOriginal;
+                } else {
+                    element.innerHTML = formatarComEstiloNegativo(valorOriginal);
+                }
+            } 
+        } 
+        const futurosMap = [ { labelCell: 'S66', valueCell: 'T66', itemId: 'futuro-1-item', labelId: 'futuros-1-label', valueId: 'futuros-1-valor' }, { labelCell: 'S67', valueCell: 'T67', itemId: 'futuro-2-item', labelId: 'futuros-2-label', valueId: 'futuros-2-valor' }, { labelCell: 'S68', valueCell: 'T68', itemId: 'futuro-3-item', labelId: 'futuros-3-label', valueId: 'futuros-3-valor' } ]; 
+        futurosMap.forEach(futuro => { 
+            const labelText = getValueFromCell(futuro.labelCell, lines); 
+            const itemElement = document.getElementById(futuro.itemId); 
+            if (labelText && labelText.trim() !== '' && labelText !== '--,-- €') { 
+                itemElement.style.display = ''; 
+                document.getElementById(futuro.labelId).textContent = labelText; 
+                document.getElementById(futuro.valueId).innerHTML = formatarComEstiloNegativo(getValueFromCell(futuro.valueCell, lines)); 
+            } else { 
+                itemElement.style.display = 'none'; 
+            } 
+        }); 
+    }
+
     function populatePriceTable(chartData, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -283,7 +332,9 @@
         tableHTML += '<thead><tr><th>Hora PT</th><th>Preço PT</th><th>Preço ES</th></tr></thead>';
         tableHTML += '<tbody>';
         chartData.horas.forEach((hora, index) => {
-            tableHTML += `<tr><td>${hora}</td><td>${formatarValor(String(chartData.precoPT[index]))}</td><td>${formatarValor(String(chartData.precoES[index]))}</td></tr>`;
+            const precoPtFormatado = formatarComEstiloNegativo(chartData.precoPT[index]);
+            const precoEsFormatado = formatarComEstiloNegativo(chartData.precoES[index]);
+            tableHTML += `<tr><td>${hora}</td><td>${precoPtFormatado}</td><td>${precoEsFormatado}</td></tr>`;
         });
         tableHTML += '</tbody></table>';
         container.innerHTML = tableHTML;
@@ -303,7 +354,6 @@
             }
             if (headerRowIndex === -1) { console.error("Cabeçalho (Hora PT) não encontrado."); return; }
             const chartData = { horas: [], precoPT: [], precoES: [] };
-            let min = Infinity, max = -Infinity;
             for (let i = headerRowIndex + 1; i < lines.length; i++) {
                 const cols = lines[i].split(',');
                 if (!cols[colIndexHora] || cols[colIndexHora].trim() === '') break;
@@ -311,20 +361,45 @@
                 const pt = parseFloat(cols[colIndexPT]?.replace('€', '').replace(',', '.'));
                 const es = parseFloat(cols[colIndexES]?.replace('€', '').replace(',', '.'));
                 if (hora && !isNaN(pt) && !isNaN(es)) {
-                    chartData.horas.push(hora); chartData.precoPT.push(pt); chartData.precoES.push(es); min = Math.min(min, pt, es); max = Math.max(max, pt, es);
+                    chartData.horas.push(hora); chartData.precoPT.push(pt); chartData.precoES.push(es);
                 }
             }
             populatePriceTable(chartData, 'tabela-container');
             const dataTituloGrafico = getValueFromCell('T38', lines) || 'hoje';
+
+            // --- INÍCIO DA NOVA LÓGICA ---
+            const minPT = Math.min(...chartData.precoPT);
+            const maxPT = Math.max(...chartData.precoPT);
+            const minES = Math.min(...chartData.precoES);
+            const maxES = Math.max(...chartData.precoES);
+
+            const plotLines = [];
+
+            // Lógica para os mínimos
+            if (minPT === minES) {
+                plotLines.push({ value: minPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatarValor(String(minPT))}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } });
+            } else {
+                plotLines.push({ value: minPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatarValor(String(minPT))}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } });
+                plotLines.push({ value: minES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatarValor(String(minES))}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } });
+            }
+
+            // Lógica para os máximos
+            if (maxPT === maxES) {
+                plotLines.push({ value: maxPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatarValor(String(maxPT))}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } });
+            } else {
+                plotLines.push({ value: maxPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatarValor(String(maxPT))}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } });
+                plotLines.push({ value: maxES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatarValor(String(maxES))}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } });
+            }
+            // --- FIM DA NOVA LÓGICA ---
+
             Highcharts.chart('grafico-container', {
                 chart: { type: 'line', height: 770 },
                 title: { text: `Valores horários de ${dataTituloGrafico} (até às 23h de PT)` },
                 xAxis: { categories: chartData.horas, title: { text: 'Hora PT' }, crosshair: true },
-                yAxis: { title: { text: 'Preço (€/MWh)' }, labels: { format: '{value:,.0f} €' },
-                    plotLines: [
-                       { value: min, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatarValor(String(min))}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } },
-                       { value: max, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatarValor(String(max))}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }
-                    ]
+                yAxis: { 
+                    title: { text: 'Preço (€/MWh)' }, 
+                    labels: { format: '{value:,.0f} €' },
+                    plotLines: plotLines // Utiliza a configuração de linhas gerada dinamicamente
                 },
                 tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 },
                 legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
