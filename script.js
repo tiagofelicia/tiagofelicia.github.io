@@ -365,3 +365,19 @@ function carregarTabelaCSV(dia, tarifario, opcao) {
 
     init();
 });
+
+// Carregamento do Menu
+document.addEventListener("DOMContentLoaded", function() {
+    // Encontra o placeholder do menu
+    const menuPlaceholder = document.getElementById("menu-placeholder");
+    
+    // Se o placeholder existir, carrega o menu.html para dentro dele
+    if (menuPlaceholder) {
+        fetch('menu.html')
+            .then(response => response.text())
+            .then(data => {
+                menuPlaceholder.innerHTML = data;
+            })
+            .catch(error => console.error('Erro ao carregar o menu:', error));
+    }
+});
