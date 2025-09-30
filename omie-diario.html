@@ -267,17 +267,23 @@
         }); 
     }
 
-    function populatePriceTable(chartData, containerId) {
+    function populatePriceTable(tableData, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
+        
         let tableHTML = '<table class="tabela-precos">';
-        tableHTML += '<thead><tr><th>Hora PT</th><th>Preço PT</th><th>Preço ES</th></tr></thead>';
+        tableHTML += '<thead>';
+        tableHTML += '<tr><th colspan="3">Preço médio horário</th></tr>';
+        tableHTML += '<tr><th>Hora PT</th><th>Preço PT</th><th>Preço ES</th></tr>';
+        tableHTML += '</thead>';
         tableHTML += '<tbody>';
-        chartData.horas.forEach((hora, index) => {
-            const precoPtFormatado = formatarComEstiloNegativo(chartData.precoPT[index]);
-            const precoEsFormatado = formatarComEstiloNegativo(chartData.precoES[index]);
+        
+        tableData.horas.forEach((hora, index) => {
+            const precoPtFormatado = formatarComEstiloNegativo(tableData.precoPT[index]);
+            const precoEsFormatado = formatarComEstiloNegativo(tableData.precoES[index]);
             tableHTML += `<tr><td>${hora}</td><td>${precoPtFormatado}</td><td>${precoEsFormatado}</td></tr>`;
         });
+        
         tableHTML += '</tbody></table>';
         container.innerHTML = tableHTML;
     }
@@ -287,37 +293,74 @@
         .then(data => {
             const lines = data.split('\n');
             populateDashboard(lines);
-            let headerRowIndex = -1, colIndexHora = -1, colIndexPT = -1, colIndexES = -1;
+            
+            // --- 1. LER DADOS QUARTO-HORÁRIOS PARA O GRÁFICO ---
+            let qhHeaderRowIndex = -1;
             for (let i = 0; i < lines.length; i++) {
-                const cols = lines[i].split(',').map(c => c.trim());
-                if (cols.indexOf('Hora PT') !== -1) {
-                    headerRowIndex = i; colIndexHora = cols.indexOf('Hora PT'); colIndexPT = cols.indexOf('Preço PT'); colIndexES = cols.indexOf('Preço ES'); break;
+                if (lines[i].includes('TABELA_OMIE_QUARTO_HORÁRIO')) {
+                    qhHeaderRowIndex = i + 1;
+                    break;
                 }
             }
-            if (headerRowIndex === -1) { console.error("Cabeçalho (Hora PT) não encontrado."); return; }
-            const chartData = { horas: [], precoPT: [], precoES: [] };
-            for (let i = headerRowIndex + 1; i < lines.length; i++) {
+            if (qhHeaderRowIndex === -1) { console.error("Marcador 'TABELA_OMIE_QUARTO_HORÁRIO' não encontrado."); return; }
+
+            const quarterHourlyData = { horas: [], precoPT: [], precoES: [] };
+            const qhColIndexHora = 24; // Y
+            const qhColIndexPT = 25;   // Z
+            const qhColIndexES = 26;   // AA
+
+            for (let i = qhHeaderRowIndex + 1; i < qhHeaderRowIndex + 1 + 96; i++) {
                 const cols = lines[i].split(',');
-                if (!cols[colIndexHora] || cols[colIndexHora].trim() === '') break;
-                const hora = cols[colIndexHora].trim();
-                const pt = parseFloat(cols[colIndexPT]?.replace('€', '').replace(',', '.'));
-                const es = parseFloat(cols[colIndexES]?.replace('€', '').replace(',', '.'));
+                if (cols.length <= qhColIndexES) continue;
+                const hora = cols[qhColIndexHora]?.trim();
+                const pt = parseFloat(cols[qhColIndexPT]?.replace('€', '').replace(',', '.'));
+                const es = parseFloat(cols[qhColIndexES]?.replace('€', '').replace(',', '.'));
                 if (hora && !isNaN(pt) && !isNaN(es)) {
-                    chartData.horas.push(hora); chartData.precoPT.push(pt); chartData.precoES.push(es);
+                    quarterHourlyData.horas.push(hora); 
+                    quarterHourlyData.precoPT.push(pt); 
+                    quarterHourlyData.precoES.push(es);
                 }
             }
-            populatePriceTable(chartData, 'tabela-container');
+
+            // --- 2. LER DADOS HORÁRIOS PARA A TABELA ---
+            let hHeaderRowIndex = -1, hColIndexHora = -1, hColIndexPT = -1, hColIndexES = -1;
+             for (let i = 0; i < lines.length; i++) {
+                const cols = lines[i].split(',').map(c => c.trim());
+                if (cols.indexOf('Hora PT') !== -1 && cols.indexOf('Preço PT') !== -1) {
+                    hHeaderRowIndex = i; 
+                    hColIndexHora = cols.indexOf('Hora PT'); 
+                    hColIndexPT = cols.indexOf('Preço PT'); 
+                    hColIndexES = cols.indexOf('Preço ES'); 
+                    break;
+                }
+            }
+            if (hHeaderRowIndex === -1) { console.error("Cabeçalho antigo ('Hora PT') não encontrado para a tabela."); return; }
+
+            const hourlyTableData = { horas: [], precoPT: [], precoES: [] };
+            for (let i = hHeaderRowIndex + 1; i < hHeaderRowIndex + 1 + 24; i++) {
+                const cols = lines[i].split(',');
+                if(cols.length <= Math.max(hColIndexHora, hColIndexPT, hColIndexES)) continue;
+                const hora = cols[hColIndexHora]?.trim();
+                const pt = parseFloat(cols[hColIndexPT]?.replace('€', '').replace(',', '.'));
+                const es = parseFloat(cols[hColIndexES]?.replace('€', '').replace(',', '.'));
+                if (hora && !isNaN(pt) && !isNaN(es)) {
+                    hourlyTableData.horas.push(hora); 
+                    hourlyTableData.precoPT.push(pt); 
+                    hourlyTableData.precoES.push(es);
+                }
+            }
+            
+            // ===== CHAMADA CORRIGIDA: Passar os dados horários para a função da tabela =====
+            populatePriceTable(hourlyTableData, 'tabela-container');
+            
             const dataTituloGrafico = getValueFromCell('T38', lines) || 'hoje';
 
-            // --- INÍCIO DA NOVA LÓGICA ---
-            const minPT = Math.min(...chartData.precoPT);
-            const maxPT = Math.max(...chartData.precoPT);
-            const minES = Math.min(...chartData.precoES);
-            const maxES = Math.max(...chartData.precoES);
-
+            const minPT = Math.min(...quarterHourlyData.precoPT);
+            const maxPT = Math.max(...quarterHourlyData.precoPT);
+            const minES = Math.min(...quarterHourlyData.precoES);
+            const maxES = Math.max(...quarterHourlyData.precoES);
             const plotLines = [];
 
-            // Lógica para os mínimos
             if (minPT === minES) {
                 plotLines.push({ value: minPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatarValor(String(minPT))}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } });
             } else {
@@ -325,27 +368,34 @@
                 plotLines.push({ value: minES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatarValor(String(minES))}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } });
             }
 
-            // Lógica para os máximos
             if (maxPT === maxES) {
                 plotLines.push({ value: maxPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatarValor(String(maxPT))}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } });
             } else {
                 plotLines.push({ value: maxPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatarValor(String(maxPT))}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } });
                 plotLines.push({ value: maxES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatarValor(String(maxES))}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } });
             }
-            // --- FIM DA NOVA LÓGICA ---
 
             Highcharts.chart('grafico-container', {
                 chart: { type: 'line', height: 770 },
-                title: { text: `Valores horários de ${dataTituloGrafico} (até às 23h de PT)` },
-                xAxis: { categories: chartData.horas, title: { text: 'Hora PT' }, crosshair: true },
+                title: { text: `Valores quarto-horários de ${dataTituloGrafico} (até às 23h de PT)` },
+                xAxis: { 
+                    categories: quarterHourlyData.horas, 
+                    title: { text: 'Hora PT' }, 
+                    crosshair: true, 
+                    labels: { 
+                        rotation: -45,
+                        style: { fontSize: '8px' },
+                        step: 2 
+                    } 
+                },
                 yAxis: { 
                     title: { text: 'Preço (€/MWh)' }, 
                     labels: { format: '{value:,.0f} €' },
-                    plotLines: plotLines // Utiliza a configuração de linhas gerada dinamicamente
+                    plotLines: plotLines
                 },
                 tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 },
                 legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
-                series: [ { name: 'Espanha', color: '#28a745', data: chartData.precoES }, { name: 'Portugal', color: '#007bff', data: chartData.precoPT } ],
+                series: [ { name: 'Espanha', color: '#28a745', data: quarterHourlyData.precoES }, { name: 'Portugal', color: '#007bff', data: quarterHourlyData.precoPT } ],
                 responsive: { rules: [{ condition: { maxWidth: 600 }, chartOptions: { legend: { layout: 'vertical' } } }] }
             });
         })
