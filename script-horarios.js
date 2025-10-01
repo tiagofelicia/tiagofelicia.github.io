@@ -136,7 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
         corpoTabela.innerHTML = "";
 
         let omieValores = [];
-        let precoMedioValores = [];
+        // ===== ALTERAÇÃO 1: Remover a lista de Preço Médio. Já não é necessária para o cálculo das cores. =====
+        // let precoMedioValores = []; // REMOVIDO
         const dadosParaTabela = [];
 
         linhasTabela.forEach((linha) => {
@@ -150,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const omieValido = !isNaN(omie) ? parseFloat(omie) : null;
 
                 if (omieValido !== null) omieValores.push(omieValido);
-                if (precoMedioValido !== null) precoMedioValores.push(precoMedioValido);
+                // if (precoMedioValido !== null) precoMedioValores.push(precoMedioValido); // REMOVIDO
                 
                 dadosParaTabela.push({ hora, omie, precoMedio, precoMedioValido });
             }
@@ -166,10 +167,10 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         const quartisOmie = calcularQuartis(omieValores);
-        const quartisPrecoMedio = calcularQuartis(precoMedioValores);
+        // const quartisPrecoMedio = calcularQuartis(precoMedioValores); // REMOVIDO
 
         const obterCorDeFundo = (valor, quartis) => {
-            if (valor === null) return 'white';
+            if (valor === null || valor === undefined || isNaN(valor)) return 'white'; // Células sem valor ficam brancas
             if (valor <= quartis.q1) return "#A9D08E";
             if (valor <= quartis.q2) return "#E2EFDA";
             if (valor <= quartis.q3) return "#F9E79F";
@@ -182,6 +183,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const custoValido = dadosLinha.precoMedioValido !== null ? "0.0000" : "";
             const precoMedioFormatado = dadosLinha.precoMedioValido !== null ? dadosLinha.precoMedioValido.toFixed(5) : "";
             const tr = document.createElement('tr');
+            
+            // ===== ALTERAÇÃO 2: Usar o valor OMIE da linha para definir a cor de AMBAS as células =====
+            const corDeFundoDaLinha = obterCorDeFundo(parseFloat(dadosLinha.omie), quartisOmie);
 
             const tdHora = document.createElement('td');
             tdHora.textContent = dadosLinha.hora;
@@ -189,13 +193,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const tdOmie = document.createElement('td');
             tdOmie.textContent = dadosLinha.omie;
-            tdOmie.style.backgroundColor = obterCorDeFundo(parseFloat(dadosLinha.omie), quartisOmie);
+            tdOmie.style.backgroundColor = corDeFundoDaLinha; // Usar a cor calculada
             if (parseFloat(dadosLinha.omie) < 0) tdOmie.style.color = 'red';
             tr.appendChild(tdOmie);
 
             const tdPrecoMedio = document.createElement('td');
             tdPrecoMedio.textContent = precoMedioFormatado;
-            tdPrecoMedio.style.backgroundColor = obterCorDeFundo(dadosLinha.precoMedioValido, quartisPrecoMedio);
+            tdPrecoMedio.style.backgroundColor = corDeFundoDaLinha; // Usar a MESMA cor
             if (dadosLinha.precoMedioValido < 0) tdPrecoMedio.style.color = 'red';
             tr.appendChild(tdPrecoMedio);
 
