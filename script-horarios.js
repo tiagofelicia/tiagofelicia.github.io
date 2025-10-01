@@ -136,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function () {
         corpoTabela.innerHTML = "";
 
         let omieValores = [];
-        // ===== ALTERAÇÃO 1: Remover a lista de Preço Médio. Já não é necessária para o cálculo das cores. =====
         // let precoMedioValores = []; // REMOVIDO
         const dadosParaTabela = [];
 
