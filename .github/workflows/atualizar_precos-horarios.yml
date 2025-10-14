@@ -1,0 +1,51 @@
+name: Atualizar Preços Horários Automaticamente
+
+on:
+  # Agenda a execução automática
+  schedule:
+    # Corre todos os dias às 11:05 UTC
+    - cron: '5 11 * * *'
+
+  # Permite que execute este workflow manualmente a partir da interface do GitHub
+  workflow_dispatch:
+
+jobs:
+  # Nome do "trabalho" a ser executado
+  build-and-commit:
+    # A máquina virtual onde o código vai correr
+    runs-on: ubuntu-latest
+
+    # Dá permissão ao workflow para escrever no repositório
+    permissions:
+      contents: write
+
+    steps:
+      # 1. Faz o "checkout" do seu código para a máquina virtual
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Python
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 3. Instala as bibliotecas Python de que o seu script precisa
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas requests openpyxl
+
+      # 4. Executa o seu script Python
+      - name: Executar o script de atualização de preços
+        run: python scripts/precos-horarios_csv.py
+
+      # 5. Verifica se o ficheiro de dados foi alterado e faz o commit/push
+      - name: Fazer commit e push das alterações
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # A mensagem que aparecerá no histórico de commits
+          commit_message: "BOT: Atualização automática dos preços horários"
+          
+          # O ficheiro específico a ser verificado e adicionado
+          file_pattern: data/precos-horarios.csv
