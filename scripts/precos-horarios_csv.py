@@ -408,7 +408,7 @@ def main():
         print(f"✂️ Após filtro: {len(df_qh)} registos quarto-horários | {len(df_h)} registos horários")
 
         # 6. Exportar para CSV
-        exportar_para_csv_compativel(df_qh, df_h, "precos-horarios.csv")
+        exportar_para_csv_compativel(df_qh, df_h, "data/precos-horarios.csv")
         
         print("\n" + "=" * 60)
         print("✅ PROCESSO CONCLUÍDO COM SUCESSO")
