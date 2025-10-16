@@ -388,21 +388,24 @@ def main():
         # --- 3. Ler o ficheiro antigo para usar como cache ---
         df_qh_antigo = None
         try:
-            # Lemos apenas a primeira parte do CSV (quarto-horário)
             df_qh_antigo = pd.read_csv(
                 NOME_FICHEIRO_SAIDA, 
                 decimal='.', 
-                nrows=11000, # Lê um número seguro de linhas para apanhar a tabela
-                usecols=range(8) # Lê apenas as 8 colunas da tabela quarto-horária
+                nrows=11000,
+                usecols=range(8),
+                dtype=str # Ler tudo como texto para evitar erros de tipo
             )
+            
+            # --- CORREÇÃO: Remover linhas em branco lidas do cache ---
+            df_qh_antigo.dropna(how='all', inplace=True)
+            
             df_qh_antigo = df_qh_antigo.rename(columns={
                 'dia': 'Dia', 'tarifario': 'Tarifário', 'opcao': 'Opção Horária e Ciclo',
                 'intervalo': 'Hora', 'col': 'Valor', 'omie': 'OMIE_PT',
                 'tar': 'TAR', 'omieTar': 'OMIE*Perdas+TAR'
             })
-            # Converte a data para um formato comparável
             df_qh_antigo['Dia_dt'] = pd.to_datetime(df_qh_antigo['Dia'], dayfirst=True).dt.date
-            print(f"   - Ficheiro de cache '{NOME_FICHEIRO_SAIDA}' lido com sucesso.")
+            print(f"   - Ficheiro de cache '{NOME_FICHEIRO_SAIDA}' lido e limpo com sucesso.")
         except FileNotFoundError:
             print("   - Aviso: Ficheiro de cache não encontrado. A processar tudo do zero.")
         except Exception as e:
@@ -411,13 +414,13 @@ def main():
         # --- 4. Processar os dados para cada dia ---
         lista_df_qh = []
 
-        # Processar HOJE (sempre com dados novos)
+        # Processar HOJE
         print(f"   - A processar dados para HOJE ({data_hoje})...")
         df_omie_hoje = df_omie_novo[df_omie_novo['Data'].dt.date == data_hoje]
         df_qh_hoje, _ = gerar_tabelas_tarifarias(df_omie_hoje, URL_CONFIG)
         lista_df_qh.append(df_qh_hoje)
 
-        # Processar ONTEM (com lógica de fallback para o cache)
+        # Processar ONTEM (com lógica de fallback)
         print(f"   - A processar dados para ONTEM ({data_ontem})...")
         df_omie_ontem = df_omie_novo[df_omie_novo['Data'].dt.date == data_ontem]
 
@@ -427,10 +430,12 @@ def main():
             lista_df_qh.append(df_qh_ontem)
         elif df_qh_antigo is not None:
             print("     - Não foram encontrados dados novos da OMIE. A tentar reutilizar dados do ficheiro antigo...")
-            df_qh_ontem_cache = df_qh_antigo[df_qh_antigo['Dia_dt'] == data_ontem]
+            df_qh_ontem_cache = df_qh_antigo[df_qh_antigo['Dia_dt'] == data_ontem].copy() # Usar .copy() para evitar warnings
             if not df_qh_ontem_cache.empty:
-                # Remove a coluna auxiliar de data antes de juntar
-                df_qh_ontem_cache = df_qh_ontem_cache.drop(columns=['Dia_dt'])
+                df_qh_ontem_cache.drop(columns=['Dia_dt'], inplace=True)
+                # Converter colunas numéricas de volta para números antes de juntar
+                cols_num = ['Valor', 'OMIE_PT', 'TAR', 'OMIE*Perdas+TAR']
+                df_qh_ontem_cache[cols_num] = df_qh_ontem_cache[cols_num].apply(pd.to_numeric, errors='coerce')
                 lista_df_qh.append(df_qh_ontem_cache)
                 print("       - ✅ Dados de ontem reutilizados com sucesso!")
             else:
@@ -444,14 +449,12 @@ def main():
 
         df_qh_final = pd.concat(lista_df_qh, ignore_index=True)
 
-        # Re-calcular a tabela horária a partir dos dados quarto-horários finais
         print("   - A re-calcular a tabela horária final...")
         df_qh_final['Hora_Int'] = df_qh_final['Hora'].str.extract(r'\[(\d{2}):\d{2}').astype(int)
         df_h_final = df_qh_final.groupby(['Dia', 'Tarifário', 'Opção Horária e Ciclo', 'Hora_Int']).agg(
             OMIE_PT=('OMIE_PT', 'mean'), Valor=('Valor', 'mean')
         ).reset_index()
         df_h_final['Hora'] = df_h_final['Hora_Int'].apply(lambda h: f"[{h:02d}:00-{(h + 1):02d}:00[")
-        # (Lógica de ordenação, se necessária, iria aqui)
 
         exportar_para_csv_compativel(df_qh_final, df_h_final, NOME_FICHEIRO_SAIDA)
 
