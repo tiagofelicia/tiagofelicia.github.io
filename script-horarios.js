@@ -239,13 +239,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function init() {
-        const CSV_URL = "https://docs.google.com/spreadsheets/d/1goqE2sj--smB2hsw3TSC1u65y-Ind-zd/export?format=csv&id=1goqE2sj--smB2hsw3TSC1u65y-Ind-zd";
+        // ALTERAÇÃO: Apontar para o URL "raw" do GitHub
+        const baseURL = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/precos-horarios.csv";
+        
+        //Cache busting com o raw.githubusercontent.com
+        const CSV_URL = baseURL + "?cache_bust=" + new Date().getTime();
+        
         fetch(CSV_URL)
             .then(res => res.text())
             .then(data => {
                 dadosCSVGlobal = data;
                 parseCSV(data);
                 populaDropdowns();
+            })
+            .catch(error => {
+                console.error("Erro ao carregar os dados CSV:", error);
+                // Opcional: Mostrar uma mensagem de erro ao utilizador na página
+                const container = document.getElementById("container-chart");
+                if (container) {
+                    container.innerHTML = "<p style='color: red; text-align: center;'>Não foi possível carregar os dados dos preços horários. Por favor, tente mais tarde.</p>";
+                }
             });
     }
 
