@@ -4,9 +4,26 @@ document.addEventListener('DOMContentLoaded', function () {
     let dadosCSVGlobal = "";
 
     function parseCSV(csv) {
-        const linhas = csv.split("\n").filter(l => l.trim());
+        // Limpa o objeto de dados antes de começar
+        dadosEstruturados = {};
+    
+        const linhas = csv.split("\n"); // Não filtrar aqui ainda
+    
+        // Começa na linha 1 para ignorar o cabeçalho
         linhas.slice(1).forEach(row => {
+            // Se a linha estiver vazia ou for apenas whitespace, ignora
+            if (!row.trim()) {
+                return;
+            }
+    
             const [dia, tarifario, opcao, intervalo, col, omie, tar, omieTar] = row.split(",");
+    
+            // --- SALVAGUARDA ---
+            // Se, por alguma razão, o 'dia' for uma string vazia, ignora esta linha
+            if (!dia) {
+                return;
+            }
+    
             if (!dadosEstruturados[dia]) dadosEstruturados[dia] = {};
             if (!dadosEstruturados[dia][tarifario]) dadosEstruturados[dia][tarifario] = {};
             if (!dadosEstruturados[dia][tarifario][opcao]) {
