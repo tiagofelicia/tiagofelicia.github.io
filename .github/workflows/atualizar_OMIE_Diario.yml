@@ -1,0 +1,54 @@
+# Nome descritivo do workflow
+name: Atualizar OMIE Diario Automaticamente
+
+on:
+  # Agenda a execução automática
+  schedule:
+    # Corre todos os dias às 10:40 UTC
+    - cron: '40 10 * * *'
+    # Corre todos os dias às 10:55 UTC
+    - cron: '55 10 * * *'
+    # Corre todos os dias às 11:10 UTC
+    - cron: '10 11 * * *'
+    # Executa de Seg a Sex às 17:27 UTC
+    - cron: '27 17 * * 1-5'
+
+  # Permite execução manual
+  workflow_dispatch:
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Necessário para fazer commit
+
+    steps:
+      # 1. Checkout do código
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      # 2. Configura Python
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 3. Instala dependências
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas requests openpyxl numpy
+
+      # 4. Executa o seu script Python
+      - name: Executar o script omie_diario_csv.py
+        run: python scripts/omie_diario_csv.py
+
+      # 5. Verifica se o ficheiro de dados foi alterado e faz o commit/push
+      - name: Fazer commit e push das alterações
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # A mensagem que aparecerá no histórico de commits
+          commit_message: "BOT: Atualização automática do omie_diario.csv"
+          
+          # O ficheiro específico a ser verificado e adicionado
+          file_pattern: data/omie_diario.csv
