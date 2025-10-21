@@ -97,8 +97,8 @@
 <main>
     <div class="painel-header" id="painel-header-main"> 
         <div class="date-selector"> <label for="seletor-data">Selecione o dia:</label> <input type="date" id="seletor-data"> </div>
-        <h2>Preços médios OMIE para <span id="data-titulo-painel">--/--/----</span></h2> 
-        <p>Valores OMIE corrigidos para a hora de Portugal</p>
+        <h2>Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">--/--/----</span></h2> 
+        <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
 
     <div class="dashboard-grid">
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- PONTO 1: Atualizar Título Principal ---
         const tituloH2 = document.querySelector("#painel-header-main h2");
-        if (tituloH2) { tituloH2.innerHTML = `Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
+        if (tituloH2) { tituloH2.innerHTML = `Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
 
         const dadosDoDia = dadosPrecos.filter(d => d.dia === dataFormatadaCSV);
         if (dadosDoDia.length === 0) { return; };
