@@ -81,9 +81,9 @@
         .tabela-precos thead th { background-color: #343a40; color: white; position: sticky; top: 0; z-index: 1; }
         .tabela-precos thead tr:last-child th { top: 30px; /* Ajustar se a altura da primeira linha for diferente */ }
         .tabela-precos tbody tr:nth-child(even) { background-color: #f9f9f9; }
-        .tabela-precos th:nth-child(1), .tabela-precos td:nth-child(1) { width: 46%; }
-        .tabela-precos th:nth-child(2), .tabela-precos td:nth-child(2) { width: 27%; }
-        .tabela-precos th:nth-child(3), .tabela-precos td:nth-child(3) { width: 27%; }
+        .tabela-precos th:nth-child(1), .tabela-precos td:nth-child(1) { width: 34%; }
+        .tabela-precos th:nth-child(2), .tabela-precos td:nth-child(2) { width: 33%; }
+        .tabela-precos th:nth-child(3), .tabela-precos td:nth-child(3) { width: 33%; }
         
     </style>
 </head>
@@ -423,6 +423,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- PONTO 1: Título Condicional do Gráfico ---
         const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`;
 
+        // --- NOME DE FICHEIRO DINÂMICO ---
+        // Cria um nome base usando a data, substituindo '/' por '-' para ser seguro
+        const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`; 
+        // Exemplo: "precos-omie-21-10-2025"
+
         Highcharts.chart('grafico-container', {
             chart: { type: 'line', height: 770 },
             title: { text: tituloGrafico }, 
@@ -438,8 +443,9 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 },
             legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
-             // --- PONTO 3: Adicionar opções de exportação ---
+             // --- Opções de exportação ---
             exporting: {
+                filename: nomeFicheiroBase, // Define o nome base dinâmico
                 enabled: true, // Garante que está ativo
                 buttons: {
                     contextButton: {
