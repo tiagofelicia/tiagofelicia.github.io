@@ -1,75 +1,351 @@
+<!DOCTYPE html>
 <html lang="pt">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Futuros OMIP - Preços da Eletricidade | Tiago Felícia</title>
-    <meta name="description" content="Consulte os valores dos contratos futuros do OMIP para Portugal. Dados essenciais para compreender o mercado de eletricidade." />
+    <meta name="description" content="Consulte os valores dos contratos futuros do OMIP para Portugal e Espanha. Dados atualizados do mercado a prazo de eletricidade." />
 
     <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
-    <link rel="shortcut icon" href="/images/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
-    <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
-    
-  <!-- Google Analytics (GA4) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
 
-    gtag('config', 'G-J4NWP00S4F');
-  </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "O que é o OMIP e como difere do OMIE?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O OMIP (Operador do Mercado Ibérico de Energia - Pólo Português) é a entidade que gere o mercado a prazo de eletricidade na Península Ibérica. Complementa o OMIE, que gere o mercado diário e intradiário (mercado "spot"). No OMIE, negoceiam-se os preços da eletricidade para entrega no dia seguinte. No OMIP, negoceiam-se contratos para entrega de eletricidade em períodos futuros (dias, semanas, meses, trimestres, anos)."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que são os "Contratos Futuros" apresentados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Contratos futuros são acordos para comprar ou vender eletricidade a um preço definido hoje, mas para entrega numa data ou período futuro específico. O Valor (€/MWh) apresentado para cada contrato (ex: FPB M Apr-26) reflete a expectativa do mercado, no momento da atualização dos dados, sobre qual será o preço médio da eletricidade durante esse período futuro (novembro de 2025, neste exemplo)."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que significam as diferentes descrições (Diários, Semanais, Mensais...)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Os contratos estão agrupados pela duração do período de entrega a que se referem: Diários (D): Referem-se a um dia específico no futuro. Semanais (Wk): Referem-se a uma semana específica (identificada pelo número da semana e ano). O preço é a média esperada para essa semana. Mensais (M): Referem-se a um mês civil específico. Trimestrais (Q): Referem-se a um trimestre civil específico (Q1: Jan-Mar, Q2: Abr-Jun, Q3: Jul-Set, Q4: Out-Dez). Anuais (YR): Referem-se a um ano civil completo."
+        }
+      },{
+        "@type": "Question",
+        "name": "Para que servem estes preços? Quem os utiliza?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Os preços dos futuros OMIP são importantes porque: Funcionam como um indicador das expectativas do mercado sobre a evolução futura dos preços da eletricidade. São usados por produtores, comercializadores e grandes consumidores para gerir o risco de volatilidade dos preços, permitindo-lhes "fixar" custos ou receitas futuras. Servem de referência para a definição de preços em contratos de fornecimento de eletricidade a médio e longo prazo, incluindo algumas tarifas fixas oferecidas aos consumidores finais."
+        }
+      },{
+        "@type": "Question",
+        "name": "De onde vêm estes dados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Os dados apresentados são extraídos automaticamente das informações publicadas pelo OMIP. A Data de Atualização indicada no topo da página corresponde à data da última atualização."
+        }
+      }]
+    }
+    </script>
+    
+    <style>
+        .painel-header { text-align: center; margin-bottom: 20px; }
+        .painel-header h2 { margin: 0; font-size: 1.5em; }
+        .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
+        .data-atualizacao { text-align: center; font-weight: bold; margin-bottom: 30px; font-size: 1.1em; }
+
+        /* Grelha para as duas tabelas */
+        .futures-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+            gap: 100px; /* Espaço entre tabelas */
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        @media (max-width: 900px) {
+            .futures-grid {
+                grid-template-columns: 1fr; /* Uma coluna em ecrãs menores */
+            }
+        }
+
+        .table-container { width: 100%; overflow-x: auto; border: 1px solid #ddd; border-radius: 8px; background-color: white; }
+        .futures-table { width: 100%; border-collapse: collapse; }
+        .futures-table caption { font-size: 1.2em; font-weight: bold; padding: 10px; background-color: #f8f9fa; border-bottom: 1px solid #ddd; caption-side: top; text-align: center; }
+        .futures-table th, .futures-table td { padding: 8px 12px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; font-size: 0.85em; }
+        .futures-table thead th { background-color: #343a40; color: white; position: sticky; top: 0; font-size: 0.9em; }
+        .futures-table tbody tr:nth-child(even) { background-color: #f9f9f9; }
+        /* Colunas específicas */
+        .col-contrato { width: 25%; font-family: monospace; }
+        .col-descricao { width: 55%; }
+        .col-valor { width: 20%; text-align: center; font-weight: bold;}
+
+        /* Estilos para agrupar linhas por tipo */
+        .futures-table tbody tr.tipo-header td {
+            background-color: #e9ecef;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+            border-top: 2px solid #ccc;
+        }
+
+        .link-section { text-align: center; margin: 30px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+        .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
+
+    </style>
 </head>
 <body>
 <header>
-    <div class="header-content">
-        <div class="header-title-container">
-            <a href="index.html">
-                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo">
-            </a>
-            <h1>Tiago Felícia</h1>
-        </div>
-        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
-    </div>
+    <div class="header-content"> <div class="header-title-container"> <a href="index.html"> <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo"> </a> <h1>Tiago Felícia</h1> </div> <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p> </div>
 </header>
 
 <div id="menu-placeholder"></div>
 
-    <main>
-        <section id="omie-tables">
-            <h2>Médias OMIE</h2>
-            <p class="subtitulo-tabela">€/MWh - Valores corrigidos para a hora de Portugal Continental (até às 23h no último dia)</p>
-            <div class="table-container">
-              <table id="tabela-omie">
+<main>
+    <section id="omip-futures">
+        <div class="painel-header">
+            <h2>Futuros OMIP</h2>
+            <p>Valores dos contratos a prazo (€/MWh)</p>
+            <p class="data-atualizacao">Dados atualizados em: <span id="data-omip-atualizacao">--/--/----</span></p>
+        </div>
+
+        <div class="futures-grid">
+            <div class="table-group">
+                 <div class="link-section">
+                    <p>https://www.tiagofelicia.pt/omip.html</p>
+                </div>
+                <div class="table-container">
+                    <table id="tabela-omip-pt" class="futures-table">
+                        <caption>Portugal (FPB)</caption>
+
+                    <thead>
+                        <tr>
+                            <th class="col-contrato">Contrato</th>
+                            <th class="col-descricao">Descrição</th>
+                            <th class="col-valor">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
+                    </tbody>
                 </table>
-            </div>
-          
-            <div class="link-section">
-                <p>https://www.tiagofelicia.pt/omip.html</p>
             </div>
 
-            <h2>Média mensal e Futuros OMIP</h2>
-            <p class="subtitulo-tabela">€/MWh - Valores no último dia disponível</p>
-            <div class="table-container">
-              <table id="tabela-omip">
+            </div> <div class="table-group">
+                 <div class="link-section">
+                     <p>https://www.tiagofelicia.pt/omip.html</p>
+                 </div>
+                <div class="table-container">
+                    <table id="tabela-omip-es" class="futures-table">
+                         <caption>Espanha (FTB)</caption>
+                    <thead>
+                        <tr>
+                            <th class="col-contrato">Contrato</th>
+                            <th class="col-descricao">Descrição</th>
+                            <th class="col-valor">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
+                    </tbody>
                 </table>
             </div>
-            <article class="content-support" style="margin-top: 30px;">
-            <h2>OMIE vs. OMIP: Qual a Diferença?</h2>
-            <p>Embora ambos se refiram ao mercado ibérico de energia, têm finalidades distintas:</p>
-            <ul>
-                <li><strong>OMIE (Mercado Diário):</strong> É o mercado "spot", onde se define o preço da eletricidade para cada hora do dia seguinte. Os valores refletem as condições de oferta e procura em tempo real (disponibilidade de renováveis, consumo previsto, etc.). É a referência para os tarifários dinâmicos.</li>
-                <li><strong>OMIP (Mercado a Prazo):</strong> É o mercado de "futuros", onde se negoceiam contratos de eletricidade para entrega no futuro (próximo mês, trimestre ou ano). Os seus preços refletem a expectativa do mercado sobre quanto custará a energia nesses períodos.</li>
-            </ul>
-            </article>
-        </section>
-    </main>
+        </div>
+
+        <article class="content-support" style="margin-top: 30px;">
+            <h2>Compreender os Futuros OMIP</h2>
+
+            <details class="faq-item">
+                <summary><strong>O que é o OMIP e como difere do OMIE?</strong></summary>
+                <div class="faq-content">
+                    <p>O <strong>OMIP (Operador do Mercado Ibérico de Energia - Pólo Português)</strong> é a entidade que gere o mercado a prazo de eletricidade na Península Ibérica. Complementa o <strong>OMIE</strong>, que gere o mercado diário e intradiário (mercado "spot").</p>
+                    <ul>
+                        <li>No <strong>OMIE</strong>, negoceiam-se os preços da eletricidade para entrega no dia seguinte.</li>
+                        <li>No <strong>OMIP</strong>, negoceiam-se contratos para entrega de eletricidade em períodos futuros (dias, semanas, meses, trimestres, anos).</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que são os "Contratos Futuros" apresentados?</strong></summary>
+                <div class="faq-content">
+                    <p>Contratos futuros são acordos para comprar ou vender eletricidade a um preço definido hoje, mas para entrega numa data ou período futuro específico.</p>
+                    <p>O <strong>Valor (€/MWh)</strong> apresentado para cada contrato (ex: FPB M Apr-26) reflete a <strong>expectativa do mercado</strong>, no momento da atualização dos dados, sobre qual será o preço médio da eletricidade durante esse período futuro (novembro de 2025, neste exemplo).</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que significam as diferentes descrições (Diários, Semanais, Mensais...)?</strong></summary>
+                <div class="faq-content">
+                    <p>Os contratos estão agrupados pela duração do período de entrega a que se referem:</p>
+                    <ul>
+                        <li><strong>Diários (D):</strong> Referem-se a um dia específico no futuro.</li>
+                        <li><strong>Semanais (Wk):</strong> Referem-se a uma semana específica (identificada pelo número da semana e ano). O preço é a média esperada para essa semana.</li>
+                        <li><strong>Mensais (M):</strong> Referem-se a um mês civil específico.</li>
+                        <li><strong>Trimestrais (Q):</strong> Referem-se a um trimestre civil específico (Q1: Jan-Mar, Q2: Abr-Jun, Q3: Jul-Set, Q4: Out-Dez).</li>
+                        <li><strong>Anuais (YR):</strong> Referem-se a um ano civil completo.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>Para que servem estes preços? Quem os utiliza?</strong></summary>
+                <div class="faq-content">
+                    <p>Os preços dos futuros OMIP são importantes porque:</p>
+                    <ul>
+                        <li>Funcionam como um <strong>indicador das expectativas</strong> do mercado sobre a evolução futura dos preços da eletricidade.</li>
+                        <li>São usados por <strong>produtores, comercializadores e grandes consumidores</strong> para gerir o risco de volatilidade dos preços, permitindo-lhes "fixar" custos ou receitas futuras.</li>
+                        <li>Servem de <strong>referência</strong> para a definição de preços em contratos de fornecimento de eletricidade a médio e longo prazo, incluindo algumas tarifas fixas oferecidas aos consumidores finais.</li>
+                    </ul>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Estes são os preços que vou pagar na minha fatura?</strong></summary>
+                <div class="faq-content">
+                    <p><strong>Não diretamente.</strong> Os consumidores (residenciais ou pequenos negócios) pagam as tarifas definidas pelos seus comercializadores, que já incluem outras componentes (custos de rede, taxas, margem do comercializador).</p>
+                    <p>No entanto, os preços negociados no OMIP influenciam a forma como os comercializadores compram energia e definem as suas estratégias de preço, especialmente para tarifas fixas ou de longo prazo. Por isso, podem ter um impacto indireto nas ofertas disponíveis no mercado.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>De onde vêm estes dados?</strong></summary>
+                <div class="faq-content">
+                    <p>Os dados apresentados são extraídos automaticamente das informações publicadas pelo OMIP. A <strong>Data de Atualização</strong> indicada no topo da página corresponde à data da última atualização.</p>
+                </div>
+            </details>
+        </article>
+    </section>
+</main>
 
 <div id="footer-placeholder"></div>
 
-    <script src="script-omie.js"></script>
-    <script src="script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const csvUrl = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/omie_diario.csv";
+    // Referências aos *corpos* das tabelas
+    const tabelaOmipPtBody = document.querySelector("#tabela-omip-pt tbody");
+    const tabelaOmipEsBody = document.querySelector("#tabela-omip-es tbody");
+    const spanDataAtualizacao = document.getElementById("data-omip-atualizacao");
+
+    // --- Funções Auxiliares ---
+    function formatarValor(valor, casasDecimais = 2) {
+        if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,--'; } // Retorna sem € para a tabela
+        return valor.toFixed(casasDecimais).replace('.', ',');
+    }
+
+    // Função parseCSV adaptada para extrair apenas Atualizações e Futuros
+    function parseCSV(text) {
+        const tabelas = text.split('\nTABELA_');
+
+        // --- PARSING CSV COM ASPAS E VÍRGULAS ---
+        function parseTabelaSimples(raw, tipo) {
+             if (!raw) return tipo === 'obj' ? {} : [];
+             const lines = raw.trim().split('\n');
+             lines.shift(); // Remove título da tabela
+             if (lines.length < 1) return tipo === 'obj' ? {} : [];
+             const headerLine = lines.shift();
+             if (!headerLine) return tipo === 'obj' ? {} : [];
+             const headers = headerLine.split(',').map(h => h.trim().replace(/^\uFEFF/, ''));
+
+             if (tipo === 'obj') { /* ... (lógica objeto igual) ... */
+                 const obj = {}; const keyHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'chave'); const valueHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'valor'); if (keyHeaderIndex === -1 || valueHeaderIndex === -1) { return {}; } lines.forEach(line => { const values = line.split(','); if (values.length > Math.max(keyHeaderIndex, valueHeaderIndex)) { const key = values[keyHeaderIndex]?.trim(); const value = values[valueHeaderIndex]?.trim(); if (key) { obj[key] = value; } } }); return obj;
+             } else { // tipo === 'array' para Futuros
+                 const data = lines.map(line => {
+                     const row = {};
+                     // Regex para split CSV robusto: vírgulas fora de aspas
+                     const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+                     
+                     headers.forEach((header, index) => {
+                         let value = (values.length > index && values[index]) ? values[index].trim() : '';
+                         // Remover aspas das extremidades se existirem
+                         if (value.startsWith('"') && value.endsWith('"')) {
+                             value = value.substring(1, value.length - 1);
+                         }
+                         
+                         if (header.toLowerCase() === 'valor' && value !== "") {
+                             row[header] = parseFloat(value);
+                         } else {
+                             row[header] = value; // Manter outros como string
+                         }
+                     });
+                     // Adicionar tipo baseado no contrato (igual a antes)
+                     if (row['Contrato']) { if (row['Contrato'].includes(' D ')) row.Tipo = 'Diários'; else if (row['Contrato'].includes(' Wk')) row.Tipo = 'Semanais'; else if (row['Contrato'].includes(' M ')) row.Tipo = 'Mensais'; else if (row['Contrato'].includes(' Q')) row.Tipo = 'Trimestrais'; else if (row['Contrato'].includes(' YR-')) row.Tipo = 'Anuais'; else row.Tipo = 'Outros'; } 
+                     else { row.Tipo = 'Inválido'; }
+                     return row;
+                 });
+                 return data;
+             }
+        }
+        // --- FIM PARSING ---
+        
+        const atualizacoes = parseTabelaSimples(tabelas.find(t => t.startsWith("ATUALIZACOES")), 'obj');
+        const futurosPT = parseTabelaSimples(tabelas.find(t => t.startsWith("FUTUROS_PT")), 'array');
+        const futurosES = parseTabelaSimples(tabelas.find(t => t.startsWith("FUTUROS_ES")), 'array');
+        return { atualizacoes, futurosPT, futurosES };
+    }
+
+    // --- Função para construir o HTML de UMA tabela de futuros ---
+    function buildFuturesTableHTML(futuros) {
+        let tableHTML = '';
+        const tipos = ['Diários', 'Semanais', 'Mensais', 'Trimestrais', 'Anuais'];
+        const futurosAgrupados = tipos.reduce((acc, tipo) => {
+            acc[tipo] = futuros.filter(f => f.Tipo === tipo);
+            return acc;
+        }, {});
+
+        tipos.forEach(tipo => {
+            const fData = futurosAgrupados[tipo];
+            if (fData.length > 0) {
+                tableHTML += `<tr class="tipo-header"><td colspan="3">${tipo}</td></tr>`;
+                fData.forEach(futuro => {
+                    tableHTML += `<tr>`;
+                    tableHTML += `<td class="col-contrato">${futuro['Contrato'] || ''}</td>`;
+                    tableHTML += `<td class="col-descricao">${futuro['Descricao'] || ''}</td>`;
+                    tableHTML += `<td class="col-valor">${futuro['Valor'] !== undefined ? formatarValor(futuro['Valor']) : ''}</td>`;
+                    tableHTML += `</tr>`;
+                });
+            }
+        });
+        return tableHTML || '<tr><td colspan="3" style="text-align: center;">Não foram encontrados dados.</td></tr>';
+    }
+
+    // --- Lógica Principal ---
+    fetch(csvUrl)
+        .then(response => { if (!response.ok) throw new Error(`Erro ${response.status} ao carregar CSV.`); return response.text(); })
+        .then(csvText => {
+            const { atualizacoes, futurosPT, futurosES } = parseCSV(csvText);
+
+            // 1. Atualizar Data
+            spanDataAtualizacao.textContent = atualizacoes.Data_Valores_OMIP || "Erro";
+
+            // 2. Construir e Inserir HTML para cada tabela
+            tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(futurosPT);
+            tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(futurosES);
+
+        })
+        .catch(error => {
+            console.error('Falha ao carregar ou processar os dados OMIP:', error);
+            const errorMsg = '<tr><td colspan="3" style="text-align: center; color: red;">Erro ao carregar os dados.</td></tr>';
+            tabelaOmipPtBody.innerHTML = errorMsg;
+            tabelaOmipEsBody.innerHTML = errorMsg;
+            spanDataAtualizacao.textContent = "Erro";
+        });
+
+    // Carregar menu e footer
+    fetch('menu.html').then(response => response.text()).then(data => { document.getElementById('menu-placeholder').innerHTML = data; }).catch(error => console.error('Erro menu:', error));
+    fetch('footer.html').then(response => response.text()).then(data => { document.getElementById('footer-placeholder').innerHTML = data; }).catch(error => console.error('Erro footer:', error));
+});
+</script>
+
 </body>
 </html>
