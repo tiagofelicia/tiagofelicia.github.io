@@ -22,7 +22,6 @@
     </script>
     
     <style>
-        /* ... (O seu CSS completo e validado permanece aqui) ... */
         .painel-header { text-align: center; margin-bottom: 20px; }
         .painel-header h2 { margin: 0; font-size: 1.5em; }
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
@@ -182,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return row;
         });
 
-        function parseTabelaSimples(raw, tipo) { /* ... (Função parse robusta anterior) ... */ 
+        function parseTabelaSimples(raw, tipo) {
              if (!raw) return tipo === 'obj' ? {} : []; const lines = raw.trim().split('\n'); lines.shift(); 
              if (lines.length < 1) return tipo === 'obj' ? {} : []; const headerLine = lines.shift();
              if (!headerLine) return tipo === 'obj' ? {} : []; const headers = headerLine.split(',').map(h => h.trim().replace(/^\uFEFF/, '')); 
@@ -239,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const dataOMIP = dadosAtualizacao.Data_Valores_OMIP;
         const isUltimoDiaOMIE = (dataFormatadaCSV === dataOMIE);
 
-        // --- PONTO 1: Atualizar Título Principal ---
+        // --- Atualizar Título Principal ---
         const tituloH2 = document.querySelector("#painel-header-main h2");
         if (tituloH2) { tituloH2.innerHTML = `Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
 
@@ -255,17 +254,21 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.max(...precosReaisPT) : null);
         document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.min(...precosReaisPT) : null);
 
-        // --- Cálculos Espanha (inclui última hora dia anterior) ---
+        // --- Cálculos Espanha (Regra 24h ES) ---
         const dataAnteriorCSV = getDataAnteriorCSV(dataSelecionada);
-        let precosESCompletos = dadosDoDia.map(d => d.preco_es).filter(p => p !== null); 
+        let precosDiaEspanhol = []; // Array para guardar os preços das 24h ES
+        let ultimos4ESAnterior = [];
         if (dataAnteriorCSV) {
-             const dadosDiaAnterior = dadosPrecos.filter(d => d.dia === dataAnteriorCSV);
-             const ultimos4ESAnterior = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null);
-             precosESCompletos = ultimos4ESAnterior.concat(precosESCompletos);
+            const dadosDiaAnterior = dadosPrecos.filter(d => d.dia === dataAnteriorCSV);
+            ultimos4ESAnterior = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null);
         }
-        document.getElementById('media-es').innerHTML = formatarValor(calcularMedia(precosESCompletos));
-        document.getElementById('max-es').innerHTML = formatarValor(precosESCompletos.length > 0 ? Math.max(...precosESCompletos) : null);
-        document.getElementById('min-es').innerHTML = formatarValor(precosESCompletos.length > 0 ? Math.min(...precosESCompletos) : null);
+        // Primeiros 92 quartos (00:00 PT a 23:00 PT) do dia D
+        const primeiros92ESAtual = dadosDoDia.slice(0, 92).map(d => d.preco_es).filter(p => p !== null);
+        precosDiaEspanhol = ultimos4ESAnterior.concat(primeiros92ESAtual);
+
+        document.getElementById('media-es').innerHTML = formatarValor(calcularMedia(precosDiaEspanhol));
+        document.getElementById('max-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.max(...precosDiaEspanhol) : null);
+        document.getElementById('min-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.min(...precosDiaEspanhol) : null);
         
         // --- Futuros do Dia (PT e ES) ---
         const containerFuturosPT = document.getElementById('futuros-container-pt');
@@ -289,8 +292,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, {});
         }
         
-        // --- PONTO 5: Apresentar Ciclos ---
-        document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['V'])); // Usar optional chaining ?.
+        // --- Apresentar Ciclos ---
+        document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['V']));
         document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['F']));
         document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['V']));
         document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['F']));
@@ -305,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
         atualizarGrafico(dadosDoDia, dadosReaisDoDia, dataFormatadaCSV, isUltimoDiaOMIE); 
     }
     
-    // --- PONTO 2: Função para mostrar futuros diários seguintes com dia da semana ---
+    // --- Função para mostrar futuros diários seguintes com dia da semana ---
     function atualizarFuturosProximos() {
         if (!dadosFuturosPT || dadosFuturosPT.length === 0) { return; }
         const futurosDiariosPT = dadosFuturosPT.filter(f => f.Contrato && f.Contrato.includes(" D "))
@@ -352,11 +355,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- PONTO 2 (Tabela): Função Tabela Horária com cabeçalho corrigido ---
+    // --- Função Tabela Horária ---
     function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia) {
         const container = document.getElementById('tabela-container');
         let tableHTML = '<table class="tabela-precos">';
-        // --- CABEÇALHO CORRIGIDO ---
+        // --- CABEÇALHO ---
         tableHTML += '<thead>';
         tableHTML += '<tr>';
         tableHTML += '<th rowspan="2">Hora PT</th>'; // rowspan para ocupar 2 linhas
@@ -367,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         tableHTML += '<th>Preço ES</th>'; // Sem unidades
         tableHTML += '</tr>';
         tableHTML += '</thead>';
-        // --- FIM CABEÇALHO CORRIGIDO ---
+        // --- FIM CABEÇALHO ---
         tableHTML += '<tbody>';
         const dadosHorarios = []; let qh_index_compl = 0;
         for (let h = 0; h < 24; h++) {
@@ -420,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
                  if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } });
              }
         }
-        // --- PONTO 1: Título Condicional do Gráfico ---
+        // --- Título Condicional do Gráfico ---
         const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`;
 
         // --- NOME DE FICHEIRO DINÂMICO ---
@@ -458,7 +461,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             },
-            // --- FIM PONTO 3 ---
             series: [ 
                 { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, 
                 { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } 
