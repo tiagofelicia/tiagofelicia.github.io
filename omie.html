@@ -313,8 +313,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => { console.error('Falha:', error, error.stack); document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro ao carregar os dados. Verifique se o ficheiro <strong>omie_diario.csv</strong> está acessível e verifique a consola para detalhes.</p>`; });
 
     // Carregar menu e footer
-    // fetch('menu.html')...
-    // fetch('footer.html')...
+    fetch('menu.html').then(response => response.text()).then(data => { document.getElementById('menu-placeholder').innerHTML = data; }).catch(error => console.error('Erro ao carregar o menu:', error));
+    fetch('footer.html').then(response => response.text()).then(data => { document.getElementById('footer-placeholder').innerHTML = data; }).catch(error => console.error('Erro ao carregar o footer:', error));
 });
 </script>
 
