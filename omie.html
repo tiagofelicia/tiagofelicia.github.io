@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preços OMIE por Período | Tiago Felícia</title>
+    <meta name="description" content="Analise os preços médios e detalhados do mercado de eletricidade (OMIE) para Portugal e Espanha num período selecionado." />
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
+
+    <style>
+        .painel-header { text-align: center; margin-bottom: 20px; }
+        .painel-header h2 { margin: 0; font-size: 1.5em; }
+        .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
+        .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .date-selector-periodo label { font-weight: bold; }
+        .date-selector-periodo input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+        .dashboard-grid-periodo { display: flex; flex-direction: column; gap: 20px; width: 95%; max-width: 1200px; margin: auto; }
+        .card-pair-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 700px) { .card-pair-row { grid-template-columns: 1fr; } }
+        .card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card-title-bd { background-color: #A9D08E; color: black; padding: 5px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
+        .card-title-bs { background-color: #8EA9DB; color: black; padding: 5px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
+        .card-title-td { background-color: #BF8F00; color: white; padding: 5px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
+        .card-title-ts { background-color: #C65911; color: white; padding: 5px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
+        .data-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
+        .data-item:last-child { border-bottom: none; }
+        .label { font-weight: 600; }
+        .valor { font-weight: bold; font-size: 0.95em; }
+        .card-principal { text-align: center; border-style: solid; }
+        .valor-principal { font-size: 1.8em; font-weight: bold; color: #333; }
+        .card-portugal { border-color: #007bff; border-width: 5px; }
+        .card-title-media-pt { font-size: 1em; text-align: center; margin: -10px -10px 10px -10px; padding: 8px 10px; background-color: #007bff; color: white; border-radius: 2px 2px 0 0; }
+        .card-espanha { border-color: #28a745; border-width: 5px; }
+        .card-title-media-es { font-size: 1em; text-align: center; margin: -10px -10px 10px -10px; padding: 8px 10px; background-color: #28a745; color: white; border-radius: 2px 2px 0 0; }
+        .label-vazio, .label-fora-vazio, .label-cheias, .label-ponta { padding: 3px 8px; border-radius: 12px; color: white; font-size: 0.95em; font-weight: 600; }
+        .card:has(.card-title-bd) .label-vazio { background-color: #C6E0B4; color: #000000; }
+        .card:has(.card-title-bd) .label-fora-vazio { background-color: #E2EFDA; color: #000000; }
+        .card:has(.card-title-bs) .label-vazio { background-color: #B4C6E7; color: #000000; }
+        .card:has(.card-title-bs) .label-fora-vazio { background-color: #D9E1F2; color: #000000; }
+        .card:has(.card-title-td) .label-vazio { background-color: #FFD966; color: #000000; }
+        .card:has(.card-title-td) .label-cheias { background-color: #FFE699; color: #000000; }
+        .card:has(.card-title-td) .label-ponta { background-color: #FFF2CC; color: #000000; }
+        .card:has(.card-title-ts) .label-vazio { background-color: #F4B084; color: #000000; }
+        .card:has(.card-title-ts) .label-cheias { background-color: #F8CBAD; color: #000000; }
+        .card:has(.card-title-ts) .label-ponta { background-color: #FCE4D6; color: #000000; }
+
+        .grafico-container { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; }
+        .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
+
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-content"> <div class="header-title-container"> <a href="index.html"> <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo"> </a> <h1>Tiago Felícia</h1> </div> <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p> </div>
+</header>
+
+<div id="menu-placeholder"></div>
+
+<main>
+    <div class="painel-header" id="painel-header-main">
+        <div class="date-selector-periodo"> <div> <label for="seletor-data-inicio">Data Início:</label> <input type="date" id="seletor-data-inicio"> </div> <div> <label for="seletor-data-fim">Data Fim:</label> <input type="date" id="seletor-data-fim"> </div> </div>
+        <h2>Eletricidade - Preços médios OMIE para o período de <span id="data-inicio-titulo">--/--/----</span> a <span id="data-fim-titulo">--/--/----</span></h2>
+        <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
+    </div>
+
+    <div class="dashboard-grid-periodo">
+        <div class="card-pair-row">
+             <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
+             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
+        </div>
+        <div class="card-pair-row">
+             <div class="card"> <h3 class="card-title-bd">Bi-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-diario-fora-vazio">--,-- €</span></div> </div>
+             <div class="card"> <h3 class="card-title-td">Tri-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-diario-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-diario-ponta">--,-- €</span></div> </div>
+        </div>
+        <div class="card-pair-row">
+             <div class="card"> <h3 class="card-title-bs">Bi-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-semanal-fora-vazio">--,-- €</span></div> </div>
+             <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
+        </div>
+    </div>
+
+    <div class="link-section"> <p>https://www.tiagofelicia.pt/omie.html</p> </div>
+
+    <div id="grafico-diario-container" class="grafico-container"></div>
+    <div id="grafico-horario-container" class="grafico-container"></div>
+    <div id="grafico-quartos-detalhado-container" class="grafico-container"></div>
+
+    <article class="content-support">
+         <h2>Compreender os Preços do OMIE</h2>
+         <p>O OMIE (Operador do Mercado Ibérico de Energia) é a entidade que gere o mercado grossista de eletricidade para Portugal e Espanha. Os preços aqui apresentados são o resultado dos "leilões" diários onde produtores vendem e comercializadores compram a energia para o dia seguinte.</p>
+         <details class="faq-item"> <summary><strong>O que significam os diferentes ciclos horários?</strong></summary> <div class="faq-content"> <p>Os preços são agregados em diferentes períodos para corresponderem aos tarifários de eletricidade:</p> <ul> <li><strong>Simples:</strong> A média de todas as 24 horas do dia.</li> <li><strong>Bi-Horário (Diário/Semanal):</strong> Divide o dia em Vazio e Fora de Vazio. O ciclo semanal tem mais horas de Vazio ao fim de semana.</li> <li><strong>Tri-Horário (Diário/Semanal):</strong> Divide o dia em Ponta, Cheias e Vazio.</li> </ul> </div> </details>
+    </article>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const csvUrl = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/omie_diario.csv";
+    const seletorDataInicio = document.getElementById('seletor-data-inicio');
+    const seletorDataFim = document.getElementById('seletor-data-fim');
+
+    // Variáveis globais
+    let dadosPrecos = [];
+    let dadosAtualizacao = {};
+
+    // --- Funções Auxiliares ---
+    function formatarDataParaInput(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('/')) { return null; } const [dia, mes, ano] = dataStr.split('/'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${ano}-${mes}-${dia}`; }
+    function formatarDataParaCSV(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('-')) { return null; } const [ano, mes, dia] = dataStr.split('-'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${dia}/${mes}/${ano}`; }
+    function getDataAnteriorCSV(dataStrYYYYMMDD) { try { const dataAtual = new Date(dataStrYYYYMMDD + "T12:00:00Z"); dataAtual.setUTCDate(dataAtual.getUTCDate() - 1); const dia = String(dataAtual.getUTCDate()).padStart(2, '0'); const mes = String(dataAtual.getUTCMonth() + 1).padStart(2, '0'); const ano = dataAtual.getUTCFullYear(); return `${dia}/${mes}/${ano}`; } catch(e) { console.error("Erro ao calcular data anterior:", e); return null; } } // Usar UTC
+
+    // Função parseCSV (com timestamp UTC)
+    function parseCSV(text) {
+        const tabelas = text.split('\nTABELA_');
+        const precosLines = tabelas[0].trim().split('\n');
+        const precosHeaders = precosLines.shift().split(',').map(h => h.trim().replace(/^\uFEFF/, ''));
+        const precos = precosLines.map(line => {
+            const values = line.split(','); const row = {};
+            precosHeaders.forEach((header, index) => { const value = (values.length > index && values[index]) ? values[index].trim() : ''; if (header === 'preco_pt' || header === 'preco_es') { row[header] = (value && value !== "") ? parseFloat(value) : null; } else { row[header] = value; } });
+             try { const [dia, mes, ano] = row.dia.split('/'); const [horaInicioStr] = row.intervalo.substring(1).split('-'); const [horaInicio, minInicio] = horaInicioStr.split(':'); row.timestamp = Date.UTC(parseInt(ano), parseInt(mes)-1, parseInt(dia), parseInt(horaInicio), parseInt(minInicio)); row.localTimestamp = new Date(row.timestamp); }
+             catch(e) { row.timestamp = null; row.localTimestamp = null; }
+            return row;
+        });
+        function parseTabelaSimples(raw, tipo) {
+             if (!raw) return tipo === 'obj' ? {} : []; const lines = raw.trim().split('\n'); lines.shift(); if (lines.length < 1) return tipo === 'obj' ? {} : []; const headerLine = lines.shift(); if (!headerLine) return tipo === 'obj' ? {} : []; const headers = headerLine.split(',').map(h => h.trim().replace(/^\uFEFF/, '')); if (tipo === 'obj') { const obj = {}; const keyHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'chave'); const valueHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'valor'); if (keyHeaderIndex === -1 || valueHeaderIndex === -1) { return {}; } lines.forEach(line => { const values = line.split(','); if (values.length > Math.max(keyHeaderIndex, valueHeaderIndex)) { const key = values[keyHeaderIndex]?.trim(); const value = values[valueHeaderIndex]?.trim(); if (key) { obj[key] = value; } } }); return obj; } else { return []; }
+        }
+        const atualizacoes = parseTabelaSimples(tabelas.find(t => t.startsWith("ATUALIZACOES")), 'obj');
+        return { precos, atualizacoes };
+    }
+
+    function formatarValor(valor, casasDecimais = 2) { if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,-- €'; } const textoFormatado = valor.toFixed(casasDecimais).replace('.', ',') + ' €'; return valor < 0 ? `<span style="color: red;">${textoFormatado}</span>` : textoFormatado; }
+    function calcularMedia(arr) { if (!Array.isArray(arr)) return null; const nums = arr.filter(v => v !== null && !isNaN(v)); return nums.length > 0 ? nums.reduce((a, b) => a + b, 0) / nums.length : null; }
+    function isDateInRange(dateStrDDMMYYYY, startStrYYYYMMDD, endStrYYYYMMDD) { try { const dateInput = formatarDataParaInput(dateStrDDMMYYYY); if (!dateInput) return false; return dateInput >= startStrYYYYMMDD && dateInput <= endStrYYYYMMDD; } catch (e) { console.error("Erro ao comparar datas:", e); return false; } }
+
+    // --- Função Principal ---
+    function atualizarDashboardPeriodo() {
+        const dataInicioSelecionada = seletorDataInicio.value;
+        const dataFimSelecionada = seletorDataFim.value;
+        if (!dataInicioSelecionada || !dataFimSelecionada || dataInicioSelecionada > dataFimSelecionada) { return; }
+        const dataInicioCSV = formatarDataParaCSV(dataInicioSelecionada);
+        const dataFimCSV = formatarDataParaCSV(dataFimSelecionada);
+        const dataOMIE = dadosAtualizacao.Data_Valores_OMIE;
+        const isDataFimUltimoDiaOMIE = (formatarDataParaInput(dataOMIE) === dataFimSelecionada);
+
+        const tituloH2 = document.querySelector("#painel-header-main h2");
+        if (tituloH2) { tituloH2.innerHTML = `Eletricidade - Preços médios OMIE para o período de <span id="data-inicio-titulo">${dataInicioCSV}</span> a <span id="data-fim-titulo">${dataFimCSV}</span> ${isDataFimUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
+
+        // Filtrar dados para o período selecionado + dia anterior (para cálculo ES)
+        const dataAnteriorInicioCSV = getDataAnteriorCSV(dataInicioSelecionada);
+        const dadosDoPeriodoEAnterior = dadosPrecos.filter(d => isDateInRange(d.dia, formatarDataParaInput(dataAnteriorInicioCSV) || dataInicioSelecionada, dataFimSelecionada));
+        const dadosDoPeriodo = dadosDoPeriodoEAnterior.filter(d => d.dia !== dataAnteriorInicioCSV); // Apenas dados do período selecionado
+
+        if (dadosDoPeriodo.length === 0) { /* ... (limpar campos) ... */ return; };
+
+        let dadosReaisDoPeriodo = dadosDoPeriodo.filter(d => !(d.dia === dataOMIE && isDataFimUltimoDiaOMIE && d.preco_es === null));
+
+        // --- Cálculos Cards ---
+        const precosReaisPTPeriodo = dadosReaisDoPeriodo.map(d => d.preco_pt).filter(p => p !== null);
+        document.getElementById('media-pt').innerHTML = formatarValor(calcularMedia(precosReaisPTPeriodo));
+        document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPTPeriodo.length > 0 ? Math.max(...precosReaisPTPeriodo) : null);
+        document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPTPeriodo.length > 0 ? Math.min(...precosReaisPTPeriodo) : null);
+
+        // --- Card ES ---
+        // Calcular a média de Espanha para o período completo, usando a regra diária
+        let somaMediasDiariasES = 0;
+        let countMediasDiariasES = 0;
+        let todosPrecosESPeriodo = []; // Para min/max
+
+        const datasUnicasPeriodo = [...new Set(dadosDoPeriodo.map(d => d.dia))].sort((a, b) => formatarDataParaInput(a).localeCompare(formatarDataParaInput(b)));
+
+        datasUnicasPeriodo.forEach((diaDDMMYYYY, index) => {
+             const diaAnteriorLoopCSV = (index === 0) ? dataAnteriorInicioCSV : datasUnicasPeriodo[index - 1];
+             let precosESDiaD = dadosDoPeriodo.filter(d => d.dia === diaDDMMYYYY).map(d => d.preco_es).filter(p => p !== null);
+             let ultimos4ESAnteriorLoop = [];
+             if (diaAnteriorLoopCSV) {
+                 const dadosDiaAnteriorLoop = dadosPrecos.filter(d => d.dia === diaAnteriorLoopCSV);
+                 ultimos4ESAnteriorLoop = dadosDiaAnteriorLoop.slice(-4).map(d => d.preco_es).filter(p => p !== null);
+             }
+             // Combinar últimos 4 do dia anterior com primeiros 92 do dia atual
+             const precosDiaEspanhol = ultimos4ESAnteriorLoop.concat(precosESDiaD.slice(0, 92)); // Assume 96 por dia PT
+             todosPrecosESPeriodo.push(...precosDiaEspanhol); // Acumula para min/max
+             const mediaDiaES = calcularMedia(precosDiaEspanhol);
+             if (mediaDiaES !== null) {
+                 somaMediasDiariasES += mediaDiaES;
+                 countMediasDiariasES++;
+             }
+        });
+
+        const mediaGeralES = countMediasDiariasES > 0 ? somaMediasDiariasES / countMediasDiariasES : null;
+        document.getElementById('media-es').innerHTML = formatarValor(mediaGeralES);
+        document.getElementById('max-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? Math.max(...todosPrecosESPeriodo) : null);
+        document.getElementById('min-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? Math.min(...todosPrecosESPeriodo) : null);
+        // --- FIM CORREÇÃO CARD ES ---
+
+        const ciclosPeriodo = { bd: {}, bs: {}, td: {}, ts: {} }; for (const ciclo in ciclosPeriodo) { ciclosPeriodo[ciclo] = dadosReaisDoPeriodo.reduce((acc, row) => { const periodo = row[ciclo.toUpperCase()]; if (!periodo) return acc; if (!acc[periodo]) acc[periodo] = []; if(row.preco_pt !== null && !isNaN(row.preco_pt)) { acc[periodo].push(row.preco_pt); } return acc; }, {}); } document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['V'])); document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['F'])); document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['V'])); document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['F'])); document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['V'])); document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['C'])); document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['P'])); document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['V'])); document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['C'])); document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['P']));
+
+        // Atualizar Gráficos
+        atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo); // Passar datasUnicasPeriodo
+        atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
+        atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
+    }
+
+    // --- Gráfico de Médias DIÁRIAS ---
+    // --- Gráfico ES ---
+    function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo) {
+         const dadosAgrupados = dadosDoPeriodo.reduce((acc, row) => { if (!acc[row.dia]) { acc[row.dia] = { precosPT: [], precosES: [] }; } if (row.preco_pt !== null) acc[row.dia].precosPT.push(row.preco_pt); if (row.preco_es !== null) acc[row.dia].precosES.push(row.preco_es); return acc; }, {});
+         const dataOMIE = dadosAtualizacao.Data_Valores_OMIE;
+         const seriesDataPT = [];
+         const seriesDataES = []; // Recalcular aqui dentro com a lógica correta
+
+         const dataAnteriorInicioCSV = getDataAnteriorCSV(dataInicioSelecionada);
+
+         datasUnicasPeriodo.forEach((diaDDMMYYYY, index) => {
+             const [dia, mes, ano] = diaDDMMYYYY.split('/');
+             const timestamp = Date.UTC(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
+             const dadosDiaDoCSV = dadosAgrupados[diaDDMMYYYY] || { precosPT: [], precosES: [] }; // Pegar dados do dia atual
+
+             // Cálculo Média PT (igual a antes)
+             let mediaPTDia;
+             if (diaDDMMYYYY === dataOMIE && isDataFimUltimoDiaOMIE) {
+                 const dadosReaisDia = dadosDoPeriodo.filter(d => d.dia === diaDDMMYYYY && d.preco_es !== null);
+                 mediaPTDia = calcularMedia(dadosReaisDia.map(d => d.preco_pt));
+             } else {
+                 mediaPTDia = calcularMedia(dadosDiaDoCSV.precosPT);
+             }
+             if (mediaPTDia !== null) seriesDataPT.push([timestamp, mediaPTDia]);
+
+             // --- CORREÇÃO CÁLCULO MÉDIA ES DIÁRIA PARA O GRÁFICO ---
+             const diaAnteriorLoopCSV = (index === 0) ? dataAnteriorInicioCSV : datasUnicasPeriodo[index - 1];
+             let precosESDiaD = dadosDiaDoCSV.precosES.filter(p => p !== null);
+             let ultimos4ESAnteriorLoop = [];
+             if (diaAnteriorLoopCSV) {
+                 const dadosDiaAnteriorLoop = dadosPrecos.filter(d => d.dia === diaAnteriorLoopCSV);
+                 ultimos4ESAnteriorLoop = dadosDiaAnteriorLoop.slice(-4).map(d => d.preco_es).filter(p => p !== null);
+             }
+             // Combinar últimos 4 do dia anterior com primeiros 92 do dia atual
+             const precosDiaEspanhol = ultimos4ESAnteriorLoop.concat(precosESDiaD.slice(0, 92)); // Assume 96 por dia PT
+             const mediaESDia = calcularMedia(precosDiaEspanhol);
+             // --- FIM CORREÇÃO ---
+             if (mediaESDia !== null) seriesDataES.push([timestamp, mediaESDia]);
+         });
+
+         const tituloGrafico = `Médias Diárias OMIE de ${dataInicioCSV} a ${dataFimCSV} ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`;
+         const nomeFicheiroBase = `medias-diarias-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
+         Highcharts.chart('grafico-diario-container', { chart: { type: 'line', zoomType: 'x' }, title: { text: tituloGrafico }, xAxis: { type: 'datetime', title: { text: 'Data' }, crosshair: true, dateTimeLabelFormats: { day: '%e %b %Y', week: '%e %b %Y', month: '%b %Y', year: '%Y' } }, yAxis: { title: { text: 'Preço Médio Diário (€/MWh)' }, labels: { format: '{value:,.0f} €' } }, tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2, xDateFormat: '%A, %e de %B de %Y' }, legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' }, exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: [ 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData' ] } } }, series: [ { name: 'Espanha', color: '#28a745', data: seriesDataES }, { name: 'Portugal', color: '#007bff', data: seriesDataPT } ] });
+    }
+
+    // --- Gráfico de Médias HORÁRIAS ---
+    function atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE) {
+        // ... (código igual à versão anterior) ...
+        const hourlyAverages = Array(24).fill(null).map(() => ({ sumPT: 0, countPT: 0, sumES: 0, countES: 0 }));
+        dadosReaisDoPeriodo.forEach(row => { let hour = -1; if (row.localTimestamp) { hour = row.localTimestamp.getHours(); } else { try { hour = parseInt(row.hora.split(':')[0]); } catch(e){} } if (hour >= 0 && hour < 24) { if (row.preco_pt !== null) { hourlyAverages[hour].sumPT += row.preco_pt; hourlyAverages[hour].countPT++; } if (row.preco_es !== null) { hourlyAverages[hour].sumES += row.preco_es; hourlyAverages[hour].countES++; } } });
+        const categories = hourlyAverages.map((_, h) => `[${String(h).padStart(2,'0')}:00-${String(h+1).padStart(2,'0') === '24' ? '00' : String(h+1).padStart(2,'0')}:00[`); const seriesDataPT = hourlyAverages.map(h => h.countPT > 0 ? h.sumPT / h.countPT : null); const seriesDataES = hourlyAverages.map(h => h.countES > 0 ? h.sumES / h.countES : null);
+        const tituloGrafico = `Média Horária no Período (${dataInicioCSV} a ${dataFimCSV}) ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`; const nomeFicheiroBase = `media-horaria-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
+        Highcharts.chart('grafico-horario-container', { chart: { type: 'column' }, title: { text: tituloGrafico }, xAxis: { categories: categories, title: { text: 'Hora PT' }, crosshair: true }, yAxis: { title: { text: 'Preço Médio Horário (€/MWh)' }, labels: { format: '{value:,.0f} €' } }, tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 }, legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' }, exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: [ 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData' ] } } }, series: [ { name: 'Espanha', color: '#28a745', data: seriesDataES }, { name: 'Portugal', color: '#007bff', data: seriesDataPT } ] });
+    }
+
+    // --- GRÁFICO QUARTO-HORÁRIO DETALHADO ---
+    function atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE) {
+        const dadosOrdenados = dadosReaisDoPeriodo.sort((a, b) => { if (!a.timestamp || !b.timestamp) return 0; return a.timestamp - b.timestamp; }); // Usar timestamp UTC
+        const seriesDataPT = dadosOrdenados.map(row => row.timestamp ? [row.timestamp, row.preco_pt] : null).filter(p => p !== null);
+        const seriesDataES = dadosOrdenados.map(row => row.timestamp ? [row.timestamp, row.preco_es] : null).filter(p => p !== null);
+        const tituloGrafico = `Valores Quarto-Horários no Período (${dataInicioCSV} a ${dataFimCSV}) ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`;
+        const nomeFicheiroBase = `quartos-detalhe-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
+        Highcharts.chart('grafico-quartos-detalhado-container', {
+            chart: { type: 'line', zoomType: 'x' }, title: { text: tituloGrafico },
+            xAxis: {
+                type: 'datetime', title: { text: 'Data e Hora (PT)' }, crosshair: true,
+                dateTimeLabelFormats: { millisecond: '%H:%M', second: '%H:%M', minute: '%H:%M', hour: '%H:%M', day: '%e %b %H:%M', week: '%e %b', month: '%b \'%y', year: '%Y' },
+            },
+            yAxis: { title: { text: 'Preço (€/MWh)' }, labels: { format: '{value:,.0f} €' } },
+            tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2, xDateFormat: '%A, %e %b %Y %H:%M' }, // Formato UTC para tooltip
+            legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
+            exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: [ 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData' ] } } },
+            series: [ { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } ]
+        });
+    }
+
+    // --- Processo de Inicialização ---
+    fetch(csvUrl)
+        .then(response => { if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`); return response.text(); })
+        .then(data => {
+            const parsedData = parseCSV(data);
+            dadosPrecos = parsedData.precos;
+            dadosAtualizacao = parsedData.atualizacoes;
+            if (!dadosAtualizacao.Data_Valores_OMIE) { throw new Error("Data_Valores_OMIE não encontrada."); }
+            const dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE);
+            if (!dataMaximaValida) { throw new Error("Data_Valores_OMIE inválida."); }
+            const todasDatasValidas = [...new Set(dadosPrecos.map(d => formatarDataParaInput(d.dia)))].filter(d => d !== null).sort();
+            if (todasDatasValidas.length === 0) { throw new Error("Não foram encontradas datas válidas."); }
+            const dataMinimaValida = todasDatasValidas[0];
+
+            // Configurar Datas Padrão
+            seletorDataInicio.min = dataMinimaValida; seletorDataInicio.max = dataMaximaValida;
+            let dataInicioDefault = new Date(dataMaximaValida + "T12:00:00Z"); dataInicioDefault.setUTCDate(1); let dataInicioDefaultStr = dataInicioDefault.toISOString().split('T')[0];
+            if (dataInicioDefaultStr < dataMinimaValida) dataInicioDefaultStr = dataMinimaValida;
+            seletorDataInicio.value = dataInicioDefaultStr;
+            seletorDataFim.min = dataMinimaValida; seletorDataFim.max = dataMaximaValida; seletorDataFim.value = dataMaximaValida;
+
+            seletorDataInicio.addEventListener('change', atualizarDashboardPeriodo);
+            seletorDataFim.addEventListener('change', atualizarDashboardPeriodo);
+            atualizarDashboardPeriodo();
+        })
+        .catch(error => { console.error('Falha:', error, error.stack); document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro ao carregar os dados. Verifique se o ficheiro <strong>omie_diario.csv</strong> está acessível e verifique a consola para detalhes.</p>`; });
+
+    // Carregar menu e footer
+    // fetch('menu.html')...
+    // fetch('footer.html')...
+});
+</script>
+
+</body>
+</html>
