@@ -94,9 +94,60 @@
     <div id="grafico-quartos-detalhado-container" class="grafico-container"></div>
 
     <article class="content-support">
-         <h2>Compreender os Preços do OMIE</h2>
-         <p>O OMIE (Operador do Mercado Ibérico de Energia) é a entidade que gere o mercado grossista de eletricidade para Portugal e Espanha. Os preços aqui apresentados são o resultado dos "leilões" diários onde produtores vendem e comercializadores compram a energia para o dia seguinte.</p>
-         <details class="faq-item"> <summary><strong>O que significam os diferentes ciclos horários?</strong></summary> <div class="faq-content"> <p>Os preços são agregados em diferentes períodos para corresponderem aos tarifários de eletricidade:</p> <ul> <li><strong>Simples:</strong> A média de todas as 24 horas do dia.</li> <li><strong>Bi-Horário (Diário/Semanal):</strong> Divide o dia em Vazio e Fora de Vazio. O ciclo semanal tem mais horas de Vazio ao fim de semana.</li> <li><strong>Tri-Horário (Diário/Semanal):</strong> Divide o dia em Ponta, Cheias e Vazio.</li> </ul> </div> </details>
+        <h2>Compreender os Preços do OMIE Diário</h2>
+
+            <details class="faq-item">
+                <summary><strong>O que é o OMIE e que preços são mostrados aqui?</strong></summary>
+                <div class="faq-content">
+                    <p>O <strong>OMIE (Operador do Mercado Ibérico de Energia)</strong> gere o mercado grossista diário e intradiário de eletricidade para Portugal e Espanha (MIBEL). Os preços resultam de leilões onde a energia é comprada e vendida para o dia seguinte.</p>
+                    <p>Esta página mostra esses preços (€/MWh) para cada <strong>intervalo de 15 minutos (quarto-horário)</strong>, já corrigidos para a <strong>hora de Portugal Continental (PT)</strong>. Também são apresentados os preços originais para Espanha (ES) para comparação.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que significam as médias Simples, Bi-Horária e Tri-Horária?</strong></summary>
+                <div class="faq-content">
+                    <p>São médias dos preços quarto-horários de Portugal (€/MWh) durante diferentes períodos do dia selecionado, calculadas com base nos ciclos standard definidos pela ERSE:</p>
+                    <ul>
+                        <li><strong>Simples:</strong> Média de todos os preços *reais* do OMIE no dia selecionado (ver nota abaixo sobre o último dia).</li>
+                        <li><strong>Bi-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Vazio</strong> e <strong>Fora de Vazio</strong>.</li>
+                        <li><strong>Tri-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Ponta</strong>, <strong>Cheias</strong> e <strong>Vazio</strong>.</li>
+                    </ul>
+                    <p>Pode consultar as horas dos períodos em https://www.tiagofelicia.pt/periodos-horarios.html</p>
+
+                    <p><strong>Nota Importante:</strong> No dia mais recente apresentado, os cálculos de médias, máximo e mínimo para Portugal <strong>excluem</strong> os últimos quartos de hora (normalmente após as 23h PT), pois os mesmos ainda não são conhecidos.</p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary><strong>Como é calculada a média de Espanha?</strong></summary>
+                <div class="faq-content">
+                    <p>A média, máximo e mínimo para Espanha apresentados referem-se às <strong>24 horas do dia espanhol</strong>. Como o dia espanhol começa e acaba uma hora mais cedo que o português, o cálculo inclui:</p>
+                    <ul>
+                        <li>Os preços de Espanha da última hora (23:00-24:00) na hora de Portugal do <strong>dia anterior</strong>.</li>
+                        <li>Os preços de Espanha das primeiras 23 horas (00:00-23:00) na hora de Portugal do <strong>dia selecionado</strong>.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>Estes preços OMIE são os que pago na fatura?</strong></summary>
+                <div class="faq-content">
+                    <p><strong>Não diretamente, a menos que tenha uma tarifa indexada ao OMIE.</strong></p>
+                    <ul>
+                        <li>Se tem uma <strong>tarifa indexada</strong> (ou dinâmica), o preço que paga pela energia varia hora a hora (ou quarto de hora) e está diretamente ligado a estes valores do OMIE, acrescido de uma margem do comercializador e outras taxas.</li>
+                        <li>Se tem uma <strong>tarifa fixa</strong>, o preço por kWh é constante, definido pelo seu comercializador. No entanto, os preços do OMIE influenciam o custo de aquisição de energia para o comercializador e, indiretamente, os preços das tarifas fixas que ele oferece.</li>
+                    </ul>
+                    <p>Lembre-se que a sua fatura final inclui sempre outras componentes como tarifas de acesso às redes, taxas e impostos.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>De onde vêm os dados?</strong></summary>
+                <div class="faq-content">
+                    <p>Os dados são processados através da recolha de informação pública do website do <strong>OMIE</strong> (para os preços diários reais).</p>
+                </div>
+            </details>
     </article>
 </main>
 
@@ -199,7 +250,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('media-es').innerHTML = formatarValor(mediaGeralES);
         document.getElementById('max-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? Math.max(...todosPrecosESPeriodo) : null);
         document.getElementById('min-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? Math.min(...todosPrecosESPeriodo) : null);
-        // --- FIM CORREÇÃO CARD ES ---
 
         const ciclosPeriodo = { bd: {}, bs: {}, td: {}, ts: {} }; for (const ciclo in ciclosPeriodo) { ciclosPeriodo[ciclo] = dadosReaisDoPeriodo.reduce((acc, row) => { const periodo = row[ciclo.toUpperCase()]; if (!periodo) return acc; if (!acc[periodo]) acc[periodo] = []; if(row.preco_pt !== null && !isNaN(row.preco_pt)) { acc[periodo].push(row.preco_pt); } return acc; }, {}); } document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['V'])); document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['F'])); document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['V'])); document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['F'])); document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['V'])); document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['C'])); document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['P'])); document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['V'])); document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['C'])); document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['P']));
 
@@ -224,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
              const timestamp = Date.UTC(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
              const dadosDiaDoCSV = dadosAgrupados[diaDDMMYYYY] || { precosPT: [], precosES: [] }; // Pegar dados do dia atual
 
-             // Cálculo Média PT (igual a antes)
+             // Cálculo Média PT
              let mediaPTDia;
              if (diaDDMMYYYY === dataOMIE && isDataFimUltimoDiaOMIE) {
                  const dadosReaisDia = dadosDoPeriodo.filter(d => d.dia === diaDDMMYYYY && d.preco_es !== null);
@@ -234,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
              }
              if (mediaPTDia !== null) seriesDataPT.push([timestamp, mediaPTDia]);
 
-             // --- CORREÇÃO CÁLCULO MÉDIA ES DIÁRIA PARA O GRÁFICO ---
+             // --- CÁLCULO MÉDIA ES DIÁRIA PARA O GRÁFICO ---
              const diaAnteriorLoopCSV = (index === 0) ? dataAnteriorInicioCSV : datasUnicasPeriodo[index - 1];
              let precosESDiaD = dadosDiaDoCSV.precosES.filter(p => p !== null);
              let ultimos4ESAnteriorLoop = [];
@@ -245,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
              // Combinar últimos 4 do dia anterior com primeiros 92 do dia atual
              const precosDiaEspanhol = ultimos4ESAnteriorLoop.concat(precosESDiaD.slice(0, 92)); // Assume 96 por dia PT
              const mediaESDia = calcularMedia(precosDiaEspanhol);
-             // --- FIM CORREÇÃO ---
+
              if (mediaESDia !== null) seriesDataES.push([timestamp, mediaESDia]);
          });
 
@@ -256,7 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Gráfico de Médias HORÁRIAS ---
     function atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE) {
-        // ... (código igual à versão anterior) ...
         const hourlyAverages = Array(24).fill(null).map(() => ({ sumPT: 0, countPT: 0, sumES: 0, countES: 0 }));
         dadosReaisDoPeriodo.forEach(row => { let hour = -1; if (row.localTimestamp) { hour = row.localTimestamp.getHours(); } else { try { hour = parseInt(row.hora.split(':')[0]); } catch(e){} } if (hour >= 0 && hour < 24) { if (row.preco_pt !== null) { hourlyAverages[hour].sumPT += row.preco_pt; hourlyAverages[hour].countPT++; } if (row.preco_es !== null) { hourlyAverages[hour].sumES += row.preco_es; hourlyAverages[hour].countES++; } } });
         const categories = hourlyAverages.map((_, h) => `[${String(h).padStart(2,'0')}:00-${String(h+1).padStart(2,'0') === '24' ? '00' : String(h+1).padStart(2,'0')}:00[`); const seriesDataPT = hourlyAverages.map(h => h.countPT > 0 ? h.sumPT / h.countPT : null); const seriesDataES = hourlyAverages.map(h => h.countES > 0 ? h.sumES / h.countES : null);
