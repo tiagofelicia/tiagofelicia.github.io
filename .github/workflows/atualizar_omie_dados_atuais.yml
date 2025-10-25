@@ -1,5 +1,5 @@
 # Nome descritivo do workflow
-name: Atualizar OMIE Diario Automaticamente
+name: Atualizar OMIE Dados Atuais Automaticamente
 
 on:
   # Agenda a execução automática
@@ -44,15 +44,15 @@ jobs:
           pip install pandas requests openpyxl numpy
 
       # 4. Executa o seu script Python
-      - name: Executar o script omie_diario_csv.py
-        run: python scripts/omie_diario_csv.py
+      - name: Executar o script omie_dados_atuais.py
+        run: python scripts/omie_dados_atuais.py
 
       # 5. Verifica se o ficheiro de dados foi alterado e faz o commit/push
       - name: Fazer commit e push das alterações
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           # A mensagem que aparecerá no histórico de commits
-          commit_message: "BOT: Atualização automática do omie_diario.csv"
+          commit_message: "BOT: Atualização automática do omie_dados_atuais.csv"
           
           # O ficheiro específico a ser verificado e adicionado
           file_pattern: data/omie_diario.csv
