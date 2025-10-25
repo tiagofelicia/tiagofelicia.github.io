@@ -148,7 +148,7 @@
                     <p>A média, máximo e mínimo para Espanha apresentados referem-se às <strong>24 horas do dia espanhol</strong>. Como o dia espanhol começa e acaba uma hora mais cedo que o português, o cálculo inclui:</p>
                     <ul>
                         <li>Os preços de Espanha da última hora (23:00-24:00) na hora de Portugal do <strong>dia anterior</strong>.</li>
-                        <li>Os preços de Espanha das primeiras 23 horas (00:00-23:00) na hora de Portugal do <strong>dia selecionado</strong>.</li>
+                        <li>Os preços de Espanha das 23 horas (00:00-23:00) na hora de Portugal do <strong>dia selecionado</strong>.</li>
                     </ul>
                 </div>
             </details>
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const precosReaisPT = dadosReaisDoDia.map(d => d.preco_pt).filter(p => p !== null); document.getElementById('media-pt').innerHTML = formatarValor(calcularMedia(precosReaisPT)); document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.max(...precosReaisPT) : null); document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.min(...precosReaisPT) : null);
 
         // --- Cálculos Espanha (Regra 24h ES) ---
-        let precosDiaEspanhol = []; const ultimos4ESAnterior = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null); const numQuartosDiaPT = dadosDoDia.length; const primeirosESAtual = dadosDoDia.slice(0, numQuartosDiaPT - 4).map(d => d.preco_es).filter(p => p !== null); precosDiaEspanhol = ultimos4ESAnterior.concat(primeirosESAtual); if (precosDiaEspanhol.length > 96) { precosDiaEspanhol = precosDiaEspanhol.slice(0, 96); }
+        let precosDiaEspanhol = []; const ultimos4ESAnterior = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null); const numQuartosDiaPT = dadosDoDia.length; const primeirosESAtual = dadosDoDia.slice(0, numQuartosDiaPT - 4).map(d => d.preco_es).filter(p => p !== null); precosDiaEspanhol = ultimos4ESAnterior.concat(primeirosESAtual);
         document.getElementById('media-es').innerHTML = formatarValor(calcularMedia(precosDiaEspanhol)); document.getElementById('max-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.max(...precosDiaEspanhol) : null); document.getElementById('min-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.min(...precosDiaEspanhol) : null);
 
         // Futuros do Dia

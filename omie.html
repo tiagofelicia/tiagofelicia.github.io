@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let precosESDiaD = dadosDiaAtual.map(d => d.preco_es).filter(p => p !== null);
             let ultimos4ESAnteriorLoop = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null);
             
-            const numQuartosUsar = Math.min(92, precosESDiaD.length);
+            const numQuartosUsar = dadosDiaAtual.length - 4;
             const precosDiaEspanhol = ultimos4ESAnteriorLoop.concat(precosESDiaD.slice(0, numQuartosUsar));
             todosPrecosESPeriodo.push(...precosDiaEspanhol);
             
@@ -438,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let precosESDiaD = dadosDiaAtual.map(d => d.preco_es).filter(p => p !== null);
             let ultimos4ESAnteriorLoop = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null);
             
-            const numQuartosUsar = Math.min(92, precosESDiaD.length);
+            const numQuartosUsar = dadosDiaAtual.length - 4;
             const precosDiaEspanhol = ultimos4ESAnteriorLoop.concat(precosESDiaD.slice(0, numQuartosUsar));
             const mediaESDia = calcularMedia(precosDiaEspanhol);
 
