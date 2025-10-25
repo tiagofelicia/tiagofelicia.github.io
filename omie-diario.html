@@ -9,10 +9,10 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    
+
     <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
     <link rel="stylesheet" href="style.css" />
-    
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -20,7 +20,7 @@
       gtag('js', new Date());
       gtag('config', 'G-J4NWP00S4F');
     </script>
-    
+
     <style>
         .painel-header { text-align: center; margin-bottom: 20px; }
         .painel-header h2 { margin: 0; font-size: 1.5em; }
@@ -41,7 +41,7 @@
         .valor { font-weight: bold; font-size: 0.95em; }
         .card-principal { text-align: center; border-style: solid; }
         .valor-principal { font-size: 1.8em; font-weight: bold; color: #333; }
-        .futuros-info { font-size: 0.9em; margin-top: 8px; min-height: 1.2em; padding: 5px 0; border-top: 1px solid #f0f0f0; margin-top: 10px; } 
+        .futuros-info { font-size: 0.9em; margin-top: 8px; min-height: 1.2em; padding: 5px 0; border-top: 1px solid #f0f0f0; margin-top: 10px; }
         .card-title-futuros { background-color: #495057; color: white; padding: 8px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
         .card-futuros ul { margin: 0; padding: 0; list-style: none; font-size: 0.95em; }
         .card-futuros ul li { display: flex; justify-content: space-between; padding: 3px 0; }
@@ -60,30 +60,23 @@
         .card:has(.card-title-ts) .label-vazio { background-color: #F4B084; color: #000000; }
         .card:has(.card-title-ts) .label-cheias { background-color: #F8CBAD; color: #000000; }
         .card:has(.card-title-ts) .label-ponta { background-color: #FCE4D6; color: #000000; }
-        
-        .grafico-tabela-grid {
-            display: grid;
-            grid-template-columns: 3fr 8fr; 
-            gap: 20px;
-            width: 95%;
-            max-width: 1200px;
-            margin: 40px auto 20px auto;
-            align-items: flex-start;
-        }
-        @media (max-width: 900px) {
-            .grafico-tabela-grid { grid-template-columns: 1fr; }
-        }
 
-        .tabela-wrapper { border: 1px solid #ddd; border-radius: 8px; background-color: white; overflow-x: auto; /* Garante scroll horizontal se necessário */ }
-        .tabela-precos { width: 100%; border-collapse: collapse; font-size: 0.8em; /* table-layout: fixed; */ /* Removido para permitir ajuste natural das colunas */ }
-        .tabela-precos th, .tabela-precos td { padding: 8px 12px; text-align: center; border-bottom: 1px solid #eee; white-space: nowrap; /* Evita quebra de linha no cabeçalho */ }
+        .grafico-tabela-grid { display: grid; grid-template-columns: 3fr 8fr; gap: 20px; width: 95%; max-width: 1200px; margin: 40px auto 20px auto; align-items: flex-start; }
+        @media (max-width: 900px) { .grafico-tabela-grid { grid-template-columns: 1fr; } }
+        .tabela-wrapper { border: 1px solid #ddd; border-radius: 8px; background-color: white; overflow-x: auto; }
+        .tabela-precos { width: 100%; border-collapse: collapse; font-size: 0.8em; }
+        .tabela-precos th, .tabela-precos td { padding: 8px 12px; text-align: center; border-bottom: 1px solid #eee; white-space: nowrap; }
         .tabela-precos thead th { background-color: #343a40; color: white; position: sticky; top: 0; z-index: 1; }
-        .tabela-precos thead tr:last-child th { top: 30px; /* Ajustar se a altura da primeira linha for diferente */ }
+        .tabela-precos thead tr:last-child th { top: 30px; }
         .tabela-precos tbody tr:nth-child(even) { background-color: #f9f9f9; }
         .tabela-precos th:nth-child(1), .tabela-precos td:nth-child(1) { width: 34%; }
         .tabela-precos th:nth-child(2), .tabela-precos td:nth-child(2) { width: 33%; }
         .tabela-precos th:nth-child(3), .tabela-precos td:nth-child(3) { width: 33%; }
-        
+        .link-section { text-align: center; margin: 30px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+        .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
+         /* Estilo para Loading Indicator */
+        #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
     </style>
 </head>
 <body>
@@ -94,11 +87,13 @@
 <div id="menu-placeholder"></div>
 
 <main>
-    <div class="painel-header" id="painel-header-main"> 
+    <div class="painel-header" id="painel-header-main">
         <div class="date-selector"> <label for="seletor-data">Selecione o dia:</label> <input type="date" id="seletor-data"> </div>
-        <h2>Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">--/--/----</span></h2> 
+        <h2>Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">--/--/----</span></h2>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
+
+    <div id="loading-indicator">A carregar dados históricos...</div>
 
     <div class="dashboard-grid">
          <div class="coluna">
@@ -113,14 +108,14 @@
              <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
         </div>
     </div>
-    
+
     <div class="link-section"> <p>https://www.tiagofelicia.pt/omie-diario.html</p> </div>
 
     <div class="grafico-tabela-grid">
         <div id="tabela-container" class="tabela-wrapper"></div>
         <div id="grafico-container"></div>
     </div>
-    
+
     <article class="content-support">
         <h2>Compreender os Preços do OMIE Diário</h2>
 
@@ -198,367 +193,228 @@
                     <p>Os dados são processados através da recolha automática de informação pública dos websites do <strong>OMIE</strong> (para os preços diários reais) e do <strong>OMIP</strong> (para os futuros).</p>
                 </div>
             </details>
-    </article>
-</main>
+    </article></main>
 
 <div id="footer-placeholder"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    
-    const csvUrl = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/omie_diario.csv"; 
-    const seletorData = document.getElementById('seletor-data');
 
-    // Variáveis globais
-    let dadosPrecos = [];
+    // --- CONFIGURAÇÕES ---
+    const URL_BASE = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/";
+    const URL_DADOS_ATUAIS = URL_BASE + "omie_dados_atuais.csv";
+    const URL_HISTORICO_BASE = URL_BASE + "omie_historico_";
+    const ANO_INICIO_HISTORICO = 2010;
+    // --- FIM CONFIGURAÇÕES ---
+
+    const seletorData = document.getElementById('seletor-data');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    // --- ARMAZENAMENTO DE DADOS ---
+    let dadosAtuais = [];
+    let dadosHistoricos = {};
     let dadosAtualizacao = {};
     let dadosFuturosPT = [];
     let dadosFuturosES = [];
+    let anoMinimoAtual = null;
 
-    // --- Funções Auxiliares (parseCSV, formatarData, formatarValor, etc.) ---
+    // --- FUNÇÕES AUXILIARES ---
     function formatarDataParaInput(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('/')) { return null; } const [dia, mes, ano] = dataStr.split('/'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${ano}-${mes}-${dia}`; }
     function formatarDataParaCSV(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('-')) { return null; } const [ano, mes, dia] = dataStr.split('-'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${dia}/${mes}/${ano}`; }
-    function getDataAnteriorCSV(dataStrYYYYMMDD) { try { const dataAtual = new Date(dataStrYYYYMMDD + "T12:00:00Z"); dataAtual.setDate(dataAtual.getDate() - 1); const dia = String(dataAtual.getDate()).padStart(2, '0'); const mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); const ano = dataAtual.getFullYear(); return `${dia}/${mes}/${ano}`; } catch(e) { console.error("Erro ao calcular data anterior:", e); return null; } }
-    
-    function parseCSV(text) {
-        const tabelas = text.split('\nTABELA_');
-        const precosLines = tabelas[0].trim().split('\n');
-        const precosHeaders = precosLines.shift().split(',').map(h => h.trim().replace(/^\uFEFF/, ''));
-        const precos = precosLines.map(line => {
-            const values = line.split(','); const row = {};
-            precosHeaders.forEach((header, index) => {
-                const value = (values.length > index && values[index]) ? values[index].trim() : '';
-                if (header === 'preco_pt' || header === 'preco_es') { row[header] = (value && value !== "") ? parseFloat(value) : null; } 
-                else { row[header] = value; }
-            });
-            try { const [dia, mes, ano] = row.dia.split('/'); const [hora, min] = row.hora.split(':'); let horaInt = parseInt(hora); let minInt = parseInt(min); if(horaInt === 23 && minInt === 59){ const [horaInicio] = row.intervalo.substring(1).split('-'); row.timestamp = new Date(`${ano}-${mes}-${dia}T${horaInicio}:00`); } else if (minInt === 0) { const tsTemp = new Date(`${ano}-${mes}-${dia}T${hora}:${min}:00`); tsTemp.setMinutes(tsTemp.getMinutes() - 1); row.timestamp = tsTemp; } else { row.timestamp = new Date(`${ano}-${mes}-${dia}T${hora}:${min}:00`); } } 
-            catch(e) { row.timestamp = null; console.warn("Erro ao criar timestamp para linha:", row, e); }
+    function getDataAnteriorCSV(dataStrYYYYMMDD) { try { const dataAtual = new Date(dataStrYYYYMMDD + "T12:00:00Z"); dataAtual.setUTCDate(dataAtual.getUTCDate() - 1); const dia = String(dataAtual.getUTCDate()).padStart(2, '0'); const mes = String(dataAtual.getUTCMonth() + 1).padStart(2, '0'); const ano = dataAtual.getUTCFullYear(); return `${dia}/${mes}/${ano}`; } catch(e) { console.error("Erro data anterior:", e); return null; } }
+    /**
+     * Verifica se uma data (no formato YYYY-MM-DD) pertence à semana atual.
+     * @param {string} dataStrYYYYMMDD - A data a verificar (ex: "2025-10-25").
+     * @returns {boolean} - True se for da semana atual, false caso contrário.
+     */
+    function isDataNaSemanaAtual(dataStrYYYYMMDD) {
+        try {
+            // Obter a data selecionada como objeto Date (local)
+            // O <input type="date"> devolve o valor no fuso horário local
+            const [ano, mes, dia] = dataStrYYYYMMDD.split('-').map(Number);
+            // new Date(ano, mes - 1, dia) -> Ex: 25 Out 2025 00:00:00 (Local)
+            const dataSelecionada = new Date(ano, mes - 1, dia); 
+
+            const dataAtual = new Date(); // Data e hora de hoje (Local)
+
+            // Normalizar ambas para o início do dia para evitar problemas de hora
+            dataSelecionada.setHours(0, 0, 0, 0);
+            dataAtual.setHours(0, 0, 0, 0);
+
+            // Encontrar o início da semana (Segunda-feira) para a data selecionada
+            const dataSelClone = new Date(dataSelecionada.getTime());
+            const diaSemanaSel = dataSelClone.getDay(); // Domingo=0, Segunda=1...
+            // Ajusta para a Segunda-feira dessa semana
+            const diffSel = dataSelClone.getDate() - diaSemanaSel + (diaSemanaSel === 0 ? -6 : 1); 
+            dataSelClone.setDate(diffSel);
+
+            // Encontrar o início da semana (Segunda-feira) para a data atual
+            const dataAtualClone = new Date(dataAtual.getTime());
+            const diaSemanaAtual = dataAtualClone.getDay();
+            // Ajusta para a Segunda-feira desta semana
+            const diffAtual = dataAtualClone.getDate() - diaSemanaAtual + (diaSemanaAtual === 0 ? -6 : 1);
+            dataAtualClone.setDate(diffAtual);
+
+            // Comparar os timestamps (ambos estão normalizados para 00:00:00 Local da respetiva Segunda-feira)
+            return dataSelClone.getTime() === dataAtualClone.getTime();
+        } catch (e) {
+            console.error("Erro ao verificar a semana:", e);
+            return false; // Ser conservador e esconder o card em caso de erro
+        }
+    }
+
+    // Parser para CSV histórico (simples)
+    function parseCSVSimples(text) {
+        const lines = text.trim().split('\n'); if (lines[0].charCodeAt(0) === 0xFEFF) { lines[0] = lines[0].substring(1); }
+        const headers = lines.shift().split(',').map(h => h.trim());
+        const precos = lines.map(line => {
+            const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || []; const row = {};
+            headers.forEach((header, index) => { let value = (values.length > index && values[index]) ? values[index].trim() : ''; if (value.startsWith('"') && value.endsWith('"')) { value = value.substring(1, value.length - 1); } if (header === 'preco_pt' || header === 'preco_es') { row[header] = (value && value !== "") ? parseFloat(value) : null; } else { row[header] = value; } });
+             try { const [dia, mes, ano] = row.dia.split('/'); const [horaInicioStr] = row.intervalo.substring(1).split('-'); const [horaInicio, minInicio] = horaInicioStr.split(':'); row.timestamp = Date.UTC(parseInt(ano), parseInt(mes)-1, parseInt(dia), parseInt(horaInicio), parseInt(minInicio)); row.localTimestamp = new Date(row.timestamp); } catch(e) { row.timestamp = null; row.localTimestamp = null; }
             return row;
         });
-
-        function parseTabelaSimples(raw, tipo) {
-             if (!raw) return tipo === 'obj' ? {} : []; const lines = raw.trim().split('\n'); lines.shift(); 
-             if (lines.length < 1) return tipo === 'obj' ? {} : []; const headerLine = lines.shift();
-             if (!headerLine) return tipo === 'obj' ? {} : []; const headers = headerLine.split(',').map(h => h.trim().replace(/^\uFEFF/, '')); 
-             if (tipo === 'obj') {
-                 const obj = {}; const keyHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'chave');
-                 const valueHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'valor');
-                 if (keyHeaderIndex === -1 || valueHeaderIndex === -1) { return {}; }
-                 lines.forEach(line => {
-                     const values = line.split(',');
-                     if (values.length > Math.max(keyHeaderIndex, valueHeaderIndex)) {
-                         const key = values[keyHeaderIndex] ? values[keyHeaderIndex].trim() : null;
-                         const value = values[valueHeaderIndex] ? values[valueHeaderIndex].trim() : null;
-                         if (key) { obj[key] = value; }
-                     }
-                 });
-                 return obj;
-             } else { 
-                 const data = lines.map(line => {
-                     const values = line.split(','); const row = {};
-                     headers.forEach((header, index) => {
-                         const value = (values.length > index && values[index]) ? values[index].trim() : ''; 
-                         if (header.toLowerCase() === 'valor' && value !== "") { row[header] = parseFloat(value); } 
-                         else { row[header] = value; }
-                     });
-                     return row;
-                 });
-                 return data;
-             }
-        }
+        return precos;
+    }
+    // Parser para CSV atual (com múltiplas tabelas)
+    function parseCSVAtual(text) {
+        const tabelas = text.split('\nTABELA_');
+        const precos = parseCSVSimples(tabelas[0]);
+        function parseTabelaSimples(raw, tipo) { if (!raw) return tipo === 'obj' ? {} : []; const lines = raw.trim().split('\n'); lines.shift(); if (lines.length < 1) return tipo === 'obj' ? {} : []; const headerLine = lines.shift(); if (!headerLine) return tipo === 'obj' ? {} : []; const headers = headerLine.split(',').map(h => h.trim().replace(/^\uFEFF/, '')); if (tipo === 'obj') { const obj = {}; const keyHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'chave'); const valueHeaderIndex = headers.findIndex(h => h.toLowerCase() === 'valor'); if (keyHeaderIndex === -1 || valueHeaderIndex === -1) { return {}; } lines.forEach(line => { const values = line.split(','); if (values.length > Math.max(keyHeaderIndex, valueHeaderIndex)) { const key = values[keyHeaderIndex]?.trim(); const value = values[valueHeaderIndex]?.trim(); if (key) { obj[key] = value; } } }); return obj; } else { const data = lines.map(line => { const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || []; const row = {}; headers.forEach((header, index) => { let value = (values.length > index && values[index]) ? values[index].trim() : ''; if (value.startsWith('"') && value.endsWith('"')) { value = value.substring(1, value.length - 1); } if (header.toLowerCase() === 'valor' && value !== "") { row[header] = parseFloat(value); } else { row[header] = value; } }); if (row['Contrato']) { if (row['Contrato'].includes(' D ')) row.Tipo = 'Diários'; else if (row['Contrato'].includes(' Wk')) row.Tipo = 'Semanais'; else if (row['Contrato'].includes(' M ')) row.Tipo = 'Mensais'; else if (row['Contrato'].includes(' Q')) row.Tipo = 'Trimestrais'; else if (row['Contrato'].includes(' YR-')) row.Tipo = 'Anuais'; else row.Tipo = 'Outros'; } else { row.Tipo = 'Inválido'; } return row; }); return data; } }
         const atualizacoes = parseTabelaSimples(tabelas.find(t => t.startsWith("ATUALIZACOES")), 'obj');
         const futurosPT = parseTabelaSimples(tabelas.find(t => t.startsWith("FUTUROS_PT")), 'array');
         const futurosES = parseTabelaSimples(tabelas.find(t => t.startsWith("FUTUROS_ES")), 'array');
         return { precos, atualizacoes, futurosPT, futurosES };
     }
 
-    function formatarValor(valor, casasDecimais = 2) {
-        if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,-- €'; }
-        const textoFormatado = valor.toFixed(casasDecimais).replace('.', ',') + ' €';
-        return valor < 0 ? `<span style="color: red;">${textoFormatado}</span>` : textoFormatado;
+    function formatarValor(valor, casasDecimais = 2) { if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,-- €'; } const textoFormatado = valor.toFixed(casasDecimais).replace('.', ',') + ' €'; return valor < 0 ? `<span style="color: red;">${textoFormatado}</span>` : textoFormatado; }
+    function calcularMedia(arr) { if (!Array.isArray(arr)) return null; const nums = arr.filter(v => v !== null && !isNaN(v)); return nums.length > 0 ? nums.reduce((a, b) => a + b, 0) / nums.length : null; }
+
+    // --- FUNÇÃO PARA CARREGAR DADOS HISTÓRICOS ---
+    async function carregarDadosHistoricos(ano) {
+        if (dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise)) { return dadosHistoricos[ano]; }
+        if (dadosHistoricos[ano] instanceof Promise) { return await dadosHistoricos[ano]; }
+        const url = `${URL_HISTORICO_BASE}${ano}.csv`; console.log(`A carregar ${ano}...`); loadingIndicator.style.display = 'block';
+        dadosHistoricos[ano] = fetch(url).then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); }) .then(csvText => { const dados = parseCSVSimples(csvText); dadosHistoricos[ano] = dados; return dados; }) .catch(error => { console.error(`Falha ${ano}:`, error); dadosHistoricos[ano] = []; return []; }) .finally(() => { const aCarregar = Object.values(dadosHistoricos).some(v => v instanceof Promise); if (!aCarregar) loadingIndicator.style.display = 'none'; });
+        return await dadosHistoricos[ano];
     }
 
-    function calcularMedia(arr) {
-        if (!Array.isArray(arr)) return null; // Adiciona verificação
-        const numerosValidos = arr.filter(v => v !== null && !isNaN(v));
-        return numerosValidos.length > 0 ? numerosValidos.reduce((a, b) => a + b, 0) / numerosValidos.length : null;
-    }
-
-    // --- Função Principal ---
-    function atualizarDashboard(dataSelecionada) { 
-        const dataFormatadaCSV = formatarDataParaCSV(dataSelecionada); 
+    // --- FUNÇÃO PRINCIPAL ---
+    async function atualizarDashboard(dataSelecionada) {
+        const cardFuturos = document.querySelector('.card-futuros');
+        if (cardFuturos) {
+            if (isDataNaSemanaAtual(dataSelecionada)) {
+                cardFuturos.style.display = 'block';
+            } else {
+                cardFuturos.style.display = 'none';
+            }
+        }
+        const dataFormatadaCSV = formatarDataParaCSV(dataSelecionada);
         if (!dataFormatadaCSV) { return; }
-        
-        const dataOMIE = dadosAtualizacao.Data_Valores_OMIE;
-        const dataOMIP = dadosAtualizacao.Data_Valores_OMIP;
-        const isUltimoDiaOMIE = (dataFormatadaCSV === dataOMIE);
+        const anoSelecionado = parseInt(dataSelecionada.substring(0, 4));
+        const dataAnteriorCSV = getDataAnteriorCSV(dataSelecionada);
+        const anoAnterior = dataAnteriorCSV ? parseInt(dataAnteriorCSV.substring(6, 10)) : null;
 
-        // --- Atualizar Título Principal ---
-        const tituloH2 = document.querySelector("#painel-header-main h2");
-        if (tituloH2) { tituloH2.innerHTML = `Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
+        const anosACarregar = [];
+        if (anoSelecionado >= ANO_INICIO_HISTORICO && anoSelecionado < anoMinimoAtual && !(dadosHistoricos[anoSelecionado] && !(dadosHistoricos[anoSelecionado] instanceof Promise))) { anosACarregar.push(anoSelecionado); }
+        if (anoAnterior && anoAnterior >= ANO_INICIO_HISTORICO && anoAnterior < anoMinimoAtual && !(dadosHistoricos[anoAnterior] && !(dadosHistoricos[anoAnterior] instanceof Promise))) { anosACarregar.push(anoAnterior); }
+        if (anosACarregar.length > 0) { const promises = anosACarregar.map(ano => carregarDadosHistoricos(ano)); await Promise.all(promises); }
 
-        const dadosDoDia = dadosPrecos.filter(d => d.dia === dataFormatadaCSV);
-        if (dadosDoDia.length === 0) { return; };
+        // --- Obter os dados relevantes ---
+        let dadosDoDia = [];
+        if (anoSelecionado >= anoMinimoAtual) { dadosDoDia = dadosAtuais.filter(d => d.dia === dataFormatadaCSV); }
+        else if (dadosHistoricos[anoSelecionado]) { dadosDoDia = dadosHistoricos[anoSelecionado].filter(d => d.dia === dataFormatadaCSV); }
+        // Validar se conseguimos carregar os dados históricos
+        if (dadosDoDia.length === 0 && anoSelecionado < anoMinimoAtual) {
+            console.error(`Dados históricos para ${anoSelecionado} não disponíveis`);
+            document.querySelector('main').innerHTML = 
+                `<p style="color: orange; text-align: center; padding: 20px;">
+                📅 Dados históricos para ${dataFormatadaCSV} não disponíveis.<br>
+                Por favor, selecione outra data.</p>`;
+            return;
+        }
+        let dadosDiaAnterior = [];
+        if(dataAnteriorCSV) { if (anoAnterior >= anoMinimoAtual) { dadosDiaAnterior = dadosAtuais.filter(d => d.dia === dataAnteriorCSV); } else if (dadosHistoricos[anoAnterior]) { dadosDiaAnterior = dadosHistoricos[anoAnterior].filter(d => d.dia === dataAnteriorCSV); } }
 
-        let dadosReaisDoDia;
-        if (isUltimoDiaOMIE && dadosDoDia.length > 4) { dadosReaisDoDia = dadosDoDia.slice(0, -4); } 
-        else { dadosReaisDoDia = dadosDoDia; }
-       
-        const precosReaisPT = dadosReaisDoDia.map(d => d.preco_pt).filter(p => p !== null);
-        document.getElementById('media-pt').innerHTML = formatarValor(calcularMedia(precosReaisPT));
-        document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.max(...precosReaisPT) : null);
-        document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.min(...precosReaisPT) : null);
+        if (dadosDoDia.length === 0) { console.warn(`Nenhum dado encontrado para ${dataFormatadaCSV}.`); /* Limpar UI? */ return; };
+
+        // --- Lógica de cálculo ---
+        const dataOMIE = dadosAtualizacao.Data_Valores_OMIE; const dataOMIP = dadosAtualizacao.Data_Valores_OMIP; const isUltimoDiaOMIE = (dataFormatadaCSV === dataOMIE); let dadosReaisDoDia; if (isUltimoDiaOMIE && anoSelecionado >= anoMinimoAtual && dadosDoDia.length > 4) { dadosReaisDoDia = dadosDoDia.slice(0, -4); } else { dadosReaisDoDia = dadosDoDia; }
+
+        // Atualizar Título Principal
+        const tituloH2 = document.querySelector("#painel-header-main h2"); if (tituloH2) { tituloH2.innerHTML = `Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
+
+        // Cálculos PT
+        const precosReaisPT = dadosReaisDoDia.map(d => d.preco_pt).filter(p => p !== null); document.getElementById('media-pt').innerHTML = formatarValor(calcularMedia(precosReaisPT)); document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.max(...precosReaisPT) : null); document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.min(...precosReaisPT) : null);
 
         // --- Cálculos Espanha (Regra 24h ES) ---
-        const dataAnteriorCSV = getDataAnteriorCSV(dataSelecionada);
-        let precosDiaEspanhol = []; // Array para guardar os preços das 24h ES
-        let ultimos4ESAnterior = [];
-        if (dataAnteriorCSV) {
-            const dadosDiaAnterior = dadosPrecos.filter(d => d.dia === dataAnteriorCSV);
-            ultimos4ESAnterior = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null);
-        }
-        // Primeiros 92 quartos (00:00 PT a 23:00 PT) do dia D
-        const primeiros92ESAtual = dadosDoDia.slice(0, 92).map(d => d.preco_es).filter(p => p !== null);
-        precosDiaEspanhol = ultimos4ESAnterior.concat(primeiros92ESAtual);
+        let precosDiaEspanhol = []; const ultimos4ESAnterior = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null); const numQuartosDiaPT = dadosDoDia.length; const primeirosESAtual = dadosDoDia.slice(0, numQuartosDiaPT - 4).map(d => d.preco_es).filter(p => p !== null); precosDiaEspanhol = ultimos4ESAnterior.concat(primeirosESAtual); if (precosDiaEspanhol.length > 96) { precosDiaEspanhol = precosDiaEspanhol.slice(0, 96); }
+        document.getElementById('media-es').innerHTML = formatarValor(calcularMedia(precosDiaEspanhol)); document.getElementById('max-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.max(...precosDiaEspanhol) : null); document.getElementById('min-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.min(...precosDiaEspanhol) : null);
 
-        document.getElementById('media-es').innerHTML = formatarValor(calcularMedia(precosDiaEspanhol));
-        document.getElementById('max-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.max(...precosDiaEspanhol) : null);
-        document.getElementById('min-es').innerHTML = formatarValor(precosDiaEspanhol.length > 0 ? Math.min(...precosDiaEspanhol) : null);
-        
-        // --- Futuros do Dia (PT e ES) ---
-        const containerFuturosPT = document.getElementById('futuros-container-pt');
-        const futuroDiarioPT = dadosFuturosPT.find(f => f.Contrato && f.Contrato.includes(" D ") && f.Descricao === dataFormatadaCSV);
-        if (futuroDiarioPT) { document.getElementById('futuros-anterior-pt').innerHTML = formatarValor(futuroDiarioPT.Valor); document.getElementById('futuros-pt-data').textContent = dataOMIP; containerFuturosPT.style.display = 'block'; } 
-        else { containerFuturosPT.style.display = 'none'; }
-        const containerFuturosES = document.getElementById('futuros-container-es');
-        const futuroDiarioES = dadosFuturosES.find(f => f.Contrato && f.Contrato.includes(" D ") && f.Descricao === dataFormatadaCSV);
-        if (futuroDiarioES) { document.getElementById('futuros-anterior-es').innerHTML = formatarValor(futuroDiarioES.Valor); document.getElementById('futuros-es-data').textContent = dataOMIP; containerFuturosES.style.display = 'block'; } 
-        else { containerFuturosES.style.display = 'none'; }
-        
-        // --- Cálculos de Ciclos ---
-        const ciclos = { bd: {}, bs: {}, td: {}, ts: {} };
-        for (const ciclo in ciclos) {
-            ciclos[ciclo] = dadosReaisDoDia.reduce((acc, row) => {
-                const periodo = row[ciclo.toUpperCase()]; 
-                if (!periodo) return acc; 
-                if (!acc[periodo]) acc[periodo] = [];
-                if(row.preco_pt !== null && !isNaN(row.preco_pt)) { acc[periodo].push(row.preco_pt); }
-                return acc;
-            }, {});
-        }
-        
-        // --- Apresentar Ciclos ---
-        document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['V']));
-        document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['F']));
-        document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['V']));
-        document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['F']));
-        document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.td?.['V']));
-        document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclos.td?.['C']));
-        document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclos.td?.['P']));
-        document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['V']));
-        document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['C']));
-        document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['P']));
-        
-        atualizarTabela(dadosDoDia, dadosReaisDoDia); 
-        atualizarGrafico(dadosDoDia, dadosReaisDoDia, dataFormatadaCSV, isUltimoDiaOMIE); 
+        // Futuros do Dia
+        const containerFuturosPT = document.getElementById('futuros-container-pt'); const futuroDiarioPT = dadosFuturosPT.find(f => f.Contrato?.includes(" D ") && f.Descricao === dataFormatadaCSV); if (futuroDiarioPT) { document.getElementById('futuros-anterior-pt').innerHTML = formatarValor(futuroDiarioPT.Valor); document.getElementById('futuros-pt-data').textContent = dataOMIP; containerFuturosPT.style.display = 'block'; } else { containerFuturosPT.style.display = 'none'; }
+        const containerFuturosES = document.getElementById('futuros-container-es'); const futuroDiarioES = dadosFuturosES.find(f => f.Contrato?.includes(" D ") && f.Descricao === dataFormatadaCSV); if (futuroDiarioES) { document.getElementById('futuros-anterior-es').innerHTML = formatarValor(futuroDiarioES.Valor); document.getElementById('futuros-es-data').textContent = dataOMIP; containerFuturosES.style.display = 'block'; } else { containerFuturosES.style.display = 'none'; }
+
+        // Cálculos Ciclos
+        const ciclos = { bd: {}, bs: {}, td: {}, ts: {} }; for (const ciclo in ciclos) { ciclos[ciclo] = dadosReaisDoDia.reduce((acc, row) => { const periodo = row[ciclo.toUpperCase()]; if (!periodo) return acc; if (!acc[periodo]) acc[periodo] = []; if(row.preco_pt !== null && !isNaN(row.preco_pt)) { acc[periodo].push(row.preco_pt); } return acc; }, {}); } document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['V'])); document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['F'])); document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['V'])); document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['F'])); document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.td?.['V'])); document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclos.td?.['C'])); document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclos.td?.['P'])); document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['V'])); document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['C'])); document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['P']));
+
+        // Atualizar Tabela e Gráfico
+        atualizarTabela(dadosDoDia, dadosReaisDoDia);
+        atualizarGrafico(dadosDoDia, dadosReaisDoDia, dataFormatadaCSV, isUltimoDiaOMIE);
     }
-    
-    // --- Função para mostrar futuros diários seguintes com dia da semana ---
+
+    // --- FUNÇÕES DE ATUALIZAÇÃO ---
     function atualizarFuturosProximos() {
         if (!dadosFuturosPT || dadosFuturosPT.length === 0) { return; }
-        const futurosDiariosPT = dadosFuturosPT.filter(f => f.Contrato && f.Contrato.includes(" D "))
-            .sort((a, b) => { /* ... (lógica de ordenação anterior) ... */ 
-                const descA = a.Descricao; const descB = b.Descricao;
-                const isDescAValid = typeof descA === 'string' && descA.includes('/');
-                const isDescBValid = typeof descB === 'string' && descB.includes('/');
-                if (!isDescAValid && !isDescBValid) return 0; if (!isDescAValid) return 1; if (!isDescBValid) return -1;
-                try { 
-                     const dataA = formatarDataParaInput(descA); const dataB = formatarDataParaInput(descB);
-                     if (!dataA && !dataB) return 0; if (!dataA) return 1; if (!dataB) return -1;
-                     return dataA.localeCompare(dataB); 
-                } catch (e) { console.error("Erro ao ordenar futuros:", e, a, b); return 0; }
-            });
-            
-        let diasEncontrados = 0;
-        const dataMaximaRealStr = seletorData.max; 
-
-        for (const futuro of futurosDiariosPT) {
-             if (!futuro.Descricao || typeof futuro.Descricao !== 'string' || !futuro.Descricao.includes('/')) continue;
-            try {
-                const dataFuturoStr = formatarDataParaInput(futuro.Descricao);
-                if (!dataFuturoStr) continue; 
-
-                if (dataFuturoStr > dataMaximaRealStr && diasEncontrados < 3) {
-                    diasEncontrados++;
-                    const labelEl = document.getElementById(`futuros-${diasEncontrados}-label`);
-                    const valorEl = document.getElementById(`futuros-${diasEncontrados}-valor`);
-                    const itemEl = document.getElementById(`futuro-${diasEncontrados}-item`);
-                    if (labelEl && valorEl && itemEl) {
-                        const dataObj = new Date(dataFuturoStr + "T12:00:00Z"); 
-                        const diaSemana = dataObj.toLocaleDateString('pt-PT', { weekday: 'short', timeZone: 'UTC' }); 
-                        labelEl.textContent = `Futuros para ${futuro.Descricao} - ${diaSemana}`; 
-                        valorEl.innerHTML = formatarValor(futuro.Valor);
-                        itemEl.style.display = 'flex';
-                    }
-                }
-                if (diasEncontrados >= 3) break; 
-            } catch(e) { console.error("Erro ao processar futuro em atualizarFuturosProximos:", e, futuro); continue; }
-        }
-        for (let i = diasEncontrados + 1; i <= 3; i++) { 
-             const item = document.getElementById(`futuro-${i}-item`);
-             if(item) item.style.display = 'none'; 
-        }
+        const futurosDiariosPT = dadosFuturosPT.filter(f => f.Contrato?.includes(" D "))
+            .sort((a, b) => { const descA = a.Descricao; const descB = b.Descricao; const isAValid = typeof descA === 'string' && descA.includes('/'); const isBValid = typeof descB === 'string' && descB.includes('/'); if (!isAValid && !isBValid) return 0; if (!isAValid) return 1; if (!isBValid) return -1; try { const dA = formatarDataParaInput(descA); const dB = formatarDataParaInput(descB); if(!dA && !dB) return 0; if(!dA) return 1; if(!dB) return -1; return dA.localeCompare(dB); } catch(e){ return 0; } });
+        let diasEnc = 0; const dataMaxReal = seletorData.max;
+        for (const f of futurosDiariosPT) { if (!f.Descricao || typeof f.Descricao !== 'string' || !f.Descricao.includes('/')) continue; try { const dataF = formatarDataParaInput(f.Descricao); if (!dataF) continue; if (dataF > dataMaxReal && diasEnc < 3) { diasEnc++; const lbl = document.getElementById(`futuros-${diasEnc}-label`); const val = document.getElementById(`futuros-${diasEnc}-valor`); const itm = document.getElementById(`futuro-${diasEnc}-item`); if (lbl && val && itm) { const dO = new Date(dataF + "T12:00:00Z"); const dS = dO.toLocaleDateString('pt-PT', { weekday: 'short', timeZone: 'UTC' }); lbl.textContent = `Futuros para ${f.Descricao} - ${dS}`; val.innerHTML = formatarValor(f.Valor); itm.style.display = 'flex'; } } if (diasEnc >= 3) break; } catch(e){ console.error("Erro Futuros Próximos:", e, f); continue; } }
+        for (let i = diasEnc + 1; i <= 3; i++) { const itm = document.getElementById(`futuro-${i}-item`); if(itm) itm.style.display = 'none'; }
     }
-
-    // --- Função Tabela Horária ---
     function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia) {
-        const container = document.getElementById('tabela-container');
-        let tableHTML = '<table class="tabela-precos">';
-        // --- CABEÇALHO ---
-        tableHTML += '<thead>';
-        tableHTML += '<tr>';
-        tableHTML += '<th rowspan="2">Hora PT</th>'; // rowspan para ocupar 2 linhas
-        tableHTML += '<th colspan="2">Preço médio horário</th>'; // colspan para abranger PT e ES
-        tableHTML += '</tr>';
-        tableHTML += '<tr>';
-        tableHTML += '<th>Preço PT</th>'; // Sem unidades
-        tableHTML += '<th>Preço ES</th>'; // Sem unidades
-        tableHTML += '</tr>';
-        tableHTML += '</thead>';
-        // --- FIM CABEÇALHO ---
-        tableHTML += '<tbody>';
-        const dadosHorarios = []; let qh_index_compl = 0;
-        for (let h = 0; h < 24; h++) {
-            let num_q_nesta_hora = 4;
-            let horaFimStr = String(h + 1).padStart(2,'0'); if (horaFimStr === '24') horaFimStr = '00';
-            const horaLabel = `[${String(h).padStart(2, '0')}:00-${horaFimStr}:00[`;
-            if (dadosDoDiaCompleto.length === 100 && h === 1) num_q_nesta_hora = 8;
-            if (dadosDoDiaCompleto.length === 92 && h === 1) { dadosHorarios.push({ hora: horaLabel, precoPT: null, precoES: null }); continue; }
-            const quartosDaHoraCompleto = dadosDoDiaCompleto.slice(qh_index_compl, qh_index_compl + num_q_nesta_hora);
-            const quartosDaHoraReal = [];
-            for (let i = 0; i < num_q_nesta_hora; i++) { if (qh_index_compl + i < dadosReaisDoDia.length) { quartosDaHoraReal.push(dadosReaisDoDia[qh_index_compl + i]); } }
-            if(quartosDaHoraCompleto.length > 0){
-                 dadosHorarios.push({ hora: horaLabel, precoPT: calcularMedia(quartosDaHoraReal.map(d => d.preco_pt)), precoES: calcularMedia(quartosDaHoraCompleto.map(d => d.preco_es)) });
-                 qh_index_compl += num_q_nesta_hora;
-            } else if (dadosDoDiaCompleto.length >= 92) { dadosHorarios.push({ hora: horaLabel, precoPT: null, precoES: null }); }
-        }
-        dadosHorarios.forEach(item => { tableHTML += `<tr><td>${item.hora}</td><td>${formatarValor(item.precoPT)}</td><td>${formatarValor(item.precoES)}</td></tr>`; });
-        tableHTML += '</tbody></table>'; container.innerHTML = tableHTML;
+        const container = document.getElementById('tabela-container'); if (!container) return;
+        let tableHTML = '<table class="tabela-precos">'; tableHTML += '<thead><tr><th rowspan="2">Hora PT</th><th colspan="2">Preço médio horário</th></tr><tr><th>Preço PT</th><th>Preço ES</th></tr></thead>'; tableHTML += '<tbody>'; const dadosHorarios = []; let qh_idx = 0; const numHoras = Math.ceil(dadosDoDiaCompleto.length / 4);
+        for (let h = 0; h < numHoras; h++) { let nq = 4; let hFim = String(h + 1).padStart(2,'0'); if (hFim === '24') hFim = '00'; const hLbl = `[${String(h).padStart(2, '0')}:00-${hFim}:00[`; if (dadosDoDiaCompleto.length === 100 && h === 1) nq = 8; const qComp = dadosDoDiaCompleto.slice(qh_idx, qh_idx + nq); const qReal = []; for (let i = 0; i < nq; i++) { if (dadosReaisDoDia && qh_idx + i < dadosReaisDoDia.length) { qReal.push(dadosReaisDoDia[qh_idx + i]); } } if (dadosDoDiaCompleto.length === 92 && h === 1) { dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null }); continue; } if(qComp.length > 0){ dadosHorarios.push({ hora: hLbl, precoPT: calcularMedia(qReal.map(d => d.preco_pt)), precoES: calcularMedia(qComp.map(d => d.preco_es)) }); qh_idx += nq; } else if (h < 24) { dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null }); } }
+        dadosHorarios.forEach(item => { tableHTML += `<tr><td>${item.hora}</td><td>${formatarValor(item.precoPT)}</td><td>${formatarValor(item.precoES)}</td></tr>`; }); tableHTML += '</tbody></table>'; container.innerHTML = tableHTML;
     }
-
-    // --- Função Gráfico (com exportação) ---
     function atualizarGrafico(dadosDoDiaCompleto, dadosReaisDoDia, dataTitulo, isUltimoDiaOMIE) {
-        let seriesDataPT = dadosDoDiaCompleto.map(d => d.preco_pt);
-        const seriesDataES = dadosDoDiaCompleto.map(d => d.preco_es); 
-        if (isUltimoDiaOMIE && dadosDoDiaCompleto.length > 4) {
-            const numFuturos = dadosDoDiaCompleto.length - dadosReaisDoDia.length;
-            if (numFuturos > 0) { for (let i = 0; i < numFuturos; i++) { seriesDataPT[dadosReaisDoDia.length + i] = null; } }
-        }
-        const precosPTGrafico = seriesDataPT.filter(p => p !== null && !isNaN(p)); 
-        const precosESGrafico = seriesDataES.filter(p => p !== null && !isNaN(p));
-        const minPT = precosPTGrafico.length > 0 ? Math.min(...precosPTGrafico) : null;
-        const maxPT = precosPTGrafico.length > 0 ? Math.max(...precosPTGrafico) : null;
-        const minES = precosESGrafico.length > 0 ? Math.min(...precosESGrafico) : null;
-        const maxES = precosESGrafico.length > 0 ? Math.max(...precosESGrafico) : null;
-        const plotLines = [];
-        const formatLabelMinMax = (val) => formatarValor(val, 2); 
-        if (minPT !== null || minES !== null) { 
-             const minValPT = minPT ?? Infinity; const minValES = minES ?? Infinity;
-             if (Math.abs(minValPT - minValES) < 0.01 && minPT !== null) { plotLines.push({ value: minValPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } }); } 
-             else {
-                 if (minPT !== null) plotLines.push({ value: minValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } });
-                 if (minES !== null) plotLines.push({ value: minValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatLabelMinMax(minValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } });
-             }
-        }
-         if (maxPT !== null || maxES !== null) {
-             const maxValPT = maxPT ?? -Infinity; const maxValES = maxES ?? -Infinity;
-             if (Math.abs(maxValPT - maxValES) < 0.01 && maxPT !== null) { plotLines.push({ value: maxValPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }); } 
-             else {
-                 if (maxPT !== null) plotLines.push({ value: maxValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } });
-                 if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } });
-             }
-        }
-        // --- Título Condicional do Gráfico ---
-        const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`;
-
-        // --- NOME DE FICHEIRO DINÂMICO ---
-        // Cria um nome base usando a data, substituindo '/' por '-' para ser seguro
-        const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`; 
-        // Exemplo: "precos-omie-21-10-2025"
-
-        Highcharts.chart('grafico-container', {
-            chart: { type: 'line', height: 770 },
-            title: { text: tituloGrafico }, 
-            xAxis: { 
-                categories: dadosDoDiaCompleto.map(d => d.intervalo), 
-                title: { text: 'Hora PT' }, crosshair: true, 
-                labels: { rotation: -45, step: 4, align: 'right' } 
-            },
-            yAxis: { 
-                title: { text: 'Preço (€/MWh)' }, 
-                labels: { format: '{value:,.0f} €' }, 
-                plotLines: plotLines 
-            },
-            tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 },
-            legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
-             // --- Opções de exportação ---
-            exporting: {
-                filename: nomeFicheiroBase, // Define o nome base dinâmico
-                enabled: true, // Garante que está ativo
-                buttons: {
-                    contextButton: {
-                        menuItems: [
-                            'viewFullscreen', 'printChart', 'separator', 
-                            'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 
-                            'downloadCSV', 'downloadXLS', 
-                            'viewData' // Habilita "View data table"
-                        ]
-                    }
-                }
-            },
-            series: [ 
-                { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, 
-                { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } 
-            ]
-        });
+        const container = document.getElementById('grafico-container'); if (!container) return;
+        let seriesDataPT = dadosDoDiaCompleto.map(d => d.preco_pt); const seriesDataES = dadosDoDiaCompleto.map(d => d.preco_es);
+        if (isUltimoDiaOMIE && dadosDoDiaCompleto.length > 4) { const nf = dadosDoDiaCompleto.length - dadosReaisDoDia.length; if (nf > 0) { for (let i = 0; i < nf; i++) { seriesDataPT[dadosReaisDoDia.length + i] = null; } } }
+        const precosPTGrafico = seriesDataPT.filter(p => p !== null && !isNaN(p)); const precosESGrafico = seriesDataES.filter(p => p !== null && !isNaN(p)); const minPT = precosPTGrafico.length > 0 ? Math.min(...precosPTGrafico) : null; const maxPT = precosPTGrafico.length > 0 ? Math.max(...precosPTGrafico) : null; const minES = precosESGrafico.length > 0 ? Math.min(...precosESGrafico) : null; const maxES = precosESGrafico.length > 0 ? Math.max(...precosESGrafico) : null; const plotLines = []; const formatLabelMinMax = (val) => formatarValor(val, 2);
+        if (minPT !== null || minES !== null) { const minValPT = minPT ?? Infinity; const minValES = minES ?? Infinity; if (Math.abs(minValPT - minValES) < 0.01 && minPT !== null) { plotLines.push({ value: minValPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } }); } else { if (minPT !== null) plotLines.push({ value: minValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (minES !== null) plotLines.push({ value: minValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatLabelMinMax(minValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
+         if (maxPT !== null || maxES !== null) { const maxValPT = maxPT ?? -Infinity; const maxValES = maxES ?? -Infinity; if (Math.abs(maxValPT - maxValES) < 0.01 && maxPT !== null) { plotLines.push({ value: maxValPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }); } else { if (maxPT !== null) plotLines.push({ value: maxValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
+        const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`;
+        try { Highcharts.chart('grafico-container', { chart: { type: 'line', height: 770 }, title: { text: tituloGrafico }, xAxis: { categories: dadosDoDiaCompleto.map(d => d.intervalo), title: { text: 'Hora PT' }, crosshair: true, labels: { rotation: -45, step: 4, align: 'right' } }, yAxis: { title: { text: 'Preço (€/MWh)' }, labels: { format: '{value:,.0f} €' }, plotLines: plotLines }, tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 }, legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' }, exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: [ 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData' ] } } }, series: [ { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } ] }); }
+        catch (e) { console.error("Erro ao criar gráfico Highcharts:", e, e.stack); }
     }
 
-    // --- Processo de Inicialização ---
-    fetch(csvUrl)
+    // --- PROCESSO DE INICIALIZAÇÃO ---
+    console.log("A iniciar carregamento dos dados atuais...");
+    fetch(URL_DADOS_ATUAIS)
         .then(response => { if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`); return response.text(); })
         .then(data => {
-            const parsedData = parseCSV(data);
-            dadosPrecos = parsedData.precos;
-            dadosAtualizacao = parsedData.atualizacoes;
-            dadosFuturosPT = parsedData.futurosPT;
-            dadosFuturosES = parsedData.futurosES;
-
-            if (!dadosAtualizacao.Data_Valores_OMIE) { throw new Error("Data_Valores_OMIE não encontrada."); }
-            const dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE);
-            if (!dataMaximaValida) { throw new Error("Data_Valores_OMIE inválida."); }
-            
-            const todasDatasValidas = [...new Set(dadosPrecos.map(d => formatarDataParaInput(d.dia)))].filter(d => d !== null).sort();
-            if (todasDatasValidas.length === 0) { throw new Error("Não foram encontradas datas válidas."); }
-            
-            seletorData.min = todasDatasValidas[0]; 
-            seletorData.max = dataMaximaValida; 
-            seletorData.value = dataMaximaValida; 
-
+            console.log("Dados atuais recebidos. A processar...");
+            const parsedData = parseCSVAtual(data);
+            dadosAtuais = parsedData.precos; dadosAtualizacao = parsedData.atualizacoes; dadosFuturosPT = parsedData.futurosPT; dadosFuturosES = parsedData.futurosES;
+            if (dadosAtuais.length === 0) throw new Error("Ficheiro atual vazio."); if (!dadosAtualizacao.Data_Valores_OMIE) { throw new Error("Data_Valores_OMIE não encontrada."); }
+            const anosAtuais = dadosAtuais.map(d => d.dia ? parseInt(d.dia.substring(6, 10)) : NaN).filter(ano => !isNaN(ano)); // Adicionado check d.dia
+            if (anosAtuais.length > 0) { anoMinimoAtual = Math.min(...anosAtuais); } else { anoMinimoAtual = new Date().getFullYear(); console.warn("Não foi possível det. ano min atual."); }
+            console.log("Ano mínimo atual:", anoMinimoAtual);
+            const dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE); if (!dataMaximaValida) { throw new Error("Data_Valores_OMIE inválida."); }
+            seletorData.min = `${ANO_INICIO_HISTORICO}-01-01`; seletorData.max = dataMaximaValida; seletorData.value = dataMaximaValida;
             seletorData.addEventListener('change', (e) => atualizarDashboard(e.target.value));
-            
-            atualizarDashboard(seletorData.value);
+            atualizarDashboard(seletorData.value); // Chamar UMA VEZ
             atualizarFuturosProximos();
+            console.log("Página pronta.");
         })
-        .catch(error => {
-            console.error('Falha ao carregar ou processar os dados:', error, error.stack);
-            document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro ao carregar os dados. Verifique se o ficheiro <strong>omie_diario.csv</strong> está acessível e verifique a consola para detalhes.</p>`;
-        });
-        
+        .catch(error => { console.error('Falha CRÍTICA:', error, error.stack); document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.</p>`; });
+
     // Carregar menu e footer
-    fetch('menu.html').then(response => response.text()).then(data => { document.getElementById('menu-placeholder').innerHTML = data; }).catch(error => console.error('Erro ao carregar o menu:', error));
-    fetch('footer.html').then(response => response.text()).then(data => { document.getElementById('footer-placeholder').innerHTML = data; }).catch(error => console.error('Erro ao carregar o footer:', error));
+    fetch('menu.html').then(response => response.text()).then(data => { document.getElementById('menu-placeholder').innerHTML = data; }).catch(error => console.error('Erro menu:', error));
+    fetch('footer.html').then(response => response.text()).then(data => { document.getElementById('footer-placeholder').innerHTML = data; }).catch(error => console.error('Erro footer:', error));
 });
 </script>
-  
+
 </body>
 </html>
