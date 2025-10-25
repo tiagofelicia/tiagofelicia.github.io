@@ -13,7 +13,7 @@ print("✅ Bibliotecas carregadas")
 # ---- CONFIGURAÇÕES ----
 # ===================================================================
 DATA_INICIO_ATUALIZACAO = pd.to_datetime("2025-10-01")
-FICHEIRO_CSV = "data/omie_diario.csv"
+FICHEIRO_CSV = "data/omie_dados_atuais.csv"
 
 print(f"ℹ️ Data de início da atualização definida para: {DATA_INICIO_ATUALIZACAO.date()}")
 # ===================================================================
@@ -604,3 +604,4 @@ def run_update_process():
 if __name__ == "__main__":
 
     run_update_process()
+
