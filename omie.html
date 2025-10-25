@@ -56,6 +56,19 @@
         .grafico-container { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; }
         .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
         #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
+        #media-mes-futuros-container p {
+            font-size: 1em; 
+            margin: 0; 
+            padding: 12px; 
+            background-color: #f8f9fa; 
+            border-radius: 8px; 
+            border: 1px solid #dee2e6;
+            color: #333;
+        }
+        #media-mes-futuros-container strong {
+            font-size: 1em;
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -87,6 +100,11 @@
              <div class="card"> <h3 class="card-title-bs">Bi-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-semanal-fora-vazio">--,-- €</span></div> </div>
              <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
         </div>
+    </div>
+
+    </div>
+
+    <div id="media-mes-futuros-container" style="display: none; width: 95%; max-width: 1200px; margin: 30px auto 20px auto; text-align: center;">
     </div>
 
     <div class="link-section"> <p>https://www.tiagofelicia.pt/omie.html</p> </div>
@@ -187,6 +205,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let dadosHistoricos = {}; // { 2010: [...] ou Promise, etc. }
     let dadosAtualizacao = {};
     let anoMinimoAtual = null;
+    let defaultDataInicio = '';
+    let defaultDataFim = '';
 
     // --- FUNÇÕES AUXILIARES ---
     function formatarDataParaInput(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('/')) { return null; } const [dia, mes, ano] = dataStr.split('/'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${ano}-${mes}-${dia}`; }
@@ -397,9 +417,20 @@ document.addEventListener('DOMContentLoaded', function() {
         atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados);
         atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
         atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
+
+
+        // --- INÍCIO DA NOVA LÓGICA --- (MOVIDA PARA AQUI)
+        const mediaMesContainer = document.getElementById('media-mes-futuros-container');
+        if (dataInicioSelecionada === defaultDataInicio && dataFimSelecionada === defaultDataFim) {
+            // Se as datas forem as default, calcular e mostrar
+            calcularMediaMesCompleto(dataFimSelecionada, mediaMesContainer);
+        } else {
+            // Se as datas foram alteradas, esconder
+            mediaMesContainer.style.display = 'none';
+            mediaMesContainer.innerHTML = ''; // Limpar
+        }
+        // --- FIM DA NOVA LÓGICA ---
     }
-
-
     // --- Gráfico de Médias DIÁRIAS ---
     function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados) {
         const dadosAgrupados = dadosDoPeriodo.reduce((acc, row) => { 
@@ -528,6 +559,92 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * Calcula a média do mês inteiro (reais + dias futuros já no CSV) e atualiza o container.
+     * @param {string} dataFimStr - A data de fim default (YYYY-MM-DD)
+     * @param {HTMLElement} container - O elemento HTML onde o resultado será renderizado
+     */
+    function calcularMediaMesCompleto(dataFimStr, container) {
+        try {
+            // 1. Obter informações do mês
+            const dataFim = new Date(dataFimStr + "T12:00:00Z"); // Usar UTC
+            const ano = dataFim.getUTCFullYear();
+            const mes = dataFim.getUTCMonth(); // 0 = Jan, 9 = Out
+            const nomeMes = dataFim.toLocaleDateString('pt-PT', { month: 'long', timeZone: 'UTC' });
+            const dataOMIE = dadosAtualizacao.Data_Valores_OMIE; // Ex: '26/10/2025'
+            const dataOMIEInputFormat = formatarDataParaInput(dataOMIE);
+
+            // 2. Filtrar todos os dadosAtuais para este mês (inclui reais e futuros)
+            const dadosDoMesCompleto = dadosAtuais.filter(d => {
+                if (!d.dia) return false;
+                const [dDia, dMes, dAno] = d.dia.split('/');
+                return parseInt(dAno) === ano && parseInt(dMes) - 1 === mes;
+            });
+
+            if (dadosDoMesCompleto.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            // 3. Agrupar por dia e calcular médias diárias
+            const diasReais = new Set();
+            const diasFuturos = new Set();
+
+            // Agrupar preços de PT
+            const dadosAgrupados = dadosDoMesCompleto.reduce((acc, row) => {
+                if (!acc[row.dia]) acc[row.dia] = [];
+                // Usar apenas preços válidos de PT
+                if (row.preco_pt !== null && !isNaN(row.preco_pt)) {
+                    acc[row.dia].push(row.preco_pt);
+                }
+                return acc;
+            }, {});
+
+            // 4. Calcular a média de cada dia e classificar (real vs futuro)
+            let precosFinaisDoMes = [];
+            for (const diaStr in dadosAgrupados) {
+                // Apenas calcular média se houver dados (ignora dias só com 'null')
+                if (dadosAgrupados[diaStr].length > 0) {
+                    const mediaDia = calcularMedia(dadosAgrupados[diaStr]);
+                    if (mediaDia !== null) {
+                        precosFinaisDoMes.push(mediaDia);
+
+                        // Classificar o dia
+                        const diaInputFormat = formatarDataParaInput(diaStr);
+                        if (diaInputFormat <= dataOMIEInputFormat) {
+                            diasReais.add(diaStr);
+                        } else {
+                            diasFuturos.add(diaStr);
+                        }
+                    }
+                }
+            }
+
+            const mediaFinalMes = calcularMedia(precosFinaisDoMes);
+            let notaFuturos = '';
+            if (diasFuturos.size > 0) {
+                notaFuturos = `(${diasReais.size} dias com OMIE e ${diasFuturos.size} dias com futuros)`;
+            } else if (diasReais.size > 0) {
+                notaFuturos = `(mês com ${diasReais.size} dias)`;
+            } else {
+                container.style.display = 'none'; // Nenhum dado válido encontrado
+                return;
+            }
+
+            // 5. Renderizar
+            container.innerHTML = `
+                <p>
+                    Média ${nomeMes} ${ano} ${notaFuturos}: 
+                    <strong>${formatarValor(mediaFinalMes, 2)}</strong>
+                </p>
+            `;
+            container.style.display = 'block';
+
+        } catch (e) {
+            console.error("Erro ao calcular média do mês completo:", e);
+            container.style.display = 'none';
+        }
+    }
 // --- PROCESSO DE INICIALIZAÇÃO ---
     fetch(URL_DADOS_ATUAIS) // Carregar apenas dados atuais
         .then(response => { if (!response.ok) throw new Error(`Erro rede: ${response.statusText}`); return response.text(); })
@@ -557,6 +674,9 @@ document.addEventListener('DOMContentLoaded', function() {
             seletorDataInicio.value = dataInicioDefaultStr;
 
             seletorDataFim.min = `${ANO_INICIO_HISTORICO}-01-01`; seletorDataFim.max = dataMaximaValida; seletorDataFim.value = dataMaximaValida;
+
+            defaultDataInicio = seletorDataInicio.value;
+            defaultDataFim = seletorDataFim.value;
 
             // Adicionar ouvintes
             seletorDataInicio.addEventListener('change', atualizarDashboardPeriodo);
