@@ -1,55 +1,78 @@
 name: Atualizar Preços Horários Automaticamente
 
 on:
-  # Agenda a execução automática
   schedule:
-    # Corre todos os dias às 10:40 UTC
+    # --- Horário de VERÃO (WEST=UTC+1) ---
+    # Corresponde a 11:40, 11:55, 12:10 em Portugal
     - cron: '40 10 * * *'
-    # Corre todos os dias às 10:55 UTC
     - cron: '55 10 * * *'
-    # Corre todos os dias às 11:10 UTC
     - cron: '10 11 * * *'
+    
+    # --- Horário de INVERNO (WET=UTC+0) ---
+    # Corresponde a 11:40, 11:55, 12:10 em Portugal
+    - cron: '40 11 * * *'
+    - cron: '55 11 * * *'
+    - cron: '10 12 * * *'
     
   # Permite que execute este workflow manualmente a partir da interface do GitHub
   workflow_dispatch:
 
 jobs:
-  # Nome do "trabalho" a ser executado
   build-and-commit:
-    # A máquina virtual onde o código vai correr
     runs-on: ubuntu-latest
-
-    # Dá permissão ao workflow para escrever no repositório
     permissions:
       contents: write
 
     steps:
-      # 1. Faz o "checkout" do seu código para a máquina virtual
+      # 1. Faz o "checkout"
       - name: Checkout do Repositório
         uses: actions/checkout@v4
 
-      # 2. Configura o ambiente Python
+      # 2. NOVO PASSO: Verifica se a hora local em Portugal é a correta
+      - name: Verificar hora local (Europe/Lisbon)
+        id: check_time
+        run: |
+          # Define o fuso horário para Portugal Continental
+          export TZ='Europe/Lisbon'
+          
+          # Obtém a hora e minuto locais
+          LOCAL_TIME=$(date +'%H:%M')
+          
+          echo "Hora local atual em Portugal: $LOCAL_TIME"
+          
+          # Verifica se a hora local é uma das horas de execução desejadas
+          if [ "$LOCAL_TIME" = "11:40" ] || [ "$LOCAL_TIME" = "11:55" ] || [ "$LOCAL_TIME" = "12:10" ]; then
+            echo "Hora correta. A definir should_run=true"
+            # Define uma variável de output para os passos seguintes
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "Hora errada (é a execução do fuso horário oposto). A definir should_run=false"
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      # 3. Configura o Python (só corre se o passo anterior for 'true')
       - name: Configurar Python 3.12
+        if: steps.check_time.outputs.should_run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      # 3. Instala as bibliotecas Python de que o seu script precisa
+      # 4. Instala dependências (só corre se o passo anterior for 'true')
       - name: Instalar dependências
+        if: steps.check_time.outputs.should_run == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install pandas requests openpyxl
 
-      # 4. Executa o seu script Python
+      # 5. Executa o script (só corre se o passo anterior for 'true')
       - name: Executar o script de atualização de preços
+        if: steps.check_time.outputs.should_run == 'true'
         run: python scripts/precos-horarios_csv.py
 
-      # 5. Verifica se o ficheiro de dados foi alterado e faz o commit/push
+      # 6. Faz commit (só corre se o passo anterior for 'true')
       - name: Fazer commit e push das alterações
+        if: steps.check_time.outputs.should_run == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # A mensagem que aparecerá no histórico de commits
           commit_message: "BOT: Atualização automática dos preços horários"
-          
-          # O ficheiro específico a ser verificado e adicionado
           file_pattern: data/precos-horarios.csv
