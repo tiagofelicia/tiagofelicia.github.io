@@ -2,20 +2,26 @@
 name: Atualizar OMIE Dados Atuais Automaticamente
 
 on:
-  # Agenda a execução automática
   schedule:
-    # Corre todos os dias às 10:40 UTC
+    # === GRUPO 1: Manhã (Todos os dias) ===
+    # Horário VERÃO (WEST=UTC+1) -> 11:40, 11:55, 12:10 (Local)
     - cron: '40 10 * * *'
-    # Corre todos os dias às 10:55 UTC
     - cron: '55 10 * * *'
-    # Corre todos os dias às 11:10 UTC
     - cron: '10 11 * * *'
-    # Executa de Seg a Sex às 17:00 UTC
+    # Horário INVERNO (WET=UTC+0) -> 11:40, 11:55, 12:10 (Local)
+    - cron: '40 11 * * *'
+    - cron: '55 11 * * *'
+    - cron: '10 12 * * *'
+
+    # === GRUPO 2: Tarde (Seg-Sex) ===
+    # Horário VERÃO (WEST=UTC+1) -> 18:00, 18:15, 18:30 (Local)
     - cron: '00 17 * * 1-5'
-    # Executa de Seg a Sex às 17:15 UTC
     - cron: '15 17 * * 1-5'
-    # Executa de Seg a Sex às 17:30 UTC
     - cron: '30 17 * * 1-5'
+    # Horário INVERNO (WET=UTC+0) -> 18:00, 18:15, 18:30 (Local)
+    - cron: '00 18 * * 1-5'
+    - cron: '15 18 * * 1-5'
+    - cron: '30 18 * * 1-5'
     
   # Permite execução manual
   workflow_dispatch:
@@ -31,28 +37,62 @@ jobs:
       - name: Checkout do Repositório
         uses: actions/checkout@v4
 
-      # 2. Configura Python
+      # 2. Verifica se a hora local em Portugal é a correta
+      - name: Verificar hora local (Europe/Lisbon)
+        id: check_time
+        run: |
+          # Define o fuso horário para Portugal Continental
+          export TZ='Europe/Lisbon'
+          
+          # Obtém a hora e minuto locais
+          LOCAL_TIME=$(date +'%H:%M')
+          # Obtém o dia da semana (1=Segunda, ..., 7=Domingo)
+          LOCAL_DOW=$(date +'%u')
+          
+          echo "Hora local atual em Portugal: $LOCAL_TIME (Dia da semana: $LOCAL_DOW)"
+          
+          SHOULD_RUN="false"
+          
+          # Bloco 1: Verificação da manhã (todos os dias)
+          if [ "$LOCAL_TIME" = "11:40" ] || [ "$LOCAL_TIME" = "11:55" ] || [ "$LOCAL_TIME" = "12:10" ]; then
+            SHOULD_RUN="true"
+          
+          # Bloco 2: Verificação da tarde (apenas Seg-Sex)
+          elif { [ "$LOCAL_TIME" = "18:00" ] || [ "$LOCAL_TIME" = "18:15" ] || [ "$LOCAL_TIME" = "18:30" ]; } && [ "$LOCAL_DOW" -le 5 ]; then
+            SHOULD_RUN="true"
+          fi
+          
+          if [ "$SHOULD_RUN" = "true" ]; then
+            echo "Hora correta. A definir should_run=true"
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "Hora errada (é a execução do fuso horário oposto) ou dia da semana errado. A definir should_run=false"
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      # 3. Configura Python (só corre se o passo anterior for 'true')
       - name: Configurar Python 3.12
+        if: steps.check_time.outputs.should_run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      # 3. Instala dependências
+      # 4. Instala dependências (só corre se o passo anterior for 'true')
       - name: Instalar dependências
+        if: steps.check_time.outputs.should_run == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install pandas requests openpyxl numpy
 
-      # 4. Executa o seu script Python
+      # 5. Executa o seu script Python (só corre se o passo anterior for 'true')
       - name: Executar o script omie_dados_atuais.py
+        if: steps.check_time.outputs.should_run == 'true'
         run: python scripts/omie_dados_atuais.py
 
-      # 5. Verifica se o ficheiro de dados foi alterado e faz o commit/push
+      # 6. Verifica e faz commit (só corre se o passo anterior for 'true')
       - name: Fazer commit e push das alterações
+        if: steps.check_time.outputs.should_run == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # A mensagem que aparecerá no histórico de commits
           commit_message: "BOT: Atualização automática do omie_dados_atuais.csv"
-          
-          # O ficheiro específico a ser verificado e adicionado
           file_pattern: data/omie_dados_atuais.csv
