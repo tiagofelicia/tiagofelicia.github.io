@@ -40,12 +40,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function populaDropdowns() {
+    // Assinatura modificada para aceitar a data padrão
+    function populaDropdowns(hojePadrao) {
         const diaSelect = document.getElementById("dropdownDia");
         const tarifarioSelect = document.getElementById("dropdownTarifario");
         const opcaoSelect = document.getElementById("dropdownOpcao");
 
-        diaSelect.innerHTML = Object.keys(dadosEstruturados).map(d => `<option value="${d}">${d}</option>`).join("");
+        const diasDisponiveis = Object.keys(dadosEstruturados);
+        diaSelect.innerHTML = diasDisponiveis.map(d => `<option value="${d}">${d}</option>`).join("");
+
+        // Definir o dia padrão como "hoje" (de Lisboa)
+        if (diasDisponiveis.includes(hojePadrao)) {
+            diaSelect.value = hojePadrao;
+        } else if (diasDisponiveis.length > 0) {
+            // Fallback: Se "hoje" não estiver nos dados (ex: dados desatualizados), 
+            // seleciona o último dia (o mais recente)
+            diaSelect.value = diasDisponiveis[diasDisponiveis.length - 1];
+        }
+
         diaSelect.addEventListener("change", atualizaTarifario);
         tarifarioSelect.addEventListener("change", atualizaOpcao);
         opcaoSelect.addEventListener("change", desenhaGrafico);
@@ -54,6 +66,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const dia = diaSelect.value;
             const tarifarios = Object.keys(dadosEstruturados[dia] || {});
             tarifarioSelect.innerHTML = tarifarios.map(t => `<option value="${t}">${t}</option>`).join("");
+
+            // Selecionar o 2º tarifário (índice 1) se ele existir
+            if (tarifarios.length > 1) {
+                tarifarioSelect.selectedIndex = 1;
+            }
+
             atualizaOpcao();
         }
 
@@ -64,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function () {
             opcaoSelect.innerHTML = opcoes.map(o => `<option value="${o}">${o}</option>`).join("");
             desenhaGrafico();
         }
+        
+        // Esta chamada inicial agora usa os valores padrão corretos
         atualizaTarifario();
     }
 
@@ -74,11 +94,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.desenhaGrafico = function() {
-        const dia = document.getElementById("dropdownDia").value;
+        const dia = document.getElementById("dropdownDia").value; // Formato DD/MM/YYYY
         const tarifario = document.getElementById("dropdownTarifario").value;
         const opcao = document.getElementById("dropdownOpcao").value;
         const dados = dadosEstruturados[dia]?.[tarifario]?.[opcao];
         if (!dados) return;
+
+        // --- LÓGICA DE DESTAQUE (HORA DE LISBOA) ---
+        const agoraLisboa = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+        const diaLisboa = String(agoraLisboa.getDate()).padStart(2, '0');
+        const mesLisboa = String(agoraLisboa.getMonth() + 1).padStart(2, '0');
+        const anoLisboa = agoraLisboa.getFullYear();
+        const hojeEmLisboaDDMMYYYY = `${diaLisboa}/${mesLisboa}/${anoLisboa}`;
+        const horaAtualLisboa = agoraLisboa.getHours(); 
+        const minutoAtualLisboa = agoraLisboa.getMinutes();
+        const isHoje = (dia === hojeEmLisboaDDMMYYYY);
+        const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
 
         if (document.getElementById("checkboxSimular").checked) {
             carregarTabelaCSV(dia, tarifario, opcao);
@@ -101,10 +132,35 @@ document.addEventListener('DOMContentLoaded', function () {
         const stack3 = dados.colunas.map(v => v > Q2 && v <= Q3 ? v : null);
         const stack4 = dados.colunas.map(v => v > Q3 ? v : null);
 
-        Highcharts.chart("container-chart", {
+        let xAxisConfig = {
+            categories: dados.categorias,
+            labels: { rotation: -45, style: { fontSize: '10px' } },
+            plotBands: [],
+            crosshair: true
+        };
+
+        if (isHoje) {
+            if (qhIndex >= 0 && qhIndex < dados.categorias.length) {
+                xAxisConfig.plotBands.push({
+                    from: qhIndex - 0.5,
+                    to: qhIndex + 0.5,
+                    color: 'rgba(255, 165, 0, 0.3)',
+                    label: {
+                        text: 'Agora',
+                        style: { color: '#D98A00', fontWeight: 'bold' },
+                        align: 'center',
+                        verticalAlign: 'top',
+                        y: 15
+                    },
+                    zIndex: 3
+                });
+            }
+        }
+
+        const chart = Highcharts.chart("container-chart", {
             chart: { type: "column" },
             title: { text: `${tarifario} | ${opcao} | ${dia}` },
-            xAxis: { categories: dados.categorias, labels: { rotation: -45, style: { fontSize: '10px' } } },
+            xAxis: xAxisConfig,
             yAxis: { title: { text: "" }, labels: { formatter: function () { return `${this.value} €/kWh`; } } },
             tooltip: { pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${formatValue(this.y)}</b><br/>`; } },
             series: [
@@ -118,6 +174,36 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             credits: { enabled: false }
         });
+
+        // Lógica para mostrar o tooltip no carregamento
+        if (isHoje) {
+            setTimeout(() => {
+                try {
+                    if (qhIndex >= 0 && qhIndex < dados.categorias.length) {
+                        
+                        const seriesEnergia = chart.series.slice(0, 4);
+                        let targetPoint = null;
+
+                        for (const serie of seriesEnergia) {
+                            const point = chart.series[serie.index].points[qhIndex];
+                            if (point && point.y !== null) {
+                                targetPoint = point;
+                                break;
+                            }
+                        }
+
+                        if (targetPoint) {
+                            // Manter a linha vertical
+                            chart.xAxis[0].drawCrosshair(null, targetPoint); 
+                            
+                            chart.tooltip.refresh(targetPoint);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Erro ao tentar mostrar o tooltip automático:", e);
+                }
+            }, 0); // O delay de 0ms continua a ser necessário
+        }
     }
 
     window.controlarTabela = function() {
@@ -153,7 +239,6 @@ document.addEventListener('DOMContentLoaded', function () {
         corpoTabela.innerHTML = "";
 
         let omieValores = [];
-        // let precoMedioValores = []; // REMOVIDO
         const dadosParaTabela = [];
 
         linhasTabela.forEach((linha) => {
@@ -167,7 +252,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const omieValido = !isNaN(omie) ? parseFloat(omie) : null;
 
                 if (omieValido !== null) omieValores.push(omieValido);
-                // if (precoMedioValido !== null) precoMedioValores.push(precoMedioValido); // REMOVIDO
                 
                 dadosParaTabela.push({ hora, omie, precoMedio, precoMedioValido });
             }
@@ -183,7 +267,6 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         const quartisOmie = calcularQuartis(omieValores);
-        // const quartisPrecoMedio = calcularQuartis(precoMedioValores); // REMOVIDO
 
         const obterCorDeFundo = (valor, quartis) => {
             if (valor === null || valor === undefined || isNaN(valor)) return 'white'; // Células sem valor ficam brancas
@@ -200,7 +283,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const precoMedioFormatado = dadosLinha.precoMedioValido !== null ? dadosLinha.precoMedioValido.toFixed(5) : "";
             const tr = document.createElement('tr');
             
-            // ===== ALTERAÇÃO 2: Usar o valor OMIE da linha para definir a cor de AMBAS as células =====
             const corDeFundoDaLinha = obterCorDeFundo(parseFloat(dadosLinha.omie), quartisOmie);
 
             const tdHora = document.createElement('td');
@@ -256,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function init() {
-        // ALTERAÇÃO: Apontar para o URL "raw" do GitHub
+        // Apontar para o URL "raw" do GitHub
         const baseURL = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/precos-horarios.csv";
         
         //Cache busting com o raw.githubusercontent.com
@@ -267,7 +349,16 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 dadosCSVGlobal = data;
                 parseCSV(data);
-                populaDropdowns();
+
+                // Obter "hoje" em Lisboa (DD/MM/YYYY) para definir como padrão
+                const agoraLisboa = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+                const diaLisboa = String(agoraLisboa.getDate()).padStart(2, '0');
+                const mesLisboa = String(agoraLisboa.getMonth() + 1).padStart(2, '0');
+                const anoLisboa = agoraLisboa.getFullYear();
+                const hojeEmLisboaDDMMYYYY = `${diaLisboa}/${mesLisboa}/${anoLisboa}`;
+
+                // Passar a data de hoje para a função de popular
+                populaDropdowns(hojeEmLisboaDDMMYYYY);
             })
             .catch(error => {
                 console.error("Erro ao carregar os dados CSV:", error);

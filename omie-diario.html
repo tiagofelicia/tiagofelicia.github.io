@@ -136,7 +136,7 @@
                         <li><strong>Bi-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Vazio</strong> e <strong>Fora de Vazio</strong>.</li>
                         <li><strong>Tri-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Ponta</strong>, <strong>Cheias</strong> e <strong>Vazio</strong>.</li>
                     </ul>
-                    <p>Pode consultar as horas dos períodos em https://www.tiagofelicia.pt/periodos-horarios.html</p>
+                    <p>Pode consultar as horas dos períodos em <a href="https://www.tiagofelicia.pt/periodos-horarios.html" target="_blank" rel="noopener noreferrer">https://www.tiagofelicia.pt/periodos-horarios.html</a></p>
 
                     <p><strong>Nota Importante:</strong> No dia mais recente apresentado, os cálculos de médias, máximo e mínimo para Portugal <strong>excluem</strong> os últimos quartos de hora (normalmente após as 23h PT), pois os mesmos ainda não são conhecidos.</p>
                 </div>
@@ -337,6 +337,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (dadosDoDia.length === 0) { console.warn(`Nenhum dado encontrado para ${dataFormatadaCSV}.`); /* Limpar UI? */ return; };
 
+        // Obter a data/hora atual em Lisboa (independentemente do fuso do utilizador)
+        // Usamos "en-US" como 'locale' seguro para o parsing de 'new Date()'
+        const agoraLisboa = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+        
+        // Formatar a data de "hoje" (em Lisboa) para YYYY-MM-DD
+        const hojeEmLisboaYYYYMMDD = agoraLisboa.toISOString().split('T')[0];
+        
+        // Obter a hora e minuto atuais de Lisboa
+        const horaAtualLisboa = agoraLisboa.getHours(); // (0-23)
+        const minutoAtualLisboa = agoraLisboa.getMinutes(); // (0-59)
+        
+        // Verificar se o dia selecionado no calendário é o dia de "hoje" (em Lisboa)
+        const isHoje = (dataSelecionada === hojeEmLisboaYYYYMMDD);
+
         // --- Lógica de cálculo ---
         const dataOMIE = dadosAtualizacao.Data_Valores_OMIE; const dataOMIP = dadosAtualizacao.Data_Valores_OMIP; const isUltimoDiaOMIE = (dataFormatadaCSV === dataOMIE); let dadosReaisDoDia; if (isUltimoDiaOMIE && anoSelecionado >= anoMinimoAtual && dadosDoDia.length > 4) { dadosReaisDoDia = dadosDoDia.slice(0, -4); } else { dadosReaisDoDia = dadosDoDia; }
 
@@ -358,8 +372,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const ciclos = { bd: {}, bs: {}, td: {}, ts: {} }; for (const ciclo in ciclos) { ciclos[ciclo] = dadosReaisDoDia.reduce((acc, row) => { const periodo = row[ciclo.toUpperCase()]; if (!periodo) return acc; if (!acc[periodo]) acc[periodo] = []; if(row.preco_pt !== null && !isNaN(row.preco_pt)) { acc[periodo].push(row.preco_pt); } return acc; }, {}); } document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['V'])); document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['F'])); document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['V'])); document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['F'])); document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.td?.['V'])); document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclos.td?.['C'])); document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclos.td?.['P'])); document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['V'])); document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['C'])); document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['P']));
 
         // Atualizar Tabela e Gráfico
-        atualizarTabela(dadosDoDia, dadosReaisDoDia);
-        atualizarGrafico(dadosDoDia, dadosReaisDoDia, dataFormatadaCSV, isUltimoDiaOMIE);
+    atualizarTabela(dadosDoDia, dadosReaisDoDia, isHoje, horaAtualLisboa);
+    atualizarGrafico(dadosDoDia, dadosReaisDoDia, dataFormatadaCSV, isUltimoDiaOMIE, isHoje, horaAtualLisboa, minutoAtualLisboa);
     }
 
     // --- FUNÇÕES DE ATUALIZAÇÃO ---
@@ -371,21 +385,165 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const f of futurosDiariosPT) { if (!f.Descricao || typeof f.Descricao !== 'string' || !f.Descricao.includes('/')) continue; try { const dataF = formatarDataParaInput(f.Descricao); if (!dataF) continue; if (dataF > dataMaxReal && diasEnc < 3) { diasEnc++; const lbl = document.getElementById(`futuros-${diasEnc}-label`); const val = document.getElementById(`futuros-${diasEnc}-valor`); const itm = document.getElementById(`futuro-${diasEnc}-item`); if (lbl && val && itm) { const dO = new Date(dataF + "T12:00:00Z"); const dS = dO.toLocaleDateString('pt-PT', { weekday: 'short', timeZone: 'UTC' }); lbl.textContent = `Futuros para ${f.Descricao} - ${dS}`; val.innerHTML = formatarValor(f.Valor); itm.style.display = 'flex'; } } if (diasEnc >= 3) break; } catch(e){ console.error("Erro Futuros Próximos:", e, f); continue; } }
         for (let i = diasEnc + 1; i <= 3; i++) { const itm = document.getElementById(`futuro-${i}-item`); if(itm) itm.style.display = 'none'; }
     }
-    function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia) {
+    function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa) {
         const container = document.getElementById('tabela-container'); if (!container) return;
-        let tableHTML = '<table class="tabela-precos">'; tableHTML += '<thead><tr><th rowspan="2">Hora PT</th><th colspan="2">Preço médio horário</th></tr><tr><th>Preço PT</th><th>Preço ES</th></tr></thead>'; tableHTML += '<tbody>'; const dadosHorarios = []; let qh_idx = 0; const numHoras = Math.ceil(dadosDoDiaCompleto.length / 4);
-        for (let h = 0; h < numHoras; h++) { let nq = 4; let hFim = String(h + 1).padStart(2,'0'); if (hFim === '24') hFim = '00'; const hLbl = `[${String(h).padStart(2, '0')}:00-${hFim}:00[`; if (dadosDoDiaCompleto.length === 100 && h === 1) nq = 8; const qComp = dadosDoDiaCompleto.slice(qh_idx, qh_idx + nq); const qReal = []; for (let i = 0; i < nq; i++) { if (dadosReaisDoDia && qh_idx + i < dadosReaisDoDia.length) { qReal.push(dadosReaisDoDia[qh_idx + i]); } } if (dadosDoDiaCompleto.length === 92 && h === 1) { dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null }); continue; } if(qComp.length > 0){ dadosHorarios.push({ hora: hLbl, precoPT: calcularMedia(qReal.map(d => d.preco_pt)), precoES: calcularMedia(qComp.map(d => d.preco_es)) }); qh_idx += nq; } else if (h < 24) { dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null }); } }
-        dadosHorarios.forEach(item => { tableHTML += `<tr><td>${item.hora}</td><td>${formatarValor(item.precoPT)}</td><td>${formatarValor(item.precoES)}</td></tr>`; }); tableHTML += '</tbody></table>'; container.innerHTML = tableHTML;
+        let tableHTML = '<table class="tabela-precos">'; tableHTML += '<thead><tr><th rowspan="2">Hora PT</th><th colspan="2">Preço médio horário</th></tr><tr><th>Preço PT</th><th>Preço ES</th></tr></thead>'; tableHTML += '<tbody>'; 
+        
+        const dadosHorarios = []; 
+        let qh_idx = 0; 
+        const numHoras = Math.ceil(dadosDoDiaCompleto.length / 4);
+
+        for (let h = 0; h < numHoras; h++) { 
+            let nq = 4; 
+            let hFim = String(h + 1).padStart(2,'0'); 
+            if (hFim === '24') hFim = '00'; 
+            const hLbl = `[${String(h).padStart(2, '0')}:00-${hFim}:00[`; 
+            if (dadosDoDiaCompleto.length === 100 && h === 1) nq = 8; 
+            
+            const qComp = dadosDoDiaCompleto.slice(qh_idx, qh_idx + nq); 
+            const qReal = []; 
+            for (let i = 0; i < nq; i++) { 
+                if (dadosReaisDoDia && qh_idx + i < dadosReaisDoDia.length) { 
+                    qReal.push(dadosReaisDoDia[qh_idx + i]); 
+                } 
+            } 
+            
+            if (dadosDoDiaCompleto.length === 92 && h === 1) { 
+                dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null, isHoraAtual: false }); 
+                continue; 
+            } 
+            
+            // Lógica de Destaque: Verifica se é hoje E se o 'h' do loop é a hora atual
+            const isHoraAtual = (isHoje && h === horaAtualLisboa);
+
+            if(qComp.length > 0){ 
+                dadosHorarios.push({ 
+                    hora: hLbl, 
+                    precoPT: calcularMedia(qReal.map(d => d.preco_pt)), 
+                    precoES: calcularMedia(qComp.map(d => d.preco_es)),
+                    isHoraAtual: isHoraAtual // Guarda a informação de destaque
+                }); 
+                qh_idx += nq; 
+            } else if (h < 24) { 
+                dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null, isHoraAtual: false }); 
+            } 
+        }
+
+        // Criar o HTML da Tabela
+        dadosHorarios.forEach(item => { 
+            // Adiciona o estilo inline se 'isHoraAtual' for verdadeiro
+            const estiloLinha = item.isHoraAtual ? ' style="background-color: #FFF3E0; font-weight: bold;"' : '';
+            tableHTML += `<tr${estiloLinha}><td>${item.hora}</td><td>${formatarValor(item.precoPT)}</td><td>${formatarValor(item.precoES)}</td></tr>`; 
+        }); 
+        
+        tableHTML += '</tbody></table>'; 
+        container.innerHTML = tableHTML;
     }
-    function atualizarGrafico(dadosDoDiaCompleto, dadosReaisDoDia, dataTitulo, isUltimoDiaOMIE) {
+    function atualizarGrafico(dadosDoDiaCompleto, dadosReaisDoDia, dataTitulo, isUltimoDiaOMIE, isHoje, horaAtualLisboa, minutoAtualLisboa) {
         const container = document.getElementById('grafico-container'); if (!container) return;
+        
         let seriesDataPT = dadosDoDiaCompleto.map(d => d.preco_pt); const seriesDataES = dadosDoDiaCompleto.map(d => d.preco_es);
         if (isUltimoDiaOMIE && dadosDoDiaCompleto.length > 4) { const nf = dadosDoDiaCompleto.length - dadosReaisDoDia.length; if (nf > 0) { for (let i = 0; i < nf; i++) { seriesDataPT[dadosReaisDoDia.length + i] = null; } } }
-        const precosPTGrafico = seriesDataPT.filter(p => p !== null && !isNaN(p)); const precosESGrafico = seriesDataES.filter(p => p !== null && !isNaN(p)); const minPT = precosPTGrafico.length > 0 ? Math.min(...precosPTGrafico) : null; const maxPT = precosPTGrafico.length > 0 ? Math.max(...precosPTGrafico) : null; const minES = precosESGrafico.length > 0 ? Math.min(...precosESGrafico) : null; const maxES = precosESGrafico.length > 0 ? Math.max(...precosESGrafico) : null; const plotLines = []; const formatLabelMinMax = (val) => formatarValor(val, 2);
+        const precosPTGrafico = seriesDataPT.filter(p => p !== null && !isNaN(p)); const precosESGrafico = seriesDataES.filter(p => p !== null && !isNaN(p)); const minPT = precosPTGrafico.length > 0 ? Math.min(...precosPTGrafico) : null; const maxPT = precosPTGrafico.length > 0 ? Math.max(...precosPTGrafico) : null; const minES = precosESGrafico.length > 0 ? Math.min(...precosESGrafico) : null; const maxES = precosESGrafico.length > 0 ? Math.max(...precosESGrafico) : null;
+        
+        const plotLines = [];
+        const formatLabelMinMax = (val) => formatarValor(val, 2);
         if (minPT !== null || minES !== null) { const minValPT = minPT ?? Infinity; const minValES = minES ?? Infinity; if (Math.abs(minValPT - minValES) < 0.01 && minPT !== null) { plotLines.push({ value: minValPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } }); } else { if (minPT !== null) plotLines.push({ value: minValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (minES !== null) plotLines.push({ value: minValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatLabelMinMax(minValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
-         if (maxPT !== null || maxES !== null) { const maxValPT = maxPT ?? -Infinity; const maxValES = maxES ?? -Infinity; if (Math.abs(maxValPT - maxValES) < 0.01 && maxPT !== null) { plotLines.push({ value: maxValPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }); } else { if (maxPT !== null) plotLines.push({ value: maxValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
-        const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`;
-        try { Highcharts.chart('grafico-container', { chart: { type: 'line', height: 770 }, title: { text: tituloGrafico }, xAxis: { categories: dadosDoDiaCompleto.map(d => d.intervalo), title: { text: 'Hora PT' }, crosshair: true, labels: { rotation: -45, step: 4, align: 'right' } }, yAxis: { title: { text: 'Preço (€/MWh)' }, labels: { format: '{value:,.0f} €' }, plotLines: plotLines }, tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 }, legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' }, exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: [ 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData' ] } } }, series: [ { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } ] }); }
+        if (maxPT !== null || maxES !== null) { const maxValPT = maxPT ?? -Infinity; const maxValES = maxES ?? -Infinity; if (Math.abs(maxValPT - maxValES) < 0.01 && maxPT !== null) { plotLines.push({ value: maxValPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }); } else { if (maxPT !== null) plotLines.push({ value: maxValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
+        
+        const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; 
+        const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`;
+
+        let xAxisConfig = {
+            categories: dadosDoDiaCompleto.map(d => d.intervalo),
+            title: { text: 'Hora PT' },
+            crosshair: true,
+            labels: { rotation: -45, step: 4, align: 'right' },
+            plotBands: [] 
+        };
+
+        if (isHoje) {
+            const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
+            if (qhIndex >= 0 && qhIndex < dadosDoDiaCompleto.length) {
+                xAxisConfig.plotBands.push({
+                    from: qhIndex - 0.5,
+                    to: qhIndex + 0.5,
+                    color: 'rgba(255, 165, 0, 0.3)', 
+                    label: {
+                        text: 'Agora',
+                        style: { color: '#D98A00', fontWeight: 'bold' },
+                        align: 'center',
+                        verticalAlign: 'top',
+                        y: 15
+                    },
+                    zIndex: 3
+                });
+            }
+        }
+
+        try { 
+            const chart = Highcharts.chart('grafico-container', { 
+                chart: { type: 'line', height: 770 }, 
+                title: { text: tituloGrafico }, 
+                xAxis: xAxisConfig, 
+                yAxis: { 
+                    title: { text: 'Preço (€/MWh)' }, 
+                    labels: { format: '{value:,.0f} €' }, 
+                    plotLines: plotLines 
+                }, 
+                tooltip: { 
+                    shared: true, 
+                    valueSuffix: ' €/MWh', 
+                    valueDecimals: 2 
+                }, 
+                legend: { 
+                    layout: 'horizontal', 
+                    align: 'center', 
+                    verticalAlign: 'bottom' 
+                }, 
+                exporting: { 
+                    filename: nomeFicheiroBase, 
+                    enabled: true, 
+                    buttons: { 
+                        contextButton: { 
+                            menuItems: [ 
+                                'viewFullscreen', 'printChart', 'separator', 
+                                'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 
+                                'downloadCSV', 'downloadXLS', 'viewData' 
+                            ] 
+                        } 
+                    } 
+                }, 
+                series: [ 
+                    { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, 
+                    { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } 
+                ] 
+            }); 
+                        
+            // Lógica para mostrar o tooltip no carregamento
+            if (isHoje) {
+                // 1. Calcular o índice do quarto-hora (0-95)
+                const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
+
+                // 2. Validar o índice
+                if (qhIndex >= 0 && qhIndex < dadosDoDiaCompleto.length) {
+                    
+                    // 3. Obter os pontos das duas séries nesse índice
+                    // A série 'Espanha' é a 0, 'Portugal' é a 1
+                    const pointES = chart.series[0].points[qhIndex];
+                    const pointPT = chart.series[1].points[qhIndex];
+
+                    // 4. Verificar se os pontos existem (não são 'null')
+                    if (pointPT && pointES) {
+                        
+                        // 5. Desenhar o crosshair (linha vertical) e o tooltip
+                        // Passamos 'null' como primeiro argumento (evento do rato)
+                        chart.xAxis[0].drawCrosshair(null, pointPT); 
+                        chart.tooltip.refresh([pointES, pointPT]);
+                    }
+                }
+            }
+        }
         catch (e) { console.error("Erro ao criar gráfico Highcharts:", e, e.stack); }
     }
 
