@@ -151,7 +151,7 @@ def gerar_tabelas_tarifarias(df_omie, ficheiro_config):
     # 4. Calcular preços para cada comercializador
     resultados = []
     comercializadores = [
-        "Alfa Power Index BTN", "Coopérnico Base 2.0", "EDP Indexada Horária",
+        "Alfa Power Index BTN", "Coopérnico Base", "Coopérnico GO", "EDP Indexada Horária",
         "EZU Tarifa Coletiva", "Galp Plano Dinâmico", "G9 Smart Dynamic",
         "MeoEnergia Tarifa Variável", "Repsol Leve Sem Mais",
     ]
@@ -277,9 +277,12 @@ def calcular_preco_comercializador(nome_tarifario, omie_kwh, perdas, constantes_
     if "Alfa Power Index BTN" in nome_tarifario:
         return ((omie_kwh + constantes_dict.get('Alfa_CGS', 0.0)) * perdas + constantes_dict.get('Alfa_K', 0.0) + constantes_dict.get('Financiamento_TSE', 0.0))
     
-    elif nome_tarifario == "Coopérnico Base 2.0":
+    elif nome_tarifario == "Coopérnico Base":
         return (omie_kwh + constantes_dict.get('Coop_CS_CR', 0.0) + constantes_dict.get('Coop_K', 0.0)) * perdas + constantes_dict.get('Financiamento_TSE', 0.0)
-    
+
+    elif nome_tarifario == "Coopérnico GO":
+        return (omie_kwh + constantes_dict.get('Coop_CS_CR', 0.0) + constantes_dict.get('Coop_K', 0.0)) * perdas + constantes_dict.get('Coop_GO', 0.0) + constantes_dict.get('Financiamento_TSE', 0.0)
+
     elif "EDP Indexada Horária" in nome_tarifario:
         return (omie_kwh * perdas * constantes_dict.get('EDP_H_K1', 1.0) + constantes_dict.get('EDP_H_K2', 0.0))
     
