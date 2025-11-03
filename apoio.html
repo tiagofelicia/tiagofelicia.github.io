@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt">
   <head>
     <meta charset="UTF-8" />
@@ -13,7 +12,6 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     
-  <!-- Google Analytics (GA4) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -61,11 +59,68 @@
                 </form>
             </div>
         </div>
+
+        <h3 style="text-align: center; margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px;">Apoie ao Aderir</h3>
+        <p style="text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;">
+            Se está a pensar mudar de comercializador, e algum destes comercializadores <strong>for a opção certa</strong>, pode apoiar o projeto <strong>sem qualquer custo para si</strong>, utilizando um dos seguintes links ou códigos de referenciação.
+        </p>
+
+        <div class="support-options-container">
+            
+            <div class="support-card">
+                <h3>Goldenergy</h3>
+                <p>Utilize este código de referência ao aderir, ou pelo link</p>
+                <div class="referral-code-wrapper">
+                    <input type="text" value="MGM2087037" id="goldenergy-code" readonly>
+                    <button onclick="copyCode('goldenergy-code', 'gold-copy-btn')" id="gold-copy-btn">Copiar</button>
+                </div>
+                <a href="https://amigo.goldenergy.pt/MGM2087037" target="_blank" class="button-link" style="margin-top: 15px;">Aderir à Goldenergy</a>
+            </div>
+
+            <div class="support-card">
+                <h3>Plenitude</h3>
+                <p>Utilize o link de partilha para aderir:</p>
+                <a href="https://compartilhar.eniplenitude.pt/h202jE" target="_blank" class="button-link" style="margin-top: 15px;">Aderir à Plenitude</a>
+            </div>
+
+            <div class="support-card">
+                <h3>Repsol</h3>
+                <p>Utilize o link de partilha para aderir:</p>
+                <a href="https://partilha.repsol.pt/sePMLy" target="_blank" class="button-link" style="margin-top: 15px;">Aderir à Repsol</a>
+            </div>
+        </div>
+
     </section>
 </main>
 
 <div id="footer-placeholder"></div>
 
-  <script src="script.js"></script>
+<script>
+function copyCode(elementId, buttonId) {
+    var copyText = document.getElementById(elementId);
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); // Para telemóveis
+
+    try {
+        navigator.clipboard.writeText(copyText.value);
+        
+        // Feedback visual no botão
+        var btn = document.getElementById(buttonId);
+        if (btn) {
+            var originalText = btn.innerHTML;
+            btn.innerHTML = 'Copiado!';
+            btn.style.backgroundColor = '#28a745'; // Mudar para verde
+            setTimeout(function() {
+                btn.innerHTML = originalText;
+                btn.style.backgroundColor = ''; // Reverter cor
+            }, 2000);
+        }
+    } catch (err) {
+        console.error('Falha ao copiar o código: ', err);
+    }
+}
+</script>
+
+<script src="script.js"></script>
 </body>
 </html>
