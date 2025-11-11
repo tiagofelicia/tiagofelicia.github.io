@@ -1,13 +1,13 @@
 import requests
 import pandas as pd
 import io
-from datetime import date # Usado para saber a data de "hoje"
+from datetime import date 
 
 # --- 1. CONFIGURAÇÕES ---
 
 API_REN_SERVICE_ID = "1354"
 URL_REN_API = f"https://datahub.ren.pt/service/download/csv/{API_REN_SERVICE_ID}"
-NOME_FICHEIRO_SAIDA = "producao_dados_atuais.csv"
+NOME_FICHEIRO_SAIDA = "data/producao_dados_atuais.csv" # <- Corrigi o caminho
 
 
 def buscar_dados_ren(data_inicio, data_fim):
@@ -22,8 +22,19 @@ def buscar_dados_ren(data_inicio, data_fim):
         "culture": "pt-PT"
     }
     
+    # --- CORREÇÃO DE CACHE AQUI ---
+    # Estes 'headers' dizem ao servidor da REN para NÃO enviar
+    # uma resposta em cache e forçar um download novo.
+    headers = {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+    }
+    # --- FIM DA CORREÇÃO ---
+    
     try:
-        response = requests.get(URL_REN_API, params=params)
+        # Adicionámos o parâmetro 'headers=headers' ao pedido
+        response = requests.get(URL_REN_API, params=params, headers=headers)
         response.raise_for_status() 
         response_text = response.content.decode('utf-8')
         
@@ -39,7 +50,7 @@ def buscar_dados_ren(data_inicio, data_fim):
             format='%Y-%m-%d %H:%M:%S'
         )
 
-        print("Dados da REN carregados com sucesso.")
+        print("Dados da REN carregados com sucesso (sem cache).")
         return dados_ren
 
     except Exception as e:
@@ -58,33 +69,17 @@ def transformar_dados(df_ren):
     print("Iniciando transformação para o formato OMIE...")
     
     df_final = df_ren.copy()
-
-    # --- 1. Criar a coluna 'dia' (Formato: dd/mm/AAAA) ---
     df_final['dia'] = df_final['datetime'].dt.strftime('%d/%m/%Y')
     
-    # --- 2. Calcular os horários de início e fim ---
-    
-    # Hora de INÍCIO (ex: '10:00' ou '23:45')
     hora_inicio_str = df_final['datetime'].dt.strftime('%H:%M')
-    
-    # Hora de FIM (ex: '10:15' ou '00:00')
     datetime_fim = df_final['datetime'] + pd.Timedelta(minutes=15)
     hora_fim_str = datetime_fim.dt.strftime('%H:%M')
 
-    # --- 3. Criar a coluna 'intervalo' (Formato: [HH:MM-HH:MM[) ---
-    # Esta coluna usa a hora de fim real (ex: '00:00')
     df_final['intervalo'] = '[' + hora_inicio_str + '-' + hora_fim_str + '['
     
-    # --- 4. Criar a coluna 'hora' (com a correção 23:59) ---
-    # Esta coluna é o RÓTULO da hora fim, que não pode ser '00:00'
+    # Substitui '00:00' por '23:59' (APENAS na coluna 'hora')
+    df_final['hora'] = hora_fim_str.replace('00:00', '23:59')
     
-    # Começamos com a hora de fim real (ex: '10:15' ou '00:00')
-    df_final['hora'] = hora_fim_str
-    
-    # Substituímos '00:00' por '23:59' (APENAS nesta coluna)
-    df_final['hora'] = df_final['hora'].replace('00:00', '23:59')
-    
-    # --- 5. Limpeza Final ---
     colunas_a_remover = ['Data e Hora', 'datetime']
     colunas_dados = [col for col in df_final.columns if col not in colunas_a_remover]
     
@@ -109,9 +104,6 @@ if __name__ == "__main__":
     DATA_INICIO = f"{ano_atual}-01-01"
     DATA_FIM = hoje.strftime('%Y-%m-%d')
     
-    # Para testar o dia 11/11/2025
-    # DATA_FIM = "2025-11-11" 
-    
     df_ren_bruto = buscar_dados_ren(DATA_INICIO, DATA_FIM)
     
     if df_ren_bruto is not None:
@@ -120,6 +112,8 @@ if __name__ == "__main__":
         
         if df_producao_formatado is not None:
             try:
+                # NOTA: Verifiquei o seu link. O ficheiro está em /data/
+                # O script deve guardar no sítio certo.
                 df_producao_formatado.to_csv(
                     NOME_FICHEIRO_SAIDA, 
                     index=False, 
