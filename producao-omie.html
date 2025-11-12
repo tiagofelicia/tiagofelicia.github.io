@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Repartição da Produção e Preços OMIE | Tiago Felícia</title>
-    <meta name="description" content="Repartição da Produção e preços do mercado de eletricidade (OMIE) para Portugal num dia selecionado." />    
+    <title>Repartição da Produção de Eletricidade e Preços OMIE | Tiago Felícia</title>
+    <meta name="description" content="Repartição da Produção de Eletricidade e preços do mercado de eletricidade (OMIE) em comparação, para Portugal num dia selecionado." />    
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -91,16 +91,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 1. VERIFICAÇÃO DE ELEMENTOS HTML ---
     const seletorData = document.getElementById('seletor-data');
-    const dataTituloPainel = document.getElementById('data-titulo-painel');
     const loadingIndicator = document.getElementById('loading-indicator');
     const graficoContainer = document.getElementById('grafico-container');
 
-    if (!seletorData || !dataTituloPainel || !loadingIndicator || !graficoContainer) {
-        console.error("ERRO CRÍTICO: Um ou mais IDs HTML necessários não foram encontrados.");
+    if (!seletorData || !loadingIndicator || !graficoContainer) {
+        console.error("ERRO CRÍTICO: IDs 'seletor-data', 'loading-indicator' ou 'grafico-container' não encontrados.");
         return; 
     }
-    // --- FIM DA VERIFICAÇÃO ---
-    
+    // --- FIM DA CORREÇÃO ---
+
+
     // --- 2. CONFIGURAÇÕES ---
     const ANO_INICIO_HISTORICO = 2010;
     const URL_BASE = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/";
@@ -170,13 +170,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 6. FUNÇÃO PRINCIPAL (ATUALIZAR DASHBOARD) ---
     async function atualizarDashboard(dataSelecionada) {
+        
         const dataFormatadaCSV = formatarDataParaCSV(dataSelecionada);
         if (!dataFormatadaCSV) return;
 
-        dataTituloPainel.textContent = dataFormatadaCSV;
+        const dataTituloSpan = document.getElementById('data-titulo-painel');
+        if (!dataTituloSpan) {
+            console.error("ERRO: 'data-titulo-painel' não encontrado em atualizarDashboard.");
+            return;
+        }
+        const tituloH2 = dataTituloSpan.parentElement;
+        
+        // 1. "Resetar" o título (remove o "até hh:mm" antigo)
+        tituloH2.innerHTML = `Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span>`;
+
+
         loadingIndicator.style.display = 'block';
 
         const anoSelecionado = parseInt(dataSelecionada.substring(0, 4));
+
+        const agoraLisboa = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+        const hojeFormatado = agoraLisboa.toLocaleDateString('en-CA');
+        const isHoje = (dataSelecionada === hojeFormatado);
 
         let fonteDadosOmie, fonteDadosProducao;
 
@@ -217,18 +232,18 @@ document.addEventListener('DOMContentLoaded', function() {
             dadosOmieDoDia.forEach(reg => dadosConjugados.push(reg));
         }
 
-        atualizarGrafico(dadosConjugados, dataFormatadaCSV);
+        // --- Passar o elemento H2 para a função ---
+        atualizarGrafico(dadosConjugados, dataFormatadaCSV, tituloH2);
         loadingIndicator.style.display = 'none';
     }
 
 
-    // --- 7. O GRÁFICO (HIGHCHARTS) ---
-    function atualizarGrafico(dadosConjugados, dataTitulo) {
+// --- 7. O GRÁFICO (HIGHCHARTS) ---
+    function atualizarGrafico(dadosConjugados, dataTitulo, tituloH2) {
         
-        // Lógica de corte baseada na BIOMASSA
         let firstNullIndex = dadosConjugados.findIndex(d => (parseFloat(d.Biomassa) || 0) === 0);
         if (firstNullIndex === -1) {
-            firstNullIndex = 96; // 96 significa dia completo (0-95 slots)
+            firstNullIndex = 96; 
         }
         console.log(`Corte de dados no índice: ${firstNullIndex} (baseado na Biomassa)`);
 
@@ -278,37 +293,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         
-        // ---  Calcular hhmm e formatar nome do ficheiro ---
-        
-        // 1. Calcular o 'hhmm' do limite
+        let tituloGrafico = `Repartição da Produção vs Preço OMIE para ${dataTitulo}`;
         let hhmmLimite;
+
         if (firstNullIndex >= 96) {
-            hhmmLimite = '2400'; // Dia completo
+            hhmmLimite = '2400';
         } else {
             const totalMinutos = firstNullIndex * 15;
             const horas = Math.floor(totalMinutos / 60);
             const minutos = totalMinutos % 60;
             
-            // Formatar com padding (ex: 9 -> 09, 0 -> 00)
             const hh = String(horas).padStart(2, '0');
             const mm = String(minutos).padStart(2, '0');
             hhmmLimite = hh + mm;
+            
+            const horaLimiteStr = hh + ':' + mm;
+            
+            tituloH2.innerHTML = `Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">${dataTitulo}</span> (até ${horaLimiteStr})`;
+            tituloGrafico = `Repartição da Produção vs Preço OMIE para ${dataTitulo} (até ${horaLimiteStr})`;
         }
 
-        // 2. Formatar a data (ex: "11/11/2025" -> "11112025")
-        const dataFormatadaFicheiro = dataTitulo.replace(/\//g, '');
-        
-        // 3. Criar o nome final
-        const nomeFicheiroBase = `Repartição Produção vs OMIE_${dataFormatadaFicheiro}_${hhmmLimite}`;
-        // --- FIM ---
+        const nomeFicheiroBase = `Repartição Produção vs OMIE_${dataTitulo.replace(/\//g, '')}_${hhmmLimite}`;
 
 
         try {
             Highcharts.chart('grafico-container', {
                 
                 chart: { type: 'area', zoomType: 'x', height: 800 },
-                title: { text: `Repartição da Produção vs Preço OMIE para ${dataTitulo}` },
+                title: { text: tituloGrafico },
                 subtitle: { text: 'Pode arrastar horizontalmente no gráfico para fazer zoom.' },
+
                 xAxis: { categories: categoriasX, labels: { rotation: -45, step: 4, align: 'right' } },
                 
                 yAxis: [
@@ -345,20 +359,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
 
-                // --- Nome do ficheiro ---
                 exporting: {
                     filename: nomeFicheiroBase,
                     csv: {
                         columnHeaderFormatter: function(item, key) {
-                            if (item) {
+
+                            if (item && item.name) {
                                 return item.name;
                             } else {
-                                return 'Intervalo';
+                                // Senão, é a coluna da categoria (Eixo X)
+                                return 'Hora';
                             }
                         }
                     }
                 },
-                // --- FIM ---
 
                 plotOptions: { 
                     area: { stacking: 'normal', lineColor: '#666666', lineWidth: 1, marker: { enabled: false }, connectNulls: false },
@@ -381,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         name: 'Preço OMIE (PT)', 
                         type: 'line', yAxis: 1, 
                         color: '#FF0000',
-                        lineWidth: 4, 
+                        lineWidth: 3, 
                         data: dadosConjugados.map((d, i) => paraNumeroOMIE(d.preco_pt, i)), 
                         zIndex: 5, marker: { enabled: false } 
                     }
