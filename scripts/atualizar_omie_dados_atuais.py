@@ -12,11 +12,11 @@ print("✅ Bibliotecas carregadas para [Atualizar omie dados atuais]")
 # ===================================================================
 # ---- CONFIGURAÇÕES ----
 # ===================================================================
-DATA_INICIO_ATUALIZACAO = pd.to_datetime("2025-10-01")
 FICHEIRO_CSV = "data/omie_dados_atuais.csv" # O ficheiro de output final
 FICHEIRO_MIBEL_CSV = "data/MIBEL_ano_atual_ACUM.csv" # O ficheiro de input
 
-print(f"ℹ️ Data de início da atualização definida para: {DATA_INICIO_ATUALIZACAO.date()}")
+print(f"ℹ️ Fonte de dados: '{FICHEIRO_MIBEL_CSV}'")
+print("⚠️ Dados OMIE e futuros")
 # ===================================================================
 
 # ===================================================================
@@ -179,7 +179,7 @@ def run_analysis_process():
         # PASSO 2: Leitura do Histórico OMIE
         # ========================================================
 
-        print(f"\n⏳ Passo 2: A ler o histórico OMIE pré-atualizado de '{FICHEIRO_MIBEL_CSV}'...")
+        print(f"\n⏳ Passo 2: A ler o histórico MIBEL/OMIE pré-atualizado de '{FICHEIRO_MIBEL_CSV}'...")
         
         try:
             # Ler o CSV que a Fase 1 criou
