@@ -1,0 +1,91 @@
+# Nome descritivo do workflow
+name: Atualização Diária Completa (Fase 1 e 2)
+
+on:
+  # Agenda a execução automática
+  schedule:
+    # === GRUPO 1: Manhã (Todos os dias) ===
+    # Horário VERÃO (WEST=UTC+1) -> 11:40, 11:55, 12:10 (Local)
+    #- cron: '40 10 * * *'
+    #- cron: '55 10 * * *'
+    #- cron: '10 11 * * *'
+    # Horário INVERNO (WET=UTC+0) -> 11:40, 11:55, 12:10 (Local)
+    - cron: '40 11 * * *'
+    - cron: '55 11 * * *'
+    - cron: '10 12 * * *'
+
+    # === GRUPO 2: Tarde (Seg-Sex) ===
+    # Horário VERÃO (WEST=UTC+1) -> 18:00, 18:15, 18:30 (Local)
+    #- cron: '00 17 * * 1-5'
+    #- cron: '15 17 * * 1-5'
+    #- cron: '30 17 * * 1-5'
+    # Horário INVERNO (WET=UTC+0) -> 18:00, 18:15, 18:30 (Local)
+    - cron: '00 18 * * 1-5'
+    - cron: '15 18 * * 1-5'
+    - cron: '30 18 * * 1-5'
+    
+  # Permite execução manual
+  workflow_dispatch:
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Necessário para fazer commit
+
+    steps:
+      # 1. Checkout do código
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      # 2. Configura Python
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 3. Instala dependências (todas as que os scripts precisam)
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas requests openpyxl numpy
+
+      # =========================================================
+      # 4. EXECUTAR FASE 1
+      # =========================================================
+      - name: Executar Fase 1 (atualizar_mibel_ano_atual_ACUM.py)
+        run: python scripts/atualizar_mibel_ano_atual_ACUM.py
+
+      # =========================================================
+      # 5. COMMIT FASE 1 (A Fonte de Dados)
+      # =========================================================
+      - name: Fazer commit do MIBEL_ano_atual_ACUM.csv
+        id: commit_fase1 # ID CRÍTICO para os passos seguintes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "BOT: Atualização (Fase 1) MIBEL_ano_atual_ACUM.csv"
+          file_pattern: data/MIBEL_ano_atual_ACUM.csv
+
+      # =========================================================
+      # 6. EXECUTAR FASE 2 (CONDICIONAL)
+      # =========================================================
+      - name: Executar Fase 2 - omie_dados_atuais
+        # SÓ CORRE SE O PASSO 'commit_fase1' DETETOU MUDANÇAS
+        if: steps.commit_fase1.outputs.changes_detected == 'true'
+        run: python scripts/atualizar_omie_dados_atuais.py
+
+      - name: Executar Fase 2 - precos-horarios_csv
+        if: steps.commit_fase1.outputs.changes_detected == 'true'
+        run: python scripts/atualizar_precos-horarios_csv.py
+
+      # =========================================================
+      # 7. COMMIT FASE 2 (Ficheiros Finais)
+      # =========================================================
+      - name: Fazer commit dos ficheiros da Fase 2 (CSVs)
+        # SÓ CORRE SE A FASE 1 DETETOU MUDANÇAS
+        if: steps.commit_fase1.outputs.changes_detected == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "BOT: Atualização (Fase 2) Ficheiros processados"
+          # Padrão que apanha todos os seus ficheiros de output
+          file_pattern: "data/omie_dados_atuais.csv data/precos-horarios.csv"
