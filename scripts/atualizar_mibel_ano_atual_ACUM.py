@@ -53,11 +53,10 @@ def tentar_extrair_dados_omie_diario(data_inicio, data_fim):
 
             r.raise_for_status()
 
-            # VERSÃO CORRIGIDA!!! (Bug V15.1)
             df = pd.read_csv(
                 io.BytesIO(r.content),
                 sep=';', skiprows=1, decimal=',', encoding='windows-1252',
-                header=None, usecols=[3,4,5],          # ← CORREÇÃO CRÍTICA
+                header=None, usecols=[3,4,5],
                 names=['Hora','Preco_PT','Preco_ES']
             )
 
@@ -110,6 +109,13 @@ def tentar_extrair_dados_live():
         fontes.append(df_acum)
         sub(f"[ACUM] OK ({len(df_acum)} registos)")
 
+        # --- Intervalo de datas do ACUM ---
+        try:
+            data_min = df_acum['Data'].min()
+            data_max = df_acum['Data'].max()
+            sub(f"[ACUM] Intervalo temporal: {data_min} → {data_max}")
+        except:
+            sub("[ACUM] Intervalo temporal: indisponível")
     except Exception as e:
         sub(f"[ACUM] ❌ Falhou ({e})")
 
