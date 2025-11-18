@@ -229,13 +229,31 @@ def run_update_historico():
     df_final = pd.concat(dfs, ignore_index=True)
     
     # ---- Normalização FINAL do DataFrame ----
+
+    # Hora numérica
     df_final['Hora'] = pd.to_numeric(df_final['Hora'], errors='coerce')
 
-    # Reordenar sempre as colunas no formato preferido
+    # Preços: converter strings com vírgulas para floats
+    df_final['Preco_PT'] = (
+        df_final['Preco_PT']
+        .astype(str)
+        .str.replace(',', '.', regex=False)
+    )
+    df_final['Preco_PT'] = pd.to_numeric(df_final['Preco_PT'], errors='coerce')
+
+    df_final['Preco_ES'] = (
+        df_final['Preco_ES']
+        .astype(str)
+        .str.replace(',', '.', regex=False)
+    )
+    df_final['Preco_ES'] = pd.to_numeric(df_final['Preco_ES'], errors='coerce')
+
+    # ORDEM das colunas
     df_final = df_final[['Data','Hora','Preco_PT','Preco_ES']]
 
     # Ordenação final
     df_final = df_final.sort_values(['Data','Hora']).drop_duplicates(['Data','Hora'])
+
 
     # ---- Backup ----
     try:
