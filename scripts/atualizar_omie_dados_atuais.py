@@ -206,7 +206,7 @@ def run_analysis_process():
         
         # 3a. Criar calendário base
         calendario_es = pd.DataFrame({
-            'Data': pd.date_range(start='2025-01-01', end='2026-12-31', freq='D')
+            'Data': pd.date_range(start='2025-01-01', end='2027-12-31', freq='D')
         })
         calendario_es['Ano'] = calendario_es['Data'].dt.year
         calendario_es['Mes'] = calendario_es['Data'].dt.month
@@ -256,21 +256,36 @@ def run_analysis_process():
 
         # 3h. Criar grelha quarto-horária (para datas futuras)
         print("   - A criar grelha quarto-horária futura...")
-        def num_quartos_dia(data):
-            """Calcula número de quartos horários considerando DST"""
+        
+        def num_quartos_dia(data_obj):
+            """
+            Calcula número de quartos horários considerando DST.
+            Usa a diferença entre 'Meia noite de hoje' e 'Meia noite de amanhã'
+            para garantir que apanha as 23h ou 25h nos dias de mudança de hora.
+            """
             tz_es = 'Europe/Madrid'
-            dt0 = pd.Timestamp(f"{data} 00:00:00", tz=tz_es)
-            # Ir para o dia seguinte e subtrair um segundo
-            dt_fim = pd.Timestamp(f"{data} 00:00:00", tz=tz_es) + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
-            horas = (dt_fim - dt0).total_seconds() / 3600
-            return int(round((horas + (1/3600)) * 4)) # +1 segundo para arredondar 23:59:59 para 24h
+            
+            # Garantir que estamos a usar apenas a data (sem horas misturadas)
+            dia_atual = data_obj.date() if hasattr(data_obj, 'date') else data_obj
+            dia_seguinte = dia_atual + pd.Timedelta(days=1)
+            
+            # Criar Timestamps "localizados" para as duas datas
+            dt0 = pd.Timestamp(f"{dia_atual} 00:00:00", tz=tz_es)
+            dt_next = pd.Timestamp(f"{dia_seguinte} 00:00:00", tz=tz_es)
+            
+            # A diferença exata em horas (pode ser 23, 24 ou 25)
+            horas = (dt_next - dt0).total_seconds() / 3600
+            
+            return int(round(horas * 4)) # Multiplica por 4 para ter quartos de hora
 
         ultima_data_historica = dados_combinados_qh['Data'].max()
-        datas_futuras = pd.date_range(start=ultima_data_historica + pd.Timedelta(days=1), end='2026-01-01', freq='D')
+        
+        # Até 2026-01-05
+        datas_futuras = pd.date_range(start=ultima_data_historica + pd.Timedelta(days=1), end='2026-01-05', freq='D')
 
         futuro_qh = []
         for data in datas_futuras:
-            n_quartos = num_quartos_dia(data.date())
+            n_quartos = num_quartos_dia(data)
             for hora in range(1, n_quartos + 1):
                 futuro_qh.append({'Data': data, 'Hora': hora})
         
@@ -320,8 +335,8 @@ def run_analysis_process():
         dados_finais_pt['Data'] = dados_finais_pt['datetime_pt'].dt.date
         dados_finais_pt['Hora'] = dados_finais_pt.groupby('Data').cumcount() + 1
 
-        # Selecionar apenas 2025 e 2026
-        dados_finais_pt = dados_finais_pt[dados_finais_pt['datetime_pt'].dt.year.isin([2025, 2026])].copy()
+        # Selecionar apenas 2025, 2026 e 2027
+        dados_finais_pt = dados_finais_pt[dados_finais_pt['datetime_pt'].dt.year.isin([2025, 2026, 2027])].copy()
 
         # Selecionar as colunas finais, MANTENDO o datetime_pt para o passo seguinte
         dados_finais_pt = dados_finais_pt[['Data', 'Hora', 'Preco_PT', 'Preco_ES', 'datetime_pt']].copy()
