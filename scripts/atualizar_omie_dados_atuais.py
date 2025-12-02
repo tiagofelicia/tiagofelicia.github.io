@@ -80,7 +80,7 @@ def extrair_dados_futuros_omip(product_code, data_relatorio_omip, ficheiro_omip_
         def formatar_descricao_futuro(row):
             cat, data, nome = row['Classificacao'], row['Data'], row['Nome']
             if cat == 'Dia': return data.strftime('%d/%m/%Y')
-            if cat == 'Semana': return f"Semana {data.isocalendar().week}, {data.year}"
+            if cat == 'Semana': return f"Semana {data.isocalendar().week}, {data.isocalendar().year}"
             if cat == 'Mês':
                 mes_abbr = re.search(r' M ([A-Za-z]{3})-', nome).group(1)
                 return f"{meses_pt.get(mes_abbr, mes_abbr)} {data.year}"
@@ -218,7 +218,7 @@ def run_analysis_process():
         dados_web_dia = dados_web[dados_web['Classificacao'] == 'Dia'][['Data', 'Preco']].rename(columns={'Preco': 'Preco_Dia'}).drop_duplicates(subset=['Data'])
         dados_web_semana = dados_web[dados_web['Classificacao'] == 'Semana'].copy()
         dados_web_semana['Semana'] = dados_web_semana['Data'].dt.isocalendar().week
-        dados_web_semana['Ano'] = dados_web_semana['Data'].dt.year
+        dados_web_semana['Ano'] = dados_web_semana['Data'].dt.isocalendar().year
         dados_web_semana = dados_web_semana[['Ano', 'Semana', 'Preco']].rename(columns={'Preco': 'Preco_Semana'}).drop_duplicates(subset=['Ano', 'Semana'])
         dados_web_mes = dados_web[dados_web['Classificacao'] == 'Mês'][['Data', 'Preco']].rename(columns={'Preco': 'Preco_Mes'}).drop_duplicates(subset=['Data'])
         dados_web_trimestre = dados_web[dados_web['Classificacao'] == 'Trimestre'][['Data', 'Preco']].rename(columns={'Preco': 'Preco_Trimestre'}).drop_duplicates(subset=['Data'])
