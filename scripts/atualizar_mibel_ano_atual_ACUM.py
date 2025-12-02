@@ -5,6 +5,10 @@ import re
 import io
 import shutil
 from datetime import datetime, timedelta
+import os
+
+# Detecta se o script está a correr dentro do GitHub Actions
+RUNNING_IN_GITHUB = "GITHUB_ACTIONS" in os.environ
 
 # ============================================================
 # CONFIGURAÇÕES
@@ -190,39 +194,70 @@ def run_update_historico():
     header("🚀 A iniciar atualização MIBEL")
     today = datetime.now().date()
 
-    # ---- LIVE ----
+    # ---- 1. Ler dados LIVE ----
     df_live, num_acum, df_ind = tentar_extrair_dados_live()
+    
+    # ---- 2. Ler histórico LOCAL (Sempre necessário) ----
+    df_local = ler_historico_local()
 
-    # ---- Base ----
+    # ---- 3. Definir a BASE ----
     if num_acum >= DIAS_MINIMOS_ACUM:
-        header("[PLANO A] ACUM válido — usar como base")
+        header("[PLANO A] ACUM válido — usar como base principal")
         df_base = df_live.copy()
         df_base['Data'] = pd.to_datetime(df_base['Data']).dt.date
+        
+        # Se tivermos dados LOCAIS que são mais recentes que o ACUM,
+        # temos de os preservar para não perder os dias "do meio" (o gap).
+        if not df_base.empty and not df_local.empty:
+            ultima_data_acum = df_base['Data'].max()
+            
+            # Filtrar dados locais que são POSTERIORES ao ACUM
+            df_gap_local = df_local[df_local['Data'] > ultima_data_acum].copy()
+            
+            if not df_gap_local.empty:
+                log(f"⚠️ A recuperar {len(df_gap_local)} registos do local (gap entre ACUM e Hoje)...")
+                log(f"   Dias recuperados: {df_gap_local['Data'].unique()}")
+                df_base = pd.concat([df_base, df_gap_local], ignore_index=True)
+        # -----------------------------
+        
     else:
         header(f"[PLANO B] ACUM insuficiente ({num_acum} dias)")
-        df_base = ler_historico_local()
+        if not df_local.empty:
+            df_base = df_local.copy()
+        else:
+            # Fallback se não houver local nem ACUM suficiente
+            df_base = df_live.copy() 
+            if not df_base.empty:
+                df_base['Data'] = pd.to_datetime(df_base['Data']).dt.date
 
     ultima = df_base['Data'].max() if not df_base.empty else today - timedelta(days=1)
-    log(f"Última data na base: {ultima}")
+    log(f"Última data na base consolidada: {ultima}")
 
-    # ---- Preencher buracos ----
+    # ---- 4. Preencher buracos antigos (se necessário) ----
     ind_date = df_ind['Data'].iloc[0] if not df_ind.empty else None
 
     if ind_date:
         log(f"INDICADORES disponível para: {ind_date}")
 
+    # Se o indicador for para amanhã (ex: hoje é 30, indicador é 01), 
+    # queremos garantir que temos até dia 30 preenchido.
     fim_buracos = ind_date - timedelta(days=1) if ind_date else today
 
     df_diarios = pd.DataFrame()
+    
+    # Só procuramos diários se houver um buraco entre a Base e o Indicador
     if ultima < fim_buracos:
         df_diarios = tentar_extrair_dados_omie_diario(ultima + timedelta(days=1), fim_buracos)
 
-    # ---- Adicionar INDICADORES ----
+    # ---- 5. Adicionar INDICADORES (apenas se for mais novo que a base) ----
     df_ind_to_add = pd.DataFrame()
-    if num_acum < DIAS_MINIMOS_ACUM and ind_date and ind_date > ultima:
+    # Adicionamos o indicador se ele for posterior à nossa base consolidada
+    if ind_date and ind_date > ultima:
         df_ind_to_add = df_ind.copy()
+    elif ind_date and ind_date <= ultima:
+        log(f"ℹ️ O dia dos INDICADORES ({ind_date}) já existe na base. Ignorado.")
 
-    # ---- Combinar tudo ----
+    # ---- 6. Combinar tudo ----
     header("[FINAL] A combinar e guardar")
     dfs = [df_base]
 
@@ -240,37 +275,38 @@ def run_update_historico():
     df_final['Hora'] = pd.to_numeric(df_final['Hora'], errors='coerce')
 
     # Preços: converter strings com vírgulas para floats
-    df_final['Preco_PT'] = (
-        df_final['Preco_PT']
-        .astype(str)
-        .str.replace(',', '.', regex=False)
-    )
+    # (Garantir que é string antes de replace para evitar erro em floats já convertidos)
+    df_final['Preco_PT'] = df_final['Preco_PT'].astype(str).str.replace(',', '.', regex=False)
     df_final['Preco_PT'] = pd.to_numeric(df_final['Preco_PT'], errors='coerce')
 
-    df_final['Preco_ES'] = (
-        df_final['Preco_ES']
-        .astype(str)
-        .str.replace(',', '.', regex=False)
-    )
+    df_final['Preco_ES'] = df_final['Preco_ES'].astype(str).str.replace(',', '.', regex=False)
     df_final['Preco_ES'] = pd.to_numeric(df_final['Preco_ES'], errors='coerce')
+
+    # Remover linhas com NaN críticos
+    df_final.dropna(subset=['Data', 'Hora', 'Preco_PT'], inplace=True)
 
     # ORDEM das colunas
     df_final = df_final[['Data','Hora','Preco_PT','Preco_ES']]
 
-    # Ordenação final
-    df_final = df_final.sort_values(['Data','Hora']).drop_duplicates(['Data','Hora'])
+    # Ordenação final e remoção de duplicados exatos
+    df_final = df_final.sort_values(['Data','Hora']).drop_duplicates(['Data','Hora'], keep='last')
 
+    # BACKUP INTELIGENTE
+    backup_path = FICHEIRO_MIBEL_CSV + BACKUP_SUFFIX
 
-    # ---- Backup ----
-    try:
-        shutil.copy(FICHEIRO_MIBEL_CSV, FICHEIRO_MIBEL_CSV + BACKUP_SUFFIX)
-        log("💾 Backup criado.")
-    except:
-        log("ℹ️ Sem backup (CSV ainda não existia).")
+    if not RUNNING_IN_GITHUB:
+        try:
+            shutil.copy(FICHEIRO_MIBEL_CSV, backup_path)
+            log(f"💾 Backup criado (local): {backup_path}")
+        except Exception as e:
+            log(f"⚠️ Falha ao criar backup local: {e}")
+    else:
+        log("ℹ️ Backup ignorado (GitHub Actions)")
 
     df_final.to_csv(FICHEIRO_MIBEL_CSV, index=False, encoding='utf-8-sig', float_format="%.2f")
 
     log(f"✅ Atualização concluída: {len(df_final)} registos")
+    log(f"   📅 Dados de: {df_final['Data'].min()} até {df_final['Data'].max()}")
     log("🏁 FIM")
 
 # ============================================================
