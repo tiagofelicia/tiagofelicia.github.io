@@ -217,28 +217,53 @@ def run_update_historico():
         # Se tivermos dados LOCAIS que são mais recentes que o ACUM,
         # temos de os preservar para não perder os dias "do meio" (o gap).
         if not df_base.empty and not df_local.empty:
-            ultima_data_acum = df_base['Data'].max()
             
-            # Filtrar dados locais que são POSTERIORES ao ACUM
+            # Para descobrir onde acaba o ACUM real, temos de ignorar 
+            # a data do Indicador se ela já estiver misturada no df_base.
+            if not df_ind.empty:
+                ind_date_val = df_ind['Data'].iloc[0]
+                # Filtra tudo o que for MENOR que a data do indicador para achar o max do ACUM
+                mask_acum = df_base['Data'] < ind_date_val
+                if mask_acum.any():
+                    ultima_data_acum = df_base.loc[mask_acum, 'Data'].max()
+                else:
+                    ultima_data_acum = df_base['Data'].max()
+            else:
+                ultima_data_acum = df_base['Data'].max()
+            # ---------------------
+
+            # Filtrar dados locais que são POSTERIORES ao ACUM real
             df_gap_local = df_local[df_local['Data'] > ultima_data_acum].copy()
             
             if not df_gap_local.empty:
                 log(f"⚠️ A recuperar {len(df_gap_local)} registos do local (gap entre ACUM e Hoje)...")
-                log(f"   Dias recuperados: {df_gap_local['Data'].unique()}")
+                dias_recup = sorted(df_gap_local['Data'].unique())
+                log(f"   Dias recuperados: {dias_recup}")
                 df_base = pd.concat([df_base, df_gap_local], ignore_index=True)
-        # -----------------------------
         
     else:
         header(f"[PLANO B] ACUM insuficiente ({num_acum} dias)")
         if not df_local.empty:
             df_base = df_local.copy()
         else:
-            # Fallback se não houver local nem ACUM suficiente
             df_base = df_live.copy() 
             if not df_base.empty:
                 df_base['Data'] = pd.to_datetime(df_base['Data']).dt.date
 
-    ultima = df_base['Data'].max() if not df_base.empty else today - timedelta(days=1)
+    # Para o passo seguinte (preencher buracos), 'ultima' deve ser a data contínua,
+    # ignorando o "salto" do indicador se existir um buraco antes dele.
+    if not df_base.empty:
+        if not df_ind.empty:
+            ind_date_val = df_ind['Data'].iloc[0]
+            # Se a base tem o indicador, mas queremos saber onde acaba o histórico contínuo
+            # Verificamos se há um buraco. Mas simplificando: usamos o max da base completa
+            # SE a recuperação do local funcionou bem.
+            ultima = df_base['Data'].max()
+        else:
+            ultima = df_base['Data'].max()
+    else:
+        ultima = today - timedelta(days=1)
+
     log(f"Última data na base consolidada: {ultima}")
 
     # ---- 4. Preencher buracos antigos (se necessário) ----
@@ -250,30 +275,36 @@ def run_update_historico():
         fim_buracos = ind_date - timedelta(days=1)
     else:
         # Se NÃO temos indicador, assumimos que queremos dados até amanhã 
-        # (para tentar apanhar o diário caso o indicador tenha falhado)
         fim_buracos = today + timedelta(days=1)
 
     df_diarios = pd.DataFrame()
     
-    # Só procuramos diários se houver um buraco entre a Base e o Alvo
-    if ultima < fim_buracos:
-        df_diarios = tentar_extrair_dados_omie_diario(ultima + timedelta(days=1), fim_buracos)
+    # Recalcular 'ultima_continua' ignorando o indicador para ver se falta algo no meio
+    ultima_continua = ultima
+    if ind_date and ultima >= ind_date:
+        # Tenta achar o maximo excluindo o indicador
+        mask = df_base['Data'] < ind_date
+        if mask.any():
+            ultima_continua = df_base.loc[mask, 'Data'].max()
+    
+    if ultima_continua < fim_buracos:
+        df_diarios = tentar_extrair_dados_omie_diario(ultima_continua + timedelta(days=1), fim_buracos)
 
     # ---- 5. Adicionar INDICADORES ----
     df_ind_to_add = pd.DataFrame()
     
     if ind_date:
         if ind_date > ultima:
-            # Caso 1: O indicador é NOVO (ainda não está na base)
+            # Caso 1: O indicador é NOVO
             df_ind_to_add = df_ind.copy()
             log(f"➕ A adicionar INDICADORES do dia {ind_date} (Novo)...")
             
         elif ind_date == ultima:
-            # Caso 2: O indicador JÁ LÁ ESTÁ (veio junto com o df_live no Plano A)
+            # Caso 2: O indicador JÁ LÁ ESTÁ 
             log(f"✅ O dia dos INDICADORES ({ind_date}) já foi integrado via Download Live.")
             
         else:
-            # Caso 3: O indicador é VELHO (ex: temos dia 5, indicador é dia 1)
+            # Caso 3: O indicador é VELHO
             log(f"ℹ️ O dia dos INDICADORES ({ind_date}) é antigo e desnecessário. Ignorado.")
 
     # ---- 6. Combinar tudo ----
@@ -293,8 +324,7 @@ def run_update_historico():
     # Hora numérica
     df_final['Hora'] = pd.to_numeric(df_final['Hora'], errors='coerce')
 
-    # Preços: converter strings com vírgulas para floats
-    # (Garantir que é string antes de replace para evitar erro em floats já convertidos)
+    # Preços
     df_final['Preco_PT'] = df_final['Preco_PT'].astype(str).str.replace(',', '.', regex=False)
     df_final['Preco_PT'] = pd.to_numeric(df_final['Preco_PT'], errors='coerce')
 
@@ -325,7 +355,8 @@ def run_update_historico():
     df_final.to_csv(FICHEIRO_MIBEL_CSV, index=False, encoding='utf-8-sig', float_format="%.2f")
 
     log(f"✅ Atualização concluída: {len(df_final)} registos")
-    log(f"   📅 Dados de: {df_final['Data'].min()} até {df_final['Data'].max()}")
+    if not df_final.empty:
+        log(f"   📅 Dados de: {df_final['Data'].min()} até {df_final['Data'].max()}")
     log("🏁 FIM")
 
 # ============================================================
