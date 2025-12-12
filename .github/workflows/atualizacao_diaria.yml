@@ -65,25 +65,21 @@ jobs:
           file_pattern: data/MIBEL_ano_atual_ACUM.csv
 
       # =========================================================
-      # 6. EXECUTAR FASE 2 (CONDICIONAL — Apenas se Fase 1 mudou algo)
+      # 6. EXECUTAR FASE 2 (SEMPRE - Independente da Fase 1)
       # =========================================================
       - name: Executar Fase 2 - omie_dados_atuais
-        # SÓ CORRE SE O PASSO 'commit_fase1' DETETOU MUDANÇAS
-        if: steps.commit_fase1.outputs.changes_detected == 'true'
         run: python scripts/atualizar_omie_dados_atuais.py
 
       - name: Executar Fase 2 - precos-horarios_csv
-        if: steps.commit_fase1.outputs.changes_detected == 'true'
         run: python scripts/atualizar_precos-horarios_csv.py
 
       # =========================================================
-      # 7. COMMIT FASE 2 (Ficheiros Finais - apenas se a Fase 1 mudou algo)
+      # 7. COMMIT FASE 2 (Ficheiros Finais)
       # =========================================================
       - name: Fazer commit dos ficheiros da Fase 2 (CSVs)
-        # SÓ CORRE SE A FASE 1 DETETOU MUDANÇAS
-        if: steps.commit_fase1.outputs.changes_detected == 'true'
+        # O 'git-auto-commit' só fará commit se estes ficheiros tiverem mudado.
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "BOT: Atualização (Fase 2) Ficheiros processados"
-          # Padrão que apanha todos os seus ficheiros de output
+          # Padrão que apanha os ficheiros de output da fase 2
           file_pattern: "data/omie_dados_atuais.csv data/precos-horarios.csv"
