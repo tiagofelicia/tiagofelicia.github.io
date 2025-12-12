@@ -147,10 +147,18 @@ def tentar_extrair_dados_live():
 
             dados.append([data_sessao, hora_seq, preco_pt, preco_es])
 
-        df_ind = pd.DataFrame(dados, columns=['Data','Hora','Preco_PT','Preco_ES'])
-        fontes.append(df_ind)
-        sub(f"[INDICADORES] OK, dia {data_sessao} ({len(df_ind)} registos)")
-
+        df_temp_ind = pd.DataFrame(dados, columns=['Data','Hora','Preco_PT','Preco_ES'])
+        
+        # --- VALIDAÇÃO ROBUSTA DE LINHAS ---
+        qtd_linhas = len(df_temp_ind)
+        if qtd_linhas in [92, 96, 100]:
+            df_ind = df_temp_ind
+            fontes.append(df_ind)
+            sub(f"[INDICADORES] OK, dia {data_sessao} ({qtd_linhas} registos)")
+        else:
+            sub(f"[INDICADORES] ⚠️ Ignorado: {qtd_linhas} registos (esperado 96/100/92).")
+            # df_ind continua vazio
+            
     except Exception as e:
         sub(f"[INDICADORES] ❌ Falhou ({e})")
 
@@ -238,24 +246,35 @@ def run_update_historico():
 
     if ind_date:
         log(f"INDICADORES disponível para: {ind_date}")
-
-    # Se o indicador for para amanhã (ex: hoje é 30, indicador é 01), 
-    # queremos garantir que temos até dia 30 preenchido.
-    fim_buracos = ind_date - timedelta(days=1) if ind_date else today
+        # Se temos indicador válido, o buraco fecha ontem
+        fim_buracos = ind_date - timedelta(days=1)
+    else:
+        # Se NÃO temos indicador, assumimos que queremos dados até amanhã 
+        # (para tentar apanhar o diário caso o indicador tenha falhado)
+        fim_buracos = today + timedelta(days=1)
 
     df_diarios = pd.DataFrame()
     
-    # Só procuramos diários se houver um buraco entre a Base e o Indicador
+    # Só procuramos diários se houver um buraco entre a Base e o Alvo
     if ultima < fim_buracos:
         df_diarios = tentar_extrair_dados_omie_diario(ultima + timedelta(days=1), fim_buracos)
 
-    # ---- 5. Adicionar INDICADORES (apenas se for mais novo que a base) ----
+    # ---- 5. Adicionar INDICADORES ----
     df_ind_to_add = pd.DataFrame()
-    # Adicionamos o indicador se ele for posterior à nossa base consolidada
-    if ind_date and ind_date > ultima:
-        df_ind_to_add = df_ind.copy()
-    elif ind_date and ind_date <= ultima:
-        log(f"ℹ️ O dia dos INDICADORES ({ind_date}) já existe na base. Ignorado.")
+    
+    if ind_date:
+        if ind_date > ultima:
+            # Caso 1: O indicador é NOVO (ainda não está na base)
+            df_ind_to_add = df_ind.copy()
+            log(f"➕ A adicionar INDICADORES do dia {ind_date} (Novo)...")
+            
+        elif ind_date == ultima:
+            # Caso 2: O indicador JÁ LÁ ESTÁ (veio junto com o df_live no Plano A)
+            log(f"✅ O dia dos INDICADORES ({ind_date}) já foi integrado via Download Live.")
+            
+        else:
+            # Caso 3: O indicador é VELHO (ex: temos dia 5, indicador é dia 1)
+            log(f"ℹ️ O dia dos INDICADORES ({ind_date}) é antigo e desnecessário. Ignorado.")
 
     # ---- 6. Combinar tudo ----
     header("[FINAL] A combinar e guardar")
