@@ -132,7 +132,7 @@ def gerar_tabelas_tarifarias(df_omie, ficheiro_config):
     resultados = []
     comercializadores = [
         "Alfa Power Index BTN", "Coopérnico Base", "Coopérnico GO", "EDP Indexada Horária",
-        "EZU Tarifa Coletiva", "Galp Plano Dinâmico", "G9 Smart Dynamic",
+        "EZU Tarifa Indexada", "Galp Plano Dinâmico", "G9 Smart Dynamic",
         "MeoEnergia Tarifa Variável", "Repsol Leve Sem Mais",
     ]
     ordem_ciclo = {
@@ -277,7 +277,7 @@ def calcular_preco_comercializador(nome_tarifario, omie_kwh, perdas, constantes_
     elif "EDP Indexada Horária" in nome_tarifario:
         return (omie_kwh * perdas * constantes_dict.get('EDP_H_K1', 1.0) + constantes_dict.get('EDP_H_K2', 0.0))
     
-    elif "EZU Tarifa Coletiva" in nome_tarifario:
+    elif "EZU Tarifa Indexada" in nome_tarifario:
         return (omie_kwh + constantes_dict.get('EZU_K', 0.0) + constantes_dict.get('EZU_CGS', 0.0)) * perdas + constantes_dict.get('Financiamento_TSE', 0.0)
         
     elif "Galp Plano Dinâmico" in nome_tarifario:
