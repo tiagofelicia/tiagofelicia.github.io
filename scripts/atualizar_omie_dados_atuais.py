@@ -206,7 +206,7 @@ def run_analysis_process():
         
         # 3a. Criar calendário base
         calendario_es = pd.DataFrame({
-            'Data': pd.date_range(start='2025-01-01', end='2027-12-31', freq='D')
+            'Data': pd.date_range(start='2026-01-01', end='2027-12-31', freq='D')
         })
         calendario_es['Ano'] = calendario_es['Data'].dt.year
         calendario_es['Mes'] = calendario_es['Data'].dt.month
@@ -280,8 +280,8 @@ def run_analysis_process():
 
         ultima_data_historica = dados_combinados_qh['Data'].max()
         
-        # Até 2026-01-05
-        datas_futuras = pd.date_range(start=ultima_data_historica + pd.Timedelta(days=1), end='2026-01-05', freq='D')
+        # Até 2027-01-01
+        datas_futuras = pd.date_range(start=ultima_data_historica + pd.Timedelta(days=1), end='2027-01-01', freq='D')
 
         futuro_qh = []
         for data in datas_futuras:
@@ -335,8 +335,8 @@ def run_analysis_process():
         dados_finais_pt['Data'] = dados_finais_pt['datetime_pt'].dt.date
         dados_finais_pt['Hora'] = dados_finais_pt.groupby('Data').cumcount() + 1
 
-        # Selecionar apenas 2025, 2026 e 2027
-        dados_finais_pt = dados_finais_pt[dados_finais_pt['datetime_pt'].dt.year.isin([2025, 2026, 2027])].copy()
+        # Selecionar apenas 2026 e 2027
+        dados_finais_pt = dados_finais_pt[dados_finais_pt['datetime_pt'].dt.year.isin([2026, 2027])].copy()
 
         # Selecionar as colunas finais, MANTENDO o datetime_pt para o passo seguinte
         dados_finais_pt = dados_finais_pt[['Data', 'Hora', 'Preco_PT', 'Preco_ES', 'datetime_pt']].copy()
