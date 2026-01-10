@@ -1,21 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Repartição da Produção de Eletricidade e Preços OMIE | Tiago Felícia</title>
-    <meta name="description" content="Repartição da Produção de Eletricidade e preços do mercado de eletricidade (OMIE) em comparação, para Portugal num dia selecionado." />    
+    
+    <title>Produção de Eletricidade vs Preço OMIE 2026 | Tiago Felícia</title>
+    <meta name="description" content="Veja a origem da eletricidade em Portugal (Renováveis, Gás, Importação) e compare com o preço de mercado (OMIE) hora a hora." />
+    
+    <link rel="canonical" href="https://www.tiagofelicia.pt/producao-omie.html" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="De onde vem a eletricidade agora? Produção vs Preço" />
+    <meta property="og:description" content="Gráfico interativo: Fontes de energia (Eólica, Solar, Hídrica) e o seu impacto no preço da luz." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/producao-omie.html" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
+    <meta property="og:locale" content="pt_PT" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
-    <link rel="stylesheet" href="style.css" />
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DataFeed",
+      "name": "Produção Eletricidade Portugal vs Preços OMIE",
+      "description": "Dados horários da geração de energia por tecnologia (Solar, Eólica, Hídrica, etc.) cruzados com o preço de mercado.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Tiago Felícia"
+      }
+    }
+    </script>
 
     <style>
         .grafico-wrapper {
@@ -34,7 +61,10 @@
 
         /* ===== REGRAS DE CSS ===== */
         .painel-header { text-align: center; margin-bottom: 20px; }
-        .painel-header h2 { margin: 0; font-size: 1.5em; }
+        
+        /* Ajuste para o novo H1 herdar a linha azul corretamente */
+        .painel-header h1 { margin: 0 0 20px 0; font-size: 1.5em; color: #2c3e50; }
+        
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
 
         .date-selector {
@@ -44,14 +74,32 @@
             font-weight: bold;
             margin-right: 10px;
         }
+        .link-section { text-align: center; margin: 30px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
 
     </style>
 </head>
 <body>
 
 <header>
+    <div class="header-content">
+        <div class="header-title-container">
+            <a href="index.html">
+                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo">
+            </a>
+            <div class="brand-name">Tiago Felícia</div>
+        </div>
+        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
+    </div>
 </header>
-<div id="menu-placeholder"></div>
+
+<div id="menu-placeholder">
+    <nav style="display:none;">
+        <a href="eletricidade-tiagofelicia.html">Eletricidade</a>
+        <a href="gas-natural-tiagofelicia.html">Gás</a>
+        <a href="autoconsumo-tiagofelicia.html">Solar</a>
+    </nav>
+</div>
 
 <main>
     <div class="painel-header" id="painel-header-main">
@@ -62,16 +110,17 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados históricos disponíveis desde 01/01/2010
         </p>
-        <h2>Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">--/--/----</span></h2>
+        <h1>Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
         </div>
 
     <div id="loading-indicator">A carregar dados...</div>
-    <div class="link-section"> <p>https://www.tiagofelicia.pt/producao-omie.html</p> </div>
-
+    
     <div class="grafico-wrapper">
         <div id="grafico-container"></div>
     </div>
+    
+    <div class="link-section"> <p>https://www.tiagofelicia.pt/producao-omie.html</p> </div>
 
 </main>
 
@@ -179,10 +228,11 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("ERRO: 'data-titulo-painel' não encontrado em atualizarDashboard.");
             return;
         }
-        const tituloH2 = dataTituloSpan.parentElement;
+        // Obtemos o pai (que agora é H1)
+        const tituloPrincipal = dataTituloSpan.parentElement;
         
         // 1. "Resetar" o título (remove o "até hh:mm" antigo)
-        tituloH2.innerHTML = `Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span>`;
+        tituloPrincipal.innerHTML = `Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span>`;
 
 
         loadingIndicator.style.display = 'block';
@@ -232,14 +282,14 @@ document.addEventListener('DOMContentLoaded', function() {
             dadosOmieDoDia.forEach(reg => dadosConjugados.push(reg));
         }
 
-        // --- Passar o elemento H2 para a função ---
-        atualizarGrafico(dadosConjugados, dataFormatadaCSV, tituloH2);
+        // --- Passar o elemento H1 para a função ---
+        atualizarGrafico(dadosConjugados, dataFormatadaCSV, tituloPrincipal);
         loadingIndicator.style.display = 'none';
     }
 
 
 // --- 7. O GRÁFICO (HIGHCHARTS) ---
-    function atualizarGrafico(dadosConjugados, dataTitulo, tituloH2) {
+    function atualizarGrafico(dadosConjugados, dataTitulo, tituloPrincipal) {
         
         let firstNullIndex = dadosConjugados.findIndex(d => (parseFloat(d.Biomassa) || 0) === 0);
         if (firstNullIndex === -1) {
@@ -309,7 +359,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const horaLimiteStr = hh + ':' + mm;
             
-            tituloH2.innerHTML = `Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">${dataTitulo}</span> (até ${horaLimiteStr})`;
+            // Atualiza o H1 com a hora limite se não for o dia todo
+            tituloPrincipal.innerHTML = `Repartição da Produção vs. Preços OMIE para <span id="data-titulo-painel">${dataTitulo}</span> (até ${horaLimiteStr})`;
             tituloGrafico = `Repartição da Produção vs Preço OMIE para ${dataTitulo} (até ${horaLimiteStr})`;
         }
 
@@ -487,9 +538,6 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('footer.html').then(response => response.text()).then(data => { document.getElementById('footer-placeholder').innerHTML = data; }).catch(error => console.error('Erro ao carregar o footer:', error));
 });
 </script>
-
-</body>
-</html>
 
 </body>
 </html>

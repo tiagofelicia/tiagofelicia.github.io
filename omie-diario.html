@@ -1,17 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Preços OMIE Diário - Mercado de Eletricidade em Portugal | Tiago Felícia</title>
-    <meta name="description" content="Consulte os preços diários e horários do mercado de eletricidade (OMIE) para Portugal. Selecione o dia e veja a média simples, bi-horária e tri-horária." />
+    
+    <title>Preços OMIE Diário 2026: Eletricidade Hora-a-Hora | Tiago Felícia</title>
+    <meta name="description" content="Consulte os preços diários e horários do mercado de eletricidade (OMIE) para Portugal. Consulte médias diárias, bi-horárias e tri-horárias atualizadas." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/omie-diario.html" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Preço da Eletricidade Hoje (OMIE Portugal)" />
+    <meta property="og:description" content="Veja o preço da luz para amanhã e os futuros. Gráficos e tabelas hora-a-hora." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/omie-diario.html" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
+    <meta property="og:locale" content="pt_PT" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
-    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
-    <link rel="stylesheet" href="style.css" />
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script>
@@ -21,9 +36,25 @@
       gtag('config', 'G-J4NWP00S4F');
     </script>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Dashboard OMIE Diário Portugal",
+      "url": "https://www.tiagofelicia.pt/omie-diario.html",
+      "description": "Ferramenta de visualização de preços do mercado de eletricidade (OMIE) e futuros (OMIP) para Portugal.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web browser",
+      "author": {
+        "@type": "Person",
+        "name": "Tiago Felícia"
+      }
+    }
+    </script>
+
     <style>
         .painel-header { text-align: center; margin-bottom: 20px; }
-        .painel-header h2 { margin: 0; font-size: 1.5em; }
+        .painel-header h1 { margin: 0 0 20px 0; font-size: 1.5em; color: #2c3e50; }
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
         .date-selector { margin-bottom: 20px; text-align: center; }
         .date-selector label { font-weight: bold; margin-right: 10px; }
@@ -81,10 +112,24 @@
 </head>
 <body>
 <header>
-    <div class="header-content"> <div class="header-title-container"> <a href="index.html"> <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo"> </a> <h1>Tiago Felícia</h1> </div> <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p> </div>
+    <div class="header-content">
+        <div class="header-title-container">
+            <a href="index.html">
+                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo">
+            </a>
+            <div class="brand-name">Tiago Felícia</div>
+        </div>
+        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
+    </div>
 </header>
 
-<div id="menu-placeholder"></div>
+<div id="menu-placeholder">
+    <nav style="display:none;">
+        <a href="eletricidade-tiagofelicia.html">Eletricidade</a>
+        <a href="gas-natural-tiagofelicia.html">Gás</a>
+        <a href="autoconsumo-tiagofelicia.html">Solar</a>
+    </nav>
+</div>
 
 <main>
     <div class="painel-header" id="painel-header-main">
@@ -92,7 +137,7 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados disponíveis desde 01/01/2010
         </p>
-        <h2>Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">--/--/----</span></h2>
+        <h1>Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
 
@@ -360,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const dataOMIE = dadosAtualizacao.Data_Valores_OMIE; const dataOMIP = dadosAtualizacao.Data_Valores_OMIP; const isUltimoDiaOMIE = (dataFormatadaCSV === dataOMIE); let dadosReaisDoDia; if (isUltimoDiaOMIE && anoSelecionado >= anoMinimoAtual && dadosDoDia.length > 4) { dadosReaisDoDia = dadosDoDia.slice(0, -4); } else { dadosReaisDoDia = dadosDoDia; }
 
         // Atualizar Título Principal
-        const tituloH2 = document.querySelector("#painel-header-main h2"); if (tituloH2) { tituloH2.innerHTML = `Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
+        const tituloH1 = document.querySelector("#painel-header-main h1"); if (tituloH1) { tituloH1.innerHTML = `Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
 
         // Cálculos PT
         const precosReaisPT = dadosReaisDoDia.map(d => d.preco_pt).filter(p => p !== null); document.getElementById('media-pt').innerHTML = formatarValor(calcularMedia(precosReaisPT)); document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.max(...precosReaisPT) : null); document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.min(...precosReaisPT) : null);

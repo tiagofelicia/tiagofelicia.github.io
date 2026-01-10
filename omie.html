@@ -1,24 +1,54 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Preços Históricos do OMIE | Tiago Felícia</title>
-    <meta name="description" content="Analise os preços médios e detalhados do mercado de eletricidade (OMIE) para Portugal e Espanha num período selecionado." />
+    
+    <title>Histórico de Preços OMIE (2010-2026) | Tiago Felícia</title>
+    <meta name="description" content="Analise o histórico de preços de eletricidade (OMIE) em Portugal e Espanha. Médias diárias, mensais e anuais desde 2010 até hoje." />
+    
+    <link rel="canonical" href="https://www.tiagofelicia.pt/omie.html" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Histórico de Preços da Eletricidade (OMIE)" />
+    <meta property="og:description" content="Base de dados completa de preços de energia desde 2010. Analise a evolução do mercado." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/omie.html" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
+    <meta property="og:locale" content="pt_PT" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
-    <link rel="stylesheet" href="style.css" />
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DataCatalog",
+      "name": "Histórico Preços OMIE Portugal",
+      "description": "Dados históricos de preços de eletricidade no mercado ibérico (MIBEL) para Portugal.",
+      "url": "https://www.tiagofelicia.pt/omie.html",
+      "keywords": "OMIE, Eletricidade, Portugal, Preços Históricos",
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia"
+      }
+    }
+    </script>
+
     <style>
         .painel-header { text-align: center; margin-bottom: 20px; }
-        .painel-header h2 { margin: 0; font-size: 1.5em; }
+        .painel-header h1 { margin: 0 0 20px 0; font-size: 1.5em; color: #2c3e50; }
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
         .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .date-selector-periodo label { font-weight: bold; }
@@ -73,10 +103,24 @@
 </head>
 <body>
 <header>
-    <div class="header-content"> <div class="header-title-container"> <a href="index.html"> <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo"> </a> <h1>Tiago Felícia</h1> </div> <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p> </div>
+    <div class="header-content"> 
+        <div class="header-title-container"> 
+            <a href="index.html"> 
+                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo"> 
+            </a> 
+            <div class="brand-name">Tiago Felícia</div> 
+        </div> 
+        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p> 
+    </div>
 </header>
 
-<div id="menu-placeholder"></div>
+<div id="menu-placeholder">
+    <nav style="display:none;">
+        <a href="eletricidade-tiagofelicia.html">Eletricidade</a>
+        <a href="gas-natural-tiagofelicia.html">Gás</a>
+        <a href="autoconsumo-tiagofelicia.html">Solar</a>
+    </nav>
+</div>
 
 <main>
     <div class="painel-header" id="painel-header-main">
@@ -88,7 +132,7 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados históricos disponíveis desde 01/01/2010
         </p>
-        <h2>Eletricidade - Preços médios OMIE para o período de <span id="data-inicio-titulo">--/--/----</span> a <span id="data-fim-titulo">--/--/----</span></h2>
+        <h1>Eletricidade - Preços médios OMIE para o período de <span id="data-inicio-titulo">--/--/----</span> a <span id="data-fim-titulo">--/--/----</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
 
@@ -355,9 +399,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let dadosReaisDoPeriodo = dadosDoPeriodo.filter(d => !(d.dia === dataOMIE && isDataFimUltimoDiaOMIE && d.preco_es === null));
 
         // Atualizar Título Principal
-        const tituloH2 = document.querySelector("#painel-header-main h2"); 
-        if (tituloH2) { 
-            tituloH2.innerHTML = `Eletricidade - Preços médios OMIE para o período de <span id="data-inicio-titulo">${dataInicioCSV}</span> a <span id="data-fim-titulo">${dataFimCSV}</span> ${isDataFimUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; 
+        const tituloH1 = document.querySelector("#painel-header-main h1"); 
+        if (tituloH1) { 
+            tituloH1.innerHTML = `Eletricidade - Preços médios OMIE para o período de <span id="data-inicio-titulo">${dataInicioCSV}</span> a <span id="data-fim-titulo">${dataFimCSV}</span> ${isDataFimUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; 
         }
 
         // Cálculos PT
