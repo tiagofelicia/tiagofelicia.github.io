@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>Preços OMIE Diário 2026: Eletricidade Hora-a-Hora | Tiago Felícia</title>
-    <meta name="description" content="Consulte os preços diários e horários do mercado de eletricidade (OMIE) para Portugal. Consulte médias diárias, bi-horárias e tri-horárias atualizadas." />
+    <title>Preços Mercado Diário (Day-Ahead) OMIE Spot 2026: Eletricidade Hora-a-Hora | Tiago Felícia</title>
+    <meta name="description" content="Consulte os preços diários e horários do Mercado Diário (Day-Ahead) de eletricidade (OMIE Spot) para Portugal. Consulte médias diárias, bi-horárias e tri-horárias atualizadas." />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/omie-diario.html" />
     
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Preço da Eletricidade Hoje (OMIE Portugal)" />
+    <meta property="og:title" content="Preço da Eletricidade Hoje (OMIE Spot Portugal)" />
     <meta property="og:description" content="Veja o preço da luz para amanhã e os futuros. Gráficos e tabelas hora-a-hora." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/omie-diario.html" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
@@ -40,9 +40,9 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "Dashboard OMIE Diário Portugal",
+      "name": "Dashboard Mercado Diário (Day-Ahead) OMIE Spot Portugal",
       "url": "https://www.tiagofelicia.pt/omie-diario.html",
-      "description": "Ferramenta de visualização de preços do mercado de eletricidade (OMIE) e futuros (OMIP) para Portugal.",
+      "description": "Ferramenta de visualização de preços do Mercado Diário (Day-Ahead) de eletricidade (OMIE Spot) e futuros (OMIP) para Portugal.",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Web browser",
       "author": {
@@ -137,7 +137,7 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados disponíveis desde 01/01/2010
         </p>
-        <h1>Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
+        <h1>Eletricidade - Preços médios Mercado Diário OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
 
@@ -165,12 +165,12 @@
     </div>
 
     <article class="content-support">
-        <h2>Compreender os Preços do OMIE Diário</h2>
+        <h2>Compreender os Preços do Mercado Diário (Day-Ahead) OMIE</h2>
 
             <details class="faq-item">
                 <summary><strong>O que é o OMIE e que preços são mostrados aqui?</strong></summary>
                 <div class="faq-content">
-                    <p>O <strong>OMIE (Operador do Mercado Ibérico de Energia)</strong> gere o mercado grossista diário e intradiário de eletricidade para Portugal e Espanha (MIBEL). Os preços resultam de leilões onde a energia é comprada e vendida para o dia seguinte.</p>
+                    <p>O <strong>OMIE (Operador do Mercado Ibérico de Energia)</strong> gere o mercado grossista diário e intradiário de eletricidade para Portugal e Espanha (MIBEL). Os preços resultam de leilões onde a energia é comprada e vendida para o dia seguinte (Day-Ahead).</p>
                     <p>Esta página mostra esses preços (€/MWh) para cada <strong>intervalo de 15 minutos (quarto-horário)</strong>, já corrigidos para a <strong>hora de Portugal Continental (PT)</strong>. Também são apresentados os preços originais para Espanha (ES) para comparação.</p>
                 </div>
             </details>
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const dataOMIE = dadosAtualizacao.Data_Valores_OMIE; const dataOMIP = dadosAtualizacao.Data_Valores_OMIP; const isUltimoDiaOMIE = (dataFormatadaCSV === dataOMIE); let dadosReaisDoDia; if (isUltimoDiaOMIE && anoSelecionado >= anoMinimoAtual && dadosDoDia.length > 4) { dadosReaisDoDia = dadosDoDia.slice(0, -4); } else { dadosReaisDoDia = dadosDoDia; }
 
         // Atualizar Título Principal
-        const tituloH1 = document.querySelector("#painel-header-main h1"); if (tituloH1) { tituloH1.innerHTML = `Eletricidade - Preços médios OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
+        const tituloH1 = document.querySelector("#painel-header-main h1"); if (tituloH1) { tituloH1.innerHTML = `Eletricidade - Preços médios Mercado Diário OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
 
         // Cálculos PT
         const precosReaisPT = dadosReaisDoDia.map(d => d.preco_pt).filter(p => p !== null); document.getElementById('media-pt').innerHTML = formatarValor(calcularMedia(precosReaisPT)); document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.max(...precosReaisPT) : null); document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPT.length > 0 ? Math.min(...precosReaisPT) : null);
