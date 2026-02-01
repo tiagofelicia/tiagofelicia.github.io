@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>Produção de Eletricidade vs Preços Mercado Diário (Day-Ahead) OMIE Spot 2026 | Tiago Felícia</title>
+    <title>Produção de Eletricidade Portugal vs Preços Mercado Diário (Day-Ahead) OMIE Spot 2026 | Tiago Felícia</title>
     <meta name="description" content="Veja a origem da eletricidade em Portugal (Renováveis, Gás, Importação) e compare com o preço de mercado (OMIE) hora a hora." />
     
     <link rel="canonical" href="https://www.tiagofelicia.pt/producao-omie.html" />
@@ -110,7 +110,7 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados históricos disponíveis desde 01/01/2010
         </p>
-        <h1>Repartição da Produção vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
+        <h1>Repartição da Produção em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
         </div>
 
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tituloPrincipal = dataTituloSpan.parentElement;
         
         // 1. "Resetar" o título (remove o "até hh:mm" antigo)
-        tituloPrincipal.innerHTML = `Repartição da Produção vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span>`;
+        tituloPrincipal.innerHTML = `Repartição da Produção em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span>`;
 
 
         loadingIndicator.style.display = 'block';
@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         
-        let tituloGrafico = `Repartição da Produção vs Preços Mercado Diário OMIE para ${dataTitulo}`;
+        let tituloGrafico = `Repartição da Produção em Portugal vs Preços Mercado Diário OMIE para ${dataTitulo}`;
         let hhmmLimite;
 
         if (firstNullIndex >= 96) {
@@ -360,8 +360,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const horaLimiteStr = hh + ':' + mm;
             
             // Atualiza o H1 com a hora limite se não for o dia todo
-            tituloPrincipal.innerHTML = `Repartição da Produção vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">${dataTitulo}</span> (até ${horaLimiteStr})`;
-            tituloGrafico = `Repartição da Produção vs Preços Mercado Diário OMIE para ${dataTitulo} (até ${horaLimiteStr})`;
+            tituloPrincipal.innerHTML = `Repartição da Produção em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">${dataTitulo}</span> (até ${horaLimiteStr})`;
+            tituloGrafico = `Repartição da Produção em Portugal vs Preços Mercado Diário OMIE para ${dataTitulo} (até ${horaLimiteStr})`;
         }
 
         const nomeFicheiroBase = `Repartição Produção vs OMIE Spot_${dataTitulo.replace(/\//g, '')}_${hhmmLimite}`;
