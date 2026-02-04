@@ -65,11 +65,16 @@ document.addEventListener('DOMContentLoaded', function () {
         function atualizaTarifario() {
             const dia = diaSelect.value;
             const tarifarios = Object.keys(dadosEstruturados[dia] || {});
+            const tarifarioSelecionadoIndex = tarifarioSelect.selectedIndex;
             tarifarioSelect.innerHTML = tarifarios.map(t => `<option value="${t}">${t}</option>`).join("");
 
-            // Selecionar o 2º tarifário (índice 1) se ele existir
+            // Selecionar o tarifário anterior ou o 2º tarifário (índice 1) se ele existir
             if (tarifarios.length > 1) {
-                tarifarioSelect.selectedIndex = 1;
+                if (tarifarioSelecionadoIndex >= 0 && tarifarioSelecionadoIndex < tarifarios.length) {
+                    tarifarioSelect.selectedIndex = tarifarioSelecionadoIndex;
+                } else {
+                    tarifarioSelect.selectedIndex = 1; // Seleciona o 2º tarifário por padrão
+                }
             }
 
             atualizaOpcao();
@@ -78,8 +83,13 @@ document.addEventListener('DOMContentLoaded', function () {
         function atualizaOpcao() {
             const dia = diaSelect.value;
             const tarifario = tarifarioSelect.value;
+            const opcaoSelecionadaIndex = opcaoSelect.selectedIndex;
             const opcoes = Object.keys(dadosEstruturados[dia]?.[tarifario] || {});
             opcaoSelect.innerHTML = opcoes.map(o => `<option value="${o}">${o}</option>`).join("");
+
+            if (opcaoSelecionadaIndex >= 0 && opcaoSelecionadaIndex < opcoes.length) {
+                opcaoSelect.selectedIndex = opcaoSelecionadaIndex;
+            }
             desenhaGrafico();
         }
         
