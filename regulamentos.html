@@ -21,6 +21,7 @@
     <link rel="shortcut icon" href="/images/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="manifest" href="/images/site.webmanifest" />
+    
     <link rel="stylesheet" href="style.css" />
     
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
@@ -52,6 +53,61 @@
     }
   }
   </script>
+
+    <style>
+        /* Contentor dos botões */
+        .tab-buttons {
+            overflow: hidden;
+            border-bottom: 3px solid #3498db;
+            background-color: #f1f1f1;
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            border-radius: 5px 5px 0 0;
+        }
+
+        /* Estilo dos botões */
+        .tab-buttons button {
+            background-color: #e0e0e0;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 15px 20px;
+            transition: 0.3s;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+            flex-grow: 1;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Hover e Ativo */
+        .tab-buttons button:hover { background-color: #dcdcdc; color: #2c3e50; }
+        .tab-buttons button.active { background-color: #3498db; color: white; }
+
+        /* Conteúdo das abas */
+        .tab-content {
+            display: none; /* Escondido por defeito */
+            padding: 25px;
+            border: 1px solid #ccc;
+            border-top: none;
+            background-color: #fff;
+            animation: fadeEffect 0.4s;
+        }
+        
+        /* Ajuste para títulos dentro das abas */
+        .tab-content h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+        @keyframes fadeEffect {
+            from {opacity: 0; transform: translateY(5px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        @media (max-width: 600px) {
+            .tab-buttons button { font-size: 14px; padding: 12px 10px; }
+        }
+    </style>
+    
 </head>
 <body>
 <header>
@@ -67,52 +123,101 @@
 </header>
 
 <div id="menu-placeholder">
-    <nav style="display:none;">
-        <a href="eletricidade-tiagofelicia.html">Eletricidade</a>
-        <a href="gas-natural-tiagofelicia.html">Gás</a>
-        <a href="autoconsumo-tiagofelicia.html">Solar</a>
-    </nav>
-</div>
+    </div>
 
 <main>
     <section class="content-section">
         <h1>Regulamentos do Setor Energético</h1>
       
         <p>O setor energético em Portugal é regido por um conjunto de regulamentos publicados pela ERSE (Entidade Reguladora dos Serviços Energéticos). Estes documentos estabelecem as regras para o funcionamento dos mercados, as relações comerciais entre os vários agentes e os direitos e deveres dos consumidores.</p>
-        <p>Esta página serve como um acesso rápido aos regulamentos mais importantes para os setores da eletricidade, gás natural e mobilidade elétrica.</p>
+        <p>Utilize as abas abaixo para consultar a legislação específica de cada setor:</p>
 
-        <h3 id="eletricidade">Regulamentos - Eletricidade</h3>
-        <ul>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/acesso-as-redes-e-as-interligacoes/" target="_blank" rel="noopener noreferrer">Regulamento do Acesso às Redes e às Interligações (RARI)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/apropriacao-indevida-de-energia/" target="_blank" rel="noopener noreferrer">Regulamento relativo à Apropriação Indevida de Energia (RAIE)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/autoconsumo/" target="_blank" rel="noopener noreferrer">Regulamento do Autoconsumo (RAC)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/operacao-das-redes/" target="_blank" rel="noopener noreferrer">Regulamento de Operação das Redes (ROR)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/qualidade-de-servico/" target="_blank" rel="noopener noreferrer">Regulamento da Qualidade de Serviço (RQS) dos setores elétrico e do gás</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/relacoes-comerciais/" target="_blank" rel="noopener noreferrer">Regulamento de Relações Comerciais (RRC)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/redes-inteligentes/" target="_blank" rel="noopener noreferrer">Regulamento dos Serviços das Redes Inteligentes de Distribuição de Energia Elétrica (RSRI)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/tarifario/" target="_blank" rel="noopener noreferrer">Regulamento Tarifário (RT)</a></li>
-        </ul>
+        <div class="tab-buttons">
+            <button class="tab-link" onclick="abrirTab(event, 'eletricidade')" id="btn-eletricidade">Eletricidade</button>
+            <button class="tab-link" onclick="abrirTab(event, 'gas')" id="btn-gas">Gás Natural</button>
+            <button class="tab-link" onclick="abrirTab(event, 'mobilidade')" id="btn-mobilidade">Mobilidade Elétrica</button>
+        </div>
 
-        <h3 id="gas">Regulamentos - Gás</h3>
-        <ul>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-gas/acesso-as-redes-as-infraestruturas-e-as-interligacoes/" target="_blank" rel="noopener noreferrer">Regulamento do Acesso às Redes, às Infraestruturas e às Interligações (RARII)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-gas/apropriacao-indevida-de-energia/" target="_blank" rel="noopener noreferrer">Regulamento relativo à Apropriação Indevida de Energia (RAIE)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-gas/operacao-das-infraestruturas/" target="_blank" rel="noopener noreferrer">Regulamento de Operação das Infraestruturas (ROI)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-gas/qualidade-de-servico/" target="_blank" rel="noopener noreferrer">Regulamento da Qualidade de Serviço (RQS) dos setores elétrico e do gás</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-gas/relacoes-comerciais/" target="_blank" rel="noopener noreferrer">Regulamento de Relações Comerciais (RRC)</a></li>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-gas/tarifario/" target="_blank" rel="noopener noreferrer">Regulamento Tarifário (RT)</a></li>
-        </ul>
-      
-        <h3 id="mobilidade">Regulamento - Mobilidade Elétrica</h3>
-        <ul>
-            <li><a href="https://www.erse.pt/atividade/regulamentos-mobilidade-eletrica/gestao-da-mobilidade-eletrica/" target="_blank" rel="noopener noreferrer">Regulamento da Mobilidade Elétrica (RME)</a></li>
-        </ul>
-    
-    </section>
+        <div id="eletricidade" class="tab-content">
+            <h3>Regulamentos - Eletricidade</h3>
+            <ul>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/acesso-as-redes-e-as-interligacoes/" target="_blank" rel="noopener noreferrer">Regulamento do Acesso às Redes e às Interligações (RARI)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/apropriacao-indevida-de-energia/" target="_blank" rel="noopener noreferrer">Regulamento relativo à Apropriação Indevida de Energia (RAIE)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/autoconsumo/" target="_blank" rel="noopener noreferrer">Regulamento do Autoconsumo (RAC)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/operacao-das-redes/" target="_blank" rel="noopener noreferrer">Regulamento de Operação das Redes (ROR)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/qualidade-de-servico/" target="_blank" rel="noopener noreferrer">Regulamento da Qualidade de Serviço (RQS)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/relacoes-comerciais/" target="_blank" rel="noopener noreferrer">Regulamento de Relações Comerciais (RRC)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/redes-inteligentes/" target="_blank" rel="noopener noreferrer">Regulamento dos Serviços das Redes Inteligentes (RSRI)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-eletricidade/tarifario/" target="_blank" rel="noopener noreferrer">Regulamento Tarifário (RT)</a></li>
+            </ul>
+        </div>
+
+        <div id="gas" class="tab-content">
+            <h3>Regulamentos - Gás</h3>
+            <ul>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-gas/acesso-as-redes-as-infraestruturas-e-as-interligacoes/" target="_blank" rel="noopener noreferrer">Regulamento do Acesso às Redes e Infraestruturas (RARII)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-gas/apropriacao-indevida-de-energia/" target="_blank" rel="noopener noreferrer">Regulamento relativo à Apropriação Indevida de Energia (RAIE)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-gas/operacao-das-infraestruturas/" target="_blank" rel="noopener noreferrer">Regulamento de Operação das Infraestruturas (ROI)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-gas/qualidade-de-servico/" target="_blank" rel="noopener noreferrer">Regulamento da Qualidade de Serviço (RQS)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-gas/relacoes-comerciais/" target="_blank" rel="noopener noreferrer">Regulamento de Relações Comerciais (RRC)</a></li>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-gas/tarifario/" target="_blank" rel="noopener noreferrer">Regulamento Tarifário (RT)</a></li>
+            </ul>
+        </div>
+
+        <div id="mobilidade" class="tab-content">
+            <h3>Regulamento - Mobilidade Elétrica</h3>
+            <ul>
+                <li><a href="https://www.erse.pt/atividade/regulamentos-mobilidade-eletrica/gestao-da-mobilidade-eletrica/" target="_blank" rel="noopener noreferrer">Regulamento da Mobilidade Elétrica (RME)</a></li>
+            </ul>
+        </div>
+        </section>
 </main>
 
 <div id="footer-placeholder"></div>
 
-  <script src="script.js"></script>
-  </body>
+<script>
+    function abrirTab(evt, nomeCategoria) {
+        var i, tabcontent, tablinks;
+
+        // Esconde todos os conteúdos
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Desativa todos os botões
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Mostra o conteúdo selecionado
+        document.getElementById(nomeCategoria).style.display = "block";
+        
+        // Ativa o botão correto
+        if (evt && evt.currentTarget) {
+            evt.currentTarget.className += " active";
+        } else {
+            var btn = document.getElementById("btn-" + nomeCategoria);
+            if(btn) btn.className += " active";
+        }
+    }
+
+    // Ao carregar a página, verifica se há #naURL
+    document.addEventListener("DOMContentLoaded", function() {
+        var hash = window.location.hash.substring(1); // Remove o '#'
+        
+        if (hash === "gas") {
+            abrirTab(null, 'gas');
+        } else if (hash === "mobilidade") {
+            abrirTab(null, 'mobilidade');
+        } else {
+            abrirTab(null, 'eletricidade'); // Padrão
+        }
+    });
+</script>
+
+<script src="script.js"></script>
+
+</body>
 </html>
