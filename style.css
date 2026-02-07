@@ -784,6 +784,7 @@ nav > ul > li:hover > .dropdown-content {
     color: #333;
     text-align: center;
     /* Remove a sombra do input em iOS */
+    appearance: none;
     -webkit-appearance: none; 
 }
 
@@ -798,9 +799,56 @@ nav > ul > li:hover > .dropdown-content {
     cursor: pointer;
     transition: background-color 0.3s;
     /* Remove a sombra do botão em iOS */
+    appearance: none;
     -webkit-appearance: none;
 }
 
 .referral-code-wrapper button:hover {
     background-color: #0056b3;
+}
+
+/* Estilo base para os cabeçalhos da tabela */
+#tabelaHoraria thead th {
+    position: relative;        /* Necessário para posicionar as setas */
+    cursor: pointer;           /* Mostra a mãozinha ao passar o rato */
+    user-select: none;         /* Impede seleção de texto ao clicar rápido */
+    padding-right: 25px;       /* Espaço extra à direita para não tapar o texto */
+    background-color: #f4f4f4; /* Cor de fundo suave */
+    transition: background-color 0.2s;
+}
+
+#tabelaHoraria thead th:hover {
+    background-color: #e2e2e2; /* Efeito hover */
+}
+
+/* DESENHAR AS SETAS (Estado neutro/inativo) */
+#tabelaHoraria thead th::after {
+    content: '▲\A▼';           /* Caracteres Unicode para setas + \A (nova linha) */
+    white-space: pre;          /* Permite que o \A funcione como enter */
+    font-size: 8px;            /* Tamanho pequenino */
+    line-height: 9px;          /* Altura da linha para ficarem juntas */
+    color: #ccc;               /* Cinzento claro (inativo) */
+    
+    /* Posicionamento absoluto à direita */
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%); /* Centraliza verticalmente */
+    text-align: center;
+}
+
+/* QUANDO ORDENADO ASCENDENTE (Seta para cima escura, baixo oculta) */
+#tabelaHoraria thead th.sort-asc::after {
+    content: '▲';              /* Mostra apenas a de cima */
+    color: #333;               /* Cor escura (ativo) */
+    font-size: 10px;           /* Ligeiramente maior */
+    white-space: normal;       /* Reset */
+}
+
+/* QUANDO ORDENADO DESCENDENTE (Seta para baixo escura, cima oculta) */
+#tabelaHoraria thead th.sort-desc::after {
+    content: '▼';              /* Mostra apenas a de baixo */
+    color: #333;               /* Cor escura (ativo) */
+    font-size: 10px;
+    white-space: normal;
 }
