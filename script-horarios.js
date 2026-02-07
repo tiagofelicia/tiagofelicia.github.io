@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const corpoTabela = document.querySelector("#tabelaHoraria tbody");
         corpoTabela.innerHTML = "";
 
-        // Função de cor baseada nos quartis estatísticos (igual ao gráfico)
+        // Função de cor baseada nos quartis estatísticos
         const obterCorDeFundo = (valor, quartis) => {
             if (valor === null || valor === undefined || isNaN(valor)) return 'white';
             
@@ -330,16 +330,18 @@ document.addEventListener('DOMContentLoaded', function () {
             tdHora.textContent = dado.hora;
             tr.appendChild(tdHora);
 
-            // Coluna OMIE
+            // Coluna OMIE (ALTERADO AQUI: .toFixed(2))
             const tdOmie = document.createElement('td');
-            tdOmie.textContent = dado.omie !== null ? dado.omie : "—";
+            // Se for null mostra traço, senão formata com 2 casas decimais
+            tdOmie.textContent = dado.omie !== null ? dado.omie.toFixed(2) : "—";
             tdOmie.style.backgroundColor = obterCorDeFundo(dado.omie, estadoTabela.quartisOmie);
             if (dado.omie < 0) tdOmie.style.color = 'red';
             tr.appendChild(tdOmie);
 
-            // Coluna Preço Médio
+            // Coluna Preço Médio (ALTERADO AQUI: .toFixed(4))
             const tdPreco = document.createElement('td');
-            tdPreco.textContent = dado.precoMedio !== null ? dado.precoMedio.toFixed(5) : "—";
+            // Se for null mostra traço, senão formata com 4 casas decimais
+            tdPreco.textContent = dado.precoMedio !== null ? dado.precoMedio.toFixed(4) : "—";
             tdPreco.style.backgroundColor = obterCorDeFundo(dado.precoMedio, estadoTabela.quartisPreco);
             if (dado.precoMedio < 0) tdPreco.style.color = 'red';
             tr.appendChild(tdPreco);
@@ -367,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Coluna Custo
             const tdCusto = document.createElement('td');
+            // Mantivemos o custo com 4 casas também para consistência
             tdCusto.textContent = dado.custo > 0 ? dado.custo.toFixed(4) : (dado.precoMedio !== null ? "0.0000" : "");
             tr.appendChild(tdCusto);
 
