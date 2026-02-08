@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- VARIÁVEIS GLOBAIS ---
     let dadosEstruturados = {};
     let dadosCSVGlobal = "";
+    let chartInstance = null; // Guardar referência ao gráfico
     
     // Estado da tabela
     let estadoTabela = {
@@ -147,6 +148,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const dados = dadosEstruturados[dia]?.[tarifario]?.[opcao];
         if (!dados) return;
 
+        // Destruir gráfico existente se houver
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
+
         // Atualiza a tabela se a checkbox estiver ativa
         if (document.getElementById("checkboxSimular").checked) {
             prepararDadosTabela(dia, tarifario, opcao);
@@ -199,8 +206,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        const chart = Highcharts.chart("container-chart", {
-            chart: { type: "column" },
+        chartInstance = Highcharts.chart("container-chart", {
+            chart: { 
+                type: "column",
+                marginTop: 30
+            },
             title: { text: `${tarifario} | ${opcao} | ${dia}` },
             xAxis: xAxisConfig,
             yAxis: { title: { text: "" }, labels: { formatter: function () { return `${this.value} €/kWh`; } } },
@@ -214,25 +224,71 @@ document.addEventListener('DOMContentLoaded', function () {
                 { name: "TAR", type: "line", data: dados.tar, color: "#B4C7E7", marker: { enabled: false }, visible: false },
                 { name: "OMIE*Perdas+TAR", type: "line", data: dados.omieTar, color: "#D3B5E9", marker: { enabled: false }, visible: false }
             ],
-            credits: { enabled: false }
+            credits: { enabled: false },
+            
+            // --- RESPONSIVIDADE COM HIGHCHARTS ---
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 600 // Telemóveis
+                    },
+                    chartOptions: {
+                        chart: {
+                            type: 'bar',  // Barras horizontais
+                            marginLeft: 65 // Espaço para as etiquetas das horas à esquerda
+                        },
+                        xAxis: {
+                            reversed: true, // 00:00 no topo
+                            labels: {
+                                rotation: 0,
+                                step: 4,      // Mostra apenas de hora em hora (00:00, 01:00...) para não atulhar
+                                style: {
+                                    fontSize: '11px'
+                                }
+                            },
+                            // Garante que desenha todas as grelhas, mesmo que não mostre o texto
+                            tickInterval: 1 
+                        },
+                        yAxis: {
+                            labels: {
+                                align: 'left',
+                                x: 0,
+                                y: -2
+                            },
+                            title: {
+                                text: '€/kWh',
+                                align: 'high'
+                            }
+                        },
+                        plotOptions: {
+                            series: {
+                                pointWidth: 15, // Largura fixa da barra para ficar "gordinha" e legível
+                                pointPadding: 0.1,
+                                groupPadding: 0
+                            }
+                        }
+                    }
+                }]
+            }
         });
 
+        // O resto do código (tooltip automático) mantém-se igual
         if (isHoje) {
             setTimeout(() => {
                 try {
                     if (qhIndex >= 0 && qhIndex < dados.categorias.length) {
-                        const seriesEnergia = chart.series.slice(0, 4);
+                        const seriesEnergia = chartInstance.series.slice(0, 4);
                         let targetPoint = null;
                         for (const serie of seriesEnergia) {
-                            const point = chart.series[serie.index].points[qhIndex];
+                            const point = chartInstance.series[serie.index].points[qhIndex];
                             if (point && point.y !== null) {
                                 targetPoint = point;
                                 break;
                             }
                         }
                         if (targetPoint) {
-                            chart.xAxis[0].drawCrosshair(null, targetPoint); 
-                            chart.tooltip.refresh(targetPoint);
+                            chartInstance.xAxis[0].drawCrosshair(null, targetPoint); 
+                            chartInstance.tooltip.refresh(targetPoint);
                         }
                     }
                 } catch (e) {
@@ -240,7 +296,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }, 0);
         }
-    }
+        
+        // --- FORÇAR REFLOW APÓS CRIAÇÃO ---
+        setTimeout(() => {
+            if (chartInstance) {
+                chartInstance.reflow();
+            }
+        }, 100);
+    };
+
+    // Event listener para resize que redesenha o gráfico
+    let resizeTimer;
+    let lastWidth = window.innerWidth;
+    
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            const currentWidth = window.innerWidth;
+            const wasDesktop = lastWidth > 600;
+            const isDesktop = currentWidth > 600;
+            
+            // Se mudou entre desktop e mobile, redesenhar
+            if (wasDesktop !== isDesktop) {
+                desenhaGrafico();
+            } else if (chartInstance) {
+                // Apenas reflow se manteve no mesmo modo
+                chartInstance.reflow();
+            }
+            
+            lastWidth = currentWidth;
+        }, 250);
+    });
 
     window.controlarTabela = function() {
         const checkbox = document.getElementById("checkboxSimular");
