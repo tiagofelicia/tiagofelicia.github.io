@@ -5292,9 +5292,11 @@
                                     } else if(nomeOriginal.includes("LUZiGÁS - Super Lig Index")) {
                                         precoBase = (omieSimples + getConst('Luzigas_K') + getConst('Luzigas_CGS')) * perdasAnual;
                                     } else if(nomeOriginal.includes("Ibelectra - Solução Família")) {
-                                        precoBase = (omieVal + getConst('Ibelectra_CS')) * perdasAnual + getConst('Ibelectra_K');
+                                        precoBase = (omieVal + getConst('Ibelectra_CS')) * getConst('Ibelectra_Perdas') + getConst('Ibelectra_K');
+                                    //  Anteriormente utilizava perdasAnual, mas parece que alterou.
+                                    //  precoBase = (omieVal + getConst('Ibelectra_CS')) * perdasAnual + getConst('Ibelectra_K');
                                     } else if(nomeOriginal.includes("Ibelectra - Solução Amigo")) {
-                                        precoBase = (omieVal + getConst('Ibelectra_CS')) * perdasAnual + getConst('Ibelectra_K_a');                
+                                        precoBase = (omieVal + getConst('Ibelectra_CS')) * getConst('Ibelectra_Perdas') + getConst('Ibelectra_K_a');                
                                     } else if(nomeOriginal.includes("G9 - Smart Index")) {
                                         precoBase = (omieVal * getConst('G9_FA') * perdasMensal) + getConst('G9_CGS') + getConst('G9_AC');
                                     } else if(nomeOriginal.includes("EDP - Eletricidade Indexada Média")) {
@@ -5899,8 +5901,8 @@
                             else if(nomeOriginal.includes("Endesa")) { precoBase = omieVal+getConst(`Endesa_A_${period==='F'?'FV':period}`); }
                             else if(nomeOriginal.includes("LUZiGÁS - Energy 8.8")) { precoBase=(omieSimples+getConst('Luzigas_8_8_K')+getConst('Luzigas_CGS'))*perdasAnual; }
                             else if(nomeOriginal.includes("LUZiGÁS - Super Lig Index")) { precoBase=(omieSimples+getConst('Luzigas_K')+getConst('Luzigas_CGS'))*perdasAnual; }
-                            else if(nomeOriginal.includes("Ibelectra - Solução Família")) { precoBase=(omieVal+getConst('Ibelectra_CS'))*perdasAnual+getConst('Ibelectra_K'); }
-                            else if(nomeOriginal.includes("Ibelectra - Solução Amigo")) { precoBase=(omieVal+getConst('Ibelectra_CS'))*perdasAnual+getConst('Ibelectra_K_a'); }
+                            else if(nomeOriginal.includes("Ibelectra - Solução Família")) { precoBase=(omieVal+getConst('Ibelectra_CS'))*getConst('Ibelectra_Perdas')+getConst('Ibelectra_K'); }
+                            else if(nomeOriginal.includes("Ibelectra - Solução Amigo")) { precoBase=(omieVal+getConst('Ibelectra_CS'))*getConst('Ibelectra_Perdas')+getConst('Ibelectra_K_a'); }
                             else if(nomeOriginal.includes("G9 - Smart Index")) { precoBase=(omieVal*getConst('G9_FA')*perdasMensal)+getConst('G9_CGS')+getConst('G9_AC'); }
                             else if(nomeOriginal.includes("EDP - Eletricidade Indexada Média")) { precoBase=omieVal*getConst('EDP_M_Perdas')*getConst('EDP_M_K1')+getConst('EDP_M_K2'); }
                             else { precoBase = omieVal + 0.02; }
