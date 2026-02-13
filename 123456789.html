@@ -1210,7 +1210,7 @@
                 <div class="quick-title">🕐 Como utiliza mais eletricidade?</div>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <div class="quick-option selected" onclick="selectUsagePattern('balanced')" id="usage-balanced">
-                        <input type="radio" name="usage" checked> Uso equilibrado ao longo do dia
+                        <input type="radio" name="usage" checked> Não adapto o consumo aos horários
                     </div>
                     <div class="quick-option" onclick="selectUsagePattern('night')" id="usage-night">
                         <input type="radio" name="usage"> Maior consumo à noite (após as 22h)
@@ -1447,11 +1447,17 @@
                 <div class="input-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="ocultar_edp_h" checked onchange="calcular()"> Ocultar EDP Horária
+                        <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
+                        onmouseenter="showTooltipNome(event, 'Ocultar EDP Horária', 'Este tarifário não é calculado por perfil. Quando contratado e a EDP não recebe os diagramas de carga da E-Redes, é aplicado o cálculo pelo EDP Média.')" 
+                        onmouseleave="hideTooltip()"></i>
                     </label>
                 </div>
                 <div class="input-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="quota_acp" checked onchange="calcular()"> Incluir Quota ACP
+                        <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
+                        onmouseenter="showTooltipNome(event, 'Incluir Quota ACP', 'Incluir o valor da quota do ACP (4,90 €/mês) no valor do tarifário da parceria GE/ACP.')" 
+                        onmouseleave="hideTooltip()"></i>
                     </label>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -1504,8 +1510,10 @@
 
             <div id="omie-panel" class="omie-box hidden">
                 <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:#9a3412; margin-bottom:6px;">
-                    <i class="fa-solid fa-chart-line"></i> Média OMIE / OMIP<span class="label-units">(€/MWh)</span>
-                </div>
+                    <i class="fa-solid fa-chart-line"></i> <span id="omie-label-titulo">Média OMIE / OMIP</span><span class="label-units">(€/MWh)</span>
+                    <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
+                    onmouseenter="showTooltipNome(event, 'Média OMIE / OMIP', 'Se escolher datas passadas, serão médias finais do OMIE. Se escolher datas futuras, serão médias dos futuros OMIP, que podem não concretizar-se no OMIE. Estas médias são atualizadas diariamente e são usadas para calcular os tarifários indexados.')" 
+                    onmouseleave="hideTooltip()"></i></label></div>
                 <div id="omie-display" style="font-size:0.85rem; margin-bottom:8px; font-family: 'Roboto Mono', monospace;"></div>
                 <div id="omie-inputs" class="omie-editable"></div>
                 <div style="font-size:0.7rem; color:var(--text-light); margin-top:4px;">*Edição manual fixa o valor para todo o cálculo.</div>
@@ -1562,7 +1570,7 @@
                     <div class="checkbox-group">
                         <label class="checkbox-label"><input type="checkbox" class="chk-tipo" value="Fixo" checked onchange="calcular()"> Fixo</label>
                         <label class="checkbox-label"><input type="checkbox" class="chk-tipo" value="Indexado Média" checked onchange="calcular()"> Indexado Média</label>
-                        <label class="checkbox-label"><input type="checkbox" class="chk-tipo" value="Indexado quarto-horário" checked onchange="calcular()"> Indexado QH/Dinâmico</label>
+                        <label class="checkbox-label"><input type="checkbox" class="chk-tipo" value="Indexado quarto-horário" checked onchange="calcular()"> Dinâmico/Indexado QH</label>
                     </div>
                 </div>
                 <div class="filter-item" style="flex: 2;">
@@ -1615,7 +1623,7 @@
             <!-- Tabela de Análise de Consumos (só aparece com ficheiros E-Redes) -->
             <div id="analise-consumos" style="display:none; margin-bottom:25px;">
                 <div style="cursor:pointer; padding:15px; background:#f0f9ff; border:1px solid #0ea5e9; border-radius:10px; display:flex; justify-content:space-between; align-items:center;" onclick="toggleAnalise()">
-                    <h5 style="margin:0; color:#0369a1; font-size:1rem;">
+                    <h5 style="margin:0; color:#0369a1; font-size:0.95rem;">
                         <i class="fa-solid fa-chart-pie"></i> Análise de Consumos e Médias OMIE (do(s) ficheiro(s))
                     </h5>
                     <i id="analise-icon" class="fa-solid fa-chevron-down" style="color:#0369a1;"></i>
@@ -1673,7 +1681,9 @@
                         <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
                             <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 4px;">Potência Máxima Registada</div>
                             <div id="potencia-maxima-display" style="font-size: 1.5rem; font-weight: 700; color: #0f172a;">-- kW</div>
-                            <div style="font-size: 0.75rem; color: #94a3b8;">(Médias de 15 min)</div>
+                            <div id="potencia-maxima-legenda" style="font-size: 0.75rem; color: #94a3b8;">
+                                (Médias de 15 min)
+                            </div>
                         </div>
                         <div style="background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
                             <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 4px;">Utilização da Potência</div>
@@ -1861,6 +1871,38 @@
         faqContainer.innerHTML = html;
     }
 
+    // === VERIFICAR SE DATAS INCLUEM VALORES OMIP ===
+    function verificarIncluiFuturosOMIP() {
+        const d1El = document.getElementById('d_inicio');
+        const d2El = document.getElementById('d_fim');
+        
+        if(!d1El || !d2El || !d1El.value || !d2El.value) return false;
+        
+        // Obter data de corte OMIE (última data com valores reais)
+        const dataCorteOMIE = getDataReferencia('Data_Valores_OMIE');
+        if(!dataCorteOMIE) return false;
+        
+        // Converter data final selecionada para Date
+        const d2Parts = d2El.value.split('-');
+        const d2Date = new Date(parseInt(d2Parts[0]), parseInt(d2Parts[1])-1, parseInt(d2Parts[2]));
+        
+        // Se data final é posterior à data de corte OMIE, inclui futuros OMIP
+        return d2Date > dataCorteOMIE;
+    }
+    
+    function atualizarLabelsOMIE() {
+        const incluiFuturos = verificarIncluiFuturosOMIP();
+        const labelTitulo = document.getElementById('omie-label-titulo');
+        
+        if(labelTitulo) {
+            if(incluiFuturos) {
+                labelTitulo.textContent = 'Média OMIE / OMIP (com Futuros)';
+            } else {
+                labelTitulo.textContent = 'Média OMIE (valor Final)';
+            }
+        }
+    }
+
         // === CONTROLE DE ABAS ===
         function switchTab(tabName) {
             const previousTab = CURRENT_TAB;
@@ -1902,11 +1944,11 @@
                     if (QUICK_PARAMS.cycle === 'simples') {
                         STATE_ABA2.consumos = { S: totalKwh, V: 0, F: 0, C: 0, P: 0 };
                     } else if (QUICK_PARAMS.cycle === 'bi') {
-                        const pctV = QUICK_PARAMS.usagePattern === 'night' ? 0.50 : 0.40;
+                        const pctV = QUICK_PARAMS.usagePattern === 'night' ? 0.60 : 0.40;
                         STATE_ABA2.consumos = { S: 0, V: Math.round(totalKwh * pctV), F: Math.round(totalKwh * (1-pctV)), C: 0, P: 0 };
                     } else if (QUICK_PARAMS.cycle === 'tri') {
-                        const pctV = QUICK_PARAMS.usagePattern === 'night' ? 0.45 : 0.35;
-                        const pctP = 0.20;
+                        const pctV = QUICK_PARAMS.usagePattern === 'night' ? 0.60 : 0.25;
+                        const pctP = 0.15;
                         const pctC = 1 - pctV - pctP;
                         STATE_ABA2.consumos = { S: 0, V: Math.round(totalKwh * pctV), F: 0, C: Math.round(totalKwh * pctC), P: Math.round(totalKwh * pctP) };
                     }
@@ -2476,11 +2518,11 @@
             if (QUICK_PARAMS.cycle === 'simples') {
                 document.getElementById('kwh_S').value = QUICK_PARAMS.kwh;
             } else if (QUICK_PARAMS.cycle === 'bi') {
-                document.getElementById('kwh_V').value = Math.round(QUICK_PARAMS.kwh * 0.4);
-                document.getElementById('kwh_F').value = Math.round(QUICK_PARAMS.kwh * 0.6);
+                document.getElementById('kwh_V').value = Math.round(QUICK_PARAMS.kwh * 0.6);
+                document.getElementById('kwh_F').value = Math.round(QUICK_PARAMS.kwh * 0.4);
             } else if (QUICK_PARAMS.cycle === 'tri') {
-                document.getElementById('kwh_V').value = Math.round(QUICK_PARAMS.kwh * 0.4);
-                document.getElementById('kwh_C').value = Math.round(QUICK_PARAMS.kwh * 0.45);
+                document.getElementById('kwh_V').value = Math.round(QUICK_PARAMS.kwh * 0.6);
+                document.getElementById('kwh_C').value = Math.round(QUICK_PARAMS.kwh * 0.25);
                 document.getElementById('kwh_P').value = Math.round(QUICK_PARAMS.kwh * 0.15);
             }
             
@@ -3121,6 +3163,20 @@
             document.getElementById('potencia-contratada-display').textContent = `${potContratada} kVA`;
             document.getElementById('potencia-maxima-display').innerHTML = `${potMaxima.toFixed(3)} kW<span style="font-size: 0.75rem; color: #94a3b8;">${notaTrifasico}</span>`;
             document.getElementById('potencia-utilizacao-display').textContent = `${percentagem.toFixed(1)} %`;
+            
+            // Atualizar legenda da potência máxima
+            const legendaElement = document.getElementById('potencia-maxima-legenda');
+            if(legendaElement) {
+                if(isTrifasico) {
+                    legendaElement.innerHTML = `(Médias de 15 min) (estimativa para 3 fases)
+                        <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
+                        onmouseenter="showTooltipNome(event, 'Instalação Trifásica', 'Dado que é uma instalação trifásica, a potência elétrica é distribuída por três fases, sendo o valor da potência máxima tomada a soma das três fases.')" 
+                        onmouseleave="hideTooltip()">
+                        </i>`;
+                } else {
+                    legendaElement.innerHTML = '(Médias de 15 min)';
+                }
+            }
             
             // Gerar recomendação
             let recomendacao = '';
@@ -4560,27 +4616,27 @@
             let html = '';
             
             if(c.includes("Simples")) {
-                html = `<div class="input-group"><label>Preço Simples <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_S" value="0.15" step="0.0001" oninput="calcular()"></div>`;
+                html = `<div class="input-group"><label>Preço Simples <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_S" value="0.1654" step="0.0001" oninput="calcular()"></div>`;
             } else if(c.includes("Bi")) {
-                html = `<div class="input-group"><label>Vazio <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_V" value="0.10" step="0.0001" oninput="calcular()"></div>
-                        <div class="input-group"><label>Fora Vazio <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_F" value="0.18" step="0.0001" oninput="calcular()"></div>`;
+                html = `<div class="input-group"><label>Vazio <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_V" value="0.1087" step="0.0001" oninput="calcular()"></div>
+                        <div class="input-group"><label>Fora Vazio <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_F" value="0.1988" step="0.0001" oninput="calcular()"></div>`;
             } else {
-                html = `<div class="input-group"><label>Vazio <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_V" value="0.10" step="0.0001" oninput="calcular()"></div>
-                        <div class="input-group"><label>Cheias <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_C" value="0.15" step="0.0001" oninput="calcular()"></div>
-                        <div class="input-group"><label>Ponta <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_P" value="0.25" step="0.0001" oninput="calcular()"></div>`;
+                html = `<div class="input-group"><label>Vazio <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_V" value="0.1087" step="0.0001" oninput="calcular()"></div>
+                        <div class="input-group"><label>Cheias <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_C" value="0.1690" step="0.0001" oninput="calcular()"></div>
+                        <div class="input-group"><label>Ponta <span class="label-units">(€/kWh)</span></label><input type="number" id="meu_P" value="0.2495" step="0.0001" oninput="calcular()"></div>`;
             }
-            html += `<div class="input-group"><label>Potência <span class="label-units">(€/dia)</span></label><input type="number" id="meu_pot" value="0.20" step="0.0001" oninput="calcular()"></div>
-                     <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="meu_tar_en_incl" checked onchange="calcular()"> TAR Energia incluída
+            html += `<div class="input-group"><label>Potência <span class="label-units">(€/dia)</span></label><input type="number" id="meu_pot" value="0.1917" step="0.0001" oninput="calcular()"></div>
+                     <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="meu_tar_en_incl" checked onchange="calcular()"> TAR incluída na Energia
                         <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
-                        onmouseenter="showTooltipNome(event, 'TAR na Energia', 'É muito importante saber se os valores têm ou não as TAR (Tarifas de Acesso às Redes). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Acesso às Redes na fatura em (€/kWh)')" 
+                        onmouseenter="showTooltipNome(event, 'TAR incluída na Energia', 'É muito importante saber se os valores têm ou não as TAR (Tarifas de Acesso às Redes). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Acesso às Redes na fatura em (€/kWh)')" 
                         onmouseleave="hideTooltip()"></i></label></div>
-                     <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="meu_tar_pot_incl" checked onchange="calcular()"> TAR Potência incluída
+                     <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="meu_tar_pot_incl" checked onchange="calcular()"> TAR incluída na Potência
                         <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
-                        onmouseenter="showTooltipNome(event, 'TAR na Potência', 'É muito importante saber se os valores têm ou não as TAR (Tarifas de Acesso às Redes). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Acesso às Redes na fatura em (€/dia)')" 
+                        onmouseenter="showTooltipNome(event, 'TAR incluída na Potência', 'É muito importante saber se os valores têm ou não as TAR (Tarifas de Acesso às Redes). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Acesso às Redes na fatura em (€/dia)')" 
                         onmouseleave="hideTooltip()"></i></label></div>
-                     <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="meu_tse_incl" checked onchange="calcular()"> TSE incluído
+                     <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="meu_tse_incl" checked onchange="calcular()"> Inclui Financiamento TSE
                         <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
-                        onmouseenter="showTooltipNome(event, 'Financiamento TSE', 'É importante saber se os valores têm ou não incluido o financiamento da Tarifa Social de Eletricidade (TSE). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Financiamento Tarifa Social na fatura em (€/kWh)')" 
+                        onmouseenter="showTooltipNome(event, 'Inclui Financiamento TSE', 'É importante saber se os valores têm ou não incluido o financiamento da Tarifa Social de Eletricidade (TSE). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Financiamento Tarifa Social na fatura em (€/kWh)')" 
                         onmouseleave="hideTooltip()"></i></label></div>
                      <div class="input-group"><label>Desc. Energia (%)
                         <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
@@ -4696,17 +4752,21 @@
                 <div class="input-group" style="margin-bottom: 4px;">
                     <label class="checkbox-label" style="font-size: 0.75rem;">
                         <input type="checkbox" id="pers_tar_energia" checked onchange="calcular()"> TAR incluída na Energia?
-                    </label>
-                </div>
+                        <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
+                        onmouseenter="showTooltipNome(event, 'TAR incluída na Energia?', 'É muito importante saber se os valores têm ou não as TAR (Tarifas de Acesso às Redes). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Acesso às Redes na fatura em (€/kWh)')" 
+                        onmouseleave="hideTooltip()"></i></label></div>
                 <div class="input-group" style="margin-bottom: 4px;">
                     <label class="checkbox-label" style="font-size: 0.75rem;">
                         <input type="checkbox" id="pers_tar_potencia" checked onchange="calcular()"> TAR incluída na Potência?
-                    </label>
-                </div>
+                        <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
+                        onmouseenter="showTooltipNome(event, 'TAR incluída na Potência', 'É muito importante saber se os valores têm ou não as TAR (Tarifas de Acesso às Redes). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Acesso às Redes na fatura em (€/dia)')" 
+                        onmouseleave="hideTooltip()"></i></label></div>
                 <div class="input-group" style="margin-bottom: 0;">
                     <label class="checkbox-label" style="font-size: 0.75rem;">
                         <input type="checkbox" id="pers_tse_incluido" checked onchange="calcular()"> Inclui Financiamento TSE?
-                    </label>
+                        <i class="fa-solid fa-circle-question" style="color: var(--text-light); cursor: help; margin-left: 4px;" 
+                        onmouseenter="showTooltipNome(event, 'Inclui Financiamento TSE', 'É importante saber se os valores têm ou não incluido o financiamento da Tarifa Social de Eletricidade (TSE). Alguns comercializadores separam na fatura, outros não. Verifique se há alguma referência a Financiamento Tarifa Social na fatura em (€/kWh)')" 
+                        onmouseleave="hideTooltip()"></i></label></div>
                 </div>
             </div>`;
             
@@ -5486,6 +5546,9 @@
                     gerarGraficoOMIEDiario();
                 }
             }
+            
+            // === ATUALIZAR LABELS OMIE PARA REFLETIR SE INCLUI FUTUROS ===
+            atualizarLabelsOMIE();
         }        
 
         function criarMeuTarifario(pot, ciclo, dias, kwh, totalKwh, tarEnBase, tarPotRegBase, tseVal, famNum, cavUser, iecVal, dgegUser, tarEnFinal, tarPotRegFinal) {
@@ -6388,7 +6451,17 @@
                 } else {
                     omieDetalhe = `Vazio: ${omieV.toFixed(2)} €/MWh, Cheias: ${omieC.toFixed(2)} €/MWh, Ponta: ${omieP.toFixed(2)} €/MWh`;
                 }
-                html += `<li style="margin-bottom:5px;"><b>OMIE ${!OMIE_MANUAL ? '(período selecionado)' : '(manual)'}:</b> ${omieDetalhe}</li>`;
+                
+                // Determinar se inclui valores OMIP (futuros)
+                let omieLabel = 'OMIE (Média Final)';
+                if(!OMIE_MANUAL) {
+                    const incluiFuturos = verificarIncluiFuturosOMIP();
+                    omieLabel = incluiFuturos ? 'OMIE / OMIP (Média com Futuros)' : 'OMIE (Média Final)';
+                } else {
+                    omieLabel = 'OMIE (manual)';
+                }
+                
+                html += `<li style="margin-bottom:5px;"><b>${omieLabel}:</b> ${omieDetalhe}</li>`;
                 
                 // Perfil de consumo
                 html += `<li style="margin-bottom:5px;"><b>Perfil de Consumo:</b> ${perfilTexto}</li>`;
@@ -7706,7 +7779,17 @@
                 addRL(`Segmento: ${segTexto}   |  Faturação: ${fat}   |  Pagamento: ${pag}`, `${pot} kVA em ${ciclo.replace('- Ciclo ','').replace('Bi-horário','Bi-Horário').replace('Tri-horário','Tri-Horário')}`);
                 addRL(`Consumos (${totalKwh.toFixed(0)} kWh Total):`, consumoText);
                 addRL('Período:', `De ${d1} a ${d2} (${dias} dias)`);
-                addRL(`OMIE  ${!OMIE_MANUAL ? '(Média com Futuros)' : '(Manual)'}:`, omieText);
+                
+                // Determinar label OMIE baseado se inclui futuros
+                let omieLabel = 'OMIE (Média Final)';
+                if(!OMIE_MANUAL) {
+                    const incluiFuturos = verificarIncluiFuturosOMIP();
+                    omieLabel = incluiFuturos ? 'OMIE / OMIP (Média com Futuros)' : 'OMIE (Média Final)';
+                } else {
+                    omieLabel = 'OMIE (Manual)';
+                }
+                addRL(`${omieLabel}:`, omieText);
+                
                 addRL('Perfil de Consumo:', perfilText);
                 if(famNum || tarSoc) {
                     let benef = [];
