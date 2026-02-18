@@ -108,6 +108,9 @@
         .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
          /* Estilo para Loading Indicator */
         #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
+        /* Badge de data para prints */
+        .data-badge-secao { font-size: 0.72em; color: #888; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+        .data-badge-wrapper { width: 95%; max-width: 1200px; margin: 0 auto 4px auto; text-align: right; }
     </style>
 </head>
 <body>
@@ -150,7 +153,7 @@
              <div class="card card-futuros"> <h3 class="card-title-futuros">Futuros Diários OMIP (PT)</h3> <ul> <li id="futuro-1-item" style="display: none;"> <span id="futuros-1-label"></span> <strong id="futuros-1-valor"></strong> </li> <li id="futuro-2-item" style="display: none;"> <span id="futuros-2-label"></span> <strong id="futuros-2-valor"></strong> </li> <li id="futuro-3-item" style="display: none;"> <span id="futuros-3-label"></span> <strong id="futuros-3-valor"></strong> </li> </ul> </div>
         </div>
         <div class="coluna">
-            <div class="card"> <h3 class="card-title-bd">Bi-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-diario-fora-vazio">--,-- €</span></div> </div>
+            <div class="card"> <h3 class="card-title-bd" style="display:flex; justify-content:space-between; align-items:center;"><span style="visibility:hidden;">📅 --/--/----</span>Bi-horário Diário<span class="data-badge-secao" id="badge-data-cards" style="font-size:0.75em; background:rgba(255,255,255,0.5); border-color:rgba(0,0,0,0.15);">📅 --/--/----</span></h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-diario-fora-vazio">--,-- €</span></div> </div>
              <div class="card"> <h3 class="card-title-bs">Bi-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-semanal-fora-vazio">--,-- €</span></div> </div>
              <div class="card"> <h3 class="card-title-td">Tri-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-diario-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-diario-ponta">--,-- €</span></div> </div>
              <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
@@ -352,7 +355,17 @@ document.addEventListener('DOMContentLoaded', function() {
     async function atualizarDashboard(dataSelecionada) {
         const cardFuturos = document.querySelector('.card-futuros');
         if (cardFuturos) {
-            if (isDataNaSemanaAtual(dataSelecionada)) {
+            // Mostrar o card se a data selecionada estiver dentro dos últimos 7 dias ou no futuro.
+            // Isto corrige o bug de domingo: quando o OMIE publica a segunda-feira (day-ahead)
+            // ao domingo, a segunda pertence à "semana seguinte" e o card ficava escondido.
+            const hojeParaFuturos = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+            hojeParaFuturos.setHours(0, 0, 0, 0);
+            const seteDiasAtras = new Date(hojeParaFuturos);
+            seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
+            const [anoSel, mesSel, diaSel] = dataSelecionada.split('-').map(Number);
+            const dataSelObj = new Date(anoSel, mesSel - 1, diaSel);
+            dataSelObj.setHours(0, 0, 0, 0);
+            if (dataSelObj >= seteDiasAtras) {
                 cardFuturos.style.display = 'block';
             } else {
                 cardFuturos.style.display = 'none';
@@ -404,6 +417,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- Lógica de cálculo ---
         const dataOMIE = dadosAtualizacao.Data_Valores_OMIE; const dataOMIP = dadosAtualizacao.Data_Valores_OMIP; const isUltimoDiaOMIE = (dataFormatadaCSV === dataOMIE); let dadosReaisDoDia; if (isUltimoDiaOMIE && anoSelecionado >= anoMinimoAtual && dadosDoDia.length > 4) { dadosReaisDoDia = dadosDoDia.slice(0, -4); } else { dadosReaisDoDia = dadosDoDia; }
 
+        // Atualizar badges de data para prints
+        const badgeCards = document.getElementById('badge-data-cards');
+        if (badgeCards) badgeCards.textContent = '📅 ' + dataFormatadaCSV;
+
         // Atualizar Título Principal
         const tituloH1 = document.querySelector("#painel-header-main h1"); if (tituloH1) { tituloH1.innerHTML = `Eletricidade - Preços médios Mercado Diário OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; }
 
@@ -422,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const ciclos = { bd: {}, bs: {}, td: {}, ts: {} }; for (const ciclo in ciclos) { ciclos[ciclo] = dadosReaisDoDia.reduce((acc, row) => { const periodo = row[ciclo.toUpperCase()]; if (!periodo) return acc; if (!acc[periodo]) acc[periodo] = []; if(row.preco_pt !== null && !isNaN(row.preco_pt)) { acc[periodo].push(row.preco_pt); } return acc; }, {}); } document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['V'])); document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bd?.['F'])); document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['V'])); document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclos.bs?.['F'])); document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclos.td?.['V'])); document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclos.td?.['C'])); document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclos.td?.['P'])); document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['V'])); document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['C'])); document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclos.ts?.['P']));
 
         // Atualizar Tabela e Gráfico
-    atualizarTabela(dadosDoDia, dadosReaisDoDia, isHoje, horaAtualLisboa);
+    atualizarTabela(dadosDoDia, dadosReaisDoDia, isHoje, horaAtualLisboa, dataFormatadaCSV);
     atualizarGrafico(dadosDoDia, dadosReaisDoDia, dataFormatadaCSV, isUltimoDiaOMIE, isHoje, horaAtualLisboa, minutoAtualLisboa);
     }
 
@@ -435,9 +452,10 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const f of futurosDiariosPT) { if (!f.Descricao || typeof f.Descricao !== 'string' || !f.Descricao.includes('/')) continue; try { const dataF = formatarDataParaInput(f.Descricao); if (!dataF) continue; if (dataF > dataMaxReal && diasEnc < 3) { diasEnc++; const lbl = document.getElementById(`futuros-${diasEnc}-label`); const val = document.getElementById(`futuros-${diasEnc}-valor`); const itm = document.getElementById(`futuro-${diasEnc}-item`); if (lbl && val && itm) { const dO = new Date(dataF + "T12:00:00Z"); const dS = dO.toLocaleDateString('pt-PT', { weekday: 'short', timeZone: 'UTC' }); lbl.textContent = `Futuros para ${f.Descricao} - ${dS}`; val.innerHTML = formatarValor(f.Valor); itm.style.display = 'flex'; } } if (diasEnc >= 3) break; } catch(e){ console.error("Erro Futuros Próximos:", e, f); continue; } }
         for (let i = diasEnc + 1; i <= 3; i++) { const itm = document.getElementById(`futuro-${i}-item`); if(itm) itm.style.display = 'none'; }
     }
-    function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa) {
+    function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa, dataFormatadaCSV) {
         const container = document.getElementById('tabela-container'); if (!container) return;
-        let tableHTML = '<table class="tabela-precos">'; tableHTML += '<thead><tr><th rowspan="2">Hora PT</th><th colspan="2">Preço médio horário</th></tr><tr><th>Preço PT</th><th>Preço ES</th></tr></thead>'; tableHTML += '<tbody>'; 
+        let tableHTML = '<table class="tabela-precos">';
+        tableHTML += `<thead><tr><th><span class="data-badge-secao" id="badge-data-tabela" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3); color:#ccc; font-size:0.85em;">📅 ${dataFormatadaCSV || '--/--/----'}</span></th><th colspan="2">Preço médio horário</th></tr><tr><th>Hora PT</th><th>Preço PT</th><th>Preço ES</th></tr></thead>`; tableHTML += '<tbody>'; 
         
         const dadosHorarios = []; 
         let qh_idx = 0; 
