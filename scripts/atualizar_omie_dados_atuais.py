@@ -438,7 +438,68 @@ def run_analysis_process():
         }
         df_atualizacao = pd.DataFrame(dados_atualizacao)
 
-        # --- 5d. Escrever as tabelas no ficheiro CSV final ---
+        # --- 5d. Calcular variações face à sessão anterior ---
+        def carregar_futuros_anteriores(ficheiro, tabela_tag):
+            """Lê os futuros da sessão anterior do CSV existente."""
+            try:
+                with open(ficheiro, 'r', encoding='utf-8-sig') as f:
+                    conteudo = f.read()
+                partes = conteudo.split('\nTABELA_')
+                raw = next((p for p in partes if p.startswith(tabela_tag)), None)
+                if not raw:
+                    return {}
+                linhas = raw.strip().split('\n')
+                linhas.pop(0)  # tag
+                if not linhas:
+                    return {}
+                headers = [h.strip() for h in linhas.pop(0).split(',')]
+                resultado = {}
+                for linha in linhas:
+                    valores = linha.split(',')
+                    row = {headers[i]: valores[i].strip() for i in range(min(len(headers), len(valores)))}
+                    contrato = row.get('Contrato', '')
+                    valor_str = row.get('Valor', '')
+                    if contrato and valor_str:
+                        try:
+                            resultado[contrato] = float(valor_str)
+                        except ValueError:
+                            pass
+                return resultado
+            except FileNotFoundError:
+                return {}
+            except Exception as e:
+                print(f"   ⚠️ Aviso: não foi possível ler futuros anteriores: {e}")
+                return {}
+
+        def adicionar_variacao(df_novo, anteriores):
+            """Adiciona coluna Variacao comparando com sessão anterior."""
+            def calcular(row):
+                prev = anteriores.get(row['Contrato'])
+                if prev is None:
+                    return 'new'
+                diff = round(row['Valor'] - prev, 4)
+                if diff > 0:
+                    return 'up'
+                elif diff < 0:
+                    return 'down'
+                else:
+                    return 'equal'
+            df_novo = df_novo.copy()
+            df_novo['Variacao'] = df_novo.apply(calcular, axis=1)
+            return df_novo
+
+        print("\n⏳ A calcular variações face à sessão anterior...")
+        anteriores_pt = carregar_futuros_anteriores(FICHEIRO_CSV, 'FUTUROS_PT')
+        anteriores_es = carregar_futuros_anteriores(FICHEIRO_CSV, 'FUTUROS_ES')
+        print(f"   - {len(anteriores_pt)} contratos PT anteriores encontrados.")
+        print(f"   - {len(anteriores_es)} contratos ES anteriores encontrados.")
+
+        if not futuros_pt.empty:
+            futuros_pt = adicionar_variacao(futuros_pt, anteriores_pt)
+        if not futuros_es.empty:
+            futuros_es = adicionar_variacao(futuros_es, anteriores_es)
+
+        # --- 5e. Escrever as tabelas no ficheiro CSV final ---
         try:
             with open(FICHEIRO_CSV, 'w', encoding='utf-8-sig', newline='') as f:
                 df_principal.to_csv(f, index=False, decimal='.', float_format='%.2f')
