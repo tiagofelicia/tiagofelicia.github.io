@@ -489,15 +489,88 @@ def run_analysis_process():
             return df_novo
 
         print("\n⏳ A calcular variações face à sessão anterior...")
-        anteriores_pt = carregar_futuros_anteriores(FICHEIRO_CSV, 'FUTUROS_PT')
-        anteriores_es = carregar_futuros_anteriores(FICHEIRO_CSV, 'FUTUROS_ES')
-        print(f"   - {len(anteriores_pt)} contratos PT anteriores encontrados.")
-        print(f"   - {len(anteriores_es)} contratos ES anteriores encontrados.")
 
-        if not futuros_pt.empty:
-            futuros_pt = adicionar_variacao(futuros_pt, anteriores_pt)
-        if not futuros_es.empty:
-            futuros_es = adicionar_variacao(futuros_es, anteriores_es)
+        # Ler a data OMIP do CSV existente antes de o sobrescrever
+        def ler_data_omip_anterior(ficheiro):
+            try:
+                with open(ficheiro, 'r', encoding='utf-8-sig') as f:
+                    conteudo = f.read()
+                partes = conteudo.split('\nTABELA_')
+                raw = next((p for p in partes if p.startswith('ATUALIZACOES')), None)
+                if not raw:
+                    return None
+                linhas = raw.strip().split('\n')
+                linhas.pop(0)  # tag
+                if not linhas:
+                    return None
+                headers = [h.strip() for h in linhas.pop(0).split(',')]
+                for linha in linhas:
+                    valores = linha.split(',')
+                    row = {headers[i]: valores[i].strip() for i in range(min(len(headers), len(valores)))}
+                    if row.get('chave') == 'Data_Valores_OMIP':
+                        return row.get('valor')
+                return None
+            except FileNotFoundError:
+                return None
+            except Exception as e:
+                print(f"   ⚠️ Aviso: não foi possível ler data OMIP anterior: {e}")
+                return None
+
+        data_omip_anterior = ler_data_omip_anterior(FICHEIRO_CSV)
+        data_omip_nova = data_relatorio_omip.strftime('%d/%m/%Y')
+
+        if data_omip_anterior and data_omip_anterior == data_omip_nova:
+            print(f"   ℹ️ Data OMIP inalterada ({data_omip_nova}) — variação preservada do CSV anterior.")
+            # Preservar variação anterior em vez de recalcular
+            def preservar_variacao(df_novo, anteriores_variacao):
+                df_novo = df_novo.copy()
+                df_novo['Variacao'] = df_novo['Contrato'].map(anteriores_variacao).fillna('new')
+                return df_novo
+
+            def carregar_variacao_anterior(ficheiro, tabela_tag):
+                try:
+                    with open(ficheiro, 'r', encoding='utf-8-sig') as f:
+                        conteudo = f.read()
+                    partes = conteudo.split('\nTABELA_')
+                    raw = next((p for p in partes if p.startswith(tabela_tag)), None)
+                    if not raw:
+                        return {}
+                    linhas = raw.strip().split('\n')
+                    linhas.pop(0)
+                    if not linhas:
+                        return {}
+                    headers = [h.strip() for h in linhas.pop(0).split(',')]
+                    resultado = {}
+                    for linha in linhas:
+                        valores = linha.split(',')
+                        row = {headers[i]: valores[i].strip() for i in range(min(len(headers), len(valores)))}
+                        contrato = row.get('Contrato', '')
+                        variacao = row.get('Variacao', 'new')
+                        if contrato:
+                            resultado[contrato] = variacao
+                    return resultado
+                except Exception:
+                    return {}
+
+            var_ant_pt = carregar_variacao_anterior(FICHEIRO_CSV, 'FUTUROS_PT')
+            var_ant_es = carregar_variacao_anterior(FICHEIRO_CSV, 'FUTUROS_ES')
+            if not futuros_pt.empty:
+                futuros_pt = preservar_variacao(futuros_pt, var_ant_pt)
+            if not futuros_es.empty:
+                futuros_es = preservar_variacao(futuros_es, var_ant_es)
+        else:
+            if data_omip_anterior:
+                print(f"   ✅ Data OMIP avançou ({data_omip_anterior} → {data_omip_nova}) — a calcular variações.")
+            else:
+                print(f"   ℹ️ Sem CSV anterior — a marcar todos os contratos como novos.")
+            anteriores_pt = carregar_futuros_anteriores(FICHEIRO_CSV, 'FUTUROS_PT')
+            anteriores_es = carregar_futuros_anteriores(FICHEIRO_CSV, 'FUTUROS_ES')
+            print(f"   - {len(anteriores_pt)} contratos PT anteriores encontrados.")
+            print(f"   - {len(anteriores_es)} contratos ES anteriores encontrados.")
+            if not futuros_pt.empty:
+                futuros_pt = adicionar_variacao(futuros_pt, anteriores_pt)
+            if not futuros_es.empty:
+                futuros_es = adicionar_variacao(futuros_es, anteriores_es)
 
         # --- 5e. Escrever as tabelas no ficheiro CSV final ---
         try:
