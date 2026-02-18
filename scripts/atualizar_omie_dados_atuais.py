@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import requests
 import openpyxl
+import csv
 from datetime import datetime
 import io
 import re
@@ -452,10 +453,13 @@ def run_analysis_process():
                 linhas.pop(0)  # tag
                 if not linhas:
                     return {}
-                headers = [h.strip() for h in linhas.pop(0).split(',')]
+                headers = next(csv.reader([linhas.pop(0)]))
+                headers = [h.strip() for h in headers]
                 resultado = {}
                 for linha in linhas:
-                    valores = linha.split(',')
+                    if not linha.strip():
+                        continue
+                    valores = next(csv.reader([linha]))
                     row = {headers[i]: valores[i].strip() for i in range(min(len(headers), len(valores)))}
                     contrato = row.get('Contrato', '')
                     valor_str = row.get('Valor', '')
@@ -503,9 +507,12 @@ def run_analysis_process():
                 linhas.pop(0)  # tag
                 if not linhas:
                     return None
-                headers = [h.strip() for h in linhas.pop(0).split(',')]
+                headers = next(csv.reader([linhas.pop(0)]))
+                headers = [h.strip() for h in headers]
                 for linha in linhas:
-                    valores = linha.split(',')
+                    if not linha.strip():
+                        continue
+                    valores = next(csv.reader([linha]))
                     row = {headers[i]: valores[i].strip() for i in range(min(len(headers), len(valores)))}
                     if row.get('chave') == 'Data_Valores_OMIP':
                         return row.get('valor')
@@ -539,10 +546,13 @@ def run_analysis_process():
                     linhas.pop(0)
                     if not linhas:
                         return {}
-                    headers = [h.strip() for h in linhas.pop(0).split(',')]
+                    headers = next(csv.reader([linhas.pop(0)]))
+                    headers = [h.strip() for h in headers]
                     resultado = {}
                     for linha in linhas:
-                        valores = linha.split(',')
+                        if not linha.strip():
+                            continue
+                        valores = next(csv.reader([linha]))
                         row = {headers[i]: valores[i].strip() for i in range(min(len(headers), len(valores)))}
                         contrato = row.get('Contrato', '')
                         variacao = row.get('Variacao', 'new')
