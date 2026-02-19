@@ -348,8 +348,10 @@ document.addEventListener('DOMContentLoaded', function () {
                      });
                      if (row['Contrato']) { if (row['Contrato'].includes(' D ')) row.Tipo = 'Diários'; else if (row['Contrato'].includes(' Wk')) row.Tipo = 'Semanais'; else if (row['Contrato'].includes(' M ')) row.Tipo = 'Mensais'; else if (row['Contrato'].includes(' Q')) row.Tipo = 'Trimestrais'; else if (row['Contrato'].includes(' YR-')) row.Tipo = 'Anuais'; else row.Tipo = 'Outros'; }
                      else { row.Tipo = 'Inválido'; }
-                     // Normalizar Variacao
-                     if (!['up','down','equal','new'].includes(row['Variacao'])) row['Variacao'] = 'new';
+                     // Normalizar Variacao (formato: direção:diff, ex: up:+1.50)
+                     const validDirs = ['up','down','equal','new'];
+                     const varDir = (row['Variacao'] || '').split(':')[0];
+                     if (!validDirs.includes(varDir)) row['Variacao'] = 'new:0';
                      return row;
                  });
                  return data;
@@ -371,12 +373,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }, {});
 
         const omipLink = 'https://www.omip.pt/pt';
-        const variacaoHTML = {
-            'up':    `<a href="${omipLink}" target="_blank" rel="noopener" title="Subiu — ver OMIP" style="color:#28a745; font-size:1.1em; text-decoration:none;">▲</a>`,
-            'down':  `<a href="${omipLink}" target="_blank" rel="noopener" title="Desceu — ver OMIP" style="color:#dc3545; font-size:1.1em; text-decoration:none;">▼</a>`,
-            'equal': `<a href="${omipLink}" target="_blank" rel="noopener" title="Igual — ver OMIP" style="color:#b8860b; font-size:1.0em; text-decoration:none;">▬</a>`,
-            'new':   `<a href="${omipLink}" target="_blank" rel="noopener" title="Novo contrato — ver OMIP" style="color:#888; font-size:0.8em; text-decoration:none;">—</a>`
-        };
+
+        function renderVariacao(raw) {
+            const [dir, diff] = (raw || 'new:0').split(':');
+            const diffNum = parseFloat(diff) || 0;
+            const diffStr = diffNum !== 0 ? ` (${diffNum > 0 ? '+' : ''}${diffNum.toFixed(2)} €/MWh)` : '';
+
+            const configs = {
+                'up':    { icon: '▲', color: '#28a745', label: `Subiu${diffStr}` },
+                'down':  { icon: '▼', color: '#dc3545', label: `Desceu${diffStr}` },
+                'equal': { icon: '=', color: '#b8860b', label: 'Sem variação' },
+                'new':   { icon: '—', color: '#888',    label: 'Novo contrato' },
+            };
+            const c = configs[dir] || configs['new'];
+            return `<a href="${omipLink}" target="_blank" rel="noopener" title="${c.label} — ver OMIP" style="color:${c.color}; font-size:1.1em; text-decoration:none; font-weight:bold;">${c.icon}</a>`;
+        }
 
         tipos.forEach(tipo => {
             const fData = futurosAgrupados[tipo];
@@ -385,8 +396,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 fData.forEach(futuro => {
                     let descricao = futuro['Descricao'] || '';
                     let contrato = futuro['Contrato'] || '';
-                    const variacao = futuro['Variacao'] || 'new';
-                    const icone = variacaoHTML[variacao] || variacaoHTML['new'];
+                    const variacao = futuro['Variacao'] || 'new:0';
+                    const icone = renderVariacao(variacao);
 
                     if (tipo === 'Diários') {
                         const diaSemana = obterDiaPeloCodigo(contrato);
