@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let dadosEstruturados = {};
     let dadosCSVGlobal = "";
     let chartInstance = null; // Guardar referência ao gráfico
+    let constantes = {}; // Constantes carregadas da TABELA_CONSTANTES
     
     // Estado da tabela
     let estadoTabela = {
@@ -12,6 +13,27 @@ document.addEventListener('DOMContentLoaded', function () {
         colunaOrdenada: null, 
         direcaoOrdenacao: 1   
     };
+
+    // --- PARSE DAS CONSTANTES ---
+    function parseConstantes(csv) {
+        constantes = {};
+        const linhas = csv.split("\n");
+        const idxTag = linhas.findIndex(l => l.includes("TABELA_CONSTANTES"));
+        if (idxTag === -1) return;
+
+        // Linha seguinte é o cabeçalho — ignorar; depois vêm os dados
+        for (let i = idxTag + 2; i < linhas.length; i++) {
+            const linha = linhas[i];
+            if (!linha.trim()) break;
+            // Cada linha tem 18 vírgulas de offset: ,,,,,,,,,,,,,,,,,, chave, valor
+            const colunas = linha.split(",");
+            const chave = colunas[18]?.trim();
+            const valor = colunas[19]?.trim();
+            if (chave && valor !== undefined && valor !== "") {
+                constantes[chave] = parseFloat(valor);
+            }
+        }
+    }
 
     // --- PARSE DO CSV ---
     function parseCSV(csv) {
@@ -140,6 +162,159 @@ document.addEventListener('DOMContentLoaded', function () {
         return value < 0 ? `<span class="valor-negativo">${formatted}</span>` : formatted;
     }
 
+    // --- FÓRMULAS POR TARIFÁRIO ---
+    function mostrarFormula(tarifario) {
+        const container = document.getElementById('formula-container');
+        const details = document.getElementById('formula-details');
+        if (!container || !details) return;
+
+        // Helper: lê constante do objeto global, formata com 4 casas decimais + unidade
+        const c = (key, unit = '€/kWh', decimais = 4) => {
+            const val = constantes[key];
+            if (val === undefined || isNaN(val)) return `<em title="${key}">${key}</em>`;
+            return `<strong>${val.toFixed(decimais).replace('.', ',')} ${unit}</strong>`;
+        };
+
+        const formulas = {
+            "Alfa Power Index BTN": {
+                expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
+                    ["CGS", () => `Custos de gestão geral do sistema - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Alfa_CGS', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["Perdas", "Perdas da rede fixadas pela ERSE (variável)"],
+                    ["k", () => `Gastos operacionais Alfa Energia: ${c('Alfa_K', '€/kWh', 3)}`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                ]
+            },
+            "Coopérnico Base": {
+                expr: `P<sub>Energia</sub> = (OMIE + k) × (1 + FP) + (CS + CR) × (1 + FP) + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
+                    ["FP", "Perfil de Perda (variável)"],
+                    ["CS + CR", () => `Custos de Sistema + Regulação - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS_CR', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CS+CR real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                ]
+            },
+            "Coopérnico GO": {
+                expr: `P<sub>Energia</sub> = (OMIE + k) × (1 + FP) + (CS + CR) × (1 + FP) + GO + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
+                    ["GO", () => `Garantias de Origem: ${c('Coop_GO', '€/kWh', 3)}`],
+                    ["FP", "Perfil de Perda (variável)"],
+                    ["CS + CR", () => `Custos de Sistema + Regulação - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS_CR', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CS+CR real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                ]
+            },
+            "EDP Indexada Horária": {
+                expr: `P<sub>i</sub> = Σ<sub>i</sub> [(P<sub>OMIE i</sub> × (1 + Perdas<sub>i</sub>) × K<sub>1</sub> + K<sub>2</sub> + TAR<sub>Energia i</sub>]`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["Perdas<sub>i</sub>", "Coeficiente de ajustamento para perdas na rede (variável)"],
+                    ["K<sub>1</sub>", () => c('EDP_H_K1', '(adimensional)', 2)],
+                    ["K<sub>2</sub>", () => c('EDP_H_K2')],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                ]
+            },
+            "EZU Tarifa Indexada": {
+                expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>) + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
+                    ["CGS", () => `Custos de gestão geral do sistema - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('EZU_CGS', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["Perda<sub>ERSE</sub>", "Perdas da rede fixadas pela ERSE (variável)"],
+                    ["k", () => { const mwh = constantes['EZU_K'] !== undefined ? ` (${(constantes['EZU_K']*1000).toFixed(2).replace('.',',')} €/MWh)` : ''; return `Gastos operacionais EZU Energia: ${c('EZU_K')}${mwh}`; }],
+                    ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                ]
+            },
+            "G9 Smart Dynamic": {
+                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × F<sub>adeq</sub> × (1 + Perdas<sub>(15m)</sub>) + GGS + AC + TAR`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["F<sub>adeq</sub>", () => `Fator de adequação: ${c('G9_FA', '(adimensional)', 2)}`],
+                    ["Perdas", "Perdas nas redes de transporte e distribuição (variável)"],
+                    ["GGS", () => `Garantia de Gestão e Serviço: ${c('G9_CGS')}`],
+                    ["AC", () => `Ajuste Comercial: ${c('G9_AC')}`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                ]
+            },
+            "Galp Plano Dinâmico": {
+                expr: `Preço = ENERGIA<sub>GALP</sub> + TAR<sub>ENERGIA</sub><br>ENERGIA<sub>GALP</sub> = Σ[(PMi + Ci) × (1 + Li)]`,
+                legenda: [
+                    ["PMi", "Preço horário OMIE Portugal (€/kWh), vigente em cada 15 minutos"],
+                    ["Ci", () => `Componente de Comercializador (margem, desvios, garantias de origem, etc.): ${c('Galp_Ci')}`],
+                    ["Li", "Perdas em percentagem para cada 15 minutos, publicadas pela ERSE (percentual)"],
+                    ["TAR<sub>ENERGIA</sub>", "Valores para o termo variável divulgados pela ERSE"],
+                ]
+            },
+            "Iberdrola - Simples Indexado Dinâmico": {
+                expr: `Preço Energia <sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TSE + TAR`,
+                legenda: [
+                    ["POMIE<sub>P</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
+                    ["Perdas", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
+                    ["Q", () => `Custo de operação e gestão do sistema + componente de comercialização da Iberdrola: ${c('Iberdrola_Dinamico_Q', '€/kWh', 3)}`],
+                    ["Banda mFRR", () => `Sobrecusto associado ao leilão da Banda de Reserva de Restabelecimento de Frequência com Ativação Manual: ${c('Iberdrola_mFRR', '€/kWh', 5)}`],
+                    ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                ]
+            },
+            "MeoEnergia Tarifa Variável": {
+                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + K) × (1 + FP) + TAR`,
+                legenda: [
+                    ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
+                    ["K", () => `Inclui Gestão do sistema, desvios e margem: ${c('Meo_K')}`],
+                    ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                ]
+            },
+            "Plenitude - Tendência": {
+                expr: `(OMIE + CGS + GDOs) × Perdas + Fee + TAR`,
+                legenda: [
+                    ["OMIE", "Preço do mercado diário (OMIE)"],
+                    ["CGS", () => `Corresponde à soma dos custos de gestão do sistema da REN com os custos de desvio a pagar por todos os comercializadores de eletricidade - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Plenitude_CGS', '€/kWh', 5)}`],
+                    ["GDOs", () => `Custo das garantias de origem: ${c('Plenitude_GDOs', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["Perdas", "Perfil de perdas da rede de distribuição, com base no perfil de perdas regulado pela ERSE."],
+                    ["Fee", () => `Margem comercial da Plenitude, estabelecida para o preço indexado: ${c('Plenitude_Fee', '€/kWh', 3)}`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],                    
+                ]
+            },
+            "Repsol Leve Sem Mais": {
+                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS) + TAR`,
+                legenda: [
+                    ["P<sub>OMIE 15min</sub>", "Preço marginal no sistema Português por quarto de hora, publicado pelo OMIE (€/MWh)"],
+                    ["Perdas<sub>15min</sub>", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
+                    ["FA", () => `Fator de adequação: ${c('Repsol_FA', '(adimensional)', 2)}`],
+                    ["QTarifa", () => `Serviços Complementares, Encargos, Desvios e Margem Repsol: ${c('Repsol_Q_Tarifa', '€/kWh', 5)}`],
+                    ["FinTS", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                ]
+            },
+        };
+
+        const def = formulas[tarifario];
+        if (!def || !def.expr) {
+            details.style.display = 'none';
+            return;
+        }
+
+        const legendaHTML = def.legenda
+            .map(([sigla, desc]) => {
+                const texto = typeof desc === 'function' ? desc() : desc;
+                return `<span>${sigla}</span> — ${texto}`;
+            })
+            .join('<br>');
+
+        container.innerHTML = `
+            <div class="formula-expr">${def.expr}</div>
+            ${legendaHTML ? `<div class="formula-legenda">${legendaHTML}</div>` : ''}
+        `;
+        details.style.display = 'block';
+    }
+
     // --- DESENHO DO GRÁFICO ---
     window.desenhaGrafico = function() {
         const dia = document.getElementById("dropdownDia").value;
@@ -147,6 +322,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const opcao = document.getElementById("dropdownOpcao").value;
         const dados = dadosEstruturados[dia]?.[tarifario]?.[opcao];
         if (!dados) return;
+
+        mostrarFormula(tarifario);
 
         // Destruir gráfico existente se houver
         if (chartInstance) {
@@ -543,6 +720,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 dadosCSVGlobal = data;
                 parseCSV(data);
+                parseConstantes(data);
                 const agoraLisboa = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
                 const diaLisboa = String(agoraLisboa.getDate()).padStart(2, '0');
                 const mesLisboa = String(agoraLisboa.getMonth() + 1).padStart(2, '0');
