@@ -134,12 +134,16 @@ def gerar_tabelas_tarifarias(df_omie, ficheiro_config):
         "Alfa Power Index BTN", "Coopérnico Base", "Coopérnico GO", "EDP Indexada Horária",
         "EZU Tarifa Indexada", "Galp Plano Dinâmico", "G9 Smart Dynamic",
         "MeoEnergia Tarifa Variável", "Repsol Leve Sem Mais",
+        "Iberdrola - Simples Indexado Dinâmico", "Plenitude - Tendência",
     ]
     ordem_ciclo = {
         'Simples': 0, 'Bi-horário - Ciclo Diário': 1, 'Bi-horário - Ciclo Semanal': 2,
         'Tri-horário - Ciclo Diário': 3, 'Tri-horário - Ciclo Semanal': 4,
         'Tri-horário > 20.7 kVA - Ciclo Diário': 5, 'Tri-horário > 20.7 kVA - Ciclo Semanal': 6
     }
+
+    # Tarifários que só existem na opção Simples
+    so_simples = {"Iberdrola - Simples Indexado Dinâmico", "Plenitude - Tendência"}
 
     for _, row in df_merged.iterrows():
         dt = row['DataHora']
@@ -159,14 +163,15 @@ def gerar_tabelas_tarifarias(df_omie, ficheiro_config):
                 # É preciso determinar os ciclos mesmo sem preço
                 
                 ciclos_a_processar = []
-                if pd.notna(row.get('BD')): ciclos_a_processar.append({'opcao_nome': 'Bi-horário - Ciclo Diário'})
-                if pd.notna(row.get('BS')): ciclos_a_processar.append({'opcao_nome': 'Bi-horário - Ciclo Semanal'})
-                if pd.notna(row.get('TD')): 
-                    ciclos_a_processar.append({'opcao_nome': 'Tri-horário - Ciclo Diário'})
-                    ciclos_a_processar.append({'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Diário'})
-                if pd.notna(row.get('TS')): 
-                    ciclos_a_processar.append({'opcao_nome': 'Tri-horário - Ciclo Semanal'})
-                    ciclos_a_processar.append({'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Semanal'})
+                if comercializador not in so_simples:
+                    if pd.notna(row.get('BD')): ciclos_a_processar.append({'opcao_nome': 'Bi-horário - Ciclo Diário'})
+                    if pd.notna(row.get('BS')): ciclos_a_processar.append({'opcao_nome': 'Bi-horário - Ciclo Semanal'})
+                    if pd.notna(row.get('TD')): 
+                        ciclos_a_processar.append({'opcao_nome': 'Tri-horário - Ciclo Diário'})
+                        ciclos_a_processar.append({'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Diário'})
+                    if pd.notna(row.get('TS')): 
+                        ciclos_a_processar.append({'opcao_nome': 'Tri-horário - Ciclo Semanal'})
+                        ciclos_a_processar.append({'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Semanal'})
                 ciclos_a_processar.append({'opcao_nome': 'Simples'})
 
                 for ciclo in list({c['opcao_nome']: c for c in ciclos_a_processar}.values()): # Remove duplicados
@@ -191,20 +196,21 @@ def gerar_tabelas_tarifarias(df_omie, ficheiro_config):
                 
                 ciclos_processar = []
                 ciclos_processar.append({'ciclo_codigo': 'S','periodo': None, 'opcao_nome': 'Simples','tar_key': 'TAR_Energia_Simples'})
-                if pd.notna(row.get('BD')): ciclos_processar.append({'ciclo_codigo': 'BD','periodo': row['BD'],'opcao_nome': 'Bi-horário - Ciclo Diário','tar_key': 'TAR_Energia_Bi_Vazio' if row['BD'] == 'V' else 'TAR_Energia_Bi_ForaVazio'})
-                if pd.notna(row.get('BS')): ciclos_processar.append({'ciclo_codigo': 'BS','periodo': row['BS'],'opcao_nome': 'Bi-horário - Ciclo Semanal','tar_key': 'TAR_Energia_Bi_Vazio' if row['BS'] == 'V' else 'TAR_Energia_Bi_ForaVazio'})
-                if pd.notna(row.get('TD')): 
-                    periodo_td = row['TD']
-                    tar_map_td = {'V': 'TAR_Energia_Tri_Vazio','C': 'TAR_Energia_Tri_Cheias','P': 'TAR_Energia_Tri_Ponta'}
-                    ciclos_processar.append({'ciclo_codigo': 'TD','periodo': periodo_td,'opcao_nome': 'Tri-horário - Ciclo Diário','tar_key': tar_map_td.get(periodo_td)})
-                    tar_map_td_alta = {'V': 'TAR_Energia_Tri_27.6_Vazio','C': 'TAR_Energia_Tri_27.6_Cheias','P': 'TAR_Energia_Tri_27.6_Ponta'}
-                    ciclos_processar.append({'ciclo_codigo': 'TD>20.7','periodo': periodo_td,'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Diário','tar_key': tar_map_td_alta.get(periodo_td)})
-                if pd.notna(row.get('TS')):
-                    periodo_ts = row['TS']
-                    tar_map_ts = {'V': 'TAR_Energia_Tri_Vazio','C': 'TAR_Energia_Tri_Cheias','P': 'TAR_Energia_Tri_Ponta'}
-                    ciclos_processar.append({'ciclo_codigo': 'TS','periodo': periodo_ts,'opcao_nome': 'Tri-horário - Ciclo Semanal','tar_key': tar_map_ts.get(periodo_ts)})
-                    tar_map_ts_alta = {'V': 'TAR_Energia_Tri_27.6_Vazio','C': 'TAR_Energia_Tri_27.6_Cheias','P': 'TAR_Energia_Tri_27.6_Ponta'}
-                    ciclos_processar.append({'ciclo_codigo': 'TS>20.7','periodo': periodo_ts,'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Semanal','tar_key': tar_map_ts_alta.get(periodo_ts)})
+                if comercializador not in so_simples:
+                    if pd.notna(row.get('BD')): ciclos_processar.append({'ciclo_codigo': 'BD','periodo': row['BD'],'opcao_nome': 'Bi-horário - Ciclo Diário','tar_key': 'TAR_Energia_Bi_Vazio' if row['BD'] == 'V' else 'TAR_Energia_Bi_ForaVazio'})
+                    if pd.notna(row.get('BS')): ciclos_processar.append({'ciclo_codigo': 'BS','periodo': row['BS'],'opcao_nome': 'Bi-horário - Ciclo Semanal','tar_key': 'TAR_Energia_Bi_Vazio' if row['BS'] == 'V' else 'TAR_Energia_Bi_ForaVazio'})
+                    if pd.notna(row.get('TD')): 
+                        periodo_td = row['TD']
+                        tar_map_td = {'V': 'TAR_Energia_Tri_Vazio','C': 'TAR_Energia_Tri_Cheias','P': 'TAR_Energia_Tri_Ponta'}
+                        ciclos_processar.append({'ciclo_codigo': 'TD','periodo': periodo_td,'opcao_nome': 'Tri-horário - Ciclo Diário','tar_key': tar_map_td.get(periodo_td)})
+                        tar_map_td_alta = {'V': 'TAR_Energia_Tri_27.6_Vazio','C': 'TAR_Energia_Tri_27.6_Cheias','P': 'TAR_Energia_Tri_27.6_Ponta'}
+                        ciclos_processar.append({'ciclo_codigo': 'TD>20.7','periodo': periodo_td,'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Diário','tar_key': tar_map_td_alta.get(periodo_td)})
+                    if pd.notna(row.get('TS')):
+                        periodo_ts = row['TS']
+                        tar_map_ts = {'V': 'TAR_Energia_Tri_Vazio','C': 'TAR_Energia_Tri_Cheias','P': 'TAR_Energia_Tri_Ponta'}
+                        ciclos_processar.append({'ciclo_codigo': 'TS','periodo': periodo_ts,'opcao_nome': 'Tri-horário - Ciclo Semanal','tar_key': tar_map_ts.get(periodo_ts)})
+                        tar_map_ts_alta = {'V': 'TAR_Energia_Tri_27.6_Vazio','C': 'TAR_Energia_Tri_27.6_Cheias','P': 'TAR_Energia_Tri_27.6_Ponta'}
+                        ciclos_processar.append({'ciclo_codigo': 'TS>20.7','periodo': periodo_ts,'opcao_nome': 'Tri-horário > 20.7 kVA - Ciclo Semanal','tar_key': tar_map_ts_alta.get(periodo_ts)})
 
                 for ciclo_info in ciclos_processar:
                     # Se a tar_key não for encontrada, tar_kwh será 0.0 (seguro)
@@ -258,7 +264,30 @@ def gerar_tabelas_tarifarias(df_omie, ficheiro_config):
     print(f"   - Tabela horária gerada: {len(df_horario_final)} registos")
 
     print("✅ Cálculos concluídos.")
-    return df_quarto_horario_final, df_horario_final
+
+    # Filtrar apenas as constantes efetivamente utilizadas nos cálculos
+    chaves_utilizadas = {
+        # Tarifários
+        'Alfa_CGS', 'Alfa_K',
+        'Coop_CS_CR', 'Coop_K', 'Coop_GO',
+        'EDP_H_K1', 'EDP_H_K2',
+        'EZU_K', 'EZU_CGS',
+        'Galp_Ci',
+        'G9_FA', 'G9_CGS', 'G9_AC',
+        'Iberdrola_Dinamico_Q', 'Iberdrola_mFRR',
+        'Meo_K',
+        'Repsol_FA', 'Repsol_Q_Tarifa',
+        'Plenitude_CGS', 'Plenitude_GDOs', 'Plenitude_Fee',
+        'Financiamento_TSE',
+        # TAR Energia
+        'TAR_Energia_Simples',
+        'TAR_Energia_Bi_Vazio', 'TAR_Energia_Bi_ForaVazio',
+        'TAR_Energia_Tri_Vazio', 'TAR_Energia_Tri_Cheias', 'TAR_Energia_Tri_Ponta',
+        'TAR_Energia_Tri_27.6_Vazio', 'TAR_Energia_Tri_27.6_Cheias', 'TAR_Energia_Tri_27.6_Ponta',
+    }
+    constantes_utilizadas = {k: v for k, v in constantes_dict.items() if k in chaves_utilizadas}
+
+    return df_quarto_horario_final, df_horario_final, constantes_utilizadas
 
 
 def calcular_preco_comercializador(nome_tarifario, omie_kwh, perdas, constantes_dict):
@@ -284,7 +313,7 @@ def calcular_preco_comercializador(nome_tarifario, omie_kwh, perdas, constantes_
         return (omie_kwh + constantes_dict.get('Galp_Ci', 0.0)) * perdas    
     
     elif "G9 Smart Dynamic" in nome_tarifario:
-        return (omie_kwh * constantes_dict.get('G9_FA', 0.0) * perdas + constantes_dict.get('G9_CGS', 0.0) + constantes_dict.get('G9_AC', 0.0)) + constantes_dict.get('Financiamento_TSE', 0.0)
+        return (omie_kwh * constantes_dict.get('G9_FA', 0.0) * perdas + constantes_dict.get('G9_CGS', 0.0) + constantes_dict.get('G9_AC', 0.0))
     
     elif "MeoEnergia Tarifa Variável" in nome_tarifario:
         return (omie_kwh + constantes_dict.get('Meo_K', 0.0)) * perdas        
@@ -292,6 +321,12 @@ def calcular_preco_comercializador(nome_tarifario, omie_kwh, perdas, constantes_
     elif "Repsol Leve Sem Mais" in nome_tarifario:
         return (omie_kwh * perdas * constantes_dict.get('Repsol_FA', 0.0) + constantes_dict.get('Repsol_Q_Tarifa', 0.0)) + constantes_dict.get('Financiamento_TSE', 0.0)
     
+    elif "Iberdrola - Simples Indexado Dinâmico" in nome_tarifario:
+        return (omie_kwh * perdas + constantes_dict.get("Iberdrola_Dinamico_Q", 0.0) + constantes_dict.get('Iberdrola_mFRR', 0.0))
+
+    elif "Plenitude - Tendência" in nome_tarifario:
+        return (omie_kwh + constantes_dict.get('Plenitude_CGS', 0.0) + constantes_dict.get('Plenitude_GDOs', 0.0)) * perdas + constantes_dict.get('Plenitude_Fee', 0.0)
+
     else:
         # Fallback
         return omie_kwh * perdas
@@ -301,7 +336,7 @@ def calcular_preco_comercializador(nome_tarifario, omie_kwh, perdas, constantes_
 # 3. EXPORTADOR CSV
 # ============================================================
 
-def exportar_para_csv_compativel(df_q_horario, df_horario, nome_ficheiro):
+def exportar_para_csv_compativel(df_q_horario, df_horario, constantes_dict, nome_ficheiro):
     """
     Gera o ficheiro CSV com a formatação final e exata.
     """
@@ -333,7 +368,10 @@ def exportar_para_csv_compativel(df_q_horario, df_horario, nome_ficheiro):
     colunas_horarias = ['CSV_Dia', 'CSV_Tarifario', 'CSV_Opcao', 'CSV_Hora', 'CSV_OMIE_Medio_MWh', 'CSV_Preco_Medio_kWh']
     df_h_export = df_h_export[colunas_horarias]
 
-    # --- 3. CONSTRUÇÃO DO FICHEIRO CSV ---
+    # --- 3. PREPARAÇÃO DA TABELA CONSTANTES ---
+    df_const = pd.DataFrame(list(constantes_dict.items()), columns=['constante', 'valor_unitário'])
+
+    # --- 4. CONSTRUÇÃO DO FICHEIRO CSV ---
     try:
         # Garantir que o diretório 'data/' existe
         import os
@@ -343,10 +381,9 @@ def exportar_para_csv_compativel(df_q_horario, df_horario, nome_ficheiro):
             # Tabela 1: Quarto-Horária
             f.write(df_q_export.to_csv(index=False, header=True, decimal='.', float_format='%.5f'))
             
-            # Separador
+            # Separador + Tabela 2: Horária (offset coluna K = 10 vírgulas)
             f.write("\n" + "," * 10 + "TABELA_HORARIA\n")
 
-            # Tabela 2: Horária
             df_h_export['CSV_OMIE_Medio_MWh'] = df_h_export['CSV_OMIE_Medio_MWh'].apply(
                 lambda x: f'{x:.2f}' if pd.notna(x) else ''
             )
@@ -355,11 +392,17 @@ def exportar_para_csv_compativel(df_q_horario, df_horario, nome_ficheiro):
             )
             
             csv_tabela_h = df_h_export.to_csv(index=False, header=True, decimal='.')
-            
-            offset = "," * 10
-            linhas_h = csv_tabela_h.strip().split('\n')
-            for i, linha in enumerate(linhas_h):
-                f.write(offset + linha + ('\n' if i < len(linhas_h) - 1 else ''))
+            offset_h = "," * 10
+            for i, linha in enumerate(csv_tabela_h.strip().split('\n')):
+                f.write(offset_h + linha + '\n')
+
+            # Separador + Tabela 3: Constantes (offset coluna S = 18 vírgulas)
+            f.write("\n" + "," * 18 + "TABELA_CONSTANTES\n")
+
+            csv_tabela_c = df_const.to_csv(index=False, header=True, decimal='.')
+            offset_c = "," * 18
+            for linha in csv_tabela_c.strip().split('\n'):
+                f.write(offset_c + linha + '\n')
 
         print(f"✅ Ficheiro CSV '{nome_ficheiro}' criado com o formato definitivo.")
     
@@ -398,7 +441,7 @@ def main():
         print(f"ℹ️ Registos filtrados para processamento: {len(df_omie_filtrado)}")
         
         # 4. Executar cálculos, passando o URL de configuração
-        df_qh, df_h = gerar_tabelas_tarifarias(
+        df_qh, df_h, constantes_dict = gerar_tabelas_tarifarias(
             df_omie_filtrado, 
             URL_CONFIG 
         )
@@ -415,7 +458,7 @@ def main():
         print(f"✂️ Após filtro: {len(df_qh)} registos quarto-horários | {len(df_h)} registos horários")
 
         # 6. Exportar para CSV
-        exportar_para_csv_compativel(df_qh, df_h, FICHEIRO_SAIDA_CSV)
+        exportar_para_csv_compativel(df_qh, df_h, constantes_dict, FICHEIRO_SAIDA_CSV)
         
         print("\n" + "=" * 60)
         print("✅ PROCESSO CONCLUÍDO COM SUCESSO")
