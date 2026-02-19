@@ -476,18 +476,18 @@ def run_analysis_process():
                 return {}
 
         def adicionar_variacao(df_novo, anteriores):
-            """Adiciona coluna Variacao comparando com sessão anterior."""
+            """Adiciona coluna Variacao comparando com sessão anterior (formato: direção:diff)."""
             def calcular(row):
                 prev = anteriores.get(row['Contrato'])
                 if prev is None:
-                    return 'new'
+                    return 'new:0'
                 diff = round(row['Valor'] - prev, 4)
                 if diff > 0:
-                    return 'up'
+                    return f'up:+{diff}'
                 elif diff < 0:
-                    return 'down'
+                    return f'down:{diff}'
                 else:
-                    return 'equal'
+                    return 'equal:0'
             df_novo = df_novo.copy()
             df_novo['Variacao'] = df_novo.apply(calcular, axis=1)
             return df_novo
@@ -531,7 +531,7 @@ def run_analysis_process():
             # Preservar variação anterior em vez de recalcular
             def preservar_variacao(df_novo, anteriores_variacao):
                 df_novo = df_novo.copy()
-                df_novo['Variacao'] = df_novo['Contrato'].map(anteriores_variacao).fillna('new')
+                df_novo['Variacao'] = df_novo['Contrato'].map(anteriores_variacao).fillna('new:0')
                 return df_novo
 
             def carregar_variacao_anterior(ficheiro, tabela_tag):
