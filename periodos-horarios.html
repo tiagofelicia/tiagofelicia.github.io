@@ -79,6 +79,140 @@
         <h1>Períodos Horários (BTN): Horas de Vazio, Ponta e Cheias</h1>
         
         <p>Conhecer os períodos horários definidos pela ERSE é fundamental para gerir o consumo e poupar na fatura de eletricidade, especialmente em tarifários bi e tri-horários. Os horários apresentados aplicam-se a clientes em <strong>Baixa Tensão Normal (BTN)</strong> em Portugal Continental.</p>
+
+        <!-- INDICADOR DINÂMICO -->
+        <div id="agora-container" style="margin: 24px 0; border: 2px solid #dee2e6; border-radius: 10px; overflow: hidden; background: white;">
+            <div style="background: #343a40; color: white; padding: 10px 16px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.1em;">🕐</span>
+                <span style="font-weight: bold; font-size: 1em;">Período Atual</span>
+                <span id="agora-hora" style="margin-left: auto; font-size: 0.9em; opacity: 0.8;"></span>
+                <span id="agora-estacao" style="font-size: 0.8em; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 10px;"></span>
+            </div>
+            <div id="agora-ciclos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: #dee2e6;"></div>
+        </div>
+
+        <script>
+        (function() {
+            const CORES = {
+                'Vazio':         { bg: '#d4edda', text: '#155724', border: '#28a745' },
+                'Fora de Vazio': { bg: '#f8d7da', text: '#721c24', border: '#dc3545' },
+                'Cheias':        { bg: '#fff3cd', text: '#856404', border: '#ffc107' },
+                'Ponta':         { bg: '#f8d7da', text: '#721c24', border: '#dc3545' },
+                'Simples':       { bg: '#e2e3e5', text: '#383d41', border: '#6c757d' },
+            };
+
+            function horaEmMinutos(h, m) { return h * 60 + m; }
+
+            function isSummer(date) {
+                const year = date.getFullYear();
+                // Último domingo de março
+                const marco = new Date(year, 2, 31);
+                marco.setDate(31 - ((marco.getDay() + 1) % 7 === 0 ? 7 : (marco.getDay() + 1) % 7));
+                // Último domingo de outubro
+                const outubro = new Date(year, 9, 31);
+                outubro.setDate(31 - ((outubro.getDay() + 1) % 7 === 0 ? 7 : (outubro.getDay() + 1) % 7));
+                return date >= marco && date < outubro;
+            }
+
+            function periodoAgora(agora) {
+                const min = horaEmMinutos(agora.getHours(), agora.getMinutes());
+                const dow = agora.getDay(); // 0=Dom, 1-5=Útil, 6=Sáb
+                const verão = isSummer(agora);
+                const isDomingo = dow === 0;
+                const isSabado = dow === 6;
+                const isUtil = !isDomingo && !isSabado;
+
+                // ---------- Bi-horário Diário ----------
+                const biDiario = (min >= horaEmMinutos(22,0) || min < horaEmMinutos(8,0)) ? 'Vazio' : 'Fora de Vazio';
+
+                // ---------- Bi-horário Semanal ----------
+                let biSemanal;
+                if (isDomingo) {
+                    biSemanal = 'Vazio';
+                } else if (isSabado) {
+                    if (verão) {
+                        biSemanal = (min < horaEmMinutos(9,0) || (min >= horaEmMinutos(14,0) && min < horaEmMinutos(20,0)) || min >= horaEmMinutos(22,0)) ? 'Vazio' : 'Fora de Vazio';
+                    } else {
+                        biSemanal = (min < horaEmMinutos(9,30) || (min >= horaEmMinutos(13,0) && min < horaEmMinutos(18,30)) || min >= horaEmMinutos(22,0)) ? 'Vazio' : 'Fora de Vazio';
+                    }
+                } else {
+                    biSemanal = min < horaEmMinutos(7,0) ? 'Vazio' : 'Fora de Vazio';
+                }
+
+                // ---------- Tri-horário Diário ----------
+                let triDiario;
+                if (min >= horaEmMinutos(22,0) || min < horaEmMinutos(8,0)) {
+                    triDiario = 'Vazio';
+                } else if (verão) {
+                    if ((min >= horaEmMinutos(10,30) && min < horaEmMinutos(13,0)) || (min >= horaEmMinutos(19,30) && min < horaEmMinutos(21,0))) triDiario = 'Ponta';
+                    else triDiario = 'Cheias';
+                } else {
+                    if ((min >= horaEmMinutos(9,0) && min < horaEmMinutos(10,30)) || (min >= horaEmMinutos(18,0) && min < horaEmMinutos(20,30))) triDiario = 'Ponta';
+                    else triDiario = 'Cheias';
+                }
+
+                // ---------- Tri-horário Semanal ----------
+                let triSemanal;
+                if (isDomingo) {
+                    triSemanal = 'Vazio';
+                } else if (isSabado) {
+                    if (verão) {
+                        if (min < horaEmMinutos(9,0) || (min >= horaEmMinutos(14,0) && min < horaEmMinutos(20,0)) || min >= horaEmMinutos(22,0)) triSemanal = 'Vazio';
+                        else triSemanal = 'Cheias';
+                    } else {
+                        if (min < horaEmMinutos(9,30) || (min >= horaEmMinutos(13,0) && min < horaEmMinutos(18,30)) || min >= horaEmMinutos(22,0)) triSemanal = 'Vazio';
+                        else triSemanal = 'Cheias';
+                    }
+                } else {
+                    // Dias úteis
+                    if (min < horaEmMinutos(7,0)) {
+                        triSemanal = 'Vazio';
+                    } else if (verão) {
+                        if (min >= horaEmMinutos(9,15) && min < horaEmMinutos(12,15)) triSemanal = 'Ponta';
+                        else triSemanal = 'Cheias';
+                    } else {
+                        if ((min >= horaEmMinutos(9,30) && min < horaEmMinutos(12,0)) || (min >= horaEmMinutos(18,30) && min < horaEmMinutos(21,0))) triSemanal = 'Ponta';
+                        else triSemanal = 'Cheias';
+                    }
+                }
+
+                return { biDiario, biSemanal, triDiario, triSemanal };
+            }
+
+            function render() {
+                const agora = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+                const verão = isSummer(agora);
+                const hh = String(agora.getHours()).padStart(2,'0');
+                const mm = String(agora.getMinutes()).padStart(2,'0');
+                const ss = String(agora.getSeconds()).padStart(2,'0');
+
+                document.getElementById('agora-hora').textContent = `${hh}:${mm}:${ss}`;
+                document.getElementById('agora-estacao').textContent = verão ? '☀️ Horário de Verão' : '❄️ Horário de Inverno';
+
+                const p = periodoAgora(agora);
+                const ciclos = [
+                    { nome: 'Simples',                  periodo: 'Simples' },
+                    { nome: 'Bi-horário Diário',         periodo: p.biDiario },
+                    { nome: 'Bi-horário Semanal',        periodo: p.biSemanal },
+                    { nome: 'Tri-horário Diário',        periodo: p.triDiario },
+                    { nome: 'Tri-horário Semanal',       periodo: p.triSemanal },
+                ];
+
+                const container = document.getElementById('agora-ciclos');
+                container.innerHTML = ciclos.map(({ nome, periodo }) => {
+                    const cor = CORES[periodo] || CORES['Simples'];
+                    return `
+                        <div style="background:${cor.bg}; padding: 12px 14px; display:flex; flex-direction:column; gap:4px; border-left: 4px solid ${cor.border};">
+                            <span style="font-size:0.78em; color:#555; font-weight:600; text-transform:uppercase; letter-spacing:0.03em;">${nome}</span>
+                            <span style="font-size:1.1em; font-weight:bold; color:${cor.text};">${periodo}</span>
+                        </div>`;
+                }).join('');
+            }
+
+            render();
+            setInterval(render, 1000);
+        })();
+        </script>
         
         <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background-color: #f9f9f9; margin: 30px 0;">
             <h4 style="margin-top: 0;">Horário de Verão vs. Horário de Inverno</h4>
