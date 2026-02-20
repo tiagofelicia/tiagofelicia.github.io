@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["CGS", () => `Custos de gestão geral do sistema - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Alfa_CGS', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
                     ["Perdas", "Perdas da rede fixadas pela ERSE (variável)"],
                     ["k", () => `Gastos operacionais Alfa Energia: ${c('Alfa_K', '€/kWh', 3)}`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
                     ["FP", "Perfil de Perda (variável)"],
                     ["CS + CR", () => `Custos de Sistema + Regulação - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS_CR', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CS+CR real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["GO", () => `Garantias de Origem: ${c('Coop_GO', '€/kWh', 3)}`],
                     ["FP", "Perfil de Perda (variável)"],
                     ["CS + CR", () => `Custos de Sistema + Regulação - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS_CR', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CS+CR real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["Perdas<sub>i</sub>", "Coeficiente de ajustamento para perdas na rede (variável)"],
                     ["K<sub>1</sub>", () => c('EDP_H_K1', '(adimensional)', 2)],
                     ["K<sub>2</sub>", () => c('EDP_H_K2')],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
             "EZU Tarifa Indexada": {
@@ -227,8 +227,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["CGS", () => `Custos de gestão geral do sistema - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('EZU_CGS', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
                     ["Perda<sub>ERSE</sub>", "Perdas da rede fixadas pela ERSE (variável)"],
                     ["k", () => { const mwh = constantes['EZU_K'] !== undefined ? ` (${(constantes['EZU_K']*1000).toFixed(2).replace('.',',')} €/MWh)` : ''; return `Gastos operacionais EZU Energia: ${c('EZU_K')}${mwh}`; }],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
                 ]
             },
             "G9 Smart Dynamic": {
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["Perdas", "Perdas nas redes de transporte e distribuição (variável)"],
                     ["GGS", () => `Garantia de Gestão e Serviço: ${c('G9_CGS')}`],
                     ["AC", () => `Ajuste Comercial: ${c('G9_AC')}`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
             "Galp Plano Dinâmico": {
@@ -248,18 +248,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["PMi", "Preço horário OMIE Portugal (€/kWh), vigente em cada 15 minutos"],
                     ["Ci", () => `Componente de Comercializador (margem, desvios, garantias de origem, etc.): ${c('Galp_Ci')}`],
                     ["Li", "Perdas em percentagem para cada 15 minutos, publicadas pela ERSE (percentual)"],
-                    ["TAR<sub>ENERGIA</sub>", "Valores para o termo variável divulgados pela ERSE"],
+                    ["TAR<sub>ENERGIA</sub>", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
             "Iberdrola - Simples Indexado Dinâmico": {
-                expr: `Preço Energia <sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TSE + TAR`,
+                expr: `Preço Energia <sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TAR + TSE`,
                 legenda: [
                     ["POMIE<sub>P</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
                     ["Perdas", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
                     ["Q", () => `Custo de operação e gestão do sistema + componente de comercialização da Iberdrola: ${c('Iberdrola_Dinamico_Q', '€/kWh', 3)}`],
                     ["Banda mFRR", () => `Sobrecusto associado ao leilão da Banda de Reserva de Restabelecimento de Frequência com Ativação Manual: ${c('Iberdrola_mFRR', '€/kWh', 5)}`],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): tarifa única, aplicável apenas à opção Simples."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
                 ]
             },
             "MeoEnergia Tarifa Variável": {
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
                     ["K", () => `Inclui Gestão do sistema, desvios e margem: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
             "Plenitude - Tendência": {
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["GDOs", () => `Custo das garantias de origem: ${c('Plenitude_GDOs', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
                     ["Perdas", "Perfil de perdas da rede de distribuição, com base no perfil de perdas regulado pela ERSE."],
                     ["Fee", () => `Margem comercial da Plenitude, estabelecida para o preço indexado: ${c('Plenitude_Fee', '€/kWh', 3)}`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],                    
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): tarifa única, aplicável apenas à opção Simples."],
                 ]
             },
             "Repsol Leve Sem Mais": {
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["FA", () => `Fator de adequação: ${c('Repsol_FA', '(adimensional)', 2)}`],
                     ["QTarifa", () => `Serviços Complementares, Encargos, Desvios e Margem Repsol: ${c('Repsol_Q_Tarifa', '€/kWh', 5)}`],
                     ["FinTS", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
-                    ["TAR", "Tarifa de Acesso às Redes (variável consoante a opção horária e ciclo escolhida)"],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
         };
