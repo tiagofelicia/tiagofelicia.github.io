@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Fórmulas de Cálculo de Tarifários Indexados ao OMIE | Tiago Felícia</title>
+    <meta name="description" content="Consulte as fórmulas de cálculo do preço de energia de tarifários dinâmicos e de média indexados ao OMIE em Portugal." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/formulas-tarifarios-indexados.html" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Fórmulas dos Tarifários Indexados ao OMIE" />
+    <meta property="og:description" content="Como é calculado o preço de energia em cada tarifário indexado? Consulte as fórmulas de cada comercializador." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/formulas-tarifarios-indexados.html" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
+    <meta property="og:locale" content="pt_PT" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Fórmulas de Cálculo de Tarifários Indexados ao OMIE",
+      "description": "Fórmulas de cálculo do preço de energia de tarifários dinâmicos e de média indexados ao OMIE em Portugal.",
+      "author": { "@type": "Person", "name": "Tiago Felícia" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Tiago Felícia Simuladores",
+        "logo": { "@type": "ImageObject", "url": "https://www.tiagofelicia.pt/images/favicon-96x96.png" }
+      }
+    }
+    </script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <style>
+        /* ── Tags de tipo ── */
+        .tag {
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            letter-spacing: 0.05em;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .tag.qh    { background: #BDD7EE; color: #000; }
+        .tag.media { background: #FFE699; color: #000; }
+
+        /* ── Cabeçalhos de grupo ── */
+        .grupo-header {
+            margin: 28px 0 10px 0;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .grupo-header.qh    { background: #dce8f5; color: #1a3a5c; border-left: 4px solid #4D79BC; }
+        .grupo-header.media { background: #fffbe6; color: #5a4000; border-left: 4px solid #BF8F00; }
+
+        /* ── Acordeão ── */
+        .tarifario-item {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 7px;
+            overflow: hidden;
+        }
+        .tarifario-item summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 11px 16px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            user-select: none;
+        }
+        .tarifario-item summary::-webkit-details-marker { display: none; }
+        .tarifario-item.qh    summary { border-left: 4px solid #4D79BC; }
+        .tarifario-item.media summary { border-left: 4px solid #BF8F00; }
+        .tarifario-item.qh[open]    summary { background: #dce8f5; }
+        .tarifario-item.media[open] summary { background: #fffbe6; }
+        .tarifario-nome           { font-weight: bold; font-size: 0.97em; }
+        .tarifario-sub            { font-size: 0.8em; color: #666; display: flex; gap: 8px; align-items: center; margin-top: 2px; }
+        .seta { margin-left: auto; font-size: 0.8em; color: #999; transition: transform 0.2s; flex-shrink: 0; }
+        .tarifario-item[open] .seta { transform: rotate(180deg); }
+
+        /* ── Corpo ── */
+        .tarifario-body { padding: 14px 18px; background: white; }
+        .formula-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 10px; margin-bottom: 12px; font-size: 0.84em;
+        }
+        .formula-meta a { color: #0d6efd; text-decoration: none; }
+        .formula-meta a:hover { text-decoration: underline; }
+        .formula-nota {
+            background: #fff3cd; border: 1px solid #ffc107;
+            border-radius: 4px; padding: 2px 9px; color: #856404; font-size: 0.82em;
+        }
+        .formula-expr {
+            font-family: 'Georgia', serif;
+            font-size: 1.03em;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 9px 13px;
+            margin-bottom: 10px;
+            display: block;
+            line-height: 2;
+        }
+        .tarifario-item.qh    .formula-expr { border-left: 4px solid #4D79BC; }
+        .tarifario-item.media .formula-expr { border-left: 4px solid #BF8F00; }
+        .formula-legenda { font-size: 0.87em; color: #444; line-height: 2; }
+        .formula-legenda span { display: inline-block; min-width: 90px; font-weight: bold; color: #222; }
+        .formula-sem-dados { color: #888; font-style: italic; padding: 6px 0; font-size: 0.9em; }
+
+        @media (max-width: 520px) {
+            .formula-legenda span { display: block; min-width: unset; margin-bottom: 0; }
+            .formula-legenda br { display: block; margin-bottom: 8px; }
+            .formula-expr { font-size: 0.93em; padding: 8px 10px; }
+            .tipo-box { min-width: unset; }
+            .formula-meta { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .tarifario-nome { font-size: 0.93em; }
+            .tarifario-sub { flex-wrap: wrap; }
+        }
+
+        /* ── Estado carregamento ── */
+        #estado-carregamento { text-align: center; padding: 28px; color: #666; font-style: italic; }
+
+        /* ── Botões expandir/recolher ── */
+        .grupo-controles {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+        .btn-grupo {
+            font-size: 0.75em;
+            padding: 2px 9px;
+            border-radius: 4px;
+            border: 1px solid currentColor;
+            cursor: pointer;
+            background: transparent;
+            font-weight: 600;
+            opacity: 0.7;
+            transition: opacity 0.15s;
+        }
+        .btn-grupo:hover { opacity: 1; }
+        .grupo-header.qh    .btn-grupo { color: #1a3a5c; }
+        .grupo-header.media .btn-grupo { color: #5a4000; }
+
+        /* ── Caixas explicativas do topo ── */
+        .tipo-box {
+            background: #f8f9fa; border-radius: 7px; padding: 11px 16px;
+            flex: 1; min-width: 200px;
+        }
+        .tipo-box p { margin: 5px 0 0 0; font-size: 0.87em; }
+        .tipo-box.qh    { border-left: 4px solid #4D79BC; }
+        .tipo-box.media { border-left: 4px solid #BF8F00; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="header-title-container">
+            <a href="index.html">
+                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo">
+            </a>
+            <div class="brand-name">Tiago Felícia</div>
+        </div>
+        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
+    </div>
+</header>
+
+<div id="menu-placeholder">
+    <nav style="display:none;">
+        <a href="eletricidade-tiagofelicia.html">Eletricidade</a>
+        <a href="gas-natural-tiagofelicia.html">Gás</a>
+        <a href="autoconsumo-tiagofelicia.html">Solar</a>
+    </nav>
+</div>
+
+<main>
+    <section class="content-section">
+        <h1>Fórmulas de Cálculo de Tarifários Indexados ao OMIE</h1>
+
+        <p>Os tarifários indexados calculam o preço de energia com base no preço de mercado grossista (OMIE), acrescido de margens, perdas de rede e tarifas reguladas. Existem dois tipos:</p>
+
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin: 14px 0 24px 0;">
+            <div class="tipo-box qh">
+                <span class="tag qh">Indexado Quarto-Horário</span>
+                <p>O preço varia <strong>a cada 15 minutos</strong>, acompanhando o mercado OMIE em tempo real. Também chamados <em>dinâmicos</em>. Permitem poupar consumindo nas horas mais baratas do dia.</p>
+            </div>
+            <div class="tipo-box media">
+                <span class="tag media">Indexado Média</span>
+                <p>O preço baseia-se na <strong>média do OMIE</strong> para o período de faturação. Menor variabilidade, mas sem benefício direto de deslocar consumo para horas baratas.</p>
+            </div>
+        </div>
+
+        <p style="font-size:0.88em; color:#666; margin-bottom:22px;">
+            Se encontrar algum erro nos valores das constantes (margens, fatores de adequação, etc.) ou na fórmula, não exite em contactar-me.
+        </p>
+        <p style="font-size:0.88em; color:#666; margin-bottom:22px;">
+            As TAR são publicadas pela <a href="https://www.erse.pt" target="_blank" rel="noopener">ERSE</a> e variam conforme a opção horária e o ciclo, podem ser consultadas no site da ERSE ou em <a href="https://www.tiagofelicia.pt/tarifas-acesso-redes.html" target="_blank" rel="noopener">Tarifas de Acesso às Redes (TAR) 2026</a>.
+        </p>
+
+        <div id="estado-carregamento">⏳ A carregar constantes...</div>
+        <div id="lista-tarifarios"></div>
+
+        <div class="link-section" style="margin-top:28px;">
+            <p>https://www.tiagofelicia.pt/formulas-tarifarios-indexados.html</p>
+        </div>
+
+        <article class="content-support" style="margin-top:28px;">
+            <h2>O que são as TAR e por que variam?</h2>
+            <p>As Tarifas de Acesso às Redes (TAR) são valores regulados pela ERSE que remuneram o transporte e distribuição de eletricidade. O valor varia consoante o ciclo (Diário ou Semanal) e a opção horária: a opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta.</p>
+        </article>
+    </section>
+</main>
+
+<div id="footer-placeholder"></div>
+<script src="script.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    let constantes = {};
+
+    // ── Parser do Constantes.csv (formato direto: constante,valor_unitário) ──
+    function parseConstantesCSV(csv) {
+        constantes = {};
+        const linhas = csv.split('\n');
+        for (let i = 1; i < linhas.length; i++) {
+            const linha = linhas[i].trim();
+            if (!linha) continue;
+            const idx = linha.indexOf(',');
+            if (idx === -1) continue;
+            const chave = linha.substring(0, idx).trim().replace(/^"|"$/g, '');
+            const valor = linha.substring(idx + 1).trim().replace(/^"|"$/g, '');
+            if (chave && valor !== '') {
+                const num = parseFloat(valor.replace(',', '.'));
+                if (!isNaN(num)) constantes[chave] = num;
+            }
+        }
+    }
+
+    // ── Helper: lê constante e formata ──
+    function c(key, unit = '€/kWh', decimais = 4) {
+        const val = constantes[key];
+        if (val === undefined || isNaN(val)) return `<em title="${key}">${key}</em>`;
+        return `<strong>${val.toFixed(decimais).replace('.', ',')} ${unit}</strong>`;
+    }
+
+    // ── Textos reutilizáveis ──
+    const TAR  = "Custo das Tarifas de Acesso às Redes - TAR (Energia) regulado pela ERSE (€/kWh), variável conforme a opção horária.";
+    const TAR_S   = "Tarifa de Acesso às Redes (ERSE): tarifa única, aplicável apenas à opção Simples.";
+    const TSE     = () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`;
+    const PERDAS_QH  = "Perdas da rede fixadas pela ERSE, variáveis a cada quarto de hora (%).";
+    const PERDAS_MED = "Médias para cada período, dos coeficientes de perdas publicados pela ERSE (%).";
+
+    // ── Definição dos tarifários ──
+    function definirTarifarios() {
+        return [
+
+            // ═══════════════════════════════════════
+            // INDEXADOS QUARTO-HORÁRIOS (DINÂMICOS)
+            // ═══════════════════════════════════════
+            {
+                tipo: 'qh',
+                nome: "Alfa Power Index BTN",
+                comercializador: "Alfa Energia",
+                url: "https://www.alfaenergia.pt",
+                notaLimitacao: null,
+                expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
+                    ["CGS", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Alfa_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["Perdas", PERDAS_QH],
+                    ["k", () => `Gastos operacionais Alfa Energia: ${c('Alfa_K', '€/kWh', 3)}`],
+                    ["TAR", TAR],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "Coopérnico Base",
+                comercializador: "Coopérnico",
+                url: "https://www.coopernico.org",
+                notaLimitacao: null,
+                expr: `P<sub>Energia</sub> = (OMIE + k) × (1 + FP) + (CS + CR) × (1 + FP) + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
+                    ["FP", "Perfil de Perda (variável)"],
+                    ["CS + CR", () => `Custos de Sistema + Regulação — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS_CR', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["TAR", TAR],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "Coopérnico GO",
+                comercializador: "Coopérnico",
+                url: "https://www.coopernico.org",
+                notaLimitacao: null,
+                expr: `P<sub>Energia</sub> = (OMIE + k) × (1 + FP) + (CS + CR) × (1 + FP) + GO + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
+                    ["GO", () => `Garantias de Origem: ${c('Coop_GO', '€/kWh', 3)}`],
+                    ["FP", "Perfil de Perda (variável)"],
+                    ["CS + CR", () => `Custos de Sistema + Regulação — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS_CR', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["TAR", TAR],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "EDP Indexada Horária",
+                comercializador: "EDP Comercial",
+                url: "https://www.edp.pt/particulares/energia/gas-eletricidade-oferta-indexada/",
+                notaLimitacao: null,
+                expr: `P<sub>i</sub> = Σ<sub>i</sub> [(P<sub>OMIE i</sub> × (1 + Perdas<sub>i</sub>) × K<sub>1</sub> + K<sub>2</sub> + TAR<sub>Energia i</sub>]`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["Perdas<sub>i</sub>", "Coeficiente de ajustamento para perdas na rede (variável)"],
+                    ["K<sub>1</sub>", () => c('EDP_H_K1', '(adimensional)', 2)],
+                    ["K<sub>2</sub>", () => c('EDP_H_K2')],
+                    ["TAR", TAR],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "EZU Tarifa Indexada",
+                comercializador: "EZU Energia",
+                url: "https://ezu.pt/tarifas",
+                notaLimitacao: null,
+                expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>) + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
+                    ["CGS", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('EZU_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["Perda<sub>ERSE</sub>", PERDAS_QH],
+                    ["k", () => { const mwh = constantes['EZU_K'] !== undefined ? ` (${(constantes['EZU_K']*1000).toFixed(2).replace('.',',')} €/MWh)` : ''; return `Gastos operacionais EZU Energia: ${c('EZU_K')}${mwh}`; }],
+                    ["TAR", TAR],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "G9 Smart Dynamic",
+                comercializador: "G9 Energia",
+                url: "https://g9.pt/energia/",
+                notaLimitacao: null,
+                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × F<sub>adeq</sub> × (1 + Perdas<sub>(15m)</sub>) + GGS + AC + TAR`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["F<sub>adeq</sub>", () => `Fator de adequação: ${c('G9_FA', '(adimensional)', 2)}`],
+                    ["Perdas", PERDAS_QH],
+                    ["GGS", () => `Garantia de Gestão e Serviço: ${c('G9_CGS')}`],
+                    ["AC", () => `Ajuste Comercial: ${c('G9_AC')}`],
+                    ["TAR", TAR],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "Galp Plano Dinâmico",
+                comercializador: "Galp",
+                url: "https://www.galp.com/pt/casa/planos-eletricidade-e-gas/eletricidade-indexada",
+                notaLimitacao: null,
+                expr: `Preço = ENERGIA<sub>GALP</sub> + TAR<sub>ENERGIA</sub><br>ENERGIA<sub>GALP</sub> = Σ[(PMi + Ci) × (1 + Li)]`,
+                legenda: [
+                    ["PMi", "Preço horário OMIE Portugal (€/kWh), vigente em cada 15 minutos"],
+                    ["Ci", () => `Componente de Comercializador (margem, desvios, garantias de origem, etc.): ${c('Galp_Ci')}`],
+                    ["Li", "Perdas em percentagem para cada 15 minutos, publicadas pela ERSE (%)"],
+                    ["TAR<sub>ENERGIA</sub>", TAR],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "Iberdrola - Simples Indexado Dinâmico",
+                comercializador: "Iberdrola",
+                url: "https://www.iberdrola.pt/casa/energia/plano-indexado-simples-dinamico",
+                notaLimitacao: "Disponível apenas na opção tarifária Simples.",
+                expr: `Preço Energia<sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TAR + TSE`,
+                legenda: [
+                    ["POMIE<sub>P</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
+                    ["Perdas", PERDAS_QH],
+                    ["Q", () => `Custo de operação e gestão do sistema + componente de comercialização da Iberdrola: ${c('Iberdrola_Dinamico_Q', '€/kWh', 3)}`],
+                    ["Banda mFRR", () => `Sobrecusto associado ao leilão da Banda de Reserva de Restabelecimento de Frequência com Ativação Manual: ${c('Iberdrola_mFRR', '€/kWh', 5)}`],
+                    ["TAR", TAR_S],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "MeoEnergia Tarifa Variável",
+                comercializador: "MeoEnergia",
+                url: "https://www.meoenergia.pt/eletricidade/tarifa-dinamica",
+                notaLimitacao: null,
+                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + K) × (1 + FP) + TAR`,
+                legenda: [
+                    ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
+                    ["K", () => `Inclui Gestão do sistema, desvios e margem: ${c('Meo_K')}`],
+                    ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
+                    ["TAR", TAR],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "Plenitude - Tendência",
+                comercializador: "Plenitude",
+                url: "https://eniplenitude.pt/eletricidade/tendencia/",
+                notaLimitacao: "Disponível apenas na opção tarifária Simples.",
+                expr: `(OMIE + CGS + GDOs) × Perdas + Fee + TAR`,
+                legenda: [
+                    ["OMIE", "Preço do mercado diário OMIE (€/kWh)"],
+                    ["CGS", () => `Custos de gestão do sistema da REN + custos de desvio — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Plenitude_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["GDOs", () => `Custo das garantias de origem: ${c('Plenitude_GDOs', '€/kWh', 5)}`],
+                    ["Perdas", "Perfil de perdas da rede de distribuição, com base no perfil de perdas regulado pela ERSE."],
+                    ["Fee", () => `Margem comercial da Plenitude: ${c('Plenitude_Fee', '€/kWh', 3)}`],
+                    ["TAR", TAR_S],
+                ]
+            },
+            {
+                tipo: 'qh',
+                nome: "Repsol Leve Sem Mais",
+                comercializador: "Repsol",
+                url: "https://www.repsol.pt/particulares/casa/eletricidade-gas/planos-eletricidade-e-gas/plano-leve-sem-mais/",
+                notaLimitacao: null,
+                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS) + TAR`,
+                legenda: [
+                    ["P<sub>OMIE 15min</sub>", "Preço marginal no sistema Português por quarto de hora, publicado pelo OMIE (€/MWh)"],
+                    ["Perdas<sub>15min</sub>", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
+                    ["FA", () => `Fator de adequação: ${c('Repsol_FA', '(adimensional)', 2)}`],
+                    ["QTarifa", () => `Serviços Complementares, Encargos, Desvios e Margem Repsol: ${c('Repsol_Q_Tarifa', '€/kWh', 5)}`],
+                    ["FinTS", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                    ["TAR", TAR],
+                ]
+            },
+
+            // ═══════════════════════════════════
+            // INDEXADOS MÉDIA
+            // ═══════════════════════════════════
+            {
+                tipo: 'media',
+                nome: "EDP - Eletricidade Indexada Média",
+                comercializador: "EDP Comercial",
+                url: "https://www.edp.pt/particulares/energia/gas-eletricidade-oferta-indexada/",
+                notaLimitacao: null,
+                expr: `P<sub>i</sub> = Σ<sub>i</sub> [(P<sub>OMIE i</sub> × (1 + Perdas<sub>i</sub>) × K<sub>1</sub> + K<sub>2</sub> + TAR<sub>Energia i</sub>]`,
+                legenda: [
+                    ["OMIE", "Preço médio do mercado grossista para o período de faturação (€/kWh)"],
+                    ["Perdas<sub>i</sub>", "Coeficiente de ajustamento para perdas na rede (variável)"],
+                    ["K<sub>1</sub>", () => c('EDP_M_K1', '(adimensional)', 2)],
+                    ["K<sub>2</sub>", () => c('EDP_M_K2')],
+                    ["TAR", TAR],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "Endesa - Tarifa Indexada",
+                comercializador: "Endesa",
+                url: "https://www.endesa.pt/particulares/planos/luz/tarifa-indexada",
+                notaLimitacao: null,
+                expr: `Preço = A + B`,
+                legenda: [
+                    ["A", () => `Outros custos: Preço de tarifas de acesso, custos de serviço de sistemas estimados, perdas estimadas e margem do comercializador. Simples: ${c('Endesa_A_S', '€/kWh', 5)}, Fora Vazio: ${c('Endesa_A_FV', '€/kWh', 5)},Vazio: ${c('Endesa_A_V', '€/kWh', 5)}`],
+                    ["B", "Custos de Energia Indexada: Preço médio diário do OMIE em Portugal para o período de faturação (€/kWh)"],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "G9 - Smart Index",
+                comercializador: "G9 Energia",
+                url: "https://g9.pt/energia/",
+                notaLimitacao: null,
+                expr: `PE = OMIE × F<sub>adeq</sub> × (1 + Perdas) + GGS + AC + TAR`,
+                legenda: [
+                    ["OMIE", "Preço médio do mercado grossista para o período de faturação (€/kWh)"],
+                    ["F<sub>adeq</sub>", () => `Fator de adequação: ${c('G9_FA', '(adimensional)', 2)}`],
+                    ["Perdas", PERDAS_MED],
+                    ["GGS", () => `Garantia de Gestão e Serviço: ${c('G9_CGS')}`],
+                    ["AC", () => `Ajuste Comercial: ${c('G9_AC')}`],
+                    ["TAR", TAR],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "Goldenergy - Tarifário Indexado 100%",
+                comercializador: "Goldenergy",
+                url: "https://www.goldenergy.pt",
+                notaLimitacao: null,
+                expr: `CE = (P<sub>OMIE</sub> × (1 + Perdas) + QTarifa + CG) + TEPA<sub>i</sub>`,
+                legenda: [
+                    ["CE", "Custo da energia (€)"],
+                    ["P<sub>OMIE</sub>", "Valor médio do período de faturação, do mercado diário publicado pelo Operador do Mercado Ibérico de Energia (€/kWh)"],
+                    ["Perdas", "Coeficientes de perdas correspondentes ao consumo (%)"],
+                    ["QTarifa", () => `Serviços complementares, encargos desvios, garantias de origem e riscos: ${c('GE_Q_Tarifa', '€/kWh', 5)}`],
+                    ["CG", () => `Custo de gestão por cada kWh consumido: ${c('GE_CG', '€/kWh', 3)}`],
+                    ["TEPA<sub>i</sub>", "Custo de acesso às redes (Energia) regulado pela ERSE (€/kWh)"],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "Ibelectra - Solução Amigo",
+                comercializador: "Ibelectra",
+                url: "https://www.ibelectra.pt",
+                notaLimitacao: null,
+                expr: `Preço = (PM<sub>OMIE</sub> + CS) × (1 + Perd) + K + TAR + TSE`,
+                legenda: [
+                    ["PM<sub>OMIE</sub>", "Preço médio do mercado OMIE para o período de faturação (€/kWh)"],
+                    ["CS", () => `Custos de Sistema (gestão, desvios): ${c('Ibelectra_CS', '€/kWh', 5)}`],
+                    ["Perd", PERDAS_MED],
+                    ["K", () => `Margem comercial Ibelectra: ${c('Ibelectra_K_a', '€/kWh', 4)}`],
+                    ["TAR", TAR],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "Ibelectra - Solução Família",
+                comercializador: "Ibelectra",
+                url: "https://www.ibelectra.pt",
+                notaLimitacao: null,
+                expr: `Preço = (PM<sub>OMIE</sub> + CS) × (1 + Perd) + K + TAR + TSE`,
+                legenda: [
+                    ["PM<sub>OMIE</sub>", "Preço médio do mercado OMIE para o período de faturação (€/kWh)"],
+                    ["CS", () => `Custos de Sistema (gestão, desvios): ${c('Ibelectra_CS', '€/kWh', 5)}`],
+                    ["Perd", PERDAS_MED],
+                    ["K", () => `Margem comercial Ibelectra: ${c('Ibelectra_K', '€/kWh', 4)}`],
+                    ["TAR", TAR],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "Iberdrola - Simples Indexado",
+                comercializador: "Iberdrola",
+                url: "https://www.iberdrola.pt/casa/energia/plano-indexado-simples",
+                notaLimitacao: "Disponível apenas na opção tarifária Simples.",
+                expr: `Preço Energia<sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TAR + TSE`,
+                legenda: [
+                    ["POMIE<sub>P</sub>", "Preço médio do mercado ibérico em Portugal para o período de faturação (€/kWh)"],
+                    ["Perdas", PERDAS_MED],
+                    ["Q", () => `Custo de operação e gestão do sistema + componente de comercialização da Iberdrola: ${c('Iberdrola_Media_Q', '€/kWh', 3)}`],
+                    ["Banda mFRR", () => `Sobrecusto associado ao leilão da Banda de Reserva de Restabelecimento de Frequência com Ativação Manual: ${c('Iberdrola_mFRR', '€/kWh', 5)}`],
+                    ["TAR", TAR_S],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "LUZiGÁS - Super Lig Index",
+                comercializador: "LUZiGÁS",
+                url: "https://www.luzigas.pt/luzifix-campanhas-novos-clientes/",
+                notaLimitacao: null,
+                expr: `PE = (P<sub>OMIE</sub> + K + CGS) × (1 + Perdas)`,
+                legenda: [
+                    ["P<sub>OMIE</sub>", "Custo da energia horária no Mercado Diário OMIE — Portugal (€/kWh)"],
+                    ["K", () => `Margem fixa LUZiGÁS: ${c('Luzigas_K', '€/kWh', 3)}`],
+                    ["CGS", () => `Custos do Gestor do Sistema: ${c('Luzigas_CGS', '€/kWh', 5)}`],
+                    ["Perdas", PERDAS_MED],
+                ]
+            },
+            {
+                tipo: 'media',
+                nome: "Luzboa - BTN SPOTDEF",
+                comercializador: "Luzboa",
+                url: "https://www.luzboa.pt/tarifas/domestico/1",
+                notaLimitacao: null,
+                expr: `P<sub>p</sub> = (OMIE<sub>h</sub> + CGS<sub>h</sub>) × (1 + Perdas<sub>ERSE</sub>) × FA + K<sub>p</sub>`,
+                legenda: [
+                    ["P<sub>p</sub>", "Preço de energia ativa a pagar (€/kWh)"],
+                    ["OMIE<sub>h</sub>", "Preço horário médio mensal, no período faturado, no mercado OMIE (€/kWh)"],
+                    ["CGS<sub>h</sub>", () => `Custos de operação e gestão do sistema: ${c('Luzboa_CGS', '€/kWh', 5)}`],
+                    ["Perdas<sub>ERSE</sub>", "Perdas da rede fixadas pela ERSE — Entidade Reguladora dos Serviços Energéticos (%)"],
+                    ["FA", () => `Fator de adequação: ${c('Luzboa_FA', '(adimensional)', 2)}`],
+                    ["K<sub>p</sub>", () => `Gastos operacionais da Luzboa: ${c('Luzboa_Kp', '€/kWh', 3)}`],
+                ]
+            },
+        ];
+    }
+
+    // ── Slug para âncoras ──
+    function slug(nome) {
+        return nome.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
+    // ── Renderizar ──
+    function renderizar() {
+        const tarifarios = definirTarifarios();
+        const lista = document.getElementById('lista-tarifarios');
+        let html = '';
+
+        [
+            { tipo: 'qh',    label: 'Indexados Quarto-Horários (Dinâmicos)' },
+            { tipo: 'media', label: 'Indexados Média' },
+        ].forEach(({ tipo, label }) => {
+
+            const grupoId = `grupo-${tipo}`;
+            html += `<div class="grupo-header ${tipo}" id="${grupoId}">
+                        <span class="tag ${tipo}">${tipo === 'qh' ? 'Quarto-Horário' : 'Média'}</span>
+                        ${label}
+                        <div class="grupo-controles">
+                            <button class="btn-grupo" onclick="expandirGrupo('${grupoId}', true)">Expandir todos</button>
+                            <button class="btn-grupo" onclick="expandirGrupo('${grupoId}', false)">Recolher todos</button>
+                        </div>
+                     </div>`;
+
+            tarifarios.filter(t => t.tipo === tipo).forEach(t => {
+                const id = slug(t.nome);
+                const legendaHTML = t.legenda.map(([sigla, desc]) => {
+                    const texto = typeof desc === 'function' ? desc() : desc;
+                    return `<span>${sigla}</span> — ${texto}`;
+                }).join('<br>');
+
+                const bodyHTML = (!t.expr)
+                    ? `<div class="formula-sem-dados">Fórmula ainda não disponível.</div>`
+                    : `<div class="formula-expr">${t.expr}</div>
+                       ${legendaHTML ? `<div class="formula-legenda">${legendaHTML}</div>` : ''}`;
+
+                html += `
+                <details class="tarifario-item ${tipo}" id="${id}" data-grupo="${grupoId}">
+                    <summary>
+                        <div>
+                            <div class="tarifario-nome">${t.nome}</div>
+                            <div class="tarifario-sub">
+                                <span>${t.comercializador}</span>
+                                <span class="tag ${tipo}">${tipo === 'qh' ? 'Quarto-Horário' : 'Média'}</span>
+                            </div>
+                        </div>
+                        <span class="seta">▼</span>
+                    </summary>
+                    <div class="tarifario-body">
+                        <div class="formula-meta">
+                            <span>🏢 <strong>${t.comercializador}</strong></span>
+                            <a href="${t.url}" target="_blank" rel="noopener">🔗 ${t.url.replace('https://','')}</a>
+                            ${t.notaLimitacao ? `<span class="formula-nota">⚠️ ${t.notaLimitacao}</span>` : ''}
+                        </div>
+                        ${bodyHTML}
+                    </div>
+                </details>`;
+            });
+        });
+
+        lista.innerHTML = html;
+        document.getElementById('estado-carregamento').style.display = 'none';
+
+        // Abrir acordeão se a URL tiver hash correspondente
+        if (window.location.hash) {
+            const alvo = document.querySelector(window.location.hash);
+            if (alvo && alvo.tagName === 'DETAILS') {
+                alvo.open = true;
+                setTimeout(() => alvo.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+            }
+        }
+    }
+
+    // ── Expandir/recolher grupo (acessível globalmente) ──
+    window.expandirGrupo = function(grupoId, abrir) {
+        document.querySelectorAll(`[data-grupo="${grupoId}"]`).forEach(d => d.open = abrir);
+    };
+
+    // ── Carregar CSV e iniciar ──
+    const CSV_URL = "https://huggingface.co/spaces/tiagofelicia/simulador-tarifarios-eletricidade/resolve/main/data/csv/Constantes.csv"
+                  + "?cache_bust=" + new Date().getTime();
+
+    fetch(CSV_URL)
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.text();
+        })
+        .then(csv => {
+            parseConstantesCSV(csv);
+            renderizar();
+        })
+        .catch(err => {
+            console.warn("Não foi possível carregar constantes:", err);
+            document.getElementById('estado-carregamento').textContent =
+                '⚠️ Não foi possível carregar os valores das constantes. As fórmulas são apresentadas sem valores numéricos.';
+            renderizar();
+        });
+});
+</script>
+</body>
+</html>
