@@ -2350,18 +2350,40 @@ async function simularSolar(dados) {
     const inclinacao=getVal('solar-inclinacao'), orientacao=getVal('solar-orientacao'), loss=getVal('solar-loss');
     const montagem=document.getElementById('solar-montagem').value, sombra=getVal('solar-sombra');
     const distrito=document.getElementById('sel-distrito').value;
+    
     try {
-        const url=`https://re.jrc.ec.europa.eu/api/seriescalc?lat=${lat}&lon=${lon}&peakpower=1&loss=${loss}&mountingplace=${montagem}&angle=${inclinacao}&aspect=${orientacao}&outputformat=json&pvcalculation=1`;
-        const resp=await fetch(url,{signal:AbortSignal.timeout(15000)});
+        // 1. URL original do PVGIS (Atualizado para v5_2)
+        const pvgisUrl=`https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat=${lat}&lon=${lon}&peakpower=1&loss=${loss}&mountingplace=${montagem}&angle=${inclinacao}&aspect=${orientacao}&outputformat=json&pvcalculation=1`;
+        
+        // 2. O URL embrulhado no proxy de CORS (endpoint /raw devolve o JSON direto)
+        const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(pvgisUrl)}`;
+        
+        // 3. Fazer o fetch ao proxyUrl em vez do url do PVGIS
+        const resp=await fetch(proxyUrl,{signal:AbortSignal.timeout(15000)});
+        
         if(!resp.ok)throw new Error('API error '+resp.status);
+        
         const json=await resp.json();
         const hourly=json.outputs.hourly;
+        
         // Build profile keyed by month-day-hour (like Python)
         const profile={};
-        for(const h of hourly){const ts=h.time;const m=parseInt(ts.slice(4,6));const d=parseInt(ts.slice(6,8));const hr=parseInt(ts.slice(9,11));const key=`${m}-${d}-${hr}`;if(!profile[key])profile[key]={sum:0,count:0};profile[key].sum+=(h.P||0)/1000;profile[key].count++;}
+        for(const h of hourly){
+            const ts=h.time;
+            const m=parseInt(ts.slice(4,6));
+            const d=parseInt(ts.slice(6,8));
+            const hr=parseInt(ts.slice(9,11));
+            const key=`${m}-${d}-${hr}`;
+            if(!profile[key])profile[key]={sum:0,count:0};
+            profile[key].sum+=(h.P||0)/1000;
+            profile[key].count++;
+        }
+        
         const avgProfile={};
         for(const[k,v]of Object.entries(profile))avgProfile[k]=v.sum/v.count;
+        
         return aplicarPerfilSolar(dados,avgProfile,potencia,sombra,'api');
+        
     } catch(e) {
         console.warn('PVGIS API falhou:',e.message,'→ a usar dados de backup locais');
         return simularComBackup(dados,potencia,inclinacao,orientacao,loss,sombra,distrito);
