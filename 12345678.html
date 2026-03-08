@@ -2353,8 +2353,7 @@ async function simularSolar(dados) {
     
     try {
         // 1. URL original do PVGIS (Atualizado para v5_2)
-        const pvgisUrl=`https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat=${lat}&lon=${lon}&peakpower=1&loss=${loss}&mountingplace=${montagem}&angle=${inclinacao}&aspect=${orientacao}&outputformat=json&pvcalculation=1`;
-        
+        const pvgisUrl = `https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat=${lat}&lon=${lon}&peakpower=1&loss=${loss}&mountingplace=${montagem}&angle=${inclinacao}&aspect=${orientacao}&outputformat=json&pvcalculation=1&startyear=2020&endyear=2020`;        
         // 2. O URL embrulhado no proxy de CORS (endpoint /raw devolve o JSON direto)
         const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(pvgisUrl)}`;
         
