@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>Histórico de Preços do Mercado Diário (Day-Ahead) OMIE (2010-2026) | Tiago Felícia</title>
+    <title>Histórico de Preços do Mercado Diário (Day-Ahead) OMIE (desde 2010) | Tiago Felícia</title>
     <meta name="description" content="Analise o histórico de preços do Mercado Diário (Day-Ahead) de eletricidade (OMIE) em Portugal e Espanha. Médias diárias, mensais e anuais desde 2010 até hoje." />
     
     <link rel="canonical" href="https://www.tiagofelicia.pt/omie.html" />
@@ -23,10 +23,10 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/highcharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/exporting.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/export-data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/accessibility.js"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
@@ -99,6 +99,8 @@
             font-size: 1em;
             color: #000;
         }
+        #erro-periodo { display: none; width: 95%; max-width: 1200px; margin: 0 auto 10px auto; padding: 10px 16px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; color: #856404; font-size: 0.9em; text-align: center; }
+        input.input-erro { border-color: #dc3545 !important; box-shadow: 0 0 0 2px rgba(220,53,69,0.2); }
     </style>
 </head>
 <body>
@@ -132,16 +134,18 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados históricos disponíveis desde 01/01/2010
         </p>
-        <h1>Eletricidade - Preços médios Mercado Diário OMIE para o período de <span id="data-inicio-titulo">--/--/----</span> a <span id="data-fim-titulo">--/--/----</span></h1>
+        <h1>Eletricidade - Preços médios Mercado Diário OMIE para o período de <span id="data-inicio-titulo">Portugal</span> a <span id="data-fim-titulo">hoje</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
 
-     <div id="loading-indicator">A carregar dados históricos...</div>
+    <div id="erro-periodo" role="alert"></div>
+
+    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados históricos...</div>
 
     <div class="dashboard-grid-periodo">
         <div class="card-pair-row">
-             <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
-             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
+             <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
+             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
         </div>
         <div class="card-pair-row">
              <div class="card"> <h3 class="card-title-bd">Bi-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-diario-fora-vazio">--,-- €</span></div> </div>
@@ -151,8 +155,6 @@
              <div class="card"> <h3 class="card-title-bs">Bi-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-semanal-fora-vazio">--,-- €</span></div> </div>
              <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
         </div>
-    </div>
-
     </div>
 
     <div id="media-mes-futuros-container" style="display: none; width: 95%; max-width: 1200px; margin: 30px auto 20px auto; text-align: center;">
@@ -184,7 +186,7 @@
                         <li><strong>Bi-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Vazio</strong> e <strong>Fora de Vazio</strong>.</li>
                         <li><strong>Tri-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Ponta</strong>, <strong>Cheias</strong> e <strong>Vazio</strong>.</li>
                     </ul>
-                    <p>Pode consultar as horas dos períodos em https://www.tiagofelicia.pt/periodos-horarios.html</p>
+                    <p>Pode consultar as horas dos períodos em <a href="https://www.tiagofelicia.pt/periodos-horarios.html" target="_blank" rel="noopener noreferrer">periodos-horarios.html</a></p>
 
                     <p><strong>Nota Importante:</strong> No dia mais recente apresentado, os cálculos de médias, máximo e mínimo para Portugal <strong>excluem</strong> os últimos quartos de hora (normalmente após as 23h PT), pois os mesmos ainda não são conhecidos.</p>
                 </div>
@@ -251,6 +253,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const seletorDataInicio = document.getElementById('seletor-data-inicio');
     const seletorDataFim = document.getElementById('seletor-data-fim');
     const loadingIndicator = document.getElementById('loading-indicator');
+    const erroPeriodoEl = document.getElementById('erro-periodo');
+
+    // Mostra mensagem de erro inline (não-bloqueante)
+    function mostrarErroPeriodo(msg) {
+        erroPeriodoEl.textContent = msg;
+        erroPeriodoEl.style.display = 'block';
+        seletorDataInicio.classList.add('input-erro');
+        seletorDataFim.classList.add('input-erro');
+    }
+    function limparErroPeriodo() {
+        erroPeriodoEl.style.display = 'none';
+        erroPeriodoEl.textContent = '';
+        seletorDataInicio.classList.remove('input-erro');
+        seletorDataFim.classList.remove('input-erro');
+    }
+
+    // Debounce: aguarda 'ms' ms sem atividade antes de executar fn
+    function debounce(fn, ms) {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), ms);
+        };
+    }
 
     // --- ARMAZENAMENTO DE DADOS ---
     let dadosAtuais = [];
@@ -295,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function carregarDadosHistoricos(ano) {
         if (dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise)) { return dadosHistoricos[ano]; }
         if (dadosHistoricos[ano] instanceof Promise) { return await dadosHistoricos[ano]; }
-        const url = `${URL_HISTORICO_BASE}${ano}.csv`; console.log(`A carregar ${ano}...`); loadingIndicator.style.display = 'block';
+        const url = `${URL_HISTORICO_BASE}${ano}.csv`; loadingIndicator.style.display = 'block';
         dadosHistoricos[ano] = fetch(url).then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); }) .then(csvText => { const dados = parseCSVSimples(csvText); dadosHistoricos[ano] = dados; return dados; }) .catch(error => { console.error(`Falha ${ano}:`, error); dadosHistoricos[ano] = []; return []; }) .finally(() => { const aCarregar = Object.values(dadosHistoricos).some(v => v instanceof Promise); if (!aCarregar) loadingIndicator.style.display = 'none'; });
         return await dadosHistoricos[ano];
     }
@@ -308,6 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!dataInicioSelecionada || !dataFimSelecionada || dataInicioSelecionada > dataFimSelecionada) { 
             return; 
         }
+
+        limparErroPeriodo();
         
         // VALIDAÇÃO: Verificar se o período não excede o limite
         const dataInicio = new Date(dataInicioSelecionada);
@@ -315,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const diasDiferenca = Math.ceil((dataFim - dataInicio) / (1000 * 60 * 60 * 24));
         
         if (diasDiferenca > MAX_DIAS_PERIODO) {
-            alert(`⚠️ Por favor selecione um período máximo de ${MAX_DIAS_PERIODO} dias (${Math.floor(MAX_DIAS_PERIODO/30)} meses).\n\nPeríodo selecionado: ${diasDiferenca} dias.`);
+            mostrarErroPeriodo(`⚠️ Por favor selecione um período máximo de ${MAX_DIAS_PERIODO} dias (${Math.floor(MAX_DIAS_PERIODO / 365)} anos). Período selecionado: ${diasDiferenca} dias.`);
             return;
         }
         
@@ -338,10 +366,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (anosACarregar.size > 0) {
-            console.log("Anos a carregar:", [...anosACarregar]);
             const promises = [...anosACarregar].map(ano => carregarDadosHistoricos(ano));
             await Promise.all(promises);
-            console.log("Carregamento histórico concluído.");
         }
 
         // --- OBTER DADOS DO PERÍODO ---
@@ -374,10 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dadosDiaAnteriorInicio = dadosHistoricos[anoAnteriorInicio].filter(d => d.dia === dataAnteriorInicioCSV);
         }
         
-        console.log(`📊 Dados carregados: ${dadosDoPeriodo.length} registos`);
-
         if (dadosDoPeriodo.length === 0) { 
-            console.warn(`Nenhum dado encontrado para o período ${dataInicioCSV} a ${dataFimCSV}.`);
             document.querySelector('main').innerHTML = `<p style="color: orange; text-align: center; padding: 20px;">📅 Nenhum dado disponível para o período selecionado.</p>`;
             return; 
         }
@@ -407,8 +430,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Cálculos PT
         const precosReaisPTPeriodo = dadosReaisDoPeriodo.map(d => d.preco_pt).filter(p => p !== null); 
         document.getElementById('media-pt').innerHTML = formatarValor(calcularMedia(precosReaisPTPeriodo)); 
-        document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPTPeriodo.length > 0 ? Math.max(...precosReaisPTPeriodo) : null); 
-        document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPTPeriodo.length > 0 ? Math.min(...precosReaisPTPeriodo) : null);
+        document.getElementById('max-pt').innerHTML = formatarValor(precosReaisPTPeriodo.length > 0 ? precosReaisPTPeriodo.reduce((a, b) => Math.max(a, b), -Infinity) : null); 
+        document.getElementById('min-pt').innerHTML = formatarValor(precosReaisPTPeriodo.length > 0 ? precosReaisPTPeriodo.reduce((a, b) => Math.min(a, b), Infinity) : null);
 
         // Cálculos Cards ES (OTIMIZADO com Map)
         let somaMediasDiariasES = 0; 
@@ -439,8 +462,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const mediaGeralES = countMediasDiariasES > 0 ? somaMediasDiariasES / countMediasDiariasES : null;
         document.getElementById('media-es').innerHTML = formatarValor(mediaGeralES);
-        document.getElementById('max-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? Math.max(...todosPrecosESPeriodo) : null);
-        document.getElementById('min-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? Math.min(...todosPrecosESPeriodo) : null);
+        document.getElementById('max-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? todosPrecosESPeriodo.reduce((a, b) => Math.max(a, b), -Infinity) : null);
+        document.getElementById('min-es').innerHTML = formatarValor(todosPrecosESPeriodo.length > 0 ? todosPrecosESPeriodo.reduce((a, b) => Math.min(a, b), Infinity) : null);
 
         // Cálculos Ciclos
         const ciclosPeriodo = { bd: {}, bs: {}, td: {}, ts: {} }; 
@@ -592,7 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- GRÁFICO QUARTO-HORÁRIO DETALHADO ---
     function atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE) {
-        const dadosOrdenados = dadosReaisDoPeriodo.sort((a, b) => { if (!a.timestamp || !b.timestamp) return 0; return a.timestamp - b.timestamp; }); // Usar timestamp UTC
+        const dadosOrdenados = [...dadosReaisDoPeriodo].sort((a, b) => { if (!a.timestamp || !b.timestamp) return 0; return a.timestamp - b.timestamp; });
         const seriesDataPT = dadosOrdenados.map(row => row.timestamp ? [row.timestamp, row.preco_pt] : null).filter(p => p !== null);
         const seriesDataES = dadosOrdenados.map(row => row.timestamp ? [row.timestamp, row.preco_es] : null).filter(p => p !== null);
         const tituloGrafico = `Valores Quarto-Horários no Período (${dataInicioCSV} a ${dataFimCSV}) ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`;
@@ -701,19 +724,16 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch(URL_DADOS_ATUAIS) // Carregar apenas dados atuais
         .then(response => { if (!response.ok) throw new Error(`Erro rede: ${response.statusText}`); return response.text(); })
         .then(data => {
-            const parsedData = parseCSVAtual(data); // Usar parser que lê tudo
+            const parsedData = parseCSVAtual(data);
             dadosAtuais = parsedData.precos;
             dadosAtualizacao = parsedData.atualizacoes;
-            // Guardar futuros também, mesmo que não use diretamente nos cards
-            // dadosFuturosPT = parsedData.futurosPT;
-            // dadosFuturosES = parsedData.futurosES;
 
             if (dadosAtuais.length === 0) throw new Error("Ficheiro atual vazio.");
             if (!dadosAtualizacao.Data_Valores_OMIE) { throw new Error("Data_Valores_OMIE não encontrada."); }
 
             const anosAtuais = dadosAtuais.map(d => d.dia ? parseInt(d.dia.substring(6, 10)) : NaN).filter(ano => !isNaN(ano));
             if (anosAtuais.length > 0) { anoMinimoAtual = Math.min(...anosAtuais); }
-            else { anoMinimoAtual = new Date().getFullYear(); console.warn("Não detetado ano min atual."); }
+            else { anoMinimoAtual = new Date().getFullYear(); }
 
             const dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE);
             if (!dataMaximaValida) { throw new Error("Data_Valores_OMIE inválida."); }
@@ -730,9 +750,11 @@ document.addEventListener('DOMContentLoaded', function() {
             defaultDataInicio = seletorDataInicio.value;
             defaultDataFim = seletorDataFim.value;
 
-            // Adicionar ouvintes
-            seletorDataInicio.addEventListener('change', atualizarDashboardPeriodo);
-            seletorDataFim.addEventListener('change', atualizarDashboardPeriodo);
+            // Adicionar ouvintes com debounce: a atualização só dispara 600ms
+            // após a última alteração, evitando erros a meio da edição manual das datas
+            const atualizarComDebounce = debounce(atualizarDashboardPeriodo, 600);
+            seletorDataInicio.addEventListener('change', atualizarComDebounce);
+            seletorDataFim.addEventListener('change', atualizarComDebounce);
 
             // Carga inicial
             atualizarDashboardPeriodo(); // Chama a função principal

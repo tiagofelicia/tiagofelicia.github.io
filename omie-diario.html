@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>Preços Mercado Diário (Day-Ahead) OMIE Spot 2026: Eletricidade Hora-a-Hora | Tiago Felícia</title>
+    <title>Preços Mercado Diário (Day-Ahead) OMIE Spot: Eletricidade Hora-a-Hora | Tiago Felícia</title>
     <meta name="description" content="Consulte os preços diários e horários do Mercado Diário (Day-Ahead) de eletricidade (OMIE Spot) para Portugal. Consulte médias diárias, bi-horárias e tri-horárias atualizadas." />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/omie-diario.html" />
@@ -23,10 +23,10 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
 
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/highcharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/exporting.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/export-data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/accessibility.js"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script>
@@ -111,6 +111,11 @@
         /* Badge de data para prints */
         .data-badge-secao { font-size: 0.72em; color: #888; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; padding: 2px 8px; display: inline-block; }
         .data-badge-wrapper { width: 95%; max-width: 1200px; margin: 0 auto 4px auto; text-align: right; }
+        .chart-type-toggle { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 8px; }
+        .chart-type-toggle button { display: flex; align-items: center; gap: 6px; padding: 5px 14px; border: 1px solid #ccc; border-radius: 6px; background: white; font-size: 0.85em; cursor: pointer; color: #555; transition: all 0.15s ease; }
+        .chart-type-toggle button:hover { border-color: #999; background: #f5f5f5; }
+        .chart-type-toggle button.active { background: #343a40; color: white; border-color: #343a40; font-weight: 600; }
+        .chart-type-toggle svg { flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -140,16 +145,16 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados disponíveis desde 01/01/2010
         </p>
-        <h1>Eletricidade - Preços médios Mercado Diário OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
+        <h1>Eletricidade - Preços médios Mercado Diário OMIE para <span id="data-titulo-painel">Portugal</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
 
-    <div id="loading-indicator">A carregar dados históricos...</div>
+    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados históricos...</div>
 
     <div class="dashboard-grid">
          <div class="coluna">
-            <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt">--,-- €</div> <div class="futuros-info" id="futuros-container-pt"> Futuro do dia: <strong id="futuros-anterior-pt">--,-- €</strong> em <strong id="futuros-pt-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
-             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es">--,-- €</div> <div class="futuros-info" id="futuros-container-es"> Futuro do dia: <strong id="futuros-anterior-es">--,-- €</strong> em <strong id="futuros-es-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
+            <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="futuros-info" id="futuros-container-pt"> Futuro do dia: <strong id="futuros-anterior-pt">--,-- €</strong> em <strong id="futuros-pt-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
+             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="futuros-info" id="futuros-container-es"> Futuro do dia: <strong id="futuros-anterior-es">--,-- €</strong> em <strong id="futuros-es-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
              <div class="card card-futuros"> <h3 class="card-title-futuros">Futuros Diários OMIP (PT)</h3> <ul> <li id="futuro-1-item" style="display: none;"> <span id="futuros-1-label"></span> <strong id="futuros-1-valor"></strong> </li> <li id="futuro-2-item" style="display: none;"> <span id="futuros-2-label"></span> <strong id="futuros-2-valor"></strong> </li> <li id="futuro-3-item" style="display: none;"> <span id="futuros-3-label"></span> <strong id="futuros-3-valor"></strong> </li> </ul> </div>
         </div>
         <div class="coluna">
@@ -164,7 +169,19 @@
 
     <div class="grafico-tabela-grid">
         <div id="tabela-container" class="tabela-wrapper"></div>
-        <div id="grafico-container"></div>
+        <div style="min-width: 0; overflow: hidden;">
+            <div class="chart-type-toggle">
+                <button id="btn-tipo-linha" class="active" title="Gráfico de linhas">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="1,12 5,6 9,9 13,3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                    Linhas
+                </button>
+                <button id="btn-tipo-barras" title="Gráfico de barras">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="8" width="3" height="6" rx="1" fill="currentColor"/><rect x="6" y="4" width="3" height="10" rx="1" fill="currentColor"/><rect x="11" y="6" width="3" height="8" rx="1" fill="currentColor"/></svg>
+                    Barras
+                </button>
+            </div>
+            <div id="grafico-container"></div>
+        </div>
     </div>
 
     <article class="content-support">
@@ -270,6 +287,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let dadosFuturosPT = [];
     let dadosFuturosES = [];
     let anoMinimoAtual = null;
+    let tipoGrafico = 'line';
+    let ultimosArgsGrafico = null;
 
     // --- FUNÇÕES AUXILIARES ---
     function formatarDataParaInput(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('/')) { return null; } const [dia, mes, ano] = dataStr.split('/'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${ano}-${mes}-${dia}`; }
@@ -346,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function carregarDadosHistoricos(ano) {
         if (dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise)) { return dadosHistoricos[ano]; }
         if (dadosHistoricos[ano] instanceof Promise) { return await dadosHistoricos[ano]; }
-        const url = `${URL_HISTORICO_BASE}${ano}.csv`; console.log(`A carregar ${ano}...`); loadingIndicator.style.display = 'block';
+        const url = `${URL_HISTORICO_BASE}${ano}.csv`; loadingIndicator.style.display = 'block';
         dadosHistoricos[ano] = fetch(url).then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); }) .then(csvText => { const dados = parseCSVSimples(csvText); dadosHistoricos[ano] = dados; return dados; }) .catch(error => { console.error(`Falha ${ano}:`, error); dadosHistoricos[ano] = []; return []; }) .finally(() => { const aCarregar = Object.values(dadosHistoricos).some(v => v instanceof Promise); if (!aCarregar) loadingIndicator.style.display = 'none'; });
         return await dadosHistoricos[ano];
     }
@@ -388,7 +407,6 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (dadosHistoricos[anoSelecionado]) { dadosDoDia = dadosHistoricos[anoSelecionado].filter(d => d.dia === dataFormatadaCSV); }
         // Validar se conseguimos carregar os dados históricos
         if (dadosDoDia.length === 0 && anoSelecionado < anoMinimoAtual) {
-            console.error(`Dados históricos para ${anoSelecionado} não disponíveis`);
             document.querySelector('main').innerHTML = 
                 `<p style="color: orange; text-align: center; padding: 20px;">
                 📅 Dados históricos para ${dataFormatadaCSV} não disponíveis.<br>
@@ -398,14 +416,16 @@ document.addEventListener('DOMContentLoaded', function() {
         let dadosDiaAnterior = [];
         if(dataAnteriorCSV) { if (anoAnterior >= anoMinimoAtual) { dadosDiaAnterior = dadosAtuais.filter(d => d.dia === dataAnteriorCSV); } else if (dadosHistoricos[anoAnterior]) { dadosDiaAnterior = dadosHistoricos[anoAnterior].filter(d => d.dia === dataAnteriorCSV); } }
 
-        if (dadosDoDia.length === 0) { console.warn(`Nenhum dado encontrado para ${dataFormatadaCSV}.`); /* Limpar UI? */ return; };
+        if (dadosDoDia.length === 0) { return; };
 
         // Obter a data/hora atual em Lisboa (independentemente do fuso do utilizador)
         // Usamos "en-US" como 'locale' seguro para o parsing de 'new Date()'
         const agoraLisboa = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
         
         // Formatar a data de "hoje" (em Lisboa) para YYYY-MM-DD
-        const hojeEmLisboaYYYYMMDD = agoraLisboa.toISOString().split('T')[0];
+        // Nota: toISOString() devolveria sempre UTC, podendo retornar o dia anterior
+        // entre as 00:00-00:59 em Lisboa no inverno (UTC+0). Usamos os valores locais.
+        const hojeEmLisboaYYYYMMDD = `${agoraLisboa.getFullYear()}-${String(agoraLisboa.getMonth() + 1).padStart(2, '0')}-${String(agoraLisboa.getDate()).padStart(2, '0')}`;
         
         // Obter a hora e minuto atuais de Lisboa
         const horaAtualLisboa = agoraLisboa.getHours(); // (0-23)
@@ -509,6 +529,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function atualizarGrafico(dadosDoDiaCompleto, dadosReaisDoDia, dataTitulo, isUltimoDiaOMIE, isHoje, horaAtualLisboa, minutoAtualLisboa) {
         const container = document.getElementById('grafico-container'); if (!container) return;
+
+        // Guardar os argumentos para poder redesenhar ao mudar o tipo de gráfico
+        ultimosArgsGrafico = [dadosDoDiaCompleto, dadosReaisDoDia, dataTitulo, isUltimoDiaOMIE, isHoje, horaAtualLisboa, minutoAtualLisboa];
         
         let seriesDataPT = dadosDoDiaCompleto.map(d => d.preco_pt); const seriesDataES = dadosDoDiaCompleto.map(d => d.preco_es);
         if (isUltimoDiaOMIE && dadosDoDiaCompleto.length > 4) { const nf = dadosDoDiaCompleto.length - dadosReaisDoDia.length; if (nf > 0) { for (let i = 0; i < nf; i++) { seriesDataPT[dadosReaisDoDia.length + i] = null; } } }
@@ -521,6 +544,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; 
         const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`;
+
+        // Configurações específicas por tipo de gráfico
+        const isBarras = (tipoGrafico === 'column');
+        const chartTypeConfig = isBarras
+            ? { type: 'column', height: 770 }
+            : { type: 'line', height: 770 };
+        const seriesExtraConfig = isBarras
+            ? { pointPadding: 0.05, groupPadding: 0.1 }
+            : { connectNulls: false };
 
         let xAxisConfig = {
             categories: dadosDoDiaCompleto.map(d => d.intervalo),
@@ -551,7 +583,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try { 
             const chart = Highcharts.chart('grafico-container', { 
-                chart: { type: 'line', height: 770 }, 
+                chart: chartTypeConfig, 
                 title: { text: tituloGrafico }, 
                 xAxis: xAxisConfig, 
                 yAxis: { 
@@ -583,13 +615,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     } 
                 }, 
                 series: [ 
-                    { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, 
-                    { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } 
+                    { name: 'Espanha', color: '#28a745', data: seriesDataES, ...seriesExtraConfig }, 
+                    { name: 'Portugal', color: '#007bff', data: seriesDataPT, ...seriesExtraConfig } 
                 ] 
             }); 
                         
-            // Lógica para mostrar o tooltip no carregamento
-            if (isHoje) {
+            // Lógica para mostrar o tooltip no carregamento (apenas no gráfico de linhas)
+            if (isHoje && !isBarras) {
                 // 1. Calcular o índice do quarto-hora (0-95)
                 const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
 
@@ -615,24 +647,40 @@ document.addEventListener('DOMContentLoaded', function() {
         catch (e) { console.error("Erro ao criar gráfico Highcharts:", e, e.stack); }
     }
 
+    // --- TOGGLE TIPO DE GRÁFICO ---
+    const btnLinha = document.getElementById('btn-tipo-linha');
+    const btnBarras = document.getElementById('btn-tipo-barras');
+    if (btnLinha && btnBarras) {
+        btnLinha.addEventListener('click', () => {
+            if (tipoGrafico === 'line') return;
+            tipoGrafico = 'line';
+            btnLinha.classList.add('active');
+            btnBarras.classList.remove('active');
+            if (ultimosArgsGrafico) atualizarGrafico(...ultimosArgsGrafico);
+        });
+        btnBarras.addEventListener('click', () => {
+            if (tipoGrafico === 'column') return;
+            tipoGrafico = 'column';
+            btnBarras.classList.add('active');
+            btnLinha.classList.remove('active');
+            if (ultimosArgsGrafico) atualizarGrafico(...ultimosArgsGrafico);
+        });
+    }
+
     // --- PROCESSO DE INICIALIZAÇÃO ---
-    console.log("A iniciar carregamento dos dados atuais...");
     fetch(URL_DADOS_ATUAIS)
         .then(response => { if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`); return response.text(); })
         .then(data => {
-            console.log("Dados atuais recebidos. A processar...");
             const parsedData = parseCSVAtual(data);
             dadosAtuais = parsedData.precos; dadosAtualizacao = parsedData.atualizacoes; dadosFuturosPT = parsedData.futurosPT; dadosFuturosES = parsedData.futurosES;
             if (dadosAtuais.length === 0) throw new Error("Ficheiro atual vazio."); if (!dadosAtualizacao.Data_Valores_OMIE) { throw new Error("Data_Valores_OMIE não encontrada."); }
             const anosAtuais = dadosAtuais.map(d => d.dia ? parseInt(d.dia.substring(6, 10)) : NaN).filter(ano => !isNaN(ano)); // Adicionado check d.dia
-            if (anosAtuais.length > 0) { anoMinimoAtual = Math.min(...anosAtuais); } else { anoMinimoAtual = new Date().getFullYear(); console.warn("Não foi possível det. ano min atual."); }
-            console.log("Ano mínimo atual:", anoMinimoAtual);
+            if (anosAtuais.length > 0) { anoMinimoAtual = Math.min(...anosAtuais); } else { anoMinimoAtual = new Date().getFullYear(); }
             const dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE); if (!dataMaximaValida) { throw new Error("Data_Valores_OMIE inválida."); }
             seletorData.min = `${ANO_INICIO_HISTORICO}-01-01`; seletorData.max = dataMaximaValida; seletorData.value = dataMaximaValida;
             seletorData.addEventListener('change', (e) => atualizarDashboard(e.target.value));
             atualizarDashboard(seletorData.value); // Chamar UMA VEZ
             atualizarFuturosProximos();
-            console.log("Página pronta.");
         })
         .catch(error => { console.error('Falha CRÍTICA:', error, error.stack); document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.</p>`; });
 

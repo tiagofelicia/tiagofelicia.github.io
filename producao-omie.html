@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>Produção de Eletricidade Portugal vs Preços Mercado Diário (Day-Ahead) OMIE Spot 2026 | Tiago Felícia</title>
+    <title>Produção de Eletricidade Portugal vs Preços Mercado Diário OMIE Spot | Tiago Felícia</title>
     <meta name="description" content="Veja a origem da eletricidade em Portugal (Renováveis, Gás, Importação) e compare com o preço de mercado (OMIE) hora a hora." />
     
     <link rel="canonical" href="https://www.tiagofelicia.pt/producao-omie.html" />
@@ -23,10 +23,10 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
 
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/highcharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/exporting.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/export-data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts/modules/accessibility.js"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
@@ -110,11 +110,11 @@
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados históricos disponíveis desde 01/01/2010
         </p>
-        <h1>Repartição da Produção em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">--/--/----</span></h1>
+        <h1>Repartição da Produção em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">Portugal</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
         </div>
 
-    <div id="loading-indicator">A carregar dados...</div>
+    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
     
     <div class="grafico-wrapper">
         <div id="grafico-container"></div>
@@ -295,19 +295,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (firstNullIndex === -1) {
             firstNullIndex = 96; 
         }
-        console.log(`Corte de dados no índice: ${firstNullIndex} (baseado na Biomassa)`);
 
 
         const paraNumeroComCorte = (val, index) => {
             if (index >= firstNullIndex) { return null; }
             const num = parseFloat(val);
             return isNaN(num) ? null : num;
-        };
-        
-        const paraNumeroOMIE = (val, index) => { 
-            if (index >= firstNullIndex) { return null; }
-            const num = parseFloat(val); 
-            return isNaN(num) ? null : num; 
         };
 
         const categoriasX = dadosConjugados.map(d => d.intervalo);
@@ -320,11 +313,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         const precosOmieValidos = dadosConjugados
-            .map((d, i) => paraNumeroOMIE(d.preco_pt, i))
+            .map((d, i) => paraNumeroComCorte(d.preco_pt, i))
             .filter(p => p !== null);
 
-        const maxOmie = precosOmieValidos.length > 0 ? Math.max(...precosOmieValidos) : null;
-        const minOmie = precosOmieValidos.length > 0 ? Math.min(...precosOmieValidos) : null;
+        const maxOmie = precosOmieValidos.length > 0 ? precosOmieValidos.reduce((a, b) => Math.max(a, b), -Infinity) : null;
+        const minOmie = precosOmieValidos.length > 0 ? precosOmieValidos.reduce((a, b) => Math.min(a, b), Infinity) : null;
 
         const plotLinesOMIE = [];
         const formatarPlotLine = (val) => Highcharts.numberFormat(val, 2, ',', '');
@@ -447,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         type: 'line', yAxis: 1, 
                         color: '#FF0000',
                         lineWidth: 3, 
-                        data: dadosConjugados.map((d, i) => paraNumeroOMIE(d.preco_pt, i)), 
+                        data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.preco_pt, i)), 
                         zIndex: 5, marker: { enabled: false } 
                     }
                 ]
@@ -459,8 +452,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- 8. PROCESSO DE INICIALIZAÇÃO ---
-    console.log("A iniciar carregamento dos dados atuais (OMIE e Produção)...");
-    
     const dataDeHoje = getLisboaDateString();
 
     Promise.all([
@@ -480,8 +471,6 @@ document.addEventListener('DOMContentLoaded', function() {
         dadosOmieAtuais = parseCSV(precosOmieCSV);
         dadosProducaoAtuais = parseCSV(textoProducao);
         
-        console.log("Dados atuais de OMIE e Produção carregados.");
-        
         if (!dadosOmieAtuais || dadosOmieAtuais.length === 0) {
              throw new Error("Ficheiro OMIE atual está vazio ou é inválido após 'parse'.");
         }
@@ -496,7 +485,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         anoMinimoAtual = Math.min(...anosAtuaisValidos);
-        console.log("Ano mínimo detetado no ficheiro 'atuais':", anoMinimoAtual);
 
         
         const ultimoRegisto = dadosOmieAtuais[dadosOmieAtuais.length - 1];

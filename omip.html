@@ -1,10 +1,11 @@
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>Futuros OMIP 2026: Preços da Eletricidade a Prazo | Tiago Felícia</title>
-    <meta name="description" content="Consulte os valores dos contratos futuros do OMIP para Portugal e Espanha. Dados atualizados para 2026 do mercado a prazo de eletricidade (Diário, Mensal, Anual)." />
+    <title>Futuros OMIP: Preços da Eletricidade a Prazo | Tiago Felícia</title>
+    <meta name="description" content="Consulte os valores dos contratos futuros do OMIP para Portugal e Espanha. Dados atualizados do mercado a prazo de eletricidade (Diário, Mensal, Anual)." />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/omip.html" />
     
@@ -212,6 +213,7 @@
                     </tbody>
                 </table>
             </div>
+            </div>
         </div>
     </section>
 
@@ -418,6 +420,20 @@ document.addEventListener('DOMContentLoaded', function () {
         return tableHTML || '<tr><td colspan="4" style="text-align: center;">Não foram encontrados dados.</td></tr>';
     }
 
+    // Calcula a data do dia seguinte a uma string DD/MM/YYYY
+    function diaSeguinte(dataStr) {
+        if (!dataStr || !dataStr.includes('/')) return null;
+        const [dia, mes, ano] = dataStr.split('/');
+        const d = new Date(Date.UTC(parseInt(ano), parseInt(mes) - 1, parseInt(dia)));
+        d.setUTCDate(d.getUTCDate() + 1);
+        return `${String(d.getUTCDate()).padStart(2,'0')}/${String(d.getUTCMonth()+1).padStart(2,'0')}/${d.getUTCFullYear()}`;
+    }
+
+    // Filtra contratos Diários cuja Descricao seja o dia seguinte à atualização
+    function filtrarFuturos(futuros, dataSeguinte) {
+        return futuros.filter(f => !(f.Tipo === 'Diários' && f.Descricao === dataSeguinte));
+    }
+
     fetch(csvUrl)
         .then(response => { if (!response.ok) throw new Error(`Erro ${response.status} ao carregar CSV.`); return response.text(); })
         .then(csvText => {
@@ -425,30 +441,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const dataAtualizacao = atualizacoes.Data_Valores_OMIP || "Erro";
             document.querySelectorAll('.badge-data-omip').forEach(el => { el.textContent = dataAtualizacao; });
 
-            // Calcular a data do dia seguinte à atualização (formato DD/MM/YYYY)
-            function diaSeguinte(dataStr) {
-                if (!dataStr || !dataStr.includes('/')) return null;
-                const [dia, mes, ano] = dataStr.split('/');
-                const d = new Date(Date.UTC(parseInt(ano), parseInt(mes) - 1, parseInt(dia)));
-                d.setUTCDate(d.getUTCDate() + 1);
-                return `${String(d.getUTCDate()).padStart(2,'0')}/${String(d.getUTCMonth()+1).padStart(2,'0')}/${d.getUTCFullYear()}`;
-            }
-            const dataSeguinte = diaSeguinte(dataAtualizacao);
-
-            // Filtrar contratos Diários cuja Descricao seja o dia seguinte
-            function filtrarFuturos(futuros) {
-                return futuros.filter(f => !(f.Tipo === 'Diários' && f.Descricao === dataSeguinte));
-            }
-
-            tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(filtrarFuturos(futurosPT));
-            tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(filtrarFuturos(futurosES));
+            const dataSeg = diaSeguinte(dataAtualizacao);
+            tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(filtrarFuturos(futurosPT, dataSeg));
+            tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(filtrarFuturos(futurosES, dataSeg));
         })
         .catch(error => {
             console.error('Falha ao carregar ou processar os dados OMIP:', error);
-            const errorMsg = '<tr><td colspan="3" style="text-align: center; color: red;">Erro ao carregar os dados.</td></tr>';
+            const errorMsg = '<tr><td colspan="4" style="text-align: center; color: red;">Erro ao carregar os dados.</td></tr>';
             tabelaOmipPtBody.innerHTML = errorMsg;
             tabelaOmipEsBody.innerHTML = errorMsg;
-            spanDataAtualizacao.textContent = "Erro";
+            document.querySelectorAll('.badge-data-omip').forEach(el => { el.textContent = 'Erro'; });
         });
 
     fetch('menu.html').then(response => response.text()).then(data => { document.getElementById('menu-placeholder').innerHTML = data; }).catch(error => console.error('Erro menu:', error));
