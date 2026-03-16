@@ -116,6 +116,9 @@
         .chart-type-toggle button:hover { border-color: #999; background: #f5f5f5; }
         .chart-type-toggle button.active { background: #343a40; color: white; border-color: #343a40; font-weight: 600; }
         .chart-type-toggle svg { flex-shrink: 0; }
+        #minmax-barras { display: none; justify-content: center; flex-wrap: wrap; gap: 8px 20px; padding: 7px 12px; margin-bottom: 6px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.85em; }
+        #minmax-barras span { display: flex; align-items: center; gap: 5px; font-weight: 600; white-space: nowrap; }
+        #minmax-barras .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -180,6 +183,7 @@
                     Barras
                 </button>
             </div>
+            <div id="minmax-barras"></div>
             <div id="grafico-container"></div>
         </div>
     </div>
@@ -537,22 +541,32 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isUltimoDiaOMIE && dadosDoDiaCompleto.length > 4) { const nf = dadosDoDiaCompleto.length - dadosReaisDoDia.length; if (nf > 0) { for (let i = 0; i < nf; i++) { seriesDataPT[dadosReaisDoDia.length + i] = null; } } }
         const precosPTGrafico = seriesDataPT.filter(p => p !== null && !isNaN(p)); const precosESGrafico = seriesDataES.filter(p => p !== null && !isNaN(p)); const minPT = precosPTGrafico.length > 0 ? Math.min(...precosPTGrafico) : null; const maxPT = precosPTGrafico.length > 0 ? Math.max(...precosPTGrafico) : null; const minES = precosESGrafico.length > 0 ? Math.min(...precosESGrafico) : null; const maxES = precosESGrafico.length > 0 ? Math.max(...precosESGrafico) : null;
         
-        const plotLines = [];
-        const formatLabelMinMax = (val) => formatarValor(val, 2);
-        if (minPT !== null || minES !== null) { const minValPT = minPT ?? Infinity; const minValES = minES ?? Infinity; if (Math.abs(minValPT - minValES) < 0.01 && minPT !== null) { plotLines.push({ value: minValPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } }); } else { if (minPT !== null) plotLines.push({ value: minValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (minES !== null) plotLines.push({ value: minValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatLabelMinMax(minValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
-        if (maxPT !== null || maxES !== null) { const maxValPT = maxPT ?? -Infinity; const maxValES = maxES ?? -Infinity; if (Math.abs(maxValPT - maxValES) < 0.01 && maxPT !== null) { plotLines.push({ value: maxValPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }); } else { if (maxPT !== null) plotLines.push({ value: maxValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
-        
-        const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`; 
-        const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`;
-
         // Configurações específicas por tipo de gráfico
         const isBarras = (tipoGrafico === 'column');
         const chartTypeConfig = isBarras
-            ? { type: 'column', height: 770 }
-            : { type: 'line', height: 770 };
+            ? { type: 'column', height: 770, zoomType: 'x' }
+            : { type: 'line',   height: 770, zoomType: 'x' };
         const seriesExtraConfig = isBarras
             ? { pointPadding: 0.05, groupPadding: 0.1 }
             : { connectNulls: false };
+
+        const plotLines = [];
+        const formatLabelMinMax = (val) => formatarValor(val, 2);
+        const minmaxEl = document.getElementById('minmax-barras');
+
+        if (isBarras) {
+            // Em modo barras: sem plotLines (ficam tapadas pelas colunas),
+            // os valores de mínimo e máximo são mostrados numa faixa HTML acima do gráfico
+            const itens = [];
+            if (minPT !== null) itens.push(`<span><span class="dot" style="background:#007bff;"></span>Mín PT: ${formatLabelMinMax(minPT)}</span><span><span class="dot" style="background:#007bff;"></span>Máx PT: ${formatLabelMinMax(maxPT)}</span>`);
+            if (minES !== null) itens.push(`<span><span class="dot" style="background:#28a745;"></span>Mín ES: ${formatLabelMinMax(minES)}</span><span><span class="dot" style="background:#28a745;"></span>Máx ES: ${formatLabelMinMax(maxES)}</span>`);
+            if (minmaxEl) { minmaxEl.innerHTML = itens.join(''); minmaxEl.style.display = itens.length ? 'flex' : 'none'; }
+        } else {
+            // Em modo linhas: plotLines normais no eixo Y
+            if (minmaxEl) minmaxEl.style.display = 'none';
+            if (minPT !== null || minES !== null) { const minValPT = minPT ?? Infinity; const minValES = minES ?? Infinity; if (Math.abs(minValPT - minValES) < 0.01 && minPT !== null) { plotLines.push({ value: minValPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } }); } else { if (minPT !== null) plotLines.push({ value: minValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (minES !== null) plotLines.push({ value: minValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatLabelMinMax(minValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
+            if (maxPT !== null || maxES !== null) { const maxValPT = maxPT ?? -Infinity; const maxValES = maxES ?? -Infinity; if (Math.abs(maxValPT - maxValES) < 0.01 && maxPT !== null) { plotLines.push({ value: maxValPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }); } else { if (maxPT !== null) plotLines.push({ value: maxValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
+        }
 
         let xAxisConfig = {
             categories: dadosDoDiaCompleto.map(d => d.intervalo),
@@ -561,6 +575,9 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: { rotation: -45, step: 4, align: 'right' },
             plotBands: [] 
         };
+
+        const tituloGrafico = `Valores quarto-horários de ${dataTitulo} ${isUltimoDiaOMIE ? '(até às 23h de PT)' : ''}`;
+        const nomeFicheiroBase = `precos-omie-${dataTitulo.replace(/\//g, '-')}`;
 
         if (isHoje) {
             const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
@@ -585,6 +602,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const chart = Highcharts.chart('grafico-container', { 
                 chart: chartTypeConfig, 
                 title: { text: tituloGrafico }, 
+                subtitle: { text: 'Pode arrastar horizontalmente no gráfico para fazer zoom.' },
                 xAxis: xAxisConfig, 
                 yAxis: { 
                     title: { text: 'Preço (€/MWh)' }, 
@@ -620,8 +638,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 ] 
             }); 
                         
-            // Lógica para mostrar o tooltip no carregamento (apenas no gráfico de linhas)
-            if (isHoje && !isBarras) {
+            // Lógica para mostrar o tooltip no carregamento
+            if (isHoje) {
                 // 1. Calcular o índice do quarto-hora (0-95)
                 const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
 
