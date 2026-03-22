@@ -1,7 +1,5 @@
 /* ============================================= */
 /* menu.js — JavaScript do Menu Responsivo        */
-/* Inicializa automaticamente quando o HTML do    */
-/* menu é detetado na página (via fetch/innerHTML) */
 /* ============================================= */
 
 (function() {
@@ -12,7 +10,6 @@
         var closeBtn = document.getElementById('drawerClose');
         var drawerBody = document.getElementById('drawerBody');
 
-        // Se os elementos ainda não existem, sai (o observer vai tentar de novo)
         if (!hamburger || !drawer || !overlay || !closeBtn || !drawerBody) return false;
 
         var currentView = 'main';
@@ -76,16 +73,14 @@
             if (window.innerWidth > 768 && drawer.classList.contains('active')) closeDrawer();
         });
 
-        return true; // Inicializado com sucesso
+        return true;
     }
 
-    // Tenta inicializar imediatamente (caso o HTML já esteja na página)
     if (initMenu()) return;
 
-    // Se não, observa o DOM à espera que o menu seja injetado via fetch/innerHTML
     var observer = new MutationObserver(function(mutations, obs) {
         if (initMenu()) {
-            obs.disconnect(); // Para de observar depois de inicializar
+            obs.disconnect();
         }
     });
 
