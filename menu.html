@@ -1,4 +1,269 @@
+<!-- ============================================= -->
+<!-- menu.html — Menu Responsivo                   -->
+<!-- Substitui o ficheiro menu.html antigo no GitHub -->
+<!-- ============================================= -->
+
+<style>
+/* === CSS ADICIONAL PARA MENU RESPONSIVO === */
+/* (o estilo desktop do nav já vem do style.css) */
+
+/* Hamburger (escondido em desktop) */
+.hamburger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    gap: 5px;
+    flex-direction: column;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.hamburger span {
+    display: block;
+    width: 24px;
+    height: 2.5px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.hamburger.active span:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg);
+}
+
+/* Overlay */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.nav-overlay.active {
+    opacity: 1;
+}
+
+/* Drawer (painel lateral) */
+.mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(320px, 85vw);
+    height: 100%;
+    background: #2c3e50;
+    z-index: 999;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-direction: column;
+    overflow: hidden;
+}
+.mobile-drawer.active {
+    transform: translateX(0);
+}
+
+.drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.1rem;
+    border-bottom: 1px solid #4a627a;
+    min-height: 56px;
+    background: #2c3e50;
+}
+.drawer-header span {
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: white;
+}
+
+.drawer-close {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #bdc3c7;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+.drawer-close:hover {
+    background: #4a627a;
+    color: white;
+}
+.drawer-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Vistas drill-down */
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.drawer-view {
+    padding: 0;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+}
+.drawer-view.hidden-left {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+.drawer-view.hidden-right {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+.drawer-view.visible {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mobile-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    background: rgba(52, 73, 94, 0.6);
+    border: none;
+    border-bottom: 1px solid #4a627a;
+    color: #3498db;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.mobile-back-btn:hover {
+    background: #4a627a;
+}
+.mobile-back-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.mobile-section-title {
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #3498db;
+    padding: 1rem 1.1rem 0.35rem;
+}
+
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.1rem;
+    color: white;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    min-height: 48px;
+    border-bottom: 1px solid rgba(74, 98, 122, 0.4);
+}
+.mobile-nav-item:hover,
+.mobile-nav-item:active {
+    background: #4a627a;
+}
+.mobile-nav-item svg {
+    width: 16px;
+    height: 16px;
+    color: #bdc3c7;
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.mobile-divider {
+    height: 1px;
+    background: #4a627a;
+    margin: 0.25rem 0;
+}
+
+/* === BREAKPOINT MOBILE === */
+@media (max-width: 768px) {
+    nav {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    nav > ul {
+        display: none !important;
+    }
+
+    .nav-mobile-label {
+        display: block !important;
+        color: white;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .mobile-drawer,
+    .nav-overlay {
+        display: flex;
+    }
+}
+
+@media (min-width: 769px) {
+    .nav-mobile-label {
+        display: none !important;
+    }
+}
+</style>
+
+<!-- ====== MENU DESKTOP (estrutura original) ====== -->
 <nav>
+    <span class="nav-mobile-label">Menu</span>
+
     <ul>
         <li class="dropdown">
             <a href="javascript:void(0)">Eletricidade e Gás</a>
@@ -53,7 +318,7 @@
                                 <li><a href="tarifas-acesso-redes-gas.html">Tarifas Acesso às Redes - TAR (Gás)</a></li>
                                 <li><a href="tarifa-social-gas.html">Tarifa Social (Gás)</a></li>
                                 <li><a href="tarifa-regulada-gas-natural.html">Tarifa Regulada (Gás)</a></li>
-                                </ul>
+                            </ul>
                         </li>
                     </ul>
                 </li>
@@ -67,6 +332,7 @@
                 </li>
             </ul>
         </li>
+
         <li class="dropdown">
             <a href="javascript:void(0)">Projeto</a>
             <ul class="dropdown-content">
@@ -76,4 +342,221 @@
             </ul>
         </li>
     </ul>
+
+    <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 </nav>
+
+<!-- ====== OVERLAY ====== -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- ====== DRAWER MOBILE ====== -->
+<aside class="mobile-drawer" id="mobileDrawer" aria-label="Menu de navegação">
+    <div class="drawer-header">
+        <span>Menu</span>
+        <button class="drawer-close" id="drawerClose" aria-label="Fechar menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+
+        <!-- MENU PRINCIPAL -->
+        <div class="drawer-view visible" data-view="main">
+            <button class="mobile-nav-item" data-goto="eletricidade-gas">
+                <span>Eletricidade e Gás</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="mobile-nav-item" data-goto="fotovoltaico">
+                <span>Fotovoltaico</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="mobile-nav-item" data-goto="omie">
+                <span>OMIE</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="mobile-nav-item" data-goto="regulador">
+                <span>Regulador</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="mobile-nav-item" data-goto="projeto">
+                <span>Projeto</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+        </div>
+
+        <!-- ELETRICIDADE E GÁS -->
+        <div class="drawer-view hidden-right" data-view="eletricidade-gas">
+            <button class="mobile-back-btn" data-back="main">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Voltar
+            </button>
+            <div class="mobile-section-title">Simuladores</div>
+            <a class="mobile-nav-item" href="eletricidade-tiagofelicia.html">Simulador Eletricidade</a>
+            <a class="mobile-nav-item" href="eletricidade-tiagofelicia-v1.html">Simulador Eletricidade v1</a>
+            <a class="mobile-nav-item" href="gas-natural-tiagofelicia.html">Simulador Gás Natural</a>
+            <div class="mobile-divider"></div>
+            <div class="mobile-section-title">Informação</div>
+            <a class="mobile-nav-item" href="precos-horarios.html">Preços Horários</a>
+            <a class="mobile-nav-item" href="formulas-tarifarios-indexados.html">Fórmulas Tarifários Indexados</a>
+            <a class="mobile-nav-item" href="periodos-horarios.html">Períodos Horários (BTN)</a>
+        </div>
+
+        <!-- FOTOVOLTAICO -->
+        <div class="drawer-view hidden-right" data-view="fotovoltaico">
+            <button class="mobile-back-btn" data-back="main">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Voltar
+            </button>
+            <a class="mobile-nav-item" href="autoconsumo-tiagofelicia.html">Simulador Autoconsumo</a>
+            <a class="mobile-nav-item" href="simulador-autoconsumo-excel.html">Autoconsumo (Excel)</a>
+        </div>
+
+        <!-- OMIE -->
+        <div class="drawer-view hidden-right" data-view="omie">
+            <button class="mobile-back-btn" data-back="main">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Voltar
+            </button>
+            <a class="mobile-nav-item" href="omie-diario.html">OMIE Diário</a>
+            <a class="mobile-nav-item" href="omie.html">OMIE - Histórico</a>
+            <a class="mobile-nav-item" href="omip.html">OMIP - Futuros</a>
+            <div class="mobile-divider"></div>
+            <a class="mobile-nav-item" href="producao-omie.html">Produção vs OMIE</a>
+            <a class="mobile-nav-item" href="precos-horarios.html">Preços Horários</a>
+        </div>
+
+        <!-- REGULADOR -->
+        <div class="drawer-view hidden-right" data-view="regulador">
+            <button class="mobile-back-btn" data-back="main">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Voltar
+            </button>
+            <div class="mobile-section-title">Regulação</div>
+            <button class="mobile-nav-item" data-goto="regulador-eletricidade">
+                <span>Eletricidade</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="mobile-nav-item" data-goto="regulador-gas">
+                <span>Gás Natural</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <div class="mobile-divider"></div>
+            <div class="mobile-section-title">Regulamentação</div>
+            <a class="mobile-nav-item" href="regulamentos.html#eletricidade">Eletricidade</a>
+            <a class="mobile-nav-item" href="regulamentos.html#gas">Gás</a>
+            <a class="mobile-nav-item" href="regulamentos.html#mobilidade">Mobilidade Elétrica</a>
+        </div>
+
+        <!-- REGULADOR > ELETRICIDADE -->
+        <div class="drawer-view hidden-right" data-view="regulador-eletricidade">
+            <button class="mobile-back-btn" data-back="regulador">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Regulador
+            </button>
+            <div class="mobile-section-title">Regulação — Eletricidade</div>
+            <a class="mobile-nav-item" href="periodos-horarios.html">Períodos Horários (BTN)</a>
+            <a class="mobile-nav-item" href="tarifas-acesso-redes.html">Tarifas Acesso às Redes - TAR</a>
+            <a class="mobile-nav-item" href="tarifa-social.html">Tarifa Social</a>
+            <a class="mobile-nav-item" href="tarifa-regulada-eletricidade.html">Tarifa Regulada</a>
+            <a class="mobile-nav-item" href="perfil-perdas.html">Perfil Perdas</a>
+        </div>
+
+        <!-- REGULADOR > GÁS NATURAL -->
+        <div class="drawer-view hidden-right" data-view="regulador-gas">
+            <button class="mobile-back-btn" data-back="regulador">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Regulador
+            </button>
+            <div class="mobile-section-title">Regulação — Gás Natural</div>
+            <a class="mobile-nav-item" href="tarifas-acesso-redes-gas.html">Tarifas Acesso às Redes - TAR</a>
+            <a class="mobile-nav-item" href="tarifa-social-gas.html">Tarifa Social</a>
+            <a class="mobile-nav-item" href="tarifa-regulada-gas-natural.html">Tarifa Regulada</a>
+        </div>
+
+        <!-- PROJETO -->
+        <div class="drawer-view hidden-right" data-view="projeto">
+            <button class="mobile-back-btn" data-back="main">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Voltar
+            </button>
+            <a class="mobile-nav-item" href="sobre.html">Sobre</a>
+            <a class="mobile-nav-item" href="apoio.html">Apoio</a>
+            <a class="mobile-nav-item" href="sugestoes.html">Sugestões</a>
+        </div>
+
+    </div>
+</aside>
+
+<!-- ====== JAVASCRIPT DO MENU ====== -->
+<script>
+(function() {
+    var hamburger = document.getElementById('hamburger');
+    var drawer = document.getElementById('mobileDrawer');
+    var overlay = document.getElementById('navOverlay');
+    var closeBtn = document.getElementById('drawerClose');
+    var drawerBody = document.getElementById('drawerBody');
+    var currentView = 'main';
+
+    function openDrawer() {
+        drawer.classList.add('active');
+        overlay.classList.add('active');
+        hamburger.classList.add('active');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('active');
+        overlay.classList.remove('active');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        setTimeout(function() { navigateTo('main'); }, 350);
+    }
+
+    function navigateTo(viewName) {
+        var allViews = drawerBody.querySelectorAll('.drawer-view');
+        var targetView = drawerBody.querySelector('[data-view="' + viewName + '"]');
+        if (!targetView) return;
+
+        var goingDeeper = viewName !== 'main' && (currentView === 'main' || viewName.startsWith(currentView));
+
+        allViews.forEach(function(v) {
+            if (v === targetView) {
+                v.className = 'drawer-view visible';
+            } else {
+                v.className = 'drawer-view ' + (goingDeeper ? 'hidden-left' : 'hidden-right');
+            }
+        });
+
+        currentView = viewName;
+        requestAnimationFrame(function() { drawerBody.scrollTop = 0; });
+    }
+
+    hamburger.addEventListener('click', function() {
+        drawer.classList.contains('active') ? closeDrawer() : openDrawer();
+    });
+
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    drawerBody.addEventListener('click', function(e) {
+        var gotoBtn = e.target.closest('[data-goto]');
+        if (gotoBtn) { navigateTo(gotoBtn.dataset.goto); return; }
+
+        var backBtn = e.target.closest('[data-back]');
+        if (backBtn) { navigateTo(backBtn.dataset.back); return; }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && drawer.classList.contains('active')) closeDrawer();
+    });
+
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && drawer.classList.contains('active')) closeDrawer();
+    });
+})();
+</script>
