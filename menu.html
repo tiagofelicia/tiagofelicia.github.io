@@ -5,7 +5,6 @@
 
 <style>
 /* === CSS ADICIONAL PARA MENU RESPONSIVO === */
-/* (o estilo desktop do nav já vem do style.css) */
 
 /* Hamburger (escondido em desktop) */
 .hamburger {
@@ -24,6 +23,7 @@
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 10;
 }
 
 .hamburger span {
@@ -47,23 +47,33 @@
     transform: translateY(-7.5px) rotate(-45deg);
 }
 
-/* Overlay */
-.nav-overlay {
+/* Label mobile (escondido por defeito) */
+.nav-mobile-label {
     display: none;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+/* Overlay — SEMPRE escondido e sem bloquear toque até ser ativado */
+.nav-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.45);
     z-index: 998;
     opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
     transition: opacity 0.3s ease;
 }
 .nav-overlay.active {
     opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
 }
 
-/* Drawer (painel lateral) */
+/* Drawer — SEMPRE fora do ecrã e sem bloquear toque até ser ativado */
 .mobile-drawer {
-    display: none;
     position: fixed;
     top: 0;
     right: 0;
@@ -72,12 +82,18 @@
     background: #2c3e50;
     z-index: 999;
     transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    visibility: hidden;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0.35s;
+    display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 .mobile-drawer.active {
     transform: translateX(0);
+    pointer-events: auto;
+    visibility: visible;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0s;
 }
 
 .drawer-header {
@@ -220,47 +236,36 @@
     margin: 0.25rem 0;
 }
 
-/* === BREAKPOINT MOBILE === */
+/* === MOBILE (≤768px) === */
 @media (max-width: 768px) {
     nav {
-        position: sticky;
+        position: sticky !important;
         top: 0;
         z-index: 1000;
         min-height: 52px;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
+        padding: 0 !important;
     }
 
+    /* Esconde menu desktop */
     nav > ul {
         display: none !important;
     }
 
+    /* Mostra label e hamburger */
     .nav-mobile-label {
         display: block !important;
-        color: white;
-        font-weight: bold;
-        font-size: 15px;
     }
 
     .hamburger {
-        display: flex;
-    }
-
-    .mobile-drawer,
-    .nav-overlay {
-        display: flex;
-    }
-}
-
-@media (min-width: 769px) {
-    .nav-mobile-label {
-        display: none !important;
+        display: flex !important;
     }
 }
 </style>
 
-<!-- ====== MENU DESKTOP (estrutura original) ====== -->
+<!-- ====== MENU DESKTOP (estrutura original mantida) ====== -->
 <nav>
     <span class="nav-mobile-label">Menu</span>
 
@@ -499,6 +504,8 @@
     var closeBtn = document.getElementById('drawerClose');
     var drawerBody = document.getElementById('drawerBody');
     var currentView = 'main';
+
+    if (!hamburger || !drawer || !overlay || !closeBtn || !drawerBody) return;
 
     function openDrawer() {
         drawer.classList.add('active');
