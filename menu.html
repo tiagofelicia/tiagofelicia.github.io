@@ -1,10 +1,185 @@
 <!-- ============================================= -->
-<!-- menu.html — Menu Responsivo                   -->
-<!-- Carrega o menu.js automaticamente             -->
+<!-- menu.html — Menu Responsivo + Desktop melhorado -->
+<!-- Carrega o menu.js automaticamente               -->
 <!-- ============================================= -->
 
 <style>
-/* === CSS MENU RESPONSIVO (mobile) === */
+/* === DESKTOP: Transições suaves nos dropdowns === */
+.dropdown-content {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s 0.25s;
+    pointer-events: none;
+}
+
+nav > ul > li:hover > .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s 0s;
+    pointer-events: auto;
+}
+
+/* Seta roda ao abrir */
+nav > ul > li.dropdown > a::after {
+    content: ' ▾' !important;
+    display: inline-block;
+    transition: transform 0.25s ease;
+}
+nav > ul > li.dropdown:hover > a::after {
+    transform: rotate(180deg);
+}
+
+/* Submenus (nível 2+) com transição */
+.submenu-content {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
+    pointer-events: none;
+}
+
+.submenu:hover > .submenu-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0s;
+    pointer-events: auto;
+}
+
+/* Submenu que abre à esquerda (quando não há espaço à direita) */
+.submenu-content.flip-left {
+    left: auto !important;
+    right: 100% !important;
+    border-left: none !important;
+    border-right: 1px solid #4a627a;
+    border-radius: 5px 0 5px 5px !important;
+    transform: translateX(-8px);
+}
+
+.submenu:hover > .submenu-content.flip-left {
+    transform: translateX(0);
+}
+
+/* Hover suave nos itens do dropdown */
+.dropdown-content a,
+.submenu-content a {
+    transition: background-color 0.2s ease, padding-left 0.2s ease !important;
+}
+
+.dropdown-content a:hover,
+.submenu-content a:hover {
+    padding-left: 22px !important;
+}
+
+/* === DESKTOP: Indicador de página ativa === */
+nav > ul > li > a.nav-active {
+    background-color: #4a627a;
+    position: relative;
+}
+
+nav > ul > li > a.nav-active::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: #3498db;
+    border-radius: 3px 3px 0 0;
+}
+
+.dropdown-content a.nav-active-item {
+    background-color: rgba(52, 152, 219, 0.15) !important;
+    border-left: 3px solid #3498db;
+}
+
+/* === DESKTOP: Megamenu para o Regulador === */
+.mega-dropdown {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s 0.25s;
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    min-width: 580px;
+    background-color: #34495e;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    z-index: 100;
+    padding: 20px 24px;
+    border-radius: 0 0 8px 8px;
+    transform-origin: top center;
+}
+
+/* Centra o megamenu relativamente ao item */
+li.dropdown:hover > .mega-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) translateX(-50%);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s 0s;
+    pointer-events: auto;
+}
+
+.mega-dropdown {
+    transform: translateY(8px) translateX(-50%);
+}
+
+.mega-columns {
+    display: flex;
+    gap: 24px;
+}
+
+.mega-column {
+    flex: 1;
+    min-width: 0;
+}
+
+.mega-column-title {
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #3498db;
+    padding: 0 0 8px 0;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(74, 98, 122, 0.5);
+}
+
+.mega-column a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, padding-left 0.2s ease;
+}
+
+.mega-column a:hover {
+    background-color: #4a627a;
+    padding-left: 16px;
+}
+
+.mega-column a.nav-active-item {
+    background-color: rgba(52, 152, 219, 0.15);
+    border-left: 3px solid #3498db;
+}
+
+.mega-divider {
+    width: 1px;
+    background: rgba(74, 98, 122, 0.5);
+    align-self: stretch;
+}
+
+/* === MOBILE: CSS completo === */
 
 .hamburger {
     display: none;
@@ -119,36 +294,14 @@
     -webkit-overflow-scrolling: touch;
 }
 
-/* Vista visível fica no fluxo normal */
 .drawer-view {
     padding: 0;
     width: 100%;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 }
-
-/* Vistas escondidas ficam absolutas e fora do caminho */
-.drawer-view.hidden-left {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translateX(-100%);
-    opacity: 0;
-    pointer-events: none;
-}
-.drawer-view.hidden-right {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translateX(100%);
-    opacity: 0;
-    pointer-events: none;
-}
-.drawer-view.visible {
-    position: relative;
-    transform: translateX(0);
-    opacity: 1;
-    pointer-events: auto;
-}
+.drawer-view.hidden-left  { position: absolute; top: 0; left: 0; transform: translateX(-100%); opacity: 0; pointer-events: none; }
+.drawer-view.hidden-right { position: absolute; top: 0; left: 0; transform: translateX(100%);  opacity: 0; pointer-events: none; }
+.drawer-view.visible      { position: relative; transform: translateX(0); opacity: 1; pointer-events: auto; }
 
 .mobile-back-btn {
     display: flex;
@@ -201,8 +354,14 @@
 .mobile-nav-item:active { background: #4a627a; }
 .mobile-nav-item svg { width: 16px; height: 16px; color: #bdc3c7; flex-shrink: 0; opacity: 0.6; }
 
+.mobile-nav-item.nav-active-mobile {
+    background-color: rgba(52, 152, 219, 0.15);
+    border-left: 3px solid #3498db;
+}
+
 .mobile-divider { height: 1px; background: #4a627a; margin: 0.25rem 0; }
 
+/* === MOBILE BREAKPOINT === */
 @media (max-width: 768px) {
     nav {
         position: sticky !important;
@@ -217,6 +376,9 @@
     nav > ul { display: none !important; }
     .nav-mobile-label { display: block !important; }
     .hamburger { display: flex !important; }
+
+    /* Esconde megamenu em mobile */
+    .mega-dropdown { display: none !important; }
 }
 </style>
 
@@ -252,42 +414,40 @@
                 <li><a href="precos-horarios.html">Preços Horários</a></li>
             </ul>
         </li>
+
+        <!-- REGULADOR com Megamenu -->
         <li class="dropdown">
             <a href="javascript:void(0)">Regulador</a>
-            <ul class="dropdown-content">
-                <li class="submenu">
-                    <a href="javascript:void(0)">Regulação</a>
-                    <ul class="submenu-content">
-                        <li class="submenu">
-                            <a href="javascript:void(0)">Eletricidade</a>
-                            <ul class="submenu-content">
-                                <li><a href="periodos-horarios.html">Períodos Horários (BTN)</a></li>
-                                <li><a href="tarifas-acesso-redes.html">Tarifas Acesso às Redes - TAR (Eletricidade)</a></li>
-                                <li><a href="tarifa-social.html">Tarifa Social (Eletricidade)</a></li>
-                                <li><a href="tarifa-regulada-eletricidade.html">Tarifa Regulada (Eletricidade)</a></li>
-                                <li><a href="perfil-perdas.html">Perfil Perdas (Eletricidade)</a></li>
-                            </ul>
-                        </li>
-                        <li class="submenu">
-                            <a href="javascript:void(0)">Gás Natural</a>
-                            <ul class="submenu-content">
-                                <li><a href="tarifas-acesso-redes-gas.html">Tarifas Acesso às Redes - TAR (Gás)</a></li>
-                                <li><a href="tarifa-social-gas.html">Tarifa Social (Gás)</a></li>
-                                <li><a href="tarifa-regulada-gas-natural.html">Tarifa Regulada (Gás)</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="submenu">
-                    <a href="regulamentos.html">Regulamentação</a>
-                    <ul class="submenu-content">
-                        <li><a href="regulamentos.html#eletricidade">Eletricidade</a></li>
-                        <li><a href="regulamentos.html#gas">Gás</a></li>
-                        <li><a href="regulamentos.html#mobilidade">Mobilidade Elétrica</a></li>
-                    </ul>
-                </li>
-            </ul>
+
+            <!-- Megamenu (desktop) -->
+            <div class="mega-dropdown">
+                <div class="mega-columns">
+                    <div class="mega-column">
+                        <div class="mega-column-title">Regulação — Eletricidade</div>
+                        <a href="periodos-horarios.html">Períodos Horários (BTN)</a>
+                        <a href="tarifas-acesso-redes.html">Tarifas Acesso às Redes - TAR</a>
+                        <a href="tarifa-social.html">Tarifa Social</a>
+                        <a href="tarifa-regulada-eletricidade.html">Tarifa Regulada</a>
+                        <a href="perfil-perdas.html">Perfil Perdas</a>
+                    </div>
+                    <div class="mega-divider"></div>
+                    <div class="mega-column">
+                        <div class="mega-column-title">Regulação — Gás Natural</div>
+                        <a href="tarifas-acesso-redes-gas.html">Tarifas Acesso às Redes - TAR</a>
+                        <a href="tarifa-social-gas.html">Tarifa Social</a>
+                        <a href="tarifa-regulada-gas-natural.html">Tarifa Regulada</a>
+                    </div>
+                    <div class="mega-divider"></div>
+                    <div class="mega-column">
+                        <div class="mega-column-title">Regulamentação</div>
+                        <a href="regulamentos.html#eletricidade">Eletricidade</a>
+                        <a href="regulamentos.html#gas">Gás</a>
+                        <a href="regulamentos.html#mobilidade">Mobilidade Elétrica</a>
+                    </div>
+                </div>
+            </div>
         </li>
+
         <li class="dropdown">
             <a href="javascript:void(0)">Projeto</a>
             <ul class="dropdown-content">

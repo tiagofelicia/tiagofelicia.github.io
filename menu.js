@@ -12,6 +12,7 @@
 
         if (!hamburger || !drawer || !overlay || !closeBtn || !drawerBody) return false;
 
+        /* ── MOBILE DRAWER ── */
         var currentView = 'main';
 
         function openDrawer() {
@@ -73,11 +74,103 @@
             if (window.innerWidth > 768 && drawer.classList.contains('active')) closeDrawer();
         });
 
+        /* ── INDICADOR DE PÁGINA ATIVA ── */
+        (function markActivePage() {
+            var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            // Também inclui hash para páginas como regulamentos.html#eletricidade
+            var currentHash = window.location.hash;
+            var currentFull = currentPage + currentHash;
+
+            // Desktop: marcar link principal e item de dropdown/megamenu
+            var allDesktopLinks = document.querySelectorAll('nav ul a[href], .mega-dropdown a[href]');
+            allDesktopLinks.forEach(function(link) {
+                var href = link.getAttribute('href');
+                if (!href || href === 'javascript:void(0)') return;
+
+                if (href === currentFull || href === currentPage) {
+                    // Marca o item dentro do dropdown/megamenu
+                    link.classList.add('nav-active-item');
+
+                    // Marca o link principal (pai) na barra de navegação
+                    var parentLi = link.closest('li.dropdown');
+                    if (parentLi) {
+                        var mainLink = parentLi.querySelector(':scope > a');
+                        if (mainLink) mainLink.classList.add('nav-active');
+                    }
+                }
+            });
+
+            // Mobile: marcar itens no drawer
+            var allMobileLinks = drawerBody.querySelectorAll('a.mobile-nav-item[href]');
+            allMobileLinks.forEach(function(link) {
+                var href = link.getAttribute('href');
+                if (href === currentFull || href === currentPage) {
+                    link.classList.add('nav-active-mobile');
+                }
+            });
+        })();
+
+        /* ── SUBMENUS INTELIGENTES (não saem do ecrã) ── */
+        (function smartSubmenus() {
+            var submenus = document.querySelectorAll('.submenu-content');
+            submenus.forEach(function(sub) {
+                var parent = sub.closest('.submenu');
+                if (!parent) return;
+
+                parent.addEventListener('mouseenter', function() {
+                    // Reset para posição padrão (direita)
+                    sub.classList.remove('flip-left');
+
+                    // Verifica se sai do viewport
+                    requestAnimationFrame(function() {
+                        var rect = sub.getBoundingClientRect();
+                        if (rect.right > window.innerWidth) {
+                            sub.classList.add('flip-left');
+                        }
+                    });
+                });
+            });
+        })();
+
+        /* ── MEGAMENU: posicionamento inteligente ── */
+        (function smartMegamenu() {
+            var mega = document.querySelector('.mega-dropdown');
+            if (!mega) return;
+            var parentLi = mega.closest('li.dropdown');
+            if (!parentLi) return;
+
+            parentLi.addEventListener('mouseenter', function() {
+                requestAnimationFrame(function() {
+                    var rect = mega.getBoundingClientRect();
+                    // Se sai pela direita, alinha à direita do item pai
+                    if (rect.right > window.innerWidth - 10) {
+                        mega.style.left = 'auto';
+                        mega.style.right = '0';
+                        mega.style.transform = 'translateY(0)';
+                    }
+                    // Se sai pela esquerda, alinha à esquerda
+                    if (rect.left < 10) {
+                        mega.style.left = '0';
+                        mega.style.right = 'auto';
+                        mega.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            parentLi.addEventListener('mouseleave', function() {
+                mega.style.left = '';
+                mega.style.right = '';
+                mega.style.transform = '';
+            });
+        })();
+
         return true;
     }
 
+    // Tenta inicializar imediatamente
     if (initMenu()) return;
 
+    // Senão, observa o DOM até o menu ser injetado
     var observer = new MutationObserver(function(mutations, obs) {
         if (initMenu()) {
             obs.disconnect();
