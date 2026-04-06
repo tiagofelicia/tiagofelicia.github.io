@@ -82,6 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- DROPDOWNS ---
     function populaDropdowns(hojePadrao) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramDia = urlParams.get('dia');
+        const paramTarifario = urlParams.get('tarifario');
+        const paramOpcao = urlParams.get('opcao');
+        
         const diaSelect = document.getElementById("dropdownDia");
         const tarifarioSelect = document.getElementById("dropdownTarifario");
         const opcaoSelect = document.getElementById("dropdownOpcao");
@@ -131,11 +136,6 @@ document.addEventListener('DOMContentLoaded', function () {
         atualizaTarifario();
 
         // --- QUERY PARAMS: aplicar estado da URL após o carregamento inicial ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramDia = urlParams.get('dia');
-        const paramTarifario = urlParams.get('tarifario');
-        const paramOpcao = urlParams.get('opcao');
-
         // Passo 1: aplicar 'dia' ('hoje', 'amanha' ou índice numérico)
         if (paramDia) {
             if (paramDia === 'hoje') {
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const dados = dadosEstruturados[dia]?.[tarifario]?.[opcao];
         if (!dados) return;
 
-        // --- Atualizar URL com o estado atual (para preservar ao recarregar) ---
+        // --- Atualizar URL com o estado atual (Omitir valores por defeito) ---
         (function() {
             const fmtLx = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric' });
             const hojeStr = fmtLx.format(new Date());
@@ -376,15 +376,29 @@ document.addEventListener('DOMContentLoaded', function () {
             const diaSelect = document.getElementById("dropdownDia");
             const tarifarioSelect = document.getElementById("dropdownTarifario");
             const opcaoSelect = document.getElementById("dropdownOpcao");
+            
             let diaParam;
             if (dia === hojeStr) diaParam = 'hoje';
             else if (dia === amanhaStr) diaParam = 'amanha';
-            else diaParam = diaSelect.selectedIndex;
-            const qp = new URLSearchParams();
-            qp.set('dia', diaParam);
-            qp.set('tarifario', tarifarioSelect.selectedIndex);
-            qp.set('opcao', opcaoSelect.selectedIndex);
-            window.history.replaceState(null, '', '?' + qp.toString());
+            else diaParam = diaSelect.selectedIndex.toString();
+            
+            const tarifarioParam = tarifarioSelect.selectedIndex.toString();
+            const opcaoParam = opcaoSelect.selectedIndex.toString();
+
+            // Verifica se as opções atuais são os valores por defeito
+            const isDefault = (diaParam === 'hoje' && tarifarioParam === '1' && opcaoParam === '0');
+
+            if (isDefault) {
+                // Se for o estado padrão, limpa a querystring mantendo o link limpo
+                window.history.replaceState(null, '', window.location.pathname);
+            } else {
+                // Se o utilizador escolheu outras opções, atualiza o link com os parâmetros
+                const qp = new URLSearchParams();
+                qp.set('dia', diaParam);
+                qp.set('tarifario', tarifarioParam);
+                qp.set('opcao', opcaoParam);
+                window.history.replaceState(null, '', '?' + qp.toString());
+            }
         })();
 
         mostrarFormula(tarifario);
