@@ -43,16 +43,18 @@
 
     <!-- Google Analytics (GA4) — só carrega após consentimento RGPD -->
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', { analytics_storage: 'denied' });
+        if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+        gtag('consent', 'update', { analytics_storage: 'granted' });
         var _ga = document.createElement('script');
         _ga.async = true;
         _ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F';
         document.head.appendChild(_ga);
         gtag('js', new Date());
         gtag('config', 'G-J4NWP00S4F');
-    }
+        }
     </script>
 </head>
 <body>
