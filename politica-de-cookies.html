@@ -64,6 +64,8 @@
 </head>
 <body>
 
+<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar Modo Escuro" id="btn-dark-mode">🌙</button>
+
 <header>
     <div class="header-content">
         <div class="header-title-container">
@@ -111,7 +113,7 @@
             </tr>
             <tr>
                 <td><strong>Essenciais</strong></td>
-                <td><code>tf_theme</code></td>
+                <td><code>tf_theme</code> / <code>tf_autoconsumo_theme</code></td>
                 <td>Guardar a sua preferência de modo escuro (dark mode)</td>
                 <td>Permanente</td>
                 <td>Não necessário (preferência funcional)</td>
@@ -190,10 +192,23 @@ function revogarConsentimento() {
     document.getElementById('revoke-msg').style.display = 'block';
 }
 
-// Dark mode (respeitar preferência do site)
+// Dark mode toggle
+function toggleDarkMode() {
+    var html = document.documentElement;
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    var newTheme = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('tf_theme', newTheme);
+    var btn = document.getElementById('btn-dark-mode');
+    if (btn) btn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+}
 (function() {
     var saved = localStorage.getItem('tf_theme') || localStorage.getItem('tf_autoconsumo_theme');
-    if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        var btn = document.getElementById('btn-dark-mode');
+        if (btn) btn.textContent = '\u2600\uFE0F';
+    }
 })();
 </script>
 <script src="cookie-consent.js"></script>
