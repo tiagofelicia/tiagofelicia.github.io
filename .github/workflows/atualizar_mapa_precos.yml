@@ -1,10 +1,16 @@
 name: Atualizar Mapa de Precos
 
 on:
+  # Agenda a execução automática
   schedule:
-    # Todos os dias às 14:00 UTC (após publicação dos preços day-ahead ~13h)
-    # Busca dados de hoje (se day-ahead já publicado) e re-verifica ontem
-    - cron: '0 14 * * *'
+    # === GRUPO 1: Manhã (Todos os dias) ===
+    # Horário VERÃO (WEST=UTC+1) -> 14:00 e 19:00 (Local)
+    - cron: '00 13 * * *'
+    - cron: '00 18 * * *'
+    # Horário INVERNO (WET=UTC+0) -> 14:00 e 19:00 (Local)
+    #- cron: '00 14 * * *'
+    #- cron: '00 19 * * *'
+    
   workflow_dispatch:
 
 jobs:
