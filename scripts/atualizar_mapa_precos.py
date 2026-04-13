@@ -155,13 +155,14 @@ def main():
         end_date = yesterday
         print(f"Modo BACKFILL: {start_date} a {end_date}")
     else:
-        # Modo diário: buscar ontem (re-verificar) + hoje (se day-ahead já publicado)
-        # Os preços day-ahead são publicados ~13h do dia anterior, por isso
-        # ao correr às 14h UTC, os preços de hoje já devem estar disponíveis.
-        # Re-buscar ontem permite corrigir eventuais alterações tardias.
+        # Modo diário (corre às 14h UTC):
+        # - Amanhã: preços day-ahead publicados ~13h, já devem estar disponíveis
+        # - Hoje: re-verificar (pode ter sido incompleto na execução anterior)
+        # - Ontem: segurança - corrigir eventuais alterações tardias
+        tomorrow = today + timedelta(days=1)
         start_date = yesterday
-        end_date = today
-        print(f"Modo DIÁRIO: {start_date} a {end_date} (re-verifica ontem + hoje se disponível)")
+        end_date = tomorrow
+        print(f"Modo DIÁRIO: {start_date} a {end_date} (ontem + hoje + amanhã)")
 
     # Cache de ficheiros mensais carregados
     monthly_cache = {}
