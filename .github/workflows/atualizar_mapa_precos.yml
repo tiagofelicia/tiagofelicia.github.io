@@ -1,0 +1,35 @@
+name: Atualizar Mapa de Precos
+
+on:
+  schedule:
+    # Todos os dias às 14:00 UTC (após publicação dos preços day-ahead ~13h)
+    # Busca dados de hoje (se day-ahead já publicado) e re-verifica ontem
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-map-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests tzdata
+
+      - name: Run price update script
+        run: python scripts/atualizar_mapa_precos.py
+
+      - name: Commit updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Atualizar dados mapa de precos europeu"
+          file_pattern: "data/mapa_precos/*.json"
