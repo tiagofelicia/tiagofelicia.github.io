@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Mapa de Preços da Eletricidade na Europa - Day-Ahead | Tiago Felícia</title>
+    <meta name="description" content="Mapa interativo com os preços médios diários de eletricidade (day-ahead) por zona de licitação na Europa. Dados via Energy-Charts API." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-precos.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mapa de Preços da Eletricidade na Europa" />
+    <meta property="og:description" content="Preços médios diários de eletricidade por zona de licitação europeia." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-precos.html" />
+    <meta property="og:locale" content="pt_PT" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mapa de Preços da Eletricidade na Europa",
+      "url": "https://www.tiagofelicia.pt/mapa-precos.html",
+      "description": "Mapa interativo com preços médios diários de eletricidade por zona de licitação europeia.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web browser",
+      "author": { "@type": "Person", "name": "Tiago Felícia" }
+    }
+    </script>
+
+    <style>
+        .painel-header { text-align: center; margin-bottom: 20px; }
+        .painel-header h1 { margin: 0 0 10px 0; font-size: 1.5em; color: #2c3e50; }
+        .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
+        .date-selector { margin-bottom: 20px; text-align: center; }
+        .date-selector label { font-weight: bold; margin-right: 10px; }
+        .date-selector input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+
+        /*
+         * DIMENSOES DO MAPA - alterar aqui para mudar o tamanho:
+         *   height: altura do mapa (px)
+         *   max-width: largura maxima do mapa (px)
+         */
+        #mapa-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 20px auto; }
+        #mapa-container { width: 100%; height: 780px; border-radius: 8px; border: 1px solid #ddd; background: #f8f9fa; }
+
+        /* Botao ecra inteiro */
+        .btn-fullscreen { position: absolute; top: 10px; right: 10px; z-index: 999; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 0.85em; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+        .btn-fullscreen:hover { background: #e2e8f0; }
+        #mapa-wrapper { position: relative; }
+        #mapa-wrapper.fullscreen { position: fixed; top: 0; left: 0; width: 100vw; max-width: 100vw; height: 100vh; z-index: 9999; margin: 0; border-radius: 0; }
+        #mapa-wrapper.fullscreen #mapa-container { height: 100vh; border-radius: 0; border: none; }
+
+        #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
+
+        /* Info control (tooltip ao passar o rato) */
+        .info-control { padding: 10px 14px; background: white; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,0.2); font-size: 0.9em; line-height: 1.5; min-width: 160px; }
+        .info-control h4 { margin: 0 0 5px; color: #777; font-size: 0.85em; }
+        .info-control b { font-size: 1.05em; }
+        .info-control .price-value { font-size: 1.3em; font-weight: bold; margin-top: 4px; }
+
+        /* Legenda compacta */
+        .legend { line-height: 18px; font-size: 0.75em; padding: 6px 8px !important; min-width: auto !important; }
+        .legend i { width: 16px; height: 12px; display: inline-block; margin-right: 4px; vertical-align: middle; border-radius: 2px; }
+        .legend-title { font-weight: bold; margin-bottom: 4px; font-size: 0.85em; }
+
+        /* Price labels no mapa */
+        .price-label { background: none; border: none; font-size: 10px; font-weight: bold; color: #333; text-align: center; white-space: nowrap; text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; }
+
+        /* Sem dados */
+        .no-data-msg { text-align: center; padding: 10px; color: #999; font-size: 0.9em; }
+
+        /* Nota de horas locais */
+        .nota-horas { text-align: center; font-size: 0.82em; color: #555; margin: 5px 0 15px 0; font-style: italic; }
+
+        /* Aviso de dados provisorios */
+        .aviso-provisorio { text-align: center; font-size: 0.8em; color: #c0392b; margin: 5px 0 10px 0; font-style: italic; }
+
+        /* Lista de precos ordenada */
+        #ranked-list-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 10px; box-sizing: border-box; }
+        #ranked-list-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
+        .ranked-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        .ranked-table th { background: #f1f5f9; padding: 8px 12px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; }
+        .ranked-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+        .ranked-table tr:hover { background: #f8fafc; }
+        .ranked-table .price-cell { font-weight: bold; text-align: right; padding-right: 20px; }
+        .ranked-table .rank-cell { text-align: center; width: 50px; color: #888; }
+        .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
+
+        /* FAQ */
+        .content-support { max-width: 1300px; margin: 40px auto; padding: 0 15px; }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            #mapa-container { height: 440px; }
+            .info-control { font-size: 0.8em; min-width: 120px; }
+        }
+
+        /* === DARK MODE === */
+        [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p { color: #94a3b8; }
+        [data-theme="dark"] .date-selector label { color: #cbd5e1; }
+        [data-theme="dark"] .date-selector input { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #mapa-container { background: #1a1f2e; border-color: #475569; }
+        [data-theme="dark"] .info-control { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .info-control h4 { color: #94a3b8; }
+        [data-theme="dark"] .price-label { color: #e2e8f0 !important; text-shadow: 1px 1px 2px #0f172a, -1px -1px 2px #0f172a, 1px -1px 2px #0f172a, -1px 1px 2px #0f172a; }
+        [data-theme="dark"] #loading-indicator { background-color: rgba(15, 23, 42, 0.85); }
+        [data-theme="dark"] .leaflet-control-zoom a { background: #1e293b !important; color: #e2e8f0 !important; border-color: #475569 !important; }
+        [data-theme="dark"] .leaflet-control-attribution { background: rgba(30,41,59,0.8) !important; color: #94a3b8 !important; }
+        [data-theme="dark"] .leaflet-control-attribution a { color: #60a5fa !important; }
+        [data-theme="dark"] #ranked-list-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] .ranked-table th { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .ranked-table td { border-color: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .ranked-table tr:hover { background: #1e293b; }
+        [data-theme="dark"] .ranked-table .rank-cell { color: #64748b; }
+        [data-theme="dark"] .aviso-provisorio { color: #f87171; }
+        [data-theme="dark"] .nota-horas { color: #94a3b8; }
+        [data-theme="dark"] .btn-fullscreen { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-fullscreen:hover { background: #334155; }
+    </style>
+</head>
+<body>
+
+<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar Modo Escuro" id="btn-dark-mode">&#x1F319;</button>
+
+<header>
+    <div class="header-content">
+        <div class="header-title-container">
+            <a href="index.html">
+                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo">
+            </a>
+            <div class="brand-name">Tiago Felícia</div>
+        </div>
+        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
+    </div>
+</header>
+
+<div id="menu-placeholder">
+    <nav style="display:none;">
+        <a href="eletricidade-tiagofelicia.html">Eletricidade</a>
+        <a href="gas-natural-tiagofelicia.html">Gás</a>
+        <a href="autoconsumo-tiagofelicia.html">Solar</a>
+    </nav>
+</div>
+
+<main>
+    <div class="painel-header">
+        <div class="date-selector">
+            <label for="seletor-data">Selecione o dia:</label>
+            <input type="date" id="seletor-data">
+        </div>
+        <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
+            Dados disponíveis desde 01/01/2026 &mdash; Valores nas horas locais de cada zona
+        </p>
+        <h1 id="titulo-mapa">Mapa de Preços Médios Diários da Eletricidade na Europa</h1>
+        <p>Preço médio diário por zona de licitação (€/MWh) &mdash; Mercado Day-Ahead</p>
+        <p id="aviso-provisorio" class="aviso-provisorio" style="display:none;"></p>
+    </div>
+
+    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
+
+    <div id="mapa-wrapper">
+        <button class="btn-fullscreen" onclick="toggleFullscreen()" id="btn-fullscreen" title="Abrir mapa em ecrã inteiro">&#x26F6; Ecrã inteiro</button>
+        <div id="mapa-container"></div>
+    </div>
+
+    <p class="nota-horas">Valores nas horas locais de cada zona</p>
+    <p class="nota-horas">Fonte: Energy-Charts API (Fraunhofer ISE) | tiagofelicia.pt</p>
+
+    <div id="ranked-list-wrapper">
+        <h2 id="ranked-list-titulo">Preços por zona de licitação</h2>
+        <div id="ranked-list-content">
+            <p class="no-data-msg">A carregar dados...</p>
+        </div>
+    </div>
+
+    <article class="content-support">
+        <h2>Sobre este mapa</h2>
+
+        <details class="faq-item">
+            <summary><strong>O que mostra este mapa?</strong></summary>
+            <div class="faq-content">
+                <p>Este mapa apresenta o <strong>preço médio diário da eletricidade</strong> (mercado day-ahead) para cada zona de licitação europeia, expresso em <strong>€/MWh</strong>.</p>
+                <p>As cores variam do <strong style="color:#2166ac;">azul</strong> (preços mais baixos) ao <strong style="color:#b2182b;">vermelho</strong> (preços mais altos), permitindo comparar visualmente os preços entre regiões. A escala azul-vermelho foi escolhida para melhor acessibilidade a utilizadores daltónicos.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Os valores são nas horas locais?</strong></summary>
+            <div class="faq-content">
+                <p>Sim. Os preços médios diários são calculados com base na <strong>hora local de cada zona de licitação</strong>. Por exemplo, um dia em Portugal (UTC+0/+1) pode não corresponder exatamente ao mesmo período UTC que um dia na Finlândia (UTC+2/+3).</p>
+                <p>Isto garante que os valores apresentados coincidem com os publicados pelas bolsas de eletricidade e pelo Energy-Charts.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Porque é que o último dia pode ter valores provisórios?</strong></summary>
+            <div class="faq-content">
+                <p>No último dia disponível, os dados podem estar incompletos &mdash; normalmente <strong>falta o valor da última hora do dia</strong> (23h às 24h), pois esse período pode ainda não ter sido concluído ou publicado no momento da recolha.</p>
+                <p>Quando tal acontece, é apresentado o aviso <em>"até às 23h de PT"</em> no título.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>O que são zonas de licitação?</strong></summary>
+            <div class="faq-content">
+                <p>A Europa está dividida em <strong>zonas de licitação</strong> (bidding zones) para o mercado de eletricidade. A maioria dos países tem uma única zona, mas alguns estão divididos em várias:</p>
+                <ul>
+                    <li><strong>Noruega:</strong> 5 zonas (NO1-NO5)</li>
+                    <li><strong>Suécia:</strong> 4 zonas (SE1-SE4)</li>
+                    <li><strong>Itália:</strong> 6 zonas (Norte, Centro-Norte, Centro-Sul, Sul, Sicília, Sardenha)</li>
+                    <li><strong>Dinamarca:</strong> 2 zonas (DK1 Oeste, DK2 Este)</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>De onde vêm os dados?</strong></summary>
+            <div class="faq-content">
+                <p>Os dados são obtidos através da <strong>API Energy-Charts</strong> do <strong>Fraunhofer ISE</strong>. Os preços day-ahead provêm das bolsas de eletricidade europeias (EPEX SPOT, Nord Pool, GME, OMIE, etc.).</p>
+                <p>Os dados são atualizados diariamente de forma automática.</p>
+                <p><small>Fronteiras das zonas: <a href="https://github.com/electricitymaps/electricitymaps-contrib" target="_blank" rel="noopener">Electricity Maps</a> (MIT License)</small></p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Porque é que alguns países não têm dados?</strong></summary>
+            <div class="faq-content">
+                <p>Zonas a <strong>cinzento</strong> indicam ausência de dados para o dia selecionado. Isto pode acontecer porque:</p>
+                <ul>
+                    <li>Os dados ainda não foram publicados</li>
+                    <li>A zona não participou no mercado nesse dia</li>
+                    <li>Houve uma falha temporária na recolha de dados</li>
+                </ul>
+            </div>
+        </details>
+    </article>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<!-- theme.js pode nao existir localmente - ignorar erro -->
+<script src="theme.js" onerror="console.log('theme.js nao encontrado (normal em teste local)')"></script>
+
+<!-- GeoJSON das zonas inline (carregado como ficheiro JS externo) -->
+<script src="europe_zones_compact.js"></script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- CONFIGURACOES ---
+    var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos/";
+    var DATA_INICIO = "2026-01-01";
+
+    // Nomes das zonas para display (português com acentos)
+    var ZONE_NAMES = {
+        "AT": "Áustria", "BE": "Bélgica", "BG": "Bulgária", "CH": "Suíça",
+        "CZ": "Chéquia", "DE-LU": "Alemanha",
+        "DK1": "Dinamarca Oeste (DK1)", "DK2": "Dinamarca Este (DK2)",
+        "EE": "Estónia", "ES": "Espanha", "FI": "Finlândia", "FR": "França",
+        "GR": "Grécia", "HR": "Croácia", "HU": "Hungria",
+        "IT-North": "Itália Norte", "IT-Centre-North": "Itália Centro-Norte",
+        "IT-Centre-South": "Itália Centro-Sul", "IT-South": "Itália Sul",
+        "IT-Sicily": "Itália Sicília", "IT-Sardinia": "Itália Sardenha",
+        "IT-Calabria": "Itália Calábria",
+        "LT": "Lituânia", "LV": "Letónia", "ME": "Montenegro",
+        "NL": "Países Baixos",
+        "NO1": "Noruega Leste (NO1)", "NO2": "Noruega Sul (NO2)",
+        "NO3": "Noruega Central (NO3)", "NO4": "Noruega Norte (NO4)",
+        "NO5": "Noruega Oeste (NO5)",
+        "PL": "Polónia", "PT": "Portugal", "RO": "Roménia", "RS": "Sérvia",
+        "SE1": "Suécia Norte (SE1)", "SE2": "Suécia Centro-Norte (SE2)",
+        "SE3": "Suécia Centro-Sul (SE3)", "SE4": "Suécia Sul (SE4)",
+        "SI": "Eslovénia", "SK": "Eslováquia",
+        "IE": "Irlanda", "IE(SEM)": "Irlanda",
+        "LU": "Luxemburgo",
+        "IT-SACOAC": "Córsega (SACOAC)",
+        "IT-SACODC": "SACODC",
+        "NO2NSL": "Noruega NSL (NO2NSL)"
+    };
+
+    // Mapeamento: ecZone do GeoJSON -> chave nos dados (para zonas com codigo diferente)
+    var ZONE_DATA_MAP = {
+        "IE": "IE(SEM)",
+        "LU": "DE-LU"
+    };
+
+    // Zonas cujo label nao deve aparecer no mapa (apenas tooltip e cor)
+    var ZONES_SEM_LABEL = { "LU": true };
+
+    /*
+     * POSICOES PERSONALIZADAS DOS LABELS NO MAPA [latitude, longitude]
+     * Para afinar manualmente, altere os valores abaixo.
+     * Latitude: mais alto = mais a norte (ex: 70 = norte da Noruega, 37 = sul de Portugal)
+     * Longitude: mais alto = mais a leste (ex: 25 = Finlandia, 5 = costa norueguesa)
+     *
+     * Zonas que nao estao aqui usam o centroide automatico do poligono.
+     * Se um label ficar mal posicionado, adicione a zona aqui com as coordenadas desejadas.
+     * Pode usar o Google Maps para encontrar as coordenadas (lat, lng) de um ponto.
+     */
+    var LABEL_POSITIONS = {
+        "FI": [63.0, 26.0],    // Finlândia
+        "NO3": [62.5, 9.0],    // Noruega Central
+        "NO4": [69.25, 23.5],   // Noruega Norte
+        "NO5": [60.75, 7.0]     // Noruega Oeste
+    };
+
+    function getZonePrice(zone) {
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        return currentData[dataZone];
+    }
+
+    // --- ESTADO ---
+    var map, geojsonLayer;
+    var currentData = {};
+    var dataCache = {};
+    var priceLabelsLayer = null;
+    var ultimaDataDisponivel = null;
+
+    var seletorData = document.getElementById('seletor-data');
+    var loadingIndicator = document.getElementById('loading-indicator');
+
+    // --- FUNCAO AUXILIAR: fetch com fallback ---
+    async function fetchComFallback(relativePath) {
+        try {
+            var resp = await fetch("data/mapa_precos/" + relativePath);
+            if (resp.ok) return resp;
+        } catch(e) { /* ignorar - pode ser file:// */ }
+        var resp2 = await fetch(URL_GITHUB + relativePath);
+        return resp2;
+    }
+
+    // --- ESCALA DE CORES (azul-vermelho, acessivel a daltonicos) ---
+    function getColor(price) {
+        if (price === null || price === undefined) return '#D3D3D3';
+        if (price < 0)   return '#2166ac';
+        if (price <= 20)  return '#4393c3';
+        if (price <= 40)  return '#92c5de';
+        if (price <= 60)  return '#d1e5f0';
+        if (price <= 80)  return '#fddbc7';
+        if (price <= 100) return '#f4a582';
+        if (price <= 120) return '#d6604d';
+        if (price <= 150) return '#b2182b';
+        return '#67001f';
+    }
+
+    // --- ESTILO DAS ZONAS ---
+    function style(feature) {
+        var zone = feature.properties.ecZone;
+        var price = getZonePrice(zone);
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+            fillColor: getColor(price),
+            weight: 1.2,
+            opacity: 1,
+            color: isDark ? '#475569' : '#888',
+            fillOpacity: 0.85
+        };
+    }
+
+    // --- INICIALIZAR MAPA ---
+    function initMap() {
+        map = L.map('mapa-container', {
+            center: [56, 10],
+            zoom: 4,
+            minZoom: 3,
+            maxZoom: 7,
+            maxBounds: L.latLngBounds([33, -15], [72, 40]),
+            maxBoundsViscosity: 1.0,
+            zoomControl: true,
+            attributionControl: true
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+    }
+
+    // --- INFO CONTROL (hover) ---
+    var info = L.control({position: 'topright'});
+
+    info.onAdd = function() {
+        this._div = L.DomUtil.create('div', 'info-control');
+        this.update();
+        return this._div;
+    };
+
+    info.update = function(props) {
+        if (props) {
+            var zone = props.ecZone;
+            var price = getZonePrice(zone);
+            var name = ZONE_NAMES[zone] || props.displayName || zone;
+            var priceText = (price !== null && price !== undefined)
+                ? '<div class="price-value">' + price.toFixed(2) + ' €/MWh</div>'
+                : '<div class="price-value" style="color:#999;">Sem dados</div>';
+            this._div.innerHTML = '<b>' + name + '</b>' + priceText;
+        } else {
+            this._div.innerHTML = '<h4>Zona de licitação</h4>Passe o rato sobre uma zona';
+        }
+    };
+
+    // --- LEGENDA ---
+    var legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function() {
+        var div = L.DomUtil.create('div', 'info-control legend');
+        var grades = [-10, 0, 20, 40, 60, 80, 100, 120, 150];
+        var labels = ['< 0', '0-20', '20-40', '40-60', '60-80', '80-100', '100-120', '120-150', '150+'];
+
+        div.innerHTML = '<div class="legend-title">€/MWh</div>';
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i>' +
+                labels[i] + '<br>';
+        }
+        return div;
+    };
+
+    // --- INTERACAO ---
+    function highlightFeature(e) {
+        var layer = e.target;
+        layer.setStyle({ weight: 3, color: '#333', fillOpacity: 0.95 });
+        layer.bringToFront();
+        info.update(layer.feature.properties);
+    }
+
+    function resetHighlight(e) {
+        geojsonLayer.resetStyle(e.target);
+        info.update();
+    }
+
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+    }
+
+    // --- CARREGAR GEOJSON ---
+    function loadGeoJSON() {
+        if (typeof EUROPE_ZONES_GEOJSON === 'undefined') {
+            console.error('GeoJSON não carregado. Verifique se europe_zones_compact.js está na mesma pasta.');
+            return false;
+        }
+        geojsonLayer = L.geoJson(EUROPE_ZONES_GEOJSON, {
+            style: style,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+        return true;
+    }
+
+    // --- LABELS DE PRECO ---
+    function updatePriceLabels() {
+        if (priceLabelsLayer) {
+            map.removeLayer(priceLabelsLayer);
+        }
+        priceLabelsLayer = L.layerGroup();
+
+        if (!geojsonLayer) return;
+
+        geojsonLayer.eachLayer(function(layer) {
+            var zone = layer.feature.properties.ecZone;
+
+            // Nao mostrar label para zonas configuradas (ex: LU - mostra so tooltip e cor)
+            if (ZONES_SEM_LABEL[zone]) return;
+
+            var price = getZonePrice(zone);
+            if (price !== null && price !== undefined) {
+                // Usar posicao personalizada se existir, senao centroide do bounding box
+                var center = LABEL_POSITIONS[zone]
+                    ? L.latLng(LABEL_POSITIONS[zone][0], LABEL_POSITIONS[zone][1])
+                    : layer.getBounds().getCenter();
+
+                var marker = L.marker(center, {
+                    icon: L.divIcon({
+                        className: 'price-label',
+                        html: price.toFixed(2),
+                        iconSize: [40, 14],
+                        iconAnchor: [20, 7]
+                    }),
+                    interactive: false
+                });
+                priceLabelsLayer.addLayer(marker);
+            }
+        });
+
+        priceLabelsLayer.addTo(map);
+    }
+
+    // --- LISTA ORDENADA DE PRECOS ---
+    function updateRankedList(isUltimoDia) {
+        var container = document.getElementById('ranked-list-content');
+        var tituloLista = document.getElementById('ranked-list-titulo');
+        if (!container) return;
+
+        // Titulo com aviso provisorio se for o ultimo dia
+        if (tituloLista) {
+            tituloLista.textContent = isUltimoDia
+                ? 'Preços por zona de licitação (até às 23h de PT)'
+                : 'Preços por zona de licitação';
+        }
+
+        var entries = [];
+        for (var zone in currentData) {
+            if (currentData.hasOwnProperty(zone)) {
+                var price = currentData[zone];
+                if (price !== null && price !== undefined) {
+                    var name = ZONE_NAMES[zone] || zone;
+                    entries.push({ zone: zone, name: name, price: price });
+                }
+            }
+        }
+
+        if (entries.length === 0) {
+            container.innerHTML = '<p class="no-data-msg">Sem dados para o dia selecionado.</p>';
+            return;
+        }
+
+        entries.sort(function(a, b) { return a.price - b.price; });
+
+        var html = '<table class="ranked-table">';
+        html += '<thead><tr><th class="rank-cell">#</th><th>Zona</th><th class="price-cell">Preço (€/MWh)</th></tr></thead>';
+        html += '<tbody>';
+
+        for (var i = 0; i < entries.length; i++) {
+            var e = entries[i];
+            var color = getColor(e.price);
+            html += '<tr>';
+            html += '<td class="rank-cell">' + (i + 1) + '</td>';
+            html += '<td><span class="color-indicator" style="background:' + color + '"></span>' + e.name + '</td>';
+            html += '<td class="price-cell">' + e.price.toFixed(2) + ' €/MWh</td>';
+            html += '</tr>';
+        }
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    // --- CARREGAR DADOS DE PRECOS ---
+    async function loadPriceData(dateStr) {
+        loadingIndicator.style.display = 'block';
+        var yearMonth = dateStr.substring(0, 7);
+
+        if (!dataCache[yearMonth]) {
+            try {
+                var resp = await fetchComFallback(yearMonth + ".json");
+                if (resp.ok) {
+                    dataCache[yearMonth] = await resp.json();
+                } else {
+                    dataCache[yearMonth] = {};
+                    console.warn('Dados não encontrados para ' + yearMonth);
+                }
+            } catch (e) {
+                dataCache[yearMonth] = {};
+                console.warn('Erro ao carregar dados de ' + yearMonth + ':', e.message);
+            }
+        }
+
+        currentData = dataCache[yearMonth][dateStr] || {};
+        loadingIndicator.style.display = 'none';
+
+        // Atualizar cores do mapa
+        if (geojsonLayer) {
+            geojsonLayer.setStyle(style);
+            updatePriceLabels();
+        }
+
+        // Verificar se e o ultimo dia disponivel (dados provisorios)
+        var isUltimoDia = (dateStr === ultimaDataDisponivel);
+
+        // Atualizar lista ordenada
+        updateRankedList(isUltimoDia);
+
+        // Atualizar titulo com data
+        var partes = dateStr.split('-');
+        var tituloBase = 'Mapa de Preços Médios da Eletricidade - ' + partes[2] + '/' + partes[1] + '/' + partes[0];
+        if (isUltimoDia) {
+            tituloBase += ' (até às 23h de PT)';
+        }
+        document.getElementById('titulo-mapa').textContent = tituloBase;
+
+        // Aviso provisorio
+        var avisoEl = document.getElementById('aviso-provisorio');
+        if (avisoEl) {
+            if (isUltimoDia) {
+                avisoEl.textContent = 'No último dia disponível, a média poderá não ser final — poderá faltar o valor da última hora do dia (23h às 24h de PT).';
+                avisoEl.style.display = 'block';
+            } else {
+                avisoEl.style.display = 'none';
+            }
+        }
+
+        info.update();
+    }
+
+    // --- ECRA INTEIRO ---
+    window.toggleFullscreen = function() {
+        var wrapper = document.getElementById('mapa-wrapper');
+        var btn = document.getElementById('btn-fullscreen');
+        wrapper.classList.toggle('fullscreen');
+        if (wrapper.classList.contains('fullscreen')) {
+            btn.innerHTML = '&#x2716; Sair';
+            btn.title = 'Sair do ecrã inteiro';
+        } else {
+            btn.innerHTML = '&#x26F6; Ecrã inteiro';
+            btn.title = 'Abrir mapa em ecrã inteiro';
+        }
+        // Leaflet precisa recalcular o tamanho
+        setTimeout(function() { map.invalidateSize(); }, 100);
+    };
+
+    // Tecla ESC para sair do ecra inteiro
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var wrapper = document.getElementById('mapa-wrapper');
+            if (wrapper.classList.contains('fullscreen')) {
+                window.toggleFullscreen();
+            }
+        }
+    });
+
+    // --- DARK MODE ---
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'data-theme') {
+                if (geojsonLayer) {
+                    geojsonLayer.setStyle(style);
+                    updatePriceLabels();
+                }
+            }
+        });
+    });
+    observer.observe(document.documentElement, { attributes: true });
+
+    // --- INICIALIZACAO ---
+    async function init() {
+        loadingIndicator.style.display = 'block';
+
+        try {
+            initMap();
+            info.addTo(map);
+            legend.addTo(map);
+
+            // Carregar GeoJSON (inline)
+            if (!loadGeoJSON()) {
+                loadingIndicator.style.display = 'none';
+                document.getElementById('titulo-mapa').textContent =
+                    'Erro: europe_zones_compact.js não encontrado';
+                return;
+            }
+
+            // Carregar metadata para definir data maxima e inicial
+            try {
+                var metaResp = await fetchComFallback("metadata.json");
+                if (metaResp.ok) {
+                    var meta = await metaResp.json();
+                    if (meta.ultima_data) ultimaDataDisponivel = meta.ultima_data;
+                }
+            } catch(e) {
+                console.warn('metadata.json não encontrado:', e.message);
+            }
+
+            // Definir datas do seletor
+            seletorData.min = DATA_INICIO;
+            if (ultimaDataDisponivel) {
+                seletorData.max = ultimaDataDisponivel;
+                seletorData.value = ultimaDataDisponivel;
+            } else {
+                var yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                seletorData.value = yesterday.toISOString().split('T')[0];
+            }
+            if (seletorData.value < DATA_INICIO) {
+                seletorData.value = DATA_INICIO;
+            }
+
+            // Carregar dados do dia selecionado
+            await loadPriceData(seletorData.value);
+
+            // Event listener para mudanca de data
+            seletorData.addEventListener('change', function() {
+                loadPriceData(this.value);
+            });
+
+        } catch(e) {
+            console.error('Erro na inicialização:', e);
+        }
+
+        loadingIndicator.style.display = 'none';
+    }
+
+    init();
+
+    // Carregar menu e footer (silencioso - falha OK em teste local)
+    fetch('menu.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
+        if (d) document.getElementById('menu-placeholder').innerHTML = d;
+    }).catch(function() {});
+    fetch('footer.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
+        if (d) document.getElementById('footer-placeholder').innerHTML = d;
+    }).catch(function() {});
+
+});
+</script>
+</body>
+</html>
