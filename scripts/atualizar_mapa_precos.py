@@ -76,16 +76,14 @@ def fetch_prices(zone, start_date, end_date):
     return data.get("unix_seconds", []), data.get("price", [])
 
 
-def compute_daily_averages(unix_seconds, prices, tz_name):
-    """Agrupar precos por dia LOCAL da zona e calcular media diaria.
+def compute_daily_stats(unix_seconds, prices, tz_name):
+    """Agrupar precos por dia LOCAL da zona e calcular estatisticas diarias.
 
     Os timestamps da API sao UTC. O agrupamento deve usar a hora local
     da zona de licitacao para que os dias coincidam com os valores
     publicados (ex: Energy-Charts).
 
-    Exemplo para ES (CEST=UTC+2) em Abril:
-      - 22:00 UTC = 00:00 CEST -> pertence ao dia seguinte na hora local
-      - Sem esta correcao, esses valores ficam no dia errado (UTC)
+    Retorna por dia: avg, min, min_hour, max, max_hour (horas locais).
     """
     tz = ZoneInfo(tz_name)
     daily = {}
@@ -94,8 +92,24 @@ def compute_daily_averages(unix_seconds, prices, tz_name):
             continue
         local_dt = datetime.fromtimestamp(ts, tz=tz)
         day = local_dt.strftime("%Y-%m-%d")
-        daily.setdefault(day, []).append(price)
-    return {day: round(sum(ps) / len(ps), 2) for day, ps in daily.items() if ps}
+        hour_str = local_dt.strftime("%H:%M")
+        daily.setdefault(day, []).append((price, hour_str))
+
+    result = {}
+    for day, entries in daily.items():
+        if not entries:
+            continue
+        prices_only = [p for p, _ in entries]
+        min_entry = min(entries, key=lambda x: x[0])
+        max_entry = max(entries, key=lambda x: x[0])
+        result[day] = {
+            "avg": round(sum(prices_only) / len(prices_only), 2),
+            "min": round(min_entry[0], 2),
+            "min_hour": min_entry[1],
+            "max": round(max_entry[0], 2),
+            "max_hour": max_entry[1],
+        }
+    return result
 
 
 def load_monthly_file(year_month):
@@ -181,13 +195,13 @@ def main():
                     timestamps, prices = fetch_prices(
                         zone, m_start.isoformat(), m_end.isoformat()
                     )
-                    daily_avgs = compute_daily_averages(timestamps, prices, ZONE_TIMEZONES.get(zone, "Europe/Berlin"))
+                    daily_stats = compute_daily_stats(timestamps, prices, ZONE_TIMEZONES.get(zone, "Europe/Berlin"))
 
-                    for date_str, avg in daily_avgs.items():
+                    for date_str, stats in daily_stats.items():
                         year_month = date_str[:7]
                         if year_month not in monthly_cache:
                             monthly_cache[year_month] = load_monthly_file(year_month)
-                        monthly_cache[year_month].setdefault(date_str, {})[zone] = avg
+                        monthly_cache[year_month].setdefault(date_str, {})[zone] = stats
                         zone_days += 1
 
                         if latest_date is None or date_str > latest_date:
@@ -205,18 +219,18 @@ def main():
                 timestamps, prices = fetch_prices(
                     zone, start_date.isoformat(), end_date.isoformat()
                 )
-                daily_avgs = compute_daily_averages(timestamps, prices, ZONE_TIMEZONES.get(zone, "Europe/Berlin"))
+                daily_stats = compute_daily_stats(timestamps, prices, ZONE_TIMEZONES.get(zone, "Europe/Berlin"))
 
-                for date_str, avg in daily_avgs.items():
+                for date_str, stats in daily_stats.items():
                     year_month = date_str[:7]
                     if year_month not in monthly_cache:
                         monthly_cache[year_month] = load_monthly_file(year_month)
-                    monthly_cache[year_month].setdefault(date_str, {})[zone] = avg
+                    monthly_cache[year_month].setdefault(date_str, {})[zone] = stats
 
                     if latest_date is None or date_str > latest_date:
                         latest_date = date_str
 
-                days_found = len(daily_avgs)
+                days_found = len(daily_stats)
                 print(f"OK ({days_found} dias)")
                 time.sleep(1.5)
             except Exception as e:
