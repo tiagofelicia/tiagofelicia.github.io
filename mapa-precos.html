@@ -73,7 +73,7 @@
         #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
 
         /* Info control (tooltip ao passar o rato) */
-        .info-control { padding: 10px 14px; background: white; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,0.2); font-size: 0.9em; line-height: 1.5; min-width: 160px; }
+        .info-control { padding: 10px 14px; background: white; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,0.2); font-size: 0.9em; line-height: 1.5; min-width: 140px; }
         .info-control h4 { margin: 0 0 5px; color: #777; font-size: 0.85em; }
         .info-control b { font-size: 1.05em; }
         .info-control .price-value { font-size: 1.3em; font-weight: bold; margin-top: 4px; }
@@ -92,6 +92,9 @@
         /* Nota de horas locais */
         .nota-horas { text-align: center; font-size: 0.82em; color: #555; margin: 5px 0 15px 0; font-style: italic; }
 
+        /* Nota de Fonte de Dados */
+        .nota-fonte { text-align: center; font-size: 0.82em; color: #555; margin: 5px 0 15px 0;}
+
         /* Aviso de dados provisorios */
         .aviso-provisorio { text-align: center; font-size: 0.8em; color: #c0392b; margin: 5px 0 10px 0; font-style: italic; }
 
@@ -99,10 +102,10 @@
         #ranked-list-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 10px; box-sizing: border-box; }
         #ranked-list-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
         .ranked-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-        .ranked-table th { background: #f1f5f9; padding: 8px 12px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; }
+        .ranked-table th { background: #f1f5f9; padding: 8px 12px; text-align: center; border-bottom: 2px solid #ddd; font-weight: 600; }
         .ranked-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
         .ranked-table tr:hover { background: #f8fafc; }
-        .ranked-table .price-cell { font-weight: bold; text-align: right; padding-right: 20px; }
+        .ranked-table .price-cell { font-weight: bold; text-align: center; padding-right: 20px; }
         .ranked-table .rank-cell { text-align: center; width: 50px; color: #888; }
         .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
 
@@ -135,6 +138,7 @@
         [data-theme="dark"] .ranked-table .rank-cell { color: #64748b; }
         [data-theme="dark"] .aviso-provisorio { color: #f87171; }
         [data-theme="dark"] .nota-horas { color: #94a3b8; }
+        [data-theme="dark"] .nota-fonte { color: #94a3b8; }
         [data-theme="dark"] .btn-fullscreen { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .btn-fullscreen:hover { background: #334155; }
     </style>
@@ -185,7 +189,7 @@
     </div>
 
     <p class="nota-horas">Valores nas horas locais de cada zona</p>
-    <p class="nota-horas">Fonte: Energy-Charts API (Fraunhofer ISE) | tiagofelicia.pt</p>
+    <p class="nota-fonte">Fonte: Energy-Charts API (Fraunhofer ISE) | tiagofelicia.pt</p>
 
     <div id="ranked-list-wrapper">
         <h2 id="ranked-list-titulo">Preços por zona de licitação</h2>
@@ -209,14 +213,15 @@
             <summary><strong>Os valores são nas horas locais?</strong></summary>
             <div class="faq-content">
                 <p>Sim. Os preços médios diários são calculados com base na <strong>hora local de cada zona de licitação</strong>. Por exemplo, um dia em Portugal (UTC+0/+1) pode não corresponder exatamente ao mesmo período UTC que um dia na Finlândia (UTC+2/+3).</p>
-                <p>Isto garante que os valores apresentados coincidem com os publicados pelas bolsas de eletricidade e pelo Energy-Charts.</p>
+                <p>Isto garante que os valores apresentados coincidem com os publicados pelo Energy-Charts.</p>
             </div>
         </details>
 
         <details class="faq-item">
             <summary><strong>Porque é que o último dia pode ter valores provisórios?</strong></summary>
             <div class="faq-content">
-                <p>No último dia disponível, os dados podem estar incompletos &mdash; normalmente <strong>falta o valor da última hora do dia</strong> (23h às 24h), pois esse período pode ainda não ter sido concluído ou publicado no momento da recolha.</p>
+                <p>O OMIE negoceia em Hora Central Europeia (CET), que é a hora de Espanha.</p>
+                <p>Como <strong>Portugal</strong> está uma hora "atrás" de <strong>Espanha</strong> (hora local PT = hora CET - 1), quando olhamos para os resultados do mercado diário (Day-Ahead) que são divulgados para o dia seguinte, <strong>o intervalo correspondente a 23:00 - 24:00 (hora de Portugal)</strong> é conhecido apenas no dia seguinte.</p>
                 <p>Quando tal acontece, é apresentado o aviso <em>"até às 23h de PT"</em> no título.</p>
             </div>
         </details>
@@ -614,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var avisoEl = document.getElementById('aviso-provisorio');
         if (avisoEl) {
             if (isUltimoDia) {
-                avisoEl.textContent = 'No último dia disponível, a média poderá não ser final — poderá faltar o valor da última hora do dia (23h às 24h de PT).';
+                avisoEl.textContent = 'A média para Portugal não é final — falta o valor da última hora do dia (23h às 24h de PT), que ainda não foi negociado.';
                 avisoEl.style.display = 'block';
             } else {
                 avisoEl.style.display = 'none';
