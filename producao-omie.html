@@ -61,19 +61,19 @@
 
         /* ===== REGRAS DE CSS ===== */
         .painel-header { text-align: center; margin-bottom: 20px; }
-        
-        /* Ajuste para o novo H1 herdar a linha azul corretamente */
-        .painel-header h1 { margin: 0 0 20px 0; font-size: 1.5em; color: #2c3e50; }
-        
+        .painel-header h1 { margin: 0 0 10px 0; font-size: 1.5em; color: #2c3e50; }
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
 
-        .date-selector {
-            margin-bottom: 10px;
-        }
-        .date-selector label {
-            font-weight: bold;
-            margin-right: 10px;
-        }
+        .date-selector { margin-bottom: 20px; text-align: center; }
+        .date-selector label { font-weight: bold; margin-right: 10px; }
+        .date-selector input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+
+        /* Contentor das setas e input */
+        .date-nav-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;}
+        /* Estilo dos botões de seta */
+        .btn-nav { background: #fff; border: 1px solid #ccc; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center; transition: background 0.2s; color: #2c3e50;}
+        .btn-nav:hover { background: #e2e8f0; }
+        
         .link-section { text-align: center; margin: 30px auto; }
         .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
 
@@ -85,7 +85,9 @@
         [data-theme="dark"] .date-selector input { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] #loading-indicator { color: #e2e8f0; }
         [data-theme="dark"] #grafico-container { background: #1e293b; border-radius: 8px; }
-    </style>
+        [data-theme="dark"] .btn-nav { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-nav:hover { background: #334155; }
+</style>
 </head>
 <body>
 
@@ -115,8 +117,13 @@
     <div class="painel-header" id="painel-header-main">
         <div class="date-selector">
             <label for="seletor-data">Selecione o dia:</label>
-            <input type="date" id="seletor-data">
+            <div class="date-nav-wrapper">
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior">&#10094;</button>
+                <input type="date" id="seletor-data">
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte">&#10095;</button>
+            </div>
         </div>
+
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados históricos disponíveis desde 01/01/2010
         </p>
@@ -540,6 +547,37 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('themeChanged', function() {
         if (seletorData.value) atualizarDashboard(seletorData.value);
     });
+
+    // --- Lógica das Setas de Navegação ---
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+
+    function alterarData(dias) {
+        if (!seletorData.value) return; // Evita erros se o campo estiver vazio
+
+        // Separar ano, mês e dia para evitar problemas de mudança de hora (ex: 29 de Março)
+        const partes = seletorData.value.split('-');
+        const dataAtual = new Date(partes[0], partes[1] - 1, partes[2]);
+        
+        // Somar ou subtrair o dia
+        dataAtual.setDate(dataAtual.getDate() + dias);
+        
+        // Reconstruir a string no formato AAAA-MM-DD
+        const y = dataAtual.getFullYear();
+        const m = String(dataAtual.getMonth() + 1).padStart(2, '0');
+        const d = String(dataAtual.getDate()).padStart(2, '0');
+        const novaDataStr = `${y}-${m}-${d}`;
+
+        // Validar limites antes de aplicar
+        if (novaDataStr >= seletorData.min && novaDataStr <= seletorData.max) {
+            seletorData.value = novaDataStr;
+            seletorData.dispatchEvent(new Event('change')); // Dispara a atualização dos gráficos
+        }
+    }
+
+    btnPrev.addEventListener('click', () => alterarData(-1));
+    btnNext.addEventListener('click', () => alterarData(1));
+    // -------------------------------------
 
     // Carregar menu e footer
     fetch('menu.html').then(response => response.text()).then(data => { document.getElementById('menu-placeholder').innerHTML = data; }).catch(error => console.error('Erro ao carregar o menu:', error));

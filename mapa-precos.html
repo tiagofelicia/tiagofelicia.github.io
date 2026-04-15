@@ -51,9 +51,16 @@
         .painel-header { text-align: center; margin-bottom: 20px; }
         .painel-header h1 { margin: 0 0 10px 0; font-size: 1.5em; color: #2c3e50; }
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
+
         .date-selector { margin-bottom: 20px; text-align: center; }
         .date-selector label { font-weight: bold; margin-right: 10px; }
         .date-selector input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+
+        /* Contentor das setas e input */
+        .date-nav-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;}
+        /* Estilo dos botões de seta */
+        .btn-nav { background: #fff; border: 1px solid #ccc; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center; transition: background 0.2s; color: #2c3e50;}
+        .btn-nav:hover { background: #e2e8f0; }
 
         /*
          * DIMENSOES DO MAPA - alterar aqui para mudar o tamanho:
@@ -121,7 +128,7 @@
             .info-control { font-size: 0.8em; min-width: 120px; }
         }
 
-        /* === DARK MODE === */
+        /* === DARK MODE — Estilos específicos desta página === */
         [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
         [data-theme="dark"] .painel-header p { color: #94a3b8; }
         [data-theme="dark"] .date-selector label { color: #cbd5e1; }
@@ -144,6 +151,8 @@
         [data-theme="dark"] .nota-fonte { color: #94a3b8; }
         [data-theme="dark"] .btn-fullscreen { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .btn-fullscreen:hover { background: #334155; }
+        [data-theme="dark"] .btn-nav { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-nav:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -174,7 +183,11 @@
     <div class="painel-header">
         <div class="date-selector">
             <label for="seletor-data">Selecione o dia:</label>
-            <input type="date" id="seletor-data">
+            <div class="date-nav-wrapper">
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior">&#10094;</button>
+                <input type="date" id="seletor-data">
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte">&#10095;</button>
+            </div>
         </div>
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados disponíveis desde 01/01/2026 &mdash; Valores nas horas locais de cada zona
@@ -739,6 +752,36 @@ document.addEventListener('DOMContentLoaded', function() {
             if (seletorData.value < DATA_INICIO) {
                 seletorData.value = DATA_INICIO;
             }
+
+            // Referência aos novos botões
+            var btnPrev = document.getElementById('btn-prev');
+            var btnNext = document.getElementById('btn-next');
+
+            // Função para mudar a data
+            function alterarData(dias) {
+                // Criamos a data separando ano, mês e dia para evitar problemas de fuso horário
+                var partes = seletorData.value.split('-');
+                var dataAtual = new Date(partes[0], partes[1] - 1, partes[2]);
+                
+                // Adicionamos os dias
+                dataAtual.setDate(dataAtual.getDate() + dias);
+                
+                // Formatamos de volta para YYYY-MM-DD
+                var y = dataAtual.getFullYear();
+                var m = String(dataAtual.getMonth() + 1).padStart(2, '0');
+                var d = String(dataAtual.getDate()).padStart(2, '0');
+                var novaDataStr = y + '-' + m + '-' + d;
+
+                // Verificação de limites
+                if (novaDataStr >= seletorData.min && (!seletorData.max || novaDataStr <= seletorData.max)) {
+                    seletorData.value = novaDataStr;
+                    seletorData.dispatchEvent(new Event('change'));
+                }
+            }
+
+            // Eventos de clique
+            btnPrev.addEventListener('click', function() { alterarData(-1); });
+            btnNext.addEventListener('click', function() { alterarData(1); });
 
             // Carregar dados do dia selecionado
             await loadPriceData(seletorData.value);
