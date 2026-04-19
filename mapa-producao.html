@@ -338,7 +338,7 @@
         <details class="faq-item">
             <summary><strong>Como é calculada a percentagem renovável?</strong></summary>
             <div class="faq-content">
-                <p>A percentagem renovável é calculada como: <strong>(Solar + Eólica + Hídrica + Biomassa) / Produção Total &times; 100</strong>.</p>
+                <p>A percentagem renovável é calculada como: <strong>(Solar + Eólica + Hídrica + Biomassa + Outras Renováveis) / Produção Total &times; 100</strong>.</p>
                 <p>Os valores de produção são totais diários em GWh, obtidos a partir dos dados de produção pública líquida da API Energy-Charts.</p>
             </div>
         </details>
@@ -357,10 +357,10 @@
                 <p>São consideradas renováveis as seguintes fontes:</p>
                 <ul>
                     <li><strong>Solar</strong> (fotovoltaica)</li>
-                    <li><strong>Eólica onshore</strong> (wind onshore)</li>
-                    <li><strong>Eólica offshore</strong> (wind offshore)</li>
+                    <li><strong>Eólica</strong> (wind onshore e wind offshore)</li>
                     <li><strong>Hídrica</strong> (fio-de-água, albufeira e bombagem &mdash; apenas geração)</li>
-                    <li><strong>Biomassa</strong> (inclui geotermia e resíduos)</li>
+                    <li><strong>Biomassa</strong> (inclui Biomassa florestal, biogás e a fração biodegradável dos resíduos sólidos urbanos)</li>
+                    <li><strong>Outras Renováveis</strong> (inclui geotermia)</li>
                 </ul>
                 <p>As fontes fósseis (gás natural, carvão, petróleo) e nuclear não são consideradas renováveis.</p>
             </div>
@@ -1176,10 +1176,10 @@ document.addEventListener('DOMContentLoaded', function() {
             { key: 'solar', label: 'Solar' },
             { key: 'eolica', label: 'Eólica' },
             { key: 'hydro', label: 'Hídrica' },
-            { key: 'nuclear', label: 'Nuclear' },
             { key: 'biomass', label: 'Biomassa' },
             { key: 'other_ren', label: 'Out. Renov.' },
             { key: 'fossil', label: 'Fóssil' },
+            { key: 'nuclear', label: 'Nuclear' },
             { key: 'total', label: 'Total' }
         ];
 
@@ -1220,9 +1220,6 @@ document.addEventListener('DOMContentLoaded', function() {
             var tipHyd = 'Fio de Água: ' + e.hydro_run_of_river.toFixed(2) + ' GWh\nAlbufeira: ' + e.hydro_water_reservoir.toFixed(2) + ' GWh\nBombagem: ' + e.hydro_pumped_storage.toFixed(2) + ' GWh';
             html += '<td class="has-tooltip" title="' + tipHyd + '">' + e.hydro.toFixed(1) + '</td>';
 
-            // Nuclear
-            html += '<td>' + e.nuclear.toFixed(1) + '</td>';
-
             // Biomassa
             html += '<td>' + e.biomass.toFixed(1) + '</td>';
 
@@ -1233,6 +1230,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fóssil — tooltip com gás + gás de carvão + carvão + linhite + petróleo + outro
             var tipFos = 'Gás Natural: ' + e.gas.toFixed(2) + ' GWh\nGás de Carvão: ' + e.gas_coal_derived.toFixed(2) + ' GWh\nCarvão: ' + e.coal_hard.toFixed(2) + ' GWh\nLinhite: ' + e.coal_lignite.toFixed(2) + ' GWh\nPetróleo: ' + e.oil.toFixed(2) + ' GWh\nOutro: ' + e.other_src.toFixed(2) + ' GWh';
             html += '<td class="has-tooltip" title="' + tipFos + '">' + e.fossil.toFixed(1) + '</td>';
+
+            // Nuclear
+            html += '<td>' + e.nuclear.toFixed(1) + '</td>';
 
             // Total — tooltip com renováveis + nuclear + fóssil
             var renTotal = e.solar + e.eolica + e.hydro + e.biomass_total;
