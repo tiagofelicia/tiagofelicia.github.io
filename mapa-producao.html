@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Mapa de Produção de Eletricidade na Europa | Tiago Felícia</title>
+    <meta name="description" content="Mapa interativo da produção de eletricidade europeia por fonte: solar, eólica, hídrica, nuclear, gás e carvão. Percentagem renovável por país." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-producao.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mapa de Produção de Eletricidade na Europa" />
+    <meta property="og:description" content="Produção de eletricidade por fonte e percentagem renovável por país europeu." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-producao.html" />
+    <meta property="og:locale" content="pt_PT" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mapa de Produção de Eletricidade na Europa",
+      "url": "https://www.tiagofelicia.pt/mapa-producao.html",
+      "description": "Mapa interativo da produção de eletricidade europeia por fonte e percentagem renovável.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web browser",
+      "author": { "@type": "Person", "name": "Tiago Felícia" }
+    }
+    </script>
+
+    <style>
+        .painel-header { text-align: center; margin-bottom: 20px; }
+        .painel-header h1 { margin: 0 0 10px 0; font-size: 1.5em; color: #2c3e50; }
+        .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
+
+        .date-selector { margin-bottom: 20px; text-align: center; }
+        .date-selector label { font-weight: bold; margin-right: 10px; }
+        .date-selector input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+
+        .country-selector { text-align: center; margin: 0 auto 25px auto; max-width: 1300px; }
+        .country-selector label { font-weight: bold; margin-right: 10px; }
+        .country-selector select { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; min-width: 200px; cursor: pointer; }
+
+        /* Contentor das setas e input */
+        .date-nav-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+        .btn-nav { background: #fff; border: 1px solid #ccc; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center; transition: background 0.2s; color: #2c3e50; }
+        .btn-nav:hover { background: #e2e8f0; }
+
+        #mapa-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 20px auto; position: relative; }
+        #mapa-container { width: 100%; height: 780px; border-radius: 8px; border: 1px solid #ddd; background: #f8f9fa; }
+
+        .btn-fullscreen { position: absolute; top: 10px; right: 10px; z-index: 999; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 0.85em; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+        .btn-fullscreen:hover { background: #e2e8f0; }
+        #mapa-wrapper.fullscreen { position: fixed; top: 0; left: 0; width: 100vw; max-width: 100vw; height: 100vh; z-index: 9999; margin: 0; border-radius: 0; }
+        #mapa-wrapper.fullscreen #mapa-container { height: 100vh; border-radius: 0; border: none; }
+
+        #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
+
+        .info-control { padding: 10px 14px; background: white; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,0.2); font-size: 0.9em; line-height: 1.5; min-width: 160px; }
+        .info-control h4 { margin: 0 0 5px; color: #777; font-size: 0.85em; }
+        .info-control b { font-size: 1.05em; }
+        .info-control .ren-value { font-size: 1.3em; font-weight: bold; margin-top: 4px; }
+        .info-control .prod-detail { font-size: 0.85em; margin-top: 6px; line-height: 1.6; }
+        .info-control .prod-total { font-size: 0.8em; opacity: 0.6; margin-top: 4px; }
+        .info-control .sparkline-label { font-size: 0.72em; opacity: 0.7; margin-top: 6px; }
+        .info-control .sparkline-wrap { margin-top: 2px; }
+        .info-control .sparkline { display: block; }
+        [data-theme="dark"] .info-control .sparkline polyline { stroke: #60a5fa; }
+
+        .legend { line-height: 18px; font-size: 0.75em; padding: 6px 8px !important; min-width: auto !important; }
+        .legend i { width: 16px; height: 12px; display: inline-block; margin-right: 4px; vertical-align: middle; border-radius: 2px; }
+        .legend-title { font-weight: bold; margin-bottom: 4px; font-size: 0.85em; }
+
+        .ren-label { background: none; border: none; font-size: 10px; font-weight: bold; color: #333; text-align: center; white-space: nowrap; text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; }
+
+        .no-data-msg { text-align: center; padding: 10px; color: #999; font-size: 0.9em; }
+        .nota-fonte { text-align: center; font-size: 0.82em; color: #555; margin: 5px 0 15px 0; }
+
+        /* Badge de fonte (previsão / provisório) */
+        .source-badge { display: none; font-size: 0.82em; padding: 6px 16px; border-radius: 6px; margin-bottom: 15px; }
+        .source-badge.forecast { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+        .source-badge.provisional { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+        .forecast-badge { font-size: 0.7em; background: #fef3c7; color: #92400e; padding: 1px 5px; border-radius: 3px; margin-left: 4px; white-space: nowrap; }
+
+        /* Gráfico */
+        #chart-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 15px; box-sizing: border-box; }
+        #chart-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
+        #chart-container-wrapper { background: #fff; border-radius: 8px; border: 1px solid #ddd; padding: 15px; }
+        #chart-container { width: 100%; height: 245px; }
+
+        /* Gráfico de Evolução (30 dias) */
+        #evolution-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 15px; box-sizing: border-box; }
+        #evolution-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
+        #evolution-container-wrapper { background: #fff; border-radius: 8px; border: 1px solid #ddd; padding: 15px; }
+        #evolution-container { width: 100%; height: 320px; }
+        [data-theme="dark"] #evolution-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] #evolution-container-wrapper { background: #1e293b; border-color: #475569; }
+
+        /* Toggle de modo (diário/semanal/mensal) */
+        .mode-toggle { text-align: center; margin: 0 auto 18px auto; max-width: 1300px; }
+        .mode-toggle .mode-btn { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; transition: background 0.2s; }
+        .mode-toggle .mode-btn:first-child { border-radius: 5px 0 0 5px; }
+        .mode-toggle .mode-btn:last-child { border-radius: 0 5px 5px 0; }
+        .mode-toggle .mode-btn:not(:last-child) { border-right: none; }
+        .mode-toggle .mode-btn:hover { background: #e2e8f0; }
+        .mode-toggle .mode-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        [data-theme="dark"] .mode-toggle .mode-btn { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .mode-toggle .mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .mode-toggle .mode-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+        /* Link cruzado para mapa-precos */
+        .cross-link { text-align: center; margin: 8px auto 22px; }
+        .cross-link a { display: inline-block; background: #f1f5f9; color: #2563eb; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 5px; text-decoration: none; font-size: 0.85em; transition: background 0.2s; }
+        .cross-link a:hover { background: #dbeafe; }
+        [data-theme="dark"] .cross-link a { background: #1e293b; color: #60a5fa; border-color: #475569; }
+        [data-theme="dark"] .cross-link a:hover { background: #334155; }
+
+        .kbd-hint { font-size: 0.72em; color: #888; margin-top: 6px; }
+        [data-theme="dark"] .kbd-hint { color: #64748b; }
+        .kbd-hint kbd { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 3px; padding: 1px 5px; font-family: monospace; font-size: 0.9em; }
+
+        /* Foco visível (a11y) */
+        .btn-nav:focus-visible, .mode-toggle .mode-btn:focus-visible, .btn-fullscreen:focus-visible,
+        .cross-link a:focus-visible, #seletor-data:focus-visible, #seletor-pais:focus-visible,
+        #chart-container:focus-visible, #evolution-container:focus-visible,
+        .ranked-table th.sortable:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+        [data-theme="dark"] .kbd-hint kbd { background: #334155; border-color: #475569; color: #cbd5e1; }
+
+        /* Lista de produção ordenada */
+        #ranked-list-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 10px; box-sizing: border-box; }
+        #ranked-list-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
+        .ranked-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+        .ranked-table th { background: #f1f5f9; padding: 8px 10px; text-align: center; border-bottom: 2px solid #ddd; font-weight: 600; white-space: nowrap; }
+        .ranked-table td { padding: 6px 10px; border-bottom: 1px solid #eee; text-align: center; }
+        .ranked-table td:nth-child(2) { text-align: left; }
+        .ranked-table tr:hover { background: #f8fafc; }
+        .ranked-table .rank-cell { width: 40px; color: #888; }
+        .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
+
+        .ranked-table th.sortable { cursor: pointer; user-select: none; transition: background 0.15s; }
+        .ranked-table th.sortable:hover { background: #dbeafe; }
+        .sort-indicator { font-size: 0.65em; opacity: 0.3; margin-left: 3px; vertical-align: middle; }
+        .sort-indicator.active { opacity: 1; color: #2563eb; }
+        .ranked-table td.has-tooltip { cursor: help; text-decoration: underline; text-decoration-style: dotted; text-decoration-color: #aaa; text-underline-offset: 2px; }
+
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .content-support { max-width: 1300px; margin: 40px auto; padding: 0 15px; }
+
+        @media (max-width: 768px) {
+            #mapa-container { height: 440px; }
+            .info-control { font-size: 0.8em; min-width: 120px; }
+            #chart-container { height: 160px; }
+            .ranked-table { font-size: 0.75em; }
+        }
+
+        /* === DARK MODE === */
+        [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p { color: #94a3b8; }
+        [data-theme="dark"] .date-selector label, [data-theme="dark"] .country-selector label { color: #cbd5e1; }
+        [data-theme="dark"] .date-selector input, [data-theme="dark"] .country-selector select { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #mapa-container { background: #1a1f2e; border-color: #475569; }
+        [data-theme="dark"] .info-control { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .info-control h4 { color: #94a3b8; }
+        [data-theme="dark"] .ren-label { color: #e2e8f0 !important; text-shadow: 1px 1px 2px #0f172a, -1px -1px 2px #0f172a, 1px -1px 2px #0f172a, -1px 1px 2px #0f172a; }
+        [data-theme="dark"] #loading-indicator { background-color: rgba(15, 23, 42, 0.85); }
+        [data-theme="dark"] .leaflet-control-zoom a { background: #1e293b !important; color: #e2e8f0 !important; border-color: #475569 !important; }
+        [data-theme="dark"] .leaflet-control-attribution { background: rgba(30,41,59,0.8) !important; color: #94a3b8 !important; }
+        [data-theme="dark"] .leaflet-control-attribution a { color: #60a5fa !important; }
+        [data-theme="dark"] #chart-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] #chart-container-wrapper { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] #ranked-list-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] .ranked-table th { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .ranked-table td { border-color: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .ranked-table tr:hover { background: #1e293b; }
+        [data-theme="dark"] .ranked-table .rank-cell { color: #64748b; }
+        [data-theme="dark"] .nota-fonte { color: #94a3b8; }
+        [data-theme="dark"] .btn-fullscreen { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-fullscreen:hover { background: #334155; }
+        [data-theme="dark"] .btn-nav { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-nav:hover { background: #334155; }
+        [data-theme="dark"] .ranked-table th.sortable:hover { background: #334155; }
+        [data-theme="dark"] .sort-indicator.active { color: #60a5fa; }
+        [data-theme="dark"] .ranked-table td.has-tooltip { text-decoration-color: #555; }
+        [data-theme="dark"] .source-badge.forecast { background: #422006; color: #fbbf24; border-color: #b45309; }
+        [data-theme="dark"] .source-badge.provisional { background: #0c4a6e; color: #7dd3fc; border-color: #0284c7; }
+        [data-theme="dark"] .forecast-badge { background: #422006; color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar Modo Escuro" id="btn-dark-mode">&#x1F319;</button>
+
+<header>
+    <div class="header-content">
+        <div class="header-title-container">
+            <a href="index.html">
+                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo">
+            </a>
+            <div class="brand-name">Tiago Felícia</div>
+        </div>
+        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
+    </div>
+</header>
+
+<div id="menu-placeholder">
+    <nav style="display:none;">
+        <a href="eletricidade-tiagofelicia.html">Eletricidade</a>
+        <a href="gas-natural-tiagofelicia.html">Gás</a>
+        <a href="autoconsumo-tiagofelicia.html">Solar</a>
+    </nav>
+</div>
+
+<main>
+    <div class="painel-header">
+        <div class="date-selector">
+            <label for="seletor-data">Selecione o dia:</label>
+            <div class="date-nav-wrapper">
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior">&#10094;</button>
+                <input type="date" id="seletor-data">
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte">&#10095;</button>
+            </div>
+        </div>
+        <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
+            Dados disponíveis desde 01/01/2026 &mdash; Fonte: Energy-Charts API (Fraunhofer ISE)
+        </p>
+        <div class="cross-link">
+            <a href="#" id="link-precos" title="Ver preços de eletricidade para o mesmo dia">&#128202; Ver preços de eletricidade</a>
+        </div>
+        <h1 id="titulo-mapa">Mapa de Produção de Eletricidade na Europa</h1>
+        <p>Percentagem de energia renovável no mix de produção por país</p>
+        <p id="source-badge" class="source-badge" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="mode-toggle" role="group" aria-label="Modo de agregação">
+        <button type="button" class="mode-btn active" data-mode="day" aria-pressed="true">Diário</button>
+        <button type="button" class="mode-btn" data-mode="week" aria-pressed="false">Semanal (7d)</button>
+        <button type="button" class="mode-btn" data-mode="month" aria-pressed="false">Mensal (30d)</button>
+    </div>
+
+    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
+
+    <div id="mapa-wrapper">
+        <button class="btn-fullscreen" onclick="toggleFullscreen()" id="btn-fullscreen" title="Abrir mapa em ecrã inteiro">&#x26F6; Ecrã inteiro</button>
+        <div id="mapa-container"></div>
+    </div>
+
+    <p class="nota-fonte">Fonte: Energy-Charts API (Fraunhofer ISE) &mdash; Produção pública líquida | tiagofelicia.pt</p>
+
+    <div class="country-selector">
+        <label for="seletor-pais">País:</label>
+        <select id="seletor-pais">
+            <option value="at">Áustria</option>
+            <option value="be">Bélgica</option>
+            <option value="bg">Bulgária</option>
+            <option value="ch">Suíça</option>
+            <option value="cz">Chéquia</option>
+            <option value="de">Alemanha</option>
+            <option value="dk">Dinamarca</option>
+            <option value="ee">Estónia</option>
+            <option value="es">Espanha</option>
+            <option value="fi">Finlândia</option>
+            <option value="fr">França</option>
+            <option value="gr">Grécia</option>
+            <option value="hr">Croácia</option>
+            <option value="hu">Hungria</option>
+            <option value="ie">Irlanda</option>
+            <option value="it">Itália</option>
+            <option value="lt">Lituânia</option>
+            <option value="lv">Letónia</option>
+            <option value="me">Montenegro</option>
+            <option value="nl">Países Baixos</option>
+            <option value="no">Noruega</option>
+            <option value="pl">Polónia</option>
+            <option value="pt" selected>Portugal</option>
+            <option value="ro">Roménia</option>
+            <option value="rs">Sérvia</option>
+            <option value="se">Suécia</option>
+            <option value="si">Eslovénia</option>
+            <option value="sk">Eslováquia</option>
+        </select>
+    </div>
+
+    <div id="chart-wrapper">
+        <h2 id="chart-titulo">Mix de Produção</h2>
+        <div id="chart-container-wrapper">
+            <canvas id="chart-container" tabindex="0" role="img" aria-label="Gráfico de mix de produção do país selecionado"></canvas>
+        </div>
+    </div>
+
+    <div id="evolution-wrapper">
+        <h2 id="evolution-titulo">Evolução (30 dias)</h2>
+        <div class="mode-toggle" id="evolution-type-toggle" role="group" aria-label="Tipo de gráfico">
+            <button type="button" class="mode-btn active" data-evotype="bar" aria-pressed="true">Colunas</button>
+            <button type="button" class="mode-btn" data-evotype="area" aria-pressed="false">Áreas</button>
+        </div>
+        <div id="evolution-container-wrapper">
+            <canvas id="evolution-container" tabindex="0" role="img" aria-label="Gráfico de evolução dos últimos 30 dias"></canvas>
+        </div>
+    </div>
+
+    <div id="ranked-list-wrapper">
+        <h2 id="ranked-list-titulo">Produção por país</h2>
+        <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de produção por país">
+            <p class="no-data-msg">A carregar dados...</p>
+        </div>
+    </div>
+
+    <article class="content-support">
+        <h2>Sobre este mapa</h2>
+
+        <details class="faq-item">
+            <summary><strong>O que mostra este mapa?</strong></summary>
+            <div class="faq-content">
+                <p>Este mapa apresenta a <strong>percentagem de energia renovável</strong> no mix de produção de eletricidade de cada país europeu.</p>
+                <p>As cores variam do <strong style="color:#15803d;">verde</strong> (alta percentagem renovável) ao <strong style="color:#78350f;">castanho</strong> (baixa percentagem renovável). A escala de luminosidade foi escolhida para melhor acessibilidade a utilizadores daltónicos.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Como é calculada a percentagem renovável?</strong></summary>
+            <div class="faq-content">
+                <p>A percentagem renovável é calculada como: <strong>(Solar + Eólica + Hídrica + Biomassa) / Produção Total &times; 100</strong>.</p>
+                <p>Os valores de produção são totais diários em GWh, obtidos a partir dos dados de produção pública líquida da API Energy-Charts.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Porque é que todas as zonas de um país têm a mesma cor?</strong></summary>
+            <div class="faq-content">
+                <p>A API Energy-Charts devolve dados de produção ao nível do <strong>país</strong>, não por zona de licitação. Por isso, países como a <strong>Noruega</strong> (5 zonas), <strong>Suécia</strong> (4 zonas) ou <strong>Itália</strong> (6+ zonas) partilham a mesma cor em todas as suas zonas.</p>
+                <p>Os preços de eletricidade, por outro lado, variam entre zonas &mdash; consulte o <a href="mapa-precos.html">Mapa de Preços</a> para essa informação.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Que fontes de energia são consideradas renováveis?</strong></summary>
+            <div class="faq-content">
+                <p>São consideradas renováveis as seguintes fontes:</p>
+                <ul>
+                    <li><strong>Solar</strong> (fotovoltaica)</li>
+                    <li><strong>Eólica onshore</strong> (wind onshore)</li>
+                    <li><strong>Eólica offshore</strong> (wind offshore)</li>
+                    <li><strong>Hídrica</strong> (fio-de-água, albufeira e bombagem &mdash; apenas geração)</li>
+                    <li><strong>Biomassa</strong> (inclui geotermia e resíduos)</li>
+                </ul>
+                <p>As fontes fósseis (gás natural, carvão, petróleo) e nuclear não são consideradas renováveis.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>De onde vêm os dados?</strong></summary>
+            <div class="faq-content">
+                <p>Os dados são obtidos através da <strong>API Energy-Charts</strong> do <strong>Fraunhofer ISE</strong>, que agrega dados de produção de eletricidade de 28 países europeus.</p>
+                <p>Os dados são atualizados diariamente de forma automática.</p>
+                <p><small>Fronteiras das zonas: <a href="https://github.com/electricitymaps/electricitymaps-contrib" target="_blank" rel="noopener">Electricity Maps</a> (MIT License)</small></p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Atalhos de teclado</strong></summary>
+            <div class="faq-content">
+                <p>Pode navegar o mapa sem usar o rato:</p>
+                <ul>
+                    <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> &mdash; dia anterior / seguinte</li>
+                    <li><kbd>&#8593;</kbd> / <kbd>&#8595;</kbd> &mdash; país anterior / seguinte (na lista)</li>
+                    <li><kbd>Esc</kbd> &mdash; sair do modo ecrã inteiro</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Porque é que alguns países não têm dados?</strong></summary>
+            <div class="faq-content">
+                <p>Zonas a <strong>cinzento</strong> indicam ausência de dados para o dia selecionado. Isto pode acontecer porque:</p>
+                <ul>
+                    <li>Os dados ainda não foram publicados</li>
+                    <li>O país não está disponível na API Energy-Charts</li>
+                    <li>Houve uma falha temporária na recolha de dados</li>
+                </ul>
+            </div>
+        </details>
+    </article>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<!-- theme.js pode não existir localmente - ignorar erro -->
+<script src="theme.js" onerror="console.log('theme.js não encontrado (normal em teste local)')"></script>
+
+<!-- GeoJSON das zonas inline (carregado como ficheiro JS externo) -->
+<script src="europe_zones_compact.js"></script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- CONFIGURAÇÕES ---
+    var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_producao/";
+    var DATA_INICIO = "2026-01-01";
+
+    // Mapeamento: ecZone (GeoJSON) → código de país (dados JSON)
+    var ZONE_TO_COUNTRY = {
+        "AT": "at", "BE": "be", "BG": "bg", "CH": "ch", "CZ": "cz",
+        "DE-LU": "de", "LU": "de",
+        "DK1": "dk", "DK2": "dk",
+        "EE": "ee", "ES": "es", "FI": "fi", "FR": "fr",
+        "GR": "gr", "HR": "hr", "HU": "hu", "IE": "ie",
+        "IT-North": "it", "IT-Centre-North": "it", "IT-Centre-South": "it",
+        "IT-South": "it", "IT-Sicily": "it", "IT-Sardinia": "it",
+        "IT-Calabria": "it", "IT-SACOAC": "it", "IT-SACODC": "it",
+        "LT": "lt", "LV": "lv", "ME": "me", "NL": "nl",
+        "NO1": "no", "NO2": "no", "NO2NSL": "no", "NO3": "no", "NO4": "no", "NO5": "no",
+        "PL": "pl", "PT": "pt", "RO": "ro", "RS": "rs",
+        "SE1": "se", "SE2": "se", "SE3": "se", "SE4": "se",
+        "SI": "si", "SK": "sk"
+    };
+
+    // Nomes de países (português com acentos)
+    var COUNTRY_NAMES = {
+        "at": "Áustria", "be": "Bélgica", "bg": "Bulgária", "ch": "Suíça",
+        "cz": "Chéquia", "de": "Alemanha", "dk": "Dinamarca", "ee": "Estónia",
+        "es": "Espanha", "fi": "Finlândia", "fr": "França", "gr": "Grécia",
+        "hr": "Croácia", "hu": "Hungria", "ie": "Irlanda", "it": "Itália",
+        "lt": "Lituânia", "lv": "Letónia", "me": "Montenegro", "nl": "Países Baixos",
+        "no": "Noruega", "pl": "Polónia", "pt": "Portugal", "ro": "Roménia",
+        "rs": "Sérvia", "se": "Suécia", "si": "Eslovénia", "sk": "Eslováquia"
+    };
+
+    // Nomes de categorias de produção (português com acentos)
+    var CAT_LABELS = {
+        "solar": "Solar", "wind_onshore": "Eólica Onshore",
+        "wind_offshore": "Eólica Offshore",
+        "hydro_run_of_river": "Hídrica Fio de Água",
+        "hydro_water_reservoir": "Hídrica Albufeira",
+        "hydro_pumped_storage": "Hídrica Bombagem",
+        "nuclear": "Nuclear", "gas": "Gás Natural",
+        "gas_coal_derived": "Gás de Carvão",
+        "coal_hard": "Carvão", "coal_lignite": "Linhite",
+        "oil": "Petróleo",
+        "biomass": "Biomassa", "geothermal": "Geotermia",
+        "waste": "Resíduos", "other_renewables": "Outras Renováveis",
+        "other": "Outro"
+    };
+    var CAT_COLORS = {
+        "solar": "#FFDA8B", "wind_onshore": "#D2E1CB",
+        "wind_offshore": "#9BAF91",
+        "hydro_run_of_river": "#4040D6",
+        "hydro_water_reservoir": "#C3D6FF",
+        "hydro_pumped_storage": "#40B1E9",
+        "nuclear": "#FF4040", "gas": "#FCB178",
+        "gas_coal_derived": "#DFC27D",
+        "coal_hard": "#323232", "coal_lignite": "#967D64",
+        "oil": "#7D644B",
+        "biomass": "#40B166", "geothermal": "#6666B1",
+        "waste": "#543005", "other_renewables": "#323296",
+        "other": "#B19EC3"
+    };
+    var CAT_ORDER = [
+        "solar", "wind_onshore", "wind_offshore",
+        "hydro_run_of_river", "hydro_water_reservoir", "hydro_pumped_storage",
+        "nuclear", "gas", "gas_coal_derived", "coal_hard", "coal_lignite",
+        "oil", "biomass", "geothermal", "waste", "other_renewables", "other"
+    ];
+
+    // Categorias extra para o gráfico (toggle)
+    var EXTRA_CHART_ORDER = ["cross_border", "pumped_storage_consumption", "load"];
+    var EXTRA_CHART_LABELS = {
+        "cross_border": "Importações/Exportações",
+        "pumped_storage_consumption": "Consumo Bombagem",
+        "load": "Consumo"
+    };
+    var EXTRA_CHART_COLORS = {
+        "cross_border": "#a78bfa",
+        "pumped_storage_consumption": "#60a5fa",
+        "load": "#1e1e1e"
+    };
+
+    // Grupos para agregação na tabela
+    var RENEWABLE_KEYS = ["solar", "wind_onshore", "wind_offshore", "hydro_run_of_river", "hydro_water_reservoir", "hydro_pumped_storage", "biomass", "geothermal", "waste", "other_renewables"];
+    var FOSSIL_KEYS = ["gas", "gas_coal_derived", "coal_hard", "coal_lignite", "oil", "other"];
+    var BIOMASS_KEYS = ["biomass", "geothermal", "waste", "other_renewables"];
+    var OTHER_REN_KEYS = ["geothermal", "waste", "other_renewables"];
+
+    // Zonas que não mostram label (apenas tooltip e cor)
+    var ZONES_SEM_LABEL = { "LU": true, "IT-SACOAC": true, "IT-SACODC": true, "IT-Calabria": true, "NO2NSL": true };
+
+    // Para países com múltiplas zonas, apenas uma zona mostra o label
+    var COUNTRY_LABEL_ZONE = {
+        "dk": "DK1", "de": "DE-LU",
+        "it": "IT-North", "no": "NO3", "se": "SE2"
+    };
+
+    // Posições personalizadas dos labels [lat, lng]
+    var LABEL_POSITIONS = {
+        "FI": [63.0, 26.0],
+        "NO3": [62.5, 9.0],
+        "NO4": [69.25, 23.5],
+        "NO5": [60.75, 7.0]
+    };
+
+    // --- FUNÇÕES AUXILIARES ---
+    function getCountryData(zone) {
+        var country = ZONE_TO_COUNTRY[zone];
+        if (!country) return null;
+        return currentData[country] || null;
+    }
+
+    function getCountryCode(zone) {
+        return ZONE_TO_COUNTRY[zone] || null;
+    }
+
+    function shouldShowLabel(zone) {
+        if (ZONES_SEM_LABEL[zone]) return false;
+        var country = ZONE_TO_COUNTRY[zone];
+        if (!country) return false;
+        if (COUNTRY_LABEL_ZONE[country]) {
+            return COUNTRY_LABEL_ZONE[country] === zone;
+        }
+        return true;
+    }
+
+    // --- ESTADO ---
+    var map, geojsonLayer;
+    var currentData = {};
+    var dataCache = {};
+    var renLabelsLayer = null;
+    var ultimaDataDisponivel = null;
+    var prodChart = null;
+    var evolutionChart = null;
+    var currentMode = 'day';   // 'day' | 'week' | 'month'
+    var evolutionType = 'bar'; // 'bar' | 'area'
+
+    var seletorData = document.getElementById('seletor-data');
+    var seletorPais = document.getElementById('seletor-pais');
+    var loadingIndicator = document.getElementById('loading-indicator');
+
+    // --- FETCH COM FALLBACK ---
+    async function fetchComFallback(relativePath) {
+        try {
+            var resp = await fetch("data/mapa_producao/" + relativePath, {cache: 'no-cache'});
+            if (resp.ok) return resp;
+        } catch(e) { /* ignorar - pode ser file:// */ }
+        var resp2 = await fetch(URL_GITHUB + relativePath, {cache: 'no-cache'});
+        return resp2;
+    }
+
+    // --- UTILITÁRIO: clarear cor hex ---
+    function lightenColor(hex, amount) {
+        var r = parseInt(hex.substring(1,3), 16);
+        var g = parseInt(hex.substring(3,5), 16);
+        var b = parseInt(hex.substring(5,7), 16);
+        r = Math.min(255, Math.round(r + (255 - r) * amount));
+        g = Math.min(255, Math.round(g + (255 - g) * amount));
+        b = Math.min(255, Math.round(b + (255 - b) * amount));
+        return '#' + r.toString(16).padStart(2,'0') + g.toString(16).padStart(2,'0') + b.toString(16).padStart(2,'0');
+    }
+
+    // --- ESCALA DE CORES (verde-amarelo-castanho, 10 níveis) ---
+    function getColor(renShare) {
+        if (renShare === null || renShare === undefined) return '#D3D3D3';
+        if (renShare >= 90) return '#15803d';
+        if (renShare >= 80) return '#22c55e';
+        if (renShare >= 70) return '#4ade80';
+        if (renShare >= 60) return '#86efac';
+        if (renShare >= 50) return '#fef08a';
+        if (renShare >= 40) return '#fde047';
+        if (renShare >= 30) return '#f59e0b';
+        if (renShare >= 20) return '#d97706';
+        if (renShare >= 10) return '#92400e';
+        return '#78350f';
+    }
+
+    // --- ESTILO DAS ZONAS ---
+    function style(feature) {
+        var data = getCountryData(feature.properties.ecZone);
+        var renShare = data ? data.ren_share : null;
+        var isForecast = data && data.source === 'forecast';
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+            fillColor: isForecast ? lightenColor(getColor(renShare), 0.35) : getColor(renShare),
+            weight: isForecast ? 1.8 : 1.2,
+            opacity: 1,
+            color: isForecast ? (isDark ? '#f59e0b' : '#d97706') : (isDark ? '#475569' : '#888'),
+            dashArray: isForecast ? '5 3' : null,
+            fillOpacity: isForecast ? 0.6 : 0.85
+        };
+    }
+
+    // --- INICIALIZAR MAPA ---
+    function initMap() {
+        map = L.map('mapa-container', {
+            center: [56, 10],
+            zoom: 4,
+            minZoom: 3,
+            maxZoom: 7,
+            maxBounds: L.latLngBounds([33, -15], [72, 40]),
+            maxBoundsViscosity: 1.0,
+            zoomControl: true,
+            attributionControl: true
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+    }
+
+    // --- INFO CONTROL (hover) ---
+    var info = L.control({position: 'topright'});
+
+    info.onAdd = function() {
+        this._div = L.DomUtil.create('div', 'info-control');
+        this.update();
+        return this._div;
+    };
+
+    info.update = function(props) {
+        if (props) {
+            var zone = props.ecZone;
+            var country = getCountryCode(zone);
+            var data = getCountryData(zone);
+            var name = country ? (COUNTRY_NAMES[country] || country.toUpperCase()) : (props.displayName || zone);
+            if (data) {
+                var html = '<b>' + name + '</b>';
+                html += '<div class="ren-value" style="color:' + getColor(data.ren_share) + ';">' + data.ren_share.toFixed(1) + '% renovável</div>';
+                html += '<div class="prod-detail">';
+                var prod = data.production;
+                if (prod.solar > 0) html += 'Solar: ' + prod.solar.toFixed(2) + ' GWh<br>';
+                var eolica = (prod.wind_onshore || 0) + (prod.wind_offshore || 0);
+                if (eolica > 0) html += 'Eólica: ' + eolica.toFixed(2) + ' GWh<br>';
+                var hidrica = (prod.hydro_run_of_river || 0) + (prod.hydro_water_reservoir || 0) + (prod.hydro_pumped_storage || 0);
+                if (hidrica > 0) html += 'Hídrica: ' + hidrica.toFixed(2) + ' GWh<br>';
+                if (prod.nuclear > 0) html += 'Nuclear: ' + prod.nuclear.toFixed(2) + ' GWh<br>';
+                var bioTotal = (prod.biomass || 0) + (prod.geothermal || 0) + (prod.waste || 0) + (prod.other_renewables || 0);
+                if (bioTotal > 0) html += 'Biomassa: ' + bioTotal.toFixed(2) + ' GWh<br>';
+                var fossil = (prod.gas || 0) + (prod.gas_coal_derived || 0) + (prod.coal_hard || 0) + (prod.coal_lignite || 0) + (prod.oil || 0) + (prod.other || 0);
+                if (fossil > 0) html += 'Fóssil: ' + fossil.toFixed(2) + ' GWh<br>';
+                html += '</div>';
+                html += '<div class="prod-total">Total: ' + data.total.toFixed(2) + ' GWh</div>';
+                var spark = buildSparkline(country);
+                if (spark) html += '<div class="sparkline-label">% Renov. (7d)</div>' + spark;
+                this._div.innerHTML = html;
+            } else {
+                this._div.innerHTML = '<b>' + name + '</b><div class="ren-value" style="color:#999;">Sem dados</div>';
+            }
+        } else {
+            this._div.innerHTML = '<h4>Produção por país</h4>Passe o rato sobre uma zona';
+        }
+    };
+
+    // --- LEGENDA ---
+    var legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function() {
+        var div = L.DomUtil.create('div', 'info-control legend');
+        var grades = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
+        var labels = ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90%+'];
+
+        div.innerHTML = '<div class="legend-title">% Renovável</div>';
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i>' +
+                labels[i] + '<br>';
+        }
+        return div;
+    };
+
+    // --- INTERAÇÃO ---
+    function highlightFeature(e) {
+        var layer = e.target;
+        layer.setStyle({ weight: 3, color: '#333', fillOpacity: 0.95 });
+        layer.bringToFront();
+        info.update(layer.feature.properties);
+    }
+
+    function resetHighlight(e) {
+        geojsonLayer.resetStyle(e.target);
+        info.update();
+    }
+
+    function selectCountry(e) {
+        var zone = e.target.feature.properties.ecZone;
+        var country = getCountryCode(zone);
+        if (country) {
+            seletorPais.value = country;
+            updateChart(country);
+            document.getElementById('chart-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: selectCountry
+        });
+    }
+
+    // --- CARREGAR GEOJSON ---
+    function loadGeoJSON() {
+        if (typeof EUROPE_ZONES_GEOJSON === 'undefined') {
+            console.error('GeoJSON não carregado. Verifique se europe_zones_compact.js está na mesma pasta.');
+            return false;
+        }
+        geojsonLayer = L.geoJson(EUROPE_ZONES_GEOJSON, {
+            style: style,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+        return true;
+    }
+
+    // --- LABELS DE PERCENTAGEM RENOVÁVEL ---
+    function updateRenLabels() {
+        if (renLabelsLayer) {
+            map.removeLayer(renLabelsLayer);
+        }
+        renLabelsLayer = L.layerGroup();
+
+        if (!geojsonLayer) return;
+
+        geojsonLayer.eachLayer(function(layer) {
+            var zone = layer.feature.properties.ecZone;
+
+            if (!shouldShowLabel(zone)) return;
+
+            var data = getCountryData(zone);
+            if (data && data.ren_share !== null && data.ren_share !== undefined) {
+                var center = LABEL_POSITIONS[zone]
+                    ? L.latLng(LABEL_POSITIONS[zone][0], LABEL_POSITIONS[zone][1])
+                    : layer.getBounds().getCenter();
+
+                var marker = L.marker(center, {
+                    icon: L.divIcon({
+                        className: 'ren-label',
+                        html: Math.round(data.ren_share) + '%',
+                        iconSize: [36, 14],
+                        iconAnchor: [18, 7]
+                    }),
+                    interactive: false
+                });
+                renLabelsLayer.addLayer(marker);
+            }
+        });
+
+        renLabelsLayer.addTo(map);
+    }
+
+    // --- GRÁFICO CHART.JS ---
+    function resizeChart(numBars) {
+        var barH = 160;      // altura por barra (área útil)
+        var overhead = 85;   // título + eixo x + padding
+        var canvas = document.getElementById('chart-container');
+        canvas.style.height = (numBars * barH + overhead) + 'px';
+        if (prodChart) prodChart.resize();
+    }
+
+    function initChart() {
+        var ctx = document.getElementById('chart-container').getContext('2d');
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+        var prodDatasets = CAT_ORDER.map(function(cat) {
+            return {
+                label: CAT_LABELS[cat],
+                data: [0, null],
+                backgroundColor: CAT_COLORS[cat],
+                borderWidth: 0
+            };
+        });
+        // Extra datasets: cross_border e pumped_storage_consumption na barra de produção (podem ser negativos)
+        // load na segunda barra
+        prodDatasets.push({
+            label: EXTRA_CHART_LABELS['cross_border'],
+            data: [null, null],
+            backgroundColor: EXTRA_CHART_COLORS['cross_border'],
+            borderWidth: 0,
+            hidden: true,
+            _extra: 'cross_border'
+        });
+        prodDatasets.push({
+            label: EXTRA_CHART_LABELS['pumped_storage_consumption'],
+            data: [null, null],
+            backgroundColor: EXTRA_CHART_COLORS['pumped_storage_consumption'],
+            borderWidth: 0,
+            hidden: true,
+            _extra: 'pumped_storage_consumption'
+        });
+        prodDatasets.push({
+            label: EXTRA_CHART_LABELS['load'],
+            data: [null, null],
+            backgroundColor: EXTRA_CHART_COLORS['load'],
+            borderWidth: 0,
+            hidden: true,
+            _extra: 'load'
+        });
+
+        var zeroLinePlugin = {
+            id: 'zeroLine',
+            afterDraw: function(chart) {
+                var xScale = chart.scales.x;
+                var yScale = chart.scales.y;
+                var c = chart.ctx;
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+                // --- Linha vermelha no zero (só quando PSC visível) ---
+                var pscVisible = false;
+                var pscVal = 0;
+                var cbVal = 0;
+                var prodTotal = 0;
+                for (var d = 0; d < chart.data.datasets.length; d++) {
+                    var ds = chart.data.datasets[d];
+                    if (!chart.isDatasetVisible(d)) continue;
+                    var v = ds.data[0];
+                    if (v === null || v === undefined) continue;
+                    if (ds._extra === 'pumped_storage_consumption') {
+                        pscVisible = true;
+                        pscVal = v; // negativo
+                    } else if (ds._extra === 'cross_border') {
+                        cbVal = v;
+                        prodTotal += v;
+                    } else if (!ds._extra && v > 0) {
+                        prodTotal += v;
+                    }
+                }
+
+                if (pscVisible) {
+                    var zero = xScale.getPixelForValue(0);
+                    if (zero >= xScale.left && zero <= xScale.right) {
+                        c.save();
+                        c.beginPath();
+                        c.moveTo(zero, yScale.top);
+                        c.lineTo(zero, yScale.bottom);
+                        c.strokeStyle = 'rgba(220,38,38,0.85)';
+                        c.lineWidth = 2;
+                        c.setLineDash([5, 3]);
+                        c.stroke();
+                        c.restore();
+                    }
+                }
+
+                // --- Labels de total no topo/base das barras ---
+                var textColor = isDark ? '#e2e8f0' : '#374151';
+                var bgColor = isDark ? 'rgba(30,41,59,0.82)' : 'rgba(255,255,255,0.82)';
+                c.save();
+                c.font = 'bold 11px sans-serif';
+                c.textBaseline = 'middle';
+
+                function drawLabel(text, xPx, yPx, align) {
+                    c.textAlign = align;
+                    c.lineWidth = 3;
+                    c.strokeStyle = bgColor;
+                    c.lineJoin = 'round';
+                    c.strokeText(text, xPx, yPx);
+                    c.fillStyle = textColor;
+                    c.fillText(text, xPx, yPx);
+                }
+
+                // Calcular total positivo (produção + importação) e total negativo (PSC + exportação)
+                var posTotal = 0;  // extremo direito
+                var negTotal = 0;  // extremo esquerdo (soma de negativos)
+                for (var d2 = 0; d2 < chart.data.datasets.length; d2++) {
+                    var ds2 = chart.data.datasets[d2];
+                    if (!chart.isDatasetVisible(d2)) continue;
+                    var v2 = ds2.data[0];
+                    if (v2 === null || v2 === undefined) continue;
+                    if (ds2._extra === 'pumped_storage_consumption') {
+                        if (v2 < 0) negTotal += v2;
+                    } else if (ds2._extra === 'cross_border') {
+                        if (v2 >= 0) posTotal += v2;   // importação → soma ao positivo
+                        else negTotal += v2;            // exportação → soma ao negativo
+                    } else if (!ds2._extra) {
+                        if (v2 > 0) posTotal += v2;
+                    }
+                }
+
+                var yProd = yScale.getPixelForValue(0);
+
+                // Total positivo — extremo direito
+                if (posTotal > 0) {
+                    var xRight = xScale.getPixelForValue(posTotal);
+                    var labelRight = posTotal.toFixed(1) + ' GWh';
+                    if (xRight + 5 + c.measureText(labelRight).width + 6 > xScale.right) {
+                        drawLabel(labelRight, xRight - 5, yProd, 'right');
+                    } else {
+                        drawLabel(labelRight, xRight + 5, yProd, 'left');
+                    }
+                }
+
+                // Total negativo — extremo esquerdo (PSC e/ou exportação combinados)
+                if (negTotal < 0) {
+                    var xLeft = xScale.getPixelForValue(negTotal);
+                    var labelLeft = negTotal.toFixed(1) + ' GWh';
+                    if (xLeft - 5 - c.measureText(labelLeft).width - 6 < xScale.left) {
+                        drawLabel(labelLeft, xLeft + 5, yProd, 'left');
+                    } else {
+                        drawLabel(labelLeft, xLeft - 5, yProd, 'right');
+                    }
+                }
+
+                // Total da barra de Consumo — extremo direito (label index 1)
+                var loadDs = null;
+                for (var ld = 0; ld < chart.data.datasets.length; ld++) {
+                    if (chart.data.datasets[ld]._extra === 'load' && chart.isDatasetVisible(ld)) {
+                        loadDs = chart.data.datasets[ld];
+                        break;
+                    }
+                }
+                if (loadDs && chart.data.labels.length > 1) {
+                    var loadVal2 = loadDs.data[1];
+                    if (loadVal2 !== null && loadVal2 !== undefined && loadVal2 > 0) {
+                        var yLoad = yScale.getPixelForValue(1);
+                        var xLoad = xScale.getPixelForValue(loadVal2);
+                        var labelLoad = loadVal2.toFixed(1) + ' GWh';
+                        if (xLoad + 5 + c.measureText(labelLoad).width + 6 > xScale.right) {
+                            drawLabel(labelLoad, xLoad - 5, yLoad, 'right');
+                        } else {
+                            drawLabel(labelLoad, xLoad + 5, yLoad, 'left');
+                        }
+                    }
+                }
+
+                c.restore();
+            }
+        };
+
+        prodChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Produção', 'Consumo'],
+                datasets: prodDatasets
+            },
+            plugins: [zeroLinePlugin],
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Mix de Produção',
+                        color: isDark ? '#e2e8f0' : '#2c3e50',
+                        font: { size: 14 }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: isDark ? '#cbd5e1' : '#666',
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            padding: 12,
+                            font: { size: 11 },
+                            filter: function(item, chartData) {
+                                var ds = chartData.datasets[item.datasetIndex];
+                                if (!ds) return false;
+                                // Extras: sempre visíveis na legenda
+                                if (ds._extra) return true;
+                                // Produção: só mostrar se valor > 0
+                                return ds.data && ds.data[0] > 0;
+                            }
+                        },
+                        onClick: function(e, legendItem, legend) {
+                            var chart = legend.chart;
+                            var idx = legendItem.datasetIndex;
+                            var ds = chart.data.datasets[idx];
+                            var meta = chart.getDatasetMeta(idx);
+                            if (chart.isDatasetVisible(idx)) {
+                                // Ocultar
+                                meta.hidden = true;
+                            } else {
+                                // Mostrar: limpar dataset.hidden e meta.hidden
+                                ds.hidden = false;
+                                meta.hidden = false;
+                            }
+                            updateChart(seletorPais.value);
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                var val = ctx.raw || 0;
+                                return ctx.dataset.label + ': ' + val.toFixed(2) + ' GWh';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: { display: true, text: 'GWh', color: isDark ? '#94a3b8' : '#666' },
+                        ticks: { color: isDark ? '#94a3b8' : '#666' },
+                        grid: { color: isDark ? '#334155' : '#e5e7eb' }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: { color: isDark ? '#94a3b8' : '#666' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateChart(country) {
+        if (!prodChart) return;
+        var data = currentData[country];
+        var name = COUNTRY_NAMES[country] || country.toUpperCase();
+
+        var partes = seletorData.value.split('-');
+        var dateLabel = partes[2] + '/' + partes[1] + '/' + partes[0];
+
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        prodChart.options.plugins.title.text = 'Mix de Produção — ' + name + ' — ' + dateLabel;
+        prodChart.options.plugins.title.color = isDark ? '#e2e8f0' : '#2c3e50';
+
+        var nProd = CAT_ORDER.length;
+        // Ler estado de visibilidade real (meta.hidden tem prioridade sobre dataset.hidden)
+        var cbVisible  = prodChart.isDatasetVisible(nProd);
+        var pscVisible = prodChart.isDatasetVisible(nProd + 1);
+        var loadVisible = prodChart.isDatasetVisible(nProd + 2);
+
+        // Labels dinâmicos: só mostrar "Consumo" se o dataset estiver visível
+        prodChart.data.labels = loadVisible ? ['Produção', 'Consumo'] : ['Produção'];
+        resizeChart(loadVisible ? 2 : 1);
+
+        if (data && data.production) {
+            var isFc = data.source === 'forecast';
+            var fcSet = data.forecast || {};
+            var prod = data.production;
+
+            for (var i = 0; i < CAT_ORDER.length; i++) {
+                var cat = CAT_ORDER[i];
+                var val = prod[cat] || 0;
+                // Se Carga visível: 2 pontos [produção, null]; senão: 1 ponto [produção]
+                prodChart.data.datasets[i].data = loadVisible ? [val, null] : [val];
+                if (isFc && !(cat in fcSet)) {
+                    prodChart.data.datasets[i].backgroundColor = lightenColor(CAT_COLORS[cat], 0.45);
+                } else {
+                    prodChart.data.datasets[i].backgroundColor = CAT_COLORS[cat];
+                }
+            }
+
+            // cross_border: positivo = importação, negativo = exportação
+            var cbVal = cbVisible ? (prod['cross_border'] || 0) : null;
+            prodChart.data.datasets[nProd].data = loadVisible ? [cbVal, null] : [cbVal];
+
+            // pumped_storage_consumption: consumo → negativo
+            var pscVal = pscVisible ? -(Math.abs(prod['pumped_storage_consumption'] || 0)) : null;
+            prodChart.data.datasets[nProd + 1].data = loadVisible ? [pscVal, null] : [pscVal];
+
+            // load: barra separada no índice 1
+            var loadVal = loadVisible ? (prod['load'] || 0) : null;
+            prodChart.data.datasets[nProd + 2].data = loadVisible ? [null, loadVal] : [null];
+
+            var renText = data.ren_share !== undefined ? ' (' + data.ren_share.toFixed(1) + '% renovável)' : '';
+            var fcLabel = isFc ? ' \u2014 Previsão' : '';
+            document.getElementById('chart-titulo').textContent = 'Mix de Produção — ' + name + renText + fcLabel;
+        } else {
+            for (var j = 0; j < CAT_ORDER.length; j++) {
+                prodChart.data.datasets[j].data = loadVisible ? [0, null] : [0];
+                prodChart.data.datasets[j].backgroundColor = CAT_COLORS[CAT_ORDER[j]];
+            }
+            prodChart.data.datasets[nProd].data = loadVisible ? [null, null] : [null];
+            prodChart.data.datasets[nProd + 1].data = loadVisible ? [null, null] : [null];
+            prodChart.data.datasets[nProd + 2].data = loadVisible ? [null, null] : [null];
+            document.getElementById('chart-titulo').textContent = 'Mix de Produção — ' + name + ' (sem dados)';
+        }
+        prodChart.update();
+    }
+
+    function updateChartColors() {
+        if (!prodChart) return;
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        prodChart.options.plugins.title.color = isDark ? '#e2e8f0' : '#2c3e50';
+        prodChart.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#666';
+        prodChart.options.scales.x.ticks.color = isDark ? '#94a3b8' : '#666';
+        prodChart.options.scales.x.title.color = isDark ? '#94a3b8' : '#666';
+        prodChart.options.scales.x.grid.color = isDark ? '#334155' : '#e5e7eb';
+        prodChart.options.scales.y.ticks.color = isDark ? '#94a3b8' : '#666';
+        prodChart.update();
+    }
+
+    // --- LISTA ORDENADA (com ordenação por coluna e tooltips) ---
+    var currentSort = { column: 'ren', direction: 'desc' };
+
+    function getSortIndicator(key) {
+        if (currentSort.column !== key) return ' <span class="sort-indicator">\u21C5</span>';
+        return currentSort.direction === 'asc'
+            ? ' <span class="sort-indicator active">\u25B2</span>'
+            : ' <span class="sort-indicator active">\u25BC</span>';
+    }
+
+    function updateRankedList() {
+        var container = document.getElementById('ranked-list-content');
+        if (!container) return;
+
+        var entries = [];
+        for (var country in currentData) {
+            if (!currentData.hasOwnProperty(country)) continue;
+            var d = currentData[country];
+            if (!d || d.ren_share === null || d.ren_share === undefined) continue;
+            var name = COUNTRY_NAMES[country] || country.toUpperCase();
+            var prod = d.production || {};
+            var sumKeys = function(keys) { var s = 0; for (var k = 0; k < keys.length; k++) s += (prod[keys[k]] || 0); return s; };
+            entries.push({
+                country: country,
+                name: name,
+                source: d.source || 'real',
+                ren: d.ren_share,
+                solar: prod.solar || 0,
+                wind_onshore: prod.wind_onshore || 0,
+                wind_offshore: prod.wind_offshore || 0,
+                eolica: (prod.wind_onshore || 0) + (prod.wind_offshore || 0),
+                hydro_run_of_river: prod.hydro_run_of_river || 0,
+                hydro_water_reservoir: prod.hydro_water_reservoir || 0,
+                hydro_pumped_storage: prod.hydro_pumped_storage || 0,
+                hydro: (prod.hydro_run_of_river || 0) + (prod.hydro_water_reservoir || 0) + (prod.hydro_pumped_storage || 0),
+                nuclear: prod.nuclear || 0,
+                gas: prod.gas || 0,
+                gas_coal_derived: prod.gas_coal_derived || 0,
+                coal_hard: prod.coal_hard || 0,
+                coal_lignite: prod.coal_lignite || 0,
+                oil: prod.oil || 0,
+                other_src: prod.other || 0,
+                fossil: sumKeys(FOSSIL_KEYS),
+                biomass_val: prod.biomass || 0,
+                geothermal: prod.geothermal || 0,
+                waste: prod.waste || 0,
+                other_renewables: prod.other_renewables || 0,
+                biomass: prod.biomass || 0,
+                other_ren: sumKeys(OTHER_REN_KEYS),
+                biomass_total: sumKeys(BIOMASS_KEYS),
+                total: d.total || 0
+            });
+        }
+
+        if (entries.length === 0) {
+            container.innerHTML = '<p class="no-data-msg">Sem dados para o dia selecionado.</p>';
+            return;
+        }
+
+        // Ordenar pela coluna selecionada
+        var col = currentSort.column;
+        var dir = currentSort.direction === 'asc' ? 1 : -1;
+        entries.sort(function(a, b) {
+            if (col === 'name') return dir * a.name.localeCompare(b.name, 'pt');
+            return dir * ((a[col] || 0) - (b[col] || 0));
+        });
+
+        // Colunas da tabela: key, label
+        var columns = [
+            { key: 'ren', label: 'Renovável' },
+            { key: 'solar', label: 'Solar' },
+            { key: 'eolica', label: 'Eólica' },
+            { key: 'hydro', label: 'Hídrica' },
+            { key: 'nuclear', label: 'Nuclear' },
+            { key: 'biomass', label: 'Biomassa' },
+            { key: 'other_ren', label: 'Out. Renov.' },
+            { key: 'fossil', label: 'Fóssil' },
+            { key: 'total', label: 'Total' }
+        ];
+
+        var html = '<div class="table-scroll"><table class="ranked-table">';
+        html += '<thead><tr>';
+        html += '<th class="rank-cell">#</th>';
+        html += '<th class="sortable" data-sort="name" tabindex="0" role="button" aria-label="Ordenar por país">País' + getSortIndicator('name') + '</th>';
+        for (var c = 0; c < columns.length; c++) {
+            html += '<th class="sortable" data-sort="' + columns[c].key + '" tabindex="0" role="button" aria-label="Ordenar por ' + columns[c].label + '">' + columns[c].label + getSortIndicator(columns[c].key) + '</th>';
+        }
+        html += '</tr></thead><tbody>';
+
+        for (var i = 0; i < entries.length; i++) {
+            var e = entries[i];
+            var color = getColor(e.ren);
+            html += '<tr>';
+            html += '<td class="rank-cell">' + (i + 1) + '</td>';
+            var fcBadge = e.source === 'forecast' ? ' <span class="forecast-badge">prev.</span>' : '';
+            html += '<td style="text-align:left;"><span class="color-indicator" style="background:' + color + (e.source === 'forecast' ? ';opacity:0.6' : '') + '"></span>' + e.name + fcBadge + '</td>';
+
+            // Renovável — tooltip com decomposição
+            var tipRen = 'Solar: ' + e.solar.toFixed(2) + ' GWh\n'
+                + 'Eól. Onshore: ' + e.wind_onshore.toFixed(2) + ' GWh\n'
+                + 'Eól. Offshore: ' + e.wind_offshore.toFixed(2) + ' GWh\n'
+                + 'Hídrica: ' + e.hydro.toFixed(2) + ' GWh\n'
+                + 'Biomassa: ' + e.biomass.toFixed(2) + ' GWh\n'
+                + 'Out. Renov.: ' + e.other_ren.toFixed(2) + ' GWh';
+            html += '<td class="has-tooltip" title="' + tipRen + '"><strong>' + e.ren.toFixed(1) + '%</strong></td>';
+
+            // Solar
+            html += '<td>' + e.solar.toFixed(1) + '</td>';
+
+            // Eólica — tooltip com onshore + offshore
+            var tipEol = 'Onshore: ' + e.wind_onshore.toFixed(2) + ' GWh\nOffshore: ' + e.wind_offshore.toFixed(2) + ' GWh';
+            html += '<td class="has-tooltip" title="' + tipEol + '">' + e.eolica.toFixed(1) + '</td>';
+
+            // Hídrica — tooltip com fio de água + albufeira + bombagem
+            var tipHyd = 'Fio de Água: ' + e.hydro_run_of_river.toFixed(2) + ' GWh\nAlbufeira: ' + e.hydro_water_reservoir.toFixed(2) + ' GWh\nBombagem: ' + e.hydro_pumped_storage.toFixed(2) + ' GWh';
+            html += '<td class="has-tooltip" title="' + tipHyd + '">' + e.hydro.toFixed(1) + '</td>';
+
+            // Nuclear
+            html += '<td>' + e.nuclear.toFixed(1) + '</td>';
+
+            // Biomassa
+            html += '<td>' + e.biomass.toFixed(1) + '</td>';
+
+            // Out. Renov. — tooltip com geotermia + resíduos + outras renováveis
+            var tipOR = 'Geotermia: ' + e.geothermal.toFixed(2) + ' GWh\nResíduos: ' + e.waste.toFixed(2) + ' GWh\nOutras Renov.: ' + e.other_renewables.toFixed(2) + ' GWh';
+            html += '<td class="has-tooltip" title="' + tipOR + '">' + e.other_ren.toFixed(1) + '</td>';
+
+            // Fóssil — tooltip com gás + gás de carvão + carvão + linhite + petróleo + outro
+            var tipFos = 'Gás Natural: ' + e.gas.toFixed(2) + ' GWh\nGás de Carvão: ' + e.gas_coal_derived.toFixed(2) + ' GWh\nCarvão: ' + e.coal_hard.toFixed(2) + ' GWh\nLinhite: ' + e.coal_lignite.toFixed(2) + ' GWh\nPetróleo: ' + e.oil.toFixed(2) + ' GWh\nOutro: ' + e.other_src.toFixed(2) + ' GWh';
+            html += '<td class="has-tooltip" title="' + tipFos + '">' + e.fossil.toFixed(1) + '</td>';
+
+            // Total — tooltip com renováveis + nuclear + fóssil
+            var renTotal = e.solar + e.eolica + e.hydro + e.biomass_total;
+            var tipTotal = 'Renovável: ' + renTotal.toFixed(2) + ' GWh (' + e.ren.toFixed(1) + '%)\nNuclear: ' + e.nuclear.toFixed(2) + ' GWh\nFóssil: ' + e.fossil.toFixed(2) + ' GWh';
+            html += '<td class="has-tooltip" title="' + tipTotal + '">' + e.total.toFixed(1) + '</td>';
+            html += '</tr>';
+        }
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+
+        // Handlers de ordenação nos cabeçalhos
+        var ths = container.querySelectorAll('th.sortable');
+        for (var t = 0; t < ths.length; t++) {
+            function handleSort() {
+                var sortKey = this.getAttribute('data-sort');
+                if (currentSort.column === sortKey) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = sortKey;
+                    currentSort.direction = (sortKey === 'name') ? 'asc' : 'desc';
+                }
+                updateRankedList();
+            }
+            ths[t].addEventListener('click', handleSort);
+            ths[t].addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort.call(this); }
+            });
+        }
+    }
+
+    // --- BADGE DE FONTE (previsão / provisório) ---
+    function updateSourceBadge() {
+        var badge = document.getElementById('source-badge');
+        if (!badge) return;
+        var hasForecast = false, hasProvisional = false;
+        var fcCount = 0, provCount = 0;
+        for (var c in currentData) {
+            if (!currentData.hasOwnProperty(c)) continue;
+            var src = currentData[c].source;
+            if (src === 'forecast') { hasForecast = true; fcCount++; }
+            if (src === 'provisional') { hasProvisional = true; provCount++; }
+        }
+        // Determinar se a data selecionada é passada, hoje ou futura
+        var selectedDate = seletorData.value;
+        var todayStr = new Date().toISOString().split('T')[0];
+        var isPast = selectedDate < todayStr;
+        var isFuture = selectedDate > todayStr;
+
+        if (isPast && hasForecast) {
+            // Data passada com alguns países ainda com previsão — alerta suave
+            badge.textContent = '\u23F3 Alguns valores podem ainda ser estimativas \u2014 ' + fcCount + (fcCount === 1 ? ' país' : ' países') + ' sem dados reais finais';
+            badge.className = 'source-badge provisional';
+            badge.style.display = 'inline-block';
+        } else if (hasForecast && hasProvisional) {
+            // Mix: maioria provisórios, alguns com previsão (tipicamente hoje)
+            badge.textContent = '\u23F3 Dados provisórios \u2014 ' + provCount + ' países com dados reais (não finais); ' + fcCount + ' com previsão day-ahead';
+            badge.className = 'source-badge provisional';
+            badge.style.display = 'inline-block';
+        } else if (hasForecast && !hasProvisional) {
+            // Tipicamente data futura — previsão pura
+            badge.textContent = '\u26A1 Previsão day-ahead \u2014 Solar e eólica previstas; restantes fontes estimadas com base no dia anterior';
+            badge.className = 'source-badge forecast';
+            badge.style.display = 'inline-block';
+        } else if (hasProvisional) {
+            badge.textContent = '\u23F3 Dados provisórios \u2014 Valores irão ser atualizados com dados finais';
+            badge.className = 'source-badge provisional';
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    // --- HELPERS DE DATA / RANGE ---
+    function parseDate(s) {
+        var p = s.split('-');
+        return new Date(+p[0], +p[1] - 1, +p[2]);
+    }
+    function formatDate(d) {
+        var y = d.getFullYear();
+        var m = String(d.getMonth() + 1).padStart(2, '0');
+        var da = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + da;
+    }
+    function datesInRange(endStr, days) {
+        var end = parseDate(endStr);
+        var out = [];
+        for (var i = days - 1; i >= 0; i--) {
+            var d = new Date(end);
+            d.setDate(end.getDate() - i);
+            var s = formatDate(d);
+            if (s < DATA_INICIO) continue;
+            out.push(s);
+        }
+        return out;
+    }
+
+    async function ensureMonth(yearMonth) {
+        if (dataCache[yearMonth]) return dataCache[yearMonth];
+        try {
+            var resp = await fetchComFallback(yearMonth + ".json");
+            if (resp.ok) {
+                dataCache[yearMonth] = await resp.json();
+            } else {
+                dataCache[yearMonth] = {};
+            }
+        } catch (e) {
+            dataCache[yearMonth] = {};
+        }
+        return dataCache[yearMonth];
+    }
+
+    async function loadDatesData(dateList) {
+        var needed = {};
+        for (var i = 0; i < dateList.length; i++) {
+            needed[dateList[i].substring(0, 7)] = true;
+        }
+        var promises = [];
+        for (var ym in needed) { if (needed.hasOwnProperty(ym)) promises.push(ensureMonth(ym)); }
+        await Promise.all(promises);
+        var out = {};
+        for (var j = 0; j < dateList.length; j++) {
+            var ds = dateList[j];
+            var monthData = dataCache[ds.substring(0, 7)] || {};
+            if (monthData[ds]) out[ds] = monthData[ds];
+        }
+        return out;
+    }
+
+    // Agregar dados diários em médias por país
+    function aggregateData(byDate) {
+        var dates = Object.keys(byDate);
+        if (dates.length === 0) return {};
+        var countries = {};
+        for (var i = 0; i < dates.length; i++) {
+            var day = byDate[dates[i]];
+            for (var c in day) {
+                if (!day.hasOwnProperty(c)) continue;
+                if (!countries[c]) countries[c] = { _count: 0, _sumRen: 0, _totalSum: 0, _sources: {}, prod: {} };
+                var d = day[c];
+                if (d.ren_share == null) continue;
+                countries[c]._count++;
+                countries[c]._sumRen += d.ren_share;
+                countries[c]._totalSum += (d.total || 0);
+                var src = d.source || 'real';
+                countries[c]._sources[src] = (countries[c]._sources[src] || 0) + 1;
+                var p = d.production || {};
+                for (var k in p) {
+                    if (p.hasOwnProperty(k)) {
+                        countries[c].prod[k] = (countries[c].prod[k] || 0) + (p[k] || 0);
+                    }
+                }
+            }
+        }
+        var out = {};
+        for (var cc in countries) {
+            if (!countries.hasOwnProperty(cc)) continue;
+            var a = countries[cc];
+            if (a._count === 0) continue;
+            var avgProd = {};
+            for (var kk in a.prod) { if (a.prod.hasOwnProperty(kk)) avgProd[kk] = a.prod[kk] / a._count; }
+            // Determinar source dominante
+            var domSrc = 'real', domN = 0;
+            for (var sk in a._sources) { if (a._sources[sk] > domN) { domN = a._sources[sk]; domSrc = sk; } }
+            out[cc] = {
+                ren_share: a._sumRen / a._count,
+                total: a._totalSum / a._count,
+                production: avgProd,
+                source: domSrc
+            };
+        }
+        return out;
+    }
+
+    // --- GRÁFICO DE EVOLUÇÃO (30 dias) ---
+    // Categorias de evolução (área empilhada — mesma ordem da tabela + importação no topo)
+    var EVO_CATS = [
+        { key: 'solar',    label: 'Solar',       color: '#FFDA8B' },
+        { key: 'eolica',   label: 'Eólica',      color: '#B7C8AE' },
+        { key: 'hydro',    label: 'Hídrica',     color: '#6C98EA' },
+        { key: 'nuclear',  label: 'Nuclear',     color: '#FF4040' },
+        { key: 'biomass',  label: 'Biomassa',    color: '#40B166' },
+        { key: 'other_ren',label: 'Out. Renov.', color: '#14b8a6' },
+        { key: 'fossil',   label: 'Fóssil',      color: '#78716c' },
+        { key: 'import',   label: 'Importação',  color: '#a78bfa' }
+    ];
+
+    // Plugin: sombra vertical nos fins-de-semana
+    var weekendBandsPlugin = {
+        id: 'weekendBands',
+        beforeDatasetsDraw: function(chart) {
+            var fullDates = chart._fullDates;
+            if (!fullDates || !fullDates.length) return;
+            var xScale = chart.scales.x;
+            var yScale = chart.scales.yGwh;
+            if (!xScale || !yScale) return;
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            var color = isDark ? 'rgba(148,163,184,0.10)' : 'rgba(100,116,139,0.09)';
+            var c = chart.ctx;
+            c.save();
+            c.fillStyle = color;
+            for (var i = 0; i < fullDates.length; i++) {
+                var parts = fullDates[i].split('-');
+                var wd = new Date(+parts[0], +parts[1]-1, +parts[2]).getDay(); // 0=Dom, 6=Sáb
+                if (wd !== 0 && wd !== 6) continue;
+                var center = xScale.getPixelForValue(i);
+                var prev = i > 0 ? xScale.getPixelForValue(i-1) : center - (xScale.getPixelForValue(1) - xScale.getPixelForValue(0))/2;
+                var next = i < fullDates.length - 1 ? xScale.getPixelForValue(i+1) : center + (xScale.getPixelForValue(i) - xScale.getPixelForValue(i-1))/2;
+                var left = (prev + center) / 2;
+                var right = (center + next) / 2;
+                c.fillRect(left, yScale.top, right - left, yScale.bottom - yScale.top);
+            }
+            c.restore();
+        }
+    };
+
+    function initEvolutionChart() {
+        var ctx = document.getElementById('evolution-container').getContext('2d');
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var isBar = evolutionType === 'bar';
+
+        var baseDatasets = [];
+        // Categorias empilhadas (áreas ou barras)
+        for (var i = 0; i < EVO_CATS.length; i++) {
+            var ec = EVO_CATS[i];
+            var catDs = {
+                label: ec.label, data: [],
+                borderColor: ec.color, backgroundColor: isBar ? ec.color : (ec.color + 'B3'),
+                yAxisID: 'yGwh', stack: 'cats',
+                _evoKey: ec.key,
+                hidden: (ec.key === 'import')
+            };
+            if (isBar) {
+                catDs.type = 'bar';
+                catDs.borderWidth = 0;
+                catDs.categoryPercentage = 0.92;
+                catDs.barPercentage = 1.0;
+                catDs.order = 2; // barras atrás das linhas
+            } else {
+                catDs.type = 'line';
+                catDs.fill = i === 0 ? 'origin' : '-1';
+                catDs.tension = 0.25;
+                catDs.pointRadius = 0;
+                catDs.borderWidth = 1;
+            }
+            baseDatasets.push(catDs);
+        }
+
+        // Datasets extra (só em modo colunas; negativos abaixo de zero)
+        // Consumo Bombagem (PSC) — negativo
+        if (isBar) {
+            baseDatasets.push({
+                type: 'bar', label: 'Consumo Bombagem', data: [],
+                backgroundColor: '#60a5fa', borderColor: '#60a5fa', borderWidth: 0,
+                yAxisID: 'yGwh', stack: 'cats', categoryPercentage: 0.92, barPercentage: 1.0,
+                order: 2, hidden: true, _evoKey: 'psc'
+            });
+            baseDatasets.push({
+                type: 'bar', label: 'Exportação', data: [],
+                backgroundColor: '#c084fc', borderColor: '#c084fc', borderWidth: 0,
+                yAxisID: 'yGwh', stack: 'cats', categoryPercentage: 0.92, barPercentage: 1.0,
+                order: 2, hidden: true, _evoKey: 'export'
+            });
+        }
+
+        // Linhas sobrepostas — cada uma no seu próprio "stack" (= não empilha)
+        baseDatasets.push({
+            type: 'line', label: 'Produção Total', data: [],
+            borderColor: '#1d4ed8', backgroundColor: 'transparent',
+            yAxisID: 'yGwh', stack: '_prod', fill: false,
+            tension: 0.25, pointRadius: 2, borderWidth: 2.5, order: 1, _overlay: true
+        });
+        baseDatasets.push({
+            type: 'line', label: 'Consumo', data: [],
+            borderColor: '#111', backgroundColor: 'transparent',
+            yAxisID: 'yGwh', stack: '_load', fill: false,
+            tension: 0.25, pointRadius: 2, borderWidth: 2.5, borderDash: [6,4], order: 1, _overlay: true
+        });
+        baseDatasets.push({
+            type: 'line', label: '% Renovável', data: [],
+            borderColor: '#15803d', backgroundColor: 'transparent',
+            yAxisID: 'yPct', fill: false,
+            tension: 0.25, pointRadius: 2, borderWidth: 2, order: 0, _overlay: true
+        });
+        evolutionChart = new Chart(ctx, {
+            type: isBar ? 'bar' : 'line',
+            data: { labels: [], datasets: baseDatasets },
+            plugins: [weekendBandsPlugin],
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: isDark ? '#cbd5e1' : '#666', usePointStyle: true, padding: 10, font: { size: 11 },
+                            filter: function(item, chartData) {
+                                var ds = chartData.datasets[item.datasetIndex];
+                                if (!ds) return false;
+                                if (ds._overlay) return true; // linhas sempre visíveis
+                                // Categorias: ocultar se todos os valores são null/0
+                                if (!ds.data || ds.data.length === 0) return false;
+                                for (var k = 0; k < ds.data.length; k++) {
+                                    if (ds.data[k] != null && Math.abs(ds.data[k]) >= 0.005) return true;
+                                }
+                                return false;
+                            }
+                        }
+                    },
+                    tooltip: {
+                        filter: function(ctx) {
+                            // Esconder linhas do tooltip para séries vazias/zero
+                            var v = ctx.parsed.y;
+                            if (v == null) return false;
+                            if (!ctx.dataset._overlay && Math.abs(v) < 0.005) return false;
+                            return true;
+                        },
+                        callbacks: {
+                            title: function(items) {
+                                if (!items || !items.length) return '';
+                                var idx = items[0].dataIndex;
+                                var full = evolutionChart && evolutionChart._fullDates && evolutionChart._fullDates[idx];
+                                var label = items[0].label || '';
+                                if (!full) return label;
+                                var parts = full.split('-');
+                                var d = new Date(+parts[0], +parts[1]-1, +parts[2]);
+                                var wdNames = ['Domingo','2\u00AA feira','3\u00AA feira','4\u00AA feira','5\u00AA feira','6\u00AA feira','S\u00E1bado'];
+                                var wd = wdNames[d.getDay()];
+                                return wd + ' \u2014 ' + parts[2] + '/' + parts[1] + '/' + parts[0];
+                            },
+                            label: function(c) {
+                                var v = c.parsed.y;
+                                if (v == null) return c.dataset.label + ': —';
+                                if (c.dataset.yAxisID === 'yPct') return c.dataset.label + ': ' + v.toFixed(1) + '%';
+                                return c.dataset.label + ': ' + v.toFixed(2) + ' GWh';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: isDark ? '#94a3b8' : '#666', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
+                    yPct: { position: 'right', min: 0, max: 100, title: { display: true, text: '% Renovável', color: '#15803d' }, ticks: { color: isDark ? '#94a3b8' : '#666' }, grid: { display: false } },
+                    yGwh: Object.assign(
+                        { position: 'left', stacked: true, title: { display: true, text: 'GWh', color: '#1d4ed8' }, ticks: { color: isDark ? '#94a3b8' : '#666' }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
+                        isBar ? {} : { min: 0 }
+                    )
+                }
+            }
+        });
+    }
+
+    async function updateEvolutionChart() {
+        if (!evolutionChart) return;
+        var country = seletorPais.value;
+        var dates = datesInRange(seletorData.value, 30);
+        if (dates.length === 0) return;
+        var byDate = await loadDatesData(dates);
+
+        var labels = [], fullDates = [], renArr = [], totArr = [], loadArr = [];
+        var catArrs = {};
+        for (var ci = 0; ci < EVO_CATS.length; ci++) catArrs[EVO_CATS[ci].key] = [];
+        catArrs['psc'] = [];
+        catArrs['export'] = [];
+
+        function sumKeys(prod, keys) { var s = 0; for (var k = 0; k < keys.length; k++) s += (prod[keys[k]] || 0); return s; }
+
+        var cutoff = false; // uma vez encontrado dia provisório/forecast, tudo a partir dai fica null
+        for (var i = 0; i < dates.length; i++) {
+            var ds = dates[i];
+            var d = byDate[ds] && byDate[ds][country];
+            var p = ds.split('-');
+            labels.push(p[2] + '/' + p[1]);
+            fullDates.push(ds);
+            // Se este dia ou um anterior for provisório/forecast → cortar a série
+            if (!cutoff && d && (d.source === 'forecast' || d.source === 'provisional')) cutoff = true;
+            if (cutoff) d = null;
+            if (d) {
+                renArr.push(d.ren_share != null ? d.ren_share : null);
+                totArr.push(d.total != null ? d.total : null);
+                loadArr.push(d.production && d.production.load ? d.production.load : null);
+                var pr = d.production || {};
+                catArrs.solar.push(pr.solar || 0);
+                catArrs.eolica.push((pr.wind_onshore || 0) + (pr.wind_offshore || 0));
+                catArrs.hydro.push((pr.hydro_run_of_river || 0) + (pr.hydro_water_reservoir || 0) + (pr.hydro_pumped_storage || 0));
+                catArrs.nuclear.push(pr.nuclear || 0);
+                catArrs.biomass.push(pr.biomass || 0);
+                catArrs.other_ren.push(sumKeys(pr, OTHER_REN_KEYS));
+                catArrs.fossil.push(sumKeys(pr, FOSSIL_KEYS));
+                // Importação: apenas parte positiva de cross_border
+                var cb = pr.cross_border || 0;
+                catArrs['import'].push(cb > 0 ? cb : 0);
+                // Exportação: parte negativa de cross_border (abaixo de zero)
+                catArrs['export'].push(cb < 0 ? cb : 0);
+                // Consumo Bombagem: sempre negativo
+                var pscv = pr.pumped_storage_consumption || 0;
+                catArrs['psc'].push(pscv > 0 ? -pscv : pscv);
+            } else {
+                renArr.push(null); totArr.push(null); loadArr.push(null);
+                for (var kk in catArrs) catArrs[kk].push(null);
+            }
+        }
+        evolutionChart.data.labels = labels;
+        evolutionChart._fullDates = fullDates;
+        // Preencher categorias (área empilhada) e overlays (linhas) pelo _evoKey / label
+        for (var di = 0; di < evolutionChart.data.datasets.length; di++) {
+            var dset = evolutionChart.data.datasets[di];
+            if (dset._evoKey) {
+                dset.data = catArrs[dset._evoKey] || [];
+            } else if (dset.label === 'Produção Total') {
+                dset.data = totArr;
+            } else if (dset.label === 'Consumo') {
+                dset.data = loadArr;
+            } else if (dset.label === '% Renovável') {
+                dset.data = renArr;
+            }
+        }
+        var name = COUNTRY_NAMES[country] || country.toUpperCase();
+        document.getElementById('evolution-titulo').textContent = 'Evolução (últimos 30 dias) — ' + name;
+        evolutionChart.update();
+    }
+
+    function updateEvolutionColors() {
+        if (!evolutionChart) return;
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        evolutionChart.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#666';
+        evolutionChart.options.scales.x.ticks.color = isDark ? '#94a3b8' : '#666';
+        evolutionChart.options.scales.x.grid.color = isDark ? '#334155' : '#e5e7eb';
+        evolutionChart.options.scales.yPct.ticks.color = isDark ? '#94a3b8' : '#666';
+        evolutionChart.options.scales.yPct.grid.color = isDark ? '#334155' : '#e5e7eb';
+        evolutionChart.options.scales.yGwh.ticks.color = isDark ? '#94a3b8' : '#666';
+        evolutionChart.update();
+    }
+
+    // --- CARREGAR DADOS DE PRODUÇÃO ---
+    async function loadProductionData(dateStr) {
+        loadingIndicator.style.display = 'block';
+
+        var days = currentMode === 'week' ? 7 : (currentMode === 'month' ? 30 : 1);
+        if (days === 1) {
+            await ensureMonth(dateStr.substring(0, 7));
+            currentData = (dataCache[dateStr.substring(0, 7)] || {})[dateStr] || {};
+        } else {
+            var dates = datesInRange(dateStr, days);
+            var byDate = await loadDatesData(dates);
+            currentData = aggregateData(byDate);
+        }
+
+        loadingIndicator.style.display = 'none';
+
+        if (geojsonLayer) {
+            geojsonLayer.setStyle(style);
+            updateRenLabels();
+        }
+
+        var partes = dateStr.split('-');
+        var dLabel = partes[2] + '/' + partes[1] + '/' + partes[0];
+        var modeLabel = currentMode === 'week' ? ' (média 7d até ' + dLabel + ')'
+                      : currentMode === 'month' ? ' (média 30d até ' + dLabel + ')'
+                      : ' — ' + dLabel;
+        document.getElementById('titulo-mapa').textContent = 'Produção de Eletricidade na Europa' + modeLabel;
+
+        updateChart(seletorPais.value);
+        updateRankedList();
+        updateSourceBadge();
+        info.update();
+
+        // Pré-carregar 7 dias anteriores para sparklines do mapa (silencioso)
+        loadDatesData(datesInRange(dateStr, 7)).catch(function(){});
+
+        // Atualizar gráfico de evolução (sempre 30 dias, independente do modo)
+        updateEvolutionChart();
+    }
+
+    // Sparkline SVG inline com últimos 7 dias de ren_share
+    function buildSparkline(country) {
+        var endDate = seletorData.value;
+        var dates = datesInRange(endDate, 7);
+        var vals = [];
+        for (var i = 0; i < dates.length; i++) {
+            var ds = dates[i];
+            var monthData = dataCache[ds.substring(0, 7)] || {};
+            var dayData = monthData[ds] && monthData[ds][country];
+            vals.push(dayData && dayData.ren_share != null ? dayData.ren_share : null);
+        }
+        var validVals = vals.filter(function(v){ return v != null; });
+        if (validVals.length < 2) return '';
+        var w = 110, h = 30, pad = 2;
+        var n = vals.length;
+        var pts = [];
+        for (var j = 0; j < n; j++) {
+            if (vals[j] == null) continue;
+            var x = pad + (n === 1 ? w/2 : (j / (n - 1)) * (w - 2*pad));
+            var y = h - pad - (vals[j] / 100) * (h - 2*pad);
+            pts.push(x.toFixed(1) + ',' + y.toFixed(1));
+        }
+        var lastX = pad + ((n-1) / (n - 1)) * (w - 2*pad);
+        var lastY = vals[n-1] != null ? (h - pad - (vals[n-1] / 100) * (h - 2*pad)) : null;
+        var lastColor = vals[n-1] != null ? getColor(vals[n-1]) : '#999';
+        var svg = '<svg class="sparkline" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">';
+        svg += '<polyline fill="none" stroke="#2563eb" stroke-width="1.5" points="' + pts.join(' ') + '"/>';
+        if (lastY != null) svg += '<circle cx="' + lastX.toFixed(1) + '" cy="' + lastY.toFixed(1) + '" r="2.5" fill="' + lastColor + '"/>';
+        svg += '</svg>';
+        return '<div class="sparkline-wrap" title="% renovável nos últimos 7 dias">' + svg + '</div>';
+    }
+
+    // --- ECRÃ INTEIRO ---
+    window.toggleFullscreen = function() {
+        var wrapper = document.getElementById('mapa-wrapper');
+        var btn = document.getElementById('btn-fullscreen');
+        wrapper.classList.toggle('fullscreen');
+        if (wrapper.classList.contains('fullscreen')) {
+            btn.innerHTML = '&#x2716; Sair';
+            btn.title = 'Sair do ecrã inteiro';
+        } else {
+            btn.innerHTML = '&#x26F6; Ecrã inteiro';
+            btn.title = 'Abrir mapa em ecrã inteiro';
+        }
+        setTimeout(function() { map.invalidateSize(); }, 100);
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var wrapper = document.getElementById('mapa-wrapper');
+            if (wrapper.classList.contains('fullscreen')) {
+                window.toggleFullscreen();
+            }
+        }
+    });
+
+    // --- DARK MODE ---
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'data-theme') {
+                if (geojsonLayer) {
+                    geojsonLayer.setStyle(style);
+                    updateRenLabels();
+                }
+                updateChartColors();
+                updateEvolutionColors();
+            }
+        });
+    });
+    observer.observe(document.documentElement, { attributes: true });
+
+    // --- INICIALIZAÇÃO ---
+    async function init() {
+        loadingIndicator.style.display = 'block';
+
+        try {
+            initMap();
+            info.addTo(map);
+            legend.addTo(map);
+
+            if (!loadGeoJSON()) {
+                loadingIndicator.style.display = 'none';
+                document.getElementById('titulo-mapa').textContent =
+                    'Erro: europe_zones_compact.js não encontrado';
+                return;
+            }
+
+            try {
+                var metaResp = await fetchComFallback("metadata.json");
+                if (metaResp.ok) {
+                    var meta = await metaResp.json();
+                    if (meta.ultima_data) ultimaDataDisponivel = meta.ultima_data;
+                }
+            } catch(e) {
+                console.warn('metadata.json não encontrado:', e.message);
+            }
+
+            seletorData.min = DATA_INICIO;
+            if (ultimaDataDisponivel) {
+                seletorData.max = ultimaDataDisponivel;
+            }
+            // Data default: hoje (com previsão se disponível) ou URL param ?date=YYYY-MM-DD
+            var todayStr = new Date().toISOString().split('T')[0];
+            var urlParams = new URLSearchParams(window.location.search);
+            var urlDate = urlParams.get('date');
+            var urlCountry = urlParams.get('country');
+            var defaultDate;
+            if (urlDate && /^\d{4}-\d{2}-\d{2}$/.test(urlDate)) {
+                defaultDate = urlDate;
+                if (defaultDate < DATA_INICIO) defaultDate = DATA_INICIO;
+                if (ultimaDataDisponivel && defaultDate > ultimaDataDisponivel) defaultDate = ultimaDataDisponivel;
+            } else if (ultimaDataDisponivel && todayStr > ultimaDataDisponivel) {
+                defaultDate = ultimaDataDisponivel;
+            } else if (todayStr < DATA_INICIO) {
+                defaultDate = DATA_INICIO;
+            } else {
+                defaultDate = todayStr;
+            }
+            seletorData.value = defaultDate;
+            if (urlCountry && COUNTRY_NAMES[urlCountry]) {
+                seletorPais.value = urlCountry;
+            }
+
+            initChart();
+            initEvolutionChart();
+
+            var btnPrev = document.getElementById('btn-prev');
+            var btnNext = document.getElementById('btn-next');
+
+            function alterarData(dias) {
+                var partes = seletorData.value.split('-');
+                var dataAtual = new Date(partes[0], partes[1] - 1, partes[2]);
+                dataAtual.setDate(dataAtual.getDate() + dias);
+                var y = dataAtual.getFullYear();
+                var m = String(dataAtual.getMonth() + 1).padStart(2, '0');
+                var d = String(dataAtual.getDate()).padStart(2, '0');
+                var novaDataStr = y + '-' + m + '-' + d;
+                if (novaDataStr >= seletorData.min && (!seletorData.max || novaDataStr <= seletorData.max)) {
+                    seletorData.value = novaDataStr;
+                    seletorData.dispatchEvent(new Event('change'));
+                }
+            }
+
+            btnPrev.addEventListener('click', function() { alterarData(-1); });
+            btnNext.addEventListener('click', function() { alterarData(1); });
+
+            // --- Link cruzado para mapa-precos ---
+            function updateCrossLink() {
+                var lnk = document.getElementById('link-precos');
+                if (lnk) lnk.href = 'mapa-precos.html?date=' + encodeURIComponent(seletorData.value);
+            }
+            updateCrossLink();
+
+            // --- Toggle Colunas / Áreas (tipo do gráfico de evolução) ---
+            var evoTypeBtns = document.querySelectorAll('#evolution-type-toggle .mode-btn');
+            for (var eb = 0; eb < evoTypeBtns.length; eb++) {
+                evoTypeBtns[eb].addEventListener('click', function() {
+                    var newType = this.getAttribute('data-evotype');
+                    if (newType === evolutionType) return;
+                    evolutionType = newType;
+                    for (var kk = 0; kk < evoTypeBtns.length; kk++) { evoTypeBtns[kk].classList.remove('active'); evoTypeBtns[kk].setAttribute('aria-pressed', 'false'); }
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                    if (evolutionChart) { evolutionChart.destroy(); evolutionChart = null; }
+                    initEvolutionChart();
+                    updateEvolutionChart();
+                });
+            }
+
+            // --- Mode toggle (diário / semanal / mensal) ---
+            var modeBtns = document.querySelectorAll('.mode-toggle .mode-btn');
+            for (var mb = 0; mb < modeBtns.length; mb++) {
+                modeBtns[mb].addEventListener('click', function() {
+                    var newMode = this.getAttribute('data-mode');
+                    if (newMode === currentMode) return;
+                    currentMode = newMode;
+                    for (var k = 0; k < modeBtns.length; k++) { modeBtns[k].classList.remove('active'); modeBtns[k].setAttribute('aria-pressed', 'false'); }
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                    loadProductionData(seletorData.value);
+                });
+            }
+
+            // --- Teclado: ← → (dia)  ↑ ↓ (país) ---
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                var tag = (e.target && e.target.tagName) || '';
+                // Permitir dentro do próprio date input e select; ignorar em text inputs/textareas
+                if (tag === 'TEXTAREA') return;
+                if (tag === 'INPUT' && e.target.type !== 'date') return;
+                if (e.key === 'ArrowLeft') { e.preventDefault(); alterarData(-1); }
+                else if (e.key === 'ArrowRight') { e.preventDefault(); alterarData(1); }
+                else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    if (tag === 'SELECT') return; // deixar o select gerir
+                    e.preventDefault();
+                    var opts = seletorPais.options;
+                    var idx = seletorPais.selectedIndex;
+                    var newIdx = e.key === 'ArrowUp' ? idx - 1 : idx + 1;
+                    if (newIdx < 0) newIdx = opts.length - 1;
+                    if (newIdx >= opts.length) newIdx = 0;
+                    seletorPais.selectedIndex = newIdx;
+                    seletorPais.dispatchEvent(new Event('change'));
+                }
+            });
+
+            await loadProductionData(seletorData.value);
+
+            seletorData.addEventListener('change', function() {
+                updateCrossLink();
+                loadProductionData(this.value);
+            });
+            seletorPais.addEventListener('change', function() {
+                updateChart(this.value);
+                updateEvolutionChart();
+            });
+
+        } catch(e) {
+            console.error('Erro na inicialização:', e);
+        }
+
+        loadingIndicator.style.display = 'none';
+    }
+
+    init();
+
+    // Carregar menu e footer (silencioso)
+    fetch('menu.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
+        if (d) document.getElementById('menu-placeholder').innerHTML = d;
+    }).catch(function() {});
+    fetch('footer.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
+        if (d) document.getElementById('footer-placeholder').innerHTML = d;
+    }).catch(function() {});
+
+});
+</script>
+</body>
+</html>
