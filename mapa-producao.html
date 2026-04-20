@@ -375,9 +375,9 @@
         <details class="faq-item">
             <summary><strong>Como é calculada a percentagem renovável?</strong></summary>
             <div class="faq-content">
-                <p>A percentagem renovável é calculada como: <strong>(Solar + Eólica + Hídrica + Biomassa + Outras Renováveis) / Produção Total &times; 100</strong>.</p>
+                <p>A percentagem renovável é calculada como: <strong>(Solar + Eólica + Hídrica + Biomassa + Outras Renováveis) / Denominador &times; 100</strong>.</p>
+                <p>A hídrica no numerador inclui <em>fio-de-água</em> e <em>albufeira</em>, mas <strong>não</strong> inclui a <strong>bombagem</strong> (ver entrada seguinte). O denominador depende dos toggles activos — em "% sobre Produção" é a produção total (com ou sem bombagem, consoante o toggle); em "% sobre Consumo" é o consumo (<em>load</em>).</p>
                 <p>Os valores de produção são totais diários em GWh, obtidos a partir dos dados de produção pública líquida da API Energy-Charts.</p>
-                <p><strong>Bombagem hidráulica</strong> (<em>hydro pumped storage</em>) é, por default, <strong>excluída</strong> tanto do numerador como do denominador — é a convenção adotada pela <a href="https://www.energy-charts.info" target="_blank" rel="noopener">energy-charts.info</a>. Podes alterar este comportamento no toggle <em>"Excluir bombagem / Incluir bombagem"</em>.</p>
             </div>
         </details>
 
@@ -421,12 +421,17 @@
                 <p>São consideradas renováveis as seguintes fontes:</p>
                 <ul>
                     <li><strong>Solar</strong> (fotovoltaica)</li>
-                    <li><strong>Eólica</strong> (wind onshore e wind offshore)</li>
-                    <li><strong>Hídrica</strong> (fio-de-água, albufeira e bombagem &mdash; apenas geração)</li>
-                    <li><strong>Biomassa</strong> (inclui Biomassa florestal, biogás e a fração biodegradável dos resíduos sólidos urbanos)</li>
-                    <li><strong>Outras Renováveis</strong> (inclui geotermia)</li>
+                    <li><strong>Eólica</strong> (onshore e offshore)</li>
+                    <li><strong>Hídrica</strong> — <em>apenas</em> fio-de-água e albufeira</li>
+                    <li><strong>Biomassa</strong> (biomassa florestal, biogás e fração biodegradável dos resíduos sólidos urbanos)</li>
+                    <li><strong>Outras Renováveis</strong> (geotermia, resíduos e outras renováveis residuais)</li>
                 </ul>
-                <p>As fontes fósseis (gás natural, carvão, petróleo) e nuclear não são consideradas renováveis.</p>
+                <p>Não são consideradas renováveis:</p>
+                <ul>
+                    <li><strong>Bombagem hidráulica</strong> (<em>hydro pumped storage</em>) — é energia armazenada previamente, não geração primária. Ver entrada sobre o toggle de bombagem.</li>
+                    <li><strong>Fósseis</strong> (gás natural, carvão, linhite, petróleo)</li>
+                    <li><strong>Nuclear</strong></li>
+                </ul>
             </div>
         </details>
 
