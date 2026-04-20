@@ -117,15 +117,24 @@
 
         /* Toggle de modo (diário/semanal/mensal) */
         .mode-toggle { text-align: center; margin: 0 auto 18px auto; max-width: 1300px; }
-        .mode-toggle .mode-btn { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; transition: background 0.2s; }
-        .mode-toggle .mode-btn:first-child { border-radius: 5px 0 0 5px; }
-        .mode-toggle .mode-btn:last-child { border-radius: 0 5px 5px 0; }
-        .mode-toggle .mode-btn:not(:last-child) { border-right: none; }
-        .mode-toggle .mode-btn:hover { background: #e2e8f0; }
-        .mode-toggle .mode-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-        [data-theme="dark"] .mode-toggle .mode-btn { background: #1e293b; color: #e2e8f0; border-color: #475569; }
-        [data-theme="dark"] .mode-toggle .mode-btn:hover { background: #334155; }
-        [data-theme="dark"] .mode-toggle .mode-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .range-pickers { display: none; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 auto 18px auto; max-width: 1300px; font-size: 0.9em; }
+        .range-pickers.visible { display: flex; }
+        .range-pickers input[type="date"] { padding: 6px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95em; }
+        .range-pickers label { font-weight: bold; color: #2c3e50; }
+        [data-theme="dark"] .range-pickers label { color: #cbd5e1; }
+        [data-theme="dark"] .range-pickers input[type="date"] { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        .agg-toggle { text-align: center; margin: 0 auto 18px auto; max-width: 1300px; display: none; }
+        .agg-toggle.visible { display: block; }
+        .mode-toggle .mode-btn, .agg-toggle .mode-btn { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; transition: background 0.2s; }
+        .mode-toggle .mode-btn:first-child, .agg-toggle .mode-btn:first-child { border-radius: 5px 0 0 5px; }
+        .mode-toggle .mode-btn:last-child, .agg-toggle .mode-btn:last-child { border-radius: 0 5px 5px 0; }
+        .mode-toggle .mode-btn:not(:last-child), .agg-toggle .mode-btn:not(:last-child) { border-right: none; }
+        .mode-toggle .mode-btn:hover, .agg-toggle .mode-btn:hover { background: #e2e8f0; }
+        .mode-toggle .mode-btn.active, .agg-toggle .mode-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .mode-toggle .mode-btn:disabled, .agg-toggle .mode-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        [data-theme="dark"] .mode-toggle .mode-btn, [data-theme="dark"] .agg-toggle .mode-btn { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .mode-toggle .mode-btn:hover, [data-theme="dark"] .agg-toggle .mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .mode-toggle .mode-btn.active, [data-theme="dark"] .agg-toggle .mode-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
 
         /* Link cruzado para mapa-precos */
         .cross-link { text-align: center; margin: 8px auto 22px; }
@@ -254,6 +263,30 @@
         <button type="button" class="mode-btn active" data-mode="day" aria-pressed="true">Diário</button>
         <button type="button" class="mode-btn" data-mode="week" aria-pressed="false">Semanal (7d)</button>
         <button type="button" class="mode-btn" data-mode="month" aria-pressed="false">Mensal (30d)</button>
+        <button type="button" class="mode-btn" data-mode="custom" aria-pressed="false">Personalizado</button>
+    </div>
+
+    <div class="range-pickers" id="range-pickers" role="group" aria-label="Intervalo personalizado">
+        <label for="range-start">Início:</label>
+        <input type="date" id="range-start">
+        <label for="range-end">Fim:</label>
+        <input type="date" id="range-end">
+        <span id="range-info" style="font-size:0.85em; opacity:0.7;"></span>
+    </div>
+
+    <div class="agg-toggle" id="agg-toggle" role="group" aria-label="Forma de agregação">
+        <button type="button" class="mode-btn active" data-agg="mean" aria-pressed="true">Médias diárias</button>
+        <button type="button" class="mode-btn" data-agg="sum" aria-pressed="false">Totais do período</button>
+    </div>
+
+    <div class="agg-toggle visible" id="renbase-toggle" role="group" aria-label="Base de cálculo da percentagem renovável">
+        <button type="button" class="mode-btn active" data-renbase="production" aria-pressed="true" title="% calculada sobre a produção total">% sobre Produção</button>
+        <button type="button" class="mode-btn" data-renbase="load" aria-pressed="false" title="% calculada sobre o consumo (load)">% sobre Consumo</button>
+    </div>
+
+    <div class="agg-toggle visible" id="pumped-toggle" role="group" aria-label="Contar bombagem como renovável">
+        <button type="button" class="mode-btn active" data-pumped="exclude" aria-pressed="true" title="Bombagem fora do denominador da produção (alinhado com energy-charts.info)">Excluir bombagem</button>
+        <button type="button" class="mode-btn" data-pumped="include" aria-pressed="false" title="Bombagem no denominador da produção — soma de todas as colunas = 100%">Incluir bombagem</button>
     </div>
 
     <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
@@ -322,6 +355,10 @@
         <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de produção por país">
             <p class="no-data-msg">A carregar dados...</p>
         </div>
+        <div style="text-align:center; margin-top:15px;">
+            <button type="button" id="btn-share" class="mode-btn" style="border-radius:5px;" title="Copiar link partilhável para o estado atual">&#128279; Copiar link de partilha</button>
+            <span id="share-feedback" style="margin-left:10px; font-size:0.85em; color:#16a34a; display:none;">Copiado!</span>
+        </div>
     </div>
 
     <article class="content-support">
@@ -340,6 +377,33 @@
             <div class="faq-content">
                 <p>A percentagem renovável é calculada como: <strong>(Solar + Eólica + Hídrica + Biomassa + Outras Renováveis) / Produção Total &times; 100</strong>.</p>
                 <p>Os valores de produção são totais diários em GWh, obtidos a partir dos dados de produção pública líquida da API Energy-Charts.</p>
+                <p><strong>Bombagem hidráulica</strong> (<em>hydro pumped storage</em>) é, por default, <strong>excluída</strong> tanto do numerador como do denominador — é a convenção adotada pela <a href="https://www.energy-charts.info" target="_blank" rel="noopener">energy-charts.info</a>. Podes alterar este comportamento no toggle <em>"Excluir bombagem / Incluir bombagem"</em>.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>O que faz o toggle "Excluir / Incluir bombagem"?</strong></summary>
+            <div class="faq-content">
+                <p>A <strong>hidráulica de bombagem</strong> não é geração primária — é energia armazenada previamente (bombeada de uma albufeira inferior para uma superior durante horas de excedente) e re-turbinada mais tarde. A origem dessa energia pode ter sido fóssil ou renovável, não é intrinsecamente verde. Por isso, nesta página, <strong>a bombagem NUNCA é contabilizada como renovável</strong> — independentemente do toggle.</p>
+                <p>O toggle controla apenas o <strong>denominador</strong> da percentagem renovável e das percentagens por coluna:</p>
+                <ul>
+                    <li><strong>Excluir bombagem</strong> (default, alinhado com <a href="https://www.energy-charts.info" target="_blank" rel="noopener">energy-charts.info</a>): bombagem fica fora do denominador. A soma das colunas (exceto bombagem) atinge os 100% da produção não-bombeada.</li>
+                    <li><strong>Incluir bombagem</strong>: bombagem entra no denominador como "mais uma origem". A soma de todas as colunas (incluindo bombagem) é <strong>100%</strong>.</li>
+                </ul>
+                <p>Na tabela, a bombagem aparece sempre numa coluna <strong>autónoma</strong> (entre "Out. Renov." e "Fóssil"), para ser visível e ordenável independentemente do toggle.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>% sobre Produção vs. % sobre Consumo — qual a diferença?</strong></summary>
+            <div class="faq-content">
+                <p>O seletor <strong>"% sobre Produção" / "% sobre Consumo"</strong> (junto aos seletores de data) permite escolher o denominador da percentagem renovável:</p>
+                <ul>
+                    <li><strong>% sobre Produção</strong> (default): renováveis / produção total do país. Reflete o peso das renováveis <em>no mix nacional gerado</em>.</li>
+                    <li><strong>% sobre Consumo</strong>: renováveis / consumo (<em>load</em>) do país. Reflete o peso das renováveis <em>face à procura</em>. É a métrica usada pela <a href="https://www.energy-charts.info" target="_blank" rel="noopener">energy-charts.info</a>.</li>
+                </ul>
+                <p>Um país exportador com muita renovável pode ter <strong>% sobre Consumo &gt; 100%</strong> (produz mais renovável do que consome). Um país importador pode ter % sobre Consumo inferior à % sobre Produção.</p>
+                <p>A opção escolhida aplica-se ao <strong>mapa</strong>, <strong>gráfico de evolução</strong> e <strong>tabela de produção por país</strong>, e é incluída no link de partilha.</p>
             </div>
         </details>
 
@@ -470,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "wind_offshore": "#9BAF91",
         "hydro_run_of_river": "#4040D6",
         "hydro_water_reservoir": "#C3D6FF",
-        "hydro_pumped_storage": "#40B1E9",
+        "hydro_pumped_storage": "#94a3b8",
         "nuclear": "#FF4040", "gas": "#FCB178",
         "gas_coal_derived": "#DFC27D",
         "coal_hard": "#323232", "coal_lignite": "#967D64",
@@ -500,7 +564,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Grupos para agregação na tabela
-    var RENEWABLE_KEYS = ["solar", "wind_onshore", "wind_offshore", "hydro_run_of_river", "hydro_water_reservoir", "hydro_pumped_storage", "biomass", "geothermal", "waste", "other_renewables"];
+    // Nota: hydro_pumped_storage NÃO entra aqui por default — é somada condicionalmente via includePumped.
+    var RENEWABLE_KEYS = ["solar", "wind_onshore", "wind_offshore", "hydro_run_of_river", "hydro_water_reservoir", "biomass", "geothermal", "waste", "other_renewables"];
+    var HYDRO_KEYS = ["hydro_run_of_river", "hydro_water_reservoir"];  // hídrica "natural" (sem bombagem)
     var FOSSIL_KEYS = ["gas", "gas_coal_derived", "coal_hard", "coal_lignite", "oil", "other"];
     var BIOMASS_KEYS = ["biomass", "geothermal", "waste", "other_renewables"];
     var OTHER_REN_KEYS = ["geothermal", "waste", "other_renewables"];
@@ -521,6 +587,37 @@ document.addEventListener('DOMContentLoaded', function() {
         "NO4": [69.25, 23.5],
         "NO5": [60.75, 7.0]
     };
+
+    // Soma das categorias renováveis (bombagem NUNCA conta como renovável)
+    function getRenSum(prod) {
+        if (!prod) return 0;
+        var s = 0;
+        for (var i = 0; i < RENEWABLE_KEYS.length; i++) s += (prod[RENEWABLE_KEYS[i]] || 0);
+        return s;
+    }
+
+    // Produção total "efetiva" para cálculo da % renovável:
+    // quando se exclui bombagem, também se subtrai ao denominador (como na energy-charts).
+    function getEffectiveTotal(d) {
+        if (!d) return 0;
+        var t = d.total || 0;
+        if (!includePumped) t -= (d.production && d.production.hydro_pumped_storage) || 0;
+        return t;
+    }
+
+    // Devolve a % renovável consoante a base selecionada e o toggle de bombagem
+    function computeRenShare(d) {
+        if (!d || !d.production) return null;
+        var renS = getRenSum(d.production);
+        if (renBase === 'load') {
+            var ld = d.production.load;
+            if (!ld || ld <= 0) return null;
+            return renS / ld * 100;
+        }
+        var t = getEffectiveTotal(d);
+        if (t <= 0) return null;
+        return renS / t * 100;
+    }
 
     // --- FUNÇÕES AUXILIARES ---
     function getCountryData(zone) {
@@ -551,8 +648,33 @@ document.addEventListener('DOMContentLoaded', function() {
     var ultimaDataDisponivel = null;
     var prodChart = null;
     var evolutionChart = null;
-    var currentMode = 'day';   // 'day' | 'week' | 'month'
+    var currentMode = 'day';   // 'day' | 'week' | 'month' | 'custom'
     var evolutionType = 'bar'; // 'bar' | 'area'
+    var aggMode = 'mean';      // 'mean' (médias diárias) | 'sum' (totais)
+    var renBase = 'production';// 'production' | 'load'
+    var includePumped = false;  // se true, bombagem conta como renovável (default: false, alinhado com energy-charts)
+    var customStart = null, customEnd = null;  // ISO YYYY-MM-DD
+    var MAX_CUSTOM_DAYS = 366;
+
+    // --- Formatação numérica (pt-PT) ---
+    // fmtN: vírgula como separador decimal, sem separador de milhares (mapas, gráficos, tooltips)
+    // fmtT: idem + espaço como separador de milhares quando o inteiro tem > 4 dígitos (tabelas)
+    function fmtN(v, dec) {
+        if (v == null || isNaN(v)) return '—';
+        if (dec == null) dec = 2;
+        return Number(v).toFixed(dec).replace('.', ',');
+    }
+    function fmtT(v, dec) {
+        if (v == null || isNaN(v)) return '—';
+        if (dec == null) dec = 2;
+        var s = Number(v).toFixed(dec);
+        var sign = '';
+        if (s.charAt(0) === '-') { sign = '-'; s = s.slice(1); }
+        var parts = s.split('.');
+        var intPart = parts[0];
+        if (intPart.length > 4) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        return sign + intPart + (parts[1] ? ',' + parts[1] : '');
+    }
 
     var seletorData = document.getElementById('seletor-data');
     var seletorPais = document.getElementById('seletor-pais');
@@ -597,7 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- ESTILO DAS ZONAS ---
     function style(feature) {
         var data = getCountryData(feature.properties.ecZone);
-        var renShare = data ? data.ren_share : null;
+        var renShare = data ? computeRenShare(data) : null;
         var isForecast = data && data.source === 'forecast';
         var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         return {
@@ -647,21 +769,30 @@ document.addEventListener('DOMContentLoaded', function() {
             var name = country ? (COUNTRY_NAMES[country] || country.toUpperCase()) : (props.displayName || zone);
             if (data) {
                 var html = '<b>' + name + '</b>';
-                html += '<div class="ren-value" style="color:' + getColor(data.ren_share) + ';">' + data.ren_share.toFixed(1) + '% renovável</div>';
+                var rs = computeRenShare(data);
+                var baseLbl = renBase === 'load' ? ' (consumo)' : '';
+                if (rs == null) {
+                    html += '<div class="ren-value" style="color:#999;">Sem dados de consumo</div>';
+                } else {
+                    html += '<div class="ren-value" style="color:' + getColor(rs) + ';">' + fmtN(rs, 1) + '% renovável' + baseLbl + '</div>';
+                }
                 html += '<div class="prod-detail">';
                 var prod = data.production;
-                if (prod.solar > 0) html += 'Solar: ' + prod.solar.toFixed(2) + ' GWh<br>';
+                if (prod.solar > 0) html += 'Solar: ' + fmtN(prod.solar, 2) + ' GWh<br>';
                 var eolica = (prod.wind_onshore || 0) + (prod.wind_offshore || 0);
-                if (eolica > 0) html += 'Eólica: ' + eolica.toFixed(2) + ' GWh<br>';
-                var hidrica = (prod.hydro_run_of_river || 0) + (prod.hydro_water_reservoir || 0) + (prod.hydro_pumped_storage || 0);
-                if (hidrica > 0) html += 'Hídrica: ' + hidrica.toFixed(2) + ' GWh<br>';
-                if (prod.nuclear > 0) html += 'Nuclear: ' + prod.nuclear.toFixed(2) + ' GWh<br>';
+                if (eolica > 0) html += 'Eólica: ' + fmtN(eolica, 2) + ' GWh<br>';
+                var hidrica = (prod.hydro_run_of_river || 0) + (prod.hydro_water_reservoir || 0);
+                if (hidrica > 0) html += 'Hídrica: ' + fmtN(hidrica, 2) + ' GWh<br>';
+                var bombagem = prod.hydro_pumped_storage || 0;
+                if (bombagem > 0) html += 'Bombagem: ' + fmtN(bombagem, 2) + ' GWh<br>';
+                if (prod.nuclear > 0) html += 'Nuclear: ' + fmtN(prod.nuclear, 2) + ' GWh<br>';
                 var bioTotal = (prod.biomass || 0) + (prod.geothermal || 0) + (prod.waste || 0) + (prod.other_renewables || 0);
-                if (bioTotal > 0) html += 'Biomassa: ' + bioTotal.toFixed(2) + ' GWh<br>';
+                if (bioTotal > 0) html += 'Biomassa: ' + fmtN(bioTotal, 2) + ' GWh<br>';
                 var fossil = (prod.gas || 0) + (prod.gas_coal_derived || 0) + (prod.coal_hard || 0) + (prod.coal_lignite || 0) + (prod.oil || 0) + (prod.other || 0);
-                if (fossil > 0) html += 'Fóssil: ' + fossil.toFixed(2) + ' GWh<br>';
+                if (fossil > 0) html += 'Fóssil: ' + fmtN(fossil, 2) + ' GWh<br>';
                 html += '</div>';
-                html += '<div class="prod-total">Total: ' + data.total.toFixed(2) + ' GWh</div>';
+                var uLbl = (currentMode !== 'day' && aggMode === 'mean') ? ' GWh/dia' : ' GWh';
+                html += '<div class="prod-total">Total: ' + fmtN(data.total, 2) + uLbl + '</div>';
                 var spark = buildSparkline(country);
                 if (spark) html += '<div class="sparkline-label">% Renov. (7d)</div>' + spark;
                 this._div.innerHTML = html;
@@ -749,7 +880,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!shouldShowLabel(zone)) return;
 
             var data = getCountryData(zone);
-            if (data && data.ren_share !== null && data.ren_share !== undefined) {
+            var rs = computeRenShare(data);
+            if (rs != null) {
                 var center = LABEL_POSITIONS[zone]
                     ? L.latLng(LABEL_POSITIONS[zone][0], LABEL_POSITIONS[zone][1])
                     : layer.getBounds().getCenter();
@@ -757,7 +889,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var marker = L.marker(center, {
                     icon: L.divIcon({
                         className: 'ren-label',
-                        html: Math.round(data.ren_share) + '%',
+                        html: Math.round(rs) + '%',
                         iconSize: [36, 14],
                         iconAnchor: [18, 7]
                     }),
@@ -902,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Total positivo — extremo direito
                 if (posTotal > 0) {
                     var xRight = xScale.getPixelForValue(posTotal);
-                    var labelRight = posTotal.toFixed(1) + ' GWh';
+                    var labelRight = fmtN(posTotal, 1) + ' GWh';
                     if (xRight + 5 + c.measureText(labelRight).width + 6 > xScale.right) {
                         drawLabel(labelRight, xRight - 5, yProd, 'right');
                     } else {
@@ -913,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Total negativo — extremo esquerdo (PSC e/ou exportação combinados)
                 if (negTotal < 0) {
                     var xLeft = xScale.getPixelForValue(negTotal);
-                    var labelLeft = negTotal.toFixed(1) + ' GWh';
+                    var labelLeft = fmtN(negTotal, 1) + ' GWh';
                     if (xLeft - 5 - c.measureText(labelLeft).width - 6 < xScale.left) {
                         drawLabel(labelLeft, xLeft + 5, yProd, 'left');
                     } else {
@@ -934,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (loadVal2 !== null && loadVal2 !== undefined && loadVal2 > 0) {
                         var yLoad = yScale.getPixelForValue(1);
                         var xLoad = xScale.getPixelForValue(loadVal2);
-                        var labelLoad = loadVal2.toFixed(1) + ' GWh';
+                        var labelLoad = fmtN(loadVal2, 1) + ' GWh';
                         if (xLoad + 5 + c.measureText(labelLoad).width + 6 > xScale.right) {
                             drawLabel(labelLoad, xLoad - 5, yLoad, 'right');
                         } else {
@@ -1002,7 +1134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         callbacks: {
                             label: function(ctx) {
                                 var val = ctx.raw || 0;
-                                return ctx.dataset.label + ': ' + val.toFixed(2) + ' GWh';
+                                return ctx.dataset.label + ': ' + fmtN(val, 2) + ' GWh';
                             }
                         }
                     }
@@ -1011,7 +1143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     x: {
                         stacked: true,
                         title: { display: true, text: 'GWh', color: isDark ? '#94a3b8' : '#666' },
-                        ticks: { color: isDark ? '#94a3b8' : '#666' },
+                        ticks: { color: isDark ? '#94a3b8' : '#666', callback: function(v) { return fmtN(v, 0); } },
                         grid: { color: isDark ? '#334155' : '#e5e7eb' }
                     },
                     y: {
@@ -1029,8 +1161,20 @@ document.addEventListener('DOMContentLoaded', function() {
         var data = currentData[country];
         var name = COUNTRY_NAMES[country] || country.toUpperCase();
 
-        var partes = seletorData.value.split('-');
-        var dateLabel = partes[2] + '/' + partes[1] + '/' + partes[0];
+        // Label do período: dia único ou intervalo agregado
+        function fmt(s) { var p = s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+        var dateLabel;
+        if (currentMode === 'custom' && customStart && customEnd) {
+            dateLabel = fmt(customStart) + ' \u2192 ' + fmt(customEnd);
+        } else if (currentMode === 'week') {
+            var ws = parseDate(seletorData.value); ws.setDate(ws.getDate() - 6);
+            dateLabel = fmt(formatDate(ws)) + ' \u2192 ' + fmt(seletorData.value);
+        } else if (currentMode === 'month') {
+            var ms = parseDate(seletorData.value); ms.setDate(ms.getDate() - 29);
+            dateLabel = fmt(formatDate(ms)) + ' \u2192 ' + fmt(seletorData.value);
+        } else {
+            dateLabel = fmt(seletorData.value);
+        }
 
         var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         prodChart.options.plugins.title.text = 'Mix de Produção — ' + name + ' — ' + dateLabel;
@@ -1075,9 +1219,12 @@ document.addEventListener('DOMContentLoaded', function() {
             var loadVal = loadVisible ? (prod['load'] || 0) : null;
             prodChart.data.datasets[nProd + 2].data = loadVisible ? [null, loadVal] : [null];
 
-            var renText = data.ren_share !== undefined ? ' (' + data.ren_share.toFixed(1) + '% renovável)' : '';
+            var rsChart = computeRenShare(data);
+            var baseSfx = renBase === 'load' ? ' s/consumo' : '';
+            var renText = rsChart != null ? ' (' + fmtN(rsChart, 1) + '% renovável' + baseSfx + ')' : '';
             var fcLabel = isFc ? ' \u2014 Previsão' : '';
-            document.getElementById('chart-titulo').textContent = 'Mix de Produção — ' + name + renText + fcLabel;
+            var unitLabel = (currentMode !== 'day') ? (aggMode === 'sum' ? ' \u2014 GWh totais' : ' \u2014 GWh/dia') : '';
+            document.getElementById('chart-titulo').textContent = 'Mix de Produção — ' + name + renText + fcLabel + unitLabel;
         } else {
             for (var j = 0; j < CAT_ORDER.length; j++) {
                 prodChart.data.datasets[j].data = loadVisible ? [0, null] : [0];
@@ -1087,6 +1234,11 @@ document.addEventListener('DOMContentLoaded', function() {
             prodChart.data.datasets[nProd + 1].data = loadVisible ? [null, null] : [null];
             prodChart.data.datasets[nProd + 2].data = loadVisible ? [null, null] : [null];
             document.getElementById('chart-titulo').textContent = 'Mix de Produção — ' + name + ' (sem dados)';
+        }
+        // Atualizar label do eixo X conforme agg
+        var xUnit = (currentMode !== 'day' && aggMode === 'sum') ? 'GWh (total)' : (currentMode !== 'day' ? 'GWh/dia' : 'GWh');
+        if (prodChart.options.scales && prodChart.options.scales.x && prodChart.options.scales.x.title) {
+            prodChart.options.scales.x.title.text = xUnit;
         }
         prodChart.update();
     }
@@ -1117,11 +1269,33 @@ document.addEventListener('DOMContentLoaded', function() {
         var container = document.getElementById('ranked-list-content');
         if (!container) return;
 
+        // Atualizar o título com período
+        var titulo = document.getElementById('ranked-list-titulo');
+        if (titulo) {
+            var fmtP = function(s) { var p = s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; };
+            var per;
+            if (currentMode === 'custom' && customStart && customEnd) {
+                per = fmtP(customStart) + ' \u2192 ' + fmtP(customEnd);
+            } else if (currentMode === 'week') {
+                var w = parseDate(seletorData.value); w.setDate(w.getDate() - 6);
+                per = fmtP(formatDate(w)) + ' \u2192 ' + fmtP(seletorData.value);
+            } else if (currentMode === 'month') {
+                var m = parseDate(seletorData.value); m.setDate(m.getDate() - 29);
+                per = fmtP(formatDate(m)) + ' \u2192 ' + fmtP(seletorData.value);
+            } else {
+                per = fmtP(seletorData.value);
+            }
+            var aggL = (currentMode !== 'day') ? (aggMode === 'sum' ? ' \u2014 Totais' : ' \u2014 Médias diárias') : '';
+            var baseL = renBase === 'load' ? ' \u00b7 % Renov. sobre Consumo' : ' \u00b7 % Renov. sobre Produção';
+            titulo.textContent = 'Produção por país — ' + per + aggL + baseL;
+        }
+
         var entries = [];
         for (var country in currentData) {
             if (!currentData.hasOwnProperty(country)) continue;
             var d = currentData[country];
-            if (!d || d.ren_share === null || d.ren_share === undefined) continue;
+            var rsTbl = computeRenShare(d);
+            if (rsTbl == null) continue;
             var name = COUNTRY_NAMES[country] || country.toUpperCase();
             var prod = d.production || {};
             var sumKeys = function(keys) { var s = 0; for (var k = 0; k < keys.length; k++) s += (prod[keys[k]] || 0); return s; };
@@ -1129,7 +1303,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 country: country,
                 name: name,
                 source: d.source || 'real',
-                ren: d.ren_share,
+                ren: rsTbl,
                 solar: prod.solar || 0,
                 wind_onshore: prod.wind_onshore || 0,
                 wind_offshore: prod.wind_offshore || 0,
@@ -1137,7 +1311,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 hydro_run_of_river: prod.hydro_run_of_river || 0,
                 hydro_water_reservoir: prod.hydro_water_reservoir || 0,
                 hydro_pumped_storage: prod.hydro_pumped_storage || 0,
-                hydro: (prod.hydro_run_of_river || 0) + (prod.hydro_water_reservoir || 0) + (prod.hydro_pumped_storage || 0),
+                hydro: (prod.hydro_run_of_river || 0) + (prod.hydro_water_reservoir || 0),
+                pumped: prod.hydro_pumped_storage || 0,
                 nuclear: prod.nuclear || 0,
                 gas: prod.gas || 0,
                 gas_coal_derived: prod.gas_coal_derived || 0,
@@ -1153,6 +1328,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 biomass: prod.biomass || 0,
                 other_ren: sumKeys(OTHER_REN_KEYS),
                 biomass_total: sumKeys(BIOMASS_KEYS),
+                renSum: getRenSum(prod),
                 total: d.total || 0
             });
         }
@@ -1178,6 +1354,7 @@ document.addEventListener('DOMContentLoaded', function() {
             { key: 'hydro', label: 'Hídrica' },
             { key: 'biomass', label: 'Biomassa' },
             { key: 'other_ren', label: 'Out. Renov.' },
+            { key: 'pumped', label: 'Bombagem' },
             { key: 'fossil', label: 'Fóssil' },
             { key: 'nuclear', label: 'Nuclear' },
             { key: 'total', label: 'Total' }
@@ -1200,44 +1377,58 @@ document.addEventListener('DOMContentLoaded', function() {
             var fcBadge = e.source === 'forecast' ? ' <span class="forecast-badge">prev.</span>' : '';
             html += '<td style="text-align:left;"><span class="color-indicator" style="background:' + color + (e.source === 'forecast' ? ';opacity:0.6' : '') + '"></span>' + e.name + fcBadge + '</td>';
 
-            // Renovável — tooltip com decomposição
-            var tipRen = 'Solar: ' + e.solar.toFixed(2) + ' GWh\n'
-                + 'Eól. Onshore: ' + e.wind_onshore.toFixed(2) + ' GWh\n'
-                + 'Eól. Offshore: ' + e.wind_offshore.toFixed(2) + ' GWh\n'
-                + 'Hídrica: ' + e.hydro.toFixed(2) + ' GWh\n'
-                + 'Biomassa: ' + e.biomass.toFixed(2) + ' GWh\n'
-                + 'Out. Renov.: ' + e.other_ren.toFixed(2) + ' GWh';
-            html += '<td class="has-tooltip" title="' + tipRen + '"><strong>' + e.ren.toFixed(1) + '%</strong></td>';
+            // Denominador para "% da produção total" (varia com toggle de bombagem)
+            var denom = includePumped ? e.total : (e.total - e.pumped);
+            function pctOf(v) { return denom > 0 ? fmtT(v / denom * 100, 1) + ' %' : '—'; }
+            function pctOfRen(v) { return e.renSum > 0 ? fmtT(v / e.renSum * 100, 1) + ' %' : '—'; }
+            // Subtotal de renováveis (sem bombagem)
+            var subLine = (e.solar > 0 ? 'Solar: ' + fmtT(e.solar, 2) + ' GWh (' + pctOfRen(e.solar) + ')\n' : '')
+                + (e.wind_onshore > 0 ? 'Eól. Onshore: ' + fmtT(e.wind_onshore, 2) + ' GWh (' + pctOfRen(e.wind_onshore) + ')\n' : '')
+                + (e.wind_offshore > 0 ? 'Eól. Offshore: ' + fmtT(e.wind_offshore, 2) + ' GWh (' + pctOfRen(e.wind_offshore) + ')\n' : '')
+                + (e.hydro_run_of_river > 0 ? 'Hídrica (Fio de Água): ' + fmtT(e.hydro_run_of_river, 2) + ' GWh (' + pctOfRen(e.hydro_run_of_river) + ')\n' : '')
+                + (e.hydro_water_reservoir > 0 ? 'Hídrica (Albufeira): ' + fmtT(e.hydro_water_reservoir, 2) + ' GWh (' + pctOfRen(e.hydro_water_reservoir) + ')\n' : '')
+                + (e.biomass > 0 ? 'Biomassa: ' + fmtT(e.biomass, 2) + ' GWh (' + pctOfRen(e.biomass) + ')\n' : '')
+                + (e.geothermal > 0 ? 'Geotermia: ' + fmtT(e.geothermal, 2) + ' GWh (' + pctOfRen(e.geothermal) + ')\n' : '')
+                + (e.waste > 0 ? 'Resíduos: ' + fmtT(e.waste, 2) + ' GWh (' + pctOfRen(e.waste) + ')\n' : '')
+                + (e.other_renewables > 0 ? 'Outras Renov.: ' + fmtT(e.other_renewables, 2) + ' GWh (' + pctOfRen(e.other_renewables) + ')\n' : '');
+            var tipRen = subLine + '─────────\nTotal renovável: ' + fmtT(e.renSum, 2) + ' GWh\n' + fmtT(e.ren, 2) + ' % da produção ' + (includePumped ? 'total' : 'sem bombagem');
+            html += '<td class="has-tooltip" title="' + tipRen + '"><strong>' + fmtT(e.ren, 1) + '%</strong></td>';
 
             // Solar
-            html += '<td>' + e.solar.toFixed(1) + '</td>';
+            html += '<td class="has-tooltip" title="Solar: ' + fmtT(e.solar, 2) + ' GWh\n' + pctOf(e.solar) + ' da produção">' + fmtT(e.solar, 1) + '</td>';
 
-            // Eólica — tooltip com onshore + offshore
-            var tipEol = 'Onshore: ' + e.wind_onshore.toFixed(2) + ' GWh\nOffshore: ' + e.wind_offshore.toFixed(2) + ' GWh';
-            html += '<td class="has-tooltip" title="' + tipEol + '">' + e.eolica.toFixed(1) + '</td>';
+            // Eólica — tooltip com onshore + offshore + % total
+            var tipEol = 'Onshore: ' + fmtT(e.wind_onshore, 2) + ' GWh\nOffshore: ' + fmtT(e.wind_offshore, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.eolica, 2) + ' GWh\n' + pctOf(e.eolica) + ' da produção';
+            html += '<td class="has-tooltip" title="' + tipEol + '">' + fmtT(e.eolica, 1) + '</td>';
 
-            // Hídrica — tooltip com fio de água + albufeira + bombagem
-            var tipHyd = 'Fio de Água: ' + e.hydro_run_of_river.toFixed(2) + ' GWh\nAlbufeira: ' + e.hydro_water_reservoir.toFixed(2) + ' GWh\nBombagem: ' + e.hydro_pumped_storage.toFixed(2) + ' GWh';
-            html += '<td class="has-tooltip" title="' + tipHyd + '">' + e.hydro.toFixed(1) + '</td>';
+            // Hídrica — tooltip com fio de água + albufeira + % total (bombagem é coluna separada)
+            var tipHyd = 'Fio de Água: ' + fmtT(e.hydro_run_of_river, 2) + ' GWh\nAlbufeira: ' + fmtT(e.hydro_water_reservoir, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.hydro, 2) + ' GWh\n' + pctOf(e.hydro) + ' da produção';
+            html += '<td class="has-tooltip" title="' + tipHyd + '">' + fmtT(e.hydro, 1) + '</td>';
 
             // Biomassa
-            html += '<td>' + e.biomass.toFixed(1) + '</td>';
+            html += '<td class="has-tooltip" title="Biomassa: ' + fmtT(e.biomass, 2) + ' GWh\n' + pctOf(e.biomass) + ' da produção">' + fmtT(e.biomass, 1) + '</td>';
 
-            // Out. Renov. — tooltip com geotermia + resíduos + outras renováveis
-            var tipOR = 'Geotermia: ' + e.geothermal.toFixed(2) + ' GWh\nResíduos: ' + e.waste.toFixed(2) + ' GWh\nOutras Renov.: ' + e.other_renewables.toFixed(2) + ' GWh';
-            html += '<td class="has-tooltip" title="' + tipOR + '">' + e.other_ren.toFixed(1) + '</td>';
+            // Out. Renov. — tooltip com geotermia + resíduos + outras renováveis + % total
+            var tipOR = 'Geotermia: ' + fmtT(e.geothermal, 2) + ' GWh\nResíduos: ' + fmtT(e.waste, 2) + ' GWh\nOutras Renov.: ' + fmtT(e.other_renewables, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.other_ren, 2) + ' GWh\n' + pctOf(e.other_ren) + ' da produção';
+            html += '<td class="has-tooltip" title="' + tipOR + '">' + fmtT(e.other_ren, 1) + '</td>';
 
-            // Fóssil — tooltip com gás + gás de carvão + carvão + linhite + petróleo + outro
-            var tipFos = 'Gás Natural: ' + e.gas.toFixed(2) + ' GWh\nGás de Carvão: ' + e.gas_coal_derived.toFixed(2) + ' GWh\nCarvão: ' + e.coal_hard.toFixed(2) + ' GWh\nLinhite: ' + e.coal_lignite.toFixed(2) + ' GWh\nPetróleo: ' + e.oil.toFixed(2) + ' GWh\nOutro: ' + e.other_src.toFixed(2) + ' GWh';
-            html += '<td class="has-tooltip" title="' + tipFos + '">' + e.fossil.toFixed(1) + '</td>';
+            // Bombagem (coluna autónoma, após Out. Renov.)
+            var bombStatus = includePumped ? 'No denominador (conta para o total)' : 'Fora do denominador (excluída)';
+            var tipBomb = 'Bombagem: ' + fmtT(e.pumped, 2) + ' GWh\n' + pctOf(e.pumped) + ' da produção\n─────────\n' + bombStatus;
+            html += '<td class="has-tooltip" title="' + tipBomb + '">' + fmtT(e.pumped, 1) + '</td>';
+
+            // Fóssil — tooltip com decomposição + % total
+            var tipFos = 'Gás Natural: ' + fmtT(e.gas, 2) + ' GWh\nGás de Carvão: ' + fmtT(e.gas_coal_derived, 2) + ' GWh\nCarvão: ' + fmtT(e.coal_hard, 2) + ' GWh\nLinhite: ' + fmtT(e.coal_lignite, 2) + ' GWh\nPetróleo: ' + fmtT(e.oil, 2) + ' GWh\nOutro: ' + fmtT(e.other_src, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.fossil, 2) + ' GWh\n' + pctOf(e.fossil) + ' da produção';
+            html += '<td class="has-tooltip" title="' + tipFos + '">' + fmtT(e.fossil, 1) + '</td>';
 
             // Nuclear
-            html += '<td>' + e.nuclear.toFixed(1) + '</td>';
+            html += '<td class="has-tooltip" title="Nuclear: ' + fmtT(e.nuclear, 2) + ' GWh\n' + pctOf(e.nuclear) + ' da produção">' + fmtT(e.nuclear, 1) + '</td>';
 
-            // Total — tooltip com renováveis + nuclear + fóssil
-            var renTotal = e.solar + e.eolica + e.hydro + e.biomass_total;
-            var tipTotal = 'Renovável: ' + renTotal.toFixed(2) + ' GWh (' + e.ren.toFixed(1) + '%)\nNuclear: ' + e.nuclear.toFixed(2) + ' GWh\nFóssil: ' + e.fossil.toFixed(2) + ' GWh';
-            html += '<td class="has-tooltip" title="' + tipTotal + '">' + e.total.toFixed(1) + '</td>';
+            // Total — tooltip com renováveis + nuclear + fóssil (+ bombagem conforme toggle)
+            var pumpedLbl = includePumped ? '\nBombagem: ' + fmtT(e.pumped, 2) + ' GWh (no denominador)' : '\nBombagem: ' + fmtT(e.pumped, 2) + ' GWh (excluída do denominador)';
+            var denomLbl = includePumped ? 'Denominador: ' + fmtT(e.total, 2) + ' GWh (total)' : 'Denominador: ' + fmtT(denom, 2) + ' GWh (total − bombagem)';
+            var tipTotal = 'Renovável: ' + fmtT(e.renSum, 2) + ' GWh (' + fmtT(e.ren, 1) + ' %)\nNuclear: ' + fmtT(e.nuclear, 2) + ' GWh\nFóssil: ' + fmtT(e.fossil, 2) + ' GWh' + pumpedLbl + '\n─────────\nProdução total: ' + fmtT(e.total, 2) + ' GWh\n' + denomLbl;
+            html += '<td class="has-tooltip" title="' + tipTotal + '">' + fmtT(e.total, 1) + '</td>';
             html += '</tr>';
         }
 
@@ -1362,8 +1553,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return out;
     }
 
-    // Agregar dados diários em médias por país
-    function aggregateData(byDate) {
+    // Agregar dados diários em médias OU totais por país.
+    // ren_share é SEMPRE ponderada (Σrenováveis / Σtotal × 100), independentemente de agg.
+    function aggregateData(byDate, agg) {
+        agg = agg || 'mean'; // 'mean' | 'sum'
         var dates = Object.keys(byDate);
         if (dates.length === 0) return {};
         var countries = {};
@@ -1371,19 +1564,22 @@ document.addEventListener('DOMContentLoaded', function() {
             var day = byDate[dates[i]];
             for (var c in day) {
                 if (!day.hasOwnProperty(c)) continue;
-                if (!countries[c]) countries[c] = { _count: 0, _sumRen: 0, _totalSum: 0, _sources: {}, prod: {} };
                 var d = day[c];
                 if (d.ren_share == null) continue;
+                if (!countries[c]) countries[c] = { _count: 0, _totalSum: 0, _renSum: 0, _loadSum: 0, _sources: {}, _prod: {} };
                 countries[c]._count++;
-                countries[c]._sumRen += d.ren_share;
                 countries[c]._totalSum += (d.total || 0);
+                if (d.production && d.production.load) countries[c]._loadSum += d.production.load;
                 var src = d.source || 'real';
                 countries[c]._sources[src] = (countries[c]._sources[src] || 0) + 1;
                 var p = d.production || {};
                 for (var k in p) {
-                    if (p.hasOwnProperty(k)) {
-                        countries[c].prod[k] = (countries[c].prod[k] || 0) + (p[k] || 0);
-                    }
+                    if (p.hasOwnProperty(k)) countries[c]._prod[k] = (countries[c]._prod[k] || 0) + (p[k] || 0);
+                }
+                // Somar categorias renováveis para ren_share ponderada
+                for (var ri = 0; ri < RENEWABLE_KEYS.length; ri++) {
+                    var rkey = RENEWABLE_KEYS[ri];
+                    if (p[rkey] != null) countries[c]._renSum += p[rkey];
                 }
             }
         }
@@ -1392,17 +1588,31 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!countries.hasOwnProperty(cc)) continue;
             var a = countries[cc];
             if (a._count === 0) continue;
-            var avgProd = {};
-            for (var kk in a.prod) { if (a.prod.hasOwnProperty(kk)) avgProd[kk] = a.prod[kk] / a._count; }
-            // Determinar source dominante
+            var divisor = agg === 'mean' ? a._count : 1;
+            var prod = {};
+            for (var kk in a._prod) { if (a._prod.hasOwnProperty(kk)) prod[kk] = a._prod[kk] / divisor; }
             var domSrc = 'real', domN = 0;
             for (var sk in a._sources) { if (a._sources[sk] > domN) { domN = a._sources[sk]; domSrc = sk; } }
             out[cc] = {
-                ren_share: a._sumRen / a._count,
-                total: a._totalSum / a._count,
-                production: avgProd,
+                ren_share: a._totalSum > 0 ? (a._renSum / a._totalSum * 100) : 0,
+                ren_share_load: a._loadSum > 0 ? (a._renSum / a._loadSum * 100) : null,
+                total: a._totalSum / divisor,
+                production: prod,
                 source: domSrc
             };
+        }
+        return out;
+    }
+
+    // Intervalo arbitrário (inclusivo)
+    function datesBetween(startStr, endStr) {
+        var out = [];
+        var cur = parseDate(startStr);
+        var end = parseDate(endStr);
+        while (cur <= end) {
+            var s = formatDate(cur);
+            if (s >= DATA_INICIO) out.push(s);
+            cur.setDate(cur.getDate() + 1);
         }
         return out;
     }
@@ -1413,6 +1623,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { key: 'solar',    label: 'Solar',       color: '#FFDA8B' },
         { key: 'eolica',   label: 'Eólica',      color: '#B7C8AE' },
         { key: 'hydro',    label: 'Hídrica',     color: '#6C98EA' },
+        { key: 'pumped',   label: 'Bombagem',    color: '#94a3b8' },
         { key: 'nuclear',  label: 'Nuclear',     color: '#FF4040' },
         { key: 'biomass',  label: 'Biomassa',    color: '#40B166' },
         { key: 'other_ren',label: 'Out. Renov.', color: '#14b8a6' },
@@ -1566,17 +1777,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             label: function(c) {
                                 var v = c.parsed.y;
                                 if (v == null) return c.dataset.label + ': —';
-                                if (c.dataset.yAxisID === 'yPct') return c.dataset.label + ': ' + v.toFixed(1) + '%';
-                                return c.dataset.label + ': ' + v.toFixed(2) + ' GWh';
+                                if (c.dataset.yAxisID === 'yPct') return c.dataset.label + ': ' + fmtN(v, 1) + '%';
+                                return c.dataset.label + ': ' + fmtN(v, 2) + ' GWh';
                             }
                         }
                     }
                 },
                 scales: {
                     x: { ticks: { color: isDark ? '#94a3b8' : '#666', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
-                    yPct: { position: 'right', min: 0, max: 100, title: { display: true, text: '% Renovável', color: '#15803d' }, ticks: { color: isDark ? '#94a3b8' : '#666' }, grid: { display: false } },
+                    yPct: { position: 'right', min: 0, suggestedMax: 100, title: { display: true, text: '% Renovável', color: '#15803d' }, ticks: { color: isDark ? '#94a3b8' : '#666', callback: function(v) { return fmtN(v, 0) + '%'; } }, grid: { display: false } },
                     yGwh: Object.assign(
-                        { position: 'left', stacked: true, title: { display: true, text: 'GWh', color: '#1d4ed8' }, ticks: { color: isDark ? '#94a3b8' : '#666' }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
+                        { position: 'left', stacked: true, title: { display: true, text: 'GWh', color: '#1d4ed8' }, ticks: { color: isDark ? '#94a3b8' : '#666', callback: function(v) { return fmtN(v, 0); } }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
                         isBar ? {} : { min: 0 }
                     )
                 }
@@ -1587,8 +1798,34 @@ document.addEventListener('DOMContentLoaded', function() {
     async function updateEvolutionChart() {
         if (!evolutionChart) return;
         var country = seletorPais.value;
-        var dates = datesInRange(seletorData.value, 30);
+        var dates;
+        if (currentMode === 'custom' && customStart && customEnd && customStart <= customEnd) {
+            dates = datesBetween(customStart, customEnd);
+            if (dates.length > MAX_CUSTOM_DAYS) dates = dates.slice(-MAX_CUSTOM_DAYS);
+        } else {
+            dates = datesInRange(seletorData.value, 30);
+        }
         if (dates.length === 0) return;
+        // Bloquear "Colunas" em intervalos longos (>60 dias) — ficam ilegíveis
+        var tooLong = dates.length > 60;
+        var evoBtns = document.querySelectorAll('#evolution-type-toggle .mode-btn');
+        for (var eb = 0; eb < evoBtns.length; eb++) {
+            var t = evoBtns[eb].getAttribute('data-evotype');
+            if (t === 'bar') {
+                evoBtns[eb].disabled = tooLong;
+                evoBtns[eb].title = tooLong ? 'Indisponível em intervalos superiores a 60 dias' : '';
+            }
+        }
+        if (tooLong && evolutionType === 'bar') {
+            evolutionType = 'area';
+            for (var eb2 = 0; eb2 < evoBtns.length; eb2++) {
+                var isArea = evoBtns[eb2].getAttribute('data-evotype') === 'area';
+                evoBtns[eb2].classList.toggle('active', isArea);
+                evoBtns[eb2].setAttribute('aria-pressed', isArea ? 'true' : 'false');
+            }
+            if (evolutionChart) { evolutionChart.destroy(); evolutionChart = null; }
+            initEvolutionChart();
+        }
         var byDate = await loadDatesData(dates);
 
         var labels = [], fullDates = [], renArr = [], totArr = [], loadArr = [];
@@ -1610,13 +1847,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!cutoff && d && (d.source === 'forecast' || d.source === 'provisional')) cutoff = true;
             if (cutoff) d = null;
             if (d) {
-                renArr.push(d.ren_share != null ? d.ren_share : null);
+                renArr.push(computeRenShare(d));
                 totArr.push(d.total != null ? d.total : null);
                 loadArr.push(d.production && d.production.load ? d.production.load : null);
                 var pr = d.production || {};
                 catArrs.solar.push(pr.solar || 0);
                 catArrs.eolica.push((pr.wind_onshore || 0) + (pr.wind_offshore || 0));
-                catArrs.hydro.push((pr.hydro_run_of_river || 0) + (pr.hydro_water_reservoir || 0) + (pr.hydro_pumped_storage || 0));
+                catArrs.hydro.push((pr.hydro_run_of_river || 0) + (pr.hydro_water_reservoir || 0));
+                catArrs.pumped.push(pr.hydro_pumped_storage || 0);
                 catArrs.nuclear.push(pr.nuclear || 0);
                 catArrs.biomass.push(pr.biomass || 0);
                 catArrs.other_ren.push(sumKeys(pr, OTHER_REN_KEYS));
@@ -1650,7 +1888,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         var name = COUNTRY_NAMES[country] || country.toUpperCase();
-        document.getElementById('evolution-titulo').textContent = 'Evolução (últimos 30 dias) — ' + name;
+        var fmt2 = function(s) { var p = s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; };
+        var evoPeriod;
+        if (currentMode === 'custom' && customStart && customEnd) {
+            evoPeriod = fmt2(dates[0]) + ' \u2192 ' + fmt2(dates[dates.length-1]) + ' (' + dates.length + ' dias)';
+        } else {
+            evoPeriod = 'últimos ' + dates.length + ' dias';
+        }
+        var baseTxt = renBase === 'load' ? ' · % Renov. sobre Consumo' : ' · % Renov. sobre Produção';
+        document.getElementById('evolution-titulo').textContent = 'Evolução (' + evoPeriod + ') — ' + name + baseTxt;
         evolutionChart.update();
     }
 
@@ -1670,14 +1916,24 @@ document.addEventListener('DOMContentLoaded', function() {
     async function loadProductionData(dateStr) {
         loadingIndicator.style.display = 'block';
 
-        var days = currentMode === 'week' ? 7 : (currentMode === 'month' ? 30 : 1);
-        if (days === 1) {
+        var dates;
+        if (currentMode === 'custom') {
+            if (!customStart || !customEnd || customStart > customEnd) {
+                loadingIndicator.style.display = 'none';
+                return; // aguardar input válido
+            }
+            dates = datesBetween(customStart, customEnd);
+            if (dates.length > MAX_CUSTOM_DAYS) dates = dates.slice(-MAX_CUSTOM_DAYS);
+            var byDate = await loadDatesData(dates);
+            currentData = aggregateData(byDate, aggMode);
+        } else if (currentMode === 'week' || currentMode === 'month') {
+            var days = currentMode === 'week' ? 7 : 30;
+            dates = datesInRange(dateStr, days);
+            var byDate2 = await loadDatesData(dates);
+            currentData = aggregateData(byDate2, aggMode);
+        } else {
             await ensureMonth(dateStr.substring(0, 7));
             currentData = (dataCache[dateStr.substring(0, 7)] || {})[dateStr] || {};
-        } else {
-            var dates = datesInRange(dateStr, days);
-            var byDate = await loadDatesData(dates);
-            currentData = aggregateData(byDate);
         }
 
         loadingIndicator.style.display = 'none';
@@ -1689,9 +1945,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var partes = dateStr.split('-');
         var dLabel = partes[2] + '/' + partes[1] + '/' + partes[0];
-        var modeLabel = currentMode === 'week' ? ' (média 7d até ' + dLabel + ')'
-                      : currentMode === 'month' ? ' (média 30d até ' + dLabel + ')'
-                      : ' — ' + dLabel;
+        var aggText = aggMode === 'sum' ? 'total' : 'média';
+        var modeLabel;
+        if (currentMode === 'custom' && customStart && customEnd) {
+            var sp = customStart.split('-'), ep = customEnd.split('-');
+            modeLabel = ' (' + aggText + ' ' + sp[2]+'/'+sp[1]+'/'+sp[0] + ' \u2192 ' + ep[2]+'/'+ep[1]+'/'+ep[0] + ')';
+        } else if (currentMode === 'week') {
+            modeLabel = ' (' + aggText + ' 7d até ' + dLabel + ')';
+        } else if (currentMode === 'month') {
+            modeLabel = ' (' + aggText + ' 30d até ' + dLabel + ')';
+        } else {
+            modeLabel = ' — ' + dLabel;
+        }
         document.getElementById('titulo-mapa').textContent = 'Produção de Eletricidade na Europa' + modeLabel;
 
         updateChart(seletorPais.value);
@@ -1715,7 +1980,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var ds = dates[i];
             var monthData = dataCache[ds.substring(0, 7)] || {};
             var dayData = monthData[ds] && monthData[ds][country];
-            vals.push(dayData && dayData.ren_share != null ? dayData.ren_share : null);
+            vals.push(computeRenShare(dayData));
         }
         var validVals = vals.filter(function(v){ return v != null; });
         if (validVals.length < 2) return '';
@@ -1829,6 +2094,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 seletorPais.value = urlCountry;
             }
 
+            // Ler mode / agg / start / end da URL
+            var urlMode = urlParams.get('mode');
+            var urlAgg = urlParams.get('agg');
+            var urlStart = urlParams.get('start');
+            var urlEnd = urlParams.get('end');
+            if (urlAgg === 'sum' || urlAgg === 'mean') aggMode = urlAgg;
+            var urlRenBase = urlParams.get('renbase');
+            if (urlRenBase === 'load' || urlRenBase === 'production') renBase = urlRenBase;
+            var urlPumped = urlParams.get('pumped');
+            if (urlPumped === 'include') includePumped = true;
+            else if (urlPumped === 'exclude') includePumped = false;
+            if (urlMode === 'week' || urlMode === 'month' || urlMode === 'custom') currentMode = urlMode;
+            if (currentMode === 'custom' && urlStart && urlEnd && /^\d{4}-\d{2}-\d{2}$/.test(urlStart) && /^\d{4}-\d{2}-\d{2}$/.test(urlEnd)) {
+                customStart = urlStart < DATA_INICIO ? DATA_INICIO : urlStart;
+                customEnd = ultimaDataDisponivel && urlEnd > ultimaDataDisponivel ? ultimaDataDisponivel : urlEnd;
+            }
+
             initChart();
             initEvolutionChart();
 
@@ -1852,12 +2134,87 @@ document.addEventListener('DOMContentLoaded', function() {
             btnPrev.addEventListener('click', function() { alterarData(-1); });
             btnNext.addEventListener('click', function() { alterarData(1); });
 
+            // --- Botão copiar link partilhável ---
+            function buildShareUrl() {
+                var base = window.location.origin + window.location.pathname;
+                var p = new URLSearchParams();
+                p.set('mode', currentMode);
+                if (currentMode !== 'day') p.set('agg', aggMode);
+                if (currentMode === 'custom' && customStart && customEnd) {
+                    p.set('start', customStart);
+                    p.set('end', customEnd);
+                } else {
+                    p.set('date', seletorData.value);
+                }
+                p.set('country', seletorPais.value);
+                if (renBase !== 'production') p.set('renbase', renBase);
+                if (includePumped) p.set('pumped', 'include');
+                return base + '?' + p.toString();
+            }
+            var btnShare = document.getElementById('btn-share');
+            var shareFb = document.getElementById('share-feedback');
+            if (btnShare) btnShare.addEventListener('click', function() {
+                var url = buildShareUrl();
+                var done = function() {
+                    shareFb.style.display = 'inline';
+                    setTimeout(function(){ shareFb.style.display = 'none'; }, 1800);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(done).catch(function(){
+                        window.prompt('Copie o link:', url);
+                    });
+                } else {
+                    window.prompt('Copie o link:', url);
+                }
+            });
+
             // --- Link cruzado para mapa-precos ---
             function updateCrossLink() {
                 var lnk = document.getElementById('link-precos');
-                if (lnk) lnk.href = 'mapa-precos.html?date=' + encodeURIComponent(seletorData.value);
+                if (!lnk) return;
+                var d = (currentMode === 'custom' && customEnd) ? customEnd : seletorData.value;
+                lnk.href = 'mapa-precos.html?date=' + encodeURIComponent(d);
             }
             updateCrossLink();
+
+            // Sincronizar botões com estado inicial (URL)
+            (function syncInitialToggles() {
+                var mbs = document.querySelectorAll('.mode-toggle .mode-btn');
+                for (var i = 0; i < mbs.length; i++) {
+                    var isActive = mbs[i].getAttribute('data-mode') === currentMode;
+                    mbs[i].classList.toggle('active', isActive);
+                    mbs[i].setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                }
+                var abs2 = document.querySelectorAll('#agg-toggle .mode-btn');
+                for (var j = 0; j < abs2.length; j++) {
+                    var isA = abs2[j].getAttribute('data-agg') === aggMode;
+                    abs2[j].classList.toggle('active', isA);
+                    abs2[j].setAttribute('aria-pressed', isA ? 'true' : 'false');
+                }
+                var rbs = document.querySelectorAll('#renbase-toggle .mode-btn');
+                for (var r = 0; r < rbs.length; r++) {
+                    var isR = rbs[r].getAttribute('data-renbase') === renBase;
+                    rbs[r].classList.toggle('active', isR);
+                    rbs[r].setAttribute('aria-pressed', isR ? 'true' : 'false');
+                }
+                var pbs = document.querySelectorAll('#pumped-toggle .mode-btn');
+                var pumpedState = includePumped ? 'include' : 'exclude';
+                for (var pi = 0; pi < pbs.length; pi++) {
+                    var isP = pbs[pi].getAttribute('data-pumped') === pumpedState;
+                    pbs[pi].classList.toggle('active', isP);
+                    pbs[pi].setAttribute('aria-pressed', isP ? 'true' : 'false');
+                }
+                var rp = document.getElementById('range-pickers');
+                var ag = document.getElementById('agg-toggle');
+                var ds = document.querySelector('.date-selector');
+                rp.classList.toggle('visible', currentMode === 'custom');
+                ag.classList.toggle('visible', currentMode !== 'day');
+                if (ds) ds.style.display = (currentMode === 'custom') ? 'none' : '';
+                if (currentMode === 'custom' && customStart && customEnd) {
+                    document.getElementById('range-start').value = customStart;
+                    document.getElementById('range-end').value = customEnd;
+                }
+            })();
 
             // --- Toggle Colunas / Áreas (tipo do gráfico de evolução) ---
             var evoTypeBtns = document.querySelectorAll('#evolution-type-toggle .mode-btn');
@@ -1875,8 +2232,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-            // --- Mode toggle (diário / semanal / mensal) ---
+            // --- Mode toggle (diário / semanal / mensal / personalizado) ---
             var modeBtns = document.querySelectorAll('.mode-toggle .mode-btn');
+            var rangePickers = document.getElementById('range-pickers');
+            var aggToggleEl = document.getElementById('agg-toggle');
+            var dateSelectorEl = document.querySelector('.date-selector');
+            var rangeStart = document.getElementById('range-start');
+            var rangeEnd = document.getElementById('range-end');
+            var rangeInfo = document.getElementById('range-info');
+
+            function applyModeUI() {
+                rangePickers.classList.toggle('visible', currentMode === 'custom');
+                aggToggleEl.classList.toggle('visible', currentMode !== 'day');
+                if (dateSelectorEl) dateSelectorEl.style.display = (currentMode === 'custom') ? 'none' : '';
+            }
+
+            function updateRangeInfo() {
+                if (!customStart || !customEnd) { rangeInfo.textContent = ''; return; }
+                if (customStart > customEnd) { rangeInfo.textContent = 'Início deve ser \u2264 Fim'; rangeInfo.style.color = '#b91c1c'; return; }
+                var ds = datesBetween(customStart, customEnd);
+                var extra = ds.length > MAX_CUSTOM_DAYS ? ' (limitado a ' + MAX_CUSTOM_DAYS + ')' : '';
+                rangeInfo.textContent = ds.length + ' dias' + extra;
+                rangeInfo.style.color = '';
+            }
+
+            rangeStart.min = DATA_INICIO; rangeEnd.min = DATA_INICIO;
+            if (ultimaDataDisponivel) { rangeStart.max = ultimaDataDisponivel; rangeEnd.max = ultimaDataDisponivel; }
+
+            rangeStart.addEventListener('change', function() {
+                customStart = this.value || null;
+                updateRangeInfo();
+                if (currentMode === 'custom') loadProductionData(seletorData.value);
+            });
+            rangeEnd.addEventListener('change', function() {
+                customEnd = this.value || null;
+                updateRangeInfo();
+                if (currentMode === 'custom') loadProductionData(seletorData.value);
+            });
+
             for (var mb = 0; mb < modeBtns.length; mb++) {
                 modeBtns[mb].addEventListener('click', function() {
                     var newMode = this.getAttribute('data-mode');
@@ -1885,7 +2278,69 @@ document.addEventListener('DOMContentLoaded', function() {
                     for (var k = 0; k < modeBtns.length; k++) { modeBtns[k].classList.remove('active'); modeBtns[k].setAttribute('aria-pressed', 'false'); }
                     this.classList.add('active');
                     this.setAttribute('aria-pressed', 'true');
+                    applyModeUI();
+                    // Se entrou em custom sem datas, usar default: últimos 30 dias
+                    if (currentMode === 'custom' && (!customStart || !customEnd)) {
+                        customEnd = seletorData.value;
+                        var startD = parseDate(customEnd); startD.setDate(startD.getDate() - 29);
+                        customStart = formatDate(startD);
+                        if (customStart < DATA_INICIO) customStart = DATA_INICIO;
+                        rangeStart.value = customStart;
+                        rangeEnd.value = customEnd;
+                        updateRangeInfo();
+                    }
                     loadProductionData(seletorData.value);
+                });
+            }
+
+            // --- Agg toggle (médias / totais) ---
+            var aggBtns = document.querySelectorAll('#agg-toggle .mode-btn');
+            for (var ab = 0; ab < aggBtns.length; ab++) {
+                aggBtns[ab].addEventListener('click', function() {
+                    var newAgg = this.getAttribute('data-agg');
+                    if (newAgg === aggMode) return;
+                    aggMode = newAgg;
+                    for (var k = 0; k < aggBtns.length; k++) { aggBtns[k].classList.remove('active'); aggBtns[k].setAttribute('aria-pressed', 'false'); }
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                    if (currentMode !== 'day') loadProductionData(seletorData.value);
+                });
+            }
+
+            // --- RenBase toggle (% sobre Produção / Consumo) ---
+            var renBaseBtns = document.querySelectorAll('#renbase-toggle .mode-btn');
+            for (var rb = 0; rb < renBaseBtns.length; rb++) {
+                renBaseBtns[rb].addEventListener('click', function() {
+                    var newRb = this.getAttribute('data-renbase');
+                    if (newRb === renBase) return;
+                    renBase = newRb;
+                    for (var k = 0; k < renBaseBtns.length; k++) { renBaseBtns[k].classList.remove('active'); renBaseBtns[k].setAttribute('aria-pressed', 'false'); }
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                    // Re-render tudo sem recarregar dados
+                    if (geojsonLayer) geojsonLayer.setStyle(style);
+                    updateRenLabels();
+                    updateChart(seletorPais.value);
+                    updateRankedList();
+                    updateEvolutionChart();
+                });
+            }
+
+            // --- Pumped toggle (Incluir / Excluir bombagem) ---
+            var pumpedBtns = document.querySelectorAll('#pumped-toggle .mode-btn');
+            for (var pb = 0; pb < pumpedBtns.length; pb++) {
+                pumpedBtns[pb].addEventListener('click', function() {
+                    var newPump = this.getAttribute('data-pumped') === 'include';
+                    if (newPump === includePumped) return;
+                    includePumped = newPump;
+                    for (var k = 0; k < pumpedBtns.length; k++) { pumpedBtns[k].classList.remove('active'); pumpedBtns[k].setAttribute('aria-pressed', 'false'); }
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                    if (geojsonLayer) geojsonLayer.setStyle(style);
+                    updateRenLabels();
+                    updateChart(seletorPais.value);
+                    updateRankedList();
+                    updateEvolutionChart();
                 });
             }
 
