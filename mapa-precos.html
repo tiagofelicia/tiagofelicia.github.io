@@ -5,15 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Mapa de Preços da Eletricidade na Europa - Day-Ahead | Tiago Felícia</title>
-    <meta name="description" content="Mapa interativo com os preços médios diários de eletricidade (day-ahead) por zona de licitação na Europa. Dados via Energy-Charts API." />
+    <meta name="description" content="Mapa interativo dos preços médios diários da eletricidade (day-ahead) em 44 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, heatmap anual e comparação entre zonas. Dados Energy-Charts (Fraunhofer ISE)." />
+    <meta name="keywords" content="preços eletricidade Europa, day-ahead, mapa preços eletricidade, OMIE, EPEX, Nord Pool, zonas licitação, mercado elétrico, Energy-Charts, Tiago Felícia" />
+    <meta name="author" content="Tiago Felícia" />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-precos.html" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Mapa de Preços da Eletricidade na Europa" />
-    <meta property="og:description" content="Preços médios diários de eletricidade por zona de licitação europeia." />
+    <meta property="og:title" content="Mapa de Preços da Eletricidade na Europa — Day-Ahead" />
+    <meta property="og:description" content="Preços médios diários da eletricidade em 44 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução e heatmap anual." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-precos.html" />
     <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Tiago Felícia" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mapa de Preços da Eletricidade na Europa" />
+    <meta name="twitter:description" content="Preços médios diários da eletricidade em 44 zonas de licitação europeias." />
 
     <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
@@ -25,6 +32,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
     <script>
@@ -37,13 +45,82 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Mapa de Preços da Eletricidade na Europa",
-      "url": "https://www.tiagofelicia.pt/mapa-precos.html",
-      "description": "Mapa interativo com preços médios diários de eletricidade por zona de licitação europeia.",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Web browser",
-      "author": { "@type": "Person", "name": "Tiago Felícia" }
+      "@graph": [
+        {
+          "@type": "Dataset",
+          "@id": "https://www.tiagofelicia.pt/mapa-precos.html#dataset",
+          "name": "Preços diários da eletricidade por zona de licitação europeia",
+          "alternateName": "European Day-Ahead Electricity Prices by Bidding Zone",
+          "description": "Conjunto de dados com preços médios diários da eletricidade (mercado day-ahead) em 44 zonas de licitação europeias, incluindo média, mínimo, máximo e respetivas horas locais. Atualizado diariamente. Fonte: API Energy-Charts (Fraunhofer ISE).",
+          "url": "https://www.tiagofelicia.pt/mapa-precos.html",
+          "keywords": ["eletricidade", "day-ahead", "preços", "Europa", "OMIE", "EPEX", "Nord Pool", "zonas de licitação", "mercado elétrico"],
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "isAccessibleForFree": true,
+          "inLanguage": "pt-PT",
+          "creator": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
+          "publisher": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
+          "temporalCoverage": "2025-01-01/..",
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": "Europa",
+            "geo": {
+              "@type": "GeoShape",
+              "box": "34.5 -10.5 71.5 32.0"
+            }
+          },
+          "variableMeasured": [
+            { "@type": "PropertyValue", "name": "Preço médio diário", "unitText": "EUR/MWh" },
+            { "@type": "PropertyValue", "name": "Preço mínimo diário", "unitText": "EUR/MWh" },
+            { "@type": "PropertyValue", "name": "Preço máximo diário", "unitText": "EUR/MWh" }
+          ],
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "encodingFormat": "application/json",
+              "contentUrl": "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos/"
+            }
+          ],
+          "isBasedOn": {
+            "@type": "Dataset",
+            "name": "Energy-Charts API",
+            "url": "https://api.energy-charts.info/",
+            "creator": { "@type": "Organization", "name": "Fraunhofer ISE", "url": "https://www.ise.fraunhofer.de/" }
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://www.tiagofelicia.pt/mapa-precos.html#app",
+          "name": "Mapa de Preços da Eletricidade na Europa",
+          "url": "https://www.tiagofelicia.pt/mapa-precos.html",
+          "description": "Mapa interativo com preços médios diários de eletricidade por zona de licitação europeia, com vistas diária, semanal, mensal e personalizada, gráfico de evolução, heatmap anual e pesquisa de zona.",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web browser",
+          "browserRequirements": "Requires JavaScript",
+          "isAccessibleForFree": true,
+          "inLanguage": "pt-PT",
+          "author": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+          "featureList": [
+            "Mapa choropleth com 44 zonas europeias",
+            "Vistas diária, semanal, mensal e personalizada",
+            "Tabela ordenável com média, mínimo, máximo e amplitude",
+            "Diferença vs Portugal (ΔPT) e variação vs dia anterior",
+            "Gráfico de evolução com comparação entre zonas",
+            "Heatmap anual de preços",
+            "Pesquisa e filtro de zona",
+            "Link de partilha por data",
+            "Modo escuro"
+          ],
+          "about": { "@id": "https://www.tiagofelicia.pt/mapa-precos.html#dataset" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+            { "@type": "ListItem", "position": 2, "name": "Mapa de Preços da Eletricidade", "item": "https://www.tiagofelicia.pt/mapa-precos.html" }
+          ]
+        }
+      ]
     }
     </script>
 
@@ -55,6 +132,58 @@
         .date-selector { margin-bottom: 20px; text-align: center; }
         .date-selector label { font-weight: bold; margin-right: 10px; }
         .date-selector input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+
+        /* Resumo rápido */
+        .resumo-rapido { background: #f1f5f9; border-left: 4px solid #2563eb; padding: 12px 16px; margin: 0 auto 18px auto; max-width: 1100px; border-radius: 4px; font-size: 0.95em; line-height: 1.55; color: #1e293b; }
+        .resumo-rapido strong { color: #0f172a; }
+        .resumo-rapido .resumo-label { font-weight: 600; }
+        .resumo-rapido .resumo-cheap { color: #2171b5; font-weight: 600; }
+        .resumo-rapido .resumo-expensive { color: #b91c1c; font-weight: 600; }
+        .resumo-rapido .resumo-pt-bad { color: #b91c1c; font-weight: 600; }
+        .resumo-rapido .resumo-pt-good { color: #15803d; font-weight: 600; }
+        [data-theme="dark"] .resumo-rapido { background: #1e293b; color: #e2e8f0; border-left-color: #60a5fa; }
+        [data-theme="dark"] .resumo-rapido strong { color: #f1f5f9; }
+        [data-theme="dark"] .resumo-rapido .resumo-cheap { color: #60a5fa; }
+        [data-theme="dark"] .resumo-rapido .resumo-expensive { color: #f87171; }
+        [data-theme="dark"] .resumo-rapido .resumo-pt-bad { color: #f87171; }
+        [data-theme="dark"] .resumo-rapido .resumo-pt-good { color: #4ade80; }
+
+        /* Tabs de modo */
+        .modo-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 auto 14px auto; }
+        .modo-tab { background: #fff; border: 1px solid #cbd5e1; padding: 6px 14px; cursor: pointer; font-size: 0.9em; color: #2c3e50; border-radius: 5px; transition: background 0.2s; }
+        .modo-tab:hover { background: #e2e8f0; }
+        .modo-tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .modo-tab:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+        .range-wrapper { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin: 0 auto 12px auto; }
+        .range-wrapper label { font-size: 0.9em; color: #2c3e50; }
+        .range-wrapper input { padding: 6px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em; }
+        [data-theme="dark"] .modo-tab { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .modo-tab:hover { background: #334155; }
+        [data-theme="dark"] .modo-tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        [data-theme="dark"] .range-wrapper label { color: #cbd5e1; }
+        [data-theme="dark"] .range-wrapper input { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+
+        /* Setas de navegacao do dia */
+        .date-nav-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+        .btn-nav { background: #fff; border: 1px solid #ccc; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center; transition: background 0.2s; color: #2c3e50; }
+        .btn-nav:hover { background: #e2e8f0; }
+        .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Link cruzado para mapa-producao */
+        .cross-link { text-align: center; margin: 8px auto 22px; }
+        .cross-link a { display: inline-block; background: #f1f5f9; color: #2563eb; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 5px; text-decoration: none; font-size: 0.85em; transition: background 0.2s; }
+        .cross-link a:hover { background: #dbeafe; }
+
+        /* Botao de partilha */
+        .share-wrapper { text-align: center; margin-top: 15px; }
+        .share-btn { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; }
+        .share-btn:hover { background: #e2e8f0; }
+        .share-feedback { margin-left: 10px; font-size: 0.85em; color: #16a34a; display: none; }
+
+        /* Foco visivel (a11y) */
+        .btn-nav:focus-visible, .btn-fullscreen:focus-visible,
+        .cross-link a:focus-visible, .share-btn:focus-visible,
+        #seletor-data:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
 
         /* Contentor das setas e input */
         .date-nav-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;}
@@ -87,6 +216,13 @@
         .info-control .stats-detail { font-size: 0.85em; margin-top: 6px; line-height: 1.6; }
         .info-control .stats-hour { opacity: 0.6; }
         .info-control .stats-amplitude { font-size: 0.8em; opacity: 0.5; margin-top: 2px; }
+        .info-control .period-label { font-size: 0.78em; color: #64748b; margin-top: 2px; }
+        [data-theme="dark"] .info-control .period-label { color: #94a3b8; }
+        .info-control .sparkline-wrap { margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; }
+        .info-control .sparkline-label { font-size: 0.72em; color: #64748b; margin-bottom: 2px; }
+        .info-control .sparkline { display: block; }
+        [data-theme="dark"] .info-control .sparkline-wrap { border-top-color: #475569; }
+        [data-theme="dark"] .info-control .sparkline-label { color: #94a3b8; }
 
         /* Legenda compacta */
         .legend { line-height: 18px; font-size: 0.75em; padding: 6px 8px !important; min-width: auto !important; }
@@ -110,7 +246,81 @@
 
         /* Lista de precos ordenada */
         #ranked-list-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 10px; box-sizing: border-box; }
+        #chart-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
+        /* Breakout para escapar do max-width: 1200px do <main> */
+        #chart-wrapper.wide {
+            position: relative;
+            width: 100vw;
+            max-width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            padding: 20px 30px;
+            background: #f1f5f9;
+            border-top: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        [data-theme="dark"] #chart-wrapper.wide {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        #chart-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
+        .chart-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-size: 0.9em; }
+        .chart-controls select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; }
+        .chart-controls label { color: #2c3e50; }
+        .chart-toggle { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+        .btn-wide { background: #fff; border: 1px solid #ccc; padding: 5px 10px; font-size: 0.85em; cursor: pointer; color: #2c3e50; border-radius: 4px; transition: background 0.2s; }
+        .btn-wide:hover { background: #e2e8f0; }
+        .btn-wide.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .chart-canvas-wrap { position: relative; height: 500px; }
+        #chart-wrapper.wide .chart-canvas-wrap { height: 560px; }
+        @media (max-width: 768px) { .chart-canvas-wrap, #chart-wrapper.wide .chart-canvas-wrap { height: 300px; } }
+        [data-theme="dark"] .btn-wide { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-wide:hover { background: #334155; }
+
+        /* Heatmap calendário */
+        #heatmap-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
+        #heatmap-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
+        .heatmap-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-size: 0.9em; }
+        .heatmap-controls select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; }
+        .heatmap-controls label { color: #2c3e50; }
+        .heatmap-stats { color: #64748b; font-size: 0.88em; margin-left: 10px; }
+        #heatmap-container { overflow-x: auto; }
+        .heatmap-grid { display: inline-block; min-width: 100%; }
+        .heatmap-month-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .heatmap-month-label { width: 36px; font-size: 0.78em; color: #64748b; text-align: right; flex-shrink: 0; }
+        .heatmap-days { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; flex: 1; }
+        .heatmap-cell { aspect-ratio: 1; min-width: 14px; max-width: 28px; border-radius: 2px; cursor: pointer; transition: transform 0.1s; }
+        .heatmap-cell:hover { transform: scale(1.2); outline: 1.5px solid #2563eb; outline-offset: 1px; z-index: 1; position: relative; }
+        .heatmap-cell.empty { background: transparent !important; cursor: default; }
+        .heatmap-cell.no-data { background: #e5e7eb; cursor: default; }
+        .heatmap-day-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.7em; color: #94a3b8; }
+        .heatmap-day-numbers { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; flex: 1; padding-left: 0; }
+        .heatmap-day-numbers span { text-align: center; }
+        [data-theme="dark"] #heatmap-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] .heatmap-controls label { color: #cbd5e1; }
+        [data-theme="dark"] .heatmap-controls select { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .heatmap-stats { color: #94a3b8; }
+        [data-theme="dark"] .heatmap-month-label { color: #94a3b8; }
+        [data-theme="dark"] .heatmap-cell.no-data { background: #334155; }
+        [data-theme="dark"] #chart-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] .chart-controls label { color: #cbd5e1; }
+        [data-theme="dark"] .chart-controls select { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         #ranked-list-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
+        .zone-search-wrap { position: relative; max-width: 420px; margin: 0 auto 12px auto; display: flex; align-items: center; gap: 8px; }
+        .zone-search { flex: 1; padding: 8px 32px 8px 12px; font-size: 0.95em; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #1e293b; outline: none; transition: border-color .15s, box-shadow .15s; }
+        .zone-search:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+        .zone-search-clear { position: absolute; right: 90px; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 1.3em; line-height: 1; color: #64748b; cursor: pointer; padding: 0 6px; }
+        .zone-search-clear:hover { color: #1e293b; }
+        .zone-search-count { font-size: 0.85em; color: #64748b; min-width: 70px; text-align: right; }
+        [data-theme="dark"] .zone-search { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .zone-search:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96,165,250,.2); }
+        [data-theme="dark"] .zone-search-clear { color: #94a3b8; }
+        [data-theme="dark"] .zone-search-clear:hover { color: #e2e8f0; }
+        [data-theme="dark"] .zone-search-count { color: #94a3b8; }
+        .ranked-table tr.search-hidden { display: none; }
+        .price-label.search-dim { opacity: 0.25; }
         .ranked-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
         .ranked-table th { background: #f1f5f9; padding: 8px 12px; text-align: center; border-bottom: 2px solid #ddd; font-weight: 600; }
         .ranked-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
@@ -118,6 +328,35 @@
         .ranked-table .price-cell { font-weight: bold; text-align: center; padding-right: 20px; }
         .ranked-table .rank-cell { text-align: center; width: 50px; color: #888; }
         .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
+        .ranked-table .zone-flag { font-size: 1.1em; margin-right: 4px; }
+        .table-toolbar { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 12px; font-size: 0.88em; }
+        .ranked-table .delta-pos { color: #b91c1c; font-weight: 600; }
+        .ranked-table .delta-neg { color: #15803d; font-weight: 600; }
+        .ranked-table .delta-zero { color: #64748b; }
+        [data-theme="dark"] .ranked-table .delta-pos { color: #f87171; }
+        [data-theme="dark"] .ranked-table .delta-neg { color: #4ade80; }
+        [data-theme="dark"] .ranked-table .delta-zero { color: #94a3b8; }
+        .flag-img { display: inline-block; vertical-align: middle; margin-right: 5px; border: 1px solid rgba(0,0,0,0.15); border-radius: 1px; }
+        [data-theme="dark"] .flag-img { border-color: rgba(255,255,255,0.2); }
+        .ranked-table th { text-align: center; }
+        .ranked-table td.num { text-align: center; font-variant-numeric: tabular-nums; }
+        .ranked-table td.zone-cell { text-align: left; }
+        .ranked-table td.hour-col, .ranked-table th.hour-col { text-align: center; color: #64748b; font-size: 0.85em; }
+        .ranked-table td.neg { color: #dc2626; font-weight: bold; }
+        [data-theme="dark"] .ranked-table td.neg { color: #f87171; }
+        .ranked-table th.sortable { cursor: pointer; user-select: none; }
+        .ranked-table th.sortable:hover { background: #e2e8f0; }
+        .ranked-table .sort-arrow { font-size: 0.75em; color: #94a3b8; margin-left: 3px; }
+        .ranked-table .sort-arrow.active { color: #2563eb; }
+        .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        @media (max-width: 768px) {
+            .ranked-table { font-size: 0.8em; min-width: 640px; }
+            .ranked-table th, .ranked-table td { padding: 5px 8px; }
+        }
+        [data-theme="dark"] .ranked-table th.sortable:hover { background: #334155; }
+        [data-theme="dark"] .ranked-table td.hour-col, [data-theme="dark"] .ranked-table th.hour-col { color: #94a3b8; }
+        [data-theme="dark"] .ranked-table .sort-arrow { color: #64748b; }
+        [data-theme="dark"] .ranked-table .sort-arrow.active { color: #60a5fa; }
 
         /* FAQ */
         .content-support { max-width: 1300px; margin: 40px auto; padding: 0 15px; }
@@ -153,6 +392,13 @@
         [data-theme="dark"] .btn-fullscreen:hover { background: #334155; }
         [data-theme="dark"] .btn-nav { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .btn-nav:hover { background: #334155; }
+        [data-theme="dark"] .cross-link a { background: #1e293b; color: #60a5fa; border-color: #475569; }
+        [data-theme="dark"] .cross-link a:hover { background: #334155; }
+        [data-theme="dark"] .share-btn { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .share-btn:hover { background: #334155; }
+        [data-theme="dark"] .share-feedback { color: #4ade80; }
+        [data-theme="dark"] .btn-nav { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-nav:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -181,20 +427,37 @@
 
 <main>
     <div class="painel-header">
-        <div class="date-selector">
-            <label for="seletor-data">Selecione o dia:</label>
+        <div class="modo-tabs" role="tablist" aria-label="Modo de visualização">
+            <button type="button" class="modo-tab active" data-modo="diario" role="tab" aria-selected="true">Diário</button>
+            <button type="button" class="modo-tab" data-modo="semanal" role="tab" aria-selected="false">Semanal (7d)</button>
+            <button type="button" class="modo-tab" data-modo="mensal" role="tab" aria-selected="false">Mensal (30d)</button>
+            <button type="button" class="modo-tab" data-modo="custom" role="tab" aria-selected="false">Personalizado</button>
+        </div>
+        <div class="range-wrapper" id="range-wrapper" style="display:none;">
+            <label for="data-inicio">Início:</label>
+            <input type="date" id="data-inicio">
+            <label for="data-fim">Fim:</label>
+            <input type="date" id="data-fim">
+            <button type="button" id="btn-aplicar-range" class="share-btn">Aplicar</button>
+        </div>
+        <div class="date-selector" id="date-selector-wrapper">
+            <label for="seletor-data" id="label-seletor-data">Selecione o dia:</label>
             <div class="date-nav-wrapper">
-                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior">&#10094;</button>
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior" aria-label="Dia anterior">&#10094;</button>
                 <input type="date" id="seletor-data">
-                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte">&#10095;</button>
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte" aria-label="Dia seguinte">&#10095;</button>
             </div>
         </div>
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
-            Dados disponíveis desde 01/01/2026 &mdash; Valores nas horas locais de cada zona
+            Dados disponíveis desde 01/01/2025 &mdash; Valores nas horas locais de cada zona
         </p>
+        <div id="resumo-rapido" class="resumo-rapido" role="status" aria-live="polite" style="display:none;"></div>
+        <div class="cross-link">
+            <a href="#" id="link-producao" title="Ver produção de eletricidade para o mesmo dia">&#128202; Ver produção de eletricidade</a>
+        </div>
         <h1 id="titulo-mapa">Mapa de Preços Médios Diários da Eletricidade na Europa</h1>
         <p>Preço médio diário por zona de licitação (€/MWh) &mdash; Mercado Day-Ahead</p>
-        <p id="aviso-provisorio" class="aviso-provisorio" style="display:none;"></p>
+        <p id="aviso-provisorio" class="aviso-provisorio" role="status" aria-live="polite" style="display:none;"></p>
     </div>
 
     <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
@@ -209,9 +472,49 @@
 
     <div id="ranked-list-wrapper">
         <h2 id="ranked-list-titulo">Preços por zona de licitação</h2>
-        <div id="ranked-list-content">
+        <div class="zone-search-wrap">
+            <input type="search" id="zone-search" class="zone-search" placeholder="🔍 Procurar zona (ex: Portugal, PT, Itália)…" autocomplete="off" aria-label="Procurar zona">
+            <button type="button" id="zone-search-clear" class="zone-search-clear" title="Limpar pesquisa (Esc)" aria-label="Limpar pesquisa" hidden>×</button>
+            <span id="zone-search-count" class="zone-search-count" aria-live="polite"></span>
+        </div>
+        <div class="table-toolbar">
+            <label class="chart-toggle"><input type="checkbox" id="toggle-delta-pt"> Mostrar ΔPT (diferença vs Portugal)</label>
+            <label class="chart-toggle" id="toggle-var-wrapper" style="display:none;"><input type="checkbox" id="toggle-var-dia"> Mostrar variação vs dia anterior</label>
+        </div>
+        <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de preços por zona">
             <p class="no-data-msg">A carregar dados...</p>
         </div>
+        <div class="share-wrapper">
+            <button type="button" id="btn-share" class="share-btn" title="Copiar link partilhável para o dia atual">&#128279; Copiar link de partilha</button>
+            <span id="share-feedback" class="share-feedback">Copiado!</span>
+        </div>
+    </div>
+
+    <div id="chart-wrapper">
+        <h2 id="chart-titulo">Evolução de preços</h2>
+        <div class="chart-controls">
+            <label for="zone-chart-select">Zona:</label>
+            <select id="zone-chart-select"></select>
+            <label for="zone-chart-compare" class="compare-label">Comparar com:</label>
+            <select id="zone-chart-compare">
+                <option value="">— nenhuma —</option>
+            </select>
+            <label class="chart-toggle"><input type="checkbox" id="chart-fill-minmax"> Mostrar Mín–Máx</label>
+            <button type="button" id="btn-chart-wide" class="btn-wide" title="Alternar largura total do gráfico">&#x2194; Largura total</button>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="chart-precos"></canvas></div>
+    </div>
+
+    <div id="heatmap-wrapper">
+        <h2 id="heatmap-titulo">Heatmap anual de preços</h2>
+        <div class="heatmap-controls">
+            <label for="heatmap-zone">Zona:</label>
+            <select id="heatmap-zone"></select>
+            <label for="heatmap-year">Ano:</label>
+            <select id="heatmap-year"></select>
+            <span class="heatmap-stats" id="heatmap-stats"></span>
+        </div>
+        <div id="heatmap-container" role="img" aria-label="Calendário anual de preços por dia"></div>
     </div>
 
     <article class="content-support">
@@ -256,6 +559,26 @@
         </details>
 
         <details class="faq-item">
+            <summary><strong>Que funcionalidades estão disponíveis?</strong></summary>
+            <div class="faq-content">
+                <ul>
+                    <li><strong>Modos de visualização:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês completo) e Personalizado (intervalo à escolha) — médias agregadas no mapa, tabela e gráfico.</li>
+                    <li><strong>Pesquisa de zona:</strong> escreve no campo "🔍 Procurar zona" para filtrar tabela e destacar a zona no mapa (procura por código, nome PT e ignora acentos). <kbd>Esc</kbd> limpa.</li>
+                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, etc. Mostra preço médio, mín/máx (com hora local) e amplitude por zona.</li>
+                    <li><strong>ΔPT:</strong> diferença em €/MWh e % vs Portugal — útil para ver se importar/exportar é vantajoso.</li>
+                    <li><strong>Variação vs ontem:</strong> só em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
+                    <li><strong>Gráfico de evolução:</strong> escolhe uma zona (e opcionalmente uma segunda para comparar), com toggle de mín–máx (whiskers) e largura total.</li>
+                    <li><strong>Heatmap anual:</strong> calendário com 365 dias coloridos por preço — clica num dia para abrir esse dia no mapa.</li>
+                    <li><strong>Resumo dinâmico:</strong> texto descritivo da data selecionada (Hoje/Ontem/Amanhã/data), com zona mais barata e mais cara em destaque.</li>
+                    <li><strong>Link de partilha:</strong> botão "🔗 Copiar link de partilha" gera URL com a data atual — partilha com 1 clique.</li>
+                    <li><strong>Modo escuro:</strong> respeita preferência do site (toggle no menu).</li>
+                    <li><strong>Ecrã inteiro:</strong> botão no canto do mapa para visualização imersiva.</li>
+                    <li><strong>Preferências persistidas:</strong> as tuas escolhas (toggles, modo, zonas no gráfico) ficam guardadas no browser.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="faq-item">
             <summary><strong>De onde vêm os dados?</strong></summary>
             <div class="faq-content">
                 <p>Os dados são obtidos através da <strong>API Energy-Charts</strong> do <strong>Fraunhofer ISE</strong>. Os preços day-ahead provêm das bolsas de eletricidade europeias (EPEX SPOT, Nord Pool, GME, OMIE, etc.).</p>
@@ -295,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- CONFIGURACOES ---
     var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos/";
-    var DATA_INICIO = "2026-01-01";
+    var DATA_INICIO = "2025-01-01";
 
     // Nomes das zonas para display (português com acentos)
     var ZONE_NAMES = {
@@ -333,6 +656,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Zonas cujo label nao deve aparecer no mapa (apenas tooltip e cor)
     var ZONES_SEM_LABEL = { "LU": true };
 
+    // Mapeamento zona -> código ISO de país (lowercase, para flagcdn.com)
+    var ZONE_COUNTRY = {
+        "AT": "at", "BE": "be", "BG": "bg", "CH": "ch", "CZ": "cz",
+        "DE-LU": "de", "DK1": "dk", "DK2": "dk",
+        "EE": "ee", "ES": "es", "FI": "fi", "FR": "fr",
+        "GR": "gr", "HR": "hr", "HU": "hu",
+        "IT-North": "it", "IT-Centre-North": "it", "IT-Centre-South": "it",
+        "IT-South": "it", "IT-Sicily": "it", "IT-Sardinia": "it",
+        "IT-Calabria": "it", "IT-SACOAC": "fr", "IT-SACODC": "it",
+        "LT": "lt", "LV": "lv", "ME": "me", "NL": "nl",
+        "NO1": "no", "NO2": "no", "NO2NSL": "no",
+        "NO3": "no", "NO4": "no", "NO5": "no",
+        "PL": "pl", "PT": "pt", "RO": "ro", "RS": "rs",
+        "SE1": "se", "SE2": "se", "SE3": "se", "SE4": "se",
+        "SI": "si", "SK": "sk",
+        "IE": "ie", "IE(SEM)": "ie", "LU": "lu"
+    };
+    function zoneFlag(z) {
+        var cc = ZONE_COUNTRY[z];
+        if (!cc) return '';
+        return '<img class="flag-img" src="https://flagcdn.com/16x12/' + cc + '.png" srcset="https://flagcdn.com/32x24/' + cc + '.png 2x" width="16" height="12" alt="" loading="lazy">';
+    }
+    // Versão para texto (selects HTML — não suportam <img>): retorna string vazia
+    function zoneFlagText(z) { return ''; }
+
     /*
      * POSICOES PERSONALIZADAS DOS LABELS NO MAPA [latitude, longitude]
      * Para afinar manualmente, altere os valores abaixo.
@@ -366,15 +714,146 @@ document.addEventListener('DOMContentLoaded', function() {
         return val;
     }
 
+    // --- Formatacao numerica (pt-PT) ---
+    // fmtN: virgula como separador decimal, sem separador de milhares (mapas, tooltips)
+    // fmtT: idem + espaco como separador de milhares quando o inteiro tem > 4 digitos (tabelas)
+    function fmtN(v, dec) {
+        if (v == null || isNaN(v)) return '—';
+        if (dec == null) dec = 2;
+        return Number(v).toFixed(dec).replace('.', ',');
+    }
+    function fmtT(v, dec) {
+        if (v == null || isNaN(v)) return '—';
+        if (dec == null) dec = 2;
+        var s = Number(v).toFixed(dec);
+        var sign = '';
+        if (s.charAt(0) === '-') { sign = '-'; s = s.slice(1); }
+        var parts = s.split('.');
+        var intPart = parts[0];
+        if (intPart.length > 4) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        return sign + intPart + (parts[1] ? ',' + parts[1] : '');
+    }
+
     // --- ESTADO ---
     var map, geojsonLayer;
     var currentData = {};
     var dataCache = {};
     var priceLabelsLayer = null;
     var ultimaDataDisponivel = null;
+    var currentMode = 'diario';   // 'diario' | 'semanal' | 'mensal' | 'custom'
+    var currentPeriod = null;     // { start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' } quando aplicável
 
     var seletorData = document.getElementById('seletor-data');
     var loadingIndicator = document.getElementById('loading-indicator');
+
+    // --- PREFERÊNCIAS (localStorage) ---
+    var PREFS_KEY = 'mapaPrecos.prefs.v1';
+    function loadPrefs() {
+        try { return JSON.parse(localStorage.getItem(PREFS_KEY) || '{}'); }
+        catch(e) { return {}; }
+    }
+    function savePref(k, v) {
+        try {
+            var p = loadPrefs(); p[k] = v;
+            localStorage.setItem(PREFS_KEY, JSON.stringify(p));
+        } catch(e) {}
+    }
+    var prefs = loadPrefs();
+
+    // --- HELPERS DE DATA ---
+    function parseDateStr(s) {
+        var p = s.split('-');
+        return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    }
+    function formatDateStr(d) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function fmtDateBR(s) {
+        if (!s) return '';
+        var p = s.split('-');
+        return p[2] + '/' + p[1] + '/' + p[0];
+    }
+    function datesInRange(startStr, endStr) {
+        var s = parseDateStr(startStr), e = parseDateStr(endStr);
+        var out = [];
+        var cur = new Date(s);
+        while (cur <= e) {
+            out.push(formatDateStr(cur));
+            cur.setDate(cur.getDate() + 1);
+        }
+        return out;
+    }
+    function monthsInRange(startStr, endStr) {
+        var s = parseDateStr(startStr), e = parseDateStr(endStr);
+        var out = [];
+        var cur = new Date(s.getFullYear(), s.getMonth(), 1);
+        while (cur <= e) {
+            out.push(cur.getFullYear() + '-' + String(cur.getMonth() + 1).padStart(2, '0'));
+            cur.setMonth(cur.getMonth() + 1);
+        }
+        return out;
+    }
+    async function ensureMonthsLoaded(months) {
+        var toLoad = months.filter(function(m) { return !dataCache[m]; });
+        if (!toLoad.length) return;
+        await Promise.all(toLoad.map(async function(ym) {
+            try {
+                var resp = await fetchComFallback(ym + ".json");
+                dataCache[ym] = resp.ok ? await resp.json() : {};
+            } catch (e) {
+                dataCache[ym] = {};
+            }
+        }));
+    }
+
+    // Agregar período: para cada zona, calcular avg, min (com data+hora), max (com data+hora)
+    function aggregatePeriod(startStr, endStr) {
+        var dates = datesInRange(startStr, endStr);
+        var perZone = {};
+        for (var i = 0; i < dates.length; i++) {
+            var ds = dates[i];
+            var ym = ds.substring(0, 7);
+            var dayData = (dataCache[ym] || {})[ds];
+            if (!dayData) continue;
+            for (var zone in dayData) {
+                if (!dayData.hasOwnProperty(zone)) continue;
+                var raw = dayData[zone];
+                if (raw == null) continue;
+                var stats = (typeof raw === 'number') ? { avg: raw } : raw;
+                if (stats.avg == null) continue;
+                if (!perZone[zone]) perZone[zone] = { avgs: [], min: null, min_date: null, min_hour: null, max: null, max_date: null, max_hour: null };
+                perZone[zone].avgs.push(stats.avg);
+                if (stats.min != null) {
+                    if (perZone[zone].min == null || stats.min < perZone[zone].min) {
+                        perZone[zone].min = stats.min;
+                        perZone[zone].min_date = ds;
+                        perZone[zone].min_hour = stats.min_hour || '';
+                    }
+                }
+                if (stats.max != null) {
+                    if (perZone[zone].max == null || stats.max > perZone[zone].max) {
+                        perZone[zone].max = stats.max;
+                        perZone[zone].max_date = ds;
+                        perZone[zone].max_hour = stats.max_hour || '';
+                    }
+                }
+            }
+        }
+        var result = {};
+        for (var z in perZone) {
+            var p = perZone[z];
+            if (!p.avgs.length) continue;
+            var sum = 0;
+            for (var k = 0; k < p.avgs.length; k++) sum += p.avgs[k];
+            result[z] = {
+                avg: sum / p.avgs.length,
+                min: p.min, min_date: p.min_date, min_hour: p.min_hour,
+                max: p.max, max_date: p.max_date, max_hour: p.max_hour,
+                _ndays: p.avgs.length
+            };
+        }
+        return result;
+    }
 
     // --- FUNCAO AUXILIAR: fetch com fallback ---
     async function fetchComFallback(relativePath) {
@@ -448,24 +927,84 @@ document.addEventListener('DOMContentLoaded', function() {
         return this._div;
     };
 
+    // Construir SVG sparkline para os últimos 7 dias (incluindo o atual)
+    function buildSparkline(zone, currentDateStr) {
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        var partes = currentDateStr.split('-');
+        var cur = new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
+        var days = [];
+        for (var i = 6; i >= 0; i--) {
+            var d = new Date(cur);
+            d.setDate(d.getDate() - i);
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var dd = String(d.getDate()).padStart(2, '0');
+            var ds = y + '-' + m + '-' + dd;
+            var ym = ds.substring(0, 7);
+            var monthData = dataCache[ym];
+            var v = null;
+            if (monthData && monthData[ds] && monthData[ds][dataZone] != null) {
+                var raw = monthData[ds][dataZone];
+                v = (typeof raw === 'number') ? raw : (raw.avg != null ? raw.avg : null);
+            }
+            days.push({ date: ds, value: v, label: dd + '/' + m });
+        }
+
+        var valid = days.filter(function(p) { return p.value != null; });
+        if (valid.length < 2) return '';
+
+        var w = 160, h = 40, pad = 4;
+        var vals = valid.map(function(p) { return p.value; });
+        var minV = Math.min.apply(null, vals);
+        var maxV = Math.max.apply(null, vals);
+        var range = maxV - minV || 1;
+        var stepX = (w - pad * 2) / (days.length - 1);
+
+        var pts = [];
+        var circles = '';
+        for (var k = 0; k < days.length; k++) {
+            var p = days[k];
+            if (p.value == null) continue;
+            var x = pad + k * stepX;
+            var y2 = h - pad - ((p.value - minV) / range) * (h - pad * 2);
+            pts.push(x.toFixed(1) + ',' + y2.toFixed(1));
+            var isLast = (k === days.length - 1);
+            circles += '<circle cx="' + x.toFixed(1) + '" cy="' + y2.toFixed(1) + '" r="' + (isLast ? 3 : 1.8) + '" fill="' + (isLast ? '#dc2626' : '#2563eb') + '"><title>' + p.label + ': ' + fmtN(p.value, 2) + ' €/MWh</title></circle>';
+        }
+        var path = '<polyline fill="none" stroke="#2563eb" stroke-width="1.5" points="' + pts.join(' ') + '"/>';
+        return '<div class="sparkline-wrap">'
+            + '<div class="sparkline-label">Últimos 7 dias (mín ' + fmtN(minV, 2) + ' / máx ' + fmtN(maxV, 2) + ')</div>'
+            + '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" class="sparkline">' + path + circles + '</svg>'
+            + '</div>';
+    }
+
     info.update = function(props) {
         if (props) {
             var zone = props.ecZone;
             var stats = getZoneStats(zone);
             var name = ZONE_NAMES[zone] || props.displayName || zone;
             if (stats) {
-                var html = '<b>' + name + '</b>';
-                html += '<div class="price-value">' + stats.avg.toFixed(2) + ' €/MWh</div>';
-                if (stats.min !== undefined) {
-                    html += '<div class="stats-detail">';
-                    html += 'Mín: ' + stats.min.toFixed(2) + ' <span class="stats-hour">(' + stats.min_hour + ')</span><br>';
-                    html += 'Máx: ' + stats.max.toFixed(2) + ' <span class="stats-hour">(' + stats.max_hour + ')</span>';
-                    html += '</div>';
-                    html += '<div class="stats-amplitude">Amplitude: ' + (stats.max - stats.min).toFixed(2) + ' €/MWh</div>';
+                var isPeriodoMap = (currentMode !== 'diario');
+                var html = '<b>' + zoneFlag(zone) + ' ' + name + '</b>';
+                if (isPeriodoMap) {
+                    var pp = computePeriod();
+                    html += '<div class="period-label">' + fmtDateBR(pp.start) + ' → ' + fmtDateBR(pp.end) + '</div>';
                 }
+                html += '<div class="price-value">' + fmtN(stats.avg, 2) + ' €/MWh</div>';
+                if (stats.min !== undefined && stats.min !== null) {
+                    var minStamp = isPeriodoMap && stats.min_date ? (fmtDateBR(stats.min_date) + ' ' + (stats.min_hour || '')) : (stats.min_hour || '');
+                    var maxStamp = isPeriodoMap && stats.max_date ? (fmtDateBR(stats.max_date) + ' ' + (stats.max_hour || '')) : (stats.max_hour || '');
+                    html += '<div class="stats-detail">';
+                    html += 'Mín: ' + fmtN(stats.min, 2) + ' <span class="stats-hour">(' + minStamp + ')</span><br>';
+                    html += 'Máx: ' + fmtN(stats.max, 2) + ' <span class="stats-hour">(' + maxStamp + ')</span>';
+                    html += '</div>';
+                    html += '<div class="stats-amplitude">Amplitude: ' + fmtN(stats.max - stats.min, 2) + ' €/MWh</div>';
+                }
+                var curDate = document.getElementById('seletor-data').value;
+                if (curDate && !isPeriodoMap) html += buildSparkline(zone, curDate);
                 this._div.innerHTML = html;
             } else {
-                this._div.innerHTML = '<b>' + name + '</b><div class="price-value" style="color:#999;">Sem dados</div>';
+                this._div.innerHTML = '<b>' + zoneFlag(zone) + ' ' + name + '</b><div class="price-value" style="color:#999;">Sem dados</div>';
             }
         } else {
             this._div.innerHTML = '<h4>Zona de licitação</h4>Passe o rato sobre uma zona';
@@ -552,11 +1091,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 var marker = L.marker(center, {
                     icon: L.divIcon({
                         className: 'price-label',
-                        html: price.toFixed(2),
+                        html: fmtN(price, 2),
                         iconSize: [40, 14],
                         iconAnchor: [20, 7]
                     }),
-                    interactive: false
+                    interactive: false,
+                    _zone: zone
                 });
                 priceLabelsLayer.addLayer(marker);
             }
@@ -566,27 +1106,88 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- LISTA ORDENADA DE PRECOS ---
+    var sortState = { key: 'avg', dir: 'asc' };
+
     function updateRankedList(isUltimoDia) {
         var container = document.getElementById('ranked-list-content');
         var tituloLista = document.getElementById('ranked-list-titulo');
         if (!container) return;
 
+        var isPeriodo = (currentMode !== 'diario');
+
         // Titulo com aviso provisorio se for o ultimo dia
         if (tituloLista) {
-            tituloLista.textContent = isUltimoDia
-                ? 'Preços por zona de licitação (até às 23h de PT)'
-                : 'Preços por zona de licitação';
+            if (isPeriodo) {
+                var p = computePeriod();
+                var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
+                tituloLista.textContent = 'Preços por zona de licitação — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')';
+            } else {
+                tituloLista.textContent = isUltimoDia
+                    ? 'Preços por zona de licitação (até às 23h de PT)'
+                    : 'Preços por zona de licitação';
+            }
         }
+
+        // PT reference
+        var ptVal = null;
+        if (currentData['PT'] != null) {
+            ptVal = (typeof currentData['PT'] === 'number') ? currentData['PT'] : (currentData['PT'].avg != null ? currentData['PT'].avg : null);
+        }
+
+        // Dia anterior (só Diário) para variação
+        var prevData = null;
+        if (!isPeriodo) {
+            var prevD = parseDateStr(seletorData.value); prevD.setDate(prevD.getDate() - 1);
+            var prevDs = formatDateStr(prevD);
+            var prevYm = prevDs.substring(0, 7);
+            prevData = (dataCache[prevYm] || {})[prevDs] || null;
+        }
+
+        var showDeltaPt = !!document.getElementById('toggle-delta-pt') && document.getElementById('toggle-delta-pt').checked;
+        var showVarDia = !isPeriodo && !!document.getElementById('toggle-var-dia') && document.getElementById('toggle-var-dia').checked;
 
         var entries = [];
         for (var zone in currentData) {
             if (currentData.hasOwnProperty(zone)) {
                 var val = currentData[zone];
                 if (val === null || val === undefined) continue;
-                var avg = (typeof val === 'number') ? val : val.avg;
-                if (avg === null || avg === undefined) continue;
+                var stats = (typeof val === 'number') ? { avg: val } : val;
+                if (stats.avg === null || stats.avg === undefined) continue;
                 var name = ZONE_NAMES[zone] || zone;
-                entries.push({ zone: zone, name: name, price: avg });
+                var amplitude = (stats.min != null && stats.max != null) ? (stats.max - stats.min) : null;
+                var minLabel = stats.min_hour || '';
+                var maxLabel = stats.max_hour || '';
+                if (isPeriodo) {
+                    if (stats.min_date) minLabel = fmtDateBR(stats.min_date) + (stats.min_hour ? ' ' + stats.min_hour : '');
+                    if (stats.max_date) maxLabel = fmtDateBR(stats.max_date) + (stats.max_hour ? ' ' + stats.max_hour : '');
+                }
+                // ΔPT
+                var deltaPt = null, deltaPtPct = null;
+                if (ptVal != null && zone !== 'PT') {
+                    deltaPt = stats.avg - ptVal;
+                    deltaPtPct = ptVal !== 0 ? (deltaPt / ptVal * 100) : null;
+                }
+                // Variação vs dia anterior
+                var varDia = null, varDiaPct = null;
+                if (!isPeriodo && prevData && prevData[zone] != null) {
+                    var prevRaw = prevData[zone];
+                    var prevAvg = (typeof prevRaw === 'number') ? prevRaw : (prevRaw.avg != null ? prevRaw.avg : null);
+                    if (prevAvg != null) {
+                        varDia = stats.avg - prevAvg;
+                        varDiaPct = prevAvg !== 0 ? (varDia / prevAvg * 100) : null;
+                    }
+                }
+                entries.push({
+                    zone: zone, name: name,
+                    avg: stats.avg,
+                    min: stats.min != null ? stats.min : null,
+                    minHour: minLabel,
+                    max: stats.max != null ? stats.max : null,
+                    maxHour: maxLabel,
+                    amplitude: amplitude,
+                    deltaPt: deltaPt, deltaPtPct: deltaPtPct,
+                    varDia: varDia, varDiaPct: varDiaPct
+                });
             }
         }
 
@@ -595,47 +1196,530 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        entries.sort(function(a, b) { return a.price - b.price; });
+        // Ordenar segundo sortState
+        var key = sortState.key, dir = sortState.dir === 'desc' ? -1 : 1;
+        entries.sort(function(a, b) {
+            var va = a[key], vb = b[key];
+            if (va == null && vb == null) return 0;
+            if (va == null) return 1;
+            if (vb == null) return -1;
+            if (key === 'name' || key === 'zone') return va.localeCompare(vb) * dir;
+            return (va - vb) * dir;
+        });
 
-        var html = '<table class="ranked-table">';
-        html += '<thead><tr><th class="rank-cell">#</th><th>Zona</th><th class="price-cell">Preço (€/MWh)</th></tr></thead>';
+        var arrow = function(k) {
+            if (sortState.key !== k) return '<span class="sort-arrow">⇅</span>';
+            return sortState.dir === 'asc' ? '<span class="sort-arrow active">▲</span>' : '<span class="sort-arrow active">▼</span>';
+        };
+
+        var avgLabel = isPeriodo ? 'Médio período (€/MWh)' : 'Médio (€/MWh)';
+        var minLabelTh = isPeriodo ? 'Mín período (€/MWh)' : 'Mín (€/MWh)';
+        var maxLabelTh = isPeriodo ? 'Máx período (€/MWh)' : 'Máx (€/MWh)';
+        var hourMinLabel = isPeriodo ? 'Data/Hora mín' : 'Hora mín';
+        var hourMaxLabel = isPeriodo ? 'Data/Hora máx' : 'Hora máx';
+
+        var html = '<div class="table-scroll"><table class="ranked-table">';
+        html += '<thead><tr>'
+            + '<th class="rank-cell">#</th>'
+            + '<th class="sortable" data-sort="name" title="Ordenar por zona">Zona ' + arrow('name') + '</th>'
+            + '<th class="sortable" data-sort="avg" title="Ordenar por preço médio">' + avgLabel + ' ' + arrow('avg') + '</th>'
+            + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" title="Ordenar por ΔPT (€)">ΔPT ' + arrow('deltaPt') + '</th>' : '')
+            + (showVarDia ? '<th class="sortable" data-sort="varDia" title="Variação vs dia anterior">vs Ontem ' + arrow('varDia') + '</th>' : '')
+            + '<th class="sortable" data-sort="min" title="Ordenar por preço mínimo">' + minLabelTh + ' ' + arrow('min') + '</th>'
+            + '<th class="hour-col" title="Quando ocorreu o mínimo">' + hourMinLabel + '</th>'
+            + '<th class="sortable" data-sort="max" title="Ordenar por preço máximo">' + maxLabelTh + ' ' + arrow('max') + '</th>'
+            + '<th class="hour-col" title="Quando ocorreu o máximo">' + hourMaxLabel + '</th>'
+            + '<th class="sortable" data-sort="amplitude" title="Ordenar por amplitude (Máx - Mín)">Amplitude (€/MWh) ' + arrow('amplitude') + '</th>'
+            + '</tr></thead>';
         html += '<tbody>';
 
+        var negCls = function(v) { return (v != null && v < 0) ? ' neg' : ''; };
+        var fmtDelta = function(d, p) {
+            if (d == null) return '—';
+            var cls = d > 0 ? 'delta-pos' : (d < 0 ? 'delta-neg' : 'delta-zero');
+            var sign = d > 0 ? '+' : '';
+            var pctStr = (p != null) ? ' (' + sign + fmtN(p, 1) + '%)' : '';
+            return '<span class="' + cls + '">' + sign + fmtN(d, 2) + pctStr + '</span>';
+        };
         for (var i = 0; i < entries.length; i++) {
             var e = entries[i];
-            var color = getColor(e.price);
-            html += '<tr>';
+            var color = getColor(e.avg);
+            html += '<tr data-zone="' + e.zone + '">';
             html += '<td class="rank-cell">' + (i + 1) + '</td>';
-            html += '<td><span class="color-indicator" style="background:' + color + '"></span>' + e.name + '</td>';
-            html += '<td class="price-cell">' + e.price.toFixed(2) + ' €/MWh</td>';
+            html += '<td class="zone-cell" title="' + e.name + ' (' + e.zone + ')"><span class="color-indicator" style="background:' + color + '"></span><span class="zone-flag">' + zoneFlag(e.zone) + '</span> ' + e.name + '</td>';
+            html += '<td class="price-cell num' + negCls(e.avg) + '" title="Preço médio diário">' + fmtN(e.avg, 2) + '</td>';
+            if (showDeltaPt) html += '<td class="num" title="Diferença vs Portugal">' + (e.zone === 'PT' ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
+            if (showVarDia) html += '<td class="num" title="Variação vs dia anterior">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
+            html += '<td class="num' + negCls(e.min) + '" title="Preço mínimo do dia">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
+            html += '<td class="hour-col" title="Hora local do mínimo">' + (e.minHour || '—') + '</td>';
+            html += '<td class="num' + negCls(e.max) + '" title="Preço máximo do dia">' + (e.max != null ? fmtN(e.max, 2) : '—') + '</td>';
+            html += '<td class="hour-col" title="Hora local do máximo">' + (e.maxHour || '—') + '</td>';
+            html += '<td class="num" title="Diferença Máx − Mín">' + (e.amplitude != null ? fmtN(e.amplitude, 2) : '—') + '</td>';
             html += '</tr>';
         }
 
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         container.innerHTML = html;
+
+        // Listeners de ordenação
+        var ths = container.querySelectorAll('th.sortable');
+        for (var j = 0; j < ths.length; j++) {
+            ths[j].addEventListener('click', function() {
+                var k = this.getAttribute('data-sort');
+                if (sortState.key === k) {
+                    sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortState.key = k;
+                    sortState.dir = (k === 'name') ? 'asc' : 'asc';
+                }
+                updateRankedList(isUltimoDia);
+            });
+        }
+
+        // Re-aplicar filtro após re-render (mantém pesquisa ativa)
+        if (typeof applyZoneSearch === 'function') applyZoneSearch();
     }
 
-    // --- CARREGAR DADOS DE PRECOS ---
-    async function loadPriceData(dateStr) {
-        loadingIndicator.style.display = 'block';
-        var yearMonth = dateStr.substring(0, 7);
+    // --- PESQUISA / FILTRO DE ZONA ---
+    function normalizeStr(s) {
+        if (s == null) return '';
+        return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+    function zoneMatches(zone, q) {
+        if (!q) return true;
+        var nq = normalizeStr(q);
+        if (normalizeStr(zone).indexOf(nq) !== -1) return true;
+        var name = ZONE_NAMES[zone] || '';
+        if (normalizeStr(name).indexOf(nq) !== -1) return true;
+        // Também tenta a chave de dados (ex: IE -> IE(SEM))
+        var dataKey = ZONE_DATA_MAP[zone];
+        if (dataKey && normalizeStr(ZONE_NAMES[dataKey] || '').indexOf(nq) !== -1) return true;
+        return false;
+    }
+    function applyZoneSearch() {
+        var input = document.getElementById('zone-search');
+        var clearBtn = document.getElementById('zone-search-clear');
+        var countEl = document.getElementById('zone-search-count');
+        if (!input) return;
+        var q = (input.value || '').trim();
+        if (clearBtn) clearBtn.hidden = !q;
 
-        if (!dataCache[yearMonth]) {
-            try {
-                var resp = await fetchComFallback(yearMonth + ".json");
-                if (resp.ok) {
-                    dataCache[yearMonth] = await resp.json();
-                } else {
-                    dataCache[yearMonth] = {};
-                    console.warn('Dados não encontrados para ' + yearMonth);
-                }
-            } catch (e) {
-                dataCache[yearMonth] = {};
-                console.warn('Erro ao carregar dados de ' + yearMonth + ':', e.message);
+        // 1. Filtrar tabela
+        var rows = document.querySelectorAll('#ranked-list-content tr[data-zone]');
+        var visibleZones = {}, visibleCount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            var z = rows[i].getAttribute('data-zone');
+            if (zoneMatches(z, q)) {
+                rows[i].classList.remove('search-hidden');
+                visibleZones[z] = true;
+                visibleCount++;
+            } else {
+                rows[i].classList.add('search-hidden');
             }
         }
 
-        currentData = dataCache[yearMonth][dateStr] || {};
+        // Re-numerar # visíveis
+        var visIdx = 0;
+        for (var k = 0; k < rows.length; k++) {
+            if (rows[k].classList.contains('search-hidden')) continue;
+            var rc = rows[k].querySelector('.rank-cell');
+            if (rc) rc.textContent = (++visIdx);
+        }
+
+        // 2. Atualizar contador
+        if (countEl) {
+            if (!q) countEl.textContent = '';
+            else countEl.textContent = visibleCount + (visibleCount === 1 ? ' zona' : ' zonas');
+        }
+
+        // 3. Aplicar destaque/dim no mapa
+        if (geojsonLayer) {
+            var matchedLayers = [];
+            geojsonLayer.eachLayer(function(layer) {
+                var ec = layer.feature.properties.ecZone;
+                // ecZone pode mapear para outra chave de dados (ex: LU -> DE-LU); a pesquisa usa o ecZone visualizado
+                var matches = !q || zoneMatches(ec, q) || (ZONE_DATA_MAP[ec] && zoneMatches(ZONE_DATA_MAP[ec], q));
+                if (!q) {
+                    geojsonLayer.resetStyle(layer);
+                } else if (matches) {
+                    layer.setStyle({ weight: 3, color: '#1d4ed8', fillOpacity: 0.95 });
+                    layer.bringToFront();
+                    matchedLayers.push(layer);
+                } else {
+                    layer.setStyle({ weight: 0.5, color: '#999', fillOpacity: 0.15 });
+                }
+            });
+
+            // Auto-fit se houver exatamente 1 match
+            if (q && matchedLayers.length === 1) {
+                try { map.fitBounds(matchedLayers[0].getBounds(), { padding: [40, 40], maxZoom: 6 }); } catch(_) {}
+            }
+        }
+
+        // 4. Dim labels de preço
+        if (priceLabelsLayer) {
+            priceLabelsLayer.eachLayer(function(m) {
+                var el = m.getElement();
+                if (!el) return;
+                var mz = m.options && m.options._zone;
+                if (!q || (mz && zoneMatches(mz, q))) el.classList.remove('search-dim');
+                else el.classList.add('search-dim');
+            });
+        }
+    }
+
+    // --- HEATMAP CALENDÁRIO ANUAL ---
+    var MES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    async function updateHeatmap() {
+        var zoneSel = document.getElementById('heatmap-zone');
+        var yearSel = document.getElementById('heatmap-year');
+        var container = document.getElementById('heatmap-container');
+        var statsEl = document.getElementById('heatmap-stats');
+        var titulo = document.getElementById('heatmap-titulo');
+        if (!zoneSel || !yearSel || !container) return;
+        var zone = zoneSel.value, year = parseInt(yearSel.value, 10);
+        if (!zone || !year) return;
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+
+        // Carregar todos os meses do ano (ou até o último disponível)
+        var months = [];
+        for (var m = 1; m <= 12; m++) months.push(year + '-' + String(m).padStart(2, '0'));
+        await ensureMonthsLoaded(months);
+
+        // Recolher valores
+        var values = [];
+        var byDay = {};
+        for (var m2 = 1; m2 <= 12; m2++) {
+            var ym = year + '-' + String(m2).padStart(2, '0');
+            var monthData = dataCache[ym] || {};
+            for (var ds in monthData) {
+                if (!monthData.hasOwnProperty(ds)) continue;
+                var raw = monthData[ds][dataZone];
+                if (raw == null) continue;
+                var v = (typeof raw === 'number') ? raw : (raw.avg != null ? raw.avg : null);
+                if (v == null) continue;
+                byDay[ds] = v;
+                values.push(v);
+            }
+        }
+
+        if (titulo) {
+            titulo.textContent = 'Heatmap anual de preços — ' + (ZONE_NAMES[zone] || zone) + ' · ' + year;
+        }
+        if (!values.length) {
+            container.innerHTML = '<p class="no-data-msg" style="text-align:center;padding:20px;">Sem dados para este ano.</p>';
+            if (statsEl) statsEl.textContent = '';
+            return;
+        }
+        var minV = Math.min.apply(null, values);
+        var maxV = Math.max.apply(null, values);
+        var avgV = values.reduce(function(a, b) { return a + b; }, 0) / values.length;
+        if (statsEl) {
+            statsEl.innerHTML = values.length + ' dias · Média: <strong>' + fmtN(avgV, 2) + '</strong> · Mín: <strong>' + fmtN(minV, 2) + '</strong> · Máx: <strong>' + fmtN(maxV, 2) + '</strong> €/MWh';
+        }
+
+        // Construir grelha: linha header (1..31) + 12 linhas mensais
+        var html = '<div class="heatmap-grid">';
+        html += '<div class="heatmap-day-header"><span class="heatmap-month-label"></span><div class="heatmap-day-numbers">';
+        for (var d = 1; d <= 31; d++) html += '<span>' + d + '</span>';
+        html += '</div></div>';
+
+        for (var mm = 1; mm <= 12; mm++) {
+            html += '<div class="heatmap-month-row">';
+            html += '<span class="heatmap-month-label">' + MES_NOMES[mm - 1] + '</span>';
+            html += '<div class="heatmap-days">';
+            var daysInMonth = new Date(year, mm, 0).getDate();
+            for (var dd = 1; dd <= 31; dd++) {
+                if (dd > daysInMonth) {
+                    html += '<div class="heatmap-cell empty"></div>';
+                    continue;
+                }
+                var dateStr = year + '-' + String(mm).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
+                var v2 = byDay[dateStr];
+                if (v2 == null) {
+                    html += '<div class="heatmap-cell no-data" title="' + fmtDateBR(dateStr) + ': sem dados"></div>';
+                } else {
+                    var bg = getColor(v2);
+                    var t = fmtDateBR(dateStr) + ': ' + fmtN(v2, 2) + ' €/MWh';
+                    html += '<div class="heatmap-cell" style="background:' + bg + '" title="' + t + '" data-date="' + dateStr + '"></div>';
+                }
+            }
+            html += '</div></div>';
+        }
+        html += '</div>';
+        container.innerHTML = html;
+
+        // Click numa célula → muda o seletor de data
+        container.querySelectorAll('.heatmap-cell[data-date]').forEach(function(c) {
+            c.addEventListener('click', function() {
+                var ds = this.getAttribute('data-date');
+                if (ds && ds >= seletorData.min && (!seletorData.max || ds <= seletorData.max)) {
+                    seletorData.value = ds;
+                    seletorData.dispatchEvent(new Event('change'));
+                    document.getElementById('mapa-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
+    // --- GRÁFICO Chart.js (30 dias por zona) ---
+    var precosChart = null;
+
+    // Plugin para mostrar valores em cima das barras (só ativa se opts.show=true)
+    var barValueLabelsPlugin = {
+        id: 'barValueLabels',
+        afterDatasetsDraw: function(chart, args, opts) {
+            if (!opts || !opts.show) return;
+            var ctx = chart.ctx;
+            var ds = chart.data.datasets[0];
+            if (!ds) return;
+            var meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data) return;
+            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            ctx.save();
+            ctx.font = '600 8.5px system-ui, -apple-system, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillStyle = dark ? '#e2e8f0' : '#1e293b';
+            for (var i = 0; i < meta.data.length; i++) {
+                var v = ds.data[i];
+                if (v == null) continue;
+                var bar = meta.data[i];
+                var x = bar.x;
+                var y = bar.y - 3;
+                ctx.fillText(fmtN(v, 2), x, y);
+            }
+            ctx.restore();
+        }
+    };
+    if (typeof Chart !== 'undefined') Chart.register(barValueLabelsPlugin);
+
+    // Plugin para desenhar whiskers (mín↔máx) sobre cada barra
+    var whiskersPlugin = {
+        id: 'whiskers',
+        afterDatasetsDraw: function(chart, args, opts) {
+            if (!opts || !opts.show || !opts.mins || !opts.maxs) return;
+            var meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data) return;
+            var yScale = chart.scales.y;
+            var ctx = chart.ctx;
+            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            ctx.save();
+            ctx.strokeStyle = dark ? 'rgba(226,232,240,0.85)' : 'rgba(15,23,42,0.85)';
+            ctx.lineWidth = 1.2;
+            for (var i = 0; i < meta.data.length; i++) {
+                var mn = opts.mins[i], mx = opts.maxs[i];
+                if (mn == null || mx == null) continue;
+                var bar = meta.data[i];
+                var x = bar.x;
+                var yMin = yScale.getPixelForValue(mn);
+                var yMax = yScale.getPixelForValue(mx);
+                var capW = Math.max(3, Math.min(8, (bar.width || 10) * 0.4));
+                ctx.beginPath();
+                // linha vertical
+                ctx.moveTo(x, yMax); ctx.lineTo(x, yMin);
+                // cap superior (máx)
+                ctx.moveTo(x - capW, yMax); ctx.lineTo(x + capW, yMax);
+                // cap inferior (mín)
+                ctx.moveTo(x - capW, yMin); ctx.lineTo(x + capW, yMin);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    };
+    if (typeof Chart !== 'undefined') Chart.register(whiskersPlugin);
+
+    function getChartColors() {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+            grid: dark ? '#334155' : '#e2e8f0',
+            text: dark ? '#cbd5e1' : '#475569',
+            bg: dark ? '#0f172a' : '#fff'
+        };
+    }
+    function buildSeriesForZoneRange(zone, startDateStr, endDateStr) {
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        var startD = parseDateStr(startDateStr);
+        var endD = parseDateStr(endDateStr);
+        var labels = [], avgs = [], mins = [], maxs = [];
+        var cur = new Date(startD);
+        while (cur <= endD) {
+            var ds = formatDateStr(cur);
+            var ym = ds.substring(0, 7);
+            var dayData = (dataCache[ym] || {})[ds];
+            var val = dayData ? dayData[dataZone] : null;
+            labels.push(ds.substring(8, 10) + '/' + ds.substring(5, 7));
+            if (val == null) { avgs.push(null); mins.push(null); maxs.push(null); }
+            else if (typeof val === 'number') { avgs.push(val); mins.push(null); maxs.push(null); }
+            else {
+                avgs.push(val.avg != null ? val.avg : null);
+                mins.push(val.min != null ? val.min : null);
+                maxs.push(val.max != null ? val.max : null);
+            }
+            cur.setDate(cur.getDate() + 1);
+        }
+        return { labels: labels, avgs: avgs, mins: mins, maxs: maxs };
+    }
+    async function updateChart() {
+        if (typeof Chart === 'undefined') return;
+        var zoneSel = document.getElementById('zone-chart-select');
+        var compareSel = document.getElementById('zone-chart-compare');
+        var fillToggle = document.getElementById('chart-fill-minmax');
+        var canvas = document.getElementById('chart-precos');
+        if (!zoneSel || !canvas) return;
+        var zone = zoneSel.value;
+        var compare = compareSel ? compareSel.value : '';
+        if (!zone) return;
+
+        // Determinar intervalo do gráfico com base no modo ativo
+        var chartStart, chartEnd;
+        if (currentMode === 'diario') {
+            chartEnd = seletorData.value;
+            var sd = parseDateStr(chartEnd); sd.setDate(sd.getDate() - 29);
+            chartStart = formatDateStr(sd);
+        } else {
+            var pp = computePeriod();
+            chartStart = pp.start;
+            chartEnd = pp.end;
+        }
+        await ensureMonthsLoaded(monthsInRange(chartStart, chartEnd));
+
+        var s1 = buildSeriesForZoneRange(zone, chartStart, chartEnd);
+        var name1 = ZONE_NAMES[zone] || zone;
+
+        // Cores por barra usando o gradiente do mapa
+        var barColors = s1.avgs.map(function(v) { return v == null ? 'rgba(0,0,0,0)' : getColor(v); });
+
+        var datasets = [{
+            type: 'bar',
+            label: name1 + ' — Média',
+            data: s1.avgs,
+            backgroundColor: barColors,
+            borderColor: barColors,
+            borderWidth: 1,
+            order: 2
+        }];
+
+        var showWhiskers = !!(fillToggle && fillToggle.checked);
+
+        if (compare) {
+            var s2 = buildSeriesForZoneRange(compare, chartStart, chartEnd);
+            var name2 = ZONE_NAMES[compare] || compare;
+            datasets.push({
+                type: 'line',
+                label: name2 + ' — Média',
+                data: s2.avgs,
+                borderColor: '#dc2626',
+                backgroundColor: '#dc2626',
+                tension: 0,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                borderWidth: 2,
+                spanGaps: true,
+                order: 0
+            });
+        }
+        var c = getChartColors();
+        var cfg = {
+            type: 'bar',
+            data: { labels: s1.labels, datasets: datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                layout: { padding: { top: compare ? 0 : 18 } },
+                plugins: {
+                    barValueLabels: { show: !compare },
+                    whiskers: { show: showWhiskers, mins: s1.mins, maxs: s1.maxs },
+                    legend: { labels: { color: c.text } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                var v = ctx.parsed.y;
+                                if (Array.isArray(ctx.raw)) {
+                                    return ctx.dataset.label + ': ' + fmtN(ctx.raw[0], 2) + ' / ' + fmtN(ctx.raw[1], 2) + ' €/MWh';
+                                }
+                                return ctx.dataset.label + ': ' + (v != null ? fmtN(v, 2) + ' €/MWh' : '—');
+                            },
+                            afterBody: function(items) {
+                                if (!showWhiskers || !items || !items.length) return '';
+                                var i = items[0].dataIndex;
+                                var mn = s1.mins[i], mx = s1.maxs[i];
+                                if (mn == null && mx == null) return '';
+                                var lines = [];
+                                lines.push('Mín: ' + (mn != null ? fmtN(mn, 2) + ' €/MWh' : '—'));
+                                lines.push('Máx: ' + (mx != null ? fmtN(mx, 2) + ' €/MWh' : '—'));
+                                if (mn != null && mx != null) lines.push('Amplitude: ' + fmtN(mx - mn, 2) + ' €/MWh');
+                                return lines;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { color: c.grid }, ticks: { color: c.text } },
+                    y: { grid: { color: c.grid }, ticks: { color: c.text, callback: function(v) { return fmtN(v, 0); } }, title: { display: true, text: '€/MWh', color: c.text } }
+                }
+            }
+        };
+        if (precosChart) {
+            precosChart.data = cfg.data;
+            precosChart.options = cfg.options;
+            precosChart.update();
+        } else {
+            precosChart = new Chart(canvas.getContext('2d'), cfg);
+        }
+        var titulo = document.getElementById('chart-titulo');
+        if (titulo) {
+            var nDias = Math.round((parseDateStr(chartEnd) - parseDateStr(chartStart)) / 86400000) + 1;
+            var label;
+            if (currentMode === 'diario') label = '30 dias até ' + fmtDateBR(chartEnd);
+            else label = nDias + ' dias (' + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
+            titulo.textContent = 'Evolução de preços — ' + label + ' — ' + name1 + (compare ? ' vs ' + ZONE_NAMES[compare] : '');
+        }
+    }
+
+    // --- DETERMINAR PERÍODO ATUAL com base em modo + seletor ---
+    function computePeriod() {
+        var dateStr = seletorData.value;
+        if (currentMode === 'diario') {
+            return { start: dateStr, end: dateStr };
+        }
+        if (currentMode === 'semanal') {
+            var d = parseDateStr(dateStr); var s = new Date(d); s.setDate(s.getDate() - 6);
+            return { start: formatDateStr(s), end: dateStr };
+        }
+        if (currentMode === 'mensal') {
+            var d2 = parseDateStr(dateStr); var s2 = new Date(d2); s2.setDate(s2.getDate() - 29);
+            return { start: formatDateStr(s2), end: dateStr };
+        }
+        if (currentMode === 'custom' && currentPeriod) {
+            return { start: currentPeriod.start, end: currentPeriod.end };
+        }
+        return { start: dateStr, end: dateStr };
+    }
+
+    // --- CARREGAR DADOS DE PRECOS ---
+    async function loadPriceData() {
+        loadingIndicator.style.display = 'block';
+        var period = computePeriod();
+        var dateStr = seletorData.value;
+
+        // Carregar todos os meses do período + mês do dia anterior (variação vs ontem) + mês para sparkline 7d
+        var months = monthsInRange(period.start, period.end);
+        var sparkStart = parseDateStr(dateStr); sparkStart.setDate(sparkStart.getDate() - 7);
+        var sparkMonths = monthsInRange(formatDateStr(sparkStart), dateStr);
+        var prevDay = parseDateStr(dateStr); prevDay.setDate(prevDay.getDate() - 1);
+        var prevDayMonth = formatDateStr(prevDay).substring(0, 7);
+        var allMonths = months.concat(sparkMonths).concat([prevDayMonth]).filter(function(v, i, a) { return a.indexOf(v) === i; });
+        await ensureMonthsLoaded(allMonths);
+
+        // Construir currentData
+        if (currentMode === 'diario') {
+            var ym = dateStr.substring(0, 7);
+            currentData = (dataCache[ym] || {})[dateStr] || {};
+        } else {
+            currentData = aggregatePeriod(period.start, period.end);
+        }
+
         loadingIndicator.style.display = 'none';
 
         // Atualizar cores do mapa
@@ -644,19 +1728,24 @@ document.addEventListener('DOMContentLoaded', function() {
             updatePriceLabels();
         }
 
-        // Verificar se e o ultimo dia disponivel (dados provisorios)
-        var isUltimoDia = (dateStr === ultimaDataDisponivel);
+        var isUltimoDia = (currentMode === 'diario' && dateStr === ultimaDataDisponivel);
 
         // Atualizar lista ordenada
         updateRankedList(isUltimoDia);
 
-        // Atualizar titulo com data
-        var partes = dateStr.split('-');
-        var tituloBase = 'Mapa de Preços Médios da Eletricidade - ' + partes[2] + '/' + partes[1] + '/' + partes[0];
-        if (isUltimoDia) {
-            tituloBase += ' (até às 23h de PT)';
+        // Re-aplicar pesquisa de zona (se ativa)
+        applyZoneSearch();
+
+        // Atualizar titulo
+        var titulo;
+        if (currentMode === 'diario') {
+            titulo = 'Mapa de Preços Médios da Eletricidade - ' + fmtDateBR(dateStr);
+            if (isUltimoDia) titulo += ' (até às 23h de PT)';
+        } else {
+            var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
+            titulo = 'Mapa de Preços Médios da Eletricidade - ' + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')';
         }
-        document.getElementById('titulo-mapa').textContent = tituloBase;
+        document.getElementById('titulo-mapa').textContent = titulo;
 
         // Aviso provisorio
         var avisoEl = document.getElementById('aviso-provisorio');
@@ -670,6 +1759,71 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         info.update();
+        if (typeof updateChart === 'function') updateChart();
+        updateResumoRapido();
+        var tvw = document.getElementById('toggle-var-wrapper');
+        if (tvw) tvw.style.display = (currentMode === 'diario') ? 'inline-flex' : 'none';
+    }
+
+    // --- RESUMO RÁPIDO TEXTUAL ---
+    function dateLabelFor(dateStr) {
+        var today = new Date();
+        var todayStr = formatDateStr(today);
+        var ystr = new Date(today); ystr.setDate(ystr.getDate() - 1);
+        var tstr = new Date(today); tstr.setDate(tstr.getDate() + 1);
+        if (dateStr === todayStr) return 'Hoje';
+        if (dateStr === formatDateStr(ystr)) return 'Ontem';
+        if (dateStr === formatDateStr(tstr)) return 'Amanhã';
+        return 'Em ' + fmtDateBR(dateStr);
+    }
+    function updateResumoRapido() {
+        var el = document.getElementById('resumo-rapido');
+        if (!el) return;
+        var entries = [];
+        for (var z in currentData) {
+            if (!currentData.hasOwnProperty(z)) continue;
+            var v = currentData[z];
+            if (v == null) continue;
+            var avg = (typeof v === 'number') ? v : v.avg;
+            if (avg == null) continue;
+            entries.push({ zone: z, avg: avg });
+        }
+        if (entries.length < 2) { el.style.display = 'none'; return; }
+
+        entries.sort(function(a, b) { return a.avg - b.avg; });
+        var cheap = entries[0], expensive = entries[entries.length - 1];
+        var sum = 0; for (var i = 0; i < entries.length; i++) sum += entries[i].avg;
+        var media = sum / entries.length;
+
+        var ptVal = currentData['PT'] != null
+            ? ((typeof currentData['PT'] === 'number') ? currentData['PT'] : currentData['PT'].avg)
+            : null;
+
+        var prefix;
+        if (currentMode === 'diario') {
+            prefix = dateLabelFor(seletorData.value);
+        } else {
+            var p = computePeriod();
+            var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Período');
+            prefix = labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')';
+        }
+
+        var html = '<span class="resumo-label">' + prefix + '</span> — ';
+        if (ptVal != null) {
+            var diff = ptVal - media;
+            var pct = media !== 0 ? (diff / media * 100) : 0;
+            var sinal = pct >= 0 ? 'acima' : 'abaixo';
+            var cls = pct >= 0 ? 'resumo-pt-bad' : 'resumo-pt-good';
+            var arrow = pct >= 0 ? '▲' : '▼';
+            html += zoneFlag('PT') + ' Portugal: <strong>' + fmtN(ptVal, 2) + ' €/MWh</strong> '
+                + '<span class="' + cls + '">(' + arrow + ' ' + fmtN(Math.abs(pct), 1) + '% ' + sinal + ' da média europeia ' + fmtN(media, 2) + ')</span>. ';
+        } else {
+            html += 'Média europeia: <strong>' + fmtN(media, 2) + ' €/MWh</strong>. ';
+        }
+        html += 'Mais barato: <span class="resumo-cheap">' + zoneFlag(cheap.zone) + ' ' + (ZONE_NAMES[cheap.zone] || cheap.zone) + ' (' + fmtN(cheap.avg, 2) + ')</span>. ';
+        html += 'Mais caro: <span class="resumo-expensive">' + zoneFlag(expensive.zone) + ' ' + (ZONE_NAMES[expensive.zone] || expensive.zone) + ' (' + fmtN(expensive.avg, 2) + ')</span>.';
+        el.innerHTML = html;
+        el.style.display = 'block';
     }
 
     // --- ECRA INTEIRO ---
@@ -706,6 +1860,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     geojsonLayer.setStyle(style);
                     updatePriceLabels();
                 }
+                if (typeof updateChart === 'function') updateChart();
             }
         });
     });
@@ -749,6 +1904,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 yesterday.setDate(yesterday.getDate() - 1);
                 seletorData.value = yesterday.toISOString().split('T')[0];
             }
+            // URL param ?date=YYYY-MM-DD tem prioridade
+            try {
+                var urlParams = new URLSearchParams(window.location.search);
+                var urlDate = urlParams.get('date');
+                if (urlDate && /^\d{4}-\d{2}-\d{2}$/.test(urlDate)) {
+                    if (urlDate >= seletorData.min && (!seletorData.max || urlDate <= seletorData.max)) {
+                        seletorData.value = urlDate;
+                    }
+                }
+            } catch(e) {}
             if (seletorData.value < DATA_INICIO) {
                 seletorData.value = DATA_INICIO;
             }
@@ -783,13 +1948,266 @@ document.addEventListener('DOMContentLoaded', function() {
             btnPrev.addEventListener('click', function() { alterarData(-1); });
             btnNext.addEventListener('click', function() { alterarData(1); });
 
+            // Atualizar estado disabled das setas
+            function updateBtnState() {
+                btnPrev.disabled = seletorData.value <= seletorData.min;
+                btnNext.disabled = !!seletorData.max && seletorData.value >= seletorData.max;
+            }
+
+            // Atualizar link cruzado para mapa-producao
+            function updateCrossLink() {
+                var link = document.getElementById('link-producao');
+                if (link) link.href = 'mapa-producao.html?date=' + seletorData.value;
+            }
+
+            // Construir URL partilhavel
+            function buildShareUrl() {
+                var url = window.location.origin + window.location.pathname;
+                var params = new URLSearchParams();
+                params.set('date', seletorData.value);
+                params.set('mode', currentMode);
+                if (currentMode === 'custom' && currentPeriod) {
+                    params.set('start', currentPeriod.start);
+                    params.set('end', currentPeriod.end);
+                }
+                var zoneSel = document.getElementById('zone-chart-select');
+                if (zoneSel && zoneSel.value) params.set('zone', zoneSel.value);
+                return url + '?' + params.toString();
+            }
+
+            // Botao de partilha
+            var btnShare = document.getElementById('btn-share');
+            var shareFeedback = document.getElementById('share-feedback');
+            if (btnShare) {
+                btnShare.addEventListener('click', function() {
+                    var url = buildShareUrl();
+                    var showOk = function() {
+                        if (!shareFeedback) return;
+                        shareFeedback.textContent = '✓ Link copiado!';
+                        shareFeedback.style.display = 'inline';
+                        setTimeout(function() { shareFeedback.style.display = 'none'; }, 2500);
+                    };
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(url).then(showOk).catch(function() {
+                            window.prompt('Copie o link:', url);
+                        });
+                    } else {
+                        window.prompt('Copie o link:', url);
+                    }
+                });
+            }
+
+            // Atalhos de teclado: setas esquerda/direita
+            document.addEventListener('keydown', function(e) {
+                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                if (e.key === 'ArrowLeft') { alterarData(-1); }
+                else if (e.key === 'ArrowRight') { alterarData(1); }
+            });
+
             // Carregar dados do dia selecionado
-            await loadPriceData(seletorData.value);
+            updateCrossLink();
+            updateBtnState();
+
+            // --- TABS DE MODO ---
+            var modoTabs = document.querySelectorAll('.modo-tab');
+            var rangeWrapper = document.getElementById('range-wrapper');
+            var dateSelectorWrapper = document.getElementById('date-selector-wrapper');
+            var dataInicio = document.getElementById('data-inicio');
+            var dataFim = document.getElementById('data-fim');
+            var btnAplicarRange = document.getElementById('btn-aplicar-range');
+
+            function setModo(modo, opts) {
+                opts = opts || {};
+                currentMode = modo;
+                modoTabs.forEach(function(t) {
+                    var active = t.getAttribute('data-modo') === modo;
+                    t.classList.toggle('active', active);
+                    t.setAttribute('aria-selected', active ? 'true' : 'false');
+                });
+                if (modo === 'custom') {
+                    rangeWrapper.style.display = 'flex';
+                    dateSelectorWrapper.style.display = 'none';
+                    if (!dataInicio.min) {
+                        dataInicio.min = DATA_INICIO;
+                        if (ultimaDataDisponivel) dataInicio.max = ultimaDataDisponivel;
+                        dataFim.min = DATA_INICIO;
+                        if (ultimaDataDisponivel) dataFim.max = ultimaDataDisponivel;
+                    }
+                    if (!dataInicio.value) {
+                        var endD = parseDateStr(seletorData.value);
+                        var startD = new Date(endD); startD.setDate(startD.getDate() - 13);
+                        dataInicio.value = formatDateStr(startD);
+                        dataFim.value = seletorData.value;
+                    }
+                    if (!currentPeriod) {
+                        currentPeriod = { start: dataInicio.value, end: dataFim.value };
+                    }
+                } else {
+                    rangeWrapper.style.display = 'none';
+                    dateSelectorWrapper.style.display = 'block';
+                    var lbl = document.getElementById('label-seletor-data');
+                    if (lbl) {
+                        lbl.textContent = (modo === 'diario') ? 'Selecione o dia:'
+                            : (modo === 'semanal' ? 'Dia final dos 7 dias:' : 'Dia final dos 30 dias:');
+                    }
+                }
+                if (!opts.skipReload) {
+                    loadPriceData();
+                }
+            }
+
+            modoTabs.forEach(function(t) {
+                t.addEventListener('click', function() {
+                    var m = this.getAttribute('data-modo');
+                    savePref('mode', m);
+                    setModo(m);
+                });
+            });
+
+            btnAplicarRange.addEventListener('click', function() {
+                if (!dataInicio.value || !dataFim.value) return;
+                if (dataInicio.value > dataFim.value) {
+                    alert('Data de início deve ser anterior à data de fim.');
+                    return;
+                }
+                // Limitar a 366 dias para não rebentar com a memória
+                var diff = (parseDateStr(dataFim.value) - parseDateStr(dataInicio.value)) / 86400000;
+                if (diff > 366) {
+                    alert('Intervalo máximo: 366 dias.');
+                    return;
+                }
+                currentPeriod = { start: dataInicio.value, end: dataFim.value };
+                loadPriceData();
+            });
+
+            // Aplicar modo inicial (URL > localStorage)
+            var urlMode = new URLSearchParams(window.location.search).get('mode') || prefs.mode;
+            if (urlMode && ['diario','semanal','mensal','custom'].indexOf(urlMode) !== -1) {
+                var urlStart = new URLSearchParams(window.location.search).get('start');
+                var urlEnd = new URLSearchParams(window.location.search).get('end');
+                if (urlMode === 'custom' && urlStart && urlEnd) {
+                    dataInicio.min = DATA_INICIO; dataFim.min = DATA_INICIO;
+                    if (ultimaDataDisponivel) { dataInicio.max = ultimaDataDisponivel; dataFim.max = ultimaDataDisponivel; }
+                    dataInicio.value = urlStart; dataFim.value = urlEnd;
+                    currentPeriod = { start: urlStart, end: urlEnd };
+                }
+                setModo(urlMode, { skipReload: true });
+            }
+
+            // --- POPULAR SELECTS DE ZONA DO GRÁFICO ---
+            var zoneSel = document.getElementById('zone-chart-select');
+            var compareSel = document.getElementById('zone-chart-compare');
+            var fillToggle = document.getElementById('chart-fill-minmax');
+            if (zoneSel && compareSel) {
+                var zonesSorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
+                    return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
+                });
+                var optsHtml = '';
+                for (var z = 0; z < zonesSorted.length; z++) {
+                    var zk = zonesSorted[z];
+                    optsHtml += '<option value="' + zk + '">' + (ZONE_NAMES[zk] || zk) + '</option>';
+                }
+                zoneSel.innerHTML = optsHtml;
+                compareSel.innerHTML = '<option value="">— nenhuma —</option>' + optsHtml;
+                zoneSel.value = 'PT';
+                var urlZone = new URLSearchParams(window.location.search).get('zone') || prefs.zone;
+                if (urlZone && ZONE_NAMES[urlZone]) zoneSel.value = urlZone;
+                if (prefs.compareZone && ZONE_NAMES[prefs.compareZone]) compareSel.value = prefs.compareZone;
+                zoneSel.addEventListener('change', function() { savePref('zone', zoneSel.value); updateChart(); });
+                compareSel.addEventListener('change', function() { savePref('compareZone', compareSel.value); updateChart(); });
+                if (fillToggle) {
+                    if (prefs.minmax) fillToggle.checked = true;
+                    fillToggle.addEventListener('change', function() { savePref('minmax', fillToggle.checked); updateChart(); });
+                }
+
+                var btnWide = document.getElementById('btn-chart-wide');
+                if (btnWide) {
+                    var w = document.getElementById('chart-wrapper');
+                    if (prefs.chartWide) { w.classList.add('wide'); btnWide.classList.add('active'); }
+                    btnWide.addEventListener('click', function() {
+                        w.classList.toggle('wide');
+                        var isWide = w.classList.contains('wide');
+                        btnWide.classList.toggle('active', isWide);
+                        savePref('chartWide', isWide);
+                        if (precosChart) setTimeout(function() { precosChart.resize(); }, 220);
+                    });
+                }
+            }
+
+            // --- HEATMAP: popular selects ---
+            var heatZone = document.getElementById('heatmap-zone');
+            var heatYear = document.getElementById('heatmap-year');
+            if (heatZone && heatYear) {
+                var hzonesSorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
+                    return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
+                });
+                var hOpts = '';
+                for (var hz = 0; hz < hzonesSorted.length; hz++) {
+                    var hzk = hzonesSorted[hz];
+                    hOpts += '<option value="' + hzk + '">' + (ZONE_NAMES[hzk] || hzk) + '</option>';
+                }
+                heatZone.innerHTML = hOpts;
+                heatZone.value = (prefs.heatmapZone && ZONE_NAMES[prefs.heatmapZone]) ? prefs.heatmapZone : 'PT';
+
+                // Anos: do início dos dados (2025) até ao ano da última data ou ano atual
+                var startYear = parseInt(DATA_INICIO.substring(0, 4), 10);
+                var endYear = ultimaDataDisponivel
+                    ? parseInt(ultimaDataDisponivel.substring(0, 4), 10)
+                    : new Date().getFullYear();
+                var yOpts = '';
+                for (var yy = endYear; yy >= startYear; yy--) yOpts += '<option value="' + yy + '">' + yy + '</option>';
+                heatYear.innerHTML = yOpts;
+                heatYear.value = endYear;
+
+                heatZone.addEventListener('change', function() { savePref('heatmapZone', heatZone.value); updateHeatmap(); });
+                heatYear.addEventListener('change', updateHeatmap);
+                // Carregar heatmap inicial (em background, não bloqueia)
+                setTimeout(updateHeatmap, 50);
+            }
+
+            // Toggles da tabela
+            var tDeltaPt = document.getElementById('toggle-delta-pt');
+            var tVarDia = document.getElementById('toggle-var-dia');
+            if (tDeltaPt) {
+                if (prefs.deltaPt) tDeltaPt.checked = true;
+                tDeltaPt.addEventListener('change', function() {
+                    savePref('deltaPt', tDeltaPt.checked);
+                    updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
+                });
+            }
+            if (tVarDia) {
+                if (prefs.varDia) tVarDia.checked = true;
+                tVarDia.addEventListener('change', function() {
+                    savePref('varDia', tVarDia.checked);
+                    updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
+                });
+            }
+
+            await loadPriceData();
 
             // Event listener para mudanca de data
             seletorData.addEventListener('change', function() {
-                loadPriceData(this.value);
+                updateCrossLink();
+                updateBtnState();
+                loadPriceData();
             });
+
+            // Pesquisa de zona
+            var zSearch = document.getElementById('zone-search');
+            var zClear = document.getElementById('zone-search-clear');
+            if (zSearch) {
+                zSearch.addEventListener('input', applyZoneSearch);
+                zSearch.addEventListener('keydown', function(ev) {
+                    if (ev.key === 'Escape') { zSearch.value = ''; applyZoneSearch(); zSearch.blur(); }
+                });
+            }
+            if (zClear) {
+                zClear.addEventListener('click', function() {
+                    if (zSearch) { zSearch.value = ''; zSearch.focus(); }
+                    applyZoneSearch();
+                });
+            }
 
         } catch(e) {
             console.error('Erro na inicialização:', e);
