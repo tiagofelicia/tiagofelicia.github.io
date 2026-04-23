@@ -4,16 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Mapa de Produção de Eletricidade na Europa | Tiago Felícia</title>
-    <meta name="description" content="Mapa interativo da produção de eletricidade europeia por fonte: solar, eólica, hídrica, nuclear, gás e carvão. Percentagem renovável por país." />
+    <title>Mapa de Produção de Eletricidade na Europa — Mix Renovável | Tiago Felícia</title>
+    <meta name="description" content="Mapa interativo da produção de eletricidade em 28 países europeus por fonte (solar, eólica, hídrica, nuclear, gás, carvão, biomassa). Percentagem renovável sobre a produção ou o consumo, vistas diária, semanal, mensal e personalizada, gráfico de evolução, tabela ordenável com ΔPT e pesquisa de país. Dados Energy-Charts (Fraunhofer ISE)." />
+    <meta name="keywords" content="produção eletricidade Europa, mix energético, energia renovável, solar, eólica, hídrica, nuclear, percentagem renovável, Energy-Charts, Fraunhofer ISE, Tiago Felícia" />
+    <meta name="author" content="Tiago Felícia" />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-producao.html" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Mapa de Produção de Eletricidade na Europa" />
-    <meta property="og:description" content="Produção de eletricidade por fonte e percentagem renovável por país europeu." />
+    <meta property="og:title" content="Mapa de Produção de Eletricidade na Europa — Mix Renovável" />
+    <meta property="og:description" content="Produção de eletricidade por fonte e percentagem renovável em 28 países europeus, com vistas diária, semanal, mensal e personalizada, gráfico de evolução e tabela ordenável." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-producao.html" />
     <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Tiago Felícia" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mapa de Produção de Eletricidade na Europa" />
+    <meta name="twitter:description" content="Mix de produção e percentagem renovável em 28 países europeus." />
 
     <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
@@ -37,17 +44,98 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Mapa de Produção de Eletricidade na Europa",
-      "url": "https://www.tiagofelicia.pt/mapa-producao.html",
-      "description": "Mapa interativo da produção de eletricidade europeia por fonte e percentagem renovável.",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "Web browser",
-      "author": { "@type": "Person", "name": "Tiago Felícia" }
+      "@graph": [
+        {
+          "@type": "Dataset",
+          "@id": "https://www.tiagofelicia.pt/mapa-producao.html#dataset",
+          "name": "Produção diária de eletricidade por país europeu e fonte",
+          "alternateName": "European Daily Electricity Production by Country and Source",
+          "description": "Conjunto de dados com a produção pública líquida de eletricidade em 28 países europeus, desagregada por fonte (solar, eólica onshore/offshore, hídrica fio-de-água/albufeira/bombagem, nuclear, gás, carvão, biomassa, geotermia, resíduos, outras renováveis), bem como totais diários e percentagem de origem renovável. Atualizado diariamente. Fonte: API Energy-Charts (Fraunhofer ISE).",
+          "url": "https://www.tiagofelicia.pt/mapa-producao.html",
+          "keywords": ["eletricidade", "produção", "mix energético", "renovável", "solar", "eólica", "hídrica", "nuclear", "Europa", "Energy-Charts"],
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "isAccessibleForFree": true,
+          "inLanguage": "pt-PT",
+          "creator": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
+          "publisher": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
+          "temporalCoverage": "2026-01-01/..",
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": "Europa",
+            "geo": { "@type": "GeoShape", "box": "34.5 -10.5 71.5 32.0" }
+          },
+          "variableMeasured": [
+            { "@type": "PropertyValue", "name": "Produção diária por fonte", "unitText": "GWh" },
+            { "@type": "PropertyValue", "name": "Produção total diária", "unitText": "GWh" },
+            { "@type": "PropertyValue", "name": "Percentagem renovável", "unitText": "%" }
+          ],
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "encodingFormat": "application/json",
+              "contentUrl": "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_producao/"
+            }
+          ],
+          "isBasedOn": {
+            "@type": "Dataset",
+            "name": "Energy-Charts API",
+            "url": "https://api.energy-charts.info/",
+            "creator": { "@type": "Organization", "name": "Fraunhofer ISE", "url": "https://www.ise.fraunhofer.de/" }
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://www.tiagofelicia.pt/mapa-producao.html#app",
+          "name": "Mapa de Produção de Eletricidade na Europa",
+          "url": "https://www.tiagofelicia.pt/mapa-producao.html",
+          "description": "Mapa interativo com produção de eletricidade e percentagem renovável por país europeu, com vistas diária, semanal, mensal e personalizada, gráfico de evolução, tabela ordenável com ΔPT e pesquisa de país.",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Web browser",
+          "browserRequirements": "Requires JavaScript",
+          "isAccessibleForFree": true,
+          "inLanguage": "pt-PT",
+          "author": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+          "featureList": [
+            "Mapa choropleth com 28 países europeus",
+            "Percentagem renovável sobre produção ou consumo",
+            "Toggle de bombagem no denominador",
+            "Vistas diária, semanal, mensal e personalizada",
+            "Tabela ordenável com ΔPT (diferença vs Portugal)",
+            "Gráfico de evolução (colunas ou áreas empilhadas)",
+            "Pesquisa e filtro de país",
+            "Link de partilha por data",
+            "Modo escuro"
+          ],
+          "about": { "@id": "https://www.tiagofelicia.pt/mapa-producao.html#dataset" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+            { "@type": "ListItem", "position": 2, "name": "Mapa de Produção de Eletricidade", "item": "https://www.tiagofelicia.pt/mapa-producao.html" }
+          ]
+        }
+      ]
     }
     </script>
 
     <style>
+        /* Resumo rápido */
+        .resumo-rapido { background: #f1f5f9; border-left: 4px solid #15803d; padding: 12px 16px; margin: 0 auto 18px auto; max-width: 1100px; border-radius: 4px; font-size: 0.95em; line-height: 1.55; color: #1e293b; }
+        .resumo-rapido strong { color: #0f172a; }
+        .resumo-rapido .resumo-label { font-weight: 600; }
+        .resumo-rapido .resumo-top { color: #15803d; font-weight: 600; }
+        .resumo-rapido .resumo-bottom { color: #b45309; font-weight: 600; }
+        .resumo-rapido .resumo-pt-good { color: #15803d; font-weight: 600; }
+        .resumo-rapido .resumo-pt-bad { color: #b91c1c; font-weight: 600; }
+        [data-theme="dark"] .resumo-rapido { background: #1e293b; color: #e2e8f0; border-left-color: #4ade80; }
+        [data-theme="dark"] .resumo-rapido strong { color: #f1f5f9; }
+        [data-theme="dark"] .resumo-rapido .resumo-top { color: #4ade80; }
+        [data-theme="dark"] .resumo-rapido .resumo-bottom { color: #fbbf24; }
+        [data-theme="dark"] .resumo-rapido .resumo-pt-good { color: #4ade80; }
+        [data-theme="dark"] .resumo-rapido .resumo-pt-bad { color: #f87171; }
+
         .painel-header { text-align: center; margin-bottom: 20px; }
         .painel-header h1 { margin: 0 0 10px 0; font-size: 1.5em; color: #2c3e50; }
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
@@ -109,9 +197,30 @@
 
         /* Gráfico de Evolução (30 dias) */
         #evolution-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 15px; box-sizing: border-box; }
+        #evolution-wrapper.wide {
+            position: relative;
+            width: 100vw;
+            max-width: 100vw;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            padding: 20px 30px;
+            background: #f1f5f9;
+            border-top: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        [data-theme="dark"] #evolution-wrapper.wide { background: #0f172a; border-color: #334155; }
         #evolution-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
         #evolution-container-wrapper { background: #fff; border-radius: 8px; border: 1px solid #ddd; padding: 15px; }
         #evolution-container { width: 100%; height: 320px; }
+        #evolution-wrapper.wide #evolution-container { height: 520px; }
+        @media (max-width: 768px) { #evolution-wrapper.wide #evolution-container { height: 320px; } }
+        .btn-wide { background: #fff; border: 1px solid #ccc; padding: 5px 10px; font-size: 0.85em; cursor: pointer; color: #2c3e50; border-radius: 4px; transition: background 0.2s; margin-left: 8px; }
+        .btn-wide:hover { background: #e2e8f0; }
+        .btn-wide.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        [data-theme="dark"] .btn-wide { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-wide:hover { background: #334155; }
         [data-theme="dark"] #evolution-wrapper h2 { color: #e2e8f0; }
         [data-theme="dark"] #evolution-container-wrapper { background: #1e293b; border-color: #475569; }
 
@@ -154,6 +263,57 @@
         .ranked-table th.sortable:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
         [data-theme="dark"] .kbd-hint kbd { background: #334155; border-color: #475569; color: #cbd5e1; }
 
+        /* Heatmap calendário anual */
+        #heatmap-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
+        #heatmap-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
+        .heatmap-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-size: 0.9em; }
+        .heatmap-controls select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; }
+        .heatmap-controls label { color: #2c3e50; }
+        .heatmap-stats { color: #64748b; font-size: 0.88em; margin-left: 10px; }
+        #heatmap-container { overflow-x: auto; }
+        .heatmap-grid { display: inline-block; min-width: 100%; }
+        .heatmap-month-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .heatmap-month-label { width: 36px; font-size: 0.78em; color: #64748b; text-align: right; flex-shrink: 0; }
+        .heatmap-days { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; flex: 1; }
+        .heatmap-cell { aspect-ratio: 1; min-width: 14px; max-width: 28px; border-radius: 2px; cursor: pointer; transition: transform 0.1s; }
+        .heatmap-cell:hover { transform: scale(1.2); outline: 1.5px solid #15803d; outline-offset: 1px; z-index: 1; position: relative; }
+        .heatmap-cell.empty { background: transparent !important; cursor: default; }
+        .heatmap-cell.no-data { background: #e5e7eb; cursor: default; }
+        .heatmap-day-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.7em; color: #94a3b8; }
+        .heatmap-day-numbers { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; flex: 1; }
+        .heatmap-day-numbers span { text-align: center; }
+        [data-theme="dark"] #heatmap-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] .heatmap-controls label { color: #cbd5e1; }
+        [data-theme="dark"] .heatmap-controls select { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .heatmap-stats { color: #94a3b8; }
+        [data-theme="dark"] .heatmap-month-label { color: #94a3b8; }
+        [data-theme="dark"] .heatmap-cell.no-data { background: #334155; }
+
+        /* ΔPT delta (renovável: positivo = melhor que PT = verde) */
+        .ranked-table .delta-pos { color: #15803d; font-weight: 600; }
+        .ranked-table .delta-neg { color: #b91c1c; font-weight: 600; }
+        .ranked-table .delta-zero { color: #64748b; }
+        [data-theme="dark"] .ranked-table .delta-pos { color: #4ade80; }
+        [data-theme="dark"] .ranked-table .delta-neg { color: #f87171; }
+        [data-theme="dark"] .ranked-table .delta-zero { color: #94a3b8; }
+        .delta-toggle-wrap { text-align: center; margin: 0 auto 10px auto; font-size: 0.9em; color: #475569; }
+        .delta-toggle-wrap label { cursor: pointer; user-select: none; }
+        [data-theme="dark"] .delta-toggle-wrap { color: #cbd5e1; }
+
+        /* Pesquisa de país */
+        .country-search-wrap { position: relative; max-width: 460px; margin: 0 auto 14px auto; display: flex; align-items: center; gap: 8px; }
+        .country-search { flex: 1; padding: 8px 32px 8px 12px; font-size: 0.95em; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #1e293b; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+        .country-search:focus { border-color: #15803d; box-shadow: 0 0 0 3px rgba(21,128,61,0.15); }
+        .country-search-clear { position: absolute; right: 100px; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 1.2em; color: #64748b; cursor: pointer; padding: 2px 6px; line-height: 1; }
+        .country-search-clear:hover { color: #0f172a; }
+        .country-search-count { font-size: 0.85em; color: #64748b; min-width: 84px; text-align: right; }
+        .ranked-table tr.search-hidden { display: none; }
+        .ren-label.search-dim { opacity: 0.2; }
+        [data-theme="dark"] .country-search { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .country-search:focus { border-color: #4ade80; box-shadow: 0 0 0 3px rgba(74,222,128,0.2); }
+        [data-theme="dark"] .country-search-clear { color: #94a3b8; }
+        [data-theme="dark"] .country-search-count { color: #94a3b8; }
+
         /* Lista de produção ordenada */
         #ranked-list-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 10px; box-sizing: border-box; }
         #ranked-list-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
@@ -162,8 +322,17 @@
         .ranked-table td { padding: 6px 10px; border-bottom: 1px solid #eee; text-align: center; }
         .ranked-table td:nth-child(2) { text-align: left; }
         .ranked-table tr:hover { background: #f8fafc; }
+        .ranked-table tr[data-country="pt"] { background: #fef9c3; }
+        .ranked-table tr[data-country="pt"]:hover { background: #fde68a; }
+        .ranked-table .spark-cell { padding: 2px 6px; min-width: 80px; }
+        .ranked-table .spark-cell svg { display: block; margin: 0 auto; }
+        [data-theme="dark"] .ranked-table .spark-cell svg polyline { stroke: #60a5fa; }
+        [data-theme="dark"] .ranked-table tr[data-country="pt"] { background: #422006; }
+        [data-theme="dark"] .ranked-table tr[data-country="pt"]:hover { background: #78350f; }
         .ranked-table .rank-cell { width: 40px; color: #888; }
         .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
+        .flag-img { display: inline-block; vertical-align: middle; margin-right: 5px; border: 1px solid rgba(0,0,0,0.15); border-radius: 1px; }
+        [data-theme="dark"] .flag-img { border-color: rgba(255,255,255,0.2); }
 
         .ranked-table th.sortable { cursor: pointer; user-select: none; transition: background 0.15s; }
         .ranked-table th.sortable:hover { background: #dbeafe; }
@@ -212,9 +381,48 @@
         [data-theme="dark"] .source-badge.forecast { background: #422006; color: #fbbf24; border-color: #b45309; }
         [data-theme="dark"] .source-badge.provisional { background: #0c4a6e; color: #7dd3fc; border-color: #0284c7; }
         [data-theme="dark"] .forecast-badge { background: #422006; color: #fbbf24; }
+        /* Toast notifications */
+        #toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { background: #16a34a; color: #fff; padding: 10px 18px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-size: 0.95em; font-weight: 500; opacity: 0; transform: translateY(20px); transition: opacity 0.2s, transform 0.2s; max-width: 90vw; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.info { background: #2563eb; }
+        .toast.warn { background: #d97706; }
+        [data-theme="dark"] .toast { box-shadow: 0 4px 16px rgba(0,0,0,0.6); }
+        /* Opções de cálculo (details colapsável) */
+        .calc-options { max-width: 1100px; margin: 10px auto 6px auto; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0; transition: background 0.2s; }
+        .calc-options summary { padding: 10px 14px; cursor: pointer; user-select: none; list-style: none; font-size: 0.92em; color: #334155; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .calc-options summary::-webkit-details-marker { display: none; }
+        .calc-options summary::after { content: '▾'; margin-left: auto; transition: transform 0.2s; color: #64748b; }
+        .calc-options[open] summary::after { transform: rotate(180deg); }
+        .calc-options summary:hover { background: #f1f5f9; border-radius: 8px; }
+        .calc-options-gear { font-size: 1.05em; }
+        .calc-options-body { padding: 8px 14px 14px 14px; border-top: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px; }
+        .calc-options-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .calc-options-label { font-size: 0.88em; color: #475569; font-weight: 500; min-width: 180px; }
+        .calc-options .agg-toggle { margin: 0; display: block; }
+        [data-theme="dark"] .calc-options { background: #1e293b; border-color: #334155; }
+        [data-theme="dark"] .calc-options summary { color: #cbd5e1; }
+        [data-theme="dark"] .calc-options summary:hover { background: #0f172a; }
+        [data-theme="dark"] .calc-options summary::after { color: #94a3b8; }
+        [data-theme="dark"] .calc-options-body { border-top-color: #334155; }
+        [data-theme="dark"] .calc-options-label { color: #94a3b8; }
+        /* Badge do mapa com estado actual de cálculo */
+        .calc-badge { position: absolute; top: 10px; left: 10px; z-index: 500; background: rgba(255,255,255,0.92); color: #334155; padding: 5px 10px; border-radius: 5px; font-size: 0.78em; font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.15); cursor: pointer; backdrop-filter: blur(3px); border: 1px solid rgba(0,0,0,0.08); max-width: calc(100% - 140px); }
+        .calc-badge:hover { background: rgba(255,255,255,1); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        [data-theme="dark"] .calc-badge { background: rgba(30,41,59,0.92); color: #e2e8f0; border-color: rgba(255,255,255,0.08); }
+        [data-theme="dark"] .calc-badge:hover { background: rgba(30,41,59,1); }
+        @media (max-width: 540px) {
+            .calc-options-label { min-width: 100%; }
+            .calc-badge { font-size: 0.72em; padding: 4px 7px; max-width: calc(100% - 110px); }
+        }
+        /* Keyboard shortcut hints */
+        .kbd-hint { display: inline-block; padding: 1px 5px; border-radius: 3px; border: 1px solid #d1d5db; background: #f9fafb; font-family: monospace; font-size: 0.85em; color: #374151; }
+        [data-theme="dark"] .kbd-hint { border-color: #475569; background: #1e293b; color: #cbd5e1; }
     </style>
 </head>
 <body>
+
+<div id="toast-container" role="status" aria-live="polite"></div>
 
 <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar Modo Escuro" id="btn-dark-mode">&#x1F319;</button>
 
@@ -240,17 +448,34 @@
 
 <main>
     <div class="painel-header">
-        <div class="date-selector">
-            <label for="seletor-data">Selecione o dia:</label>
+        <div class="mode-toggle" role="tablist" aria-label="Modo de agregação">
+            <button type="button" class="mode-btn active" data-mode="day" role="tab" aria-selected="true" aria-pressed="true">Diário</button>
+            <button type="button" class="mode-btn" data-mode="week" role="tab" aria-selected="false" aria-pressed="false">Semanal (7d)</button>
+            <button type="button" class="mode-btn" data-mode="month" role="tab" aria-selected="false" aria-pressed="false">Mensal (30d)</button>
+            <button type="button" class="mode-btn" data-mode="custom" role="tab" aria-selected="false" aria-pressed="false">Personalizado</button>
+        </div>
+
+        <div class="date-selector" id="date-selector-wrapper">
+            <label for="seletor-data" id="label-seletor-data">Selecione o dia:</label>
             <div class="date-nav-wrapper">
                 <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior">&#10094;</button>
                 <input type="date" id="seletor-data">
                 <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte">&#10095;</button>
             </div>
         </div>
+
+        <div class="range-pickers" id="range-pickers" role="group" aria-label="Intervalo personalizado">
+            <label for="range-start">Início:</label>
+            <input type="date" id="range-start">
+            <label for="range-end">Fim:</label>
+            <input type="date" id="range-end">
+            <span id="range-info" style="font-size:0.85em; opacity:0.7;"></span>
+        </div>
+
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados disponíveis desde 01/01/2026 &mdash; Fonte: Energy-Charts API (Fraunhofer ISE)
         </p>
+        <div id="resumo-rapido" class="resumo-rapido" role="status" aria-live="polite" style="display:none;"></div>
         <div class="cross-link">
             <a href="#" id="link-precos" title="Ver preços de eletricidade para o mesmo dia">&#128202; Ver preços de eletricidade</a>
         </div>
@@ -259,42 +484,40 @@
         <p id="source-badge" class="source-badge" role="status" aria-live="polite"></p>
     </div>
 
-    <div class="mode-toggle" role="group" aria-label="Modo de agregação">
-        <button type="button" class="mode-btn active" data-mode="day" aria-pressed="true">Diário</button>
-        <button type="button" class="mode-btn" data-mode="week" aria-pressed="false">Semanal (7d)</button>
-        <button type="button" class="mode-btn" data-mode="month" aria-pressed="false">Mensal (30d)</button>
-        <button type="button" class="mode-btn" data-mode="custom" aria-pressed="false">Personalizado</button>
-    </div>
-
-    <div class="range-pickers" id="range-pickers" role="group" aria-label="Intervalo personalizado">
-        <label for="range-start">Início:</label>
-        <input type="date" id="range-start">
-        <label for="range-end">Fim:</label>
-        <input type="date" id="range-end">
-        <span id="range-info" style="font-size:0.85em; opacity:0.7;"></span>
-    </div>
-
-    <div class="agg-toggle" id="agg-toggle" role="group" aria-label="Forma de agregação">
-        <button type="button" class="mode-btn active" data-agg="mean" aria-pressed="true">Médias diárias</button>
-        <button type="button" class="mode-btn" data-agg="sum" aria-pressed="false">Totais do período</button>
-    </div>
-
-    <div class="agg-toggle visible" id="renbase-toggle" role="group" aria-label="Base de cálculo da percentagem renovável">
-        <button type="button" class="mode-btn active" data-renbase="production" aria-pressed="true" title="% calculada sobre a produção total">% sobre Produção</button>
-        <button type="button" class="mode-btn" data-renbase="load" aria-pressed="false" title="% calculada sobre o consumo (load)">% sobre Consumo</button>
-    </div>
-
-    <div class="agg-toggle visible" id="pumped-toggle" role="group" aria-label="Contar bombagem como renovável">
-        <button type="button" class="mode-btn active" data-pumped="exclude" aria-pressed="true" title="Bombagem fora do denominador da produção (alinhado com energy-charts.info)">Excluir bombagem</button>
-        <button type="button" class="mode-btn" data-pumped="include" aria-pressed="false" title="Bombagem no denominador da produção — soma de todas as colunas = 100%">Incluir bombagem</button>
-    </div>
-
     <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
 
     <div id="mapa-wrapper">
         <button class="btn-fullscreen" onclick="toggleFullscreen()" id="btn-fullscreen" title="Abrir mapa em ecrã inteiro">&#x26F6; Ecrã inteiro</button>
+        <div id="calc-badge" class="calc-badge" title="Opções de cálculo actuais (clique para ajustar)" aria-label="Opções de cálculo actuais">⚙️ <span id="calc-badge-text">Base: Produção · Bombagem excluída · Médias diárias</span></div>
         <div id="mapa-container"></div>
     </div>
+
+    <details id="calc-options" class="calc-options">
+        <summary><span class="calc-options-gear">⚙️</span> <strong>Opções de cálculo:</strong> <span id="calc-options-summary">Base: Produção · Bombagem excluída · Médias diárias</span></summary>
+        <div class="calc-options-body">
+            <div class="calc-options-row">
+                <span class="calc-options-label">Base da % renovável:</span>
+                <div class="agg-toggle visible" id="renbase-toggle" role="tablist" aria-label="Base de cálculo da percentagem renovável">
+                    <button type="button" class="mode-btn active" data-renbase="production" role="tab" aria-selected="true" aria-pressed="true" title="% calculada sobre a produção total">% sobre Produção</button>
+                    <button type="button" class="mode-btn" data-renbase="load" role="tab" aria-selected="false" aria-pressed="false" title="% calculada sobre o consumo (load)">% sobre Consumo</button>
+                </div>
+            </div>
+            <div class="calc-options-row">
+                <span class="calc-options-label">Bombagem hidráulica:</span>
+                <div class="agg-toggle visible" id="pumped-toggle" role="tablist" aria-label="Contar bombagem como renovável">
+                    <button type="button" class="mode-btn active" data-pumped="exclude" role="tab" aria-selected="true" aria-pressed="true" title="Bombagem fora do denominador da produção (alinhado com energy-charts.info)">Excluir bombagem</button>
+                    <button type="button" class="mode-btn" data-pumped="include" role="tab" aria-selected="false" aria-pressed="false" title="Bombagem no denominador da produção — soma de todas as colunas = 100%">Incluir bombagem</button>
+                </div>
+            </div>
+            <div class="calc-options-row">
+                <span class="calc-options-label">Agregação (7d / 30d / personalizado):</span>
+                <div class="agg-toggle" id="agg-toggle" role="tablist" aria-label="Forma de agregação">
+                    <button type="button" class="mode-btn active" data-agg="mean" role="tab" aria-selected="true" aria-pressed="true">Médias diárias</button>
+                    <button type="button" class="mode-btn" data-agg="sum" role="tab" aria-selected="false" aria-pressed="false">Totais do período</button>
+                </div>
+            </div>
+        </div>
+    </details>
 
     <p class="nota-fonte">Fonte: Energy-Charts API (Fraunhofer ISE) &mdash; Produção pública líquida | tiagofelicia.pt</p>
 
@@ -341,9 +564,26 @@
 
     <div id="evolution-wrapper">
         <h2 id="evolution-titulo">Evolução (30 dias)</h2>
-        <div class="mode-toggle" id="evolution-type-toggle" role="group" aria-label="Tipo de gráfico">
-            <button type="button" class="mode-btn active" data-evotype="bar" aria-pressed="true">Colunas</button>
-            <button type="button" class="mode-btn" data-evotype="area" aria-pressed="false">Áreas</button>
+        <div class="mode-toggle" id="evolution-type-toggle" role="tablist" aria-label="Tipo de gráfico">
+            <button type="button" class="mode-btn active" data-evotype="bar" role="tab" aria-selected="true" aria-pressed="true">Colunas</button>
+            <button type="button" class="mode-btn" data-evotype="area" role="tab" aria-selected="false" aria-pressed="false">Áreas</button>
+        </div>
+        <div class="compare-country-wrap" style="text-align:center; margin:8px auto 10px auto; font-size:0.9em;">
+            <label for="country-chart-compare">Comparar % renovável com:</label>
+            <select id="country-chart-compare" style="margin-left:6px; padding:4px 8px; border:1px solid #cbd5e1; border-radius:5px;">
+                <option value="">— nenhum —</option>
+            </select>
+            <button type="button" id="btn-evolution-wide" class="btn-wide" title="Alternar largura total do gráfico">&#x2194; Largura total</button>
+        </div>
+        <div class="evo-options" style="text-align:center; margin:4px auto 10px auto; font-size:0.86em; display:flex; flex-wrap:wrap; justify-content:center; gap:10px 18px; align-items:center;">
+            <label title="Linha de média móvel de 7 dias sobre a % renovável"><input type="checkbox" id="toggle-evo-mavg"> 📈 Média móvel 7d</label>
+            <label title="Linha horizontal com a média do período"><input type="checkbox" id="toggle-evo-avg"> ➖ Média do período</label>
+            <label title="Linha horizontal de meta (%)">🎯 Meta:
+                <input type="number" id="evo-target" min="0" max="100" step="5" value="80" style="width:54px; padding:2px 4px; border:1px solid #cbd5e1; border-radius:4px; margin:0 4px;">
+                <input type="checkbox" id="toggle-evo-target" title="Mostrar linha de meta"> mostrar
+            </label>
+            <label title="Normalizar barras/áreas empilhadas para 100% — foca o mix em vez do volume"><input type="checkbox" id="toggle-evo-norm"> 🔄 Normalizar (100%)</label>
+            <button type="button" id="btn-evo-reset-zoom" class="mode-btn" style="border-radius:5px; padding:4px 10px; font-size:0.85em;" title="Repor zoom — arraste sobre o gráfico ou use a roda do rato para aumentar">🔍 Repor zoom</button>
         </div>
         <div id="evolution-container-wrapper">
             <canvas id="evolution-container" tabindex="0" role="img" aria-label="Gráfico de evolução dos últimos 30 dias"></canvas>
@@ -352,13 +592,40 @@
 
     <div id="ranked-list-wrapper">
         <h2 id="ranked-list-titulo">Produção por país</h2>
+        <div class="delta-toggle-wrap">
+            <label><input type="checkbox" id="toggle-delta-pt"> Mostrar ΔPT (diferença p.p. vs Portugal)</label>
+            <label style="margin-left:18px;"><input type="checkbox" id="toggle-autonomy"> Mostrar Auto-sufic. (Produção / Consumo)</label>
+            <label style="margin-left:18px;"><input type="checkbox" id="toggle-spark"> Mostrar Tendência 7d</label>
+            <label style="margin-left:18px;" title="Oculta países cujos dados para este dia ainda estão em previsão day-ahead (ex: Montenegro quando fica dias sem actualização real)"><input type="checkbox" id="toggle-hide-fc" checked> Ocultar países em previsão</label>
+        </div>
+        <div class="country-search-wrap">
+            <input type="search" id="country-search" class="country-search" placeholder="🔍 Procurar país (ex: Portugal, PT, Alemanha)…" autocomplete="off" aria-label="Procurar país">
+            <button type="button" id="country-search-clear" class="country-search-clear" title="Limpar pesquisa (Esc)" aria-label="Limpar pesquisa" hidden>×</button>
+            <span id="country-search-count" class="country-search-count" aria-live="polite"></span>
+        </div>
         <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de produção por país">
             <p class="no-data-msg">A carregar dados...</p>
         </div>
         <div style="text-align:center; margin-top:15px;">
             <button type="button" id="btn-share" class="mode-btn" style="border-radius:5px;" title="Copiar link partilhável para o estado atual">&#128279; Copiar link de partilha</button>
+            <button type="button" id="btn-csv" class="mode-btn" style="border-radius:5px; margin-left:8px;" title="Descarregar tabela em CSV (Excel / LibreOffice)">&#x2B07; Exportar CSV</button>
             <span id="share-feedback" style="margin-left:10px; font-size:0.85em; color:#16a34a; display:none;">Copiado!</span>
+            <div style="margin-top:10px; font-size:0.82em; color:#6b7280;">
+                Atalhos: <span class="kbd-hint">←</span> <span class="kbd-hint">→</span> navegar · <span class="kbd-hint">D</span>/<span class="kbd-hint">W</span>/<span class="kbd-hint">M</span>/<span class="kbd-hint">P</span> modo · <span class="kbd-hint">/</span> pesquisar · <span class="kbd-hint">S</span> partilhar · <span class="kbd-hint">?</span> ajuda
+            </div>
         </div>
+    </div>
+
+    <div id="heatmap-wrapper">
+        <h2 id="heatmap-titulo">Heatmap anual de % renovável</h2>
+        <div class="heatmap-controls">
+            <label for="heatmap-country">País:</label>
+            <select id="heatmap-country"></select>
+            <label for="heatmap-year">Ano:</label>
+            <select id="heatmap-year"></select>
+            <span class="heatmap-stats" id="heatmap-stats"></span>
+        </div>
+        <div id="heatmap-container" role="img" aria-label="Calendário anual de percentagem renovável por dia"></div>
     </div>
 
     <article class="content-support">
@@ -369,6 +636,34 @@
             <div class="faq-content">
                 <p>Este mapa apresenta a <strong>percentagem de energia renovável</strong> no mix de produção de eletricidade de cada país europeu.</p>
                 <p>As cores variam do <strong style="color:#15803d;">verde</strong> (alta percentagem renovável) ao <strong style="color:#78350f;">castanho</strong> (baixa percentagem renovável). A escala de luminosidade foi escolhida para melhor acessibilidade a utilizadores daltónicos.</p>
+                <p>Além do mapa, a página tem um <strong>gráfico de mix de produção</strong> (barras empilhadas) para o país seleccionado, um <strong>gráfico de Evolução</strong> (colunas ou áreas) para o período em análise, um <strong>heatmap anual</strong> de % renovável, e uma <strong>tabela ranked</strong> com todos os países — todas as vistas reagem ao dia/período e às opções de cálculo.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Modos Diário, Semanal, Mensal e Personalizado</strong></summary>
+            <div class="faq-content">
+                <p>No topo da página pode escolher como quer ver os dados:</p>
+                <ul>
+                    <li><strong>Diário</strong> — mostra o dia exacto seleccionado.</li>
+                    <li><strong>Semanal (7d)</strong> — agrega os 7 dias terminados no dia seleccionado.</li>
+                    <li><strong>Mensal (30d)</strong> — agrega os 30 dias terminados no dia seleccionado.</li>
+                    <li><strong>Personalizado</strong> — escolha início e fim (até 365 dias).</li>
+                </ul>
+                <p>Em modos agregados pode ainda escolher, em <em>Opções de cálculo</em>, entre <strong>Médias diárias</strong> (GWh por dia) ou <strong>Totais do período</strong> (GWh acumulados).</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Onde estão as opções de cálculo? (badge no mapa)</strong></summary>
+            <div class="faq-content">
+                <p>Logo a seguir ao mapa existe um painel recolhível <strong>"⚙️ Opções de cálculo"</strong> com três toggles:</p>
+                <ul>
+                    <li><strong>Base da % renovável</strong>: % sobre Produção / % sobre Consumo</li>
+                    <li><strong>Bombagem hidráulica</strong>: Excluir / Incluir no denominador</li>
+                    <li><strong>Agregação</strong>: Médias diárias / Totais do período</li>
+                </ul>
+                <p>O badge sobreposto ao mapa (canto superior esquerdo) mostra sempre o estado actual; clicar nele abre/fecha o painel de opções.</p>
             </div>
         </details>
 
@@ -436,6 +731,52 @@
         </details>
 
         <details class="faq-item">
+            <summary><strong>Gráfico "Evolução" — o que posso fazer?</strong></summary>
+            <div class="faq-content">
+                <p>O gráfico de Evolução mostra a série temporal do período em análise para o país seleccionado. Opções disponíveis:</p>
+                <ul>
+                    <li><strong>Colunas / Áreas</strong> — barras empilhadas (até 60 dias) ou áreas empilhadas (sem limite).</li>
+                    <li><strong>↔ Largura total</strong> — expande o gráfico para toda a largura da janela.</li>
+                    <li><strong>Comparar % renovável com…</strong> — sobrepõe a linha de % renovável de outro país (linha vermelha tracejada).</li>
+                    <li><strong>📈 Média móvel 7d</strong> — linha azul tracejada com média centrada de 7 dias da % renovável.</li>
+                    <li><strong>➖ Média do período</strong> — linha horizontal verde com a média do intervalo visível.</li>
+                    <li><strong>🎯 Meta</strong> — linha horizontal vermelha na percentagem definida (default 80%).</li>
+                    <li><strong>🔄 Normalizar (100%)</strong> — reescala as colunas/áreas empilhadas como % do total diário, focando o mix em vez do volume.</li>
+                    <li><strong>Zoom</strong>: arraste com o rato sobre o gráfico, ou <kbd>Ctrl</kbd> + roda do rato. <kbd>Shift</kbd> + arrastar faz <em>pan</em>. Use <strong>🔍 Repor zoom</strong> para reset.</li>
+                </ul>
+                <p>O tooltip mostra GWh por fonte, % do total diário, e totais agregados de Renovável vs. Fóssil.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Heatmap anual de % renovável</strong></summary>
+            <div class="faq-content">
+                <p>O heatmap mostra, para o país escolhido e um ano específico, uma célula por dia colorida pela % renovável desse dia (mesma escala do mapa). Permite identificar rapidamente padrões sazonais (ex. mais renovável no Inverno em países hidroeléctricos, ou em meses de muito vento/sol).</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Tabela "Produção por país" — colunas opcionais e pesquisa</strong></summary>
+            <div class="faq-content">
+                <p>A tabela pode ser ordenada clicando nos cabeçalhos e tem várias colunas opcionais:</p>
+                <ul>
+                    <li><strong>ΔPT</strong> — diferença, em pontos percentuais, da % renovável desse país face a Portugal.</li>
+                    <li><strong>Auto-sufic.</strong> — Produção ÷ Consumo × 100. Acima de 100% indica exportador líquido; abaixo, importador líquido.</li>
+                    <li><strong>Tendência 7d</strong> — mini-sparkline SVG com a evolução da % renovável nos últimos 7 dias.</li>
+                </ul>
+                <p>A linha de <strong>Portugal</strong> aparece destacada a amarelo para referência rápida.</p>
+                <p>Pode ainda usar a <strong>caixa de pesquisa</strong> (nome em PT, código ISO, ou parte do nome) e o botão <strong>⬇ Exportar CSV</strong> para descarregar a tabela actual em formato Excel / LibreOffice (separador <code>;</code>, codificação UTF-8 com BOM).</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Link de partilha</strong></summary>
+            <div class="faq-content">
+                <p>O botão <strong>🔗 Copiar link de partilha</strong> copia um URL que inclui todos os parâmetros da vista actual: data/intervalo, país, modo, opções de cálculo, toggles das colunas da tabela, opções do gráfico de Evolução, comparação, ano do heatmap, etc. Abrir esse link reconstrói a mesma vista.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
             <summary><strong>De onde vêm os dados?</strong></summary>
             <div class="faq-content">
                 <p>Os dados são obtidos através da <strong>API Energy-Charts</strong> do <strong>Fraunhofer ISE</strong>, que agrega dados de produção de eletricidade de 28 países europeus.</p>
@@ -447,12 +788,17 @@
         <details class="faq-item">
             <summary><strong>Atalhos de teclado</strong></summary>
             <div class="faq-content">
-                <p>Pode navegar o mapa sem usar o rato:</p>
+                <p>Pode navegar a página sem usar o rato:</p>
                 <ul>
-                    <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> &mdash; dia anterior / seguinte</li>
+                    <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> &mdash; dia (ou período) anterior / seguinte</li>
                     <li><kbd>&#8593;</kbd> / <kbd>&#8595;</kbd> &mdash; país anterior / seguinte (na lista)</li>
-                    <li><kbd>Esc</kbd> &mdash; sair do modo ecrã inteiro</li>
+                    <li><kbd>D</kbd> / <kbd>W</kbd> / <kbd>M</kbd> / <kbd>P</kbd> &mdash; trocar para modo Diário / Semanal / Mensal / Personalizado</li>
+                    <li><kbd>/</kbd> &mdash; focar a caixa de pesquisa de países</li>
+                    <li><kbd>S</kbd> &mdash; copiar link de partilha</li>
+                    <li><kbd>?</kbd> &mdash; mostrar lista rápida de atalhos</li>
+                    <li><kbd>Esc</kbd> &mdash; sair do modo ecrã inteiro (ou limpar a pesquisa, se estiver activa)</li>
                 </ul>
+                <p><small>No gráfico de Evolução: arraste com o rato para fazer <em>zoom</em>, <kbd>Ctrl</kbd> + roda do rato para <em>zoom</em> fino, <kbd>Shift</kbd> + arrastar para <em>pan</em>.</small></p>
             </div>
         </details>
 
@@ -483,9 +829,38 @@
         crossorigin=""></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+<script>
+    // Registar plugins globalmente (seguro se falhar a carregar CDN)
+    try {
+        if (window.Chart) {
+            var zp = window.ChartZoom || window['chartjs-plugin-zoom'];
+            if (zp) Chart.register(zp);
+            var ap = window['chartjs-plugin-annotation'] || window.Annotation || window.ChartAnnotation;
+            if (ap) Chart.register(ap);
+        }
+    } catch(_){}
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Mirror aria-pressed → aria-selected em botões dentro de [role="tablist"]
+    (function() {
+        var tabs = document.querySelectorAll('[role="tablist"] [role="tab"]');
+        if (!tabs.length || typeof MutationObserver === 'undefined') return;
+        var mo = new MutationObserver(function(muts) {
+            for (var i = 0; i < muts.length; i++) {
+                var tgt = muts[i].target;
+                if (tgt && tgt.getAttribute && tgt.getAttribute('role') === 'tab') {
+                    tgt.setAttribute('aria-selected', tgt.getAttribute('aria-pressed') === 'true' ? 'true' : 'false');
+                }
+            }
+        });
+        for (var t = 0; t < tabs.length; t++) mo.observe(tabs[t], { attributes: true, attributeFilter: ['aria-pressed'] });
+    })();
 
     // --- CONFIGURAÇÕES ---
     var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_producao/";
@@ -669,6 +1044,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dec == null) dec = 2;
         return Number(v).toFixed(dec).replace('.', ',');
     }
+    function showToast(msg, variant, duration) {
+        var ctn = document.getElementById('toast-container');
+        if (!ctn) return;
+        var t = document.createElement('div');
+        t.className = 'toast' + (variant ? ' ' + variant : '');
+        t.textContent = msg;
+        ctn.appendChild(t);
+        requestAnimationFrame(function(){ t.classList.add('show'); });
+        var dur = duration || 2200;
+        setTimeout(function(){
+            t.classList.remove('show');
+            setTimeout(function(){ if (t.parentNode) t.parentNode.removeChild(t); }, 250);
+        }, dur);
+    }
     function fmtT(v, dec) {
         if (v == null || isNaN(v)) return '—';
         if (dec == null) dec = 2;
@@ -773,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var data = getCountryData(zone);
             var name = country ? (COUNTRY_NAMES[country] || country.toUpperCase()) : (props.displayName || zone);
             if (data) {
-                var html = '<b>' + name + '</b>';
+                var html = '<b>' + countryFlag(country) + name + '</b>';
                 var rs = computeRenShare(data);
                 var baseLbl = renBase === 'load' ? ' (consumo)' : '';
                 if (rs == null) {
@@ -802,7 +1191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (spark) html += '<div class="sparkline-label">% Renov. (7d)</div>' + spark;
                 this._div.innerHTML = html;
             } else {
-                this._div.innerHTML = '<b>' + name + '</b><div class="ren-value" style="color:#999;">Sem dados</div>';
+                this._div.innerHTML = '<b>' + countryFlag(country) + name + '</b><div class="ren-value" style="color:#999;">Sem dados</div>';
             }
         } else {
             this._div.innerHTML = '<h4>Produção por país</h4>Passe o rato sobre uma zona';
@@ -891,10 +1280,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     ? L.latLng(LABEL_POSITIONS[zone][0], LABEL_POSITIONS[zone][1])
                     : layer.getBounds().getCenter();
 
+                var countryCode = ZONE_TO_COUNTRY[zone] || '';
                 var marker = L.marker(center, {
                     icon: L.divIcon({
                         className: 'ren-label',
-                        html: Math.round(rs) + '%',
+                        html: '<span data-country="' + countryCode + '">' + Math.round(rs) + '%</span>',
                         iconSize: [36, 14],
                         iconAnchor: [18, 7]
                     }),
@@ -1334,7 +1724,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 other_ren: sumKeys(OTHER_REN_KEYS),
                 biomass_total: sumKeys(BIOMASS_KEYS),
                 renSum: getRenSum(prod),
-                total: d.total || 0
+                total: d.total || 0,
+                load: prod.load || 0,
+                autonomy: (prod.load && prod.load > 0) ? ((d.total || 0) / prod.load * 100) : null
             });
         }
 
@@ -1342,6 +1734,29 @@ document.addEventListener('DOMContentLoaded', function() {
             container.innerHTML = '<p class="no-data-msg">Sem dados para o dia selecionado.</p>';
             return;
         }
+
+        // Filtro de países em previsão (apenas em modo diário, onde source é significativo,
+        // e só quando há dados reais/provisórios suficientes nos restantes)
+        var hideFc = !!(document.getElementById('toggle-hide-fc') && document.getElementById('toggle-hide-fc').checked);
+        var hiddenFcCount = 0;
+        if (hideFc && currentMode === 'day') {
+            var reliableEntries = entries.filter(function(e){ return e.source !== 'forecast'; });
+            if (reliableEntries.length >= Math.max(5, Math.floor(entries.length * 0.6))) {
+                hiddenFcCount = entries.length - reliableEntries.length;
+                entries = reliableEntries;
+            }
+        }
+
+        // ΔPT: diferença de % renovável vs Portugal (pontos percentuais)
+        var ptEntry = null;
+        for (var ip = 0; ip < entries.length; ip++) { if (entries[ip].country === 'pt') { ptEntry = entries[ip]; break; } }
+        var ptRen = ptEntry ? ptEntry.ren : null;
+        for (var ie = 0; ie < entries.length; ie++) {
+            entries[ie].deltaPt = (ptRen != null) ? (entries[ie].ren - ptRen) : null;
+        }
+        var showDeltaPt = !!(document.getElementById('toggle-delta-pt') && document.getElementById('toggle-delta-pt').checked);
+        var showAutonomy = !!(document.getElementById('toggle-autonomy') && document.getElementById('toggle-autonomy').checked);
+        var showSpark = !!(document.getElementById('toggle-spark') && document.getElementById('toggle-spark').checked);
 
         // Ordenar pela coluna selecionada
         var col = currentSort.column;
@@ -1369,18 +1784,26 @@ document.addEventListener('DOMContentLoaded', function() {
         html += '<thead><tr>';
         html += '<th class="rank-cell">#</th>';
         html += '<th class="sortable" data-sort="name" tabindex="0" role="button" aria-label="Ordenar por país">País' + getSortIndicator('name') + '</th>';
+        if (showSpark) { html += '<th class="spark-cell" title="Tendência de % renovável nos últimos 7 dias">Tendência 7d</th>'; }
         for (var c = 0; c < columns.length; c++) {
             html += '<th class="sortable" data-sort="' + columns[c].key + '" tabindex="0" role="button" aria-label="Ordenar por ' + columns[c].label + '">' + columns[c].label + getSortIndicator(columns[c].key) + '</th>';
+            if (columns[c].key === 'ren' && showDeltaPt) {
+                html += '<th class="sortable" data-sort="deltaPt" tabindex="0" role="button" aria-label="Ordenar por diferença vs Portugal" title="Diferença em pontos percentuais vs Portugal">ΔPT' + getSortIndicator('deltaPt') + '</th>';
+            }
+            if (columns[c].key === 'total' && showAutonomy) {
+                html += '<th class="sortable" data-sort="autonomy" tabindex="0" role="button" aria-label="Ordenar por auto-suficiência" title="Produção / Consumo × 100 — >100% = exportador líquido">Auto-sufic.' + getSortIndicator('autonomy') + '</th>';
+            }
         }
         html += '</tr></thead><tbody>';
 
         for (var i = 0; i < entries.length; i++) {
             var e = entries[i];
             var color = getColor(e.ren);
-            html += '<tr>';
+            html += '<tr data-country="' + e.country + '">';
             html += '<td class="rank-cell">' + (i + 1) + '</td>';
             var fcBadge = e.source === 'forecast' ? ' <span class="forecast-badge">prev.</span>' : '';
-            html += '<td style="text-align:left;"><span class="color-indicator" style="background:' + color + (e.source === 'forecast' ? ';opacity:0.6' : '') + '"></span>' + e.name + fcBadge + '</td>';
+            html += '<td style="text-align:left;"><span class="color-indicator" style="background:' + color + (e.source === 'forecast' ? ';opacity:0.6' : '') + '"></span>' + countryFlag(e.country) + e.name + fcBadge + '</td>';
+            if (showSpark) { html += '<td class="spark-cell">' + (buildSparkline(e.country) || '—') + '</td>'; }
 
             // Denominador para "% da produção total" (varia com toggle de bombagem)
             var denom = includePumped ? e.total : (e.total - e.pumped);
@@ -1398,6 +1821,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 + (e.other_renewables > 0 ? 'Outras Renov.: ' + fmtT(e.other_renewables, 2) + ' GWh (' + pctOfRen(e.other_renewables) + ')\n' : '');
             var tipRen = subLine + '─────────\nTotal renovável: ' + fmtT(e.renSum, 2) + ' GWh\n' + fmtT(e.ren, 2) + ' % da produção ' + (includePumped ? 'total' : 'sem bombagem');
             html += '<td class="has-tooltip" title="' + tipRen + '"><strong>' + fmtT(e.ren, 1) + '%</strong></td>';
+
+            // ΔPT
+            if (showDeltaPt) {
+                if (e.country === 'pt' || e.deltaPt == null) {
+                    html += '<td class="delta-zero">\u2014</td>';
+                } else {
+                    var dCls = e.deltaPt > 0.05 ? 'delta-pos' : (e.deltaPt < -0.05 ? 'delta-neg' : 'delta-zero');
+                    var dSign = e.deltaPt > 0 ? '+' : '';
+                    html += '<td class="' + dCls + '" title="Diferença vs Portugal (' + fmtT(ptRen, 1) + '%)">' + dSign + fmtT(e.deltaPt, 1) + ' p.p.</td>';
+                }
+            }
 
             // Solar
             html += '<td class="has-tooltip" title="Solar: ' + fmtT(e.solar, 2) + ' GWh\n' + pctOf(e.solar) + ' da produção">' + fmtT(e.solar, 1) + '</td>';
@@ -1434,11 +1868,26 @@ document.addEventListener('DOMContentLoaded', function() {
             var denomLbl = includePumped ? 'Denominador: ' + fmtT(e.total, 2) + ' GWh (total)' : 'Denominador: ' + fmtT(denom, 2) + ' GWh (total − bombagem)';
             var tipTotal = 'Renovável: ' + fmtT(e.renSum, 2) + ' GWh (' + fmtT(e.ren, 1) + ' %)\nNuclear: ' + fmtT(e.nuclear, 2) + ' GWh\nFóssil: ' + fmtT(e.fossil, 2) + ' GWh' + pumpedLbl + '\n─────────\nProdução total: ' + fmtT(e.total, 2) + ' GWh\n' + denomLbl;
             html += '<td class="has-tooltip" title="' + tipTotal + '">' + fmtT(e.total, 1) + '</td>';
+            // Auto-suficiência
+            if (showAutonomy) {
+                if (e.autonomy == null) {
+                    html += '<td class="delta-zero">—</td>';
+                } else {
+                    var aCls = e.autonomy > 100 ? 'delta-pos' : (e.autonomy < 100 ? 'delta-neg' : 'delta-zero');
+                    var netLbl = e.autonomy > 100 ? 'Exportador líquido' : (e.autonomy < 100 ? 'Importador líquido' : 'Equilíbrio');
+                    var tipAut = 'Produção: ' + fmtT(e.total, 2) + ' GWh\nConsumo: ' + fmtT(e.load, 2) + ' GWh\n─────────\nAuto-sufic.: ' + fmtT(e.autonomy, 1) + '%\n' + netLbl;
+                    html += '<td class="' + aCls + ' has-tooltip" title="' + tipAut + '">' + fmtT(e.autonomy, 1) + '%</td>';
+                }
+            }
             html += '</tr>';
         }
 
         html += '</tbody></table></div>';
+        if (hiddenFcCount > 0) {
+            html += '<p style="text-align:center; margin-top:8px; font-size:0.82em; color:#6b7280;" title="Estes países têm dados para este dia apenas em previsão day-ahead (não actualizados com valores reais). Desmarque &quot;Ocultar países em previsão&quot; para os ver.">⚠ ' + hiddenFcCount + (hiddenFcCount === 1 ? ' país ocultado' : ' países ocultados') + ' por estar' + (hiddenFcCount === 1 ? '' : 'em') + ' apenas com previsão day-ahead.</p>';
+        }
         container.innerHTML = html;
+        applyCountrySearch();
 
         // Handlers de ordenação nos cabeçalhos
         var ths = container.querySelectorAll('th.sortable');
@@ -1500,6 +1949,282 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             badge.style.display = 'none';
         }
+    }
+
+    // --- RESUMO RÁPIDO ---
+    var COUNTRY_FLAGS = {
+        at:'🇦🇹', be:'🇧🇪', bg:'🇧🇬', ch:'🇨🇭', cz:'🇨🇿', de:'🇩🇪', dk:'🇩🇰', ee:'🇪🇪',
+        es:'🇪🇸', fi:'🇫🇮', fr:'🇫🇷', gr:'🇬🇷', hr:'🇭🇷', hu:'🇭🇺', ie:'🇮🇪', it:'🇮🇹',
+        lt:'🇱🇹', lv:'🇱🇻', me:'🇲🇪', nl:'🇳🇱', no:'🇳🇴', pl:'🇵🇱', pt:'🇵🇹', ro:'🇷🇴',
+        rs:'🇷🇸', se:'🇸🇪', si:'🇸🇮', sk:'🇸🇰'
+    };
+    // Bandeiras como imagens (flagcdn.com) — render consistente em todas as plataformas
+    function countryFlag(code) {
+        if (!code) return '';
+        var cc = String(code).toLowerCase();
+        return '<img class="flag-img" src="https://flagcdn.com/16x12/' + cc + '.png" srcset="https://flagcdn.com/32x24/' + cc + '.png 2x" width="16" height="12" alt="" loading="lazy">';
+    }
+    // --- PESQUISA/FILTRO DE PAÍS ---
+    function normalizeStr(s) {
+        if (s == null) return '';
+        return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+    function countryMatches(code, q) {
+        if (!q) return true;
+        var nq = normalizeStr(q);
+        if (normalizeStr(code).indexOf(nq) !== -1) return true;
+        var name = COUNTRY_NAMES[code] || '';
+        if (normalizeStr(name).indexOf(nq) !== -1) return true;
+        return false;
+    }
+    function applyCountrySearch() {
+        var input = document.getElementById('country-search');
+        var q = input ? input.value.trim() : '';
+        var clearBtn = document.getElementById('country-search-clear');
+        var countEl = document.getElementById('country-search-count');
+        if (clearBtn) clearBtn.hidden = !q;
+
+        // 1. Filtrar linhas da tabela + recontar ranks
+        var rows = document.querySelectorAll('#ranked-list-content tbody tr');
+        var visible = 0, total = rows.length;
+        for (var i = 0; i < rows.length; i++) {
+            var cc = rows[i].getAttribute('data-country') || '';
+            var match = countryMatches(cc, q);
+            rows[i].classList.toggle('search-hidden', !match);
+            if (match) {
+                visible++;
+                var rankCell = rows[i].querySelector('.rank-cell');
+                if (rankCell) rankCell.textContent = visible;
+            }
+        }
+        if (countEl) {
+            countEl.textContent = q ? (visible + ' de ' + total) : '';
+        }
+
+        // 2. Mapa: highlight/dim das zonas
+        if (geojsonLayer) {
+            geojsonLayer.eachLayer(function(layer) {
+                var zone = layer.feature.properties.ecZone;
+                var cc = ZONE_TO_COUNTRY[zone] || '';
+                var base = style(layer.feature);
+                if (!q) {
+                    layer.setStyle(base);
+                } else if (countryMatches(cc, q)) {
+                    layer.setStyle({ weight: 3, color: '#15803d', fillOpacity: base.fillOpacity });
+                } else {
+                    layer.setStyle({ weight: base.weight, color: base.color, fillOpacity: 0.15 });
+                }
+            });
+        }
+
+        // 3. Dim de labels no mapa
+        if (renLabelsLayer) {
+            renLabelsLayer.eachLayer(function(m) {
+                if (!m._icon) return;
+                var span = m._icon.querySelector('span[data-country]');
+                var cc = span ? span.getAttribute('data-country') : '';
+                var match = countryMatches(cc, q);
+                m._icon.classList.toggle('search-dim', !!q && !match);
+            });
+        }
+    }
+
+    // --- HEATMAP CALENDÁRIO ANUAL ---
+    var MES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    async function updateHeatmap() {
+        var countrySel = document.getElementById('heatmap-country');
+        var yearSel = document.getElementById('heatmap-year');
+        var container = document.getElementById('heatmap-container');
+        var statsEl = document.getElementById('heatmap-stats');
+        var titulo = document.getElementById('heatmap-titulo');
+        if (!countrySel || !yearSel || !container) return;
+        var country = countrySel.value, year = parseInt(yearSel.value, 10);
+        if (!country || !year) return;
+
+        // Carregar todos os meses do ano
+        var months = [];
+        for (var m = 1; m <= 12; m++) months.push(year + '-' + String(m).padStart(2, '0'));
+        var promises = [];
+        for (var mi = 0; mi < months.length; mi++) promises.push(ensureMonth(months[mi]));
+        await Promise.all(promises);
+
+        // Recolher valores de % renovável por dia
+        var values = [], byDay = {};
+        for (var m2 = 1; m2 <= 12; m2++) {
+            var ym = year + '-' + String(m2).padStart(2, '0');
+            var monthData = dataCache[ym] || {};
+            for (var ds in monthData) {
+                if (!monthData.hasOwnProperty(ds)) continue;
+                var d = monthData[ds][country];
+                if (!d) continue;
+                var rs = computeRenShare(d);
+                if (rs == null) continue;
+                byDay[ds] = rs;
+                values.push(rs);
+            }
+        }
+
+        var baseL = renBase === 'load' ? '% renov. sobre consumo' : '% renov. sobre produção';
+        if (titulo) {
+            titulo.textContent = 'Heatmap anual de ' + baseL + ' — ' + (COUNTRY_NAMES[country] || country.toUpperCase()) + ' · ' + year;
+        }
+        if (!values.length) {
+            container.innerHTML = '<p class="no-data-msg" style="text-align:center;padding:20px;">Sem dados para este ano.</p>';
+            if (statsEl) statsEl.textContent = '';
+            return;
+        }
+        var minV = Math.min.apply(null, values);
+        var maxV = Math.max.apply(null, values);
+        var avgV = values.reduce(function(a, b) { return a + b; }, 0) / values.length;
+        if (statsEl) {
+            statsEl.innerHTML = values.length + ' dias · Média: <strong>' + fmtT(avgV, 1) + '%</strong> · Mín: <strong>' + fmtT(minV, 1) + '%</strong> · Máx: <strong>' + fmtT(maxV, 1) + '%</strong>';
+        }
+
+        var fmtDate = function(s) { var p = s.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; };
+
+        var html = '<div class="heatmap-grid">';
+        html += '<div class="heatmap-day-header"><span class="heatmap-month-label"></span><div class="heatmap-day-numbers">';
+        for (var dh = 1; dh <= 31; dh++) html += '<span>' + dh + '</span>';
+        html += '</div></div>';
+
+        for (var mm = 1; mm <= 12; mm++) {
+            html += '<div class="heatmap-month-row">';
+            html += '<span class="heatmap-month-label">' + MES_NOMES[mm - 1] + '</span>';
+            html += '<div class="heatmap-days">';
+            var daysInMonth = new Date(year, mm, 0).getDate();
+            for (var dd = 1; dd <= 31; dd++) {
+                if (dd > daysInMonth) { html += '<div class="heatmap-cell empty"></div>'; continue; }
+                var dateStr = year + '-' + String(mm).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
+                var v2 = byDay[dateStr];
+                if (v2 == null) {
+                    html += '<div class="heatmap-cell no-data" title="' + fmtDate(dateStr) + ': sem dados"></div>';
+                } else {
+                    var bg = getColor(v2);
+                    var t = fmtDate(dateStr) + ': ' + fmtT(v2, 1) + '% renovável';
+                    html += '<div class="heatmap-cell" style="background:' + bg + '" title="' + t + '" data-date="' + dateStr + '"></div>';
+                }
+            }
+            html += '</div></div>';
+        }
+        html += '</div>';
+        container.innerHTML = html;
+
+        container.querySelectorAll('.heatmap-cell[data-date]').forEach(function(c) {
+            c.addEventListener('click', function() {
+                var ds = this.getAttribute('data-date');
+                if (ds && ds >= seletorData.min && (!seletorData.max || ds <= seletorData.max)) {
+                    if (currentMode !== 'day') {
+                        var dayBtn = document.querySelector('.mode-toggle .mode-btn[data-mode="day"]');
+                        if (dayBtn) dayBtn.click();
+                    }
+                    seletorData.value = ds;
+                    seletorData.dispatchEvent(new Event('change'));
+                    document.getElementById('mapa-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
+    function updateResumoRapido() {
+        var el = document.getElementById('resumo-rapido');
+        if (!el) return;
+        var entries = [];
+        var totalEurope = { solar:0, wind:0, hydro:0, nuclear:0, gas:0, coal:0, biomass:0, other:0 };
+        var fcTotal = 0, provTotal = 0, realTotal = 0;
+        for (var c in currentData) {
+            if (!currentData.hasOwnProperty(c)) continue;
+            var d = currentData[c];
+            var rs = computeRenShare(d);
+            if (rs == null) continue;
+            var src = d.source;
+            if (src === 'forecast') fcTotal++;
+            else if (src === 'provisional') provTotal++;
+            else realTotal++;
+            entries.push({ country: c, ren: rs, source: src });
+            var p = d.production || {};
+            totalEurope.solar += p.solar || 0;
+            totalEurope.wind += (p.wind_onshore || 0) + (p.wind_offshore || 0);
+            totalEurope.hydro += (p.hydro_run_of_river || 0) + (p.hydro_water_reservoir || 0);
+            totalEurope.nuclear += p.nuclear || 0;
+            totalEurope.gas += (p.gas || 0) + (p.gas_coal_derived || 0);
+            totalEurope.coal += (p.coal_hard || 0) + (p.coal_lignite || 0);
+            totalEurope.biomass += (p.biomass || 0) + (p.geothermal || 0) + (p.waste || 0) + (p.other_renewables || 0);
+            totalEurope.other += (p.oil || 0) + (p.other || 0);
+        }
+        if (entries.length < 2) { el.style.display = 'none'; return; }
+
+        // Em dia de previsão pura (só forecast, sem dados reais nem provisórios — tipicamente data futura)
+        // a comparação entre países não é fiável: ocultar o resumo.
+        if (currentMode === 'day' && fcTotal > 0 && provTotal === 0 && realTotal === 0) {
+            el.style.display = 'none';
+            return;
+        }
+
+        // Se há dados reais/provisórios suficientes, excluir países com estimativa (forecast)
+        // do top/bottom/média — evita que países com dados "presos" em previsão
+        // (ex: Montenegro fora da atualização diária) distorçam o resumo.
+        var reliable = entries.filter(function(e){ return e.source !== 'forecast'; });
+        var useReliable = reliable.length >= Math.max(5, Math.floor(entries.length * 0.6));
+        var pool = useReliable ? reliable : entries;
+        var excludedFc = useReliable ? (entries.length - reliable.length) : 0;
+
+        pool.sort(function(a, b) { return b.ren - a.ren; });
+        var top = pool[0], bottom = pool[pool.length - 1];
+        var sum = 0; for (var i = 0; i < pool.length; i++) sum += pool[i].ren;
+        var media = sum / pool.length;
+
+        var ptEntry = null, ptRank = null;
+        for (var j = 0; j < pool.length; j++) {
+            if (pool[j].country === 'pt') { ptEntry = pool[j]; ptRank = j + 1; break; }
+        }
+
+        // Fonte dominante europeia
+        var srcLabels = { solar:'Solar', wind:'Eólica', hydro:'Hídrica', nuclear:'Nuclear', gas:'Gás Natural', coal:'Carvão', biomass:'Biomassa', other:'Outros' };
+        var sumAll = 0; for (var sk in totalEurope) sumAll += totalEurope[sk];
+        var domSrc = null, domVal = 0;
+        for (var sk2 in totalEurope) { if (totalEurope[sk2] > domVal) { domVal = totalEurope[sk2]; domSrc = sk2; } }
+        var domPct = sumAll > 0 ? (domVal / sumAll * 100) : 0;
+
+        // Prefixo do período
+        var fmtBR = function(s) { var p = s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; };
+        var prefix;
+        if (currentMode === 'custom' && customStart && customEnd) {
+            prefix = 'Período (' + fmtBR(customStart) + ' → ' + fmtBR(customEnd) + ')';
+        } else if (currentMode === 'week') {
+            var w = parseDate(seletorData.value); w.setDate(w.getDate() - 6);
+            prefix = 'Semana (' + fmtBR(formatDate(w)) + ' → ' + fmtBR(seletorData.value) + ')';
+        } else if (currentMode === 'month') {
+            var m = parseDate(seletorData.value); m.setDate(m.getDate() - 29);
+            prefix = 'Mês (' + fmtBR(formatDate(m)) + ' → ' + fmtBR(seletorData.value) + ')';
+        } else {
+            var today = new Date(); var todayStr = formatDate(today);
+            var yest = new Date(today); yest.setDate(today.getDate() - 1);
+            var tmrw = new Date(today); tmrw.setDate(today.getDate() + 1);
+            if (seletorData.value === todayStr) prefix = 'Hoje';
+            else if (seletorData.value === formatDate(yest)) prefix = 'Ontem';
+            else if (seletorData.value === formatDate(tmrw)) prefix = 'Amanhã';
+            else prefix = fmtBR(seletorData.value);
+        }
+
+        var baseLbl = renBase === 'load' ? ' sobre consumo' : '';
+        var html = '<span class="resumo-label">' + prefix + '</span> — ';
+        if (ptEntry) {
+            var diff = ptEntry.ren - media;
+            var cls = diff >= 0 ? 'resumo-pt-good' : 'resumo-pt-bad';
+            var arrow = diff >= 0 ? '▲' : '▼';
+            html += countryFlag('pt') + ' Portugal: <strong>' + fmtN(ptEntry.ren, 1) + '% renovável' + baseLbl + '</strong> '
+                + '<span class="' + cls + '">(' + arrow + ' ' + fmtN(Math.abs(diff), 1) + ' pp ' + (diff >= 0 ? 'acima' : 'abaixo') + ' da média europeia ' + fmtN(media, 1) + '%)</span>'
+                + ' — ' + ptRank + '.º de ' + pool.length + ' países. ';
+        } else {
+            html += 'Média europeia: <strong>' + fmtN(media, 1) + '% renovável</strong>. ';
+        }
+        // Nota de exclusão (quando ignorámos países em previsão porque há dados reais suficientes)
+        var excludedNote = excludedFc > 0 ? ' <small style="color:#6b7280;" title="Países com dados ainda em previsão day-ahead foram excluídos desta comparação porque há dados reais/provisórios suficientes nos restantes">(' + excludedFc + (excludedFc === 1 ? ' país em previsão excluído' : ' países em previsão excluídos') + ')</small>' : '';
+        html += 'Mais renovável: <span class="resumo-top">' + countryFlag(top.country) + ' ' + (COUNTRY_NAMES[top.country] || top.country) + ' (' + fmtN(top.ren, 1) + '%)</span>. ';
+        html += 'Menos renovável: <span class="resumo-bottom">' + countryFlag(bottom.country) + ' ' + (COUNTRY_NAMES[bottom.country] || bottom.country) + ' (' + fmtN(bottom.ren, 1) + '%)</span>.' + excludedNote + ' ';
+        if (domSrc) html += 'Fonte dominante: <strong>' + srcLabels[domSrc] + ' (' + fmtN(domPct, 1) + '%)</strong>.';
+        el.innerHTML = html;
+        el.style.display = 'block';
     }
 
     // --- HELPERS DE DATA / RANGE ---
@@ -1733,6 +2458,22 @@ document.addEventListener('DOMContentLoaded', function() {
             yAxisID: 'yPct', fill: false,
             tension: 0.25, pointRadius: 2, borderWidth: 2, order: 0, _overlay: true
         });
+        // Linha de comparação — % Renovável de outro país
+        baseDatasets.push({
+            type: 'line', label: '% Renov. (comparar)', data: [],
+            borderColor: '#dc2626', backgroundColor: 'transparent',
+            yAxisID: 'yPct', fill: false,
+            tension: 0.25, pointRadius: 2, borderWidth: 2, borderDash: [4,3], order: 0,
+            _overlay: true, _compare: true, hidden: true, spanGaps: true
+        });
+        // Média móvel 7d sobre % Renovável (linha tracejada azul)
+        baseDatasets.push({
+            type: 'line', label: 'Média móvel 7d (% Renov.)', data: [],
+            borderColor: '#0ea5e9', backgroundColor: 'transparent',
+            yAxisID: 'yPct', fill: false,
+            tension: 0.3, pointRadius: 0, borderWidth: 2, borderDash: [2,3], order: 0,
+            _overlay: true, _mavg: true, hidden: true, spanGaps: true
+        });
         evolutionChart = new Chart(ctx, {
             type: isBar ? 'bar' : 'line',
             data: { labels: [], datasets: baseDatasets },
@@ -1760,7 +2501,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     tooltip: {
                         filter: function(ctx) {
-                            // Esconder linhas do tooltip para séries vazias/zero
                             var v = ctx.parsed.y;
                             if (v == null) return false;
                             if (!ctx.dataset._overlay && Math.abs(v) < 0.005) return false;
@@ -1783,10 +2523,48 @@ document.addEventListener('DOMContentLoaded', function() {
                                 var v = c.parsed.y;
                                 if (v == null) return c.dataset.label + ': —';
                                 if (c.dataset.yAxisID === 'yPct') return c.dataset.label + ': ' + fmtN(v, 1) + '%';
-                                return c.dataset.label + ': ' + fmtN(v, 2) + ' GWh';
+                                // Em modo empilhado, mostrar também % do total diário daquela coluna
+                                var extra = '';
+                                try {
+                                    if (!c.dataset._overlay && c.chart && c.chart._dailyTotals) {
+                                        var tot = c.chart._dailyTotals[c.dataIndex];
+                                        if (tot && tot > 0) extra = ' (' + fmtN(v / tot * 100, 1) + '%)';
+                                    }
+                                } catch(_){}
+                                return c.dataset.label + ': ' + fmtN(v, 2) + ' GWh' + extra;
+                            },
+                            footer: function(items) {
+                                if (!items || !items.length || !evolutionChart) return '';
+                                var idx = items[0].dataIndex;
+                                var ren = 0, fos = 0;
+                                var rk = {solar:1, eolica:1, hydro:1, biomass:1, other_ren:1};
+                                var dsets = evolutionChart.data.datasets;
+                                for (var d = 0; d < dsets.length; d++) {
+                                    var ds = dsets[d];
+                                    if (ds.hidden || ds._overlay) continue;
+                                    var v = ds.data[idx];
+                                    if (v == null) continue;
+                                    if (rk[ds._evoKey]) ren += v;
+                                    else if (ds._evoKey === 'fossil') fos += v;
+                                }
+                                var out = [];
+                                if (ren > 0) out.push('🌱 Renovável: ' + fmtN(ren, 2) + ' GWh');
+                                if (fos > 0) out.push('🏭 Fóssil: ' + fmtN(fos, 2) + ' GWh');
+                                return out.join('\n');
                             }
                         }
-                    }
+                    },
+                    zoom: {
+                        pan: { enabled: true, mode: 'x', modifierKey: 'shift' },
+                        zoom: {
+                            wheel: { enabled: true, modifierKey: 'ctrl' },
+                            drag: { enabled: true, backgroundColor: 'rgba(59,130,246,0.15)', borderColor: 'rgba(59,130,246,0.5)', borderWidth: 1 },
+                            pinch: { enabled: true },
+                            mode: 'x'
+                        },
+                        limits: { x: { minRange: 2 } }
+                    },
+                    annotation: { annotations: {} }
                 },
                 scales: {
                     x: { ticks: { color: isDark ? '#94a3b8' : '#666', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
@@ -1877,18 +2655,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 for (var kk in catArrs) catArrs[kk].push(null);
             }
         }
+        // Série de comparação — % Renovável de outro país
+        var cmpSel = document.getElementById('country-chart-compare');
+        var cmpCountry = cmpSel ? cmpSel.value : '';
+        var cmpArr = [];
+        if (cmpCountry && cmpCountry !== country) {
+            var cmpCut = false;
+            for (var ci2 = 0; ci2 < dates.length; ci2++) {
+                var dc = byDate[dates[ci2]] && byDate[dates[ci2]][cmpCountry];
+                if (!cmpCut && dc && (dc.source === 'forecast' || dc.source === 'provisional')) cmpCut = true;
+                cmpArr.push((cmpCut || !dc) ? null : computeRenShare(dc));
+            }
+        } else {
+            for (var ci3 = 0; ci3 < dates.length; ci3++) cmpArr.push(null);
+        }
+
         evolutionChart.data.labels = labels;
         evolutionChart._fullDates = fullDates;
         // Preencher categorias (área empilhada) e overlays (linhas) pelo _evoKey / label
         for (var di = 0; di < evolutionChart.data.datasets.length; di++) {
             var dset = evolutionChart.data.datasets[di];
-            if (dset._evoKey) {
+            if (dset._compare) {
+                dset.data = cmpArr;
+                dset.hidden = !cmpCountry || cmpCountry === country;
+                var cmpName = COUNTRY_NAMES[cmpCountry] || (cmpCountry || '').toUpperCase();
+                dset.label = cmpCountry ? ('% Renov. — ' + cmpName) : '% Renov. (comparar)';
+            } else if (dset._evoKey) {
                 dset.data = catArrs[dset._evoKey] || [];
             } else if (dset.label === 'Produção Total') {
                 dset.data = totArr;
             } else if (dset.label === 'Consumo') {
                 dset.data = loadArr;
             } else if (dset.label === '% Renovável') {
+                var mainName = COUNTRY_NAMES[country] || country.toUpperCase();
+                dset.label = cmpCountry && cmpCountry !== country ? ('% Renov. — ' + mainName) : '% Renovável';
                 dset.data = renArr;
             }
         }
@@ -1902,6 +2702,94 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         var baseTxt = renBase === 'load' ? ' · % Renov. sobre Consumo' : ' · % Renov. sobre Produção';
         document.getElementById('evolution-titulo').textContent = 'Evolução (' + evoPeriod + ') — ' + name + baseTxt;
+
+        // --- Média móvel 7d sobre renArr ---
+        var showMavg = !!(document.getElementById('toggle-evo-mavg') && document.getElementById('toggle-evo-mavg').checked);
+        var mavgArr = [];
+        for (var mi = 0; mi < renArr.length; mi++) {
+            var w = 0, c = 0;
+            for (var mj = Math.max(0, mi - 6); mj <= mi; mj++) {
+                if (renArr[mj] != null) { w += renArr[mj]; c++; }
+            }
+            mavgArr.push(c >= 3 ? w / c : null);
+        }
+        for (var ds1 = 0; ds1 < evolutionChart.data.datasets.length; ds1++) {
+            if (evolutionChart.data.datasets[ds1]._mavg) {
+                evolutionChart.data.datasets[ds1].data = mavgArr;
+                evolutionChart.data.datasets[ds1].hidden = !showMavg;
+            }
+        }
+
+        // --- Totais diários (para tooltip com %) ---
+        var dailyTotals = [];
+        for (var di2 = 0; di2 < labels.length; di2++) {
+            var t = 0;
+            for (var di3 = 0; di3 < evolutionChart.data.datasets.length; di3++) {
+                var dsx = evolutionChart.data.datasets[di3];
+                if (dsx.hidden || dsx._overlay) continue;
+                var vx = dsx.data[di2];
+                if (vx != null && vx > 0) t += vx;
+            }
+            dailyTotals.push(t);
+        }
+        evolutionChart._dailyTotals = dailyTotals;
+
+        // --- Normalização (stacked 100%) ---
+        var normalize = !!(document.getElementById('toggle-evo-norm') && document.getElementById('toggle-evo-norm').checked);
+        evolutionChart._normalized = normalize;
+        if (normalize) {
+            // Reescrever valores das categorias positivas como % do total diário.
+            for (var di4 = 0; di4 < evolutionChart.data.datasets.length; di4++) {
+                var dn = evolutionChart.data.datasets[di4];
+                if (dn._overlay || !dn._evoKey) continue;
+                if (dn._evoKey === 'psc' || dn._evoKey === 'export') continue;  // negativos ficam como estão (GWh)
+                var raw = dn.data.slice();
+                dn._rawData = raw;
+                var norm = [];
+                for (var ni = 0; ni < raw.length; ni++) {
+                    var tv = dailyTotals[ni];
+                    norm.push((raw[ni] != null && tv > 0) ? (raw[ni] / tv * 100) : (raw[ni] == null ? null : 0));
+                }
+                dn.data = norm;
+            }
+            evolutionChart.options.scales.yGwh.title.text = '% do total diário';
+            evolutionChart.options.scales.yGwh.ticks.callback = function(v) { return fmtN(v, 0) + '%'; };
+            evolutionChart.options.scales.yGwh.max = 100;
+        } else {
+            evolutionChart.options.scales.yGwh.title.text = 'GWh';
+            evolutionChart.options.scales.yGwh.ticks.callback = function(v) { return fmtN(v, 0); };
+            delete evolutionChart.options.scales.yGwh.max;
+        }
+
+        // --- Anotações: média do período e meta ---
+        var ann = {};
+        var showAvg = !!(document.getElementById('toggle-evo-avg') && document.getElementById('toggle-evo-avg').checked);
+        if (showAvg) {
+            var sumR = 0, cntR = 0;
+            for (var ai = 0; ai < renArr.length; ai++) if (renArr[ai] != null) { sumR += renArr[ai]; cntR++; }
+            if (cntR > 0) {
+                var avg = sumR / cntR;
+                ann.avgLine = {
+                    type: 'line', yMin: avg, yMax: avg, yScaleID: 'yPct',
+                    borderColor: '#15803d', borderWidth: 1.5, borderDash: [6, 4],
+                    label: { display: true, content: 'Média: ' + fmtN(avg, 1) + '%', position: 'start', backgroundColor: 'rgba(21,128,61,0.85)', color: '#fff', font: { size: 10 }, padding: 3 }
+                };
+            }
+        }
+        var showTarget = !!(document.getElementById('toggle-evo-target') && document.getElementById('toggle-evo-target').checked);
+        var targetInp = document.getElementById('evo-target');
+        var targetVal = targetInp ? parseFloat(targetInp.value) : 80;
+        if (showTarget && !isNaN(targetVal) && targetVal >= 0 && targetVal <= 100) {
+            ann.targetLine = {
+                type: 'line', yMin: targetVal, yMax: targetVal, yScaleID: 'yPct',
+                borderColor: '#dc2626', borderWidth: 1.5, borderDash: [3, 3],
+                label: { display: true, content: '🎯 Meta: ' + fmtN(targetVal, 0) + '%', position: 'end', backgroundColor: 'rgba(220,38,38,0.85)', color: '#fff', font: { size: 10 }, padding: 3 }
+            };
+        }
+        if (evolutionChart.options.plugins.annotation) {
+            evolutionChart.options.plugins.annotation.annotations = ann;
+        }
+
         evolutionChart.update();
     }
 
@@ -1967,6 +2855,8 @@ document.addEventListener('DOMContentLoaded', function() {
         updateChart(seletorPais.value);
         updateRankedList();
         updateSourceBadge();
+        updateResumoRapido();
+        applyCountrySearch();
         info.update();
 
         // Pré-carregar 7 dias anteriores para sparklines do mapa (silencioso)
@@ -2110,6 +3000,12 @@ document.addEventListener('DOMContentLoaded', function() {
             var urlPumped = urlParams.get('pumped');
             if (urlPumped === 'include') includePumped = true;
             else if (urlPumped === 'exclude') includePumped = false;
+            // Estados secundários vindos do URL (aplicados após criação dos elementos)
+            var urlDelta = urlParams.get('delta') === '1';
+            var urlCompare = urlParams.get('compare');
+            var urlHeatYear = urlParams.get('heatYear');
+            var urlHeatCountry = urlParams.get('heatCountry');
+            var urlWide = urlParams.get('wide') === '1';
             if (urlMode === 'week' || urlMode === 'month' || urlMode === 'custom') currentMode = urlMode;
             if (currentMode === 'custom' && urlStart && urlEnd && /^\d{4}-\d{2}-\d{2}$/.test(urlStart) && /^\d{4}-\d{2}-\d{2}$/.test(urlEnd)) {
                 customStart = urlStart < DATA_INICIO ? DATA_INICIO : urlStart;
@@ -2154,15 +3050,304 @@ document.addEventListener('DOMContentLoaded', function() {
                 p.set('country', seletorPais.value);
                 if (renBase !== 'production') p.set('renbase', renBase);
                 if (includePumped) p.set('pumped', 'include');
+                var tDelta = document.getElementById('toggle-delta-pt');
+                if (tDelta && tDelta.checked) p.set('delta', '1');
+                var tAut = document.getElementById('toggle-autonomy');
+                if (tAut && tAut.checked) p.set('autonomy', '1');
+                var tSparkS = document.getElementById('toggle-spark');
+                if (tSparkS && tSparkS.checked) p.set('spark', '1');
+                var tHideFcS = document.getElementById('toggle-hide-fc');
+                if (tHideFcS && !tHideFcS.checked) p.set('showfc', '1');
+                var tMavg = document.getElementById('toggle-evo-mavg');
+                if (tMavg && tMavg.checked) p.set('mavg', '1');
+                var tEvoAvg = document.getElementById('toggle-evo-avg');
+                if (tEvoAvg && tEvoAvg.checked) p.set('evoavg', '1');
+                var tTgt = document.getElementById('toggle-evo-target');
+                if (tTgt && tTgt.checked) p.set('tgt', '1');
+                var tNorm = document.getElementById('toggle-evo-norm');
+                if (tNorm && tNorm.checked) p.set('norm', '1');
+                var evoTgtS = document.getElementById('evo-target');
+                if (evoTgtS && evoTgtS.value && evoTgtS.value !== '80') p.set('tgtval', evoTgtS.value);
+                var cmpSelS = document.getElementById('country-chart-compare');
+                if (cmpSelS && cmpSelS.value) p.set('compare', cmpSelS.value);
+                var heatYearS = document.getElementById('heatmap-year');
+                var heatCountryS = document.getElementById('heatmap-country');
+                if (heatYearS && heatYearS.value) p.set('heatYear', heatYearS.value);
+                if (heatCountryS && heatCountryS.value && heatCountryS.value !== 'pt') p.set('heatCountry', heatCountryS.value);
+                var evoWrapS = document.getElementById('evolution-wrapper');
+                if (evoWrapS && evoWrapS.classList.contains('wide')) p.set('wide', '1');
                 return base + '?' + p.toString();
             }
+            // Heatmap anual
+            var heatCountry = document.getElementById('heatmap-country');
+            var heatYear = document.getElementById('heatmap-year');
+            if (heatCountry && heatYear && seletorPais) {
+                var hcOpts = '';
+                for (var hi = 0; hi < seletorPais.options.length; hi++) {
+                    var ho = seletorPais.options[hi];
+                    hcOpts += '<option value="' + ho.value + '">' + ho.textContent + '</option>';
+                }
+                heatCountry.innerHTML = hcOpts;
+                heatCountry.value = 'pt';
+                // Anos disponíveis: de 2026 até ao ano atual
+                var curYear = new Date().getFullYear();
+                var startYear = parseInt(DATA_INICIO.substring(0, 4), 10);
+                var yOpts = '';
+                for (var yy = curYear; yy >= startYear; yy--) yOpts += '<option value="' + yy + '">' + yy + '</option>';
+                heatYear.innerHTML = yOpts;
+                heatYear.value = String(curYear);
+                try {
+                    var hc = localStorage.getItem('mapa_prod_heatCountry'); if (hc) heatCountry.value = hc;
+                    var hy = localStorage.getItem('mapa_prod_heatYear'); if (hy) heatYear.value = hy;
+                } catch(_){}
+                if (urlHeatCountry) heatCountry.value = urlHeatCountry;
+                if (urlHeatYear) heatYear.value = urlHeatYear;
+                heatCountry.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_heatCountry', heatCountry.value); } catch(_){}
+                    updateHeatmap();
+                });
+                heatYear.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_heatYear', heatYear.value); } catch(_){}
+                    updateHeatmap();
+                });
+                // Carregar em background
+                setTimeout(function() { updateHeatmap(); }, 600);
+            }
+
+            // Comparar país no gráfico de evolução
+            var cmpSelEl = document.getElementById('country-chart-compare');
+            if (cmpSelEl && seletorPais) {
+                var optsHtml = '<option value="">— nenhum —</option>';
+                for (var po = 0; po < seletorPais.options.length; po++) {
+                    var opt = seletorPais.options[po];
+                    optsHtml += '<option value="' + opt.value + '">' + opt.textContent + '</option>';
+                }
+                cmpSelEl.innerHTML = optsHtml;
+                try { var saved = localStorage.getItem('mapa_prod_compare'); if (saved) cmpSelEl.value = saved; } catch(_){}
+                if (urlCompare) cmpSelEl.value = urlCompare;
+                cmpSelEl.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_compare', cmpSelEl.value); } catch(_){}
+                    updateEvolutionChart();
+                });
+            }
+
+            // Botão "Largura total" do gráfico de evolução
+            var btnEvoWide = document.getElementById('btn-evolution-wide');
+            if (btnEvoWide) {
+                var evoWrap = document.getElementById('evolution-wrapper');
+                try {
+                    if (localStorage.getItem('mapa_prod_evoWide') === '1') {
+                        evoWrap.classList.add('wide'); btnEvoWide.classList.add('active');
+                    }
+                } catch(_){}
+                if (urlWide) { evoWrap.classList.add('wide'); btnEvoWide.classList.add('active'); }
+                btnEvoWide.addEventListener('click', function() {
+                    evoWrap.classList.toggle('wide');
+                    var isWide = evoWrap.classList.contains('wide');
+                    btnEvoWide.classList.toggle('active', isWide);
+                    try { localStorage.setItem('mapa_prod_evoWide', isWide ? '1' : '0'); } catch(_){}
+                    if (evolutionChart) setTimeout(function() { evolutionChart.resize(); }, 220);
+                });
+            }
+
+            // --- Toggles avançados do gráfico Evolução ---
+            var evoOptsIds = ['toggle-evo-mavg', 'toggle-evo-avg', 'toggle-evo-target', 'toggle-evo-norm'];
+            var evoOptsKeys = { 'toggle-evo-mavg': 'mapa_prod_evoMavg', 'toggle-evo-avg': 'mapa_prod_evoAvg', 'toggle-evo-target': 'mapa_prod_evoTgt', 'toggle-evo-norm': 'mapa_prod_evoNorm' };
+            var evoOptsUrl = { 'toggle-evo-mavg': 'mavg', 'toggle-evo-avg': 'evoavg', 'toggle-evo-target': 'tgt', 'toggle-evo-norm': 'norm' };
+            for (var eo = 0; eo < evoOptsIds.length; eo++) {
+                (function(id){
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    try { if (localStorage.getItem(evoOptsKeys[id]) === '1') el.checked = true; } catch(_){}
+                    if (urlParams.get(evoOptsUrl[id]) === '1') el.checked = true;
+                    el.addEventListener('change', function() {
+                        try { localStorage.setItem(evoOptsKeys[id], el.checked ? '1' : '0'); } catch(_){}
+                        updateEvolutionChart();
+                    });
+                })(evoOptsIds[eo]);
+            }
+            var evoTargetInp = document.getElementById('evo-target');
+            if (evoTargetInp) {
+                try { var sv = localStorage.getItem('mapa_prod_evoTgtVal'); if (sv != null) evoTargetInp.value = sv; } catch(_){}
+                var urlTgtVal = urlParams.get('tgtval');
+                if (urlTgtVal != null && !isNaN(parseFloat(urlTgtVal))) evoTargetInp.value = urlTgtVal;
+                evoTargetInp.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_evoTgtVal', evoTargetInp.value); } catch(_){}
+                    updateEvolutionChart();
+                });
+            }
+            var btnResetZoom = document.getElementById('btn-evo-reset-zoom');
+            if (btnResetZoom) {
+                btnResetZoom.addEventListener('click', function() {
+                    if (evolutionChart && typeof evolutionChart.resetZoom === 'function') {
+                        evolutionChart.resetZoom();
+                        showToast('🔍 Zoom reposto', 'info', 1000);
+                    }
+                });
+            }
+
+            // Toggle ΔPT
+            var tHideFc = document.getElementById('toggle-hide-fc');
+            if (tHideFc) {
+                // Default: ON (checked via HTML). Respeita localStorage quando explicitamente desligado.
+                try {
+                    var sfc = localStorage.getItem('mapa_prod_hideFc');
+                    if (sfc === '0') tHideFc.checked = false;
+                    else if (sfc === '1') tHideFc.checked = true;
+                } catch(_){}
+                if (urlParams.get('showfc') === '1') tHideFc.checked = false;
+                tHideFc.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_hideFc', tHideFc.checked ? '1' : '0'); } catch(_){}
+                    updateRankedList();
+                });
+            }
+            var tDeltaPt = document.getElementById('toggle-delta-pt');
+            if (tDeltaPt) {
+                try { if (localStorage.getItem('mapa_prod_deltaPt') === '1') tDeltaPt.checked = true; } catch(_){}
+                if (urlDelta) tDeltaPt.checked = true;
+                tDeltaPt.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_deltaPt', tDeltaPt.checked ? '1' : '0'); } catch(_){}
+                    updateRankedList();
+                });
+            }
+            var tAutonomy = document.getElementById('toggle-autonomy');
+            if (tAutonomy) {
+                try { if (localStorage.getItem('mapa_prod_autonomy') === '1') tAutonomy.checked = true; } catch(_){}
+                if (urlParams.get('autonomy') === '1') tAutonomy.checked = true;
+                tAutonomy.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_autonomy', tAutonomy.checked ? '1' : '0'); } catch(_){}
+                    updateRankedList();
+                });
+            }
+            var tSpark = document.getElementById('toggle-spark');
+            if (tSpark) {
+                try { if (localStorage.getItem('mapa_prod_spark') === '1') tSpark.checked = true; } catch(_){}
+                if (urlParams.get('spark') === '1') tSpark.checked = true;
+                tSpark.addEventListener('change', function() {
+                    try { localStorage.setItem('mapa_prod_spark', tSpark.checked ? '1' : '0'); } catch(_){}
+                    updateRankedList();
+                });
+            }
+
+            // Pesquisa de país
+            var searchInput = document.getElementById('country-search');
+            var searchClear = document.getElementById('country-search-clear');
+            if (searchInput) {
+                searchInput.addEventListener('input', applyCountrySearch);
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') { searchInput.value = ''; applyCountrySearch(); searchInput.blur(); }
+                });
+            }
+            if (searchClear) {
+                searchClear.addEventListener('click', function() {
+                    if (searchInput) { searchInput.value = ''; searchInput.focus(); }
+                    applyCountrySearch();
+                });
+            }
+
+            var btnCsv = document.getElementById('btn-csv');
+            if (btnCsv) btnCsv.addEventListener('click', function() {
+                var table = document.querySelector('#ranked-list-content table.ranked-table');
+                if (!table) return;
+                var rows = [];
+                var headers = [];
+                var ths = table.querySelectorAll('thead th');
+                for (var h = 0; h < ths.length; h++) {
+                    var lbl = ths[h].textContent.replace(/[\u21C5\u25B2\u25BC]/g, '').trim();
+                    headers.push(lbl);
+                }
+                rows.push(headers);
+                var trs = table.querySelectorAll('tbody tr');
+                for (var r = 0; r < trs.length; r++) {
+                    if (trs[r].classList.contains('search-hidden')) continue;
+                    var tds = trs[r].querySelectorAll('td');
+                    var rowArr = [];
+                    for (var tdi = 0; tdi < tds.length; tdi++) {
+                        rowArr.push(tds[tdi].textContent.replace(/\s+/g, ' ').trim());
+                    }
+                    rows.push(rowArr);
+                }
+                var esc = function(s) {
+                    s = String(s == null ? '' : s);
+                    if (s.indexOf(';') !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1) {
+                        return '"' + s.replace(/"/g, '""') + '"';
+                    }
+                    return s;
+                };
+                var csv = rows.map(function(r) { return r.map(esc).join(';'); }).join('\r\n');
+                // BOM para Excel abrir UTF-8 corretamente
+                var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+                var per;
+                if (currentMode === 'custom' && customStart && customEnd) per = customStart + '_' + customEnd;
+                else if (currentMode === 'week') per = 'semana_' + seletorData.value;
+                else if (currentMode === 'month') per = 'mes_' + seletorData.value;
+                else per = seletorData.value;
+                var filename = 'mapa_producao_' + per + '.csv';
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+            });
+
+            // --- Atalhos de teclado globais ---
+            document.addEventListener('keydown', function(ev) {
+                // Ignorar se estiver a escrever num input/textarea/select
+                var tg = ev.target;
+                var tag = tg && tg.tagName;
+                var editable = tg && (tg.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
+                // Exceção: Esc no search-input é tratado noutro lado, e queremos '/' mesmo em page
+                if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+
+                // '/' → focar pesquisa
+                if (ev.key === '/' && !editable) {
+                    ev.preventDefault();
+                    var si = document.getElementById('country-search');
+                    if (si) { si.focus(); si.select(); }
+                    return;
+                }
+                if (editable) return;
+
+                // (Setas ← / → são tratadas pelo handler mais abaixo, que chama alterarData directamente)
+
+                // D / W / M / P → trocar modo
+                var modeMap = { 'd': 'day', 'w': 'week', 'm': 'month', 'p': 'custom' };
+                var k = ev.key.toLowerCase();
+                if (modeMap[k]) {
+                    var btn = document.querySelector('.mode-toggle .mode-btn[data-mode="' + modeMap[k] + '"]');
+                    if (btn) {
+                        ev.preventDefault();
+                        btn.click();
+                        var labels = { day: 'Diário', week: 'Semanal (7d)', month: 'Mensal (30d)', custom: 'Personalizado' };
+                        showToast('Modo: ' + labels[modeMap[k]], 'info', 1200);
+                    }
+                    return;
+                }
+
+                // S → partilhar link
+                if (k === 's') {
+                    var bs = document.getElementById('btn-share');
+                    if (bs) { ev.preventDefault(); bs.click(); }
+                    return;
+                }
+
+                // ? → mostrar ajuda
+                if (ev.key === '?') {
+                    ev.preventDefault();
+                    showToast('Atalhos: ←/→ navegar · D/W/M/P modo · / pesquisar · S partilhar · ? ajuda', 'info', 4500);
+                    return;
+                }
+            });
+
             var btnShare = document.getElementById('btn-share');
             var shareFb = document.getElementById('share-feedback');
             if (btnShare) btnShare.addEventListener('click', function() {
                 var url = buildShareUrl();
                 var done = function() {
-                    shareFb.style.display = 'inline';
-                    setTimeout(function(){ shareFb.style.display = 'none'; }, 1800);
+                    if (shareFb) { shareFb.style.display = 'inline'; setTimeout(function(){ shareFb.style.display = 'none'; }, 1800); }
+                    showToast('🔗 Link copiado para a área de transferência');
                 };
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(url).then(done).catch(function(){
@@ -2250,6 +3435,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 rangePickers.classList.toggle('visible', currentMode === 'custom');
                 aggToggleEl.classList.toggle('visible', currentMode !== 'day');
                 if (dateSelectorEl) dateSelectorEl.style.display = (currentMode === 'custom') ? 'none' : '';
+                var lbl = document.getElementById('label-seletor-data');
+                if (lbl) {
+                    lbl.textContent = (currentMode === 'day') ? 'Selecione o dia:'
+                        : (currentMode === 'week' ? 'Dia final dos 7 dias:'
+                        : (currentMode === 'month' ? 'Dia final dos 30 dias:' : 'Selecione o dia:'));
+                }
             }
 
             function updateRangeInfo() {
@@ -2298,6 +3489,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
+            // --- Resumo das opções de cálculo (summary + badge) ---
+            function updateCalcSummary() {
+                var base = renBase === 'load' ? 'Consumo' : 'Produção';
+                var pump = includePumped ? 'Bombagem incluída' : 'Bombagem excluída';
+                var agg = aggMode === 'sum' ? 'Totais do período' : 'Médias diárias';
+                var txt = 'Base: ' + base + ' · ' + pump + ' · ' + agg;
+                var s = document.getElementById('calc-options-summary');
+                var b = document.getElementById('calc-badge-text');
+                if (s) s.textContent = txt;
+                if (b) b.textContent = txt;
+            }
+            updateCalcSummary();
+            // Clique no badge abre/fecha o <details> e faz scroll suave
+            var calcBadge = document.getElementById('calc-badge');
+            var calcDetails = document.getElementById('calc-options');
+            if (calcBadge && calcDetails) {
+                calcBadge.addEventListener('click', function() {
+                    calcDetails.open = !calcDetails.open;
+                    if (calcDetails.open) {
+                        calcDetails.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            }
+
             // --- Agg toggle (médias / totais) ---
             var aggBtns = document.querySelectorAll('#agg-toggle .mode-btn');
             for (var ab = 0; ab < aggBtns.length; ab++) {
@@ -2308,6 +3523,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     for (var k = 0; k < aggBtns.length; k++) { aggBtns[k].classList.remove('active'); aggBtns[k].setAttribute('aria-pressed', 'false'); }
                     this.classList.add('active');
                     this.setAttribute('aria-pressed', 'true');
+                    updateCalcSummary();
                     if (currentMode !== 'day') loadProductionData(seletorData.value);
                 });
             }
@@ -2328,6 +3544,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateChart(seletorPais.value);
                     updateRankedList();
                     updateEvolutionChart();
+                    updateResumoRapido();
+                    if (document.getElementById('heatmap-country')) updateHeatmap();
+                    updateCalcSummary();
                 });
             }
 
@@ -2346,6 +3565,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateChart(seletorPais.value);
                     updateRankedList();
                     updateEvolutionChart();
+                    updateResumoRapido();
+                    if (document.getElementById('heatmap-country')) updateHeatmap();
+                    updateCalcSummary();
                 });
             }
 
