@@ -1122,9 +1122,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
                 tituloLista.textContent = 'Preços por zona de licitação — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')';
             } else {
+                var diaStr = fmtDateBR(seletorData.value);
                 tituloLista.textContent = isUltimoDia
-                    ? 'Preços por zona de licitação (até às 23h de PT)'
-                    : 'Preços por zona de licitação';
+                    ? 'Preços por zona de licitação — ' + diaStr + ' (até às 23h de PT)'
+                    : 'Preços por zona de licitação — ' + diaStr;
             }
         }
 
