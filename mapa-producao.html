@@ -985,8 +985,37 @@ document.addEventListener('DOMContentLoaded', function() {
         return t;
     }
 
+    // Em entradas de previsão day-ahead, apenas Solar, Eólica (onshore + offshore) e Load
+    // são previstos pela API. As restantes fontes vinham com valores imputados a partir
+    // do dia anterior, o que produz % renovável e mix totalmente fictícios.
+    // Esta função remove esses campos imputados e mantém só os reais.
+    var FORECAST_KEEP = { solar: 1, wind_onshore: 1, wind_offshore: 1, load: 1 };
+    function sanitizeForecastEntries(data) {
+        if (!data) return data;
+        for (var c in data) {
+            if (!data.hasOwnProperty(c)) continue;
+            var d = data[c];
+            if (!d || d.source !== 'forecast' || !d.production) continue;
+            if (d._sanitized) continue;
+            var clean = {};
+            // Manter apenas campos efectivamente previstos
+            for (var k in FORECAST_KEEP) {
+                if (d.production[k] != null) clean[k] = d.production[k];
+            }
+            d.production = clean;
+            // Total fica indefinido — não há base fiável; renSum + load existem para info parcial
+            d.total = (clean.solar || 0) + (clean.wind_onshore || 0) + (clean.wind_offshore || 0);
+            d._partial = true;
+            d._sanitized = true;
+        }
+        return data;
+    }
+
     // Devolve a % renovável consoante a base selecionada e o toggle de bombagem
     function computeRenShare(d) {
+        // Em previsão sanitizada, só temos Solar/Eólica/Load. % renovável "real" não é calculável
+        // (faltam hídrica, biomassa, etc.) — devolver null em ambas as bases para não enganar.
+        if (d && d._partial) return null;
         if (!d || !d.production) return null;
         var renS = getRenSum(d.production);
         if (renBase === 'load') {
@@ -1191,7 +1220,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (spark) html += '<div class="sparkline-label">% Renov. (7d)</div>' + spark;
                 this._div.innerHTML = html;
             } else {
-                this._div.innerHTML = '<b>' + countryFlag(country) + name + '</b><div class="ren-value" style="color:#999;">Sem dados</div>';
+                var partialNote = (data && data._partial) ? ' <span title="Apenas Solar, Eólica e Consumo previstos">(previsão parcial)</span>' : '';
+                var solarP = data && data.production && data.production.solar;
+                var windP = data && data.production && ((data.production.wind_onshore || 0) + (data.production.wind_offshore || 0));
+                var loadP = data && data.production && data.production.load;
+                var partialBody = '';
+                if (data && data._partial) {
+                    if (solarP != null) partialBody += 'Solar: ' + fmtN(solarP, 2) + ' GWh<br>';
+                    if (windP != null) partialBody += 'Eólica: ' + fmtN(windP, 2) + ' GWh<br>';
+                    if (loadP != null) partialBody += 'Consumo: ' + fmtN(loadP, 2) + ' GWh<br>';
+                    partialBody = '<div class="prod-detail">' + partialBody + '</div>';
+                }
+                this._div.innerHTML = '<b>' + countryFlag(country) + name + '</b>' + partialNote + '<div class="ren-value" style="color:#999;">' + (data && data._partial ? 'Previsão day-ahead' : 'Sem dados') + '</div>' + partialBody;
             }
         } else {
             this._div.innerHTML = '<h4>Produção por país</h4>Passe o rato sobre uma zona';
@@ -1690,7 +1730,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!currentData.hasOwnProperty(country)) continue;
             var d = currentData[country];
             var rsTbl = computeRenShare(d);
-            if (rsTbl == null) continue;
+            if (rsTbl == null && !d._partial) continue;
             var name = COUNTRY_NAMES[country] || country.toUpperCase();
             var prod = d.production || {};
             var sumKeys = function(keys) { var s = 0; for (var k = 0; k < keys.length; k++) s += (prod[keys[k]] || 0); return s; };
@@ -1726,7 +1766,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 renSum: getRenSum(prod),
                 total: d.total || 0,
                 load: prod.load || 0,
-                autonomy: (prod.load && prod.load > 0) ? ((d.total || 0) / prod.load * 100) : null
+                autonomy: (prod.load && prod.load > 0) ? ((d.total || 0) / prod.load * 100) : null,
+                _partial: !!d._partial
             });
         }
 
@@ -1762,6 +1803,14 @@ document.addEventListener('DOMContentLoaded', function() {
         var col = currentSort.column;
         var dir = currentSort.direction === 'asc' ? 1 : -1;
         entries.sort(function(a, b) {
+            // Países em previsão (_partial) não têm % renovável nem totais comparáveis:
+            // empurrar para o fim e ordenar alfabeticamente (PT em 1º entre eles).
+            if (a._partial !== b._partial) return a._partial ? 1 : -1;
+            if (a._partial && b._partial) {
+                if (a.country === 'pt') return -1;
+                if (b.country === 'pt') return 1;
+                return a.name.localeCompare(b.name, 'pt');
+            }
             if (col === 'name') return dir * a.name.localeCompare(b.name, 'pt');
             return dir * ((a[col] || 0) - (b[col] || 0));
         });
@@ -1777,7 +1826,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { key: 'pumped', label: 'Bombagem' },
             { key: 'fossil', label: 'Fóssil' },
             { key: 'nuclear', label: 'Nuclear' },
-            { key: 'total', label: 'Total' }
+            { key: 'total', label: 'Total' },
+            { key: 'load', label: 'Consumo' }
         ];
 
         var html = '<div class="table-scroll"><table class="ranked-table">';
@@ -1805,6 +1855,12 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<td style="text-align:left;"><span class="color-indicator" style="background:' + color + (e.source === 'forecast' ? ';opacity:0.6' : '') + '"></span>' + countryFlag(e.country) + e.name + fcBadge + '</td>';
             if (showSpark) { html += '<td class="spark-cell">' + (buildSparkline(e.country) || '—') + '</td>'; }
 
+            // Em entradas parciais (previsão), só Solar, Eólica e Consumo são reais
+            var PARTIAL_OK = { solar:1, eolica:1, load:1 };
+            function fmtCell(key, val, dec) {
+                if (e._partial && !PARTIAL_OK[key]) return '<span title="Não disponível em previsão day-ahead">—</span>';
+                return fmtT(val, dec == null ? 1 : dec);
+            }
             // Denominador para "% da produção total" (varia com toggle de bombagem)
             var denom = includePumped ? e.total : (e.total - e.pumped);
             function pctOf(v) { return denom > 0 ? fmtT(v / denom * 100, 1) + ' %' : '—'; }
@@ -1820,7 +1876,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 + (e.waste > 0 ? 'Resíduos: ' + fmtT(e.waste, 2) + ' GWh (' + pctOfRen(e.waste) + ')\n' : '')
                 + (e.other_renewables > 0 ? 'Outras Renov.: ' + fmtT(e.other_renewables, 2) + ' GWh (' + pctOfRen(e.other_renewables) + ')\n' : '');
             var tipRen = subLine + '─────────\nTotal renovável: ' + fmtT(e.renSum, 2) + ' GWh\n' + fmtT(e.ren, 2) + ' % da produção ' + (includePumped ? 'total' : 'sem bombagem');
-            html += '<td class="has-tooltip" title="' + tipRen + '"><strong>' + fmtT(e.ren, 1) + '%</strong></td>';
+            if (e._partial) {
+                html += '<td class="has-tooltip" title="Em previsão day-ahead, % renovável não é calculável (faltam hídrica, biomassa, fóssil, nuclear).">—</td>';
+            } else {
+                html += '<td class="has-tooltip" title="' + tipRen + '"><strong>' + fmtT(e.ren, 1) + '%</strong></td>';
+            }
 
             // ΔPT
             if (showDeltaPt) {
@@ -1833,41 +1893,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Solar
-            html += '<td class="has-tooltip" title="Solar: ' + fmtT(e.solar, 2) + ' GWh\n' + pctOf(e.solar) + ' da produção">' + fmtT(e.solar, 1) + '</td>';
+            // Solar (real mesmo em previsão)
+            html += '<td class="has-tooltip" title="Solar: ' + fmtT(e.solar, 2) + ' GWh' + (e._partial ? '\n(previsão day-ahead)' : '\n' + pctOf(e.solar) + ' da produção') + '">' + fmtT(e.solar, 1) + '</td>';
 
-            // Eólica — tooltip com onshore + offshore + % total
-            var tipEol = 'Onshore: ' + fmtT(e.wind_onshore, 2) + ' GWh\nOffshore: ' + fmtT(e.wind_offshore, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.eolica, 2) + ' GWh\n' + pctOf(e.eolica) + ' da produção';
+            // Eólica — tooltip com onshore + offshore + % total (real mesmo em previsão)
+            var tipEol = 'Onshore: ' + fmtT(e.wind_onshore, 2) + ' GWh\nOffshore: ' + fmtT(e.wind_offshore, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.eolica, 2) + ' GWh' + (e._partial ? '\n(previsão day-ahead)' : '\n' + pctOf(e.eolica) + ' da produção');
             html += '<td class="has-tooltip" title="' + tipEol + '">' + fmtT(e.eolica, 1) + '</td>';
 
-            // Hídrica — tooltip com fio de água + albufeira + % total (bombagem é coluna separada)
+            // Hídrica
             var tipHyd = 'Fio de Água: ' + fmtT(e.hydro_run_of_river, 2) + ' GWh\nAlbufeira: ' + fmtT(e.hydro_water_reservoir, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.hydro, 2) + ' GWh\n' + pctOf(e.hydro) + ' da produção';
-            html += '<td class="has-tooltip" title="' + tipHyd + '">' + fmtT(e.hydro, 1) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipHyd) + '">' + fmtCell('hydro', e.hydro) + '</td>';
 
             // Biomassa
-            html += '<td class="has-tooltip" title="Biomassa: ' + fmtT(e.biomass, 2) + ' GWh\n' + pctOf(e.biomass) + ' da produção">' + fmtT(e.biomass, 1) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : 'Biomassa: ' + fmtT(e.biomass, 2) + ' GWh\n' + pctOf(e.biomass) + ' da produção') + '">' + fmtCell('biomass', e.biomass) + '</td>';
 
-            // Out. Renov. — tooltip com geotermia + resíduos + outras renováveis + % total
+            // Out. Renov.
             var tipOR = 'Geotermia: ' + fmtT(e.geothermal, 2) + ' GWh\nResíduos: ' + fmtT(e.waste, 2) + ' GWh\nOutras Renov.: ' + fmtT(e.other_renewables, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.other_ren, 2) + ' GWh\n' + pctOf(e.other_ren) + ' da produção';
-            html += '<td class="has-tooltip" title="' + tipOR + '">' + fmtT(e.other_ren, 1) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipOR) + '">' + fmtCell('other_ren', e.other_ren) + '</td>';
 
-            // Bombagem (coluna autónoma, após Out. Renov.)
+            // Bombagem
             var bombStatus = includePumped ? 'No denominador (conta para o total)' : 'Fora do denominador (excluída)';
             var tipBomb = 'Bombagem: ' + fmtT(e.pumped, 2) + ' GWh\n' + pctOf(e.pumped) + ' da produção\n─────────\n' + bombStatus;
-            html += '<td class="has-tooltip" title="' + tipBomb + '">' + fmtT(e.pumped, 1) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipBomb) + '">' + fmtCell('pumped', e.pumped) + '</td>';
 
-            // Fóssil — tooltip com decomposição + % total
+            // Fóssil
             var tipFos = 'Gás Natural: ' + fmtT(e.gas, 2) + ' GWh\nGás de Carvão: ' + fmtT(e.gas_coal_derived, 2) + ' GWh\nCarvão: ' + fmtT(e.coal_hard, 2) + ' GWh\nLinhite: ' + fmtT(e.coal_lignite, 2) + ' GWh\nPetróleo: ' + fmtT(e.oil, 2) + ' GWh\nOutro: ' + fmtT(e.other_src, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.fossil, 2) + ' GWh\n' + pctOf(e.fossil) + ' da produção';
-            html += '<td class="has-tooltip" title="' + tipFos + '">' + fmtT(e.fossil, 1) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipFos) + '">' + fmtCell('fossil', e.fossil) + '</td>';
 
             // Nuclear
-            html += '<td class="has-tooltip" title="Nuclear: ' + fmtT(e.nuclear, 2) + ' GWh\n' + pctOf(e.nuclear) + ' da produção">' + fmtT(e.nuclear, 1) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : 'Nuclear: ' + fmtT(e.nuclear, 2) + ' GWh\n' + pctOf(e.nuclear) + ' da produção') + '">' + fmtCell('nuclear', e.nuclear) + '</td>';
 
-            // Total — tooltip com renováveis + nuclear + fóssil (+ bombagem conforme toggle)
+            // Total
             var pumpedLbl = includePumped ? '\nBombagem: ' + fmtT(e.pumped, 2) + ' GWh (no denominador)' : '\nBombagem: ' + fmtT(e.pumped, 2) + ' GWh (excluída do denominador)';
             var denomLbl = includePumped ? 'Denominador: ' + fmtT(e.total, 2) + ' GWh (total)' : 'Denominador: ' + fmtT(denom, 2) + ' GWh (total − bombagem)';
             var tipTotal = 'Renovável: ' + fmtT(e.renSum, 2) + ' GWh (' + fmtT(e.ren, 1) + ' %)\nNuclear: ' + fmtT(e.nuclear, 2) + ' GWh\nFóssil: ' + fmtT(e.fossil, 2) + ' GWh' + pumpedLbl + '\n─────────\nProdução total: ' + fmtT(e.total, 2) + ' GWh\n' + denomLbl;
-            html += '<td class="has-tooltip" title="' + tipTotal + '">' + fmtT(e.total, 1) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? 'Em previsão day-ahead, o total não é calculável (faltam hídrica, biomassa, fóssil, nuclear).' : tipTotal) + '">' + fmtCell('total', e.total) + '</td>';
+            // Consumo (load) — disponível mesmo em previsão day-ahead
+            var tipLoad = 'Consumo: ' + fmtT(e.load, 2) + ' GWh' + (e._partial ? '\n(previsão day-ahead)' : '');
+            html += '<td class="has-tooltip" title="' + tipLoad + '">' + (e.load > 0 ? fmtT(e.load, 1) : '<span title="Sem dados de consumo">—</span>') + '</td>';
+
             // Auto-suficiência
             if (showAutonomy) {
                 if (e.autonomy == null) {
@@ -1928,18 +1992,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var isFuture = selectedDate > todayStr;
 
         if (isPast && hasForecast) {
-            // Data passada com alguns países ainda com previsão — alerta suave
-            badge.textContent = '\u23F3 Alguns valores podem ainda ser estimativas \u2014 ' + fcCount + (fcCount === 1 ? ' país' : ' países') + ' sem dados reais finais';
+            badge.textContent = '\u23F3 ' + fcCount + (fcCount === 1 ? ' país sem dados reais finais' : ' países sem dados reais finais') + ' \u2014 nesses, apenas Solar, Eólica e Consumo são apresentados (% renovável e outras fontes ocultadas)';
             badge.className = 'source-badge provisional';
             badge.style.display = 'inline-block';
         } else if (hasForecast && hasProvisional) {
-            // Mix: maioria provisórios, alguns com previsão (tipicamente hoje)
-            badge.textContent = '\u23F3 Dados provisórios \u2014 ' + provCount + ' países com dados reais (não finais); ' + fcCount + ' com previsão day-ahead';
+            badge.textContent = '\u23F3 Dados provisórios \u2014 ' + provCount + ' país(es) com dados reais (não finais); ' + fcCount + ' apenas com previsão day-ahead (Solar, Eólica e Consumo). Outras fontes ocultadas para evitar valores imputados.';
             badge.className = 'source-badge provisional';
             badge.style.display = 'inline-block';
         } else if (hasForecast && !hasProvisional) {
-            // Tipicamente data futura — previsão pura
-            badge.textContent = '\u26A1 Previsão day-ahead \u2014 Solar e eólica previstas; restantes fontes estimadas com base no dia anterior';
+            badge.textContent = '\u26A1 Previsão day-ahead \u2014 apenas Solar, Eólica e Consumo estão disponíveis. As restantes fontes não são previstas pela API e foram ocultadas (% renovável não é calculável de forma fiável).';
             badge.className = 'source-badge forecast';
             badge.style.display = 'inline-block';
         } else if (hasProvisional) {
@@ -2828,6 +2889,8 @@ document.addEventListener('DOMContentLoaded', function() {
             await ensureMonth(dateStr.substring(0, 7));
             currentData = (dataCache[dateStr.substring(0, 7)] || {})[dateStr] || {};
         }
+        // Limpar campos imputados em entradas de previsão (mantém só Solar/Eólica/Load)
+        sanitizeForecastEntries(currentData);
 
         loadingIndicator.style.display = 'none';
 
