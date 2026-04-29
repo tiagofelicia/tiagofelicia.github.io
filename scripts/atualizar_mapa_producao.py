@@ -93,7 +93,7 @@ SKIP_TYPES = {
 # Categorias renovaveis (para calculo de ren_share)
 RENEWABLE_CATS = {
     "solar", "wind_onshore", "wind_offshore",
-    "hydro_run_of_river", "hydro_water_reservoir", "hydro_pumped_storage",
+    "hydro_run_of_river", "hydro_water_reservoir",
     "biomass", "geothermal", "waste", "other_renewables"
 }
 
@@ -121,11 +121,30 @@ FORECAST_TYPES = ["solar", "wind_onshore", "wind_offshore", "load"]
 
 
 def fetch_production(country, start_date, end_date):
-    """Buscar dados de producao da API Energy-Charts para um pais e intervalo."""
+    """Buscar dados de producao da API Energy-Charts para um pais e intervalo.
+    
+    Inclui retry com backoff progressivo longo para lidar com erros 429 (rate limiting),
+    e ignora erros 404 retornando dados vazios.
+    """
     url = f"{API_BASE}?country={country}&start={start_date}&end={end_date}"
-    resp = requests.get(url, timeout=60)
-    resp.raise_for_status()
-    return resp.json()
+    
+    for attempt in range(5):
+        resp = requests.get(url, timeout=60)
+        
+        if resp.status_code == 429:
+            wait = 30 * (attempt + 1)
+            print(f" [Aviso API] Limite atingido. A aguardar {wait}s (Tentativa {attempt + 1}/5)...", end=" ", flush=True)
+            time.sleep(wait)
+            continue
+            
+        # Se o país não tiver dados (404 Not Found), devolvemos um dicionário vazio
+        if resp.status_code == 404:
+            return {}
+            
+        resp.raise_for_status()
+        return resp.json()
+        
+    raise Exception(f"Falha ao obter dados após 5 tentativas devido a limites da API (Erro 429).")
 
 
 def fetch_forecast(country, production_type):
@@ -140,7 +159,7 @@ def fetch_forecast(country, production_type):
     )
     for attempt in range(3):
         resp = requests.get(url, timeout=60)
-        if resp.status_code == 404:
+        if resp.status_code in (400, 404):
             return None  # Tipo nao disponivel para este pais
         if resp.status_code == 429:
             wait = 5 * (attempt + 1)
@@ -188,7 +207,7 @@ def compute_daily_forecasts(country, tz_name):
                 daily_fc[day].setdefault(ptype, 0.0)
                 daily_fc[day][ptype] += values[i] * interval_hours / 1000.0
 
-            time.sleep(1.5)  # Respeitar rate limits da API
+            time.sleep(5)  # Respeitar rate limits da API
         except Exception as e:
             print(f"[fc:{ptype}:{e}]", end="")
 
@@ -387,7 +406,7 @@ def main():
                         if latest_date is None or date_str > latest_date:
                             latest_date = date_str
 
-                    time.sleep(1.5)  # Respeitar rate limits
+                    time.sleep(5)  # Respeitar rate limits
                 except Exception as e:
                     print(f"ERRO {country.upper()} ({m_start}-{m_end}): {e}")
                     time.sleep(3)
@@ -419,7 +438,7 @@ def main():
 
                 days_found = len(daily_prod)
                 print(f"OK ({days_found} dias)")
-                time.sleep(1.5)
+                time.sleep(5)
             except Exception as e:
                 print(f"ERRO: {e}")
                 time.sleep(1)
