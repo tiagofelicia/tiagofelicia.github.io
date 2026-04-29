@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Mapa de Preços da Eletricidade na Europa - Day-Ahead | Tiago Felícia</title>
-    <meta name="description" content="Mapa interativo dos preços médios diários da eletricidade (day-ahead) em 44 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, heatmap anual e comparação entre zonas. Dados Energy-Charts (Fraunhofer ISE)." />
-    <meta name="keywords" content="preços eletricidade Europa, day-ahead, mapa preços eletricidade, OMIE, EPEX, Nord Pool, zonas licitação, mercado elétrico, Energy-Charts, Tiago Felícia" />
+    <meta name="description" content="Mapa interativo dos preços médios diários da eletricidade (day-ahead) em 45 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, curva intradiária, heatmaps e comparação entre zonas. Dados oficiais ENTSO-E Transparency Platform." />
+    <meta name="keywords" content="preços eletricidade Europa, day-ahead, mapa preços eletricidade, OMIE, EPEX, Nord Pool, zonas licitação, mercado elétrico, ENTSO-E, Tiago Felícia" />
     <meta name="author" content="Tiago Felícia" />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-precos.html" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Mapa de Preços da Eletricidade na Europa — Day-Ahead" />
-    <meta property="og:description" content="Preços médios diários da eletricidade em 44 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução e heatmap anual." />
+    <meta property="og:description" content="Preços médios diários da eletricidade em 45 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução e heatmap anual." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-precos.html" />
     <meta property="og:locale" content="pt_PT" />
     <meta property="og:site_name" content="Tiago Felícia" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Mapa de Preços da Eletricidade na Europa" />
-    <meta name="twitter:description" content="Preços médios diários da eletricidade em 44 zonas de licitação europeias." />
+    <meta name="twitter:description" content="Preços médios diários da eletricidade em 45 zonas de licitação europeias." />
 
     <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
@@ -51,7 +51,7 @@
           "@id": "https://www.tiagofelicia.pt/mapa-precos.html#dataset",
           "name": "Preços diários da eletricidade por zona de licitação europeia",
           "alternateName": "European Day-Ahead Electricity Prices by Bidding Zone",
-          "description": "Conjunto de dados com preços médios diários da eletricidade (mercado day-ahead) em 44 zonas de licitação europeias, incluindo média, mínimo, máximo e respetivas horas locais. Atualizado diariamente. Fonte: API Energy-Charts (Fraunhofer ISE).",
+          "description": "Conjunto de dados com preços médios diários da eletricidade (mercado day-ahead) em 45 zonas de licitação europeias, incluindo média, mínimo, máximo, respetivas horas locais e valores intradiários (15 min/horário). Atualizado diariamente. Fonte: ENTSO-E Transparency Platform.",
           "url": "https://www.tiagofelicia.pt/mapa-precos.html",
           "keywords": ["eletricidade", "day-ahead", "preços", "Europa", "OMIE", "EPEX", "Nord Pool", "zonas de licitação", "mercado elétrico"],
           "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -59,7 +59,7 @@
           "inLanguage": "pt-PT",
           "creator": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
           "publisher": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
-          "temporalCoverage": "2025-01-01/..",
+          "temporalCoverage": "2018-01-01/..",
           "spatialCoverage": {
             "@type": "Place",
             "name": "Europa",
@@ -77,14 +77,14 @@
             {
               "@type": "DataDownload",
               "encodingFormat": "application/json",
-              "contentUrl": "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos/"
+              "contentUrl": "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos_qh/"
             }
           ],
           "isBasedOn": {
             "@type": "Dataset",
-            "name": "Energy-Charts API",
-            "url": "https://api.energy-charts.info/",
-            "creator": { "@type": "Organization", "name": "Fraunhofer ISE", "url": "https://www.ise.fraunhofer.de/" }
+            "name": "ENTSO-E Transparency Platform — Day-Ahead Prices",
+            "url": "https://transparency.entsoe.eu/transmission-domain/r2/dayAheadPrices/show",
+            "creator": { "@type": "Organization", "name": "ENTSO-E", "url": "https://www.entsoe.eu/" }
           }
         },
         {
@@ -101,12 +101,15 @@
           "author": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
           "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
           "featureList": [
-            "Mapa choropleth com 44 zonas europeias",
+            "Mapa choropleth com 45 zonas europeias",
             "Vistas diária, semanal, mensal e personalizada",
             "Tabela ordenável com média, mínimo, máximo e amplitude",
             "Diferença vs Portugal (ΔPT) e variação vs dia anterior",
             "Gráfico de evolução com comparação entre zonas",
+            "Curva intradiária (15 min, 30 min ou horária)",
+            "Heatmap horário (hora × dia do mês) por zona",
             "Heatmap anual de preços",
+            "Indicador de dados parciais",
             "Pesquisa e filtro de zona",
             "Link de partilha por data",
             "Modo escuro"
@@ -246,22 +249,34 @@
 
         /* Lista de precos ordenada */
         #ranked-list-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 10px; box-sizing: border-box; }
+        #zone-panel { width: 100%; max-width: 1300px; margin: 0 auto 14px auto; padding: 10px 14px; background: #f1f5f9; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; box-sizing: border-box; }
+        #zone-panel select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; min-width: 180px; }
+        #zone-panel .compare-label { color: #475569; }
+        .zone-panel-hint { font-size: 0.85em; color: #64748b; font-style: italic; margin-left: auto; }
+        [data-theme="dark"] #zone-panel { background: #1e293b; }
+        [data-theme="dark"] #zone-panel select { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #zone-panel .compare-label { color: #cbd5e1; }
+        [data-theme="dark"] .zone-panel-hint { color: #94a3b8; }
+
         #chart-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
-        /* Breakout para escapar do max-width: 1200px do <main> */
-        #chart-wrapper.wide {
-            position: relative;
-            width: 100vw;
-            max-width: 100vw;
-            left: 50%;
-            right: 50%;
-            margin-left: -50vw;
-            margin-right: -50vw;
-            padding: 20px 30px;
+        /* Breakout — aplicavel a qualquer wrapper de visualizacao.
+           !important e necessario porque as regras com #id (mais especificas)
+           definem width/max-width nos wrappers individuais. */
+        .viz-wide {
+            position: relative !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            left: 50% !important;
+            right: 50% !important;
+            margin-left: -50vw !important;
+            margin-right: -50vw !important;
+            padding: 20px 30px !important;
+            box-sizing: border-box !important;
             background: #f1f5f9;
             border-top: 1px solid #cbd5e1;
             border-bottom: 1px solid #cbd5e1;
         }
-        [data-theme="dark"] #chart-wrapper.wide {
+        [data-theme="dark"] .viz-wide {
             background: #0f172a;
             border-color: #334155;
         }
@@ -274,12 +289,45 @@
         .btn-wide:hover { background: #e2e8f0; }
         .btn-wide.active { background: #2563eb; color: #fff; border-color: #2563eb; }
         .chart-canvas-wrap { position: relative; height: 500px; }
-        #chart-wrapper.wide .chart-canvas-wrap { height: 560px; }
-        @media (max-width: 768px) { .chart-canvas-wrap, #chart-wrapper.wide .chart-canvas-wrap { height: 300px; } }
+        .viz-wide .chart-canvas-wrap { height: 560px; }
+        @media (max-width: 768px) { .chart-canvas-wrap, .viz-wide .chart-canvas-wrap { height: 300px; } }
         [data-theme="dark"] .btn-wide { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .btn-wide:hover { background: #334155; }
 
         /* Heatmap calendário */
+        #intraday-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
+        #intraday-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
+        #intraday-wrapper .chart-canvas-wrap { width: 100%; height: 360px; position: relative; }
+        #intraday-wrapper.viz-wide .chart-canvas-wrap { height: 480px; }
+        @media (max-width: 768px) { #intraday-wrapper .chart-canvas-wrap, #intraday-wrapper.viz-wide .chart-canvas-wrap { height: 280px; } }
+        .intraday-hint { font-size: 0.85em; color: #64748b; font-style: italic; margin-left: 8px; }
+        [data-theme="dark"] #intraday-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] .intraday-hint { color: #94a3b8; }
+
+        #heatmap-hour-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
+        #heatmap-hour-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
+        #heatmap-hour-container { overflow-x: auto; }
+        .hh-grid { display: grid; gap: 1px; background: #e2e8f0; border: 1px solid #cbd5e1; padding: 1px; border-radius: 4px; min-width: 600px; font-size: 0.7em; }
+        .hh-cell { background: #f1f5f9; padding: 3px 2px; text-align: center; min-width: 22px; min-height: 18px; cursor: default; color: #1e293b; }
+        .hh-cell.hh-header { background: #cbd5e1; font-weight: 600; cursor: default; }
+        .hh-cell.hh-data { color: #fff; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.7), 0 0 1px rgba(0,0,0,0.9); }
+        .hh-cell.hh-data.hh-light { color: #0f172a; font-weight: 700; text-shadow: 0 0 2px rgba(255,255,255,0.6); }
+        .hh-cell.hh-empty { background: #f8fafc; }
+        .hh-cell.hh-partial { font-style: italic; }
+        .hh-cell.hh-partial::after { content: '*'; }
+        [data-theme="dark"] #heatmap-hour-wrapper h2 { color: #e2e8f0; }
+        [data-theme="dark"] .hh-grid { background: #475569; border-color: #334155; }
+        [data-theme="dark"] .hh-cell { background: #1e293b; color: #e2e8f0; }
+        [data-theme="dark"] .hh-cell.hh-header { background: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .hh-cell.hh-empty { background: #0f172a; }
+        [data-theme="dark"] .hh-cell.hh-data.hh-light { color: #0f172a; }
+
+        /* Indicador de dados parciais */
+        .price-label.partial { font-style: italic; }
+        .price-label.partial::after { content: '*'; margin-left: 1px; opacity: 0.85; }
+        .partial-badge { display: inline-block; margin-left: 4px; padding: 1px 5px; font-size: 0.75em; background: #fef3c7; color: #92400e; border-radius: 3px; font-weight: 600; }
+        [data-theme="dark"] .partial-badge { background: #78350f; color: #fde68a; }
+
         #heatmap-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
         #heatmap-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
         .heatmap-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-size: 0.9em; }
@@ -328,6 +376,23 @@
         .ranked-table .price-cell { font-weight: bold; text-align: center; padding-right: 20px; }
         .ranked-table .rank-cell { text-align: center; width: 50px; color: #888; }
         .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
+        .ranked-table .row-expand { display: inline-block; width: 14px; text-align: center; color: #64748b; font-size: 0.85em; transition: transform 0.15s; cursor: pointer; user-select: none; margin-right: 4px; }
+        .ranked-table tr.expanded .row-expand { transform: rotate(90deg); color: #2563eb; }
+        .ranked-table td.zone-cell { cursor: pointer; }
+        .ranked-table td.zone-cell:hover .row-expand { color: #2563eb; }
+        .ranked-table tr.intraday-row > td { padding: 12px 0; background: #f8fafc; border-bottom: 1px solid #ddd; }
+        .intraday-row-content { width: 100%; max-width: 100%; padding: 0 6px; box-sizing: border-box; }
+        .intraday-row-header { font-size: 0.9em; color: #475569; margin-bottom: 6px; text-align: left; padding: 0 4px; }
+        .intraday-row-svg { width: 100%; height: 220px; display: block; }
+        .intraday-row-empty { color: #94a3b8; font-style: italic; padding: 6px 4px; }
+        .intraday-row-partial { color: #92400e; background: #fef3c7; padding: 1px 5px; border-radius: 3px; font-size: 0.85em; margin-left: 6px; }
+        [data-theme="dark"] .ranked-table .row-expand { color: #94a3b8; }
+        [data-theme="dark"] .ranked-table tr.expanded .row-expand { color: #60a5fa; }
+        [data-theme="dark"] .ranked-table td.zone-cell:hover .row-expand { color: #60a5fa; }
+        [data-theme="dark"] .ranked-table tr.intraday-row > td { background: #0f172a; border-color: #334155; }
+        [data-theme="dark"] .intraday-row-header { color: #cbd5e1; }
+        [data-theme="dark"] .intraday-row-empty { color: #64748b; }
+        [data-theme="dark"] .intraday-row-partial { color: #fde68a; background: #78350f; }
         .ranked-table .zone-flag { font-size: 1.1em; margin-right: 4px; }
         .table-toolbar { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-bottom: 12px; font-size: 0.88em; }
         .ranked-table .delta-pos { color: #b91c1c; font-weight: 600; }
@@ -449,7 +514,7 @@
             </div>
         </div>
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
-            Dados disponíveis desde 01/01/2025 &mdash; Valores nas horas locais de cada zona
+            Dados disponíveis desde 01/01/2018 &mdash; Valores nas horas locais de cada zona
         </p>
         <div id="resumo-rapido" class="resumo-rapido" role="status" aria-live="polite" style="display:none;"></div>
         <div class="cross-link">
@@ -468,7 +533,7 @@
     </div>
 
     <p class="nota-horas">Valores nas horas locais de cada zona</p>
-    <p class="nota-fonte">Fonte: Energy-Charts API (Fraunhofer ISE) | tiagofelicia.pt</p>
+    <p class="nota-fonte">Fonte: <a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a> | tiagofelicia.pt</p>
 
     <div id="ranked-list-wrapper">
         <h2 id="ranked-list-titulo">Preços por zona de licitação</h2>
@@ -490,26 +555,40 @@
         </div>
     </div>
 
+    <div id="zone-panel">
+        <label for="global-zone-select"><strong>Zona:</strong></label>
+        <select id="global-zone-select"></select>
+        <label for="global-compare-select" class="compare-label">Comparar com:</label>
+        <select id="global-compare-select">
+            <option value="">— nenhuma —</option>
+        </select>
+        <button type="button" id="btn-viz-wide" class="btn-wide" title="Alternar largura total das visualizações">&#x2194; Largura total</button>
+        <span class="zone-panel-hint">Dica: clica numa zona no mapa para mudar</span>
+    </div>
+
+    <div id="intraday-wrapper">
+        <h2 id="intraday-titulo">Curva intradiária</h2>
+        <div class="chart-canvas-wrap"><canvas id="chart-intraday"></canvas></div>
+    </div>
+
     <div id="chart-wrapper">
         <h2 id="chart-titulo">Evolução de preços</h2>
-        <div class="chart-controls">
-            <label for="zone-chart-select">Zona:</label>
-            <select id="zone-chart-select"></select>
-            <label for="zone-chart-compare" class="compare-label">Comparar com:</label>
-            <select id="zone-chart-compare">
-                <option value="">— nenhuma —</option>
-            </select>
-            <label class="chart-toggle"><input type="checkbox" id="chart-fill-minmax"> Mostrar Mín–Máx</label>
-            <button type="button" id="btn-chart-wide" class="btn-wide" title="Alternar largura total do gráfico">&#x2194; Largura total</button>
-        </div>
         <div class="chart-canvas-wrap"><canvas id="chart-precos"></canvas></div>
+    </div>
+
+    <div id="heatmap-hour-wrapper">
+        <h2 id="heatmap-hour-titulo">Heatmap horário (hora × dia do mês)</h2>
+        <div class="heatmap-controls">
+            <label for="heatmap-hour-month">Mês:</label>
+            <input type="month" id="heatmap-hour-month">
+            <span class="heatmap-stats" id="heatmap-hour-stats"></span>
+        </div>
+        <div id="heatmap-hour-container" role="img" aria-label="Heatmap horário"></div>
     </div>
 
     <div id="heatmap-wrapper">
         <h2 id="heatmap-titulo">Heatmap anual de preços</h2>
         <div class="heatmap-controls">
-            <label for="heatmap-zone">Zona:</label>
-            <select id="heatmap-zone"></select>
             <label for="heatmap-year">Ano:</label>
             <select id="heatmap-year"></select>
             <span class="heatmap-stats" id="heatmap-stats"></span>
@@ -532,7 +611,7 @@
             <summary><strong>Os valores são nas horas locais?</strong></summary>
             <div class="faq-content">
                 <p>Sim. Os preços médios diários são calculados com base na <strong>hora local de cada zona de licitação</strong>. Por exemplo, um dia em Portugal (UTC+0/+1) pode não corresponder exatamente ao mesmo período UTC que um dia na Finlândia (UTC+2/+3).</p>
-                <p>Isto garante que os valores apresentados coincidem com os publicados pelo Energy-Charts.</p>
+                <p>Isto garante que os valores apresentados coincidem com os publicados pelas bolsas locais e pelo ENTSO-E.</p>
             </div>
         </details>
 
@@ -565,10 +644,17 @@
                     <li><strong>Modos de visualização:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês completo) e Personalizado (intervalo à escolha) — médias agregadas no mapa, tabela e gráfico.</li>
                     <li><strong>Pesquisa de zona:</strong> escreve no campo "🔍 Procurar zona" para filtrar tabela e destacar a zona no mapa (procura por código, nome PT e ignora acentos). <kbd>Esc</kbd> limpa.</li>
                     <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, etc. Mostra preço médio, mín/máx (com hora local) e amplitude por zona.</li>
+                    <li><strong>Curva intradiária na tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva 24h logo por baixo da linha. Podes expandir várias zonas ao mesmo tempo para comparar.</li>
                     <li><strong>ΔPT:</strong> diferença em €/MWh e % vs Portugal — útil para ver se importar/exportar é vantajoso.</li>
                     <li><strong>Variação vs ontem:</strong> só em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
-                    <li><strong>Gráfico de evolução:</strong> escolhe uma zona (e opcionalmente uma segunda para comparar), com toggle de mín–máx (whiskers) e largura total.</li>
+                    <li><strong>Gráfico de evolução:</strong> barras coloridas pela escala do mapa para a zona selecionada (e opcionalmente uma segunda para comparar). Mín, máx e amplitude estão sempre visíveis no tooltip ao passar o rato.</li>
+                    <li><strong>Largura total:</strong> botão "↔ Largura total" no painel de zona faz com que as 4 visualizações (intradiária, evolução, heatmaps) ocupem toda a largura do ecrã.</li>
+                    <li><strong>Selector único de zona:</strong> existe um só dropdown "Zona" no topo que controla simultaneamente a Evolução de preços, a Curva intradiária, o Heatmap horário e o Heatmap anual. Clicar numa zona no mapa atualiza todas as visualizações automaticamente.</li>
+                    <li><strong>Curva intradiária:</strong> gráfico de barras com a curva 24h da zona selecionada (resolução 15 min, 30 min ou horária consoante o que está publicado), com cores na mesma escala do mapa. Em modos agregados mostra a média horária do período.</li>
+                    <li><strong>Sparkline no mapa:</strong> ao passar o rato sobre uma zona, o painel de informação inclui mini-curva intradiária com marcadores de mín/máx e barras coloridas pela escala de preços.</li>
+                    <li><strong>Heatmap horário (mês × hora):</strong> grelha 24 horas × dias do mês para uma zona — permite ver padrões de horas de pico/vale ao longo do mês.</li>
                     <li><strong>Heatmap anual:</strong> calendário com 365 dias coloridos por preço — clica num dia para abrir esse dia no mapa.</li>
+                    <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots ainda não foram publicados (ex: PT antes da publicação do leilão CET) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip — o cálculo de média/mín/máx só usa os slots conhecidos.</li>
                     <li><strong>Resumo dinâmico:</strong> texto descritivo da data selecionada (Hoje/Ontem/Amanhã/data), com zona mais barata e mais cara em destaque.</li>
                     <li><strong>Link de partilha:</strong> botão "🔗 Copiar link de partilha" gera URL com a data atual — partilha com 1 clique.</li>
                     <li><strong>Modo escuro:</strong> respeita preferência do site (toggle no menu).</li>
@@ -581,7 +667,7 @@
         <details class="faq-item">
             <summary><strong>De onde vêm os dados?</strong></summary>
             <div class="faq-content">
-                <p>Os dados são obtidos através da <strong>API Energy-Charts</strong> do <strong>Fraunhofer ISE</strong>. Os preços day-ahead provêm das bolsas de eletricidade europeias (EPEX SPOT, Nord Pool, GME, OMIE, etc.).</p>
+                <p>Os dados são obtidos diretamente da <strong><a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a></strong> — a fonte oficial dos operadores de redes elétricas europeus (TSOs). Os preços day-ahead provêm das bolsas de eletricidade europeias (EPEX SPOT, Nord Pool, GME, OMIE, etc.) e são disponibilizados na resolução publicada pela respetiva bolsa (15 minutos para a maioria das zonas, horário para algumas).</p>
                 <p>Os dados são atualizados diariamente de forma automática.</p>
                 <p><small>Fronteiras das zonas: <a href="https://github.com/electricitymaps/electricitymaps-contrib" target="_blank" rel="noopener">Electricity Maps</a> (MIT License)</small></p>
             </div>
@@ -617,8 +703,8 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- CONFIGURACOES ---
-    var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos/";
-    var DATA_INICIO = "2025-01-01";
+    var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos_qh/";
+    var DATA_INICIO = "2018-01-01";
 
     // Nomes das zonas para display (português com acentos)
     var ZONE_NAMES = {
@@ -631,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "IT-Centre-South": "Itália Centro-Sul", "IT-South": "Itália Sul",
         "IT-Sicily": "Itália Sicília", "IT-Sardinia": "Itália Sardenha",
         "IT-Calabria": "Itália Calábria",
-        "LT": "Lituânia", "LV": "Letónia", "ME": "Montenegro",
+        "LT": "Lituânia", "LV": "Letónia", "ME": "Montenegro", "MK": "Macedónia do Norte",
         "NL": "Países Baixos",
         "NO1": "Noruega Leste (NO1)", "NO2": "Noruega Sul (NO2)",
         "NO3": "Noruega Central (NO3)", "NO4": "Noruega Norte (NO4)",
@@ -665,7 +751,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "IT-North": "it", "IT-Centre-North": "it", "IT-Centre-South": "it",
         "IT-South": "it", "IT-Sicily": "it", "IT-Sardinia": "it",
         "IT-Calabria": "it", "IT-SACOAC": "fr", "IT-SACODC": "it",
-        "LT": "lt", "LV": "lv", "ME": "me", "NL": "nl",
+        "LT": "lt", "LV": "lv", "ME": "me", "MK": "mk", "NL": "nl",
         "NO1": "no", "NO2": "no", "NO2NSL": "no",
         "NO3": "no", "NO4": "no", "NO5": "no",
         "PL": "pl", "PT": "pt", "RO": "ro", "RS": "rs",
@@ -712,6 +798,81 @@ document.addEventListener('DOMContentLoaded', function() {
         if (val === null || val === undefined) return null;
         if (typeof val === 'number') return { avg: val };  // formato antigo (sem min/max)
         return val;
+    }
+
+    // --- Helpers intradiarios (formato novo com 'values' e 'resolution') ---
+    function isPartial(stats) {
+        if (!stats || !stats.values || !stats.values.length) return false;
+        // Considera parcial se tiver pelo menos 1 trailing null
+        return stats.values[stats.values.length - 1] == null;
+    }
+    function partialInfo(stats) {
+        // Devolve {known, total} ou null
+        if (!stats || !stats.values) return null;
+        var total = stats.values.length;
+        var known = 0;
+        for (var i = 0; i < total; i++) if (stats.values[i] != null) known++;
+        return { known: known, total: total };
+    }
+    function getZoneIntradayStats(zone, dateStr) {
+        // Devolve {values, resolution, slotMinutes, labels} para um dia em modo Diário, ou null.
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        var ym = dateStr.substring(0, 7);
+        var month = dataCache[ym];
+        if (!month || !month[dateStr]) return null;
+        var raw = month[dateStr][dataZone];
+        if (!raw || typeof raw === 'number' || !raw.values) return null;
+        var res = raw.resolution || 'PT60M';
+        var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
+        var n = raw.values.length;
+        var labels = [];
+        for (var i = 0; i < n; i++) {
+            var mins = i * slot;
+            labels.push(String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
+        }
+        return { values: raw.values.slice(), resolution: res, slotMinutes: slot, labels: labels };
+    }
+    function getAggregatedIntradayStats(zone, period) {
+        // Media por slot ao longo dos dias do periodo. Resolucao = a mais comum.
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        var resCount = {};
+        var dayList = datesInRange(period.start, period.end);
+        var entries = [];
+        for (var i = 0; i < dayList.length; i++) {
+            var ds = dayList[i];
+            var ym = ds.substring(0, 7);
+            var month = dataCache[ym];
+            if (!month || !month[ds]) continue;
+            var raw = month[ds][dataZone];
+            if (!raw || typeof raw === 'number' || !raw.values) continue;
+            var res = raw.resolution || 'PT60M';
+            resCount[res] = (resCount[res] || 0) + 1;
+            entries.push({ res: res, values: raw.values });
+        }
+        if (!entries.length) return null;
+        var bestRes = Object.keys(resCount).sort(function(a, b) { return resCount[b] - resCount[a]; })[0];
+        var slot = bestRes === 'PT15M' ? 15 : (bestRes === 'PT30M' ? 30 : 60);
+        var n = 24 * 60 / slot;
+        var sums = new Array(n).fill(0);
+        var counts = new Array(n).fill(0);
+        for (var k = 0; k < entries.length; k++) {
+            if (entries[k].res !== bestRes) continue;
+            var vals = entries[k].values;
+            for (var j = 0; j < Math.min(n, vals.length); j++) {
+                if (vals[j] != null) {
+                    sums[j] += vals[j];
+                    counts[j] += 1;
+                }
+            }
+        }
+        var avg = [];
+        var labels = [];
+        for (var s = 0; s < n; s++) {
+            avg.push(counts[s] > 0 ? sums[s] / counts[s] : null);
+            var mins = s * slot;
+            labels.push(String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
+        }
+        return { values: avg, resolution: bestRes, slotMinutes: slot, labels: labels };
     }
 
     // --- Formatacao numerica (pt-PT) ---
@@ -858,7 +1019,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- FUNCAO AUXILIAR: fetch com fallback ---
     async function fetchComFallback(relativePath) {
         try {
-            var resp = await fetch("data/mapa_precos/" + relativePath);
+            var resp = await fetch("data/mapa_precos_qh/" + relativePath);
             if (resp.ok) return resp;
         } catch(e) { /* ignorar - pode ser file:// */ }
         var resp2 = await fetch(URL_GITHUB + relativePath);
@@ -978,6 +1139,74 @@ document.addEventListener('DOMContentLoaded', function() {
             + '</div>';
     }
 
+    // Sparkline intradiaria (24h curve) com cores por preco e marcador de hora atual
+    function buildIntradaySparkline(intra, dayStats) {
+        if (!intra || !intra.values || !intra.values.length) return '';
+        var vals = intra.values;
+        var n = vals.length;
+        var w = 200, h = 56, pad = 4;
+        var validVals = [];
+        for (var i = 0; i < n; i++) if (vals[i] != null) validVals.push(vals[i]);
+        if (validVals.length < 2) return '';
+        var minV = Math.min.apply(null, validVals);
+        var maxV = Math.max.apply(null, validVals);
+        var range = maxV - minV || 1;
+        var stepX = (w - pad * 2) / (n - 1);
+
+        // Barras coloridas (uma por slot) sob a linha — visual "heatmap horizontal"
+        var bars = '';
+        var barW = Math.max(1, stepX * 0.95);
+        for (var b = 0; b < n; b++) {
+            if (vals[b] == null) continue;
+            var bx = pad + b * stepX - barW / 2;
+            bars += '<rect x="' + bx.toFixed(1) + '" y="' + (h - pad - 4) + '" width="' + barW.toFixed(1) + '" height="4" fill="' + getColor(vals[b]) + '" opacity="0.85"/>';
+        }
+
+        // Linha sobre os valores
+        var pts = [];
+        for (var k = 0; k < n; k++) {
+            if (vals[k] == null) continue;
+            var x = pad + k * stepX;
+            var y2 = (h - pad - 6) - ((vals[k] - minV) / range) * (h - pad * 2 - 8);
+            pts.push(x.toFixed(1) + ',' + y2.toFixed(1));
+        }
+        var path = '<polyline fill="none" stroke="#1e293b" stroke-width="1.3" points="' + pts.join(' ') + '"/>';
+
+        // Marcador de min/max
+        var marks = '';
+        if (dayStats && dayStats.min_hour && dayStats.max_hour) {
+            var labelToIdx = function(lbl) {
+                var p = lbl.split(':');
+                if (p.length < 2) return -1;
+                var totalMin = parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+                return Math.round(totalMin / intra.slotMinutes);
+            };
+            var idxMin = labelToIdx(dayStats.min_hour);
+            var idxMax = labelToIdx(dayStats.max_hour);
+            if (idxMin >= 0 && idxMin < n && vals[idxMin] != null) {
+                var xm = pad + idxMin * stepX;
+                var ym = (h - pad - 6) - ((vals[idxMin] - minV) / range) * (h - pad * 2 - 8);
+                marks += '<circle cx="' + xm.toFixed(1) + '" cy="' + ym.toFixed(1) + '" r="2.5" fill="#2563eb"/>';
+            }
+            if (idxMax >= 0 && idxMax < n && vals[idxMax] != null) {
+                var xM = pad + idxMax * stepX;
+                var yM = (h - pad - 6) - ((vals[idxMax] - minV) / range) * (h - pad * 2 - 8);
+                marks += '<circle cx="' + xM.toFixed(1) + '" cy="' + yM.toFixed(1) + '" r="2.5" fill="#dc2626"/>';
+            }
+        }
+
+        // Eixos minimos: 00 / 12 / 24
+        var axisLabels = '<text x="' + pad + '" y="' + (h - 1) + '" font-size="8" fill="#64748b">00h</text>'
+                       + '<text x="' + (w / 2 - 6) + '" y="' + (h - 1) + '" font-size="8" fill="#64748b">12h</text>'
+                       + '<text x="' + (w - pad - 16) + '" y="' + (h - 1) + '" font-size="8" fill="#64748b">24h</text>';
+
+        var resLabel = intra.resolution === 'PT15M' ? '15 min' : (intra.resolution === 'PT30M' ? '30 min' : 'horário');
+        return '<div class="sparkline-wrap">'
+            + '<div class="sparkline-label">Curva intradiária (' + resLabel + ')</div>'
+            + '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" class="sparkline">' + bars + path + marks + axisLabels + '</svg>'
+            + '</div>';
+    }
+
     info.update = function(props) {
         if (props) {
             var zone = props.ecZone;
@@ -990,7 +1219,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     var pp = computePeriod();
                     html += '<div class="period-label">' + fmtDateBR(pp.start) + ' → ' + fmtDateBR(pp.end) + '</div>';
                 }
-                html += '<div class="price-value">' + fmtN(stats.avg, 2) + ' €/MWh</div>';
+                var partialBadge = '';
+                if (isPartial(stats)) {
+                    var pi = partialInfo(stats);
+                    if (pi) partialBadge = ' <span class="partial-badge" title="Dados parciais: ' + pi.known + '/' + pi.total + ' slots publicados">parcial</span>';
+                }
+                html += '<div class="price-value">' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
                 if (stats.min !== undefined && stats.min !== null) {
                     var minStamp = isPeriodoMap && stats.min_date ? (fmtDateBR(stats.min_date) + ' ' + (stats.min_hour || '')) : (stats.min_hour || '');
                     var maxStamp = isPeriodoMap && stats.max_date ? (fmtDateBR(stats.max_date) + ' ' + (stats.max_hour || '')) : (stats.max_hour || '');
@@ -1001,7 +1235,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += '<div class="stats-amplitude">Amplitude: ' + fmtN(stats.max - stats.min, 2) + ' €/MWh</div>';
                 }
                 var curDate = document.getElementById('seletor-data').value;
-                if (curDate && !isPeriodoMap) html += buildSparkline(zone, curDate);
+                // Em modo Diário, mostrar sparkline intradiária; em período, sparkline 7 dias.
+                if (!isPeriodoMap && curDate) {
+                    var intra = getZoneIntradayStats(zone, curDate);
+                    if (intra) {
+                        html += buildIntradaySparkline(intra, stats);
+                    }
+                } else if (isPeriodoMap) {
+                    var aggIntra = getAggregatedIntradayStats(zone, computePeriod());
+                    if (aggIntra) html += buildIntradaySparkline(aggIntra, null);
+                }
                 this._div.innerHTML = html;
             } else {
                 this._div.innerHTML = '<b>' + zoneFlag(zone) + ' ' + name + '</b><div class="price-value" style="color:#999;">Sem dados</div>';
@@ -1042,7 +1285,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function zoomToFeature(e) {
-        map.fitBounds(e.target.getBounds());
+        // Click numa zona: define a zona global e atualiza TODAS as visualizacoes
+        var ec = e.target.feature.properties.ecZone;
+        var dataZone = ZONE_DATA_MAP[ec] || ec;
+        var gZone = document.getElementById('global-zone-select');
+        if (gZone && ZONE_NAMES[dataZone]) {
+            gZone.value = dataZone;
+            savePref('zone', dataZone);
+            if (typeof updateChart === 'function') updateChart();
+            if (typeof updateIntradayChart === 'function') updateIntradayChart();
+            if (typeof updateHeatmap === 'function') updateHeatmap();
+            if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+            var w = document.getElementById('intraday-wrapper');
+            if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     function onEachFeature(feature, layer) {
@@ -1088,9 +1344,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     ? L.latLng(LABEL_POSITIONS[zone][0], LABEL_POSITIONS[zone][1])
                     : layer.getBounds().getCenter();
 
+                var stats = getZoneStats(zone);
+                var partialCls = isPartial(stats) ? ' partial' : '';
                 var marker = L.marker(center, {
                     icon: L.divIcon({
-                        className: 'price-label',
+                        className: 'price-label' + partialCls,
                         html: fmtN(price, 2),
                         iconSize: [40, 14],
                         iconAnchor: [20, 7]
@@ -1178,6 +1436,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         varDiaPct = prevAvg !== 0 ? (varDia / prevAvg * 100) : null;
                     }
                 }
+                var partialFlag = isPartial(stats);
+                var partialCount = partialFlag ? partialInfo(stats) : null;
                 entries.push({
                     zone: zone, name: name,
                     avg: stats.avg,
@@ -1187,7 +1447,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     maxHour: maxLabel,
                     amplitude: amplitude,
                     deltaPt: deltaPt, deltaPtPct: deltaPtPct,
-                    varDia: varDia, varDiaPct: varDiaPct
+                    varDia: varDia, varDiaPct: varDiaPct,
+                    partial: partialFlag,
+                    partialKnown: partialCount ? partialCount.known : null,
+                    partialTotal: partialCount ? partialCount.total : null
                 });
             }
         }
@@ -1247,8 +1510,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var color = getColor(e.avg);
             html += '<tr data-zone="' + e.zone + '">';
             html += '<td class="rank-cell">' + (i + 1) + '</td>';
-            html += '<td class="zone-cell" title="' + e.name + ' (' + e.zone + ')"><span class="color-indicator" style="background:' + color + '"></span><span class="zone-flag">' + zoneFlag(e.zone) + '</span> ' + e.name + '</td>';
-            html += '<td class="price-cell num' + negCls(e.avg) + '" title="Preço médio diário">' + fmtN(e.avg, 2) + '</td>';
+            html += '<td class="zone-cell" title="Clique para mostrar/ocultar curva intradiária"><span class="row-expand" aria-label="Expandir curva intradiária">▸</span><span class="color-indicator" style="background:' + color + '"></span><span class="zone-flag">' + zoneFlag(e.zone) + '</span> <span class="zone-name">' + e.name + '</span></td>';
+            var partialMark = e.partial ? ' <span class="partial-badge" title="Dados parciais: ' + e.partialKnown + '/' + e.partialTotal + ' slots">parcial</span>' : '';
+            var avgTitle = e.partial ? 'Preço médio (parcial: ' + e.partialKnown + '/' + e.partialTotal + ' slots publicados)' : 'Preço médio diário';
+            html += '<td class="price-cell num' + negCls(e.avg) + '" title="' + avgTitle + '">' + fmtN(e.avg, 2) + partialMark + '</td>';
             if (showDeltaPt) html += '<td class="num" title="Diferença vs Portugal">' + (e.zone === 'PT' ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
             if (showVarDia) html += '<td class="num" title="Variação vs dia anterior">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
             html += '<td class="num' + negCls(e.min) + '" title="Preço mínimo do dia">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
@@ -1277,8 +1542,158 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // Listeners para expandir/recolher curva intradiaria por linha
+        var zoneCells = container.querySelectorAll('td.zone-cell');
+        for (var zci = 0; zci < zoneCells.length; zci++) {
+            zoneCells[zci].addEventListener('click', function() {
+                var tr = this.closest('tr[data-zone]');
+                if (!tr) return;
+                toggleRowIntraday(tr);
+            });
+        }
+
+        // Re-expandir as linhas que estavam expandidas antes do re-render
+        if (expandedZonesInTable && expandedZonesInTable.size) {
+            var rows = container.querySelectorAll('tr[data-zone]');
+            for (var ri = 0; ri < rows.length; ri++) {
+                var z = rows[ri].getAttribute('data-zone');
+                if (expandedZonesInTable.has(z)) expandRowIntraday(rows[ri]);
+            }
+        }
+
         // Re-aplicar filtro após re-render (mantém pesquisa ativa)
         if (typeof applyZoneSearch === 'function') applyZoneSearch();
+    }
+
+    // --- EXPANDIR CURVA INTRADIARIA POR LINHA ---
+    var expandedZonesInTable = new Set();
+
+    function toggleRowIntraday(tr) {
+        var zone = tr.getAttribute('data-zone');
+        if (!zone) return;
+        var next = tr.nextElementSibling;
+        if (next && next.classList.contains('intraday-row')) {
+            next.parentNode.removeChild(next);
+            tr.classList.remove('expanded');
+            expandedZonesInTable.delete(zone);
+        } else {
+            expandRowIntraday(tr);
+            expandedZonesInTable.add(zone);
+        }
+    }
+
+    function expandRowIntraday(tr) {
+        var zone = tr.getAttribute('data-zone');
+        if (!zone) return;
+        // Evitar duplicar se ja expandida
+        var nx = tr.nextElementSibling;
+        if (nx && nx.classList.contains('intraday-row')) return;
+        var nCols = tr.children.length;
+        var isPeriodo = (currentMode !== 'diario');
+        var dateStr = document.getElementById('seletor-data').value;
+        var intra = isPeriodo
+            ? getAggregatedIntradayStats(zone, computePeriod())
+            : getZoneIntradayStats(zone, dateStr);
+        var newRow = document.createElement('tr');
+        newRow.className = 'intraday-row';
+        newRow.setAttribute('data-for-zone', zone);
+        var td = document.createElement('td');
+        td.colSpan = nCols;
+        td.innerHTML = buildIntradayRowChart(zone, intra, isPeriodo);
+        newRow.appendChild(td);
+        tr.classList.add('expanded');
+        tr.parentNode.insertBefore(newRow, tr.nextSibling);
+    }
+
+    function buildIntradayRowChart(zone, intra, isPeriodo) {
+        var name = ZONE_NAMES[zone] || zone;
+        if (!intra || !intra.values || !intra.values.length) {
+            return '<div class="intraday-row-empty">Sem dados intradiários para ' + name + '.</div>';
+        }
+        var vals = intra.values, n = vals.length, slot = intra.slotMinutes;
+        var w = 1200, h = 220, padL = 38, padR = 10, padT = 16, padB = 26;
+        var plotW = w - padL - padR;
+        var plotH = h - padT - padB;
+        var validVals = [];
+        for (var i = 0; i < n; i++) if (vals[i] != null) validVals.push(vals[i]);
+        if (!validVals.length) {
+            return '<div class="intraday-row-empty">Sem valores publicados.</div>';
+        }
+        var minV = Math.min.apply(null, validVals);
+        var maxV = Math.max.apply(null, validVals);
+        // Domínio com algum padding visual
+        var range = maxV - minV;
+        if (range < 1) range = 1;
+        var yPad = range * 0.08;
+        var yMin = minV - yPad;
+        var yMax = maxV + yPad;
+        var yToPx = function(v) { return padT + plotH - ((v - yMin) / (yMax - yMin)) * plotH; };
+        var stepX = plotW / n;
+        var barW = Math.max(1, stepX * 0.92);
+
+        // Linha do zero (a vermelho quando ha valores negativos)
+        var zeroLine = '';
+        if (yMin < 0 && yMax > 0) {
+            var y0 = yToPx(0);
+            zeroLine = '<line x1="' + padL + '" y1="' + y0 + '" x2="' + (padL + plotW) + '" y2="' + y0 + '" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>'
+                     + '<text x="' + (padL + plotW - 4) + '" y="' + (y0 - 3) + '" text-anchor="end" font-size="10" font-weight="600" fill="#dc2626">0</text>';
+        }
+
+        // Eixo Y: mín, máx, e zero se relevante
+        var labelStyle = 'font-size:9px;fill:#64748b;';
+        var yAxis = '<text x="' + (padL - 4) + '" y="' + (yToPx(maxV) + 3) + '" text-anchor="end" style="' + labelStyle + '">' + fmtN(maxV, 0) + '</text>'
+                  + '<text x="' + (padL - 4) + '" y="' + (yToPx(minV) + 3) + '" text-anchor="end" style="' + labelStyle + '">' + fmtN(minV, 0) + '</text>';
+
+        // Eixo X: marcadores 0/6/12/18/24h
+        var xAxis = '';
+        var hourMarks = [0, 6, 12, 18, 24];
+        for (var hm = 0; hm < hourMarks.length; hm++) {
+            var hh = hourMarks[hm];
+            var idx = hh * 60 / slot;
+            if (idx > n) idx = n;
+            var xMark = padL + idx * stepX;
+            xAxis += '<text x="' + xMark + '" y="' + (h - 6) + '" text-anchor="middle" style="' + labelStyle + '">' + (hh < 10 ? '0' + hh : hh) + 'h</text>';
+            xAxis += '<line x1="' + xMark + '" y1="' + (padT + plotH) + '" x2="' + xMark + '" y2="' + (padT + plotH + 3) + '" stroke="#94a3b8"/>';
+        }
+
+        // Barras
+        var bars = '';
+        var pad2 = function(x) { return String(x).padStart(2, '0'); };
+        for (var b = 0; b < n; b++) {
+            var v = vals[b];
+            if (v == null) continue;
+            var bx = padL + b * stepX + (stepX - barW) / 2;
+            var by = yToPx(v);
+            var bh = (padT + plotH) - by;
+            if (bh < 0.5) bh = 0.5;
+            var color = getColor(v);
+            var totalMin = b * slot;
+            var lbl = pad2(Math.floor(totalMin / 60)) + ':' + pad2(totalMin % 60);
+            bars += '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + bh.toFixed(1) + '" fill="' + color + '" stroke="rgba(0,0,0,0.08)" stroke-width="0.5"><title>' + lbl + ' — ' + fmtN(v, 2) + ' €/MWh</title></rect>';
+        }
+
+        // Bordas do plot
+        var frame = '<rect x="' + padL + '" y="' + padT + '" width="' + plotW + '" height="' + plotH + '" fill="none" stroke="#cbd5e1" stroke-width="0.8"/>';
+
+        var resTxt = intra.resolution === 'PT15M' ? '15 min' : (intra.resolution === 'PT30M' ? '30 min' : 'horário');
+        var partialNote = '';
+        var lastNonNull = -1;
+        for (var ii = n - 1; ii >= 0; ii--) if (vals[ii] != null) { lastNonNull = ii; break; }
+        if (lastNonNull >= 0 && lastNonNull < n - 1) {
+            var nullCount = n - 1 - lastNonNull;
+            partialNote = ' <span class="intraday-row-partial">parcial: faltam ' + nullCount + ' slot' + (nullCount > 1 ? 's' : '') + '</span>';
+        }
+
+        var header = '<div class="intraday-row-header">'
+            + '<strong>' + zoneFlag(zone) + ' ' + name + '</strong> · '
+            + (isPeriodo ? 'média horária do período' : 'curva 24h')
+            + ' (' + resTxt + ')' + partialNote
+            + '</div>';
+
+        var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet" class="intraday-row-svg" role="img" aria-label="Curva intradiária ' + name + '">'
+            + frame + zeroLine + bars + yAxis + xAxis + '</svg>';
+
+        return '<div class="intraday-row-content">' + header + svg + '</div>';
     }
 
     // --- PESQUISA / FILTRO DE ZONA ---
@@ -1317,6 +1732,13 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 rows[i].classList.add('search-hidden');
             }
+        }
+        // Esconder/mostrar tambem as linhas intradiarias expandidas
+        var intraRows = document.querySelectorAll('#ranked-list-content tr.intraday-row');
+        for (var ir = 0; ir < intraRows.length; ir++) {
+            var fz = intraRows[ir].getAttribute('data-for-zone');
+            if (zoneMatches(fz, q)) intraRows[ir].classList.remove('search-hidden');
+            else intraRows[ir].classList.add('search-hidden');
         }
 
         // Re-numerar # visíveis
@@ -1372,7 +1794,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- HEATMAP CALENDÁRIO ANUAL ---
     var MES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
     async function updateHeatmap() {
-        var zoneSel = document.getElementById('heatmap-zone');
+        var zoneSel = document.getElementById('global-zone-select');
         var yearSel = document.getElementById('heatmap-year');
         var container = document.getElementById('heatmap-container');
         var statsEl = document.getElementById('heatmap-stats');
@@ -1530,6 +1952,41 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     if (typeof Chart !== 'undefined') Chart.register(whiskersPlugin);
 
+    // Plugin: linha vermelha tracejada em y=0 quando ha valores negativos
+    var zeroLinePlugin = {
+        id: 'zeroLine',
+        afterDatasetsDraw: function(chart) {
+            var ds = chart.data.datasets;
+            var hasNeg = false;
+            for (var i = 0; i < ds.length && !hasNeg; i++) {
+                var data = ds[i].data || [];
+                for (var j = 0; j < data.length; j++) {
+                    var v = data[j];
+                    if (Array.isArray(v)) v = Math.min(v[0], v[1]);
+                    if (v != null && v < 0) { hasNeg = true; break; }
+                }
+            }
+            if (!hasNeg || !chart.scales.y) return;
+            var y = chart.scales.y.getPixelForValue(0);
+            var area = chart.chartArea;
+            var ctx = chart.ctx;
+            ctx.save();
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath();
+            ctx.moveTo(area.left, y);
+            ctx.lineTo(area.right, y);
+            ctx.stroke();
+            ctx.fillStyle = '#dc2626';
+            ctx.font = '600 11px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('0', area.right - 4, y - 4);
+            ctx.restore();
+        }
+    };
+    if (typeof Chart !== 'undefined') Chart.register(zeroLinePlugin);
+
     function getChartColors() {
         var dark = document.documentElement.getAttribute('data-theme') === 'dark';
         return {
@@ -1563,9 +2020,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     async function updateChart() {
         if (typeof Chart === 'undefined') return;
-        var zoneSel = document.getElementById('zone-chart-select');
-        var compareSel = document.getElementById('zone-chart-compare');
-        var fillToggle = document.getElementById('chart-fill-minmax');
+        var zoneSel = document.getElementById('global-zone-select');
+        var compareSel = document.getElementById('global-compare-select');
         var canvas = document.getElementById('chart-precos');
         if (!zoneSel || !canvas) return;
         var zone = zoneSel.value;
@@ -1601,7 +2057,9 @@ document.addEventListener('DOMContentLoaded', function() {
             order: 2
         }];
 
-        var showWhiskers = !!(fillToggle && fillToggle.checked);
+        // Min/max sao sempre visiveis no tooltip; deixaram de ser visualizados
+        // como whiskers no grafico.
+        var showWhiskers = false;
 
         if (compare) {
             var s2 = buildSeriesForZoneRange(compare, chartStart, chartEnd);
@@ -1642,7 +2100,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 return ctx.dataset.label + ': ' + (v != null ? fmtN(v, 2) + ' €/MWh' : '—');
                             },
                             afterBody: function(items) {
-                                if (!showWhiskers || !items || !items.length) return '';
+                                // Min/Max + Amplitude sempre visiveis no tooltip
+                                if (!items || !items.length) return '';
                                 var i = items[0].dataIndex;
                                 var mn = s1.mins[i], mx = s1.maxs[i];
                                 if (mn == null && mx == null) return '';
@@ -1675,6 +2134,217 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentMode === 'diario') label = '30 dias até ' + fmtDateBR(chartEnd);
             else label = nDias + ' dias (' + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
             titulo.textContent = 'Evolução de preços — ' + label + ' — ' + name1 + (compare ? ' vs ' + ZONE_NAMES[compare] : '');
+        }
+    }
+
+    // --- GRAFICO INTRADIARIO (24h curve) ---
+    var intradayChart = null;
+    async function updateIntradayChart() {
+        var canvas = document.getElementById('chart-intraday');
+        var zoneSel = document.getElementById('global-zone-select');
+        var compareSel = document.getElementById('global-compare-select');
+        var titulo = document.getElementById('intraday-titulo');
+        if (!canvas || !zoneSel) return;
+        var zone = zoneSel.value || 'PT';
+        var compare = compareSel ? compareSel.value : '';
+        var isDiario = (currentMode === 'diario');
+        var period = computePeriod();
+
+        // Garantir que os meses do periodo (ou do dia) estao em cache
+        var months = [];
+        if (isDiario) {
+            months.push(seletorData.value.substring(0, 7));
+        } else {
+            months = monthsInRange(period.start, period.end);
+        }
+        await ensureMonthsLoaded(months);
+
+        var intra1 = isDiario
+            ? getZoneIntradayStats(zone, seletorData.value)
+            : getAggregatedIntradayStats(zone, period);
+        var intra2 = compare
+            ? (isDiario ? getZoneIntradayStats(compare, seletorData.value)
+                        : getAggregatedIntradayStats(compare, period))
+            : null;
+
+        var labels = (intra1 && intra1.labels) || (intra2 && intra2.labels) || [];
+        var datasets = [];
+        var name1 = ZONE_NAMES[zone] || zone;
+        var colorsFromValues = function(vals) {
+            return vals.map(function(v) { return v == null ? 'rgba(0,0,0,0)' : getColor(v); });
+        };
+        if (intra1) {
+            datasets.push({
+                label: name1,
+                data: intra1.values,
+                backgroundColor: colorsFromValues(intra1.values),
+                borderColor: 'rgba(0,0,0,0.15)',
+                borderWidth: 1,
+                borderRadius: 2,
+                barPercentage: 0.95,
+                categoryPercentage: 0.92
+            });
+        }
+        if (intra2) {
+            datasets.push({
+                label: ZONE_NAMES[compare] || compare,
+                data: intra2.values,
+                backgroundColor: colorsFromValues(intra2.values),
+                borderColor: '#dc2626',
+                borderWidth: 1.5,
+                borderRadius: 2,
+                barPercentage: 0.95,
+                categoryPercentage: 0.92
+            });
+        }
+
+        var cfg = {
+            type: 'bar',
+            data: { labels: labels, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: datasets.length > 1, position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            title: function(items) { return 'Hora ' + (items[0] && items[0].label); },
+                            label: function(ctx) {
+                                if (ctx.parsed.y == null) return ctx.dataset.label + ': sem dados';
+                                return ctx.dataset.label + ': ' + fmtN(ctx.parsed.y, 2) + ' €/MWh';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { maxTicksLimit: 12, autoSkip: true } },
+                    y: { title: { display: true, text: '€/MWh' }, beginAtZero: false }
+                }
+            }
+        };
+        if (intradayChart) {
+            intradayChart.data = cfg.data;
+            intradayChart.options = cfg.options;
+            intradayChart.update();
+        } else if (typeof Chart !== 'undefined') {
+            intradayChart = new Chart(canvas.getContext('2d'), cfg);
+        }
+        if (titulo) {
+            var labelMode = isDiario
+                ? fmtDateBR(seletorData.value)
+                : ('média ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
+            var resTxt = (intra1 && intra1.resolution === 'PT15M') ? ' · 15 min'
+                       : (intra1 && intra1.resolution === 'PT30M') ? ' · 30 min' : ' · horário';
+            titulo.textContent = 'Curva intradiária — ' + labelMode + ' — ' + name1 + (compare ? ' vs ' + (ZONE_NAMES[compare] || compare) : '') + resTxt;
+        }
+    }
+
+    // --- HEATMAP HORARIO (24 horas x dias do mes) ---
+    function updateHourlyHeatmap() {
+        var zoneSel = document.getElementById('global-zone-select');
+        var monthInput = document.getElementById('heatmap-hour-month');
+        var container = document.getElementById('heatmap-hour-container');
+        var titulo = document.getElementById('heatmap-hour-titulo');
+        var statsEl = document.getElementById('heatmap-hour-stats');
+        if (!zoneSel || !monthInput || !container) return;
+        var zone = zoneSel.value;
+        var ym = monthInput.value;
+        if (!zone || !ym) return;
+
+        // Carregar mes em background se ainda nao estiver
+        if (!dataCache[ym]) {
+            ensureMonthsLoaded([ym]).then(updateHourlyHeatmap);
+            container.innerHTML = '<p class="no-data-msg">A carregar…</p>';
+            return;
+        }
+
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        var monthData = dataCache[ym] || {};
+
+        // Determinar numero de dias do mes
+        var partes = ym.split('-');
+        var year = parseInt(partes[0], 10), mo = parseInt(partes[1], 10);
+        var daysInMonth = new Date(year, mo, 0).getDate();
+
+        // Recolher 24 valores horarios por dia (downsampling automatico se PT15M)
+        var grid = [];      // grid[hour][day-1] = valor ou null
+        var partialCells = {}; // key = h+'_'+d
+        for (var h = 0; h < 24; h++) grid.push(new Array(daysInMonth).fill(null));
+
+        var allVals = [];
+        for (var d = 1; d <= daysInMonth; d++) {
+            var ds = ym + '-' + String(d).padStart(2, '0');
+            var raw = monthData[ds] && monthData[ds][dataZone];
+            if (!raw || typeof raw === 'number' || !raw.values) continue;
+            var res = raw.resolution || 'PT60M';
+            var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
+            var perHour = 60 / slot;  // 4, 2 ou 1
+            for (var hh = 0; hh < 24; hh++) {
+                var sum = 0, count = 0, hasNull = false;
+                for (var qq = 0; qq < perHour; qq++) {
+                    var idx = hh * perHour + qq;
+                    if (idx < raw.values.length) {
+                        if (raw.values[idx] != null) { sum += raw.values[idx]; count++; }
+                        else hasNull = true;
+                    }
+                }
+                if (count > 0) {
+                    grid[hh][d - 1] = sum / count;
+                    allVals.push(sum / count);
+                    if (hasNull && count < perHour) partialCells[hh + '_' + (d - 1)] = true;
+                }
+            }
+        }
+
+        // Determinar cor de texto (escura vs clara) com base na luminosidade
+        // do fundo. Cores claras (azuis claros, amarelos, laranjas claros)
+        // -> texto preto; cores escuras (azul-marinho, vermelho/bordeaux)
+        // -> texto branco.
+        var lightOnDark = function(v) {
+            if (v == null) return false;
+            // Texto escuro para a faixa "central" da escala (15-105 EUR/MWh)
+            return v >= 15 && v < 105;
+        };
+
+        // Construir grid
+        var gridStyle = 'grid-template-columns: 50px repeat(' + daysInMonth + ', minmax(22px, 1fr));';
+        var html = '<div class="hh-grid" style="' + gridStyle + '">';
+        // Linha de cabecalho (dia do mes)
+        html += '<div class="hh-cell hh-header">Hora</div>';
+        for (var dh = 1; dh <= daysInMonth; dh++) {
+            html += '<div class="hh-cell hh-header">' + dh + '</div>';
+        }
+        // Linhas (horas)
+        for (var h2 = 0; h2 < 24; h2++) {
+            html += '<div class="hh-cell hh-header">' + String(h2).padStart(2, '0') + 'h</div>';
+            for (var d2 = 0; d2 < daysInMonth; d2++) {
+                var v = grid[h2][d2];
+                if (v == null) {
+                    html += '<div class="hh-cell hh-empty"></div>';
+                } else {
+                    var cls = 'hh-cell hh-data';
+                    if (lightOnDark(v)) cls += ' hh-light';
+                    if (partialCells[h2 + '_' + d2]) cls += ' hh-partial';
+                    var dStr = ym + '-' + String(d2 + 1).padStart(2, '0');
+                    var tip = dStr + ' ' + String(h2).padStart(2, '0') + 'h: ' + fmtN(v, 2) + ' €/MWh';
+                    html += '<div class="' + cls + '" style="background:' + getColor(v) + '" title="' + tip + '">' + Math.round(v) + '</div>';
+                }
+            }
+        }
+        html += '</div>';
+        container.innerHTML = html;
+
+        if (titulo) titulo.textContent = 'Heatmap horário — ' + (ZONE_NAMES[zone] || zone) + ' · ' + ym;
+        if (statsEl) {
+            if (allVals.length) {
+                var min = Math.min.apply(null, allVals);
+                var max = Math.max.apply(null, allVals);
+                var avg = allVals.reduce(function(a, b) { return a + b; }, 0) / allVals.length;
+                statsEl.textContent = 'Média: ' + fmtN(avg, 2) + ' · Mín: ' + fmtN(min, 2) + ' · Máx: ' + fmtN(max, 2) + ' €/MWh';
+            } else {
+                statsEl.textContent = 'Sem dados';
+            }
         }
     }
 
@@ -1761,6 +2431,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         info.update();
         if (typeof updateChart === 'function') updateChart();
+        if (typeof updateIntradayChart === 'function') updateIntradayChart();
         updateResumoRapido();
         var tvw = document.getElementById('toggle-var-wrapper');
         if (tvw) tvw.style.display = (currentMode === 'diario') ? 'inline-flex' : 'none';
@@ -1862,6 +2533,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     updatePriceLabels();
                 }
                 if (typeof updateChart === 'function') updateChart();
+                if (typeof updateIntradayChart === 'function') updateIntradayChart();
+                if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
             }
         });
     });
@@ -1971,7 +2644,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     params.set('start', currentPeriod.start);
                     params.set('end', currentPeriod.end);
                 }
-                var zoneSel = document.getElementById('zone-chart-select');
+                var zoneSel = document.getElementById('global-zone-select');
                 if (zoneSel && zoneSel.value) params.set('zone', zoneSel.value);
                 return url + '?' + params.toString();
             }
@@ -2096,10 +2769,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 setModo(urlMode, { skipReload: true });
             }
 
-            // --- POPULAR SELECTS DE ZONA DO GRÁFICO ---
-            var zoneSel = document.getElementById('zone-chart-select');
-            var compareSel = document.getElementById('zone-chart-compare');
-            var fillToggle = document.getElementById('chart-fill-minmax');
+            // --- POPULAR SELECTOR GLOBAL DE ZONA (alimenta todas as secoes) ---
+            var zoneSel = document.getElementById('global-zone-select');
+            var compareSel = document.getElementById('global-compare-select');
+            var heatYear = document.getElementById('heatmap-year');
+            var hhMonth = document.getElementById('heatmap-hour-month');
+
             if (zoneSel && compareSel) {
                 var zonesSorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
                     return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
@@ -2115,43 +2790,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 var urlZone = new URLSearchParams(window.location.search).get('zone') || prefs.zone;
                 if (urlZone && ZONE_NAMES[urlZone]) zoneSel.value = urlZone;
                 if (prefs.compareZone && ZONE_NAMES[prefs.compareZone]) compareSel.value = prefs.compareZone;
-                zoneSel.addEventListener('change', function() { savePref('zone', zoneSel.value); updateChart(); });
-                compareSel.addEventListener('change', function() { savePref('compareZone', compareSel.value); updateChart(); });
-                if (fillToggle) {
-                    if (prefs.minmax) fillToggle.checked = true;
-                    fillToggle.addEventListener('change', function() { savePref('minmax', fillToggle.checked); updateChart(); });
-                }
 
-                var btnWide = document.getElementById('btn-chart-wide');
-                if (btnWide) {
-                    var w = document.getElementById('chart-wrapper');
-                    if (prefs.chartWide) { w.classList.add('wide'); btnWide.classList.add('active'); }
-                    btnWide.addEventListener('click', function() {
-                        w.classList.toggle('wide');
-                        var isWide = w.classList.contains('wide');
-                        btnWide.classList.toggle('active', isWide);
-                        savePref('chartWide', isWide);
-                        if (precosChart) setTimeout(function() { precosChart.resize(); }, 220);
+                // Mudanca de zona global -> atualizar TODAS as visualizacoes
+                zoneSel.addEventListener('change', function() {
+                    savePref('zone', zoneSel.value);
+                    updateChart();
+                    updateIntradayChart();
+                    updateHeatmap();
+                    updateHourlyHeatmap();
+                });
+                // Comparar -> aplica a evolucao + intradiario
+                compareSel.addEventListener('change', function() {
+                    savePref('compareZone', compareSel.value);
+                    updateChart();
+                    updateIntradayChart();
+                });
+
+                // Botao "Largura total" — aplica .viz-wide a todas as 4 visualizacoes
+                var btnVizWide = document.getElementById('btn-viz-wide');
+                if (btnVizWide) {
+                    var vizIds = ['intraday-wrapper', 'chart-wrapper', 'heatmap-hour-wrapper', 'heatmap-wrapper'];
+                    var applyWide = function(on) {
+                        vizIds.forEach(function(id) {
+                            var el = document.getElementById(id);
+                            if (el) el.classList.toggle('viz-wide', on);
+                        });
+                        btnVizWide.classList.toggle('active', on);
+                    };
+                    var initWide = !!(prefs.vizWide || prefs.chartWide);  // legado
+                    if (initWide) applyWide(true);
+                    btnVizWide.addEventListener('click', function() {
+                        var nowWide = !btnVizWide.classList.contains('active');
+                        applyWide(nowWide);
+                        savePref('vizWide', nowWide);
+                        // Forcar resize dos charts
+                        setTimeout(function() {
+                            if (precosChart) precosChart.resize();
+                            if (intradayChart) intradayChart.resize();
+                            if (typeof updateHeatmap === 'function') updateHeatmap();
+                            if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+                        }, 220);
                     });
                 }
             }
 
-            // --- HEATMAP: popular selects ---
-            var heatZone = document.getElementById('heatmap-zone');
-            var heatYear = document.getElementById('heatmap-year');
-            if (heatZone && heatYear) {
-                var hzonesSorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
-                    return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
-                });
-                var hOpts = '';
-                for (var hz = 0; hz < hzonesSorted.length; hz++) {
-                    var hzk = hzonesSorted[hz];
-                    hOpts += '<option value="' + hzk + '">' + (ZONE_NAMES[hzk] || hzk) + '</option>';
-                }
-                heatZone.innerHTML = hOpts;
-                heatZone.value = (prefs.heatmapZone && ZONE_NAMES[prefs.heatmapZone]) ? prefs.heatmapZone : 'PT';
-
-                // Anos: do início dos dados (2025) até ao ano da última data ou ano atual
+            // --- HEATMAP ANUAL: select de Ano ---
+            if (heatYear) {
                 var startYear = parseInt(DATA_INICIO.substring(0, 4), 10);
                 var endYear = ultimaDataDisponivel
                     ? parseInt(ultimaDataDisponivel.substring(0, 4), 10)
@@ -2160,11 +2844,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 for (var yy = endYear; yy >= startYear; yy--) yOpts += '<option value="' + yy + '">' + yy + '</option>';
                 heatYear.innerHTML = yOpts;
                 heatYear.value = endYear;
-
-                heatZone.addEventListener('change', function() { savePref('heatmapZone', heatZone.value); updateHeatmap(); });
                 heatYear.addEventListener('change', updateHeatmap);
-                // Carregar heatmap inicial (em background, não bloqueia)
                 setTimeout(updateHeatmap, 50);
+            }
+
+            // --- HEATMAP HORARIO: input Mes ---
+            if (hhMonth) {
+                hhMonth.min = DATA_INICIO.substring(0, 7);
+                if (ultimaDataDisponivel) hhMonth.max = ultimaDataDisponivel.substring(0, 7);
+                hhMonth.value = (prefs.hourHeatMonth && /^\d{4}-\d{2}$/.test(prefs.hourHeatMonth))
+                    ? prefs.hourHeatMonth
+                    : (ultimaDataDisponivel ? ultimaDataDisponivel.substring(0, 7) : '');
+                hhMonth.addEventListener('change', function() { savePref('hourHeatMonth', hhMonth.value); updateHourlyHeatmap(); });
+                setTimeout(updateHourlyHeatmap, 80);
             }
 
             // Toggles da tabela
