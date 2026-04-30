@@ -233,7 +233,7 @@
         .legend-title { font-weight: bold; margin-bottom: 4px; font-size: 0.85em; }
 
         /* Price labels no mapa */
-        .price-label { background: none; border: none; font-size: 10px; font-weight: bold; color: #333; text-align: center; white-space: nowrap; text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; }
+        .price-label { background: none; border: none; font-size: 12px; font-weight: bold; color: #333; text-align: center; white-space: nowrap; text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; }
 
         /* Sem dados */
         .no-data-msg { text-align: center; padding: 10px; color: #999; font-size: 0.9em; }
@@ -425,6 +425,32 @@
 
         /* FAQ */
         .content-support { max-width: 1300px; margin: 40px auto; padding: 0 15px; }
+
+        /* Estilos para as escalas de cores dos gráficos */
+        .chart-color-scale { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 12px; 
+            margin: 5px auto 20px auto; 
+            font-size: 0.8em; 
+            color: #475569; 
+            max-width: 1000px;
+        }
+        .chart-color-scale-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+        }
+        .chart-color-scale-box { 
+            width: 14px; 
+            height: 14px; 
+            border-radius: 3px; 
+            border: 1px solid rgba(0,0,0,0.15); 
+        }
+        /* Adaptação automática para o teu Modo Escuro */
+        [data-theme="dark"] .chart-color-scale { color: #94a3b8; }
+        [data-theme="dark"] .chart-color-scale-box { border-color: rgba(255,255,255,0.15); }
 
         /* Responsivo */
         @media (max-width: 768px) {
@@ -728,9 +754,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "SI": "Eslovénia", "SK": "Eslováquia",
         "IE": "Irlanda", "IE(SEM)": "Irlanda",
         "LU": "Luxemburgo",
-        "IT-SACOAC": "Córsega (SACOAC)",
-        "IT-SACODC": "SACODC",
-        "NO2NSL": "Noruega NSL (NO2NSL)"
+        "IT-SACOAC": "Córsega (SACOAC)"
     };
 
     // Mapeamento: ecZone do GeoJSON -> chave nos dados (para zonas com codigo diferente)
@@ -750,9 +774,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "GR": "gr", "HR": "hr", "HU": "hu",
         "IT-North": "it", "IT-Centre-North": "it", "IT-Centre-South": "it",
         "IT-South": "it", "IT-Sicily": "it", "IT-Sardinia": "it",
-        "IT-Calabria": "it", "IT-SACOAC": "fr", "IT-SACODC": "it",
+        "IT-Calabria": "it", "IT-SACOAC": "fr",
         "LT": "lt", "LV": "lv", "ME": "me", "MK": "mk", "NL": "nl",
-        "NO1": "no", "NO2": "no", "NO2NSL": "no",
+        "NO1": "no", "NO2": "no",
         "NO3": "no", "NO4": "no", "NO5": "no",
         "PL": "pl", "PT": "pt", "RO": "ro", "RS": "rs",
         "SE1": "se", "SE2": "se", "SE3": "se", "SE4": "se",
@@ -778,10 +802,14 @@ document.addEventListener('DOMContentLoaded', function() {
      * Pode usar o Google Maps para encontrar as coordenadas (lat, lng) de um ponto.
      */
     var LABEL_POSITIONS = {
+        "EE": [58.8, 26.0],    // Estónia
         "FI": [63.0, 26.0],    // Finlândia
+        "LT": [55.5, 24.0],    // Lituânia
+        "LV": [57.0, 26.0],    // Letónia
         "NO3": [62.5, 9.0],    // Noruega Central
-        "NO4": [69.25, 23.5],   // Noruega Norte
-        "NO5": [60.75, 7.0]     // Noruega Oeste
+        "NO4": [69.25, 23.6],   // Noruega Norte
+        "NO5": [60.75, 7.0],     // Noruega Oeste
+        "PT": [39.50, -8.5]     // Portugal
     };
 
     function getZonePrice(zone) {
@@ -796,11 +824,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var dataZone = ZONE_DATA_MAP[zone] || zone;
         var val = currentData[dataZone];
         if (val === null || val === undefined) return null;
-        if (typeof val === 'number') return { avg: val };  // formato antigo (sem min/max)
+        if (typeof val === 'number') return { avg: val };
         return val;
     }
 
-    // --- Helpers intradiarios (formato novo com 'values' e 'resolution') ---
+    // --- Helpers intradiarios ---
     function isPartial(stats) {
         if (!stats || !stats.values || !stats.values.length) return false;
         // Considera parcial se tiver pelo menos 1 trailing null
@@ -1028,10 +1056,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- ESCALA DE CORES (azul-amarelo-vermelho, 14 niveis de 15 em 15 EUR/MWh) ---
     function getColor(price) {
+        // 1. Dados em falta: devolve cinzento claro
         if (price === null || price === undefined) return '#D3D3D3';
-        if (price < 0)   return '#08306b';   // Azul 5 (mais escuro)
-        if (price < 15)  return '#2171b5';   // Azul 4
-        if (price < 30)  return '#4292c6';   // Azul 3
+
+        // 2. ESCALA DE PREÇOS NEGATIVOS
+        if (price < -45) return '#5C7089';   // Cinza azulado
+        if (price < -30) return '#581c87';   // Roxo escuro
+        if (price < -15) return '#7c3aed';   // Roxo vibrante
+        if (price < 0)   return '#c4b5fd';   // Lilás claro (para valores entre -15 e 0)
+
+        // 3. ESCALA DE PREÇOS POSITIVOS
+        if (price < 15)  return '#08306b';   // Azul 4 (mais escuro)
+        if (price < 30)  return '#3182bd';   // Azul 3
         if (price < 45)  return '#6baed6';   // Azul 2
         if (price < 60)  return '#9ecae1';   // Azul 1 (mais claro)
         if (price < 75)  return '#fee08b';   // Amarelo claro
@@ -1042,7 +1078,51 @@ document.addEventListener('DOMContentLoaded', function() {
         if (price < 150) return '#c62828';   // Vermelho 2
         if (price < 165) return '#a50026';   // Vermelho 3
         if (price < 180) return '#860020';   // Vermelho 4
-        return '#67001f';                     // Vermelho 5 (mais escuro)
+        return '#67001f';                    // Vermelho 5 (mais escuro para 180+)
+    }
+
+    // --- GERADOR AUTOMÁTICO DE ESCALAS DE COR ---
+    function renderColorScales() {
+        // 1. As tuas matrizes exatas de valores e textos
+        var grades = [-60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
+        var labels = [
+            '< -45', '-45 a -30', '-30 a -15', '-15 a 0', 
+            '0-15', '15-30', '30-45', '45-60', '60-75', 
+            '75-90', '90-105', '105-120', '120-135', 
+            '135-150', '150-165', '165-180', '180+'
+        ];
+
+        // 2. Construir o HTML da barra horizontal
+        var html = '<div class="chart-color-scale">';
+        for (var i = 0; i < grades.length; i++) {
+            // Usamos grades[i] + 1 para o getColor devolver a cor certa desse patamar
+            var cor = getColor(grades[i] + 1); 
+            html += '<div class="chart-color-scale-item">' +
+                    '<div class="chart-color-scale-box" style="background:' + cor + '"></div>' +
+                    '<span>' + labels[i] + '</span>' +
+                    '</div>';
+        }
+        html += '</div>';
+
+        // 3. IDs exatos das 4 secções que me pediste
+        var idsSeccoes = ['intraday-wrapper', 'chart-wrapper', 'heatmap-hour-wrapper', 'heatmap-wrapper'];
+
+        // 4. Injetar a escala em cada uma das secções
+        for (var j = 0; j < idsSeccoes.length; j++) {
+            var wrapper = document.getElementById(idsSeccoes[j]);
+            if (wrapper) {
+                // Procura o título (h2) de cada secção
+                var h2 = wrapper.querySelector('h2');
+                if (h2) {
+                    // Cria um contentor invisível para transformar o texto em elementos HTML reais
+                    var tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    // Insere a nossa escala imediatamente a seguir ao título H2
+                    h2.parentNode.insertBefore(tempDiv.firstChild, h2.nextSibling);
+                }
+            }
+        }
     }
 
     // --- ESTILO DAS ZONAS ---
@@ -1259,8 +1339,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     legend.onAdd = function() {
         var div = L.DomUtil.create('div', 'info-control legend');
-        var grades = [-10, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
-        var labels = ['< 0', '0-15', '15-30', '30-45', '45-60', '60-75', '75-90', '90-105', '105-120', '120-135', '135-150', '150-165', '165-180', '180+'];
+        var grades = [-60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
+        var labels = [
+            '< -45', '-45 a -30', '-30 a -15', '-15 a 0', 
+            '0-15', '15-30', '30-45', '45-60', '60-75', 
+            '75-90', '90-105', '105-120', '120-135', 
+            '135-150', '150-165', '165-180', '180+'
+        ];
 
         div.innerHTML = '<div class="legend-title">€/MWh</div>';
         for (var i = 0; i < grades.length; i++) {
@@ -1350,8 +1435,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     icon: L.divIcon({
                         className: 'price-label' + partialCls,
                         html: fmtN(price, 2),
-                        iconSize: [40, 14],
-                        iconAnchor: [20, 7]
+                        iconSize: [46, 16],
+                        iconAnchor: [23, 8]
                     }),
                     interactive: false,
                     _zone: zone
@@ -1567,12 +1652,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- EXPANDIR CURVA INTRADIARIA POR LINHA ---
     var expandedZonesInTable = new Set();
+    
+    // NOVO: Dicionário para guardar os gráficos abertos na tabela
+    var rowCharts = {}; 
 
     function toggleRowIntraday(tr) {
         var zone = tr.getAttribute('data-zone');
         if (!zone) return;
         var next = tr.nextElementSibling;
+        
         if (next && next.classList.contains('intraday-row')) {
+            // NOVO: Destruir o gráfico Chart.js da memória antes de remover a linha visualmente
+            if (rowCharts[zone]) {
+                rowCharts[zone].destroy();
+                delete rowCharts[zone];
+            }
+            
             next.parentNode.removeChild(next);
             tr.classList.remove('expanded');
             expandedZonesInTable.delete(zone);
@@ -1591,18 +1686,27 @@ document.addEventListener('DOMContentLoaded', function() {
         var nCols = tr.children.length;
         var isPeriodo = (currentMode !== 'diario');
         var dateStr = document.getElementById('seletor-data').value;
+        
         var intra = isPeriodo
             ? getAggregatedIntradayStats(zone, computePeriod())
             : getZoneIntradayStats(zone, dateStr);
+            
         var newRow = document.createElement('tr');
         newRow.className = 'intraday-row';
         newRow.setAttribute('data-for-zone', zone);
         var td = document.createElement('td');
         td.colSpan = nCols;
+        
+        // Colocamos a estrutura HTML (tela em branco)
         td.innerHTML = buildIntradayRowChart(zone, intra, isPeriodo);
         newRow.appendChild(td);
         tr.classList.add('expanded');
         tr.parentNode.insertBefore(newRow, tr.nextSibling);
+        
+        // NOVO: Após o HTML estar inserido na página, inicializamos o gráfico com o Chart.js
+        if (intra && intra.values && intra.values.length) {
+            initRowChart(zone, intra);
+        }
     }
 
     function buildIntradayRowChart(zone, intra, isPeriodo) {
@@ -1610,75 +1714,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!intra || !intra.values || !intra.values.length) {
             return '<div class="intraday-row-empty">Sem dados intradiários para ' + name + '.</div>';
         }
-        var vals = intra.values, n = vals.length, slot = intra.slotMinutes;
-        var w = 1200, h = 220, padL = 38, padR = 10, padT = 16, padB = 26;
-        var plotW = w - padL - padR;
-        var plotH = h - padT - padB;
-        var validVals = [];
-        for (var i = 0; i < n; i++) if (vals[i] != null) validVals.push(vals[i]);
-        if (!validVals.length) {
-            return '<div class="intraday-row-empty">Sem valores publicados.</div>';
-        }
-        var minV = Math.min.apply(null, validVals);
-        var maxV = Math.max.apply(null, validVals);
-        // Domínio com algum padding visual
-        var range = maxV - minV;
-        if (range < 1) range = 1;
-        var yPad = range * 0.08;
-        var yMin = minV - yPad;
-        var yMax = maxV + yPad;
-        var yToPx = function(v) { return padT + plotH - ((v - yMin) / (yMax - yMin)) * plotH; };
-        var stepX = plotW / n;
-        var barW = Math.max(1, stepX * 0.92);
-
-        // Linha do zero (a vermelho quando ha valores negativos)
-        var zeroLine = '';
-        if (yMin < 0 && yMax > 0) {
-            var y0 = yToPx(0);
-            zeroLine = '<line x1="' + padL + '" y1="' + y0 + '" x2="' + (padL + plotW) + '" y2="' + y0 + '" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>'
-                     + '<text x="' + (padL + plotW - 4) + '" y="' + (y0 - 3) + '" text-anchor="end" font-size="10" font-weight="600" fill="#dc2626">0</text>';
-        }
-
-        // Eixo Y: mín, máx, e zero se relevante
-        var labelStyle = 'font-size:9px;fill:#64748b;';
-        var yAxis = '<text x="' + (padL - 4) + '" y="' + (yToPx(maxV) + 3) + '" text-anchor="end" style="' + labelStyle + '">' + fmtN(maxV, 0) + '</text>'
-                  + '<text x="' + (padL - 4) + '" y="' + (yToPx(minV) + 3) + '" text-anchor="end" style="' + labelStyle + '">' + fmtN(minV, 0) + '</text>';
-
-        // Eixo X: marcadores 0/6/12/18/24h
-        var xAxis = '';
-        var hourMarks = [0, 6, 12, 18, 24];
-        for (var hm = 0; hm < hourMarks.length; hm++) {
-            var hh = hourMarks[hm];
-            var idx = hh * 60 / slot;
-            if (idx > n) idx = n;
-            var xMark = padL + idx * stepX;
-            xAxis += '<text x="' + xMark + '" y="' + (h - 6) + '" text-anchor="middle" style="' + labelStyle + '">' + (hh < 10 ? '0' + hh : hh) + 'h</text>';
-            xAxis += '<line x1="' + xMark + '" y1="' + (padT + plotH) + '" x2="' + xMark + '" y2="' + (padT + plotH + 3) + '" stroke="#94a3b8"/>';
-        }
-
-        // Barras
-        var bars = '';
-        var pad2 = function(x) { return String(x).padStart(2, '0'); };
-        for (var b = 0; b < n; b++) {
-            var v = vals[b];
-            if (v == null) continue;
-            var bx = padL + b * stepX + (stepX - barW) / 2;
-            var by = yToPx(v);
-            var bh = (padT + plotH) - by;
-            if (bh < 0.5) bh = 0.5;
-            var color = getColor(v);
-            var totalMin = b * slot;
-            var lbl = pad2(Math.floor(totalMin / 60)) + ':' + pad2(totalMin % 60);
-            bars += '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + bh.toFixed(1) + '" fill="' + color + '" stroke="rgba(0,0,0,0.08)" stroke-width="0.5"><title>' + lbl + ' — ' + fmtN(v, 2) + ' €/MWh</title></rect>';
-        }
-
-        // Bordas do plot
-        var frame = '<rect x="' + padL + '" y="' + padT + '" width="' + plotW + '" height="' + plotH + '" fill="none" stroke="#cbd5e1" stroke-width="0.8"/>';
-
+        
+        var n = intra.values.length;
         var resTxt = intra.resolution === 'PT15M' ? '15 min' : (intra.resolution === 'PT30M' ? '30 min' : 'horário');
         var partialNote = '';
         var lastNonNull = -1;
-        for (var ii = n - 1; ii >= 0; ii--) if (vals[ii] != null) { lastNonNull = ii; break; }
+        for (var ii = n - 1; ii >= 0; ii--) if (intra.values[ii] != null) { lastNonNull = ii; break; }
         if (lastNonNull >= 0 && lastNonNull < n - 1) {
             var nullCount = n - 1 - lastNonNull;
             partialNote = ' <span class="intraday-row-partial">parcial: faltam ' + nullCount + ' slot' + (nullCount > 1 ? 's' : '') + '</span>';
@@ -1690,12 +1731,65 @@ document.addEventListener('DOMContentLoaded', function() {
             + ' (' + resTxt + ')' + partialNote
             + '</div>';
 
-        var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet" class="intraday-row-svg" role="img" aria-label="Curva intradiária ' + name + '">'
-            + frame + zeroLine + bars + yAxis + xAxis + '</svg>';
+        // NOVO: Em vez do código gigante de SVG, criamos apenas um "canvas" (tela) identificada pela zona
+        var canvasHtml = '<div class="chart-canvas-wrap" style="height: 220px; width: 100%; position: relative;"><canvas id="chart-row-' + zone + '"></canvas></div>';
 
-        return '<div class="intraday-row-content">' + header + svg + '</div>';
+        return '<div class="intraday-row-content">' + header + canvasHtml + '</div>';
     }
+    
+    // NOVO: Inicializa o Chart.js na linha da tabela
+    function initRowChart(zone, intra) {
+        var canvas = document.getElementById('chart-row-' + zone);
+        if (!canvas) return;
 
+        var name1 = ZONE_NAMES[zone] || zone;
+        
+        // Usa as tuas próprias regras de cores do mapa
+        var colorsFromValues = function(vals) {
+            return vals.map(function(v) { return v == null ? 'rgba(0,0,0,0)' : getColor(v); });
+        };
+
+        var cfg = {
+            type: 'bar',
+            data: {
+                labels: intra.labels,
+                datasets: [{
+                    label: name1,
+                    data: intra.values,
+                    backgroundColor: colorsFromValues(intra.values),
+                    borderColor: 'rgba(0,0,0,0.15)',
+                    borderWidth: 1,
+                    borderRadius: 2,
+                    barPercentage: 0.95,
+                    categoryPercentage: 0.92
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false }, // Escondemos a legenda na tabela para poupar espaço
+                    tooltip: {
+                        callbacks: {
+                            title: function(items) { return 'Hora ' + (items[0] && items[0].label); },
+                            label: function(ctx) {
+                                if (ctx.parsed.y == null) return ctx.dataset.label + ': sem dados';
+                                return ctx.dataset.label + ': ' + fmtN(ctx.parsed.y, 2) + ' €/MWh';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { maxTicksLimit: 12, autoSkip: true } },
+                    y: { title: { display: true, text: '€/MWh' }, beginAtZero: false }
+                }
+            }
+        };
+
+        // Guardamos o gráfico na nossa "memória" para o podermos destruir quando a linha for fechada
+        rowCharts[zone] = new Chart(canvas.getContext('2d'), cfg);
+    }    
     // --- PESQUISA / FILTRO DE ZONA ---
     function normalizeStr(s) {
         if (s == null) return '';
@@ -2547,6 +2641,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             initMap();
             info.addTo(map);
+            renderColorScales();
             legend.addTo(map);
 
             // Carregar GeoJSON (inline)
