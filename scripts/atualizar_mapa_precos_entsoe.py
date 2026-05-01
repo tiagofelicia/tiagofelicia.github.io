@@ -39,8 +39,8 @@ import requests
 
 API_URL = "https://web-api.tp.entsoe.eu/api"
 DATA_DIR = os.path.join("data", "mapa_precos_qh")
-BACKFILL_START = "2020-01-01"
-BACKFILL_END = "2022-12-31"   # None = ate ontem; ou "2026-12-31"
+BACKFILL_START = "2026-01-01"
+BACKFILL_END = None   # None = ate ontem; ou "2026-12-31"
 
 # ----- ZONAS -----------------------------------------------------------------
 # Mapeamento: codigo curto (compatibilidade com frontend) -> EIC ENTSO-E
@@ -206,6 +206,7 @@ def parse_entsoe_xml(xml_text):
             if _local(period.tag) != "Period":
                 continue
             time_int = None
+            time_int_end = None
             resolution = None
             points = []
             for child in period:
@@ -214,6 +215,8 @@ def parse_entsoe_xml(xml_text):
                     for sub in child:
                         if _local(sub.tag) == "start":
                             time_int = sub.text
+                        elif _local(sub.tag) == "end":
+                            time_int_end = sub.text
                 elif tag == "resolution":
                     resolution = child.text
                 elif tag == "Point":
@@ -254,13 +257,35 @@ def parse_entsoe_xml(xml_text):
                 if not res_sec:
                     continue
 
-            # Forward-fill sparse encoding (apenas dentro do range publicado).
+            # Forward-fill sparse encoding. Sparse encoding ENTSO-E:
+            # - Posicoes ausentes propagam o ultimo valor conhecido
+            # - Se a ultima posicao publicada for menor que o total esperado
+            #   (calculado a partir de timeInterval.end - start / resolution),
+            #   o ultimo valor estende-se ate ao fim do periodo. Era esta a
+            #   parte em falta — slot 96 ficava None quando 95==96 e 96 era
+            #   omitido.
             points.sort(key=lambda x: x[0])
             max_pos = points[-1][0]
+            expected_pos = max_pos
+            if time_int_end:
+                try:
+                    end_str = time_int_end.replace("Z", "+00:00")
+                    end_dt = datetime.fromisoformat(end_str)
+                    if end_dt.tzinfo is None:
+                        end_dt = end_dt.replace(tzinfo=timezone.utc)
+                    else:
+                        end_dt = end_dt.astimezone(timezone.utc)
+                    duration_sec = (end_dt - start_dt).total_seconds()
+                    if duration_sec > 0:
+                        expected_pos = int(duration_sec // res_sec)
+                except (ValueError, TypeError):
+                    pass
+            fill_to = max(max_pos, expected_pos)
+
             filled = {}
             last_price = None
             pos_to_price = dict(points)
-            for p in range(1, max_pos + 1):
+            for p in range(1, fill_to + 1):
                 if p in pos_to_price:
                     last_price = pos_to_price[p]
                 if last_price is not None:
