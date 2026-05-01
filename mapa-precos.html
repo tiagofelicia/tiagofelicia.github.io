@@ -129,6 +129,13 @@
 
     <style>
         .painel-header { text-align: center; margin-bottom: 20px; }
+        .data-freshness { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 10px; font-size: 0.95em; font-weight: 500; }
+        .data-freshness.fresh { background: #dcfce7; color: #166534; }
+        .data-freshness.stale { background: #fef3c7; color: #92400e; }
+        .data-freshness.outdated { background: #fee2e2; color: #991b1b; }
+        [data-theme="dark"] .data-freshness.fresh { background: #14532d; color: #bbf7d0; }
+        [data-theme="dark"] .data-freshness.stale { background: #78350f; color: #fde68a; }
+        [data-theme="dark"] .data-freshness.outdated { background: #7f1d1d; color: #fecaca; }
         .painel-header h1 { margin: 0 0 10px 0; font-size: 1.5em; color: #2c3e50; }
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
 
@@ -160,6 +167,11 @@
         .range-wrapper { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin: 0 auto 12px auto; }
         .range-wrapper label { font-size: 0.9em; color: #2c3e50; }
         .range-wrapper input { padding: 6px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em; }
+        .range-wrapper input.invalid { border-color: #dc2626; background: #fef2f2; }
+        .range-wrapper button:disabled { opacity: 0.45; cursor: not-allowed; }
+        .range-error { color: #b91c1c; font-size: 0.85em; flex-basis: 100%; text-align: center; min-height: 1.1em; }
+        [data-theme="dark"] .range-wrapper input.invalid { background: #450a0a; border-color: #f87171; color: #fecaca; }
+        [data-theme="dark"] .range-error { color: #f87171; }
         [data-theme="dark"] .modo-tab { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .modo-tab:hover { background: #334155; }
         [data-theme="dark"] .modo-tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
@@ -220,6 +232,10 @@
         .info-control .stats-hour { opacity: 0.6; }
         .info-control .stats-amplitude { font-size: 0.8em; opacity: 0.5; margin-top: 2px; }
         .info-control .period-label { font-size: 0.78em; color: #64748b; margin-top: 2px; }
+        .info-control .touch-hint { margin-top: 8px; padding: 4px 6px; font-size: 0.78em; background: #dbeafe; color: #1e40af; border-radius: 4px; text-align: center; font-weight: 500; }
+        [data-theme="dark"] .info-control .touch-hint { background: #1e3a8a; color: #bfdbfe; }
+        /* Em touch, dar mais espaço ao info-control e tornar o tap fora do mapa intuitivo */
+        body.is-touch .info-control { font-size: 0.95em; max-width: 78vw; }
         [data-theme="dark"] .info-control .period-label { color: #94a3b8; }
         .info-control .sparkline-wrap { margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; }
         .info-control .sparkline-label { font-size: 0.72em; color: #64748b; margin-bottom: 2px; }
@@ -250,13 +266,25 @@
         /* Lista de precos ordenada */
         #ranked-list-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 30px auto; padding: 0 10px; box-sizing: border-box; }
         #zone-panel { width: 100%; max-width: 1300px; margin: 0 auto 14px auto; padding: 10px 14px; background: #f1f5f9; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; box-sizing: border-box; }
-        #zone-panel select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; min-width: 180px; }
+        #zone-panel > label { display: inline-flex; align-items: center; gap: 6px; }
+        #zone-panel select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; min-width: 160px; max-width: 100%; }
         #zone-panel .compare-label { color: #475569; }
         .zone-panel-hint { font-size: 0.85em; color: #64748b; font-style: italic; margin-left: auto; }
         [data-theme="dark"] #zone-panel { background: #1e293b; }
         [data-theme="dark"] #zone-panel select { background: #0f172a; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] #zone-panel .compare-label { color: #cbd5e1; }
         [data-theme="dark"] .zone-panel-hint { color: #94a3b8; }
+        /* Mobile: dois selectors lado-a-lado em grid 2x; esconder hint (sem hover em touch) */
+        @media (max-width: 600px) {
+            #zone-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; padding: 8px 10px; }
+            #zone-panel > label { font-size: 0.85em; grid-column: span 1; }
+            #zone-panel > label[for="global-zone-select"] { grid-column: 1; grid-row: 1; }
+            #zone-panel #global-zone-select { grid-column: 1; grid-row: 2; min-width: 0; width: 100%; }
+            #zone-panel > label[for="global-compare-select"] { grid-column: 2; grid-row: 1; }
+            #zone-panel #global-compare-select { grid-column: 2; grid-row: 2; min-width: 0; width: 100%; }
+            #zone-panel #btn-viz-wide { grid-column: 1 / span 2; grid-row: 3; width: 100%; padding: 8px; }
+            .zone-panel-hint { display: none; }
+        }
 
         #chart-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
         /* Breakout — aplicavel a qualquer wrapper de visualizacao.
@@ -356,6 +384,32 @@
         [data-theme="dark"] .chart-controls label { color: #cbd5e1; }
         [data-theme="dark"] .chart-controls select { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         #ranked-list-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
+        .favorites-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; max-width: 1300px; margin: 0 auto 12px auto; padding: 8px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; box-sizing: border-box; }
+        .favorites-label { font-size: 0.85em; color: #92400e; font-weight: 600; margin-right: 4px; }
+        .fav-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 10px; background: #fff; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 4px; font-size: 0.85em; cursor: pointer; color: #1e293b; transition: background 0.15s; }
+        .fav-chip:hover { background: #f1f5f9; }
+        .fav-chip-name { font-weight: 600; }
+        .fav-chip-price { font-variant-numeric: tabular-nums; color: #475569; padding: 0 4px; }
+        .fav-chip-remove { display: inline-block; padding: 0 5px; color: #94a3b8; font-size: 1.1em; line-height: 1; border-radius: 3px; }
+        .fav-chip-remove:hover { color: #dc2626; background: #fef2f2; }
+        [data-theme="dark"] .favorites-panel { background: #1c1714; border-color: #78350f; }
+        [data-theme="dark"] .favorites-label { color: #fde68a; }
+        [data-theme="dark"] .fav-chip { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .fav-chip:hover { background: #334155; }
+        [data-theme="dark"] .fav-chip-price { color: #cbd5e1; }
+        [data-theme="dark"] .fav-chip-remove:hover { background: #450a0a; }
+
+        .ranked-table .zone-fav { display: inline-block; cursor: pointer; user-select: none; color: #cbd5e1; font-size: 1em; padding: 0 4px; transition: color 0.15s, transform 0.15s; }
+        .ranked-table .zone-fav:hover { color: #fbbf24; transform: scale(1.2); }
+        .ranked-table .zone-fav.active { color: #f59e0b; }
+        [data-theme="dark"] .ranked-table .zone-fav { color: #475569; }
+        [data-theme="dark"] .ranked-table .zone-fav.active { color: #fbbf24; }
+        @media (max-width: 600px) {
+            .favorites-panel { padding: 6px 8px; gap: 4px 6px; }
+            .fav-chip { font-size: 0.78em; padding: 3px 6px 3px 8px; }
+            .fav-chip-name { display: none; }
+        }
+
         .zone-search-wrap { position: relative; max-width: 420px; margin: 0 auto 12px auto; display: flex; align-items: center; gap: 8px; }
         .zone-search { flex: 1; padding: 8px 32px 8px 12px; font-size: 0.95em; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #1e293b; outline: none; transition: border-color .15s, box-shadow .15s; }
         .zone-search:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
@@ -526,10 +580,11 @@
         </div>
         <div class="range-wrapper" id="range-wrapper" style="display:none;">
             <label for="data-inicio">Início:</label>
-            <input type="date" id="data-inicio">
+            <input type="date" id="data-inicio" aria-describedby="range-error">
             <label for="data-fim">Fim:</label>
-            <input type="date" id="data-fim">
+            <input type="date" id="data-fim" aria-describedby="range-error">
             <button type="button" id="btn-aplicar-range" class="share-btn">Aplicar</button>
+            <span id="range-error" class="range-error" role="alert"></span>
         </div>
         <div class="date-selector" id="date-selector-wrapper">
             <label for="seletor-data" id="label-seletor-data">Selecione o dia:</label>
@@ -541,6 +596,7 @@
         </div>
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
             Dados disponíveis desde 01/01/2018 &mdash; Valores nas horas locais de cada zona
+            <span id="data-freshness" class="data-freshness"></span>
         </p>
         <div id="resumo-rapido" class="resumo-rapido" role="status" aria-live="polite" style="display:none;"></div>
         <div class="cross-link">
@@ -563,6 +619,7 @@
 
     <div id="ranked-list-wrapper">
         <h2 id="ranked-list-titulo">Preços por zona de licitação</h2>
+        <div id="favorites-panel" class="favorites-panel" style="display:none;"></div>
         <div class="zone-search-wrap">
             <input type="search" id="zone-search" class="zone-search" placeholder="🔍 Procurar zona (ex: Portugal, PT, Itália)…" autocomplete="off" aria-label="Procurar zona">
             <button type="button" id="zone-search-clear" class="zone-search-clear" title="Limpar pesquisa (Esc)" aria-label="Limpar pesquisa" hidden>×</button>
@@ -629,7 +686,7 @@
             <summary><strong>O que mostra este mapa?</strong></summary>
             <div class="faq-content">
                 <p>Este mapa apresenta o <strong>preço médio diário da eletricidade</strong> (mercado day-ahead) para cada zona de licitação europeia, expresso em <strong>€/MWh</strong>.</p>
-                <p>As cores variam do <strong style="color:#2166ac;">azul</strong> (preços mais baixos) ao <strong style="color:#b2182b;">vermelho</strong> (preços mais altos), permitindo comparar visualmente os preços entre regiões. A escala azul-vermelho foi escolhida para melhor acessibilidade a utilizadores daltónicos.</p>
+                <p>As cores variam do <strong style="color:#7c3aed;">roxo</strong> (preços <em>negativos</em>, evento raro de excesso de renovável) e <strong style="color:#2166ac;">azul</strong> (preços baixos), passando por <strong style="color:#fec44f;">amarelo</strong> e <strong style="color:#e08214;">laranja</strong>, até ao <strong style="color:#b2182b;">vermelho escuro</strong> (preços mais altos). Esta paleta foi escolhida para boa acessibilidade a utilizadores daltónicos e para destacar visualmente eventos de preços negativos.</p>
             </div>
         </details>
 
@@ -669,6 +726,7 @@
                 <ul>
                     <li><strong>Modos de visualização:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês completo) e Personalizado (intervalo à escolha) — médias agregadas no mapa, tabela e gráfico.</li>
                     <li><strong>Pesquisa de zona:</strong> escreve no campo "🔍 Procurar zona" para filtrar tabela e destacar a zona no mapa (procura por código, nome PT e ignora acentos). <kbd>Esc</kbd> limpa.</li>
+                    <li><strong>Zonas favoritas:</strong> clica na estrela <kbd>☆</kbd> ao lado do nome de uma zona para adicioná-la aos favoritos. As favoritas aparecem num painel rápido no topo da tabela com o preço atual e cor da escala — clica num chip para selecionar essa zona em todas as visualizações. As favoritas ficam guardadas no browser.</li>
                     <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, etc. Mostra preço médio, mín/máx (com hora local) e amplitude por zona.</li>
                     <li><strong>Curva intradiária na tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva 24h logo por baixo da linha. Podes expandir várias zonas ao mesmo tempo para comparar.</li>
                     <li><strong>ΔPT:</strong> diferença em €/MWh e % vs Portugal — útil para ver se importar/exportar é vantajoso.</li>
@@ -677,7 +735,7 @@
                     <li><strong>Largura total:</strong> botão "↔ Largura total" no painel de zona faz com que as 4 visualizações (intradiária, evolução, heatmaps) ocupem toda a largura do ecrã.</li>
                     <li><strong>Selector único de zona:</strong> existe um só dropdown "Zona" no topo que controla simultaneamente a Evolução de preços, a Curva intradiária, o Heatmap horário e o Heatmap anual. Clicar numa zona no mapa atualiza todas as visualizações automaticamente.</li>
                     <li><strong>Curva intradiária:</strong> gráfico de barras com a curva 24h da zona selecionada (resolução 15 min, 30 min ou horária consoante o que está publicado), com cores na mesma escala do mapa. Em modos agregados mostra a média horária do período.</li>
-                    <li><strong>Sparkline no mapa:</strong> ao passar o rato sobre uma zona, o painel de informação inclui mini-curva intradiária com marcadores de mín/máx e barras coloridas pela escala de preços.</li>
+                    <li><strong>Sparkline no mapa:</strong> ao passar o rato sobre uma zona (ou tocar uma vez em mobile), o painel de informação inclui mini-curva intradiária com marcadores de mín/máx e barras coloridas pela escala de preços. Em mobile, um segundo toque na mesma zona seleciona-a em todas as visualizações.</li>
                     <li><strong>Heatmap horário (mês × hora):</strong> grelha 24 horas × dias do mês para uma zona — permite ver padrões de horas de pico/vale ao longo do mês.</li>
                     <li><strong>Heatmap anual:</strong> calendário com 365 dias coloridos por preço — clica num dia para abrir esse dia no mapa.</li>
                     <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots ainda não foram publicados (ex: PT antes da publicação do leilão CET) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip — o cálculo de média/mín/máx só usa os slots conhecidos.</li>
@@ -938,6 +996,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- PREFERÊNCIAS (localStorage) ---
     var PREFS_KEY = 'mapaPrecos.prefs.v1';
+    var PREFS_VERSION = 2;
+    // Chaves obsoletas que ja nao sao usadas (limpas no upgrade para v2):
+    //  - heatmapZone, intradayZone, hourHeatZone (selectores unificados em 'zone')
+    //  - intradayCompare (unificado em 'compareZone')
+    //  - minmax (toggle removido — min/max sempre no tooltip)
+    //  - chartWide (renomeado para 'vizWide' que aplica a todas as visualizacoes)
+    var OBSOLETE_PREF_KEYS = [
+        'heatmapZone', 'intradayZone', 'hourHeatZone',
+        'intradayCompare', 'minmax', 'chartWide'
+    ];
+
     function loadPrefs() {
         try { return JSON.parse(localStorage.getItem(PREFS_KEY) || '{}'); }
         catch(e) { return {}; }
@@ -948,7 +1017,27 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem(PREFS_KEY, JSON.stringify(p));
         } catch(e) {}
     }
-    var prefs = loadPrefs();
+    function migratePrefs() {
+        try {
+            var p = loadPrefs();
+            if ((p.__v || 0) >= PREFS_VERSION) return p;
+
+            // Migrar 'chartWide' -> 'vizWide' (so se vizWide ainda nao definido)
+            if (p.vizWide === undefined && p.chartWide !== undefined) {
+                p.vizWide = !!p.chartWide;
+            }
+
+            // Limpar chaves obsoletas
+            for (var i = 0; i < OBSOLETE_PREF_KEYS.length; i++) {
+                delete p[OBSOLETE_PREF_KEYS[i]];
+            }
+
+            p.__v = PREFS_VERSION;
+            localStorage.setItem(PREFS_KEY, JSON.stringify(p));
+            return p;
+        } catch(e) { return loadPrefs(); }
+    }
+    var prefs = migratePrefs();
 
     // --- HELPERS DE DATA ---
     function parseDateStr(s) {
@@ -1055,16 +1144,79 @@ document.addEventListener('DOMContentLoaded', function() {
         return resp2;
     }
 
-    // --- ESCALA DE CORES (azul-amarelo-vermelho, 14 niveis de 15 em 15 EUR/MWh) ---
+    // Indicador visual de frescura dos dados (badge ao lado do subtitulo).
+    // Estrategia: usar Last-Modified do HTTP (preciso, ate ao minuto) quando
+    // disponivel; cair para 'ultima_data' do metadata.json (preciso ao dia)
+    // quando nao houver — alguns servidores e file:// nao expoem o header.
+    function renderDataFreshness(ultimaData, lastModifiedHeader) {
+        var el = document.getElementById('data-freshness');
+        if (!el) return;
+
+        // Tentar Last-Modified primeiro (preciso ate ao minuto)
+        if (lastModifiedHeader) {
+            var d = new Date(lastModifiedHeader);
+            if (!isNaN(d.getTime())) {
+                var ageMs = Date.now() - d.getTime();
+                var ageH = Math.floor(ageMs / 3600000);
+                var ageMin = Math.floor((ageMs % 3600000) / 60000);
+                var label;
+                if (ageH < 1) label = 'há ' + Math.max(0, ageMin) + ' min';
+                else if (ageH < 24) label = 'há ' + ageH + 'h';
+                else label = 'há ' + Math.floor(ageH / 24) + ' dia' + (Math.floor(ageH / 24) > 1 ? 's' : '');
+                var cls = 'fresh';
+                if (ageH > 48) cls = 'outdated';
+                else if (ageH > 26) cls = 'stale';
+                var dd = String(d.getUTCDate()).padStart(2, '0');
+                var mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+                var yyyy = d.getUTCFullYear();
+                var hh = String(d.getUTCHours()).padStart(2, '0');
+                var mi = String(d.getUTCMinutes()).padStart(2, '0');
+                el.className = 'data-freshness ' + cls;
+                el.textContent = '· Atualizado ' + label;
+                el.title = 'Última atualização: ' + dd + '/' + mm + '/' + yyyy + ' ' + hh + ':' + mi + ' UTC';
+                return;
+            }
+        }
+
+        // Fallback: usar ultima_data do metadata (preciso ao dia)
+        if (ultimaData) {
+            var partsU = ultimaData.split('-');
+            if (partsU.length === 3) {
+                // Calcular dias ate hoje (em UTC, alinhar para meia-noite)
+                var ud = new Date(Date.UTC(parseInt(partsU[0], 10), parseInt(partsU[1], 10) - 1, parseInt(partsU[2], 10)));
+                var nowMid = new Date();
+                nowMid = new Date(Date.UTC(nowMid.getUTCFullYear(), nowMid.getUTCMonth(), nowMid.getUTCDate()));
+                var diffDays = Math.round((nowMid - ud) / 86400000);
+                var clsF = 'fresh';
+                // ultima_data inclui amanha quando o auction de amanha foi publicado (diff = -1)
+                if (diffDays > 2) clsF = 'outdated';
+                else if (diffDays > 1) clsF = 'stale';
+                el.className = 'data-freshness ' + clsF;
+                var labelF;
+                if (diffDays < 0) labelF = 'até amanhã (' + fmtDateBR(ultimaData) + ')';
+                else if (diffDays === 0) labelF = 'até hoje (' + fmtDateBR(ultimaData) + ')';
+                else if (diffDays === 1) labelF = 'até ontem (' + fmtDateBR(ultimaData) + ')';
+                else labelF = 'até ' + fmtDateBR(ultimaData) + ' (' + diffDays + ' dias)';
+                el.textContent = '· Dados ' + labelF;
+                el.title = 'Última data com dados: ' + ultimaData;
+                return;
+            }
+        }
+
+        el.textContent = '';
+    }
+
+    // --- ESCALA DE CORES (roxo-azul-amarelo-vermelho, 17 niveis de 15 em 15 EUR/MWh) ---
     function getColor(price) {
         // 1. Dados em falta: devolve cinzento claro
         if (price === null || price === undefined) return '#D3D3D3';
 
         // 2. ESCALA DE PREÇOS NEGATIVOS
-        if (price < -45) return '#5C7089';   // Cinza azulado
-        if (price < -30) return '#581c87';   // Roxo escuro
-        if (price < -15) return '#7c3aed';   // Roxo vibrante
-        if (price < 0)   return '#c4b5fd';   // Lilás claro (para valores entre -15 e 0)
+        // Negativos: gradiente roxo monotonico (mais negativo = mais escuro)
+        if (price < -45) return '#4c1d95';   // Roxo profundo (extremo)
+        if (price < -30) return '#7c3aed';   // Roxo vibrante
+        if (price < -15) return '#a78bfa';   // Roxo claro
+        if (price < 0)   return '#c4b5fd';   // Lilás (proximo de zero)
 
         // 3. ESCALA DE PREÇOS POSITIVOS
         if (price < 15)  return '#08306b';   // Azul 4 (mais escuro)
@@ -1326,12 +1478,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     var aggIntra = getAggregatedIntradayStats(zone, computePeriod());
                     if (aggIntra) html += buildIntradaySparkline(aggIntra, null);
                 }
+                // Em touch: dica para o segundo tap
+                if (IS_TOUCH_DEVICE) {
+                    html += '<div class="touch-hint">👉 Toque novamente para ver tudo desta zona</div>';
+                }
                 this._div.innerHTML = html;
             } else {
                 this._div.innerHTML = '<b>' + zoneFlag(zone) + ' ' + name + '</b><div class="price-value" style="color:#999;">Sem dados</div>';
             }
         } else {
-            this._div.innerHTML = '<h4>Zona de licitação</h4>Passe o rato sobre uma zona';
+            this._div.innerHTML = IS_TOUCH_DEVICE
+                ? '<h4>Zona de licitação</h4>Toque numa zona do mapa'
+                : '<h4>Zona de licitação</h4>Passe o rato sobre uma zona';
         }
     };
 
@@ -1370,29 +1528,73 @@ document.addEventListener('DOMContentLoaded', function() {
         info.update();
     }
 
-    function zoomToFeature(e) {
-        // Click numa zona: define a zona global e atualiza TODAS as visualizacoes
-        var ec = e.target.feature.properties.ecZone;
+    // Detecao de dispositivo touch (sem hover real)
+    var IS_TOUCH_DEVICE = window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    // Estado para tap-em-duas-fases em touch
+    var lastTouchedZone = null;
+    var lastTouchedTime = 0;
+    var lastTouchedLayer = null;
+    var TAP_RESET_MS = 4000;  // 4s sem nova interacao -> primeira tap recomeca
+
+    function selectZoneAndScroll(ec) {
         var dataZone = ZONE_DATA_MAP[ec] || ec;
         var gZone = document.getElementById('global-zone-select');
-        if (gZone && ZONE_NAMES[dataZone]) {
-            gZone.value = dataZone;
-            savePref('zone', dataZone);
-            if (typeof updateChart === 'function') updateChart();
-            if (typeof updateIntradayChart === 'function') updateIntradayChart();
-            if (typeof updateHeatmap === 'function') updateHeatmap();
-            if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
-            var w = document.getElementById('intraday-wrapper');
-            if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!gZone || !ZONE_NAMES[dataZone]) return;
+        gZone.value = dataZone;
+        savePref('zone', dataZone);
+        if (typeof updateChart === 'function') updateChart();
+        if (typeof updateIntradayChart === 'function') updateIntradayChart();
+        if (typeof updateHeatmap === 'function') updateHeatmap();
+        if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+        var w = document.getElementById('intraday-wrapper');
+        if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function zoomToFeature(e) {
+        var ec = e.target.feature.properties.ecZone;
+        // Marcar para que o map.click subsequente nao reset o estado
+        if (e && e.originalEvent) e.originalEvent._zoneClickHandled = true;
+        if (typeof L !== 'undefined' && e) L.DomEvent.stopPropagation(e);
+
+        if (IS_TOUCH_DEVICE) {
+            // Em touch: 1o tap mostra info-control + destaca; 2o tap (na mesma
+            // zona, dentro de TAP_RESET_MS) confirma e seleciona+scrolla.
+            var now = Date.now();
+            var sameZone = (lastTouchedZone === ec) && (now - lastTouchedTime < TAP_RESET_MS);
+            if (sameZone) {
+                lastTouchedZone = null;
+                lastTouchedLayer = null;
+                selectZoneAndScroll(ec);
+                return;
+            }
+            // Reset visual da zona anterior
+            if (lastTouchedLayer && lastTouchedLayer !== e.target) {
+                try { geojsonLayer.resetStyle(lastTouchedLayer); } catch(_) {}
+            }
+            // Mostrar info da zona tocada
+            highlightFeature(e);
+            lastTouchedZone = ec;
+            lastTouchedTime = now;
+            lastTouchedLayer = e.target;
+            return;
         }
+
+        // Desktop (com hover): comportamento original — selecionar imediatamente
+        selectZoneAndScroll(ec);
     }
 
     function onEachFeature(feature, layer) {
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-            click: zoomToFeature
-        });
+        // Em desktop: hover funciona normalmente. Em touch: hover nao dispara,
+        // o tap fica encarregue de mostrar/seleccionar.
+        if (!IS_TOUCH_DEVICE) {
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight,
+                click: zoomToFeature
+            });
+        } else {
+            layer.on({ click: zoomToFeature });
+        }
     }
 
     // --- CARREGAR GEOJSON ---
@@ -1447,6 +1649,78 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         priceLabelsLayer.addTo(map);
+    }
+
+    // --- ZONAS FAVORITAS ---
+    function getFavorites() {
+        var arr = (prefs.favorites && Array.isArray(prefs.favorites)) ? prefs.favorites : [];
+        // Filtrar zonas inexistentes (defensivo apos remocao de zonas)
+        return arr.filter(function(z) { return ZONE_NAMES[z]; });
+    }
+    function isFavorite(zone) {
+        return getFavorites().indexOf(zone) !== -1;
+    }
+    function toggleFavorite(zone) {
+        var favs = getFavorites();
+        var i = favs.indexOf(zone);
+        if (i === -1) favs.push(zone);
+        else favs.splice(i, 1);
+        savePref('favorites', favs);
+        prefs.favorites = favs;
+    }
+
+    function renderFavoritesPanel() {
+        var container = document.getElementById('favorites-panel');
+        if (!container) return;
+        var favs = getFavorites();
+        if (!favs.length) {
+            container.style.display = 'none';
+            container.innerHTML = '';
+            return;
+        }
+        container.style.display = 'flex';
+        var html = '<span class="favorites-label" title="Clica numa estrela na tabela para adicionar/remover">⭐ Favoritas:</span>';
+        for (var i = 0; i < favs.length; i++) {
+            var z = favs[i];
+            var stats = getZoneStats(z);
+            var price = stats && stats.avg != null ? stats.avg : null;
+            var color = price != null ? getColor(price) : '#94a3b8';
+            var partialMark = isPartial(stats) ? '*' : '';
+            var priceTxt = price != null ? fmtN(price, 2) + partialMark : '—';
+            html += '<button type="button" class="fav-chip" data-zone="' + z + '"'
+                  + ' style="border-left-color:' + color + '"'
+                  + ' title="Selecionar ' + (ZONE_NAMES[z] || z) + ' como zona ativa">'
+                  + zoneFlag(z) + ' <span class="fav-chip-name">' + (ZONE_NAMES[z] || z) + '</span>'
+                  + ' <span class="fav-chip-price">' + priceTxt + '</span>'
+                  + '<span class="fav-chip-remove" title="Remover dos favoritos" aria-label="Remover">×</span>'
+                  + '</button>';
+        }
+        container.innerHTML = html;
+
+        // Listeners
+        var chips = container.querySelectorAll('.fav-chip');
+        for (var k = 0; k < chips.length; k++) {
+            chips[k].addEventListener('click', function(ev) {
+                var z = this.getAttribute('data-zone');
+                if (ev.target.classList.contains('fav-chip-remove')) {
+                    ev.stopPropagation();
+                    toggleFavorite(z);
+                    renderFavoritesPanel();
+                    updateRankedList(currentMode === 'diario' && document.getElementById('seletor-data').value === ultimaDataDisponivel);
+                    return;
+                }
+                // Click no chip -> selecionar como zona global
+                var gZone = document.getElementById('global-zone-select');
+                if (gZone && ZONE_NAMES[z]) {
+                    gZone.value = z;
+                    savePref('zone', z);
+                    if (typeof updateChart === 'function') updateChart();
+                    if (typeof updateIntradayChart === 'function') updateIntradayChart();
+                    if (typeof updateHeatmap === 'function') updateHeatmap();
+                    if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+                }
+            });
+        }
     }
 
     // --- LISTA ORDENADA DE PRECOS ---
@@ -1596,7 +1870,15 @@ document.addEventListener('DOMContentLoaded', function() {
             var color = getColor(e.avg);
             html += '<tr data-zone="' + e.zone + '">';
             html += '<td class="rank-cell">' + (i + 1) + '</td>';
-            html += '<td class="zone-cell" title="Clique para mostrar/ocultar curva intradiária"><span class="row-expand" aria-label="Expandir curva intradiária">▸</span><span class="color-indicator" style="background:' + color + '"></span><span class="zone-flag">' + zoneFlag(e.zone) + '</span> <span class="zone-name">' + e.name + '</span></td>';
+            var favCls = isFavorite(e.zone) ? ' active' : '';
+            var favSymbol = isFavorite(e.zone) ? '★' : '☆';
+            var favTitle = isFavorite(e.zone) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+            html += '<td class="zone-cell" title="Clique para mostrar/ocultar curva intradiária">'
+                  + '<span class="zone-fav' + favCls + '" data-zone="' + e.zone + '" title="' + favTitle + '" role="button" aria-label="' + favTitle + '">' + favSymbol + '</span>'
+                  + '<span class="row-expand" aria-label="Expandir curva intradiária">▸</span>'
+                  + '<span class="color-indicator" style="background:' + color + '"></span>'
+                  + '<span class="zone-flag">' + zoneFlag(e.zone) + '</span> '
+                  + '<span class="zone-name">' + e.name + '</span></td>';
             var partialMark = e.partial ? ' <span class="partial-badge" title="Dados parciais: ' + e.partialKnown + '/' + e.partialTotal + ' slots">parcial</span>' : '';
             var avgTitle = e.partial ? 'Preço médio (parcial: ' + e.partialKnown + '/' + e.partialTotal + ' slots publicados)' : 'Preço médio diário';
             html += '<td class="price-cell num' + negCls(e.avg) + '" title="' + avgTitle + '">' + fmtN(e.avg, 2) + partialMark + '</td>';
@@ -1631,10 +1913,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // Listeners para expandir/recolher curva intradiaria por linha
         var zoneCells = container.querySelectorAll('td.zone-cell');
         for (var zci = 0; zci < zoneCells.length; zci++) {
-            zoneCells[zci].addEventListener('click', function() {
+            zoneCells[zci].addEventListener('click', function(ev) {
+                // Ignorar clicks na estrela (favoritos) — gerido em listener proprio
+                if (ev.target.classList.contains('zone-fav')) return;
                 var tr = this.closest('tr[data-zone]');
                 if (!tr) return;
                 toggleRowIntraday(tr);
+            });
+        }
+        // Listener das estrelas (favoritos)
+        var stars = container.querySelectorAll('.zone-fav');
+        for (var fi = 0; fi < stars.length; fi++) {
+            stars[fi].addEventListener('click', function(ev) {
+                ev.stopPropagation();
+                var z = this.getAttribute('data-zone');
+                if (!z) return;
+                toggleFavorite(z);
+                // Atualizar estrela in-place sem re-render completo
+                var nowFav = isFavorite(z);
+                this.classList.toggle('active', nowFav);
+                this.textContent = nowFav ? '★' : '☆';
+                this.setAttribute('title', nowFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos');
+                this.setAttribute('aria-label', nowFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos');
+                renderFavoritesPanel();
             });
         }
 
@@ -1649,6 +1950,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Re-aplicar filtro após re-render (mantém pesquisa ativa)
         if (typeof applyZoneSearch === 'function') applyZoneSearch();
+
+        // Atualizar painel de favoritas (precos podem ter mudado)
+        renderFavoritesPanel();
     }
 
     // --- EXPANDIR CURVA INTRADIARIA POR LINHA ---
@@ -2393,13 +2697,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Determinar cor de texto (escura vs clara) com base na luminosidade
-        // do fundo. Cores claras (azuis claros, amarelos, laranjas claros)
-        // -> texto preto; cores escuras (azul-marinho, vermelho/bordeaux)
-        // -> texto branco.
+        // do fundo. Cores claras (lilas, azuis claros, amarelos, laranjas
+        // claros) -> texto preto; cores escuras (roxo escuro, azul-marinho,
+        // vermelho/bordeaux) -> texto branco.
         var lightOnDark = function(v) {
             if (v == null) return false;
-            // Texto escuro para a faixa "central" da escala (15-105 EUR/MWh)
-            return v >= 15 && v < 105;
+            // Lilas (-15 a 0): claro -> texto preto
+            if (v >= -15 && v < 0) return true;
+            // Faixa central 15-105 (azul claro / amarelo / laranja claro): texto preto
+            if (v >= 15 && v < 105) return true;
+            return false;
         };
 
         // Construir grid
@@ -2645,6 +2952,22 @@ document.addEventListener('DOMContentLoaded', function() {
             renderColorScales();
             legend.addTo(map);
 
+            // Touch: tap no fundo do mapa (fora de qualquer zona) reseta o estado
+            // do tap-em-duas-fases e limpa o destaque/info-control.
+            if (IS_TOUCH_DEVICE) {
+                map.on('click', function(e) {
+                    // Se o click veio de uma zona (zoomToFeature), ignorar
+                    if (e && e.originalEvent && e.originalEvent._zoneClickHandled) return;
+                    if (lastTouchedLayer) {
+                        try { geojsonLayer.resetStyle(lastTouchedLayer); } catch(_) {}
+                        lastTouchedLayer = null;
+                    }
+                    lastTouchedZone = null;
+                    info.update();
+                });
+                document.body.classList.add('is-touch');
+            }
+
             // Carregar GeoJSON (inline)
             if (!loadGeoJSON()) {
                 loadingIndicator.style.display = 'none';
@@ -2654,15 +2977,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Carregar metadata para definir data maxima e inicial
+            var metaLastModified = null;
             try {
                 var metaResp = await fetchComFallback("metadata.json");
                 if (metaResp.ok) {
                     var meta = await metaResp.json();
                     if (meta.ultima_data) ultimaDataDisponivel = meta.ultima_data;
+                    metaLastModified = metaResp.headers.get('Last-Modified');
                 }
             } catch(e) {
                 console.warn('metadata.json não encontrado:', e.message);
             }
+            renderDataFreshness(ultimaDataDisponivel, metaLastModified);
 
             // Definir datas do seletor
             seletorData.min = DATA_INICIO;
@@ -2813,6 +3139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!currentPeriod) {
                         currentPeriod = { start: dataInicio.value, end: dataFim.value };
                     }
+                    if (typeof validateCustomRange === 'function') validateCustomRange();
                 } else {
                     rangeWrapper.style.display = 'none';
                     dateSelectorWrapper.style.display = 'block';
@@ -2835,18 +3162,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
+            // Validacao live do intervalo personalizado
+            var rangeError = document.getElementById('range-error');
+            var MAX_RANGE_DAYS = 366;
+
+            function validateCustomRange() {
+                var v1 = dataInicio.value;
+                var v2 = dataFim.value;
+                var minD = DATA_INICIO;
+                var maxD = ultimaDataDisponivel;
+                var err = '';
+                var inv1 = false, inv2 = false;
+
+                if (!v1 || !v2) {
+                    err = 'Indique data de início e fim.';
+                    if (!v1) inv1 = true;
+                    if (!v2) inv2 = true;
+                } else if (v1 < minD) {
+                    err = 'A data de início é anterior aos dados disponíveis (' + fmtDateBR(minD) + ').';
+                    inv1 = true;
+                } else if (maxD && v2 > maxD) {
+                    err = 'A data de fim é posterior aos dados disponíveis (' + fmtDateBR(maxD) + ').';
+                    inv2 = true;
+                } else if (v1 > v2) {
+                    err = 'A data de início tem de ser anterior ou igual à data de fim.';
+                    inv1 = true; inv2 = true;
+                } else {
+                    var diff = (parseDateStr(v2) - parseDateStr(v1)) / 86400000 + 1;
+                    if (diff > MAX_RANGE_DAYS) {
+                        err = 'Intervalo demasiado longo (' + Math.round(diff) + ' dias). Máximo: ' + MAX_RANGE_DAYS + ' dias.';
+                        inv1 = true; inv2 = true;
+                    }
+                }
+                dataInicio.classList.toggle('invalid', inv1);
+                dataFim.classList.toggle('invalid', inv2);
+                if (rangeError) rangeError.textContent = err;
+                btnAplicarRange.disabled = !!err;
+                return !err;
+            }
+            dataInicio.addEventListener('input', validateCustomRange);
+            dataFim.addEventListener('input', validateCustomRange);
+
             btnAplicarRange.addEventListener('click', function() {
-                if (!dataInicio.value || !dataFim.value) return;
-                if (dataInicio.value > dataFim.value) {
-                    alert('Data de início deve ser anterior à data de fim.');
-                    return;
-                }
-                // Limitar a 366 dias para não rebentar com a memória
-                var diff = (parseDateStr(dataFim.value) - parseDateStr(dataInicio.value)) / 86400000;
-                if (diff > 366) {
-                    alert('Intervalo máximo: 366 dias.');
-                    return;
-                }
+                if (!validateCustomRange()) return;
                 currentPeriod = { start: dataInicio.value, end: dataFim.value };
                 loadPriceData();
             });
@@ -2859,8 +3217,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (urlMode === 'custom' && urlStart && urlEnd) {
                     dataInicio.min = DATA_INICIO; dataFim.min = DATA_INICIO;
                     if (ultimaDataDisponivel) { dataInicio.max = ultimaDataDisponivel; dataFim.max = ultimaDataDisponivel; }
-                    dataInicio.value = urlStart; dataFim.value = urlEnd;
-                    currentPeriod = { start: urlStart, end: urlEnd };
+                    // Validar URL params antes de aplicar — evita estado inconsistente
+                    var validRange = urlStart >= DATA_INICIO
+                        && (!ultimaDataDisponivel || urlEnd <= ultimaDataDisponivel)
+                        && urlStart <= urlEnd
+                        && ((parseDateStr(urlEnd) - parseDateStr(urlStart)) / 86400000 + 1) <= 366;
+                    if (validRange) {
+                        dataInicio.value = urlStart; dataFim.value = urlEnd;
+                        currentPeriod = { start: urlStart, end: urlEnd };
+                    } else {
+                        console.warn('Parametros URL ?start/?end invalidos — ignorados.');
+                        urlMode = 'diario';
+                    }
                 }
                 setModo(urlMode, { skipReload: true });
             }
@@ -2913,7 +3281,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                         btnVizWide.classList.toggle('active', on);
                     };
-                    var initWide = !!(prefs.vizWide || prefs.chartWide);  // legado
+                    var initWide = !!prefs.vizWide;
                     if (initWide) applyWide(true);
                     btnVizWide.addEventListener('click', function() {
                         var nowWide = !btnVizWide.classList.contains('active');
