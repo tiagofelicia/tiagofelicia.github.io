@@ -27,6 +27,15 @@
     <link rel="shortcut icon" href="/images/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="manifest" href="/images/site.webmanifest" />
+
+    <!-- PWA / Mobile install -->
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    <meta name="application-name" content="Mapa de Preços" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mapa de Preços" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <link rel="stylesheet" href="style.css" />
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -129,6 +138,11 @@
 
     <style>
         .painel-header { text-align: center; margin-bottom: 20px; }
+        .kb-shortcuts { font-size: 0.7em; color: #64748b; margin: -8px 0 14px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .kb-shortcuts kbd { display: inline-block; padding: 1px 5px; background: #e2e8f0; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 3px; font-family: ui-monospace, monospace; font-size: 0.95em; box-shadow: 0 1px 0 #cbd5e1; }
+        [data-theme="dark"] .kb-shortcuts { color: #94a3b8; }
+        [data-theme="dark"] .kb-shortcuts kbd { background: #334155; color: #e2e8f0; border-color: #475569; box-shadow: 0 1px 0 #475569; }
+        @media (max-width: 600px) { .kb-shortcuts { display: none; } }
         .data-freshness { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 10px; font-size: 0.95em; font-weight: 500; }
         .data-freshness.fresh { background: #dcfce7; color: #166534; }
         .data-freshness.stale { background: #fef3c7; color: #92400e; }
@@ -280,11 +294,26 @@
             #zone-panel > label { font-size: 0.85em; grid-column: span 1; }
             #zone-panel > label[for="global-zone-select"] { grid-column: 1; grid-row: 1; }
             #zone-panel #global-zone-select { grid-column: 1; grid-row: 2; min-width: 0; width: 100%; }
-            #zone-panel > label[for="global-compare-select"] { grid-column: 2; grid-row: 1; }
-            #zone-panel #global-compare-select { grid-column: 2; grid-row: 2; min-width: 0; width: 100%; }
+            #zone-panel > label[for="global-compare-select"] { display: none; }
             #zone-panel #btn-viz-wide { grid-column: 1 / span 2; grid-row: 3; width: 100%; padding: 8px; }
+            #zone-panel .compare-label, #zone-panel #compare-chips, #zone-panel #add-compare-select {
+                grid-column: 1 / span 2;
+            }
             .zone-panel-hint { display: none; }
         }
+        .compare-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+        .cmp-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 8px; background: #fff; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 4px; font-size: 0.85em; color: #1e293b; }
+        .cmp-chip-name { font-weight: 600; }
+        .cmp-chip-offset { display: inline-block; padding: 1px 5px; background: #f1f5f9; color: #475569; border-radius: 3px; font-size: 0.85em; font-variant-numeric: tabular-nums; }
+        [data-theme="dark"] .cmp-chip-offset { background: #334155; color: #e2e8f0; }
+        .cmp-chip-remove { display: inline-block; padding: 0 5px; color: #94a3b8; font-size: 1.05em; line-height: 1; cursor: pointer; border-radius: 3px; user-select: none; }
+        .cmp-chip-remove:hover { color: #dc2626; background: #fef2f2; }
+        #add-compare-select { padding: 6px 8px; border: 1px dashed #94a3b8; border-radius: 4px; background: transparent; cursor: pointer; font-size: 0.9em; color: #475569; }
+        #add-compare-select:disabled { opacity: 0.45; cursor: not-allowed; }
+        [data-theme="dark"] .cmp-chip { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .cmp-chip-remove { color: #64748b; }
+        [data-theme="dark"] .cmp-chip-remove:hover { background: #450a0a; color: #fca5a5; }
+        [data-theme="dark"] #add-compare-select { color: #cbd5e1; border-color: #64748b; }
 
         #chart-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
         /* Breakout — aplicavel a qualquer wrapper de visualizacao.
@@ -336,13 +365,20 @@
         #heatmap-hour-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
         #heatmap-hour-container { overflow-x: auto; }
         .hh-grid { display: grid; gap: 1px; background: #e2e8f0; border: 1px solid #cbd5e1; padding: 1px; border-radius: 4px; min-width: 600px; font-size: 0.7em; }
+        #heatmap-hour-wrapper.viz-wide .hh-grid { font-size: 0.72em; }
         .hh-cell { background: #f1f5f9; padding: 3px 2px; text-align: center; min-width: 22px; min-height: 18px; cursor: default; color: #1e293b; }
+        #heatmap-hour-wrapper.viz-wide .hh-cell { min-height: 22px; }
         .hh-cell.hh-header { background: #cbd5e1; font-weight: 600; cursor: default; }
         .hh-cell.hh-data { color: #fff; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.7), 0 0 1px rgba(0,0,0,0.9); }
         .hh-cell.hh-data.hh-light { color: #0f172a; font-weight: 700; text-shadow: 0 0 2px rgba(255,255,255,0.6); }
         .hh-cell.hh-empty { background: #f8fafc; }
         .hh-cell.hh-partial { font-style: italic; }
         .hh-cell.hh-partial::after { content: '*'; }
+        .hh-cell.hh-spacer { background: #fff; min-width: 8px; min-height: 8px; padding: 0; }
+        [data-theme="dark"] .hh-cell.hh-spacer { background: #0f172a; }
+        .hh-cell.hh-avg-header { background: #94a3b8; color: #fff; font-weight: 700; }
+        .hh-cell.hh-avg { font-weight: 700; }
+        [data-theme="dark"] .hh-cell.hh-avg-header { background: #475569; color: #fff; }
         [data-theme="dark"] #heatmap-hour-wrapper h2 { color: #e2e8f0; }
         [data-theme="dark"] .hh-grid { background: #475569; border-color: #334155; }
         [data-theme="dark"] .hh-cell { background: #1e293b; color: #e2e8f0; }
@@ -356,11 +392,25 @@
         .partial-badge { display: inline-block; margin-left: 4px; padding: 1px 5px; font-size: 0.75em; background: #fef3c7; color: #92400e; border-radius: 3px; font-weight: 600; }
         [data-theme="dark"] .partial-badge { background: #78350f; color: #fde68a; }
 
+        #heatmap-week-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
+        #heatmap-week-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
+        #heatmap-week-container { overflow-x: auto; display: flex; justify-content: center; }
+        [data-theme="dark"] #heatmap-week-wrapper h2 { color: #e2e8f0; }
+
         #heatmap-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
         #heatmap-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
         .heatmap-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-size: 0.9em; }
-        .heatmap-controls select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; }
+        .heatmap-controls select, .heatmap-controls input[type="date"], .heatmap-controls input[type="month"] { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; }
         .heatmap-controls label { color: #2c3e50; }
+        .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 5px 12px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
+        .hh-mode-btn:last-child { border-right: none; }
+        .hh-mode-btn:hover { background: #f1f5f9; }
+        .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .hh-mode-btn.active { background: #2563eb; color: #fff; }
         .heatmap-stats { color: #64748b; font-size: 0.88em; margin-left: 10px; }
         #heatmap-container { overflow-x: auto; }
         .heatmap-grid { display: inline-block; min-width: 100%; }
@@ -386,8 +436,15 @@
         #ranked-list-wrapper h2 { text-align: center; margin-bottom: 15px; font-size: 1.2em; color: #2c3e50; }
         .favorites-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; max-width: 1300px; margin: 0 auto 12px auto; padding: 8px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; box-sizing: border-box; }
         .favorites-label { font-size: 0.85em; color: #92400e; font-weight: 600; margin-right: 4px; }
-        .fav-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 10px; background: #fff; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 4px; font-size: 0.85em; cursor: pointer; color: #1e293b; transition: background 0.15s; }
+        .fav-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 6px; background: #fff; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 4px; font-size: 0.85em; cursor: pointer; color: #1e293b; transition: background 0.15s, box-shadow 0.15s, opacity 0.15s; }
         .fav-chip:hover { background: #f1f5f9; }
+        .fav-chip.dragging { opacity: 0.4; }
+        .fav-chip.drag-over { box-shadow: 0 0 0 2px #f59e0b inset; background: #fef3c7; }
+        .fav-chip-grip { color: #cbd5e1; font-size: 0.85em; line-height: 1; cursor: grab; user-select: none; padding: 0 1px; letter-spacing: -2px; }
+        .fav-chip:hover .fav-chip-grip { color: #64748b; }
+        [data-theme="dark"] .fav-chip-grip { color: #475569; }
+        [data-theme="dark"] .fav-chip:hover .fav-chip-grip { color: #94a3b8; }
+        [data-theme="dark"] .fav-chip.drag-over { background: #78350f; box-shadow: 0 0 0 2px #fbbf24 inset; }
         .fav-chip-name { font-weight: 600; }
         .fav-chip-price { font-variant-numeric: tabular-nums; color: #475569; padding: 0 4px; }
         .fav-chip-remove { display: inline-block; padding: 0 5px; color: #94a3b8; font-size: 1.1em; line-height: 1; border-radius: 3px; }
@@ -641,12 +698,13 @@
     <div id="zone-panel">
         <label for="global-zone-select"><strong>Zona:</strong></label>
         <select id="global-zone-select"></select>
-        <label for="global-compare-select" class="compare-label">Comparar com:</label>
-        <select id="global-compare-select">
-            <option value="">— nenhuma —</option>
+        <span class="compare-label">Comparar com:</span>
+        <div id="compare-chips" class="compare-chips" role="list" aria-label="Zonas em comparação"></div>
+        <select id="add-compare-select" aria-label="Adicionar zona à comparação">
+            <option value="">+ Adicionar comparação</option>
         </select>
         <button type="button" id="btn-viz-wide" class="btn-wide" title="Alternar largura total das visualizações">&#x2194; Largura total</button>
-        <span class="zone-panel-hint">Dica: clica numa zona no mapa para mudar</span>
+        <span class="zone-panel-hint">Máx. 4 comparações · Dica: clica numa zona no mapa para mudar</span>
     </div>
 
     <div id="intraday-wrapper">
@@ -660,13 +718,34 @@
     </div>
 
     <div id="heatmap-hour-wrapper">
-        <h2 id="heatmap-hour-titulo">Heatmap horário (hora × dia do mês)</h2>
+        <h2 id="heatmap-hour-titulo">Heatmap horário</h2>
         <div class="heatmap-controls">
-            <label for="heatmap-hour-month">Mês:</label>
-            <input type="month" id="heatmap-hour-month">
+            <div class="hh-mode-toggle" role="radiogroup" aria-label="Modo de intervalo">
+                <button type="button" id="hh-mode-month" class="hh-mode-btn" data-mode="month" title="Mostrar um mês de calendário completo">Mês completo</button>
+                <button type="button" id="hh-mode-rolling" class="hh-mode-btn active" data-mode="rolling" title="Mostrar 30/31 dias terminados num dia à escolha">Mês deslizante</button>
+            </div>
+            <label for="heatmap-hour-month-ym" id="hh-label-month" style="display:none;">Mês:</label>
+            <input type="month" id="heatmap-hour-month-ym" style="display:none;">
+            <label for="heatmap-hour-month" id="hh-label-end">Dia final:</label>
+            <input type="date" id="heatmap-hour-month" title="A grelha mostra o mês deslizante terminado neste dia (30 ou 31 dias)">
             <span class="heatmap-stats" id="heatmap-hour-stats"></span>
         </div>
         <div id="heatmap-hour-container" role="img" aria-label="Heatmap horário"></div>
+    </div>
+
+    <div id="heatmap-week-wrapper">
+        <h2 id="heatmap-week-titulo">Perfil semanal (24h × dia da semana)</h2>
+        <div class="heatmap-controls">
+            <label for="hw-window">Período:</label>
+            <select id="hw-window">
+                <option value="30">Últimos 30 dias</option>
+                <option value="60">Últimos 60 dias</option>
+                <option value="90">Últimos 90 dias</option>
+                <option value="365">Últimos 365 dias</option>
+            </select>
+            <span class="heatmap-stats" id="heatmap-week-stats"></span>
+        </div>
+        <div id="heatmap-week-container" role="img" aria-label="Perfil semanal"></div>
     </div>
 
     <div id="heatmap-wrapper">
@@ -721,29 +800,69 @@
         </details>
 
         <details class="faq-item">
-            <summary><strong>Que funcionalidades estão disponíveis?</strong></summary>
+            <summary><strong>Visualizações disponíveis</strong></summary>
             <div class="faq-content">
                 <ul>
-                    <li><strong>Modos de visualização:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês completo) e Personalizado (intervalo à escolha) — médias agregadas no mapa, tabela e gráfico.</li>
-                    <li><strong>Pesquisa de zona:</strong> escreve no campo "🔍 Procurar zona" para filtrar tabela e destacar a zona no mapa (procura por código, nome PT e ignora acentos). <kbd>Esc</kbd> limpa.</li>
-                    <li><strong>Zonas favoritas:</strong> clica na estrela <kbd>☆</kbd> ao lado do nome de uma zona para adicioná-la aos favoritos. As favoritas aparecem num painel rápido no topo da tabela com o preço atual e cor da escala — clica num chip para selecionar essa zona em todas as visualizações. As favoritas ficam guardadas no browser.</li>
-                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, etc. Mostra preço médio, mín/máx (com hora local) e amplitude por zona.</li>
-                    <li><strong>Curva intradiária na tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva 24h logo por baixo da linha. Podes expandir várias zonas ao mesmo tempo para comparar.</li>
-                    <li><strong>ΔPT:</strong> diferença em €/MWh e % vs Portugal — útil para ver se importar/exportar é vantajoso.</li>
-                    <li><strong>Variação vs ontem:</strong> só em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
-                    <li><strong>Gráfico de evolução:</strong> barras coloridas pela escala do mapa para a zona selecionada (e opcionalmente uma segunda para comparar). Mín, máx e amplitude estão sempre visíveis no tooltip ao passar o rato.</li>
-                    <li><strong>Largura total:</strong> botão "↔ Largura total" no painel de zona faz com que as 4 visualizações (intradiária, evolução, heatmaps) ocupem toda a largura do ecrã.</li>
-                    <li><strong>Selector único de zona:</strong> existe um só dropdown "Zona" no topo que controla simultaneamente a Evolução de preços, a Curva intradiária, o Heatmap horário e o Heatmap anual. Clicar numa zona no mapa atualiza todas as visualizações automaticamente.</li>
-                    <li><strong>Curva intradiária:</strong> gráfico de barras com a curva 24h da zona selecionada (resolução 15 min, 30 min ou horária consoante o que está publicado), com cores na mesma escala do mapa. Em modos agregados mostra a média horária do período.</li>
-                    <li><strong>Sparkline no mapa:</strong> ao passar o rato sobre uma zona (ou tocar uma vez em mobile), o painel de informação inclui mini-curva intradiária com marcadores de mín/máx e barras coloridas pela escala de preços. Em mobile, um segundo toque na mesma zona seleciona-a em todas as visualizações.</li>
-                    <li><strong>Heatmap horário (mês × hora):</strong> grelha 24 horas × dias do mês para uma zona — permite ver padrões de horas de pico/vale ao longo do mês.</li>
-                    <li><strong>Heatmap anual:</strong> calendário com 365 dias coloridos por preço — clica num dia para abrir esse dia no mapa.</li>
-                    <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots ainda não foram publicados (ex: PT antes da publicação do leilão CET) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip — o cálculo de média/mín/máx só usa os slots conhecidos.</li>
-                    <li><strong>Resumo dinâmico:</strong> texto descritivo da data selecionada (Hoje/Ontem/Amanhã/data), com zona mais barata e mais cara em destaque.</li>
-                    <li><strong>Link de partilha:</strong> botão "🔗 Copiar link de partilha" gera URL com a data atual — partilha com 1 clique.</li>
-                    <li><strong>Modo escuro:</strong> respeita preferência do site (toggle no menu).</li>
-                    <li><strong>Ecrã inteiro:</strong> botão no canto do mapa para visualização imersiva.</li>
-                    <li><strong>Preferências persistidas:</strong> as tuas escolhas (toggles, modo, zonas no gráfico) ficam guardadas no browser.</li>
+                    <li><strong>Mapa coroplético europeu:</strong> 45 zonas de licitação coloridas pelo preço médio. Etiquetas numéricas sobre cada zona (asterisco se dados parciais).</li>
+                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, variação vs ontem. Mostra hora local do mín/máx por zona.</li>
+                    <li><strong>Curva intradiária:</strong> gráfico de barras com a curva 24h da zona selecionada. Cores na mesma escala do mapa. Resolução adapta-se ao publicado pela bolsa (15 min, 30 min ou horário). Em modos agregados mostra a média horária do período. Linha vermelha tracejada em y=0 quando há valores negativos.</li>
+                    <li><strong>Curva intradiária por linha da tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva 24h logo por baixo. Várias zonas em simultâneo para comparar.</li>
+                    <li><strong>Gráfico de evolução de preços:</strong> barras coloridas pela escala do mapa para a zona selecionada. Mín, máx e amplitude sempre visíveis no tooltip. Suporta até 4 comparações simultâneas (linhas sobrepostas com cores distintas).</li>
+                    <li><strong>Heatmap horário (24h × ~30 dias):</strong> grelha de horas vs dias, em modo "mês deslizante" terminado no Dia final escolhido (entre 28 e 31 dias consoante o mês). Inclui coluna lateral com <strong>média por hora</strong>, linha inferior com <strong>média por dia</strong> e canto com <strong>média global</strong>. Em modo "↔ Largura total" mostra valores com 2 casas decimais.</li>
+                    <li><strong>Perfil semanal (24h × 7 dias da semana):</strong> agrega todos os dias do período (30/60/90/365 dias) por dia da semana. Permite identificar padrões recorrentes ("sextas à noite são consistentemente mais caras", "domingos têm vale mais profundo de manhã"). Inclui as mesmas médias laterais e global.</li>
+                    <li><strong>Heatmap anual:</strong> calendário 12 meses × 31 dias, células coloridas pelo preço — clica num dia para abrir esse dia no mapa.</li>
+                    <li><strong>Sparkline no mapa (info-control):</strong> ao passar o rato (desktop) ou tocar (mobile) numa zona, mini-curva intradiária com marcadores mín/máx e barras coloridas.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Interatividade e navegação</strong></summary>
+            <div class="faq-content">
+                <ul>
+                    <li><strong>Modos temporais:</strong> Diário (um dia), Semanal (7 dias), Mensal (30 dias) e Personalizado (intervalo à escolha). Médias agregadas no mapa, tabela, gráfico e curva intradiária.</li>
+                    <li><strong>Selector único de zona:</strong> um só dropdown "Zona" controla simultaneamente Evolução, Curva intradiária, Heatmap horário e Heatmap anual. Clicar numa zona do mapa atualiza tudo.</li>
+                    <li><strong>Comparação multi-zona:</strong> chips com até 4 zonas adicionais comparadas no gráfico de evolução e na curva intradiária — cada uma com cor própria e linha distinta sobre as barras da zona principal. Cada chip mostra também o desfasamento de fuso horário face à zona principal (ex: <kbd>+1h</kbd> para ES quando a principal é PT). Os valores são apresentados em <em>hora local de cada zona</em>.</li>
+                    <li><strong>Pesquisa de zona:</strong> campo "🔍 Procurar zona" filtra a tabela, destaca a zona no mapa e faz auto-zoom se for um único resultado. Procura por código, nome PT, e ignora acentos.</li>
+                    <li><strong>Toque no mapa (mobile):</strong> tap único mostra o info-control (com curva intradiária); segundo tap na mesma zona seleciona-a em todas as visualizações. Toque no fundo do mapa fecha o info-control.</li>
+                    <li><strong>Validação do intervalo personalizado:</strong> datas inválidas (início > fim, fora do intervalo de dados, &gt;366 dias) ficam com borda vermelha e mensagem inline; o botão "Aplicar" desativa-se até o erro ser resolvido.</li>
+                    <li><strong>ΔPT (diferença vs Portugal):</strong> opcional na tabela, em €/MWh e %. Útil para avaliar custo de importar/exportar.</li>
+                    <li><strong>Variação vs ontem:</strong> opcional na tabela em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
+                    <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots não foram ainda publicados (ex: PT antes do leilão CET de amanhã) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip. Média/mín/máx usam só os slots conhecidos.</li>
+                    <li><strong>Resumo dinâmico:</strong> texto contextual com a data (Hoje/Ontem/Amanhã/data), com zona mais barata e mais cara em destaque, e variação vs PT.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Personalização e atalhos</strong></summary>
+            <div class="faq-content">
+                <ul>
+                    <li><strong>Zonas favoritas:</strong> clica na estrela <kbd>☆</kbd> ao lado do nome para adicionar uma zona aos favoritos. Aparecem num painel "⭐ Favoritas" no topo da tabela com o preço atual e cor da escala. Click num chip seleciona a zona em todas as visualizações; <kbd>×</kbd> remove. Em desktop, podes <strong>arrastar</strong> os chips (⋮⋮) para reordenar. Persistidas no browser.</li>
+                    <li><strong>Largura total (↔):</strong> botão no painel de zona faz com que as 4 visualizações (Curva intradiária, Evolução, Heatmap horário, Heatmap anual) ocupem toda a largura do ecrã. No heatmap horário, ativa formatação com 2 casas decimais nas células.</li>
+                    <li><strong>Modo escuro:</strong> respeita a preferência do site (toggle no menu).</li>
+                    <li><strong>Ecrã inteiro do mapa:</strong> botão no canto superior do mapa para visualização imersiva.</li>
+                    <li><strong>Preferências persistidas:</strong> escolhas de zona, comparações, favoritas, modo, toggles, largura total — tudo guardado em localStorage.</li>
+                    <li><strong>Atalhos de teclado:</strong>
+                        <ul>
+                            <li><kbd>←</kbd> <kbd>→</kbd> — dia anterior / seguinte</li>
+                            <li><kbd>T</kbd> — saltar para a data mais recente disponível</li>
+                            <li><kbd>/</kbd> — focar campo de pesquisa de zona</li>
+                            <li><kbd>Esc</kbd> — limpar pesquisa de zona</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Atualização e partilha</strong></summary>
+            <div class="faq-content">
+                <ul>
+                    <li><strong>Indicador de frescura:</strong> badge ao lado do subtítulo mostra quão recente é a última atualização do dataset (verde &lt;26h, amarelo 26-48h, vermelho &gt;48h). O tooltip mostra a hora exata em UTC.</li>
+                    <li><strong>Auto-refresh:</strong> ao voltar à tab depois de mais de 5 minutos sem foco, a página verifica silenciosamente se há dados mais recentes e refresca se necessário.</li>
+                    <li><strong>Link de partilha:</strong> botão "🔗 Copiar link de partilha" gera URL com a data, modo e zona ativa — partilha com 1 clique.</li>
+                    <li><strong>Instalável (PWA):</strong> a página pode ser instalada como aplicação no telemóvel (Adicionar ao ecrã principal) ou desktop (ícone na barra do browser). Funciona com cache offline para conteúdo estático e visitas recentes.</li>
                 </ul>
             </div>
         </details>
@@ -820,6 +939,58 @@ document.addEventListener('DOMContentLoaded', function() {
         "IE": "IE(SEM)",
         "LU": "DE-LU"
     };
+
+    // Fuso horario IANA por zona (para calcular offset vs UTC e mostrar
+    // desfasamento entre zonas comparadas).
+    var ZONE_TZ = {
+        "AT": "Europe/Vienna", "BE": "Europe/Brussels", "BG": "Europe/Sofia",
+        "CH": "Europe/Zurich", "CZ": "Europe/Prague", "DE-LU": "Europe/Berlin",
+        "DK1": "Europe/Copenhagen", "DK2": "Europe/Copenhagen",
+        "EE": "Europe/Tallinn", "ES": "Europe/Madrid", "FI": "Europe/Helsinki",
+        "FR": "Europe/Paris", "GR": "Europe/Athens", "HR": "Europe/Zagreb",
+        "HU": "Europe/Budapest", "IE(SEM)": "Europe/Dublin",
+        "IT-North": "Europe/Rome", "IT-Centre-North": "Europe/Rome",
+        "IT-Centre-South": "Europe/Rome", "IT-South": "Europe/Rome",
+        "IT-Sicily": "Europe/Rome", "IT-Sardinia": "Europe/Rome",
+        "IT-Calabria": "Europe/Rome", "IT-SACOAC": "Europe/Rome",
+        "LT": "Europe/Vilnius", "LV": "Europe/Riga", "ME": "Europe/Podgorica",
+        "MK": "Europe/Skopje", "NL": "Europe/Amsterdam",
+        "NO1": "Europe/Oslo", "NO2": "Europe/Oslo", "NO3": "Europe/Oslo",
+        "NO4": "Europe/Oslo", "NO5": "Europe/Oslo",
+        "PL": "Europe/Warsaw", "PT": "Europe/Lisbon", "RO": "Europe/Bucharest",
+        "RS": "Europe/Belgrade",
+        "SE1": "Europe/Stockholm", "SE2": "Europe/Stockholm",
+        "SE3": "Europe/Stockholm", "SE4": "Europe/Stockholm",
+        "SI": "Europe/Ljubljana", "SK": "Europe/Bratislava"
+    };
+
+    // Calcula offset UTC (em minutos) para uma zona numa dada data.
+    function getZoneOffsetMinutes(zone, dateStr) {
+        var tz = ZONE_TZ[zone] || ZONE_TZ[ZONE_DATA_MAP[zone]];
+        if (!tz) return 0;
+        try {
+            var d = new Date((dateStr || '2026-01-15') + 'T12:00:00Z');
+            var fmt = new Intl.DateTimeFormat('en-GB', { timeZone: tz, timeZoneName: 'longOffset' });
+            var parts = fmt.formatToParts(d);
+            var tzp = parts.find(function(p) { return p.type === 'timeZoneName'; });
+            if (!tzp) return 0;
+            var m = tzp.value.match(/GMT([+\-−])?(\d{1,2}):?(\d{2})?/);
+            if (!m) return 0;
+            var sign = (m[1] === '-' || m[1] === '−') ? -1 : 1;
+            var hh = parseInt(m[2], 10) || 0;
+            var mm = parseInt(m[3], 10) || 0;
+            return sign * (hh * 60 + mm);
+        } catch(e) { return 0; }
+    }
+    // Devolve label tipo "+1h" / "−2h" / "" (vazio se for igual)
+    function offsetVsMain(compareZone, mainZone, dateStr) {
+        var oC = getZoneOffsetMinutes(compareZone, dateStr);
+        var oM = getZoneOffsetMinutes(mainZone, dateStr);
+        var diff = (oC - oM) / 60;
+        if (diff === 0) return '';
+        var s = (diff > 0 ? '+' : '') + diff + 'h';
+        return s;
+    }
 
     // Zonas cujo label nao deve aparecer no mapa (apenas tooltip e cor)
     var ZONES_SEM_LABEL = { "LU": true };
@@ -996,15 +1167,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- PREFERÊNCIAS (localStorage) ---
     var PREFS_KEY = 'mapaPrecos.prefs.v1';
-    var PREFS_VERSION = 2;
-    // Chaves obsoletas que ja nao sao usadas (limpas no upgrade para v2):
-    //  - heatmapZone, intradayZone, hourHeatZone (selectores unificados em 'zone')
-    //  - intradayCompare (unificado em 'compareZone')
-    //  - minmax (toggle removido — min/max sempre no tooltip)
-    //  - chartWide (renomeado para 'vizWide' que aplica a todas as visualizacoes)
+    var PREFS_VERSION = 4;
+    // Chaves obsoletas que ja nao sao usadas (limpas em upgrades de versao):
+    //  v2:
+    //   - heatmapZone, intradayZone, hourHeatZone (selectores unificados em 'zone')
+    //   - intradayCompare (unificado em 'compareZone')
+    //   - minmax (toggle removido — min/max sempre no tooltip)
+    //   - chartWide (renomeado para 'vizWide')
+    //  v3:
+    //   - hourHeatMonth (heatmap horario passou de mes para dia-final;
+    //     nova chave: hourHeatEnd com formato YYYY-MM-DD)
+    //  v4:
+    //   - compareZone (string unica; agora 'compareZones' como array com ate 4)
     var OBSOLETE_PREF_KEYS = [
         'heatmapZone', 'intradayZone', 'hourHeatZone',
-        'intradayCompare', 'minmax', 'chartWide'
+        'intradayCompare', 'minmax', 'chartWide',
+        'hourHeatMonth', 'compareZone'
     ];
 
     function loadPrefs() {
@@ -1546,6 +1724,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof updateIntradayChart === 'function') updateIntradayChart();
         if (typeof updateHeatmap === 'function') updateHeatmap();
         if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+                if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
         var w = document.getElementById('intraday-wrapper');
         if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -1651,6 +1830,101 @@ document.addEventListener('DOMContentLoaded', function() {
         priceLabelsLayer.addTo(map);
     }
 
+    // --- MULTI-ZONA: COMPARACAO ---
+    var COMPARE_COLORS = ['#dc2626', '#16a34a', '#ea580c', '#9333ea'];  // ate 4 chips
+    var MAX_COMPARE = 4;
+
+    function getCompareZones() {
+        var arr = (prefs.compareZones && Array.isArray(prefs.compareZones)) ? prefs.compareZones : [];
+        var main = (document.getElementById('global-zone-select') || {}).value;
+        // Filtrar zonas inexistentes ou iguais a zona principal; deduplicate
+        var seen = {};
+        return arr.filter(function(z) {
+            if (!ZONE_NAMES[z]) return false;
+            if (z === main) return false;
+            if (seen[z]) return false;
+            seen[z] = true;
+            return true;
+        }).slice(0, MAX_COMPARE);
+    }
+    function getCompareColor(zone) {
+        var list = getCompareZones();
+        var i = list.indexOf(zone);
+        return i >= 0 ? COMPARE_COLORS[i % COMPARE_COLORS.length] : '#64748b';
+    }
+    function addCompareZone(zone) {
+        var list = getCompareZones();
+        if (list.length >= MAX_COMPARE) return false;
+        if (list.indexOf(zone) !== -1) return false;
+        list.push(zone);
+        savePref('compareZones', list);
+        prefs.compareZones = list;
+        return true;
+    }
+    function removeCompareZone(zone) {
+        var list = getCompareZones();
+        var i = list.indexOf(zone);
+        if (i === -1) return;
+        list.splice(i, 1);
+        savePref('compareZones', list);
+        prefs.compareZones = list;
+    }
+
+    function renderCompareChips() {
+        var holder = document.getElementById('compare-chips');
+        var addSel = document.getElementById('add-compare-select');
+        if (!holder) return;
+        var list = getCompareZones();
+        var html = '';
+        if (!list.length) {
+            html = '<span class="cmp-chip" style="border-left-color:transparent; color:#94a3b8; font-style:italic;">— nenhuma —</span>';
+        } else {
+            var mainZ = (document.getElementById('global-zone-select') || {}).value;
+            var refDate = (document.getElementById('seletor-data') || {}).value;
+            for (var i = 0; i < list.length; i++) {
+                var z = list[i];
+                var off = mainZ ? offsetVsMain(z, mainZ, refDate) : '';
+                var offTxt = off ? ' <span class="cmp-chip-offset" title="Diferença de fuso horário face a ' + (ZONE_NAMES[mainZ] || mainZ) + '">' + off + '</span>' : '';
+                html += '<span class="cmp-chip" role="listitem" style="border-left-color:' + COMPARE_COLORS[i] + '">'
+                      + zoneFlag(z) + ' <span class="cmp-chip-name">' + (ZONE_NAMES[z] || z) + '</span>' + offTxt
+                      + '<span class="cmp-chip-remove" data-zone="' + z + '" title="Remover" aria-label="Remover ' + (ZONE_NAMES[z] || z) + '">×</span>'
+                      + '</span>';
+            }
+        }
+        holder.innerHTML = html;
+        // Listeners de remoção
+        var removes = holder.querySelectorAll('.cmp-chip-remove');
+        for (var r = 0; r < removes.length; r++) {
+            removes[r].addEventListener('click', function() {
+                var z = this.getAttribute('data-zone');
+                removeCompareZone(z);
+                renderCompareChips();
+                if (typeof updateChart === 'function') updateChart();
+                if (typeof updateIntradayChart === 'function') updateIntradayChart();
+            });
+        }
+        // Repopular dropdown "+ Adicionar"
+        if (addSel) {
+            var current = list;
+            var main = (document.getElementById('global-zone-select') || {}).value;
+            var atMax = current.length >= MAX_COMPARE;
+            addSel.disabled = atMax;
+            var sorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
+                return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
+            });
+            var opts = atMax
+                ? '<option value="">+ Máximo de ' + MAX_COMPARE + ' atingido</option>'
+                : '<option value="">+ Adicionar comparação</option>';
+            for (var s = 0; s < sorted.length; s++) {
+                var zk = sorted[s];
+                if (zk === main || current.indexOf(zk) !== -1) continue;
+                opts += '<option value="' + zk + '">' + (ZONE_NAMES[zk] || zk) + '</option>';
+            }
+            addSel.innerHTML = opts;
+            addSel.value = '';
+        }
+    }
+
     // --- ZONAS FAVORITAS ---
     function getFavorites() {
         var arr = (prefs.favorites && Array.isArray(prefs.favorites)) ? prefs.favorites : [];
@@ -1687,9 +1961,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var color = price != null ? getColor(price) : '#94a3b8';
             var partialMark = isPartial(stats) ? '*' : '';
             var priceTxt = price != null ? fmtN(price, 2) + partialMark : '—';
-            html += '<button type="button" class="fav-chip" data-zone="' + z + '"'
+            html += '<button type="button" class="fav-chip" data-zone="' + z + '" draggable="true"'
                   + ' style="border-left-color:' + color + '"'
-                  + ' title="Selecionar ' + (ZONE_NAMES[z] || z) + ' como zona ativa">'
+                  + ' title="Clica para selecionar · arrasta para reordenar">'
+                  + '<span class="fav-chip-grip" aria-hidden="true">⋮⋮</span>'
                   + zoneFlag(z) + ' <span class="fav-chip-name">' + (ZONE_NAMES[z] || z) + '</span>'
                   + ' <span class="fav-chip-price">' + priceTxt + '</span>'
                   + '<span class="fav-chip-remove" title="Remover dos favoritos" aria-label="Remover">×</span>'
@@ -1697,10 +1972,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         container.innerHTML = html;
 
-        // Listeners
+        // Listeners — click + drag-and-drop para reordenar
         var chips = container.querySelectorAll('.fav-chip');
+        var dragSrcZone = null;
         for (var k = 0; k < chips.length; k++) {
-            chips[k].addEventListener('click', function(ev) {
+            var chip = chips[k];
+            chip.addEventListener('click', function(ev) {
                 var z = this.getAttribute('data-zone');
                 if (ev.target.classList.contains('fav-chip-remove')) {
                     ev.stopPropagation();
@@ -1714,11 +1991,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (gZone && ZONE_NAMES[z]) {
                     gZone.value = z;
                     savePref('zone', z);
+                    renderCompareChips();  // pode haver chip que coincide com a nova zona
                     if (typeof updateChart === 'function') updateChart();
                     if (typeof updateIntradayChart === 'function') updateIntradayChart();
                     if (typeof updateHeatmap === 'function') updateHeatmap();
                     if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+                if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
                 }
+            });
+            // Drag & drop (HTML5 nativo — funciona em desktop)
+            chip.addEventListener('dragstart', function(ev) {
+                dragSrcZone = this.getAttribute('data-zone');
+                this.classList.add('dragging');
+                if (ev.dataTransfer) {
+                    ev.dataTransfer.effectAllowed = 'move';
+                    try { ev.dataTransfer.setData('text/plain', dragSrcZone); } catch(_) {}
+                }
+            });
+            chip.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                var all = container.querySelectorAll('.fav-chip');
+                for (var i = 0; i < all.length; i++) all[i].classList.remove('drag-over');
+                dragSrcZone = null;
+            });
+            chip.addEventListener('dragover', function(ev) {
+                ev.preventDefault();
+                if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'move';
+                this.classList.add('drag-over');
+            });
+            chip.addEventListener('dragleave', function() {
+                this.classList.remove('drag-over');
+            });
+            chip.addEventListener('drop', function(ev) {
+                ev.preventDefault();
+                this.classList.remove('drag-over');
+                var targetZone = this.getAttribute('data-zone');
+                var fromZone = dragSrcZone;
+                if (!fromZone || fromZone === targetZone) return;
+                var arr = getFavorites();
+                var fromIdx = arr.indexOf(fromZone);
+                var toIdx = arr.indexOf(targetZone);
+                if (fromIdx === -1 || toIdx === -1) return;
+                arr.splice(fromIdx, 1);
+                arr.splice(toIdx, 0, fromZone);
+                savePref('favorites', arr);
+                prefs.favorites = arr;
+                renderFavoritesPanel();
             });
         }
     }
@@ -2420,11 +2738,11 @@ document.addEventListener('DOMContentLoaded', function() {
     async function updateChart() {
         if (typeof Chart === 'undefined') return;
         var zoneSel = document.getElementById('global-zone-select');
-        var compareSel = document.getElementById('global-compare-select');
         var canvas = document.getElementById('chart-precos');
         if (!zoneSel || !canvas) return;
         var zone = zoneSel.value;
-        var compare = compareSel ? compareSel.value : '';
+        var compares = getCompareZones();
+        var hasCompare = compares.length > 0;
         if (!zone) return;
 
         // Determinar intervalo do gráfico com base no modo ativo
@@ -2453,28 +2771,30 @@ document.addEventListener('DOMContentLoaded', function() {
             backgroundColor: barColors,
             borderColor: barColors,
             borderWidth: 1,
-            order: 2
+            order: 99
         }];
 
         // Min/max sao sempre visiveis no tooltip; deixaram de ser visualizados
         // como whiskers no grafico.
         var showWhiskers = false;
 
-        if (compare) {
-            var s2 = buildSeriesForZoneRange(compare, chartStart, chartEnd);
-            var name2 = ZONE_NAMES[compare] || compare;
+        // Datasets de comparacao (uma linha por zona, com cor distinta)
+        for (var ci = 0; ci < compares.length; ci++) {
+            var cz = compares[ci];
+            var sC = buildSeriesForZoneRange(cz, chartStart, chartEnd);
+            var color = COMPARE_COLORS[ci % COMPARE_COLORS.length];
             datasets.push({
                 type: 'line',
-                label: name2 + ' — Média',
-                data: s2.avgs,
-                borderColor: '#dc2626',
-                backgroundColor: '#dc2626',
+                label: (ZONE_NAMES[cz] || cz) + ' — Média',
+                data: sC.avgs,
+                borderColor: color,
+                backgroundColor: color,
                 tension: 0,
-                pointRadius: 3,
+                pointRadius: 2.5,
                 pointHoverRadius: 5,
                 borderWidth: 2,
                 spanGaps: true,
-                order: 0
+                order: ci
             });
         }
         var c = getChartColors();
@@ -2484,9 +2804,9 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true, maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
-                layout: { padding: { top: compare ? 0 : 18 } },
+                layout: { padding: { top: hasCompare ? 0 : 18 } },
                 plugins: {
-                    barValueLabels: { show: !compare },
+                    barValueLabels: { show: !hasCompare },
                     whiskers: { show: showWhiskers, mins: s1.mins, maxs: s1.maxs },
                     legend: { labels: { color: c.text } },
                     tooltip: {
@@ -2532,7 +2852,12 @@ document.addEventListener('DOMContentLoaded', function() {
             var label;
             if (currentMode === 'diario') label = '30 dias até ' + fmtDateBR(chartEnd);
             else label = nDias + ' dias (' + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
-            titulo.textContent = 'Evolução de preços — ' + label + ' — ' + name1 + (compare ? ' vs ' + ZONE_NAMES[compare] : '');
+            var comparesTxt = '';
+            if (compares.length) {
+                var compareNames = compares.map(function(z) { return ZONE_NAMES[z] || z; });
+                comparesTxt = ' vs ' + compareNames.join(', ');
+            }
+            titulo.textContent = 'Evolução de preços — ' + label + ' — ' + name1 + comparesTxt;
         }
     }
 
@@ -2541,11 +2866,11 @@ document.addEventListener('DOMContentLoaded', function() {
     async function updateIntradayChart() {
         var canvas = document.getElementById('chart-intraday');
         var zoneSel = document.getElementById('global-zone-select');
-        var compareSel = document.getElementById('global-compare-select');
         var titulo = document.getElementById('intraday-titulo');
         if (!canvas || !zoneSel) return;
         var zone = zoneSel.value || 'PT';
-        var compare = compareSel ? compareSel.value : '';
+        var compares = getCompareZones();
+        var hasCompare = compares.length > 0;
         var isDiario = (currentMode === 'diario');
         var period = computePeriod();
 
@@ -2561,19 +2886,23 @@ document.addEventListener('DOMContentLoaded', function() {
         var intra1 = isDiario
             ? getZoneIntradayStats(zone, seletorData.value)
             : getAggregatedIntradayStats(zone, period);
-        var intra2 = compare
-            ? (isDiario ? getZoneIntradayStats(compare, seletorData.value)
-                        : getAggregatedIntradayStats(compare, period))
-            : null;
+        var intrasC = compares.map(function(cz) {
+            return isDiario ? getZoneIntradayStats(cz, seletorData.value)
+                            : getAggregatedIntradayStats(cz, period);
+        });
 
-        var labels = (intra1 && intra1.labels) || (intra2 && intra2.labels) || [];
+        var labels = (intra1 && intra1.labels)
+            || (intrasC.find(function(x) { return x && x.labels; }) || {}).labels
+            || [];
         var datasets = [];
         var name1 = ZONE_NAMES[zone] || zone;
         var colorsFromValues = function(vals) {
             return vals.map(function(v) { return v == null ? 'rgba(0,0,0,0)' : getColor(v); });
         };
+        // Zona principal: barras coloridas pela escala
         if (intra1) {
             datasets.push({
+                type: 'bar',
                 label: name1,
                 data: intra1.values,
                 backgroundColor: colorsFromValues(intra1.values),
@@ -2581,19 +2910,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 borderWidth: 1,
                 borderRadius: 2,
                 barPercentage: 0.95,
-                categoryPercentage: 0.92
+                categoryPercentage: 0.92,
+                order: 99
             });
         }
-        if (intra2) {
+        // Comparações: linhas com cores distintas (sobrepostas às barras)
+        for (var ci = 0; ci < compares.length; ci++) {
+            var cz = compares[ci];
+            var ic = intrasC[ci];
+            if (!ic) continue;
+            var color = COMPARE_COLORS[ci % COMPARE_COLORS.length];
             datasets.push({
-                label: ZONE_NAMES[compare] || compare,
-                data: intra2.values,
-                backgroundColor: colorsFromValues(intra2.values),
-                borderColor: '#dc2626',
-                borderWidth: 1.5,
-                borderRadius: 2,
-                barPercentage: 0.95,
-                categoryPercentage: 0.92
+                type: 'line',
+                label: ZONE_NAMES[cz] || cz,
+                data: ic.values,
+                borderColor: color,
+                backgroundColor: color,
+                borderWidth: 2,
+                pointRadius: 1.5,
+                pointHoverRadius: 4,
+                tension: 0,
+                spanGaps: true,
+                order: ci
             });
         }
 
@@ -2635,45 +2973,282 @@ document.addEventListener('DOMContentLoaded', function() {
                 : ('média ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
             var resTxt = (intra1 && intra1.resolution === 'PT15M') ? ' · 15 min'
                        : (intra1 && intra1.resolution === 'PT30M') ? ' · 30 min' : ' · horário';
-            titulo.textContent = 'Curva intradiária — ' + labelMode + ' — ' + name1 + (compare ? ' vs ' + (ZONE_NAMES[compare] || compare) : '') + resTxt;
+            var compTxt = '';
+            if (hasCompare) {
+                compTxt = ' vs ' + compares.map(function(z) { return ZONE_NAMES[z] || z; }).join(', ');
+            }
+            // Nota explicita: cada zona em hora local (importante para multi-zona)
+            var hourNote = hasCompare ? ' · em hora local de cada zona' : '';
+            titulo.textContent = 'Curva intradiária — ' + labelMode + ' — ' + name1 + compTxt + resTxt + hourNote;
         }
     }
 
-    // --- HEATMAP HORARIO (24 horas x dias do mes) ---
+    // --- HEATMAP HORARIO (24 horas x mes-deslizante terminado em X) ---
+    // Formula: start = (end + 1 dia) - 1 mes, com clamp para meses curtos.
+    // Esta formulacao trata casos de fim-de-mes naturalmente (sem casos
+    // especiais): se end for o ultimo dia do mes, start = dia 1 do mesmo mes.
+    //   end 30/04 -> +1 = 01/05 -> -1 mes = 01/04 (Abril completo, 30 dias)
+    //   end 28/02 -> +1 = 01/03 -> -1 mes = 01/02 (Fev completo, 28 dias)
+    //   end 05/05 -> +1 = 06/05 -> -1 mes = 06/04 (rolling, 30 dias)
+    //   end 05/06 -> +1 = 06/06 -> -1 mes = 06/05 (rolling, 31 dias)
+    //   end 30/03 -> +1 = 31/03 -> -1 mes = 31/02 (clamp p/ 28/02)
+    function rollingMonthStart(endDateStr) {
+        var p = endDateStr.split('-');
+        var y = parseInt(p[0], 10), m = parseInt(p[1], 10) - 1, d = parseInt(p[2], 10);
+        // Avancar um dia
+        var dayPlus = d + 1;
+        var monthPlus = m;
+        var yearPlus = y;
+        var lastDayOfM = new Date(y, m + 1, 0).getDate();
+        if (dayPlus > lastDayOfM) {
+            dayPlus = 1;
+            monthPlus = m + 1;
+            if (monthPlus > 11) { monthPlus = 0; yearPlus = y + 1; }
+        }
+        // Recuar um mes (com clamp para o ultimo dia do mes destino)
+        var newMonth = monthPlus - 1;
+        var newYear = yearPlus;
+        if (newMonth < 0) { newMonth = 11; newYear -= 1; }
+        var lastDayPrev = new Date(newYear, newMonth + 1, 0).getDate();
+        var clampedDay = Math.min(dayPlus, lastDayPrev);
+        return formatDateStr(new Date(newYear, newMonth, clampedDay));
+    }
+
+    // --- PERFIL SEMANAL (24h x 7 dias da semana) ---
+    // Para cada (hora, dia-da-semana), calcula a media dos precos de todos
+    // os dias do periodo selecionado que cairam nesse dia da semana.
+    // Util para identificar padroes recorrentes (ex: "fim de semana mais barato").
+    var WEEKDAY_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+
+    function updateWeeklyProfile() {
+        var zoneSel = document.getElementById('global-zone-select');
+        var winSel = document.getElementById('hw-window');
+        var container = document.getElementById('heatmap-week-container');
+        var titulo = document.getElementById('heatmap-week-titulo');
+        var statsEl = document.getElementById('heatmap-week-stats');
+        if (!zoneSel || !winSel || !container) return;
+        var zone = zoneSel.value;
+        var nDays = parseInt(winSel.value, 10) || 30;
+        if (!zone) return;
+
+        // Periodo: nDays dias terminados no dia mais recente disponivel (ou
+        // no seletor principal se for anterior)
+        var endStr = ultimaDataDisponivel || (seletorData && seletorData.value);
+        if (!endStr) return;
+        var endD = parseDateStr(endStr);
+        var startD = new Date(endD); startD.setDate(startD.getDate() - (nDays - 1));
+        var startStr = formatDateStr(startD);
+        if (startStr < DATA_INICIO) startStr = DATA_INICIO;
+
+        var monthsNeeded = monthsInRange(startStr, endStr);
+        var missing = monthsNeeded.filter(function(ym) { return !dataCache[ym]; });
+        if (missing.length) {
+            ensureMonthsLoaded(missing).then(updateWeeklyProfile);
+            container.innerHTML = '<p class="no-data-msg" style="text-align:center;">A carregar…</p>';
+            return;
+        }
+
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        var allDays = datesInRange(startStr, endStr);
+
+        // Acumular por (hora, dia-da-semana ISO 0=Seg .. 6=Dom)
+        var sums = []; var counts = [];
+        for (var hi = 0; hi < 24; hi++) {
+            sums.push(new Array(7).fill(0));
+            counts.push(new Array(7).fill(0));
+        }
+        // Coleta separada de TODAS as medias horarias subjacentes (dia-a-dia, sem
+        // agregar por dia da semana). Usado para a media/min/max global do
+        // periodo, garantindo coerencia com o Heatmap horario.
+        var rawHourly = [];
+        for (var di = 0; di < allDays.length; di++) {
+            var ds = allDays[di];
+            var ym = ds.substring(0, 7);
+            var monthData = dataCache[ym] || {};
+            var raw = monthData[ds] && monthData[ds][dataZone];
+            if (!raw || typeof raw === 'number' || !raw.values) continue;
+            // Calcular dia da semana ISO (0 = Seg, 6 = Dom)
+            var d = parseDateStr(ds);
+            var dow = (d.getDay() + 6) % 7;  // JS: 0=Dom, 1=Seg → ISO 0=Seg
+            var res = raw.resolution || 'PT60M';
+            var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
+            var perHour = 60 / slot;
+            for (var hh = 0; hh < 24; hh++) {
+                var s = 0, c = 0;
+                for (var qq = 0; qq < perHour; qq++) {
+                    var idx = hh * perHour + qq;
+                    if (idx < raw.values.length && raw.values[idx] != null) {
+                        s += raw.values[idx]; c++;
+                    }
+                }
+                if (c > 0) {
+                    var hourlyAvg = s / c;
+                    sums[hh][dow] += hourlyAvg;
+                    counts[hh][dow] += 1;
+                    rawHourly.push(hourlyAvg);  // para stats globais "iguais" ao Heatmap horario
+                }
+            }
+        }
+
+        // Grid final: hourly x weekday averages
+        var grid = []; var allVals = [];
+        for (var h2 = 0; h2 < 24; h2++) {
+            grid.push(new Array(7).fill(null));
+            for (var dw = 0; dw < 7; dw++) {
+                if (counts[h2][dw] > 0) {
+                    grid[h2][dw] = sums[h2][dw] / counts[h2][dw];
+                    allVals.push(grid[h2][dw]);
+                }
+            }
+        }
+        // Medias por linha (hora) e coluna (dia da semana)
+        var hourAvg = new Array(24).fill(null);
+        var dowAvg = new Array(7).fill(null);
+        for (var hA = 0; hA < 24; hA++) {
+            var sH = 0, cH = 0;
+            for (var dA = 0; dA < 7; dA++) if (grid[hA][dA] != null) { sH += grid[hA][dA]; cH++; }
+            if (cH > 0) hourAvg[hA] = sH / cH;
+        }
+        for (var dB = 0; dB < 7; dB++) {
+            var sD = 0, cD = 0;
+            for (var hB = 0; hB < 24; hB++) if (grid[hB][dB] != null) { sD += grid[hB][dB]; cD++; }
+            if (cD > 0) dowAvg[dB] = sD / cD;
+        }
+        var globalAvg = allVals.length ? (allVals.reduce(function(a, b) { return a + b; }, 0) / allVals.length) : null;
+
+        var lightOnDark = function(v) {
+            if (v == null) return false;
+            if (v >= -15 && v < 0) return true;
+            if (v >= 15 && v < 105) return true;
+            return false;
+        };
+        var wWide = !!(document.getElementById('heatmap-week-wrapper') && document.getElementById('heatmap-week-wrapper').classList.contains('viz-wide'));
+        var fmtCell = function(v) { return wWide ? fmtN(v, 2) : String(Math.round(v)); };
+        var coloredCell = function(v, extraCls, tip) {
+            if (v == null) {
+                var clsE = 'hh-cell hh-empty' + (extraCls ? ' ' + extraCls : '');
+                return '<div class="' + clsE + '"></div>';
+            }
+            var cls = 'hh-cell hh-data';
+            if (lightOnDark(v)) cls += ' hh-light';
+            if (extraCls) cls += ' ' + extraCls;
+            return '<div class="' + cls + '" style="background:' + getColor(v) + '" title="' + (tip || '') + '">' + fmtCell(v) + '</div>';
+        };
+
+        // Cols: Hora label + 7 dias + spacer + Média
+        var dataCol = wWide ? 60 : 50;
+        var avgCol = wWide ? 70 : 60;
+        var gridStyle = 'grid-template-columns: 50px repeat(7, minmax(' + dataCol + 'px, 1fr)) 8px ' + avgCol + 'px;';
+        var html = '<div class="hh-grid" style="' + gridStyle + '; min-width: auto;">';
+        // Cabecalho
+        html += '<div class="hh-cell hh-header">Hora</div>';
+        for (var dh = 0; dh < 7; dh++) {
+            html += '<div class="hh-cell hh-header">' + WEEKDAY_NAMES[dh] + '</div>';
+        }
+        html += '<div class="hh-cell hh-spacer"></div>';
+        html += '<div class="hh-cell hh-avg-header" title="Média 7 dias">Média</div>';
+        // Linhas das horas
+        for (var h3 = 0; h3 < 24; h3++) {
+            html += '<div class="hh-cell hh-header">' + String(h3).padStart(2, '0') + 'h</div>';
+            for (var d3 = 0; d3 < 7; d3++) {
+                var v = grid[h3][d3];
+                var tip = WEEKDAY_NAMES[d3] + ' ' + String(h3).padStart(2, '0') + 'h: ' + (v != null ? fmtN(v, 2) + ' €/MWh' : 'sem dados');
+                html += coloredCell(v, null, tip);
+            }
+            html += '<div class="hh-cell hh-spacer"></div>';
+            html += coloredCell(hourAvg[h3], 'hh-avg', 'Média ' + String(h3).padStart(2, '0') + 'h ao longo da semana: ' + (hourAvg[h3] != null ? fmtN(hourAvg[h3], 2) + ' €/MWh' : '—'));
+        }
+        // Linha espacadora
+        for (var sp = 0; sp < 7 + 3; sp++) html += '<div class="hh-cell hh-spacer"></div>';
+        // Linha das medias por dia da semana
+        html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+        for (var d4 = 0; d4 < 7; d4++) {
+            html += coloredCell(dowAvg[d4], 'hh-avg', WEEKDAY_NAMES[d4] + ' (média 24h): ' + (dowAvg[d4] != null ? fmtN(dowAvg[d4], 2) + ' €/MWh' : '—'));
+        }
+        // Canto inferior-direito: vazio (média global de "média de médias" seria
+        // matematicamente diferente da do Heatmap horário e geraria confusão).
+        // As médias por linha (hora) e coluna (dia da semana) continuam corretas
+        // dentro do contexto deste perfil agregado.
+        html += '<div class="hh-cell hh-spacer"></div>';
+        html += '<div class="hh-cell hh-empty" title="Média global omitida — ver estatísticas em baixo"></div>';
+
+        html += '</div>';
+        container.innerHTML = html;
+
+        if (titulo) {
+            titulo.textContent = 'Perfil semanal — ' + (ZONE_NAMES[zone] || zone) + ' · últimos ' + nDays + ' dias (' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')';
+        }
+        if (statsEl) {
+            if (rawHourly.length) {
+                // Estatisticas baseadas em TODAS as medias horarias subjacentes,
+                // nao nas celulas agregadas (mesma logica do Heatmap horario).
+                var minV = Math.min.apply(null, rawHourly);
+                var maxV = Math.max.apply(null, rawHourly);
+                var avgV = rawHourly.reduce(function(a, b) { return a + b; }, 0) / rawHourly.length;
+                statsEl.textContent = 'Média: ' + fmtN(avgV, 2) + ' · Mín: ' + fmtN(minV, 2) + ' · Máx: ' + fmtN(maxV, 2) + ' €/MWh';
+            } else {
+                statsEl.textContent = 'Sem dados';
+            }
+        }
+    }
+
     function updateHourlyHeatmap() {
         var zoneSel = document.getElementById('global-zone-select');
-        var monthInput = document.getElementById('heatmap-hour-month');
+        var endInput = document.getElementById('heatmap-hour-month');
+        var ymInput = document.getElementById('heatmap-hour-month-ym');
         var container = document.getElementById('heatmap-hour-container');
         var titulo = document.getElementById('heatmap-hour-titulo');
         var statsEl = document.getElementById('heatmap-hour-stats');
-        if (!zoneSel || !monthInput || !container) return;
+        if (!zoneSel || !container) return;
         var zone = zoneSel.value;
-        var ym = monthInput.value;
-        if (!zone || !ym) return;
+        if (!zone) return;
 
-        // Carregar mes em background se ainda nao estiver
-        if (!dataCache[ym]) {
-            ensureMonthsLoaded([ym]).then(updateHourlyHeatmap);
+        var mode = prefs.hourHeatMode === 'month' ? 'month' : 'rolling';
+        var startStr, endStr, modeLabel;
+
+        if (mode === 'month') {
+            var ym = ymInput && ymInput.value;
+            if (!ym || !/^\d{4}-\d{2}$/.test(ym)) return;
+            var p = ym.split('-');
+            var y = parseInt(p[0], 10), mo = parseInt(p[1], 10);
+            var lastDay = new Date(y, mo, 0).getDate();
+            startStr = ym + '-01';
+            endStr = ym + '-' + String(lastDay).padStart(2, '0');
+            modeLabel = 'mês completo';
+        } else {
+            endStr = endInput && endInput.value;
+            if (!endStr) return;
+            startStr = rollingMonthStart(endStr);
+            if (startStr < DATA_INICIO) startStr = DATA_INICIO;
+            modeLabel = 'mês deslizante';
+        }
+        if (ultimaDataDisponivel && endStr > ultimaDataDisponivel) endStr = ultimaDataDisponivel;
+
+        // Carregar todos os meses cobertos pelo intervalo
+        var monthsNeeded = monthsInRange(startStr, endStr);
+        var missing = monthsNeeded.filter(function(ym) { return !dataCache[ym]; });
+        if (missing.length) {
+            ensureMonthsLoaded(missing).then(updateHourlyHeatmap);
             container.innerHTML = '<p class="no-data-msg">A carregar…</p>';
             return;
         }
 
         var dataZone = ZONE_DATA_MAP[zone] || zone;
-        var monthData = dataCache[ym] || {};
 
-        // Determinar numero de dias do mes
-        var partes = ym.split('-');
-        var year = parseInt(partes[0], 10), mo = parseInt(partes[1], 10);
-        var daysInMonth = new Date(year, mo, 0).getDate();
+        // Lista de dias entre startStr e endStr (inclusive)
+        var allDays = datesInRange(startStr, endStr);
+        var nDays = allDays.length;
 
         // Recolher 24 valores horarios por dia (downsampling automatico se PT15M)
-        var grid = [];      // grid[hour][day-1] = valor ou null
-        var partialCells = {}; // key = h+'_'+d
-        for (var h = 0; h < 24; h++) grid.push(new Array(daysInMonth).fill(null));
+        var grid = [];      // grid[hour][col] = valor ou null
+        var partialCells = {}; // key = h+'_'+col
+        for (var h = 0; h < 24; h++) grid.push(new Array(nDays).fill(null));
 
         var allVals = [];
-        for (var d = 1; d <= daysInMonth; d++) {
-            var ds = ym + '-' + String(d).padStart(2, '0');
+        for (var d = 0; d < nDays; d++) {
+            var ds = allDays[d];
+            var ym = ds.substring(0, 7);
+            var monthData = dataCache[ym] || {};
             var raw = monthData[ds] && monthData[ds][dataZone];
             if (!raw || typeof raw === 'number' || !raw.values) continue;
             var res = raw.resolution || 'PT60M';
@@ -2689,55 +3264,119 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 if (count > 0) {
-                    grid[hh][d - 1] = sum / count;
+                    grid[hh][d] = sum / count;
                     allVals.push(sum / count);
-                    if (hasNull && count < perHour) partialCells[hh + '_' + (d - 1)] = true;
+                    if (hasNull && count < perHour) partialCells[hh + '_' + d] = true;
                 }
             }
         }
 
-        // Determinar cor de texto (escura vs clara) com base na luminosidade
-        // do fundo. Cores claras (lilas, azuis claros, amarelos, laranjas
-        // claros) -> texto preto; cores escuras (roxo escuro, azul-marinho,
-        // vermelho/bordeaux) -> texto branco.
+        // Cor de texto: claro/escuro
         var lightOnDark = function(v) {
             if (v == null) return false;
-            // Lilas (-15 a 0): claro -> texto preto
             if (v >= -15 && v < 0) return true;
-            // Faixa central 15-105 (azul claro / amarelo / laranja claro): texto preto
             if (v >= 15 && v < 105) return true;
             return false;
         };
 
-        // Construir grid
-        var gridStyle = 'grid-template-columns: 50px repeat(' + daysInMonth + ', minmax(22px, 1fr));';
-        var html = '<div class="hh-grid" style="' + gridStyle + '">';
-        // Linha de cabecalho (dia do mes)
-        html += '<div class="hh-cell hh-header">Hora</div>';
-        for (var dh = 1; dh <= daysInMonth; dh++) {
-            html += '<div class="hh-cell hh-header">' + dh + '</div>';
+        // Calcular medias por hora (linha das medias por dia) e por dia
+        // (coluna das medias por hora). NULLs sao ignorados.
+        var hourAvg = new Array(24).fill(null);  // 1 valor por hora (media ao longo dos dias)
+        var dayAvg = new Array(nDays).fill(null); // 1 valor por dia (media ao longo das 24h)
+        for (var hA = 0; hA < 24; hA++) {
+            var sH = 0, cH = 0;
+            for (var dA = 0; dA < nDays; dA++) {
+                var vH = grid[hA][dA];
+                if (vH != null) { sH += vH; cH++; }
+            }
+            if (cH > 0) hourAvg[hA] = sH / cH;
         }
-        // Linhas (horas)
+        for (var dB = 0; dB < nDays; dB++) {
+            var sD = 0, cD = 0;
+            for (var hB = 0; hB < 24; hB++) {
+                var vD = grid[hB][dB];
+                if (vD != null) { sD += vD; cD++; }
+            }
+            if (cD > 0) dayAvg[dB] = sD / cD;
+        }
+        var globalAvg = allVals.length ? (allVals.reduce(function(a, b) { return a + b; }, 0) / allVals.length) : null;
+
+        // Detetar se a vista esta em "Largura total" — neste modo ha mais
+        // espaco horizontal, podemos mostrar valores com 2 casas decimais.
+        var wrapperEl = document.getElementById('heatmap-hour-wrapper');
+        var isWide = wrapperEl && wrapperEl.classList.contains('viz-wide');
+        var fmtCell = function(v) { return isWide ? fmtN(v, 2) : String(Math.round(v)); };
+
+        // Helper para celula colorida (data ou media)
+        var coloredCell = function(v, extraCls, tip) {
+            if (v == null) {
+                var clsE = 'hh-cell hh-empty' + (extraCls ? ' ' + extraCls : '');
+                return '<div class="' + clsE + '"></div>';
+            }
+            var cls = 'hh-cell hh-data';
+            if (lightOnDark(v)) cls += ' hh-light';
+            if (extraCls) cls += ' ' + extraCls;
+            return '<div class="' + cls + '" style="background:' + getColor(v) + '" title="' + (tip || '') + '">' + fmtCell(v) + '</div>';
+        };
+
+        // Grid: cols = "Hora label" + nDays + spacer + "Média"
+        // Em viz-wide, alargar celulas para caber "47,82" (5 chars); estreito mantem inteiros.
+        var dataColMin = isWide ? 38 : 28;
+        var avgColW = isWide ? 64 : 56;
+        var gridStyle = 'grid-template-columns: 50px repeat(' + nDays + ', minmax(' + dataColMin + 'px, 1fr)) 8px ' + avgColW + 'px;';
+        var html = '<div class="hh-grid" style="' + gridStyle + '">';
+
+        // Linha de cabecalho
+        html += '<div class="hh-cell hh-header">Hora</div>';
+        for (var dh = 0; dh < nDays; dh++) {
+            var dParts = allDays[dh].split('-');
+            var hdr = dParts[2] + '/' + dParts[1];
+            html += '<div class="hh-cell hh-header" title="' + allDays[dh] + '">' + hdr + '</div>';
+        }
+        html += '<div class="hh-cell hh-spacer"></div>';
+        html += '<div class="hh-cell hh-avg-header" title="Média ao longo dos ' + nDays + ' dias">Média</div>';
+
+        // Linhas das horas (1 por hora) com coluna de media por hora
         for (var h2 = 0; h2 < 24; h2++) {
             html += '<div class="hh-cell hh-header">' + String(h2).padStart(2, '0') + 'h</div>';
-            for (var d2 = 0; d2 < daysInMonth; d2++) {
+            for (var d2 = 0; d2 < nDays; d2++) {
                 var v = grid[h2][d2];
                 if (v == null) {
                     html += '<div class="hh-cell hh-empty"></div>';
                 } else {
-                    var cls = 'hh-cell hh-data';
-                    if (lightOnDark(v)) cls += ' hh-light';
-                    if (partialCells[h2 + '_' + d2]) cls += ' hh-partial';
-                    var dStr = ym + '-' + String(d2 + 1).padStart(2, '0');
+                    var cls2 = 'hh-cell hh-data';
+                    if (lightOnDark(v)) cls2 += ' hh-light';
+                    if (partialCells[h2 + '_' + d2]) cls2 += ' hh-partial';
+                    var dStr = allDays[d2];
                     var tip = dStr + ' ' + String(h2).padStart(2, '0') + 'h: ' + fmtN(v, 2) + ' €/MWh';
-                    html += '<div class="' + cls + '" style="background:' + getColor(v) + '" title="' + tip + '">' + Math.round(v) + '</div>';
+                    html += '<div class="' + cls2 + '" style="background:' + getColor(v) + '" title="' + tip + '">' + fmtCell(v) + '</div>';
                 }
             }
+            html += '<div class="hh-cell hh-spacer"></div>';
+            html += coloredCell(hourAvg[h2], 'hh-avg', 'Média da hora ' + String(h2).padStart(2, '0') + 'h: ' + (hourAvg[h2] != null ? fmtN(hourAvg[h2], 2) + ' €/MWh' : '—'));
         }
+
+        // Linha espacadora (so spacers em todas as colunas)
+        for (var sp = 0; sp < nDays + 3; sp++) {
+            html += '<div class="hh-cell hh-spacer"></div>';
+        }
+
+        // Linha das medias por dia
+        html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+        for (var d3 = 0; d3 < nDays; d3++) {
+            html += coloredCell(dayAvg[d3], 'hh-avg', allDays[d3] + ' (média 24h): ' + (dayAvg[d3] != null ? fmtN(dayAvg[d3], 2) + ' €/MWh' : '—'));
+        }
+        html += '<div class="hh-cell hh-spacer"></div>';
+        html += coloredCell(globalAvg, 'hh-avg', 'Média global do período: ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
+
         html += '</div>';
         container.innerHTML = html;
 
-        if (titulo) titulo.textContent = 'Heatmap horário — ' + (ZONE_NAMES[zone] || zone) + ' · ' + ym;
+        if (titulo) {
+            titulo.textContent = 'Heatmap horário — ' + (ZONE_NAMES[zone] || zone)
+                + ' · ' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr)
+                + ' (' + nDays + ' dias, ' + modeLabel + ')';
+        }
         if (statsEl) {
             if (allVals.length) {
                 var min = Math.min.apply(null, allVals);
@@ -2937,6 +3576,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (typeof updateChart === 'function') updateChart();
                 if (typeof updateIntradayChart === 'function') updateIntradayChart();
                 if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+                if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
             }
         });
     });
@@ -2989,6 +3629,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn('metadata.json não encontrado:', e.message);
             }
             renderDataFreshness(ultimaDataDisponivel, metaLastModified);
+
+            // Auto-refresh: ao voltar a focar a tab (>5 min sem foco), refetch
+            // metadata.json e, se a 'ultima_data' mudou, recarregar dados.
+            var lastFocusCheck = Date.now();
+            document.addEventListener('visibilitychange', async function() {
+                if (document.hidden) return;
+                if (Date.now() - lastFocusCheck < 5 * 60 * 1000) return;
+                lastFocusCheck = Date.now();
+                try {
+                    var r = await fetchComFallback("metadata.json?t=" + Date.now());
+                    if (!r.ok) return;
+                    var m = await r.json();
+                    var newLastMod = r.headers.get('Last-Modified');
+                    var changed = (m.ultima_data && m.ultima_data !== ultimaDataDisponivel);
+                    if (changed) {
+                        ultimaDataDisponivel = m.ultima_data;
+                        seletorData.max = ultimaDataDisponivel;
+                        // Limpar cache do mes mais recente para forcar refetch
+                        var ymRecent = ultimaDataDisponivel.substring(0, 7);
+                        delete dataCache[ymRecent];
+                        await loadPriceData();
+                    }
+                    renderDataFreshness(ultimaDataDisponivel, newLastMod);
+                } catch(e) { /* silencioso */ }
+            });
 
             // Definir datas do seletor
             seletorData.min = DATA_INICIO;
@@ -3093,12 +3758,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-            // Atalhos de teclado: setas esquerda/direita
+            // Atalhos de teclado:
+            //   ← / →  Dia anterior / seguinte
+            //   /      Focar campo de pesquisa de zona
+            //   t / T  Saltar para a data mais recente (hoje/amanhã)
+            //   Esc    Limpar pesquisa de zona (ja tratado no input proprio)
             document.addEventListener('keydown', function(e) {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
                 if (e.ctrlKey || e.metaKey || e.altKey) return;
                 if (e.key === 'ArrowLeft') { alterarData(-1); }
                 else if (e.key === 'ArrowRight') { alterarData(1); }
+                else if (e.key === '/') {
+                    var zs = document.getElementById('zone-search');
+                    if (zs) { zs.focus(); zs.select && zs.select(); e.preventDefault(); }
+                }
+                else if (e.key === 't' || e.key === 'T') {
+                    if (ultimaDataDisponivel) {
+                        seletorData.value = ultimaDataDisponivel;
+                        updateCrossLink(); updateBtnState(); loadPriceData();
+                    }
+                }
             });
 
             // Carregar dados do dia selecionado
@@ -3235,11 +3914,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // --- POPULAR SELECTOR GLOBAL DE ZONA (alimenta todas as secoes) ---
             var zoneSel = document.getElementById('global-zone-select');
-            var compareSel = document.getElementById('global-compare-select');
+            var addCompareSel = document.getElementById('add-compare-select');
             var heatYear = document.getElementById('heatmap-year');
             var hhMonth = document.getElementById('heatmap-hour-month');
 
-            if (zoneSel && compareSel) {
+            if (zoneSel) {
                 var zonesSorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
                     return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
                 });
@@ -3249,31 +3928,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     optsHtml += '<option value="' + zk + '">' + (ZONE_NAMES[zk] || zk) + '</option>';
                 }
                 zoneSel.innerHTML = optsHtml;
-                compareSel.innerHTML = '<option value="">— nenhuma —</option>' + optsHtml;
                 zoneSel.value = 'PT';
                 var urlZone = new URLSearchParams(window.location.search).get('zone') || prefs.zone;
                 if (urlZone && ZONE_NAMES[urlZone]) zoneSel.value = urlZone;
-                if (prefs.compareZone && ZONE_NAMES[prefs.compareZone]) compareSel.value = prefs.compareZone;
+
+                // Migracao soft do legado 'compareZone' (string) -> 'compareZones' (array)
+                if (!prefs.compareZones && prefs.compareZone && ZONE_NAMES[prefs.compareZone]) {
+                    prefs.compareZones = [prefs.compareZone];
+                    savePref('compareZones', prefs.compareZones);
+                }
 
                 // Mudanca de zona global -> atualizar TODAS as visualizacoes
                 zoneSel.addEventListener('change', function() {
                     savePref('zone', zoneSel.value);
+                    renderCompareChips();  // pode haver chip que coincide com a nova zona
                     updateChart();
                     updateIntradayChart();
                     updateHeatmap();
                     updateHourlyHeatmap();
+                    if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
                 });
-                // Comparar -> aplica a evolucao + intradiario
-                compareSel.addEventListener('change', function() {
-                    savePref('compareZone', compareSel.value);
-                    updateChart();
-                    updateIntradayChart();
-                });
+
+                // Adicionar comparacao
+                if (addCompareSel) {
+                    addCompareSel.addEventListener('change', function() {
+                        if (!addCompareSel.value) return;
+                        var added = addCompareZone(addCompareSel.value);
+                        addCompareSel.value = '';
+                        if (added) {
+                            renderCompareChips();
+                            updateChart();
+                            updateIntradayChart();
+                        }
+                    });
+                }
+                // Render inicial dos chips
+                renderCompareChips();
 
                 // Botao "Largura total" — aplica .viz-wide a todas as 4 visualizacoes
                 var btnVizWide = document.getElementById('btn-viz-wide');
                 if (btnVizWide) {
-                    var vizIds = ['intraday-wrapper', 'chart-wrapper', 'heatmap-hour-wrapper', 'heatmap-wrapper'];
+                    var vizIds = ['intraday-wrapper', 'chart-wrapper', 'heatmap-hour-wrapper', 'heatmap-week-wrapper', 'heatmap-wrapper'];
                     var applyWide = function(on) {
                         vizIds.forEach(function(id) {
                             var el = document.getElementById(id);
@@ -3293,6 +3988,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (intradayChart) intradayChart.resize();
                             if (typeof updateHeatmap === 'function') updateHeatmap();
                             if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+                if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
                         }, 220);
                     });
                 }
@@ -3312,15 +4008,75 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(updateHeatmap, 50);
             }
 
-            // --- HEATMAP HORARIO: input Mes ---
-            if (hhMonth) {
-                hhMonth.min = DATA_INICIO.substring(0, 7);
-                if (ultimaDataDisponivel) hhMonth.max = ultimaDataDisponivel.substring(0, 7);
-                hhMonth.value = (prefs.hourHeatMonth && /^\d{4}-\d{2}$/.test(prefs.hourHeatMonth))
-                    ? prefs.hourHeatMonth
+            // --- HEATMAP HORARIO: dois modos (mes completo / mes deslizante) ---
+            var hhYM = document.getElementById('heatmap-hour-month-ym');
+            var hhBtnMonth = document.getElementById('hh-mode-month');
+            var hhBtnRolling = document.getElementById('hh-mode-rolling');
+            var hhLabelMonth = document.getElementById('hh-label-month');
+            var hhLabelEnd = document.getElementById('hh-label-end');
+
+            if (hhMonth && hhYM && hhBtnMonth && hhBtnRolling) {
+                // Limites dos inputs
+                hhMonth.min = DATA_INICIO;
+                hhYM.min = DATA_INICIO.substring(0, 7);
+                if (ultimaDataDisponivel) {
+                    hhMonth.max = ultimaDataDisponivel;
+                    hhYM.max = ultimaDataDisponivel.substring(0, 7);
+                }
+
+                // Valor inicial — modo deslizante
+                var savedEnd = prefs.hourHeatEnd;
+                if (savedEnd && /^\d{4}-\d{2}$/.test(savedEnd)) savedEnd = null; // legado YYYY-MM
+                hhMonth.value = (savedEnd && /^\d{4}-\d{2}-\d{2}$/.test(savedEnd))
+                    ? savedEnd
+                    : (ultimaDataDisponivel || (seletorData && seletorData.value) || '');
+
+                // Valor inicial — modo mes completo
+                var savedYM = prefs.hourHeatMonthYM;
+                hhYM.value = (savedYM && /^\d{4}-\d{2}$/.test(savedYM))
+                    ? savedYM
                     : (ultimaDataDisponivel ? ultimaDataDisponivel.substring(0, 7) : '');
-                hhMonth.addEventListener('change', function() { savePref('hourHeatMonth', hhMonth.value); updateHourlyHeatmap(); });
+
+                // Aplicar modo guardado (default: rolling)
+                var initMode = (prefs.hourHeatMode === 'month') ? 'month' : 'rolling';
+                applyHourHeatMode(initMode);
+
+                // Listeners dos inputs
+                hhMonth.addEventListener('change', function() { savePref('hourHeatEnd', hhMonth.value); updateHourlyHeatmap(); });
+                hhYM.addEventListener('change', function() { savePref('hourHeatMonthYM', hhYM.value); updateHourlyHeatmap(); });
+
+                // Listeners do toggle de modo
+                hhBtnMonth.addEventListener('click', function() { applyHourHeatMode('month'); });
+                hhBtnRolling.addEventListener('click', function() { applyHourHeatMode('rolling'); });
+
                 setTimeout(updateHourlyHeatmap, 80);
+            }
+
+            // --- PERFIL SEMANAL: input "Período" ---
+            var hwWindow = document.getElementById('hw-window');
+            if (hwWindow) {
+                if (prefs.weeklyWindow && /^(30|60|90|365)$/.test(prefs.weeklyWindow)) {
+                    hwWindow.value = prefs.weeklyWindow;
+                }
+                hwWindow.addEventListener('change', function() {
+                    savePref('weeklyWindow', hwWindow.value);
+                    updateWeeklyProfile();
+                });
+                setTimeout(updateWeeklyProfile, 100);
+            }
+
+            function applyHourHeatMode(m) {
+                if (!hhMonth || !hhYM) return;
+                var isMonth = (m === 'month');
+                if (hhBtnMonth) hhBtnMonth.classList.toggle('active', isMonth);
+                if (hhBtnRolling) hhBtnRolling.classList.toggle('active', !isMonth);
+                if (hhLabelMonth) hhLabelMonth.style.display = isMonth ? 'inline' : 'none';
+                if (hhLabelEnd) hhLabelEnd.style.display = isMonth ? 'none' : 'inline';
+                hhYM.style.display = isMonth ? 'inline-block' : 'none';
+                hhMonth.style.display = isMonth ? 'none' : 'inline-block';
+                prefs.hourHeatMode = m;
+                savePref('hourHeatMode', m);
+                updateHourlyHeatmap();
             }
 
             // Toggles da tabela
@@ -3374,6 +4130,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     init();
+
+    // Registar service worker (PWA basico) — apenas em HTTPS/localhost
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw-mapa-precos.js', { scope: './' })
+                .catch(function(err) { console.warn('SW registration failed:', err); });
+        });
+    }
 
     // Carregar menu e footer (silencioso - falha OK em teste local)
     fetch('menu.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
