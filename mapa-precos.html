@@ -394,7 +394,9 @@
 
         #heatmap-week-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
         #heatmap-week-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
-        #heatmap-week-container { overflow-x: auto; display: flex; justify-content: center; }
+        #heatmap-week-container { overflow-x: auto; }
+        #heatmap-week-wrapper.viz-wide .hh-grid { font-size: 0.72em; }
+        #heatmap-week-wrapper.viz-wide .hh-cell { min-height: 22px; }
         [data-theme="dark"] #heatmap-week-wrapper h2 { color: #e2e8f0; }
 
         #heatmap-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
@@ -416,14 +418,22 @@
         .heatmap-grid { display: inline-block; min-width: 100%; }
         .heatmap-month-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
         .heatmap-month-label { width: 36px; font-size: 0.78em; color: #64748b; text-align: right; flex-shrink: 0; }
-        .heatmap-days { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; flex: 1; }
+        .heatmap-days { display: grid; grid-template-columns: repeat(31, 1fr) 10px minmax(40px, 56px); gap: 2px; flex: 1; align-items: center; }
         .heatmap-cell { aspect-ratio: 1; min-width: 14px; max-width: 28px; border-radius: 2px; cursor: pointer; transition: transform 0.1s; }
         .heatmap-cell:hover { transform: scale(1.2); outline: 1.5px solid #2563eb; outline-offset: 1px; z-index: 1; position: relative; }
         .heatmap-cell.empty { background: transparent !important; cursor: default; }
         .heatmap-cell.no-data { background: #e5e7eb; cursor: default; }
+        .heatmap-spacer { background: transparent; }
+        .heatmap-month-avg { aspect-ratio: auto; height: 22px; min-width: 40px; max-width: 56px; border-radius: 3px; cursor: default; display: flex; align-items: center; justify-content: center; font-size: 0.75em; font-weight: 700; color: #fff; text-shadow: 0 0 2px rgba(0,0,0,0.7); }
+        .heatmap-month-avg.light { color: #0f172a; text-shadow: 0 0 2px rgba(255,255,255,0.6); }
+        .heatmap-month-avg.no-data { background: #e5e7eb; color: #94a3b8; text-shadow: none; }
         .heatmap-day-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.7em; color: #94a3b8; }
-        .heatmap-day-numbers { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; flex: 1; padding-left: 0; }
+        .heatmap-day-numbers { display: grid; grid-template-columns: repeat(31, 1fr) 10px minmax(40px, 56px); gap: 2px; flex: 1; padding-left: 0; }
         .heatmap-day-numbers span { text-align: center; }
+        .heatmap-day-numbers .heatmap-spacer { background: transparent; }
+        .heatmap-day-numbers .heatmap-avg-header { font-weight: 700; color: #475569; text-align: center; }
+        [data-theme="dark"] .heatmap-day-numbers .heatmap-avg-header { color: #cbd5e1; }
+        [data-theme="dark"] .heatmap-month-avg.no-data { background: #334155; color: #64748b; }
         [data-theme="dark"] #heatmap-wrapper h2 { color: #e2e8f0; }
         [data-theme="dark"] .heatmap-controls label { color: #cbd5e1; }
         [data-theme="dark"] .heatmap-controls select { background: #1e293b; color: #e2e8f0; border-color: #475569; }
@@ -728,6 +738,10 @@
             <input type="month" id="heatmap-hour-month-ym" style="display:none;">
             <label for="heatmap-hour-month" id="hh-label-end">Dia final:</label>
             <input type="date" id="heatmap-hour-month" title="A grelha mostra o mês deslizante terminado neste dia (30 ou 31 dias)">
+            <div class="hh-mode-toggle ho-orient-toggle" role="radiogroup" aria-label="Orientação da tabela" title="Aplica-se também ao Perfil semanal">
+                <button type="button" class="hh-mode-btn ho-orient-btn active" data-orient="rows-dates" title="Datas/dias nas linhas (estilo OMIE)">⬇ Datas</button>
+                <button type="button" class="hh-mode-btn ho-orient-btn" data-orient="rows-hours" title="Horas nas linhas">⬇ Horas</button>
+            </div>
             <span class="heatmap-stats" id="heatmap-hour-stats"></span>
         </div>
         <div id="heatmap-hour-container" role="img" aria-label="Heatmap horário"></div>
@@ -743,6 +757,10 @@
                 <option value="90">Últimos 90 dias</option>
                 <option value="365">Últimos 365 dias</option>
             </select>
+            <div class="hh-mode-toggle ho-orient-toggle" role="radiogroup" aria-label="Orientação da tabela" title="Aplica-se também ao Heatmap horário">
+                <button type="button" class="hh-mode-btn ho-orient-btn active" data-orient="rows-dates" title="Dias da semana nas linhas (estilo OMIE)">⬇ Dias</button>
+                <button type="button" class="hh-mode-btn ho-orient-btn" data-orient="rows-hours" title="Horas nas linhas">⬇ Horas</button>
+            </div>
             <span class="heatmap-stats" id="heatmap-week-stats"></span>
         </div>
         <div id="heatmap-week-container" role="img" aria-label="Perfil semanal"></div>
@@ -2558,10 +2576,19 @@ document.addEventListener('DOMContentLoaded', function() {
             statsEl.innerHTML = values.length + ' dias · Média: <strong>' + fmtN(avgV, 2) + '</strong> · Mín: <strong>' + fmtN(minV, 2) + '</strong> · Máx: <strong>' + fmtN(maxV, 2) + '</strong> €/MWh';
         }
 
-        // Construir grelha: linha header (1..31) + 12 linhas mensais
+        // Helper: detetar se a cor da escala precisa de texto preto (faixa central clara)
+        var isLightBg = function(v) {
+            if (v == null) return false;
+            if (v >= -15 && v < 0) return true;
+            if (v >= 15 && v < 105) return true;
+            return false;
+        };
+
+        // Construir grelha: linha header (1..31 + Média) + 12 linhas mensais
         var html = '<div class="heatmap-grid">';
         html += '<div class="heatmap-day-header"><span class="heatmap-month-label"></span><div class="heatmap-day-numbers">';
         for (var d = 1; d <= 31; d++) html += '<span>' + d + '</span>';
+        html += '<span class="heatmap-spacer"></span><span class="heatmap-avg-header" title="Média mensal">Média</span>';
         html += '</div></div>';
 
         for (var mm = 1; mm <= 12; mm++) {
@@ -2569,6 +2596,7 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<span class="heatmap-month-label">' + MES_NOMES[mm - 1] + '</span>';
             html += '<div class="heatmap-days">';
             var daysInMonth = new Date(year, mm, 0).getDate();
+            var monthSum = 0, monthCount = 0;
             for (var dd = 1; dd <= 31; dd++) {
                 if (dd > daysInMonth) {
                     html += '<div class="heatmap-cell empty"></div>';
@@ -2582,7 +2610,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     var bg = getColor(v2);
                     var t = fmtDateBR(dateStr) + ': ' + fmtN(v2, 2) + ' €/MWh';
                     html += '<div class="heatmap-cell" style="background:' + bg + '" title="' + t + '" data-date="' + dateStr + '"></div>';
+                    monthSum += v2; monthCount++;
                 }
+            }
+            // Spacer + media mensal
+            html += '<div class="heatmap-spacer"></div>';
+            if (monthCount > 0) {
+                var monthAvg = monthSum / monthCount;
+                var avgCls = 'heatmap-month-avg' + (isLightBg(monthAvg) ? ' light' : '');
+                var avgTip = MES_NOMES[mm - 1] + ' ' + year + ' — Média mensal: ' + fmtN(monthAvg, 2) + ' €/MWh (' + monthCount + ' dias)';
+                html += '<div class="' + avgCls + '" style="background:' + getColor(monthAvg) + '" title="' + avgTip + '">' + fmtN(monthAvg, 2) + '</div>';
+            } else {
+                html += '<div class="heatmap-month-avg no-data" title="' + MES_NOMES[mm - 1] + ' ' + year + ': sem dados">—</div>';
             }
             html += '</div></div>';
         }
@@ -3135,44 +3174,72 @@ document.addEventListener('DOMContentLoaded', function() {
             return '<div class="' + cls + '" style="background:' + getColor(v) + '" title="' + (tip || '') + '">' + fmtCell(v) + '</div>';
         };
 
-        // Cols: Hora label + 7 dias + spacer + Média
         var dataCol = wWide ? 60 : 50;
         var avgCol = wWide ? 70 : 60;
-        var gridStyle = 'grid-template-columns: 50px repeat(7, minmax(' + dataCol + 'px, 1fr)) 8px ' + avgCol + 'px;';
-        var html = '<div class="hh-grid" style="' + gridStyle + '; min-width: auto;">';
-        // Cabecalho
-        html += '<div class="hh-cell hh-header">Hora</div>';
-        for (var dh = 0; dh < 7; dh++) {
-            html += '<div class="hh-cell hh-header">' + WEEKDAY_NAMES[dh] + '</div>';
-        }
-        html += '<div class="hh-cell hh-spacer"></div>';
-        html += '<div class="hh-cell hh-avg-header" title="Média 7 dias">Média</div>';
-        // Linhas das horas
-        for (var h3 = 0; h3 < 24; h3++) {
-            html += '<div class="hh-cell hh-header">' + String(h3).padStart(2, '0') + 'h</div>';
-            for (var d3 = 0; d3 < 7; d3++) {
-                var v = grid[h3][d3];
-                var tip = WEEKDAY_NAMES[d3] + ' ' + String(h3).padStart(2, '0') + 'h: ' + (v != null ? fmtN(v, 2) + ' €/MWh' : 'sem dados');
-                html += coloredCell(v, null, tip);
+        var orient = getHeatmapOrientation();
+        var html;
+
+        // Helper para celula de dados
+        var dataCell = function(h, d) {
+            var v = grid[h][d];
+            var tip = WEEKDAY_NAMES[d] + ' ' + String(h).padStart(2, '0') + 'h: ' + (v != null ? fmtN(v, 2) + ' €/MWh' : 'sem dados');
+            return coloredCell(v, null, tip);
+        };
+
+        if (orient === 'rows-hours') {
+            // Cols: Hora label + 7 dias + spacer + Média
+            var gridStyle = 'grid-template-columns: 50px repeat(7, minmax(' + dataCol + 'px, 1fr)) 8px ' + avgCol + 'px;';
+            html = '<div class="hh-grid" style="' + gridStyle + '">';
+            html += '<div class="hh-cell hh-header">Hora</div>';
+            for (var dh = 0; dh < 7; dh++) html += '<div class="hh-cell hh-header">' + WEEKDAY_NAMES[dh] + '</div>';
+            html += '<div class="hh-cell hh-spacer"></div>';
+            html += '<div class="hh-cell hh-avg-header" title="Média 7 dias">Média</div>';
+            // Linhas das horas
+            for (var h3 = 0; h3 < 24; h3++) {
+                html += '<div class="hh-cell hh-header">' + String(h3).padStart(2, '0') + 'h</div>';
+                for (var d3 = 0; d3 < 7; d3++) html += dataCell(h3, d3);
+                html += '<div class="hh-cell hh-spacer"></div>';
+                html += coloredCell(hourAvg[h3], 'hh-avg', 'Média ' + String(h3).padStart(2, '0') + 'h ao longo da semana: ' + (hourAvg[h3] != null ? fmtN(hourAvg[h3], 2) + ' €/MWh' : '—'));
+            }
+            // Linha espacadora
+            for (var sp = 0; sp < 7 + 3; sp++) html += '<div class="hh-cell hh-spacer"></div>';
+            // Linha das medias por dia da semana
+            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            for (var d4 = 0; d4 < 7; d4++) {
+                html += coloredCell(dowAvg[d4], 'hh-avg', WEEKDAY_NAMES[d4] + ' (média 24h): ' + (dowAvg[d4] != null ? fmtN(dowAvg[d4], 2) + ' €/MWh' : '—'));
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += coloredCell(hourAvg[h3], 'hh-avg', 'Média ' + String(h3).padStart(2, '0') + 'h ao longo da semana: ' + (hourAvg[h3] != null ? fmtN(hourAvg[h3], 2) + ' €/MWh' : '—'));
+            html += '<div class="hh-cell hh-empty" title="Média global omitida — ver estatísticas em baixo"></div>';
+            html += '</div>';
+        } else {
+            // rows-dates: linhas = dias da semana, colunas = horas
+            // Cols: Dia label + 24 horas + spacer + Média
+            var dayLabelW = wWide ? 64 : 54;
+            var hColMin = wWide ? 36 : 26;
+            var gridStyle2 = 'grid-template-columns: ' + dayLabelW + 'px repeat(24, minmax(' + hColMin + 'px, 1fr)) 8px ' + avgCol + 'px;';
+            html = '<div class="hh-grid" style="' + gridStyle2 + '">';
+            html += '<div class="hh-cell hh-header">Dia</div>';
+            for (var hh4 = 0; hh4 < 24; hh4++) html += '<div class="hh-cell hh-header">' + String(hh4).padStart(2, '0') + 'h</div>';
+            html += '<div class="hh-cell hh-spacer"></div>';
+            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            // Linhas dos dias da semana
+            for (var d5 = 0; d5 < 7; d5++) {
+                html += '<div class="hh-cell hh-header">' + WEEKDAY_NAMES[d5] + '</div>';
+                for (var h5 = 0; h5 < 24; h5++) html += dataCell(h5, d5);
+                html += '<div class="hh-cell hh-spacer"></div>';
+                html += coloredCell(dowAvg[d5], 'hh-avg', WEEKDAY_NAMES[d5] + ' (média 24h): ' + (dowAvg[d5] != null ? fmtN(dowAvg[d5], 2) + ' €/MWh' : '—'));
+            }
+            // Linha espacadora
+            for (var sp2 = 0; sp2 < 24 + 3; sp2++) html += '<div class="hh-cell hh-spacer"></div>';
+            // Linha das medias por hora
+            html += '<div class="hh-cell hh-avg-header" title="Média ' + nDays + ' dias (todos os dias da semana)">Média</div>';
+            for (var h6 = 0; h6 < 24; h6++) {
+                html += coloredCell(hourAvg[h6], 'hh-avg', 'Média ' + String(h6).padStart(2, '0') + 'h ao longo da semana: ' + (hourAvg[h6] != null ? fmtN(hourAvg[h6], 2) + ' €/MWh' : '—'));
+            }
+            html += '<div class="hh-cell hh-spacer"></div>';
+            html += '<div class="hh-cell hh-empty" title="Média global omitida — ver estatísticas em baixo"></div>';
+            html += '</div>';
         }
-        // Linha espacadora
-        for (var sp = 0; sp < 7 + 3; sp++) html += '<div class="hh-cell hh-spacer"></div>';
-        // Linha das medias por dia da semana
-        html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
-        for (var d4 = 0; d4 < 7; d4++) {
-            html += coloredCell(dowAvg[d4], 'hh-avg', WEEKDAY_NAMES[d4] + ' (média 24h): ' + (dowAvg[d4] != null ? fmtN(dowAvg[d4], 2) + ' €/MWh' : '—'));
-        }
-        // Canto inferior-direito: vazio (média global de "média de médias" seria
-        // matematicamente diferente da do Heatmap horário e geraria confusão).
-        // As médias por linha (hora) e coluna (dia da semana) continuam corretas
-        // dentro do contexto deste perfil agregado.
-        html += '<div class="hh-cell hh-spacer"></div>';
-        html += '<div class="hh-cell hh-empty" title="Média global omitida — ver estatísticas em baixo"></div>';
-
-        html += '</div>';
         container.innerHTML = html;
 
         if (titulo) {
@@ -3190,6 +3257,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 statsEl.textContent = 'Sem dados';
             }
         }
+    }
+
+    // --- ORIENTACAO DOS HEATMAPS (partilhada entre Horario e Semanal) ---
+    // Default: 'rows-dates' (datas/dias-da-semana nas linhas; horas nas colunas).
+    // Estilo OMIE.es. Alternativa: 'rows-hours' (horas nas linhas).
+    function getHeatmapOrientation() {
+        return (prefs.heatmapOrientation === 'rows-hours') ? 'rows-hours' : 'rows-dates';
+    }
+    function setHeatmapOrientation(orient) {
+        if (orient !== 'rows-dates' && orient !== 'rows-hours') return;
+        savePref('heatmapOrientation', orient);
+        prefs.heatmapOrientation = orient;
+        // Atualizar estado visual de TODOS os toggles em ambas as seccoes
+        var btns = document.querySelectorAll('.ho-orient-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.toggle('active', btns[i].getAttribute('data-orient') === orient);
+        }
+        // Re-render ambos
+        if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+        if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
     }
 
     function updateHourlyHeatmap() {
@@ -3319,57 +3406,85 @@ document.addEventListener('DOMContentLoaded', function() {
             return '<div class="' + cls + '" style="background:' + getColor(v) + '" title="' + (tip || '') + '">' + fmtCell(v) + '</div>';
         };
 
-        // Grid: cols = "Hora label" + nDays + spacer + "Média"
         // Em viz-wide, alargar celulas para caber "47,82" (5 chars); estreito mantem inteiros.
         var dataColMin = isWide ? 38 : 28;
         var avgColW = isWide ? 64 : 56;
-        var gridStyle = 'grid-template-columns: 50px repeat(' + nDays + ', minmax(' + dataColMin + 'px, 1fr)) 8px ' + avgColW + 'px;';
-        var html = '<div class="hh-grid" style="' + gridStyle + '">';
+        var orient = getHeatmapOrientation();
+        var html;
 
-        // Linha de cabecalho
-        html += '<div class="hh-cell hh-header">Hora</div>';
-        for (var dh = 0; dh < nDays; dh++) {
-            var dParts = allDays[dh].split('-');
-            var hdr = dParts[2] + '/' + dParts[1];
-            html += '<div class="hh-cell hh-header" title="' + allDays[dh] + '">' + hdr + '</div>';
-        }
-        html += '<div class="hh-cell hh-spacer"></div>';
-        html += '<div class="hh-cell hh-avg-header" title="Média ao longo dos ' + nDays + ' dias">Média</div>';
+        // Helper para celula de dados com info de partial e tooltip
+        var dataCell = function(h, d) {
+            var v = grid[h][d];
+            if (v == null) return '<div class="hh-cell hh-empty"></div>';
+            var cls = 'hh-cell hh-data';
+            if (lightOnDark(v)) cls += ' hh-light';
+            if (partialCells[h + '_' + d]) cls += ' hh-partial';
+            var tip = allDays[d] + ' ' + String(h).padStart(2, '0') + 'h: ' + fmtN(v, 2) + ' €/MWh';
+            return '<div class="' + cls + '" style="background:' + getColor(v) + '" title="' + tip + '">' + fmtCell(v) + '</div>';
+        };
 
-        // Linhas das horas (1 por hora) com coluna de media por hora
-        for (var h2 = 0; h2 < 24; h2++) {
-            html += '<div class="hh-cell hh-header">' + String(h2).padStart(2, '0') + 'h</div>';
-            for (var d2 = 0; d2 < nDays; d2++) {
-                var v = grid[h2][d2];
-                if (v == null) {
-                    html += '<div class="hh-cell hh-empty"></div>';
-                } else {
-                    var cls2 = 'hh-cell hh-data';
-                    if (lightOnDark(v)) cls2 += ' hh-light';
-                    if (partialCells[h2 + '_' + d2]) cls2 += ' hh-partial';
-                    var dStr = allDays[d2];
-                    var tip = dStr + ' ' + String(h2).padStart(2, '0') + 'h: ' + fmtN(v, 2) + ' €/MWh';
-                    html += '<div class="' + cls2 + '" style="background:' + getColor(v) + '" title="' + tip + '">' + fmtCell(v) + '</div>';
-                }
+        if (orient === 'rows-hours') {
+            // Cols: "Hora label" + nDays + spacer + "Média"
+            var gridStyle = 'grid-template-columns: 50px repeat(' + nDays + ', minmax(' + dataColMin + 'px, 1fr)) 8px ' + avgColW + 'px;';
+            html = '<div class="hh-grid" style="' + gridStyle + '">';
+            // Cabecalho
+            html += '<div class="hh-cell hh-header">Hora</div>';
+            for (var dh = 0; dh < nDays; dh++) {
+                var dParts = allDays[dh].split('-');
+                html += '<div class="hh-cell hh-header" title="' + allDays[dh] + '">' + dParts[2] + '/' + dParts[1] + '</div>';
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += coloredCell(hourAvg[h2], 'hh-avg', 'Média da hora ' + String(h2).padStart(2, '0') + 'h: ' + (hourAvg[h2] != null ? fmtN(hourAvg[h2], 2) + ' €/MWh' : '—'));
-        }
-
-        // Linha espacadora (so spacers em todas as colunas)
-        for (var sp = 0; sp < nDays + 3; sp++) {
+            html += '<div class="hh-cell hh-avg-header" title="Média ao longo dos ' + nDays + ' dias">Média</div>';
+            // Linhas das horas
+            for (var h2 = 0; h2 < 24; h2++) {
+                html += '<div class="hh-cell hh-header">' + String(h2).padStart(2, '0') + 'h</div>';
+                for (var d2 = 0; d2 < nDays; d2++) html += dataCell(h2, d2);
+                html += '<div class="hh-cell hh-spacer"></div>';
+                html += coloredCell(hourAvg[h2], 'hh-avg', 'Média da hora ' + String(h2).padStart(2, '0') + 'h: ' + (hourAvg[h2] != null ? fmtN(hourAvg[h2], 2) + ' €/MWh' : '—'));
+            }
+            // Linha espacadora
+            for (var sp = 0; sp < nDays + 3; sp++) html += '<div class="hh-cell hh-spacer"></div>';
+            // Linha das medias por dia
+            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            for (var d3 = 0; d3 < nDays; d3++) {
+                html += coloredCell(dayAvg[d3], 'hh-avg', allDays[d3] + ' (média 24h): ' + (dayAvg[d3] != null ? fmtN(dayAvg[d3], 2) + ' €/MWh' : '—'));
+            }
             html += '<div class="hh-cell hh-spacer"></div>';
+            html += coloredCell(globalAvg, 'hh-avg', 'Média global do período: ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
+            html += '</div>';
+        } else {
+            // rows-dates (default OMIE-style): linhas = datas, colunas = horas
+            // Cols: "Data label" + 24 horas + spacer + "Média"
+            var dColW = isWide ? 68 : 56;
+            var hColMin = isWide ? 36 : 26;
+            var gridStyle2 = 'grid-template-columns: ' + dColW + 'px repeat(24, minmax(' + hColMin + 'px, 1fr)) 8px ' + avgColW + 'px;';
+            html = '<div class="hh-grid" style="' + gridStyle2 + '">';
+            // Cabecalho
+            html += '<div class="hh-cell hh-header">Data</div>';
+            for (var hh2 = 0; hh2 < 24; hh2++) {
+                html += '<div class="hh-cell hh-header">' + String(hh2).padStart(2, '0') + 'h</div>';
+            }
+            html += '<div class="hh-cell hh-spacer"></div>';
+            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            // Linhas das datas
+            for (var d4 = 0; d4 < nDays; d4++) {
+                var dParts2 = allDays[d4].split('-');
+                html += '<div class="hh-cell hh-header" title="' + allDays[d4] + '">' + dParts2[2] + '/' + dParts2[1] + '</div>';
+                for (var h3 = 0; h3 < 24; h3++) html += dataCell(h3, d4);
+                html += '<div class="hh-cell hh-spacer"></div>';
+                html += coloredCell(dayAvg[d4], 'hh-avg', allDays[d4] + ' (média 24h): ' + (dayAvg[d4] != null ? fmtN(dayAvg[d4], 2) + ' €/MWh' : '—'));
+            }
+            // Linha espacadora
+            for (var sp2 = 0; sp2 < 24 + 3; sp2++) html += '<div class="hh-cell hh-spacer"></div>';
+            // Linha das medias por hora
+            html += '<div class="hh-cell hh-avg-header" title="Média ao longo dos ' + nDays + ' dias">Média</div>';
+            for (var h4 = 0; h4 < 24; h4++) {
+                html += coloredCell(hourAvg[h4], 'hh-avg', 'Média da hora ' + String(h4).padStart(2, '0') + 'h: ' + (hourAvg[h4] != null ? fmtN(hourAvg[h4], 2) + ' €/MWh' : '—'));
+            }
+            html += '<div class="hh-cell hh-spacer"></div>';
+            html += coloredCell(globalAvg, 'hh-avg', 'Média global do período: ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
+            html += '</div>';
         }
-
-        // Linha das medias por dia
-        html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
-        for (var d3 = 0; d3 < nDays; d3++) {
-            html += coloredCell(dayAvg[d3], 'hh-avg', allDays[d3] + ' (média 24h): ' + (dayAvg[d3] != null ? fmtN(dayAvg[d3], 2) + ' €/MWh' : '—'));
-        }
-        html += '<div class="hh-cell hh-spacer"></div>';
-        html += coloredCell(globalAvg, 'hh-avg', 'Média global do período: ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
-
-        html += '</div>';
         container.innerHTML = html;
 
         if (titulo) {
@@ -4063,6 +4178,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateWeeklyProfile();
                 });
                 setTimeout(updateWeeklyProfile, 100);
+            }
+
+            // --- TOGGLES DE ORIENTACAO DOS HEATMAPS (partilhados) ---
+            // Sincronizar estado inicial dos botoes com a pref atual
+            var orientBtns = document.querySelectorAll('.ho-orient-btn');
+            var currentOrient = (typeof getHeatmapOrientation === 'function') ? getHeatmapOrientation() : 'rows-dates';
+            for (var ob = 0; ob < orientBtns.length; ob++) {
+                var btn = orientBtns[ob];
+                btn.classList.toggle('active', btn.getAttribute('data-orient') === currentOrient);
+                btn.addEventListener('click', function() {
+                    setHeatmapOrientation(this.getAttribute('data-orient'));
+                });
             }
 
             function applyHourHeatMode(m) {
