@@ -1409,7 +1409,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 2. ESCALA DE PREÇOS NEGATIVOS
         // Negativos: gradiente roxo monotonico (mais negativo = mais escuro)
-        if (price < -45) return '#4c1d95';   // Roxo profundo (extremo)
         if (price < -30) return '#7c3aed';   // Roxo vibrante
         if (price < -15) return '#a78bfa';   // Roxo claro
         if (price < 0)   return '#c4b5fd';   // Lilás (proximo de zero)
@@ -1426,54 +1425,56 @@ document.addEventListener('DOMContentLoaded', function() {
         if (price < 135) return '#d73027';   // Vermelho 1 (mais claro)
         if (price < 150) return '#c62828';   // Vermelho 2
         if (price < 165) return '#a50026';   // Vermelho 3
-        if (price < 180) return '#860020';   // Vermelho 4
-        return '#67001f';                    // Vermelho 5 (mais escuro para 180+)
+        return '#860020';                    // Vermelho 4 (mais escuro para 165+)
     }
 
     // --- GERADOR AUTOMÁTICO DE ESCALAS DE COR ---
     function renderColorScales() {
-        // 1. As tuas matrizes exatas de valores e textos
-        var grades = [-60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
-        var labels = [
-            '< -45', '-45 a -30', '-30 a -15', '-15 a 0', 
-            '0-15', '15-30', '30-45', '45-60', '60-75', 
-            '75-90', '90-105', '105-120', '120-135', 
-            '135-150', '150-165', '165-180', '180+'
-        ];
+            // 1. As tuas matrizes exatas de valores e textos
+            var grades = [-45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
+            var labels = [
+                '< -30', '-30 a -15', '-15 a 0', 
+                '0-15', '15-30', '30-45', '45-60', '60-75', 
+                '75-90', '90-105', '105-120', '120-135', 
+                '135-150', '150-165', '165+'
+            ];
 
-        // 2. Construir o HTML da barra horizontal
-        var html = '<div class="chart-color-scale">';
-        for (var i = 0; i < grades.length; i++) {
-            // Usamos grades[i] + 1 para o getColor devolver a cor certa desse patamar
-            var cor = getColor(grades[i] + 1); 
-            html += '<div class="chart-color-scale-item">' +
-                    '<div class="chart-color-scale-box" style="background:' + cor + '"></div>' +
-                    '<span>' + labels[i] + '</span>' +
-                    '</div>';
-        }
-        html += '</div>';
+            // 2. Construir o HTML da barra horizontal de cores com os textos
+            var html = '<div class="chart-color-scale" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; font-size: 0.75em; margin-bottom: 15px;">';
+            
+            for (var i = 0; i < grades.length; i++) {
+                // Usamos grades[i] + 1 para o getColor devolver a cor certa desse patamar
+                var cor = getColor(grades[i] + 1); 
+                
+                // Em cada item usamos 'white-space: nowrap' para garantir que o texto (ex: '-30 a -15') não quebra a meio
+                // Usamos flexbox também aqui para manter o quadrado da cor alinhado com o texto
+                html += '<div class="chart-color-scale-item" style="display: flex; align-items: center; white-space: nowrap;">' +
+                        '<div class="chart-color-scale-box" style="background:' + cor + '; margin-right: 4px;"></div>' +
+                        '<span>' + labels[i] + '</span>' +
+                        '</div>';
+            }
+            html += '</div>';
 
-        // 3. IDs exatos das 4 secções que me pediste
-        var idsSeccoes = ['intraday-wrapper', 'chart-wrapper', 'heatmap-hour-wrapper', 'heatmap-wrapper'];
+            // 3. IDs exatos das 4 secções
+            var idsSeccoes = ['intraday-wrapper', 'chart-wrapper', 'heatmap-hour-wrapper', 'heatmap-wrapper'];
 
-        // 4. Injetar a escala em cada uma das secções
-        for (var j = 0; j < idsSeccoes.length; j++) {
-            var wrapper = document.getElementById(idsSeccoes[j]);
-            if (wrapper) {
-                // Procura o título (h2) de cada secção
-                var h2 = wrapper.querySelector('h2');
-                if (h2) {
-                    // Cria um contentor invisível para transformar o texto em elementos HTML reais
-                    var tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = html;
-                    
-                    // Insere a nossa escala imediatamente a seguir ao título H2
-                    h2.parentNode.insertBefore(tempDiv.firstChild, h2.nextSibling);
+            // 4. Injetar a escala em cada uma das secções
+            for (var j = 0; j < idsSeccoes.length; j++) {
+                var wrapper = document.getElementById(idsSeccoes[j]);
+                if (wrapper) {
+                    // Procura o título (h2) de cada secção
+                    var h2 = wrapper.querySelector('h2');
+                    if (h2) {
+                        // Cria um contentor invisível para transformar o texto em elementos HTML reais
+                        var tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        
+                        // Insere a nossa escala imediatamente a seguir ao título H2
+                        h2.parentNode.insertBefore(tempDiv.firstChild, h2.nextSibling);
+                    }
                 }
             }
         }
-    }
-
     // --- ESTILO DAS ZONAS ---
     function style(feature) {
         var zone = feature.properties.ecZone;
@@ -1694,12 +1695,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     legend.onAdd = function() {
         var div = L.DomUtil.create('div', 'info-control legend');
-        var grades = [-60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180];
+        var grades = [-45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
         var labels = [
-            '< -45', '-45 a -30', '-30 a -15', '-15 a 0', 
+            '< -30', '-30 a -15', '-15 a 0', 
             '0-15', '15-30', '30-45', '45-60', '60-75', 
             '75-90', '90-105', '105-120', '120-135', 
-            '135-150', '150-165', '165-180', '180+'
+            '135-150', '150-165', '165+'
         ];
 
         div.innerHTML = '<div class="legend-title">€/MWh</div>';
