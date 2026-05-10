@@ -345,7 +345,7 @@
         .btn-wide { background: #fff; border: 1px solid #ccc; padding: 5px 10px; font-size: 0.85em; cursor: pointer; color: #2c3e50; border-radius: 4px; transition: background 0.2s; }
         .btn-wide:hover { background: #e2e8f0; }
         .btn-wide.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-        .chart-canvas-wrap { position: relative; height: 500px; }
+        .chart-canvas-wrap { position: relative; height: 560px; }
         .viz-wide .chart-canvas-wrap { height: 560px; }
         @media (max-width: 768px) { .chart-canvas-wrap, .viz-wide .chart-canvas-wrap { height: 300px; } }
         [data-theme="dark"] .btn-wide { background: #1e293b; color: #e2e8f0; border-color: #475569; }
@@ -354,10 +354,16 @@
         /* Heatmap calendário */
         #intraday-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 40px auto; padding: 0 10px; box-sizing: border-box; }
         #intraday-wrapper h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 12px; }
-        #intraday-wrapper .chart-canvas-wrap { width: 100%; height: 360px; position: relative; }
-        #intraday-wrapper.viz-wide .chart-canvas-wrap { height: 480px; }
-        @media (max-width: 768px) { #intraday-wrapper .chart-canvas-wrap, #intraday-wrapper.viz-wide .chart-canvas-wrap { height: 280px; } }
+        #intraday-wrapper .chart-canvas-wrap { width: 100%; height: 560px; position: relative; }
+        #intraday-wrapper.viz-wide .chart-canvas-wrap { height: 560px; }
+        @media (max-width: 768px) { #intraday-wrapper .chart-canvas-wrap, #intraday-wrapper.viz-wide .chart-canvas-wrap { height: 300px; } }
         .intraday-hint { font-size: 0.85em; color: #64748b; font-style: italic; margin-left: 8px; }
+        .intraday-stats { text-align: center; font-size: 0.9em; color: #475569; margin: -6px 0 10px; min-height: 1.2em; }
+        .intraday-stats strong { color: #0f172a; font-variant-numeric: tabular-nums; }
+        .intraday-stats strong.neg { color: #dc2626; }
+        [data-theme="dark"] .intraday-stats { color: #cbd5e1; }
+        [data-theme="dark"] .intraday-stats strong { color: #f1f5f9; }
+        [data-theme="dark"] .intraday-stats strong.neg { color: #f87171; }
         [data-theme="dark"] #intraday-wrapper h2 { color: #e2e8f0; }
         [data-theme="dark"] .intraday-hint { color: #94a3b8; }
 
@@ -719,6 +725,7 @@
 
     <div id="intraday-wrapper">
         <h2 id="intraday-titulo">Curva intradiária</h2>
+        <p id="intraday-stats" class="intraday-stats" aria-live="polite"></p>
         <div class="chart-canvas-wrap"><canvas id="chart-intraday"></canvas></div>
     </div>
 
@@ -1185,7 +1192,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- PREFERÊNCIAS (localStorage) ---
     var PREFS_KEY = 'mapaPrecos.prefs.v1';
-    var PREFS_VERSION = 4;
+    var PREFS_VERSION = 5;
     // Chaves obsoletas que ja nao sao usadas (limpas em upgrades de versao):
     //  v2:
     //   - heatmapZone, intradayZone, hourHeatZone (selectores unificados em 'zone')
@@ -1200,7 +1207,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var OBSOLETE_PREF_KEYS = [
         'heatmapZone', 'intradayZone', 'hourHeatZone',
         'intradayCompare', 'minmax', 'chartWide',
-        'hourHeatMonth', 'compareZone'
+        'hourHeatMonth', 'compareZone',
+        // v5: datas do heatmap horario nao sao persistidas
+        'hourHeatEnd', 'hourHeatMonthYM'
     ];
 
     function loadPrefs() {
@@ -2410,8 +2419,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
+                layout: { padding: { top: 22, bottom: 6 } },
                 plugins: {
                     legend: { display: false }, // Escondemos a legenda na tabela para poupar espaço
+                    extremesLabels: { show: true },
                     tooltip: {
                         callbacks: {
                             title: function(items) { return 'Hora ' + (items[0] && items[0].label); },
@@ -2656,23 +2667,132 @@ document.addEventListener('DOMContentLoaded', function() {
             var meta = chart.getDatasetMeta(0);
             if (!meta || !meta.data) return;
             var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            var posColor = dark ? '#e2e8f0' : '#1e293b';
+            var negColor = '#dc2626';  // vermelho para valores negativos
             ctx.save();
             ctx.font = '600 8.5px system-ui, -apple-system, sans-serif';
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.fillStyle = dark ? '#e2e8f0' : '#1e293b';
             for (var i = 0; i < meta.data.length; i++) {
                 var v = ds.data[i];
                 if (v == null) continue;
                 var bar = meta.data[i];
-                var x = bar.x;
-                var y = bar.y - 3;
-                ctx.fillText(fmtN(v, 2), x, y);
+                if (v >= 0) {
+                    // Positivo: etiqueta ACIMA do topo da barra (preto/branco)
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillStyle = posColor;
+                    ctx.fillText(fmtN(v, 2), bar.x, bar.y - 3);
+                } else {
+                    // Negativo: etiqueta ABAIXO do fim da barra, a vermelho
+                    // (fora da barra → contraste sempre garantido)
+                    ctx.textBaseline = 'top';
+                    ctx.fillStyle = negColor;
+                    ctx.fillText(fmtN(v, 2), bar.x, bar.y + 3);
+                }
             }
             ctx.restore();
         }
     };
     if (typeof Chart !== 'undefined') Chart.register(barValueLabelsPlugin);
+
+    // Plugin para marcar APENAS os extremos (mín e máx) do dataset principal
+    // de um chart de barras. Usado na Curva intradiária para evitar sobrecarregar
+    // quando há 96 slots (PT15M). Desenha:
+    //  - Triângulo pequeno por cima/baixo da barra extrema
+    //  - Etiqueta com o valor (verde para mín, vermelho para máx; ambos a
+    //    vermelho se valor for negativo)
+    var extremesLabelsPlugin = {
+        id: 'extremesLabels',
+        afterDatasetsDraw: function(chart, args, opts) {
+            if (!opts || !opts.show) return;
+            var ds = chart.data.datasets[0];
+            if (!ds || !ds.data || !ds.data.length) return;
+            var meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data) return;
+
+            // Encontrar índices do mín e do máx (ignorando nulls)
+            var minI = -1, maxI = -1;
+            var minV = Infinity, maxV = -Infinity;
+            for (var i = 0; i < ds.data.length; i++) {
+                var v = ds.data[i];
+                if (v == null) continue;
+                if (v < minV) { minV = v; minI = i; }
+                if (v > maxV) { maxV = v; maxI = i; }
+            }
+            if (minI < 0 && maxI < 0) return;
+
+            var ctx = chart.ctx;
+            var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+            ctx.save();
+            ctx.font = '700 10px system-ui, -apple-system, sans-serif';
+            ctx.textAlign = 'center';
+
+            var drawExtreme = function(idx, value, kind) {
+                var bar = meta.data[idx];
+                if (!bar) return;
+                // Cor do badge: verde para mínimo, vermelho para máximo;
+                // se o valor for negativo, força vermelho (alarme)
+                var bgColor;
+                if (value < 0) bgColor = '#dc2626';
+                else if (kind === 'min') bgColor = '#15803d';
+                else bgColor = '#b91c1c';
+
+                var label = fmtN(value, 2);
+                var paddingX = 5, paddingY = 2;
+                var textW = ctx.measureText(label).width;
+                var boxW = textW + paddingX * 2;
+                var boxH = 16;
+
+                // Posição da etiqueta: acima do topo (positivo) / abaixo do fim (negativo)
+                var x = bar.x;
+                var y;
+                if (value >= 0) {
+                    y = bar.y - 6 - boxH;  // acima da barra
+                    // Triângulo apontando para baixo (para a barra)
+                    ctx.fillStyle = bgColor;
+                    ctx.beginPath();
+                    ctx.moveTo(x - 4, bar.y - 6);
+                    ctx.lineTo(x + 4, bar.y - 6);
+                    ctx.lineTo(x, bar.y - 1);
+                    ctx.closePath();
+                    ctx.fill();
+                } else {
+                    y = bar.y + 6;  // abaixo do fim da barra (que está em baixo)
+                    // Triângulo apontando para cima
+                    ctx.fillStyle = bgColor;
+                    ctx.beginPath();
+                    ctx.moveTo(x - 4, bar.y + 6);
+                    ctx.lineTo(x + 4, bar.y + 6);
+                    ctx.lineTo(x, bar.y + 1);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                // Caixa de fundo (pílula)
+                var bx = x - boxW / 2;
+                ctx.fillStyle = bgColor;
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(bx, y, boxW, boxH, 3);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(bx, y, boxW, boxH);
+                }
+                // Texto
+                ctx.fillStyle = '#fff';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(label, x, y + boxH / 2 + 0.5);
+            };
+
+            // Desenhar; se mín == máx (raro, dia plano), mostrar só um
+            if (minI === maxI) {
+                drawExtreme(minI, ds.data[minI], 'min');
+            } else {
+                if (minI >= 0) drawExtreme(minI, ds.data[minI], 'min');
+                if (maxI >= 0) drawExtreme(maxI, ds.data[maxI], 'max');
+            }
+            ctx.restore();
+        }
+    };
+    if (typeof Chart !== 'undefined') Chart.register(extremesLabelsPlugin);
 
     // Plugin para desenhar whiskers (mín↔máx) sobre cada barra
     var whiskersPlugin = {
@@ -2735,10 +2855,6 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.moveTo(area.left, y);
             ctx.lineTo(area.right, y);
             ctx.stroke();
-            ctx.fillStyle = '#dc2626';
-            ctx.font = '600 11px sans-serif';
-            ctx.textAlign = 'right';
-            ctx.fillText('0', area.right - 4, y - 4);
             ctx.restore();
         }
     };
@@ -2785,12 +2901,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var hasCompare = compares.length > 0;
         if (!zone) return;
 
-        // Determinar intervalo do gráfico com base no modo ativo
+        // Determinar intervalo do gráfico com base no modo ativo.
+        // Em modo Diário usa a mesma estratégia "mês deslizante" do Heatmap
+        // horário: start = (end + 1 dia) - 1 mês com clamp. Resultado: 28-31
+        // dias consoante o mês (28 para Fev, 30 para Abr/Jun, 31 para Mai, etc.).
         var chartStart, chartEnd;
         if (currentMode === 'diario') {
             chartEnd = seletorData.value;
-            var sd = parseDateStr(chartEnd); sd.setDate(sd.getDate() - 29);
-            chartStart = formatDateStr(sd);
+            chartStart = rollingMonthStart(chartEnd);
+            if (chartStart < DATA_INICIO) chartStart = DATA_INICIO;
         } else {
             var pp = computePeriod();
             chartStart = pp.start;
@@ -2838,6 +2957,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         var c = getChartColors();
+        // Media do periodo da zona principal — usada como cor "representativa"
+        // no swatch da legenda (so visivel quando ha comparacao).
+        var periodVals = s1.avgs.filter(function(v) { return v != null; });
+        var periodAvg = periodVals.length
+            ? periodVals.reduce(function(a, b) { return a + b; }, 0) / periodVals.length
+            : null;
+        var mainSwatchColor = (periodAvg != null) ? getColor(periodAvg) : '#64748b';
+
         var cfg = {
             type: 'bar',
             data: { labels: s1.labels, datasets: datasets },
@@ -2848,7 +2975,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     barValueLabels: { show: !hasCompare },
                     whiskers: { show: showWhiskers, mins: s1.mins, maxs: s1.maxs },
-                    legend: { labels: { color: c.text } },
+                    legend: {
+                        display: hasCompare,
+                        labels: {
+                            color: c.text,
+                            generateLabels: function(chart) {
+                                var dss = chart.data.datasets;
+                                return dss.map(function(ds, i) {
+                                    // Zona principal: swatch da cor da media do periodo
+                                    // Comparacoes: cor da linha (ja singular)
+                                    var col = (i === 0)
+                                        ? mainSwatchColor
+                                        : (Array.isArray(ds.borderColor) ? ds.borderColor[0] : ds.borderColor);
+                                    return {
+                                        text: ds.label,
+                                        fillStyle: col,
+                                        strokeStyle: col,
+                                        lineWidth: 1,
+                                        hidden: !chart.isDatasetVisible(i),
+                                        datasetIndex: i
+                                    };
+                                });
+                            }
+                        }
+                    },
                     tooltip: {
                         callbacks: {
                             label: function(ctx) {
@@ -2890,7 +3040,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (titulo) {
             var nDias = Math.round((parseDateStr(chartEnd) - parseDateStr(chartStart)) / 86400000) + 1;
             var label;
-            if (currentMode === 'diario') label = '30 dias até ' + fmtDateBR(chartEnd);
+            if (currentMode === 'diario') label = nDias + ' dias (' + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
             else label = nDias + ' dias (' + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
             var comparesTxt = '';
             if (compares.length) {
@@ -2982,8 +3132,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
+                // Mais espaço no topo/baixo para os badges dos extremos não serem cortados
+                layout: { padding: { top: 22, bottom: 6 } },
                 plugins: {
                     legend: { display: datasets.length > 1, position: 'top' },
+                    extremesLabels: { show: true },
                     tooltip: {
                         callbacks: {
                             title: function(items) { return 'Hora ' + (items[0] && items[0].label); },
@@ -3020,6 +3173,31 @@ document.addEventListener('DOMContentLoaded', function() {
             // Nota explicita: cada zona em hora local (importante para multi-zona)
             var hourNote = hasCompare ? ' · em hora local de cada zona' : '';
             titulo.textContent = 'Curva intradiária — ' + labelMode + ' — ' + name1 + compTxt + resTxt + hourNote;
+        }
+        // Estatisticas (media/min/max) abaixo do titulo
+        var statsEl = document.getElementById('intraday-stats');
+        if (statsEl) {
+            var fmtSigned = function(v) {
+                var cls = (v != null && v < 0) ? ' class="neg"' : '';
+                return '<strong' + cls + '>' + fmtN(v, 2) + '</strong>';
+            };
+            var buildStats = function(label, intra) {
+                if (!intra || !intra.values) return '';
+                var vv = intra.values.filter(function(v) { return v != null; });
+                if (!vv.length) return label + ': sem dados';
+                var mn = Math.min.apply(null, vv);
+                var mx = Math.max.apply(null, vv);
+                var av = vv.reduce(function(a, b) { return a + b; }, 0) / vv.length;
+                return label + ': Média ' + fmtSigned(av) + ' · Mín ' + fmtSigned(mn) + ' · Máx ' + fmtSigned(mx) + ' €/MWh';
+            };
+            var lines = [];
+            var s1 = buildStats(name1, intra1);
+            if (s1) lines.push(s1);
+            for (var ci2 = 0; ci2 < compares.length; ci2++) {
+                var sx = buildStats(ZONE_NAMES[compares[ci2]] || compares[ci2], intrasC[ci2]);
+                if (sx) lines.push(sx);
+            }
+            statsEl.innerHTML = lines.join('<br>');
         }
     }
 
@@ -3762,10 +3940,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (changed) {
                         ultimaDataDisponivel = m.ultima_data;
                         seletorData.max = ultimaDataDisponivel;
+                        // Atualizar limites e Dia final do Heatmap horario
+                        var hhM = document.getElementById('heatmap-hour-month');
+                        var hhYM2 = document.getElementById('heatmap-hour-month-ym');
+                        if (hhM) {
+                            hhM.max = ultimaDataDisponivel;
+                            hhM.value = ultimaDataDisponivel;
+                        }
+                        if (hhYM2) {
+                            hhYM2.max = ultimaDataDisponivel.substring(0, 7);
+                            hhYM2.value = ultimaDataDisponivel.substring(0, 7);
+                        }
                         // Limpar cache do mes mais recente para forcar refetch
                         var ymRecent = ultimaDataDisponivel.substring(0, 7);
                         delete dataCache[ymRecent];
                         await loadPriceData();
+                        if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
+                        if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
                     }
                     renderDataFreshness(ultimaDataDisponivel, newLastMod);
                 } catch(e) { /* silencioso */ }
@@ -4140,26 +4331,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     hhYM.max = ultimaDataDisponivel.substring(0, 7);
                 }
 
-                // Valor inicial — modo deslizante
-                var savedEnd = prefs.hourHeatEnd;
-                if (savedEnd && /^\d{4}-\d{2}$/.test(savedEnd)) savedEnd = null; // legado YYYY-MM
-                hhMonth.value = (savedEnd && /^\d{4}-\d{2}-\d{2}$/.test(savedEnd))
-                    ? savedEnd
-                    : (ultimaDataDisponivel || (seletorData && seletorData.value) || '');
+                // Valor inicial — modo deslizante.
+                // Politica: SEMPRE arrancar com a ultima data disponivel
+                // (o utilizador costuma querer ver o mais recente). A pref
+                // guardada so e usada se for IGUAL ou POSTERIOR ao limite, o
+                // que na pratica nunca acontece (apenas se mudou manualmente
+                // na sessao atual). Isto garante que o "Dia final" segue
+                // automaticamente os novos dados publicados.
+                hhMonth.value = ultimaDataDisponivel || (seletorData && seletorData.value) || '';
 
-                // Valor inicial — modo mes completo
-                var savedYM = prefs.hourHeatMonthYM;
-                hhYM.value = (savedYM && /^\d{4}-\d{2}$/.test(savedYM))
-                    ? savedYM
-                    : (ultimaDataDisponivel ? ultimaDataDisponivel.substring(0, 7) : '');
+                // Valor inicial — modo mes completo: ultimo mes disponivel
+                hhYM.value = ultimaDataDisponivel ? ultimaDataDisponivel.substring(0, 7) : '';
 
                 // Aplicar modo guardado (default: rolling)
                 var initMode = (prefs.hourHeatMode === 'month') ? 'month' : 'rolling';
                 applyHourHeatMode(initMode);
 
                 // Listeners dos inputs
-                hhMonth.addEventListener('change', function() { savePref('hourHeatEnd', hhMonth.value); updateHourlyHeatmap(); });
-                hhYM.addEventListener('change', function() { savePref('hourHeatMonthYM', hhYM.value); updateHourlyHeatmap(); });
+                // Datas escolhidas pelo utilizador NAO sao persistidas: ao
+                // recarregar, a vista volta ao ultimo dia disponivel.
+                hhMonth.addEventListener('change', updateHourlyHeatmap);
+                hhYM.addEventListener('change', updateHourlyHeatmap);
 
                 // Listeners do toggle de modo
                 hhBtnMonth.addEventListener('click', function() { applyHourHeatMode('month'); });
