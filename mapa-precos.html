@@ -205,6 +205,22 @@
 
         /* Botao de partilha */
         .share-wrapper { text-align: center; margin-top: 15px; }
+        /* Crédito de exportação — visível em screenshots, prints e screen.
+           Discreto no ecrã, ligeiramente reforçado em impressão. */
+        .export-credit {
+            text-align: center; font-size: 0.7em; color: #94a3b8;
+            margin: 8px 0 4px; padding: 0 8px;
+            font-variant-numeric: tabular-nums; user-select: text;
+            letter-spacing: 0.01em;
+        }
+        .export-credit a { color: inherit; text-decoration: none; }
+        .export-credit a:hover { color: #2563eb; text-decoration: underline; }
+        [data-theme="dark"] .export-credit { color: #64748b; }
+        [data-theme="dark"] .export-credit a:hover { color: #60a5fa; }
+        @media print {
+            .export-credit { color: #1e293b; font-size: 0.85em; font-weight: 500; margin-top: 12px; }
+            .export-credit a { color: #1e293b; }
+        }
         .share-btn { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; }
         .share-btn:hover { background: #e2e8f0; }
         .share-feedback { margin-left: 10px; font-size: 0.85em; color: #16a34a; display: none; }
@@ -232,7 +248,7 @@
         .btn-fullscreen { position: absolute; top: 10px; right: 10px; z-index: 999; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 0.85em; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
         .btn-fullscreen:hover { background: #e2e8f0; }
         #mapa-wrapper { position: relative; }
-        #mapa-wrapper.fullscreen { position: fixed; top: 0; left: 0; width: 100vw; max-width: 100vw; height: 100vh; z-index: 9999; margin: 0; border-radius: 0; }
+        #mapa-wrapper.fullscreen { position: fixed; top: 0; left: 0; width: 100%; max-width: 100%; height: 100vh; z-index: 9999; margin: 0; border-radius: 0; }
         #mapa-wrapper.fullscreen #mapa-container { height: 100vh; border-radius: 0; border: none; }
 
         #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
@@ -319,6 +335,14 @@
         /* Breakout — aplicavel a qualquer wrapper de visualizacao.
            !important e necessario porque as regras com #id (mais especificas)
            definem width/max-width nos wrappers individuais. */
+        /* Em browsers, 100vw inclui a largura do scrollbar vertical (~15-17px),
+           o que faz aparecer scroll horizontal indesejado. Solução robusta:
+           manter 100vw nos breakouts e cortar overflow horizontal a nivel
+           html/body — sem perder largura. Mais limpo do que usar 99vw, que
+           perde uns ~1% de largura. */
+        html { overflow-x: clip; }
+        @supports not (overflow: clip) { html, body { overflow-x: hidden; } }
+
         .viz-wide {
             position: relative !important;
             width: 100vw !important;
@@ -380,8 +404,14 @@
         .hh-cell.hh-empty { background: #f8fafc; }
         .hh-cell.hh-partial { font-style: italic; }
         .hh-cell.hh-partial::after { content: '*'; }
-        .hh-cell.hh-spacer { background: #fff; min-width: 8px; min-height: 8px; padding: 0; }
-        [data-theme="dark"] .hh-cell.hh-spacer { background: #0f172a; }
+        /* Spacers: fundo igual ao da seccao envolvente. box-shadow do mesmo
+           tom estende a cor por 1px em todas as direcoes, "comendo" o gap
+           da grelha (que mostraria o background cinza #e2e8f0). Resultado:
+           coluna e linha de espaço sem linhas de grelha visiveis. */
+        .hh-cell.hh-spacer { background: #fff; min-width: 8px; min-height: 8px; padding: 0; box-shadow: 0 0 0 1px #fff; position: relative; z-index: 1; }
+        .viz-wide .hh-cell.hh-spacer { background: #f1f5f9; box-shadow: 0 0 0 1px #f1f5f9; }
+        [data-theme="dark"] .hh-cell.hh-spacer { background: #1e293b; box-shadow: 0 0 0 1px #1e293b; }
+        [data-theme="dark"] .viz-wide .hh-cell.hh-spacer { background: #0f172a; box-shadow: 0 0 0 1px #0f172a; }
         .hh-cell.hh-avg-header { background: #94a3b8; color: #fff; font-weight: 700; }
         .hh-cell.hh-avg { font-weight: 700; }
         [data-theme="dark"] .hh-cell.hh-avg-header { background: #475569; color: #fff; }
@@ -709,6 +739,7 @@
             <button type="button" id="btn-share" class="share-btn" title="Copiar link partilhável para o dia atual">&#128279; Copiar link de partilha</button>
             <span id="share-feedback" class="share-feedback">Copiado!</span>
         </div>
+        <p class="export-credit" id="credit-table"></p>
     </div>
 
     <div id="zone-panel">
@@ -727,11 +758,13 @@
         <h2 id="intraday-titulo">Curva intradiária</h2>
         <p id="intraday-stats" class="intraday-stats" aria-live="polite"></p>
         <div class="chart-canvas-wrap"><canvas id="chart-intraday"></canvas></div>
+        <p class="export-credit" id="credit-intraday"></p>
     </div>
 
     <div id="chart-wrapper">
         <h2 id="chart-titulo">Evolução de preços</h2>
         <div class="chart-canvas-wrap"><canvas id="chart-precos"></canvas></div>
+        <p class="export-credit" id="credit-chart"></p>
     </div>
 
     <div id="heatmap-hour-wrapper">
@@ -752,6 +785,7 @@
             <span class="heatmap-stats" id="heatmap-hour-stats"></span>
         </div>
         <div id="heatmap-hour-container" role="img" aria-label="Heatmap horário"></div>
+        <p class="export-credit" id="credit-heatmap-hour"></p>
     </div>
 
     <div id="heatmap-week-wrapper">
@@ -771,6 +805,7 @@
             <span class="heatmap-stats" id="heatmap-week-stats"></span>
         </div>
         <div id="heatmap-week-container" role="img" aria-label="Perfil semanal"></div>
+        <p class="export-credit" id="credit-heatmap-week"></p>
     </div>
 
     <div id="heatmap-wrapper">
@@ -781,6 +816,7 @@
             <span class="heatmap-stats" id="heatmap-stats"></span>
         </div>
         <div id="heatmap-container" role="img" aria-label="Calendário anual de preços por dia"></div>
+        <p class="export-credit" id="credit-heatmap-anual"></p>
     </div>
 
     <article class="content-support">
@@ -1256,6 +1292,32 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!s) return '';
         var p = s.split('-');
         return p[2] + '/' + p[1] + '/' + p[0];
+    }
+
+    // --- CRÉDITO DE EXPORTAÇÃO (URL + data + contexto) ---
+    // Aparece sob cada gráfico/tabela: visível em screenshots manuais e prints
+    // do browser. Discreto no ecrã, ligeiramente reforçado em impressão.
+    var CREDIT_URL = 'tiagofelicia.pt/mapa-precos.html';
+    var CREDIT_FULL_URL = 'https://www.tiagofelicia.pt/mapa-precos.html';
+    function nowDateBR() {
+        var d = new Date();
+        return String(d.getDate()).padStart(2, '0') + '/'
+             + String(d.getMonth() + 1).padStart(2, '0') + '/'
+             + d.getFullYear();
+    }
+    function setExportCredit(elId, contextParts) {
+        var el = document.getElementById(elId);
+        if (!el) return;
+        var parts = [];
+        var urlAnchor = '<a href="' + CREDIT_FULL_URL + '" rel="noopener">' + CREDIT_URL + '</a>';
+        parts.push('🔗 ' + urlAnchor);
+        parts.push(nowDateBR());
+        if (contextParts && contextParts.length) {
+            for (var i = 0; i < contextParts.length; i++) {
+                if (contextParts[i]) parts.push(contextParts[i]);
+            }
+        }
+        el.innerHTML = parts.join(' · ');
     }
     function datesInRange(startStr, endStr) {
         var s = parseDateStr(startStr), e = parseDateStr(endStr);
@@ -2299,6 +2361,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Atualizar painel de favoritas (precos podem ter mudado)
         renderFavoritesPanel();
+
+        // Crédito de exportação
+        var ctxParts;
+        if (isPeriodo) {
+            var pCtx = computePeriod();
+            var modoLabel = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
+            ctxParts = [modoLabel + ' ' + fmtDateBR(pCtx.start) + ' → ' + fmtDateBR(pCtx.end)];
+        } else {
+            ctxParts = ['Diário ' + fmtDateBR(seletorData.value)];
+        }
+        setExportCredit('credit-table', ctxParts);
     }
 
     // --- EXPANDIR CURVA INTRADIARIA POR LINHA ---
@@ -2651,6 +2724,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+        // Crédito de exportação
+        setExportCredit('credit-heatmap-anual', [(ZONE_NAMES[zone] || zone), 'Ano ' + year]);
     }
 
     // --- GRÁFICO Chart.js (30 dias por zona) ---
@@ -3049,6 +3124,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             titulo.textContent = 'Evolução de preços — ' + label + ' — ' + name1 + comparesTxt;
         }
+        // Crédito de exportação
+        var ctxChart = [name1 + comparesTxt];
+        ctxChart.push(label);
+        setExportCredit('credit-chart', ctxChart);
     }
 
     // --- GRAFICO INTRADIARIO (24h curve) ---
@@ -3199,6 +3278,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             statsEl.innerHTML = lines.join('<br>');
         }
+        // Crédito de exportação
+        var ctxIntra = [name1];
+        if (hasCompare) {
+            ctxIntra[0] += ' vs ' + compares.map(function(z) { return ZONE_NAMES[z] || z; }).join(', ');
+        }
+        ctxIntra.push(isDiario
+            ? 'Curva 24h ' + fmtDateBR(seletorData.value)
+            : 'Média horária ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
+        setExportCredit('credit-intraday', ctxIntra);
     }
 
     // --- HEATMAP HORARIO (24 horas x mes-deslizante terminado em X) ---
@@ -3342,6 +3430,15 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         var wWide = !!(document.getElementById('heatmap-week-wrapper') && document.getElementById('heatmap-week-wrapper').classList.contains('viz-wide'));
         var fmtCell = function(v) { return wWide ? fmtN(v, 2) : String(Math.round(v)); };
+        // Media RAW do periodo (mesma definicao do Heatmap horario): mean de
+        // todas as medias horarias subjacentes, nao das celulas agregadas.
+        // E o valor que aparece no canto inferior-direito do "Perfil semanal".
+        var rawAvg = rawHourly.length
+            ? rawHourly.reduce(function(a, b) { return a + b; }, 0) / rawHourly.length
+            : null;
+        var rawAvgTip = rawAvg != null
+            ? 'Média do período (' + nDays + ' dias): ' + fmtN(rawAvg, 2) + ' €/MWh — coincide com o Heatmap horário'
+            : 'Sem dados';
         var coloredCell = function(v, extraCls, tip) {
             if (v == null) {
                 var clsE = 'hh-cell hh-empty' + (extraCls ? ' ' + extraCls : '');
@@ -3388,7 +3485,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += coloredCell(dowAvg[d4], 'hh-avg', WEEKDAY_NAMES[d4] + ' (média 24h): ' + (dowAvg[d4] != null ? fmtN(dowAvg[d4], 2) + ' €/MWh' : '—'));
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += '<div class="hh-cell hh-empty" title="Média global omitida — ver estatísticas em baixo"></div>';
+            html += coloredCell(rawAvg, 'hh-avg', rawAvgTip);
             html += '</div>';
         } else {
             // rows-dates: linhas = dias da semana, colunas = horas
@@ -3416,7 +3513,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += coloredCell(hourAvg[h6], 'hh-avg', 'Média ' + String(h6).padStart(2, '0') + 'h ao longo da semana: ' + (hourAvg[h6] != null ? fmtN(hourAvg[h6], 2) + ' €/MWh' : '—'));
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += '<div class="hh-cell hh-empty" title="Média global omitida — ver estatísticas em baixo"></div>';
+            html += coloredCell(rawAvg, 'hh-avg', rawAvgTip);
             html += '</div>';
         }
         container.innerHTML = html;
@@ -3436,6 +3533,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 statsEl.textContent = 'Sem dados';
             }
         }
+        // Crédito de exportação
+        setExportCredit('credit-heatmap-week', [
+            (ZONE_NAMES[zone] || zone),
+            'Últimos ' + nDays + ' dias (' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')'
+        ]);
     }
 
     // --- ORIENTACAO DOS HEATMAPS (partilhada entre Horario e Semanal) ---
@@ -3681,6 +3783,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 statsEl.textContent = 'Sem dados';
             }
         }
+        // Crédito de exportação
+        setExportCredit('credit-heatmap-hour', [
+            (ZONE_NAMES[zone] || zone),
+            fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ' (' + nDays + ' dias)'
+        ]);
     }
 
     // --- DETERMINAR PERÍODO ATUAL com base em modo + seletor ---
