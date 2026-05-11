@@ -764,6 +764,14 @@
 
     <div id="chart-wrapper">
         <h2 id="chart-titulo">Evolução de preços</h2>
+        <div class="chart-controls" id="chart-ma-controls" style="display:none;">
+            <label class="chart-toggle" title="Média móvel a 7 dias — capta o ciclo semanal (fins-de-semana vs dias úteis)">
+                <input type="checkbox" id="toggle-ma7"> MA7
+            </label>
+            <label class="chart-toggle" title="Média móvel a 30 dias — capta o ciclo mensal, útil em períodos longos">
+                <input type="checkbox" id="toggle-ma30"> MA30
+            </label>
+        </div>
         <div class="chart-canvas-wrap"><canvas id="chart-precos"></canvas></div>
         <p class="export-credit" id="credit-chart"></p>
     </div>
@@ -869,7 +877,7 @@
                     <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, variação vs ontem. Mostra hora local do mín/máx por zona.</li>
                     <li><strong>Curva intradiária:</strong> gráfico de barras com a curva 24h da zona selecionada. Cores na mesma escala do mapa. Resolução adapta-se ao publicado pela bolsa (15 min, 30 min ou horário). Em modos agregados mostra a média horária do período. Linha vermelha tracejada em y=0 quando há valores negativos.</li>
                     <li><strong>Curva intradiária por linha da tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva 24h logo por baixo. Várias zonas em simultâneo para comparar.</li>
-                    <li><strong>Gráfico de evolução de preços:</strong> barras coloridas pela escala do mapa para a zona selecionada. Mín, máx e amplitude sempre visíveis no tooltip. Suporta até 4 comparações simultâneas (linhas sobrepostas com cores distintas).</li>
+                    <li><strong>Gráfico de evolução de preços:</strong> barras coloridas pela escala do mapa para a zona selecionada. Mín, máx e amplitude sempre visíveis no tooltip. Suporta até 4 comparações simultâneas (linhas sobrepostas com cores distintas). Toggles opcionais para <strong>MA7</strong> (média móvel a 7 dias, capta ciclo semanal) e <strong>MA30</strong> (ciclo mensal) — só aparecem quando o intervalo tem ≥14 dias.</li>
                     <li><strong>Heatmap horário (24h × ~30 dias):</strong> grelha de horas vs dias, em modo "mês deslizante" terminado no Dia final escolhido (entre 28 e 31 dias consoante o mês). Inclui coluna lateral com <strong>média por hora</strong>, linha inferior com <strong>média por dia</strong> e canto com <strong>média global</strong>. Em modo "↔ Largura total" mostra valores com 2 casas decimais.</li>
                     <li><strong>Perfil semanal (24h × 7 dias da semana):</strong> agrega todos os dias do período (30/60/90/365 dias) por dia da semana. Permite identificar padrões recorrentes ("sextas à noite são consistentemente mais caras", "domingos têm vale mais profundo de manhã"). Inclui as mesmas médias laterais e global.</li>
                     <li><strong>Heatmap anual:</strong> calendário 12 meses × 31 dias, células coloridas pelo preço — clica num dia para abrir esse dia no mapa.</li>
@@ -2967,6 +2975,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return { labels: labels, avgs: avgs, mins: mins, maxs: maxs };
     }
+    // Calcula média móvel de janela `w` sobre array de valores (com nulls).
+    // Devolve array do mesmo tamanho; primeiros (w-1) valores são null.
+    // Em cada janela, ignora nulls; se >50% da janela for null, retorna null.
+    function computeMovingAverage(vals, w) {
+        var out = new Array(vals.length).fill(null);
+        for (var i = w - 1; i < vals.length; i++) {
+            var s = 0, c = 0;
+            for (var j = i - w + 1; j <= i; j++) {
+                if (vals[j] != null) { s += vals[j]; c++; }
+            }
+            if (c >= Math.ceil(w / 2)) out[i] = s / c;
+        }
+        return out;
+    }
+
     async function updateChart() {
         if (typeof Chart === 'undefined') return;
         var zoneSel = document.getElementById('global-zone-select');
@@ -2995,6 +3018,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var s1 = buildSeriesForZoneRange(zone, chartStart, chartEnd);
         var name1 = ZONE_NAMES[zone] || zone;
+
+        // Para MA7/MA30 sem "buracos" iniciais, calcular as médias móveis
+        // sobre uma série ESTENDIDA com 29 dias antes de chartStart (suficiente
+        // para preencher tanto MA7 como MA30 desde o 1º dia do gráfico).
+        // Carregar os meses adicionais e construir a série estendida.
+        var extStartD = parseDateStr(chartStart);
+        extStartD.setDate(extStartD.getDate() - 29);
+        var extStartStr = formatDateStr(extStartD);
+        if (extStartStr < DATA_INICIO) extStartStr = DATA_INICIO;
+        await ensureMonthsLoaded(monthsInRange(extStartStr, chartStart));
+        var sExt = buildSeriesForZoneRange(zone, extStartStr, chartEnd);
+        // Índice no array estendido onde o gráfico realmente começa
+        var prefixLen = sExt.avgs.length - s1.avgs.length;
 
         // Cores por barra usando o gradiente do mapa
         var barColors = s1.avgs.map(function(v) { return v == null ? 'rgba(0,0,0,0)' : getColor(v); });
@@ -3032,6 +3068,71 @@ document.addEventListener('DOMContentLoaded', function() {
                 order: ci
             });
         }
+
+        // --- MA7 / MA30 (médias móveis) ---
+        // Mostrar toggles e datasets apenas se houver dados suficientes
+        // (≥14 dias para MA7, ≥30 dias para MA30) e fora do modo Diário curto.
+        var nDias = s1.avgs.length;
+        var maControls = document.getElementById('chart-ma-controls');
+        var ma7El = document.getElementById('toggle-ma7');
+        var ma30El = document.getElementById('toggle-ma30');
+        var canMA7 = nDias >= 14;
+        var canMA30 = nDias >= 30;
+        if (maControls) {
+            maControls.style.display = (canMA7 || canMA30) ? 'flex' : 'none';
+        }
+        // Mostrar/esconder labels individualmente conforme aplicabilidade
+        if (ma7El && ma7El.parentElement) ma7El.parentElement.style.display = canMA7 ? '' : 'none';
+        if (ma30El && ma30El.parentElement) ma30El.parentElement.style.display = canMA30 ? '' : 'none';
+        var showMA7 = canMA7 && ma7El && ma7El.checked;
+        var showMA30 = canMA30 && ma30El && ma30El.checked;
+
+        // Calcular MAs sobre a série ESTENDIDA (com prefixo de 29 dias) e
+        // depois "recortar" para o range visível do gráfico. Assim o 1º dia
+        // do gráfico já tem MA7/MA30 válidas (se houver dados anteriores).
+        var ma7Data = null, ma30Data = null;
+        if (showMA7) {
+            var fullMA7 = computeMovingAverage(sExt.avgs, 7);
+            ma7Data = fullMA7.slice(prefixLen);
+        }
+        if (showMA30) {
+            var fullMA30 = computeMovingAverage(sExt.avgs, 30);
+            ma30Data = fullMA30.slice(prefixLen);
+        }
+
+        if (showMA7) {
+            datasets.push({
+                type: 'line',
+                label: name1 + ' — MA7 (média móvel 7 dias)',
+                data: ma7Data,
+                borderColor: '#1e293b',
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderDash: [5, 3],
+                borderWidth: 1.7,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+                tension: 0.15,
+                spanGaps: true,
+                order: -10  // desenhar por cima de barras e comparações
+            });
+        }
+        if (showMA30) {
+            datasets.push({
+                type: 'line',
+                label: name1 + ' — MA30 (média móvel 30 dias)',
+                data: ma30Data,
+                borderColor: '#475569',
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderDash: [2, 4],
+                borderWidth: 1.5,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+                tension: 0.2,
+                spanGaps: true,
+                order: -11
+            });
+        }
+
         var c = getChartColors();
         // Media do periodo da zona principal — usada como cor "representativa"
         // no swatch da legenda (so visivel quando ha comparacao).
@@ -3049,25 +3150,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 interaction: { mode: 'index', intersect: false },
                 layout: { padding: { top: hasCompare ? 0 : 18 } },
                 plugins: {
+                    // Etiquetas no topo das barras: visíveis sempre que NÃO houver
+                    // comparação multi-zona (linhas comparativas tornam as etiquetas
+                    // ilegíveis). MA7/MA30 não interferem visualmente.
                     barValueLabels: { show: !hasCompare },
                     whiskers: { show: showWhiskers, mins: s1.mins, maxs: s1.maxs },
                     legend: {
-                        display: hasCompare,
+                        display: hasCompare || showMA7 || showMA30,
                         labels: {
                             color: c.text,
                             generateLabels: function(chart) {
                                 var dss = chart.data.datasets;
                                 return dss.map(function(ds, i) {
-                                    // Zona principal: swatch da cor da media do periodo
-                                    // Comparacoes: cor da linha (ja singular)
-                                    var col = (i === 0)
-                                        ? mainSwatchColor
-                                        : (Array.isArray(ds.borderColor) ? ds.borderColor[0] : ds.borderColor);
+                                    // Zona principal (i=0): cor da média do período
+                                    // Comparações + MAs: cor própria da linha
+                                    var col;
+                                    if (i === 0) {
+                                        col = mainSwatchColor;
+                                    } else {
+                                        col = Array.isArray(ds.borderColor) ? ds.borderColor[0] : ds.borderColor;
+                                    }
                                     return {
                                         text: ds.label,
                                         fillStyle: col,
                                         strokeStyle: col,
-                                        lineWidth: 1,
+                                        lineWidth: ds.borderDash ? 2 : 1,
+                                        lineDash: ds.borderDash || [],
                                         hidden: !chart.isDatasetVisible(i),
                                         datasetIndex: i
                                     };
@@ -3086,6 +3194,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             },
                             afterBody: function(items) {
                                 // Min/Max + Amplitude sempre visiveis no tooltip
+                                // Mín / Máx / Amplitude do dia (não são datasets,
+                                // pelo que precisam de aparecer aqui). MA7/MA30
+                                // já são datasets — não duplicar.
                                 if (!items || !items.length) return '';
                                 var i = items[0].dataIndex;
                                 var mn = s1.mins[i], mx = s1.maxs[i];
@@ -4392,6 +4503,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 // Render inicial dos chips
                 renderCompareChips();
+
+                // Toggles MA7 / MA30 (aplicam-se a "Evolução de preços")
+                var ma7Toggle = document.getElementById('toggle-ma7');
+                var ma30Toggle = document.getElementById('toggle-ma30');
+                if (ma7Toggle) {
+                    if (prefs.ma7) ma7Toggle.checked = true;
+                    ma7Toggle.addEventListener('change', function() {
+                        savePref('ma7', ma7Toggle.checked);
+                        updateChart();
+                    });
+                }
+                if (ma30Toggle) {
+                    if (prefs.ma30) ma30Toggle.checked = true;
+                    ma30Toggle.addEventListener('change', function() {
+                        savePref('ma30', ma30Toggle.checked);
+                        updateChart();
+                    });
+                }
 
                 // Botao "Largura total" — aplica .viz-wide a todas as 4 visualizacoes
                 var btnVizWide = document.getElementById('btn-viz-wide');
