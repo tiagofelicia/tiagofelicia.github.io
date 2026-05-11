@@ -678,7 +678,7 @@
         <div class="modo-tabs" role="tablist" aria-label="Modo de visualização">
             <button type="button" class="modo-tab active" data-modo="diario" role="tab" aria-selected="true">Diário</button>
             <button type="button" class="modo-tab" data-modo="semanal" role="tab" aria-selected="false">Semanal (7d)</button>
-            <button type="button" class="modo-tab" data-modo="mensal" role="tab" aria-selected="false">Mensal (30d)</button>
+            <button type="button" class="modo-tab" data-modo="mensal" role="tab" aria-selected="false" title="Mês deslizante terminado no dia selecionado (28-31 dias consoante o mês)">Mensal</button>
             <button type="button" class="modo-tab" data-modo="custom" role="tab" aria-selected="false">Personalizado</button>
         </div>
         <div class="range-wrapper" id="range-wrapper" style="display:none;">
@@ -719,6 +719,7 @@
 
     <p class="nota-horas">Valores nas horas locais de cada zona</p>
     <p class="nota-fonte">Fonte: <a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a> | tiagofelicia.pt</p>
+    <p class="export-credit" id="credit-mapa"></p>
 
     <div id="ranked-list-wrapper">
         <h2 id="ranked-list-titulo">Preços por zona de licitação</h2>
@@ -881,7 +882,7 @@
             <summary><strong>Interatividade e navegação</strong></summary>
             <div class="faq-content">
                 <ul>
-                    <li><strong>Modos temporais:</strong> Diário (um dia), Semanal (7 dias), Mensal (30 dias) e Personalizado (intervalo à escolha). Médias agregadas no mapa, tabela, gráfico e curva intradiária.</li>
+                    <li><strong>Modos temporais:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês deslizante terminado no dia selecionado — 28 a 31 dias conforme o mês) e Personalizado (intervalo à escolha). Médias agregadas no mapa, tabela, gráfico e curva intradiária.</li>
                     <li><strong>Selector único de zona:</strong> um só dropdown "Zona" controla simultaneamente Evolução, Curva intradiária, Heatmap horário e Heatmap anual. Clicar numa zona do mapa atualiza tudo.</li>
                     <li><strong>Comparação multi-zona:</strong> chips com até 4 zonas adicionais comparadas no gráfico de evolução e na curva intradiária — cada uma com cor própria e linha distinta sobre as barras da zona principal. Cada chip mostra também o desfasamento de fuso horário face à zona principal (ex: <kbd>+1h</kbd> para ES quando a principal é PT). Os valores são apresentados em <em>hora local de cada zona</em>.</li>
                     <li><strong>Pesquisa de zona:</strong> campo "🔍 Procurar zona" filtra a tabela, destaca a zona no mapa e faz auto-zoom se for um único resultado. Procura por código, nome PT, e ignora acentos.</li>
@@ -3801,8 +3802,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return { start: formatDateStr(s), end: dateStr };
         }
         if (currentMode === 'mensal') {
-            var d2 = parseDateStr(dateStr); var s2 = new Date(d2); s2.setDate(s2.getDate() - 29);
-            return { start: formatDateStr(s2), end: dateStr };
+            // Mês deslizante (mesma estratégia do Heatmap horário e Evolução):
+            // start = (end + 1 dia) - 1 mês, com clamp. Resultado: 28-31 dias
+            // consoante o mês (28 Fev, 30 Abr/Jun, 31 Mai, etc.).
+            var sMen = rollingMonthStart(dateStr);
+            if (sMen < DATA_INICIO) sMen = DATA_INICIO;
+            return { start: sMen, end: dateStr };
         }
         if (currentMode === 'custom' && currentPeriod) {
             return { start: currentPeriod.start, end: currentPeriod.end };
@@ -3859,6 +3864,15 @@ document.addEventListener('DOMContentLoaded', function() {
             titulo = 'Mapa de Preços Médios da Eletricidade - ' + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')';
         }
         document.getElementById('titulo-mapa').textContent = titulo;
+        // Crédito de exportação do mapa
+        var ctxMapa;
+        if (currentMode === 'diario') {
+            ctxMapa = ['Diário ' + fmtDateBR(dateStr)];
+        } else {
+            var lModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
+            ctxMapa = [lModo + ' ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end)];
+        }
+        setExportCredit('credit-mapa', ctxMapa);
 
         // Aviso provisorio
         var avisoEl = document.getElementById('aviso-provisorio');
@@ -4239,7 +4253,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var lbl = document.getElementById('label-seletor-data');
                     if (lbl) {
                         lbl.textContent = (modo === 'diario') ? 'Selecione o dia:'
-                            : (modo === 'semanal' ? 'Dia final dos 7 dias:' : 'Dia final dos 30 dias:');
+                            : (modo === 'semanal' ? 'Dia final dos 7 dias:' : 'Dia final do mês deslizante:');
                     }
                 }
                 if (!opts.skipReload) {
