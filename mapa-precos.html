@@ -384,6 +384,12 @@
         .intraday-hint { font-size: 0.85em; color: #64748b; font-style: italic; margin-left: 8px; }
         .chart-legend-hint { text-align: center; font-size: 0.75em; color: #94a3b8; font-style: italic; margin: 4px 0 0; }
         [data-theme="dark"] .chart-legend-hint { color: #64748b; }
+        .chart-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; padding: 10px 6px 4px; font-size: 0.85em; }
+        .chart-legend-item { display: inline-flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 4px; cursor: pointer; user-select: none; font-weight: 600; transition: background 0.15s, opacity 0.15s; }
+        .chart-legend-item:hover { background: rgba(0,0,0,0.05); }
+        [data-theme="dark"] .chart-legend-item:hover { background: rgba(255,255,255,0.07); }
+        .chart-legend-item.hidden { opacity: 0.45; text-decoration: line-through; }
+        .chart-legend-swatch { display: inline-block; width: 26px; height: 14px; flex-shrink: 0; border-radius: 2px; }
         .intraday-stats { text-align: center; font-size: 0.9em; color: #475569; margin: -6px 0 10px; min-height: 1.2em; }
         .intraday-stats strong { color: #0f172a; font-variant-numeric: tabular-nums; }
         .intraday-stats strong.neg { color: #dc2626; }
@@ -767,6 +773,7 @@
     <div id="chart-wrapper">
         <h2 id="chart-titulo">Evolução de preços</h2>
         <div class="chart-canvas-wrap"><canvas id="chart-precos"></canvas></div>
+        <div id="chart-legend" class="chart-legend"></div>
         <p class="export-credit" id="credit-chart"></p>
     </div>
 
@@ -2996,8 +3003,65 @@ document.addEventListener('DOMContentLoaded', function() {
         return out;
     }
 
+    // Constrói legenda HTML interativa para o gráfico Evolução de preços.
+    // Cada item: swatch colorido + texto na mesma cor da série; click toggle.
+    function renderChartLegend(chart, mainColor) {
+        var holder = document.getElementById('chart-legend');
+        if (!holder || !chart) return;
+        var dss = chart.data.datasets;
+        var html = '';
+        for (var i = 0; i < dss.length; i++) {
+            var ds = dss[i];
+            var isBar = (ds.type === 'bar' || (i === 0 && !ds.type));
+            var col = (i === 0)
+                ? mainColor
+                : (Array.isArray(ds.borderColor) ? ds.borderColor[0] : ds.borderColor);
+            var hidden = !chart.isDatasetVisible(i);
+
+            // Swatch: barra colorida (bars) ou linha tracejada (lines)
+            var swatch;
+            if (isBar) {
+                swatch = '<span class="chart-legend-swatch" style="background:' + col + ';"></span>';
+            } else {
+                var dash = (ds.borderDash && ds.borderDash.length)
+                    ? 'background-image:repeating-linear-gradient(to right,' + col + ' 0,' + col + ' ' + ds.borderDash[0] + 'px,transparent ' + ds.borderDash[0] + 'px,transparent ' + (ds.borderDash[0] + ds.borderDash[1]) + 'px);'
+                    : 'background:' + col + ';';
+                var thick = Math.max(2, ds.borderWidth || 2);
+                swatch = '<span class="chart-legend-swatch" style="height:' + thick + 'px; align-self:center;' + dash + '"></span>';
+            }
+            html += '<span class="chart-legend-item' + (hidden ? ' hidden' : '')
+                  + '" data-idx="' + i + '" style="color:' + col + ';">'
+                  + swatch + '<span>' + ds.label + '</span></span>';
+        }
+        holder.innerHTML = html;
+        // Click handlers
+        var items = holder.querySelectorAll('.chart-legend-item');
+        for (var k = 0; k < items.length; k++) {
+            items[k].addEventListener('click', function() {
+                var idx = parseInt(this.getAttribute('data-idx'), 10);
+                var nowVisible = !chart.isDatasetVisible(idx);
+                chart.setDatasetVisibility(idx, nowVisible);
+                chart.update();
+                this.classList.toggle('hidden', !nowVisible);
+                // Persistir prefs das linhas extra
+                var ds2 = chart.data.datasets[idx];
+                if (ds2 && ds2.label) {
+                    if (ds2.label.indexOf('MA7') === 0) savePref('lineMA7', nowVisible);
+                    else if (ds2.label.indexOf('MA30') === 0) savePref('lineMA30', nowVisible);
+                    else if (ds2.label.indexOf('Médias diárias (linha)') === 0) savePref('lineAvg', nowVisible);
+                    else if (ds2.label.indexOf('Médias diárias — ano anterior') === 0) savePref('linePrevYear', nowVisible);
+                }
+            });
+        }
+    }
+
     async function updateChart() {
         if (typeof Chart === 'undefined') return;
+        // Forçar cor base de TODOS os textos do Chart.js para coincidir com o
+        // tema atual. Necessario porque Chart.js cacheia esta cor por chart.
+        var _dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        Chart.defaults.color = _dark ? '#f1f5f9' : '#0f172a';
+        Chart.defaults.borderColor = _dark ? '#334155' : '#e2e8f0';
         var zoneSel = document.getElementById('global-zone-select');
         var canvas = document.getElementById('chart-precos');
         if (!zoneSel || !canvas) return;
@@ -3122,12 +3186,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Acrescentar datasets sempre que aplicáveis. Visibilidade default
         // off; lê-se de prefs e a legenda controla daí em diante.
+        // Cores das linhas MA adaptadas ao tema (light/dark) para contraste.
+        var darkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+        var ma7Color = darkMode ? '#e2e8f0' : '#1e293b';   // contrastante com fundo
+        var ma30Color = darkMode ? '#94a3b8' : '#475569';  // tom intermédio
         if (canMA7) {
             datasets.push({
                 type: 'line',
                 label: 'MA7 (média móvel 7 dias)',
                 data: ma7Data,
-                borderColor: '#1e293b',
+                borderColor: ma7Color,
                 backgroundColor: 'rgba(0,0,0,0)',
                 borderDash: [5, 3],
                 borderWidth: 1.7,
@@ -3142,7 +3210,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 type: 'line',
                 label: 'MA30 (média móvel 30 dias)',
                 data: ma30Data,
-                borderColor: '#475569',
+                borderColor: ma30Color,
                 backgroundColor: 'rgba(0,0,0,0)',
                 borderDash: [2, 4],
                 borderWidth: 1.5,
@@ -3242,52 +3310,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // comparação multi-zona E o dataset 0 (barras) estiver visível.
                     barValueLabels: { show: !hasCompare },
                     whiskers: { show: showWhiskers, mins: s1.mins, maxs: s1.maxs },
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            color: c.text,
-                            usePointStyle: false,
-                            generateLabels: function(chart) {
-                                var dss = chart.data.datasets;
-                                return dss.map(function(ds, i) {
-                                    var isBar = (ds.type === 'bar' || (i === 0 && !ds.type));
-                                    var col;
-                                    if (i === 0) {
-                                        col = mainSwatchColor;
-                                    } else {
-                                        col = Array.isArray(ds.borderColor) ? ds.borderColor[0] : ds.borderColor;
-                                    }
-                                    return {
-                                        text: ds.label,
-                                        fillStyle: isBar ? col : 'rgba(0,0,0,0)',
-                                        strokeStyle: col,
-                                        lineWidth: isBar ? 1 : (ds.borderWidth || 2),
-                                        lineDash: ds.borderDash || [],
-                                        // Marca explicitamente as linhas como traço
-                                        pointStyle: isBar ? 'rect' : 'line',
-                                        hidden: !chart.isDatasetVisible(i),
-                                        datasetIndex: i
-                                    };
-                                });
-                            }
-                        },
-                        onClick: function(e, item, legend) {
-                            var ci = legend.chart;
-                            var idx = item.datasetIndex;
-                            var ds = ci.data.datasets[idx];
-                            var nowVisible = !ci.isDatasetVisible(idx);
-                            ci.setDatasetVisibility(idx, nowVisible);
-                            ci.update();
-                            // Persistir prefs das linhas extra
-                            if (ds && ds.label) {
-                                if (ds.label.indexOf('MA7') === 0) savePref('lineMA7', nowVisible);
-                                else if (ds.label.indexOf('MA30') === 0) savePref('lineMA30', nowVisible);
-                                else if (ds.label.indexOf('Médias diárias (linha)') === 0) savePref('lineAvg', nowVisible);
-                                else if (ds.label.indexOf('Médias diárias — ano anterior') === 0) savePref('linePrevYear', nowVisible);
-                            }
-                        }
-                    },
+                    // Legenda canvas DESATIVADA — usamos legenda HTML abaixo
+                    // do canvas para podermos colorir o texto de cada item.
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(ctx) {
@@ -3328,6 +3353,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             precosChart = new Chart(canvas.getContext('2d'), cfg);
         }
+        // Renderizar legenda HTML por baixo do canvas (controlo total das cores)
+        renderChartLegend(precosChart, mainSwatchColor);
         var titulo = document.getElementById('chart-titulo');
         if (titulo) {
             var nDias = Math.round((parseDateStr(chartEnd) - parseDateStr(chartStart)) / 86400000) + 1;
@@ -4204,6 +4231,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     geojsonLayer.setStyle(style);
                     updatePriceLabels();
                 }
+                // Destruir charts Chart.js para que sejam recriados com as
+                // cores corretas do novo tema (Chart.js cacheia algumas
+                // opcoes, por isso apenas .update() nao basta).
+                if (precosChart) { precosChart.destroy(); precosChart = null; }
+                if (intradayChart) { intradayChart.destroy(); intradayChart = null; }
                 if (typeof updateChart === 'function') updateChart();
                 if (typeof updateIntradayChart === 'function') updateIntradayChart();
                 if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
