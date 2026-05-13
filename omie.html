@@ -382,9 +382,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const dataAnteriorInicioCSV = getDataAnteriorCSV(dataInicioSelecionada);
         const anoAnteriorInicio = dataAnteriorInicioCSV ? parseInt(dataAnteriorInicioCSV.substring(6, 10)) : null;
 
-        // Determinar anos necessários e carregar
+        // Período estendido (30 dias antes de dataInicio) para cálculo das médias móveis (MA7/MA30)
+        const dataInicioExtendidaObj = new Date(dataInicioSelecionada + "T12:00:00Z");
+        dataInicioExtendidaObj.setUTCDate(dataInicioExtendidaObj.getUTCDate() - 30);
+        let dataInicioExtendida = dataInicioExtendidaObj.toISOString().split('T')[0];
+        if (dataInicioExtendida < `${ANO_INICIO_HISTORICO}-01-01`) dataInicioExtendida = `${ANO_INICIO_HISTORICO}-01-01`;
+        const anoInicioExtendido = parseInt(dataInicioExtendida.substring(0, 4));
+
+        // Determinar anos necessários e carregar (incluindo os anos cobertos pela extensão MA)
         const anosACarregar = new Set();
-        for (let ano = anoInicio; ano <= anoFim; ano++) {
+        for (let ano = anoInicioExtendido; ano <= anoFim; ano++) {
             if (ano >= ANO_INICIO_HISTORICO && ano < anoMinimoAtual && !(dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise))) {
                 anosACarregar.add(ano);
             }
@@ -426,6 +433,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (anoAnteriorInicio && anoAnteriorInicio < anoMinimoAtual && dadosHistoricos[anoAnteriorInicio] && Array.isArray(dadosHistoricos[anoAnteriorInicio])) {
             dadosDiaAnteriorInicio = dadosHistoricos[anoAnteriorInicio].filter(d => d.dia === dataAnteriorInicioCSV);
+        }
+
+        // Construir conjunto estendido (30 dias antes + período) para cálculo das MA7/MA30
+        let dadosExtendidosParaMA = [];
+        if (anoFim >= anoMinimoAtual) {
+            dadosExtendidosParaMA.push(...filtrarPorPeriodo(dadosAtuais, dataInicioExtendida, dataFimSelecionada));
+        }
+        for (let ano = anoInicioExtendido; ano <= anoFim; ano++) {
+            if (ano < anoMinimoAtual && dadosHistoricos[ano] && Array.isArray(dadosHistoricos[ano])) {
+                dadosExtendidosParaMA.push(...filtrarPorPeriodo(dadosHistoricos[ano], dataInicioExtendida, dataFimSelecionada));
+            }
         }
         
         if (dadosDoPeriodo.length === 0) { 
@@ -517,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['P']));
 
         // Atualizar Gráficos
-        atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados);
+        atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioSelecionada, dataFimSelecionada);
         atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
         atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
 
@@ -535,7 +553,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- FIM DA NOVA LÓGICA ---
     }
     // --- Gráfico de Médias DIÁRIAS ---
-    function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados) {
+    function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioISO, dataFimISO) {
         const dadosAgrupados = dadosDoPeriodo.reduce((acc, row) => { 
             if (!acc[row.dia]) { acc[row.dia] = { precosPT: [], precosES: [] }; } 
             if (row.preco_pt !== null) acc[row.dia].precosPT.push(row.preco_pt); 
@@ -579,6 +597,105 @@ document.addEventListener('DOMContentLoaded', function() {
             if (mediaESDia !== null) seriesDataES.push([timestamp, mediaESDia]);
         });
 
+        // --- Cálculo de séries para Médias Móveis (MA7 / MA30) ---
+        // Agrupa dados estendidos por dia e calcula métricas diárias
+        const dataOMIEcsv = dadosAtualizacao.Data_Valores_OMIE;
+        const isDataOMIEDentroPeriodo = dataInicioCSV && dataFimCSV;
+        const dadosExtPorDia = {};
+        (dadosExtendidosParaMA || []).forEach(row => {
+            if (!row.dia) return;
+            if (!dadosExtPorDia[row.dia]) dadosExtPorDia[row.dia] = [];
+            dadosExtPorDia[row.dia].push(row);
+        });
+        const diasExt = Object.keys(dadosExtPorDia).sort((a, b) => formatarDataParaInput(a).localeCompare(formatarDataParaInput(b)));
+
+        // Sum + count por dia/métrica → MA na janela = soma das somas / soma das contagens
+        // (mesma estratégia dos cards: média sobre todos os quartos-horários, não média de médias)
+        function _sumCount(arr) {
+            const valid = arr.filter(p => p !== null && !isNaN(p));
+            return { sum: valid.reduce((a, b) => a + b, 0), count: valid.length };
+        }
+        function _scCiclo(rows, cicloKey, periodo) {
+            return _sumCount(rows.filter(r => r[cicloKey] === periodo).map(r => r.preco_pt));
+        }
+
+        const dailyMetrics = diasExt.map(dia => {
+            let rows = dadosExtPorDia[dia];
+            // No último dia OMIE, excluir quartos sem ES (ainda não conhecidos)
+            if (dia === dataOMIEcsv && isDataFimUltimoDiaOMIE) {
+                rows = rows.filter(r => r.preco_es !== null);
+            }
+            const [d, m, y] = dia.split('/');
+            const ts = Date.UTC(parseInt(y), parseInt(m) - 1, parseInt(d));
+            return {
+                dia, ts,
+                simples: _sumCount(rows.map(r => r.preco_pt)),
+                // Vazio Bi == Vazio Tri (por dia/semanal). Fora Vazio só existe no Bi; Cheias/Ponta só no Tri.
+                vazioD:  _scCiclo(rows, 'BD', 'V'),
+                vazioS:  _scCiclo(rows, 'BS', 'V'),
+                fvD:     _scCiclo(rows, 'BD', 'F'),
+                fvS:     _scCiclo(rows, 'BS', 'F'),
+                cheiasD: _scCiclo(rows, 'TD', 'C'),
+                cheiasS: _scCiclo(rows, 'TS', 'C'),
+                pontaD:  _scCiclo(rows, 'TD', 'P'),
+                pontaS:  _scCiclo(rows, 'TS', 'P')
+            };
+        });
+
+        // MA com janela contínua de "windowSize" dias consecutivos. Soma os {sum,count} da janela.
+        function calcularMA(metricKey, windowSize) {
+            const out = [];
+            const DIA_MS = 86400000;
+            for (let i = windowSize - 1; i < dailyMetrics.length; i++) {
+                const slice = dailyMetrics.slice(i - windowSize + 1, i + 1);
+                // Verificar continuidade (sem gaps de dias) na janela
+                if (slice[slice.length - 1].ts - slice[0].ts !== (windowSize - 1) * DIA_MS) continue;
+                let sum = 0, count = 0;
+                for (const p of slice) { sum += p[metricKey].sum; count += p[metricKey].count; }
+                if (count === 0) continue;
+                const diaInput = formatarDataParaInput(dailyMetrics[i].dia);
+                if (diaInput >= dataInicioISO && diaInput <= dataFimISO) {
+                    out.push([dailyMetrics[i].ts, sum / count]);
+                }
+            }
+            return out;
+        }
+
+        // Métricas a apresentar (label + cor + visibilidade default)
+        const metricasMA = [
+            { key: 'simples', label: 'Simples',           color: '#6f42c1', visivel: true  },
+            { key: 'vazioD',  label: 'Vazio Diário',      color: '#70AD47', visivel: false },
+            { key: 'vazioS',  label: 'Vazio Semanal',     color: '#4472C4', visivel: false },
+            { key: 'fvD',     label: 'Fora Vazio Diário', color: '#A9D08E', visivel: false },
+            { key: 'fvS',     label: 'Fora Vazio Semanal',color: '#8EA9DB', visivel: false },
+            { key: 'cheiasD', label: 'Cheias Diário',     color: '#BF8F00', visivel: false },
+            { key: 'cheiasS', label: 'Cheias Semanal',    color: '#C65911', visivel: false },
+            { key: 'pontaD',  label: 'Ponta Diário',      color: '#806000', visivel: false },
+            { key: 'pontaS',  label: 'Ponta Semanal',     color: '#843C0C', visivel: false }
+        ];
+
+        const seriesMA = [];
+        metricasMA.forEach(m => {
+            seriesMA.push({
+                name: `${m.label} MA7`,
+                color: m.color,
+                dashStyle: 'Solid',
+                lineWidth: 1.5,
+                marker: { enabled: false },
+                visible: m.visivel,
+                data: calcularMA(m.key, 7)
+            });
+            seriesMA.push({
+                name: `${m.label} MA30`,
+                color: m.color,
+                dashStyle: 'ShortDash',
+                lineWidth: 1.5,
+                marker: { enabled: false },
+                visible: m.visivel,
+                data: calcularMA(m.key, 30)
+            });
+        });
+
         const tituloGrafico = `Médias Diárias OMIE de ${dataInicioCSV} a ${dataFimCSV} ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`;
         const nomeFicheiroBase = `medias-diarias-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
         
@@ -609,12 +726,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 valueDecimals: 2, 
                 xDateFormat: '%A, %e de %B de %Y' 
             }, 
-            legend: { 
-                layout: 'horizontal', 
-                align: 'center', 
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
                 verticalAlign: 'bottom',
-                itemStyle: { color: _d1.txt }
-            }, 
+                itemStyle: { color: _d1.txt },
+                title: {
+                    text: 'Nota: MA7 / MA30 = médias móveis a 7 / 30 dias (apenas Portugal)',
+                    style: { fontWeight: 'normal', fontStyle: 'italic', color: _d1.txt }
+                }
+            },
             exporting: { 
                 filename: nomeFicheiroBase, 
                 enabled: true, 
@@ -628,13 +749,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     } 
                 } 
             }, 
-            series: [ 
-                { name: 'Espanha', color: '#28a745', data: seriesDataES }, 
-                { name: 'Portugal', color: '#007bff', data: seriesDataPT } 
-            ] 
+            series: [
+                { name: 'Espanha', color: '#28a745', data: seriesDataES },
+                { name: 'Portugal', color: '#007bff', data: seriesDataPT },
+                ...seriesMA
+            ]
         });
     }
-    
+
     // --- Gráfico de Médias HORÁRIAS ---
     function atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE) {
         const hourlyAverages = Array(24).fill(null).map(() => ({ sumPT: 0, countPT: 0, sumES: 0, countES: 0 }));
