@@ -389,9 +389,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dataInicioExtendida < `${ANO_INICIO_HISTORICO}-01-01`) dataInicioExtendida = `${ANO_INICIO_HISTORICO}-01-01`;
         const anoInicioExtendido = parseInt(dataInicioExtendida.substring(0, 4));
 
-        // Determinar anos necessários e carregar (incluindo os anos cobertos pela extensão MA)
+        // Período do ano anterior (para comparação YoY: Simples + MA30 do ano anterior)
+        function _subYearISO(isoStr) {
+            const [y, m, d] = isoStr.split('-');
+            return `${parseInt(y) - 1}-${m}-${d}`;
+        }
+        let dataInicioExtAnterior = _subYearISO(dataInicioExtendida);
+        const dataFimAnterior = _subYearISO(dataFimSelecionada);
+        if (dataInicioExtAnterior < `${ANO_INICIO_HISTORICO}-01-01`) dataInicioExtAnterior = `${ANO_INICIO_HISTORICO}-01-01`;
+        const anoInicioExtAnterior = parseInt(dataInicioExtAnterior.substring(0, 4));
+        const anoFimAnterior = parseInt(dataFimAnterior.substring(0, 4));
+
+        // Determinar anos necessários e carregar (extensão MA + ano anterior YoY)
         const anosACarregar = new Set();
         for (let ano = anoInicioExtendido; ano <= anoFim; ano++) {
+            if (ano >= ANO_INICIO_HISTORICO && ano < anoMinimoAtual && !(dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise))) {
+                anosACarregar.add(ano);
+            }
+        }
+        for (let ano = anoInicioExtAnterior; ano <= anoFimAnterior; ano++) {
             if (ano >= ANO_INICIO_HISTORICO && ano < anoMinimoAtual && !(dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise))) {
                 anosACarregar.add(ano);
             }
@@ -443,6 +459,17 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let ano = anoInicioExtendido; ano <= anoFim; ano++) {
             if (ano < anoMinimoAtual && dadosHistoricos[ano] && Array.isArray(dadosHistoricos[ano])) {
                 dadosExtendidosParaMA.push(...filtrarPorPeriodo(dadosHistoricos[ano], dataInicioExtendida, dataFimSelecionada));
+            }
+        }
+
+        // Construir conjunto do ano anterior (estendido) para séries YoY
+        let dadosAnoAnteriorParaYoY = [];
+        if (anoFimAnterior >= anoMinimoAtual) {
+            dadosAnoAnteriorParaYoY.push(...filtrarPorPeriodo(dadosAtuais, dataInicioExtAnterior, dataFimAnterior));
+        }
+        for (let ano = anoInicioExtAnterior; ano <= anoFimAnterior; ano++) {
+            if (ano < anoMinimoAtual && dadosHistoricos[ano] && Array.isArray(dadosHistoricos[ano])) {
+                dadosAnoAnteriorParaYoY.push(...filtrarPorPeriodo(dadosHistoricos[ano], dataInicioExtAnterior, dataFimAnterior));
             }
         }
         
@@ -535,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['P']));
 
         // Atualizar Gráficos
-        atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioSelecionada, dataFimSelecionada);
+        atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioSelecionada, dataFimSelecionada, dadosAnoAnteriorParaYoY);
         atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
         atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
 
@@ -553,7 +580,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- FIM DA NOVA LÓGICA ---
     }
     // --- Gráfico de Médias DIÁRIAS ---
-    function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioISO, dataFimISO) {
+    function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioISO, dataFimISO, dadosAnoAnteriorParaYoY) {
         const dadosAgrupados = dadosDoPeriodo.reduce((acc, row) => { 
             if (!acc[row.dia]) { acc[row.dia] = { precosPT: [], precosES: [] }; } 
             if (row.preco_pt !== null) acc[row.dia].precosPT.push(row.preco_pt); 
@@ -674,27 +701,118 @@ document.addEventListener('DOMContentLoaded', function() {
             { key: 'pontaS',  label: 'Ponta Semanal',     color: '#843C0C', visivel: false }
         ];
 
+        // --- Persistência de visibilidade (localStorage) ---
+        const LS_KEY_SERIES_VIS = 'omie_grafico_diario_series_visiveis';
+        function lsGetVis() { try { return JSON.parse(localStorage.getItem(LS_KEY_SERIES_VIS)) || {}; } catch(e) { return {}; } }
+        function lsSetVis(name, visible) {
+            try {
+                const obj = lsGetVis();
+                obj[name] = visible;
+                localStorage.setItem(LS_KEY_SERIES_VIS, JSON.stringify(obj));
+            } catch(e) {}
+        }
+        const visStore = lsGetVis();
+        function resolveVisible(name, defaultVis) {
+            return Object.prototype.hasOwnProperty.call(visStore, name) ? !!visStore[name] : defaultVis;
+        }
+
         const seriesMA = [];
         metricasMA.forEach(m => {
+            const nameMA7 = `${m.label} MA7`;
+            const nameMA30 = `${m.label} MA30`;
             seriesMA.push({
-                name: `${m.label} MA7`,
+                name: nameMA7,
                 color: m.color,
                 dashStyle: 'Solid',
                 lineWidth: 1.5,
                 marker: { enabled: false },
-                visible: m.visivel,
+                visible: resolveVisible(nameMA7, m.visivel),
                 data: calcularMA(m.key, 7)
             });
             seriesMA.push({
-                name: `${m.label} MA30`,
+                name: nameMA30,
                 color: m.color,
                 dashStyle: 'ShortDash',
                 lineWidth: 1.5,
                 marker: { enabled: false },
-                visible: m.visivel,
+                visible: resolveVisible(nameMA30, m.visivel),
                 data: calcularMA(m.key, 30)
             });
         });
+
+        // --- Séries YoY (ano anterior, apenas Simples PT) ---
+        // Agrupar dados do ano anterior por dia e calcular Simples (sum+count) por dia
+        const dadosAntPorDia = {};
+        (dadosAnoAnteriorParaYoY || []).forEach(row => {
+            if (!row.dia) return;
+            if (!dadosAntPorDia[row.dia]) dadosAntPorDia[row.dia] = [];
+            dadosAntPorDia[row.dia].push(row);
+        });
+        const diasAnt = Object.keys(dadosAntPorDia).sort((a, b) => formatarDataParaInput(a).localeCompare(formatarDataParaInput(b)));
+        const dailyAnt = diasAnt.map(dia => {
+            const rows = dadosAntPorDia[dia];
+            const [d, m, y] = dia.split('/');
+            const ts = Date.UTC(parseInt(y), parseInt(m) - 1, parseInt(d));
+            return { dia, ts, simples: _sumCount(rows.map(r => r.preco_pt)) };
+        });
+
+        // Converte uma data DD/MM/YYYY do ano anterior para timestamp do ano corrente equivalente.
+        // Devolve null se o dia não existir no ano alvo (ex: 29/02 → ano não bissexto).
+        function _shiftToCurrentYearTs(dia) {
+            const [d, m, y] = dia.split('/');
+            const novoAno = parseInt(y) + 1;
+            const date = new Date(Date.UTC(novoAno, parseInt(m) - 1, parseInt(d)));
+            if (date.getUTCMonth() !== parseInt(m) - 1 || date.getUTCDate() !== parseInt(d)) return null;
+            return date.getTime();
+        }
+
+        // Simples ano anterior — média diária deslocada para o timestamp do ano atual
+        const dataSimplesAnoAnt = [];
+        dailyAnt.forEach(p => {
+            const tsAtual = _shiftToCurrentYearTs(p.dia);
+            if (tsAtual === null) return;
+            if (p.simples.count === 0) return;
+            const diaAtualInput = new Date(tsAtual).toISOString().split('T')[0];
+            if (diaAtualInput < dataInicioISO || diaAtualInput > dataFimISO) return;
+            dataSimplesAnoAnt.push([tsAtual, p.simples.sum / p.simples.count]);
+        });
+
+        // MA30 ano anterior — janela contínua de 30 dias, deslocada para o ano atual
+        const dataMA30AnoAnt = [];
+        const DIA_MS_YOY = 86400000;
+        for (let i = 29; i < dailyAnt.length; i++) {
+            const slice = dailyAnt.slice(i - 29, i + 1);
+            if (slice[slice.length - 1].ts - slice[0].ts !== 29 * DIA_MS_YOY) continue;
+            let sum = 0, count = 0;
+            for (const p of slice) { sum += p.simples.sum; count += p.simples.count; }
+            if (count === 0) continue;
+            const tsAtual = _shiftToCurrentYearTs(dailyAnt[i].dia);
+            if (tsAtual === null) continue;
+            const diaAtualInput = new Date(tsAtual).toISOString().split('T')[0];
+            if (diaAtualInput < dataInicioISO || diaAtualInput > dataFimISO) continue;
+            dataMA30AnoAnt.push([tsAtual, sum / count]);
+        }
+
+        const seriesYoY = [
+            {
+                name: 'Portugal (ano anterior)',
+                color: '#9aa0a6',
+                dashStyle: 'Solid',
+                lineWidth: 1.5,
+                marker: { enabled: false },
+                visible: resolveVisible('Portugal (ano anterior)', false),
+                data: dataSimplesAnoAnt
+            },
+            {
+                name: 'Portugal MA30 (ano anterior)',
+                color: '#9aa0a6',
+                dashStyle: 'ShortDash',
+                lineWidth: 1.5,
+                marker: { enabled: false },
+                visible: resolveVisible('Portugal MA30 (ano anterior)', false),
+                data: dataMA30AnoAnt
+            }
+        ];
 
         const tituloGrafico = `Médias Diárias OMIE de ${dataInicioCSV} a ${dataFimCSV} ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`;
         const nomeFicheiroBase = `medias-diarias-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
@@ -749,9 +867,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     } 
                 } 
             }, 
+            plotOptions: {
+                series: {
+                    events: {
+                        legendItemClick: function() {
+                            // Guarda visibilidade após o clique (toggle ainda não ocorreu)
+                            lsSetVis(this.name, !this.visible);
+                        }
+                    }
+                }
+            },
             series: [
                 { name: 'Espanha', color: '#28a745', data: seriesDataES },
                 { name: 'Portugal', color: '#007bff', data: seriesDataPT },
+                ...seriesYoY,
                 ...seriesMA
             ]
         });
