@@ -37,20 +37,19 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
 
-    <!-- FIX (v25 #15): versões CDN fixas (em vez de "latest" / sem versão) para evitar breaking changes silenciosos.
-         Para máxima protecção contra supply-chain, adicionar integrity="sha384-..." crossorigin="anonymous" a cada script
-         após validar as hashes em https://www.srihash.org/ ou via `curl -s URL | openssl dgst -sha384 -binary | base64`. -->
-    <script defer src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/highcharts.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/exporting.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/offline-exporting.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/map.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/heatmap.js" crossorigin="anonymous"></script>
+    <!-- FIX (v25 #15): versões CDN fixas + SRI integrity hashes (sha384) — protecção contra supply-chain.
+         Hashes gerados via: curl -s URL | openssl dgst -sha384 -binary | openssl base64 -A -->
+    <script defer src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js" integrity="sha384-Pqp51FUN2/qzfxZxBCtF0stpc9ONI6MYZpVqmo8m20SoaQCzf+arZvACkLkirlPz" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js" integrity="sha384-Xl/CUCfJbzsngMp0CFxkmF0VW/8C160IsGujqeQlIhaGxKz2+JsIGORFqtCPeldF" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/highcharts.js" integrity="sha384-XxsZMNol0nU0LnC2cYsyhRNbfyK7CPmF7WrlFvZDdlCKn9hzVkXsHxCHVaKwkl76" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/exporting.js" integrity="sha384-iIafvPxt7arZGSNeMKRXbEr8N+ijzanJ60dtD21K9navK1tFiY0vuOeGVpIjPD9S" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/offline-exporting.js" integrity="sha384-Lj2ktmBW/0wsRwmnbE6m6gp//rkDRovWuhjZP9qbWmPQ3WLDfgW3BZQYiitV37fX" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/map.js" integrity="sha384-ibsJU5DaO4RYhJ6IrTZGSb9fbmON9wRaU8zkiOpx1p+8ck6rL2n0RDk5nXzv32zF" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/highcharts@11.4.8/modules/heatmap.js" integrity="sha384-trMgTUhDzAPtnQ/uQrGjR3nm03BGGZxnKekalyR5n2HN5kvoRyLoITegL36k4SV8" crossorigin="anonymous"></script>
     <!-- Leaflet CSS/JS carregado dinamicamente em initMap() para evitar bloquear o carregamento inicial -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
