@@ -2,7 +2,10 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://raw.githubusercontent.com https://www.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     <meta name="referrer" content="no-referrer-when-downgrade">
     <title>Política de Cookies | Tiago Felícia</title>
     <meta name="description" content="Política de Cookies do site Tiago Felícia — Simuladores de Energia.">
@@ -61,24 +64,39 @@
         [data-theme="dark"] .btn-manage { color: #f87171; border-color: #f87171; }
         [data-theme="dark"] .btn-manage:hover { background: #f87171; color: #0f172a; }
     </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://www.tiagofelicia.pt/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Política de Cookies",
+      "item": "https://www.tiagofelicia.pt/politica-de-cookies.html"
+    }
+  ]
+}
+    </script>
 </head>
 <body>
 
-<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar Modo Escuro" id="btn-dark-mode">🌙</button>
 
-<header>
-    <div class="header-content">
-        <div class="header-title-container">
-            <a href="index.html">
-                <img src="images/Logo_Tiago_Felicia.png" alt="Logótipo Tiago Felícia - Página Inicial" class="logo">
-            </a>
-            <div class="brand-name">Tiago Felícia</div>
-        </div>
-        <p>Simuladores de tarifários de Eletricidade, Gás Natural e Autoconsumo</p>
-    </div>
-</header>
 
 <div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li aria-current="page">Política de Cookies</li>
+    </ol>
+</nav>
+
 
 <div class="policy-container">
 
@@ -113,8 +131,8 @@
             </tr>
             <tr>
                 <td><strong>Essenciais</strong></td>
-                <td><code>tf_theme</code> / <code>tf_autoconsumo_theme</code></td>
-                <td>Guardar a sua preferência de modo escuro (dark mode)</td>
+                <td><code>theme_site</code></td>
+                <td>Guardar a sua preferência de modo escuro (dark mode). O simulador de Autoconsumo pode também usar <code>tf_autoconsumo_theme</code> como chave de transição, sincronizada automaticamente.</td>
                 <td>Permanente</td>
                 <td>Não necessário (preferência funcional)</td>
             </tr>
@@ -166,18 +184,6 @@
 <div id="footer-placeholder"></div>
 
 <script>
-// Carregar menu e footer
-(function() {
-    fetch('menu.html')
-        .then(r => r.ok ? r.text() : '')
-        .then(html => { if(html) document.getElementById('menu-placeholder').innerHTML = html; })
-        .catch(() => {});
-    fetch('footer.html')
-        .then(r => r.ok ? r.text() : '')
-        .then(html => { if(html) document.getElementById('footer-placeholder').innerHTML = html; })
-        .catch(() => {});
-})();
-
 // Revogar consentimento
 function revogarConsentimento() {
     localStorage.removeItem('tf_cookie_consent');
@@ -192,25 +198,8 @@ function revogarConsentimento() {
     document.getElementById('revoke-msg').style.display = 'block';
 }
 
-// Dark mode toggle
-function toggleDarkMode() {
-    var html = document.documentElement;
-    var isDark = html.getAttribute('data-theme') === 'dark';
-    var newTheme = isDark ? 'light' : 'dark';
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('tf_theme', newTheme);
-    var btn = document.getElementById('btn-dark-mode');
-    if (btn) btn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-}
-(function() {
-    var saved = localStorage.getItem('tf_theme') || localStorage.getItem('tf_autoconsumo_theme');
-    if (saved === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        var btn = document.getElementById('btn-dark-mode');
-        if (btn) btn.textContent = '\u2600\uFE0F';
-    }
-})();
 </script>
+<script src="theme.js"></script>
 <script src="cookie-consent.js"></script>
 </body>
 </html>
