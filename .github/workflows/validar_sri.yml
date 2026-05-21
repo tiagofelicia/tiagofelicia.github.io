@@ -1,0 +1,56 @@
+name: Validar SRI Hashes (CDN)
+
+# Verifica diariamente se os hashes SRI (integrity=) declarados nos HTMLs
+# ainda batem com o conteúdo atual servido pelo CDN.
+#
+# Se um CDN republicar um ficheiro, o hash deixa de bater e o browser bloqueia
+# o script. Este workflow alerta-nos antes que isso aconteça em produção.
+
+on:
+  schedule:
+    - cron: '15 6 * * *'  # Todos os dias às 06:15 UTC (07:15 inverno PT)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '**.html'
+      - 'scripts/validar_sri.py'
+      - '.github/workflows/validar_sri.yml'
+
+permissions:
+  contents: read
+  issues: write   # para criar/atualizar issue de alerta
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validar hashes SRI
+        id: sri_check
+        continue-on-error: true
+        run: |
+          python scripts/validar_sri.py | tee sri_report.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Falhar workflow se houver mismatches
+        if: steps.sri_check.outputs.exit_code != '0'
+        run: |
+          echo "::warning::Detectados hashes SRI inválidos. Ver sri_report.txt."
+          cat sri_report.txt
+          exit 1
+
+      - name: Upload relatório como artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sri-report
+          path: sri_report.txt
+          retention-days: 30

@@ -1,0 +1,148 @@
+name: Validar HTML / JSON / Sitemap
+
+# Corre em cada push e PR para main que toque em ficheiros relevantes.
+# Falha o build se algum JSON-LD for inválido, sitemap.xml mal formado,
+# ou se houver referências a ficheiros locais inexistentes.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.html'
+      - 'sitemap.xml'
+      - 'images/site.webmanifest'
+      - 'robots.txt'
+      - '.github/workflows/validate.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.html'
+      - 'sitemap.xml'
+      - 'images/site.webmanifest'
+      - 'robots.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validar XML do sitemap
+        run: |
+          python -c "
+          import xml.etree.ElementTree as ET, sys, os
+          if not os.path.exists('sitemap.xml'):
+              print('sitemap.xml não encontrado'); sys.exit(0)
+          try:
+              tree = ET.parse('sitemap.xml')
+              urls = tree.getroot().findall('{http://www.sitemaps.org/schemas/sitemap/0.9}url')
+              print(f'sitemap.xml OK — {len(urls)} URLs')
+          except Exception as e:
+              print(f'ERRO: sitemap.xml inválido: {e}')
+              sys.exit(1)
+          "
+
+      - name: Validar JSON do webmanifest
+        run: |
+          python -c "
+          import json, sys, os
+          path = 'images/site.webmanifest'
+          if not os.path.exists(path):
+              print(f'{path} não encontrado'); sys.exit(0)
+          try:
+              with open(path, encoding='utf-8') as f:
+                  d = json.load(f)
+              required = ['name', 'short_name', 'icons', 'start_url']
+              missing = [k for k in required if k not in d]
+              if missing:
+                  print(f'AVISO: campos em falta em manifest: {missing}')
+              print(f'manifest OK: {d.get(\"name\")}')
+          except Exception as e:
+              print(f'ERRO: manifest inválido: {e}')
+              sys.exit(1)
+          "
+
+      - name: Validar JSON-LD em todas as páginas HTML
+        run: |
+          python -c "
+          import re, json, glob, sys
+          fail = 0
+          total = 0
+          for f in sorted(glob.glob('*.html')):
+              try:
+                  with open(f, encoding='utf-8') as fh: c = fh.read()
+              except Exception as e:
+                  print(f'AVISO: não foi possível ler {f}: {e}'); continue
+              blocks = re.findall(r'<script type=\"application/ld\+json\">\s*(.+?)\s*</script>', c, re.DOTALL)
+              for i, b in enumerate(blocks):
+                  total += 1
+                  try:
+                      json.loads(b)
+                  except Exception as e:
+                      print(f'ERRO JSON-LD em {f} bloco #{i}: {e}')
+                      fail += 1
+          print(f'Validados: {total} blocos JSON-LD')
+          if fail:
+              print(f'FAIL: {fail} blocos inválidos'); sys.exit(1)
+          "
+
+      - name: Validar HTML básico (estrutura, alt em imagens, lang)
+        run: |
+          python -c "
+          import re, glob, sys
+          issues = 0
+          for f in sorted(glob.glob('*.html')):
+              with open(f, encoding='utf-8') as fh: c = fh.read()
+              # 1. <html lang=>
+              if not re.search(r'<html [^>]*lang=', c[:300]):
+                  print(f'AVISO: {f}: falta atributo lang em <html>'); issues += 1
+              # 2. <img> sem alt
+              for m in re.finditer(r'<img\s+[^>]*>', c):
+                  tag = m.group(0)
+                  if 'alt=' not in tag:
+                      print(f'AVISO: {f}: <img> sem alt: {tag[:80]}'); issues += 1
+              # 3. <a target=_blank sem rel=noopener
+              for m in re.finditer(r'<a\s+[^>]*target=[\"\']_blank[\"\'][^>]*>', c):
+                  tag = m.group(0)
+                  if 'noopener' not in tag and 'noreferrer' not in tag:
+                      print(f'AVISO: {f}: target=_blank sem rel=noopener: {tag[:80]}'); issues += 1
+          print(f'Concluído. {issues} avisos (não bloqueantes).')
+          # Não falhar por estes avisos — são apenas indicativos.
+          "
+
+      - name: Verificar links internos (ficheiros referenciados existem)
+        run: |
+          python -c "
+          import re, glob, sys, os
+          missing = []
+          for f in sorted(glob.glob('*.html')):
+              with open(f, encoding='utf-8') as fh: c = fh.read()
+              # href ou src para ficheiros locais (.html, .css, .js, .png, .svg, .webp, .ico, .csv, .json, .webmanifest)
+              for m in re.finditer(r'(?:href|src|srcset)=[\"\']((?!https?://|//|mailto:|tel:|data:|javascript:|#)[^\"\']+)[\"\']', c):
+                  target = m.group(1).split('?')[0].split('#')[0]
+                  if not target: continue
+                  if target.startswith('/'):
+                      candidate = target.lstrip('/')
+                  else:
+                      candidate = target
+                  if not any(target.endswith(ext) for ext in ['.html', '.css', '.js', '.png', '.svg', '.webp', '.ico', '.csv', '.json', '.webmanifest', '.jpg', '.gif']):
+                      continue
+                  if not os.path.exists(candidate):
+                      missing.append((f, target))
+          if missing:
+              print(f'ERROS: {len(missing)} ficheiros referenciados não existem')
+              for src, tgt in missing[:50]:
+                  print(f'  {src} -> {tgt}')
+              sys.exit(1)
+          else:
+              print('Todos os links internos OK.')
+          "

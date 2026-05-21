@@ -1,0 +1,43 @@
+name: Regenerar sitemap.xml
+
+# Atualiza sitemap.xml com lastmod = data do último commit em cada ficheiro.
+# Corre quando há push em ficheiros HTML, e também 1x por semana (para apanhar
+# alterações no schema/priority).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.html'
+      - 'scripts/regenerar_sitemap.py'
+      - '.github/workflows/atualizar_sitemap.yml'
+  schedule:
+    - cron: '0 4 * * 1'  # Segundas-feiras às 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Precisa do histórico para ler datas dos commits
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Regenerar sitemap.xml
+        run: python scripts/regenerar_sitemap.py
+
+      - name: Commit se houver alterações
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "BOT: Atualizar sitemap.xml (lastmod automático)"
+          file_pattern: "sitemap.xml"
