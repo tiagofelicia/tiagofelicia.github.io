@@ -424,6 +424,7 @@
     </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
 
 <div id="toast-container" role="status" aria-live="polite"></div>
 
@@ -439,7 +440,7 @@
 </nav>
 
 
-<main>
+<main id="main-content">
     <div class="painel-header">
         <div class="mode-toggle" role="tablist" aria-label="Modo de agregação">
             <button type="button" class="mode-btn active" data-mode="day" role="tab" aria-selected="true" aria-pressed="true">Diário</button>
@@ -3668,16 +3669,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     init();
-
-    // Carregar menu e footer (silencioso)
-    fetch('menu.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
-        if (d) document.getElementById('menu-placeholder').innerHTML = d;
-    }).catch(function() {});
-    fetch('footer.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
-        if (d) document.getElementById('footer-placeholder').innerHTML = d;
-    }).catch(function() {});
-
 });
 </script>
+
+<script src="script.js"></script>
 </body>
 </html>

@@ -43,7 +43,7 @@
     // Criar banner
     var banner = document.createElement('div');
     banner.id = 'tf-cookie-banner';
-    banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1e293b;color:#e2e8f0;padding:16px 24px;box-shadow:0 -4px 20px rgba(0,0,0,0.3);font-family:Roboto,sans-serif;font-size:0.88rem;line-height:1.5;';
+    banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1e293b;color:#e2e8f0;padding:16px 24px;box-shadow:0 -4px 20px rgba(0,0,0,0.3);font-family:Arial,sans-serif;font-size:0.88rem;line-height:1.5;';
 
     banner.innerHTML = '<div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:space-between;">'
         + '<div style="flex:1;min-width:280px;">'

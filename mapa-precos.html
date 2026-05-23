@@ -659,6 +659,7 @@
     </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
 
 
 
@@ -672,7 +673,7 @@
 </nav>
 
 
-<main>
+<main id="main-content">
     <div class="painel-header">
         <div class="modo-tabs" role="tablist" aria-label="Modo de visualização">
             <button type="button" class="modo-tab active" data-modo="diario" role="tab" aria-selected="true">Diário</button>
@@ -2260,18 +2261,22 @@ document.addEventListener('DOMContentLoaded', function() {
         var hourMinLabel = isPeriodo ? 'Data/Hora mín' : 'Hora mín';
         var hourMaxLabel = isPeriodo ? 'Data/Hora máx' : 'Hora máx';
 
+        var captionText = isPeriodo
+            ? 'Tabela de preços médios de eletricidade day-ahead por zona de licitação europeia para o período selecionado, incluindo média, mínimo, máximo e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.'
+            : 'Tabela de preços médios diários de eletricidade day-ahead por zona de licitação europeia, incluindo média, mínimo, máximo, respetivas horas locais e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.';
         var html = '<div class="table-scroll"><table class="ranked-table">';
+        html += '<caption class="sr-only">' + captionText + '</caption>';
         html += '<thead><tr>'
-            + '<th class="rank-cell">#</th>'
-            + '<th class="sortable" data-sort="name" title="Ordenar por zona">Zona ' + arrow('name') + '</th>'
-            + '<th class="sortable" data-sort="avg" title="Ordenar por preço médio">' + avgLabel + ' ' + arrow('avg') + '</th>'
-            + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" title="Ordenar por ΔPT (€)">ΔPT ' + arrow('deltaPt') + '</th>' : '')
-            + (showVarDia ? '<th class="sortable" data-sort="varDia" title="Variação vs dia anterior">vs Ontem ' + arrow('varDia') + '</th>' : '')
-            + '<th class="sortable" data-sort="min" title="Ordenar por preço mínimo">' + minLabelTh + ' ' + arrow('min') + '</th>'
-            + '<th class="hour-col" title="Quando ocorreu o mínimo">' + hourMinLabel + '</th>'
-            + '<th class="sortable" data-sort="max" title="Ordenar por preço máximo">' + maxLabelTh + ' ' + arrow('max') + '</th>'
-            + '<th class="hour-col" title="Quando ocorreu o máximo">' + hourMaxLabel + '</th>'
-            + '<th class="sortable" data-sort="amplitude" title="Ordenar por amplitude (Máx - Mín)">Amplitude (€/MWh) ' + arrow('amplitude') + '</th>'
+            + '<th class="rank-cell" scope="col">#</th>'
+            + '<th class="sortable" data-sort="name" scope="col" title="Ordenar por zona">Zona ' + arrow('name') + '</th>'
+            + '<th class="sortable" data-sort="avg" scope="col" title="Ordenar por preço médio">' + avgLabel + ' ' + arrow('avg') + '</th>'
+            + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" scope="col" title="Ordenar por ΔPT (€)">ΔPT ' + arrow('deltaPt') + '</th>' : '')
+            + (showVarDia ? '<th class="sortable" data-sort="varDia" scope="col" title="Variação vs dia anterior">vs Ontem ' + arrow('varDia') + '</th>' : '')
+            + '<th class="sortable" data-sort="min" scope="col" title="Ordenar por preço mínimo">' + minLabelTh + ' ' + arrow('min') + '</th>'
+            + '<th class="hour-col" scope="col" title="Quando ocorreu o mínimo">' + hourMinLabel + '</th>'
+            + '<th class="sortable" data-sort="max" scope="col" title="Ordenar por preço máximo">' + maxLabelTh + ' ' + arrow('max') + '</th>'
+            + '<th class="hour-col" scope="col" title="Quando ocorreu o máximo">' + hourMaxLabel + '</th>'
+            + '<th class="sortable" data-sort="amplitude" scope="col" title="Ordenar por amplitude (Máx - Mín)">Amplitude (€/MWh) ' + arrow('amplitude') + '</th>'
             + '</tr></thead>';
         html += '<tbody>';
 
@@ -4822,15 +4827,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Carregar menu e footer (silencioso - falha OK em teste local)
-    fetch('menu.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
-        if (d) document.getElementById('menu-placeholder').innerHTML = d;
-    }).catch(function() {});
-    fetch('footer.html').then(function(r) { return r.ok ? r.text() : ''; }).then(function(d) {
-        if (d) document.getElementById('footer-placeholder').innerHTML = d;
-    }).catch(function() {});
-
 });
 </script>
+
+<script src="script.js"></script>
 </body>
 </html>

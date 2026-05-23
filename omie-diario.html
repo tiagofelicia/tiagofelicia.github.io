@@ -17,6 +17,10 @@
     <meta property="og:description" content="Veja o preço da luz para amanhã e os futuros. Gráficos e tabelas hora-a-hora." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/omie-diario.html" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
+    <meta property="og:image:width" content="1024" />
+    <meta property="og:image:height" content="541" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Tiago Felícia — Simuladores de Energia" />
     <meta property="og:locale" content="pt_PT" />
 
     <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
@@ -180,8 +184,82 @@
   ]
 }
     </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que é o OMIE e que preços são mostrados aqui?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O OMIE (Operador do Mercado Ibérico de Energia) gere o mercado grossista diário e intradiário de eletricidade para Portugal e Espanha (MIBEL). Os preços resultam de leilões onde a energia é comprada e vendida para o dia seguinte (Day-Ahead). Esta página mostra esses preços (€/MWh) para cada intervalo de 15 minutos (quarto-horário), já corrigidos para a hora de Portugal Continental (PT). Também são apresentados os preços originais para Espanha (ES) para comparação."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que significam as médias Simples, Bi-Horária e Tri-Horária?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "São médias dos preços quarto-horários de Portugal (€/MWh) durante diferentes períodos do dia selecionado, calculadas com base nos ciclos standard definidos pela ERSE. Simples: média de todos os preços reais do OMIE no dia. Bi-Horário (Diário/Semanal): média dos períodos de Vazio e Fora de Vazio. Tri-Horário (Diário/Semanal): média dos períodos de Ponta, Cheias e Vazio. No dia mais recente, os cálculos excluem os últimos quartos de hora após as 23h PT (ainda desconhecidos)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como é calculada a média de Espanha?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A média, máximo e mínimo para Espanha apresentados referem-se às 24 horas do dia espanhol. Como o dia espanhol começa e acaba uma hora mais cedo que o português, o cálculo inclui os preços de Espanha da última hora (23:00-24:00) na hora de Portugal do dia anterior, e os preços de Espanha das primeiras 23 horas (00:00-23:00) na hora de Portugal do dia selecionado."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que são os Futuros OMIP?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "OMIP é o mercado onde se negoceiam os preços de eletricidade para o futuro (próximo dia, mês, trimestre, ano). Os valores apresentados representam a expectativa do mercado para os preços futuros."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que significa o Futuro do dia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O valor Futuro do dia apresentado nos cartões de Portugal e Espanha é o preço do contrato futuro diário negociado no OMIP para o dia específico que está a visualizar. Este valor representa a expectativa que o mercado tinha (na data de atualização OMIP indicada) sobre qual seria o preço médio nesse dia. É útil para comparar a expectativa (futuro) com a realidade (média OMIE calculada)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Os Futuros Diários OMIP (PT) são diferentes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. O cartão Futuros Diários OMIP (PT) mostra os preços dos contratos futuros diários para os próximos dias (até um máximo de 3), tal como negociados no OMIP. Servem para dar uma indicação das expectativas do mercado para o futuro próximo, para além do dia selecionado."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Estes preços OMIE são os que pago na fatura?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não diretamente, a menos que tenha uma tarifa indexada ao OMIE. Se tem uma tarifa indexada (ou dinâmica), o preço que paga pela energia varia hora a hora (ou quarto de hora) e está diretamente ligado a estes valores do OMIE, acrescido de uma margem do comercializador e outras taxas. Se tem uma tarifa fixa, o preço por kWh é constante, definido pelo seu comercializador. A sua fatura final inclui sempre outras componentes como tarifas de acesso às redes, taxas e impostos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "De onde vêm os dados e qual o período disponível?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Os dados são processados através da recolha automática de informação pública dos websites do OMIE (para os preços diários reais) e do OMIP (para os futuros). Esta página inclui o histórico de dados desde 01/01/2010."
+          }
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
 
 
 
@@ -195,14 +273,14 @@
 </nav>
 
 
-<main>
+<main id="main-content">
     <div class="painel-header" id="painel-header-main">
         <div class="date-selector">
             <label for="seletor-data">Selecione o dia:</label>
             <div class="date-nav-wrapper">
-                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior">&#10094;</button>
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior" aria-label="Dia anterior">&#10094;</button>
                 <input type="date" id="seletor-data">
-                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte">&#10095;</button>
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte" aria-label="Dia seguinte">&#10095;</button>
             </div>
         </div>        
 
@@ -541,7 +619,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa, dataFormatadaCSV) {
         const container = document.getElementById('tabela-container'); if (!container) return;
         let tableHTML = '<table class="tabela-precos">';
-        tableHTML += `<thead><tr><th><span class="data-badge-secao" id="badge-data-tabela" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3); color:#ccc; font-size:0.85em;">📅 ${dataFormatadaCSV || '--/--/----'}</span></th><th colspan="2">Preço médio horário</th></tr><tr><th>Hora PT</th><th>Preço PT</th><th>Preço ES</th></tr></thead>`; tableHTML += '<tbody>'; 
+        tableHTML += `<caption class="sr-only">Preços médios horários OMIE para Portugal e Espanha em ${dataFormatadaCSV || '--/--/----'} (€/MWh).</caption>`;
+        tableHTML += `<thead><tr><th scope="col"><span class="data-badge-secao" id="badge-data-tabela" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3); color:#ccc; font-size:0.85em;">📅 ${dataFormatadaCSV || '--/--/----'}</span></th><th colspan="2" scope="colgroup">Preço médio horário</th></tr><tr><th scope="col">Hora PT</th><th scope="col">Preço PT</th><th scope="col">Preço ES</th></tr></thead>`; tableHTML += '<tbody>';
         
         const dadosHorarios = []; 
         let qh_idx = 0; 
@@ -587,7 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dadosHorarios.forEach(item => { 
             // Adiciona o estilo inline se 'isHoraAtual' for verdadeiro
             const estiloLinha = item.isHoraAtual ? ' style="background-color: #FFF3E0; font-weight: bold;"' : '';
-            tableHTML += `<tr${estiloLinha}><td>${item.hora}</td><td>${formatarValor(item.precoPT)}</td><td>${formatarValor(item.precoES)}</td></tr>`; 
+            tableHTML += `<tr${estiloLinha}><th scope="row">${item.hora}</th><td>${formatarValor(item.precoPT)}</td><td>${formatarValor(item.precoES)}</td></tr>`;
         }); 
         
         tableHTML += '</tbody></table>'; 
@@ -804,12 +883,9 @@ document.addEventListener('DOMContentLoaded', function() {
     btnPrev.addEventListener('click', () => alterarData(-1));
     btnNext.addEventListener('click', () => alterarData(1));
     // -------------------------------------
-
-    // Carregar menu e footer
-    fetch('menu.html').then(response => response.text()).then(data => { document.getElementById('menu-placeholder').innerHTML = data; }).catch(error => console.error('Erro menu:', error));
-    fetch('footer.html').then(response => response.text()).then(data => { document.getElementById('footer-placeholder').innerHTML = data; }).catch(error => console.error('Erro footer:', error));
 });
 </script>
 
+<script src="script.js"></script>
 </body>
 </html>

@@ -15,6 +15,18 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(function (data) {
                 menuPlaceholder.innerHTML = data;
+
+                // Carregar menu.js (lógica de hamburger, drawer, dropdowns).
+                // Anteriormente era auto-injetado via <img onerror> em menu.html — substituído
+                // por uma injeção explícita aqui (mais robusta sob CSP estrita).
+                if (!window._menuJSLoaded) {
+                    window._menuJSLoaded = true;
+                    var menuJsScript = document.createElement('script');
+                    menuJsScript.src = 'menu.js';
+                    menuJsScript.defer = true;
+                    document.body.appendChild(menuJsScript);
+                }
+
                 // Notificar componentes (theme.js, etc.) de que o menu/header foram injetados.
                 document.dispatchEvent(new Event('menuLoaded'));
                 if (typeof window.refreshDarkModeIcon === 'function') {
