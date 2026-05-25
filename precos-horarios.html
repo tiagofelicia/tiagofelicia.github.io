@@ -101,12 +101,12 @@
             <h1>Preços Horários da Eletricidade (OMIE)</h1>
             
             <div class="dropdown-container">
-                
+
                 <div class="dropdown-item">
                     <label for="dropdownDia">Dia</label>
                     <select id="dropdownDia"></select>
                 </div>
-                
+
                 <div class="dropdown-item">
                     <label for="dropdownTarifario">Tarifário</label>
                     <select id="dropdownTarifario"></select>
@@ -119,8 +119,21 @@
 
             </div>
 
+            <div class="controles-vista">
+                <div class="vista-container" role="radiogroup" aria-label="Vista do gráfico e tabela">
+                    <span class="vista-label">Vista:</span>
+                    <label><input type="radio" name="vista" value="quartohoraria" checked onchange="desenhaGrafico()"> <span>Quarto-horária</span></label>
+                    <label><input type="radio" name="vista" value="horaria" onchange="desenhaGrafico()"> <span>Horária</span></label>
+                </div>
+                <label id="sobreporAmanhaContainer" class="sobrepor-amanha" style="display:none;">
+                    <input type="checkbox" id="checkboxSobreporAmanha" onchange="desenhaGrafico()"> Sobrepor amanhã
+                </label>
+            </div>
+
+            <div id="miniResumo" class="mini-resumo" aria-live="polite"></div>
+
             <div id="container-chart" style="width: 100%;"></div>
-            
+
             <div class="link-section">
                 <p>https://www.tiagofelicia.pt/precos-horarios.html</p>
             </div>
@@ -129,28 +142,24 @@
                 <summary style="cursor:pointer; font-weight:bold; font-size:0.95em; color:#495057; padding:6px 0;">Fórmula de cálculo do tarifário selecionado</summary>
                 <div id="formula-container"></div>
             </details>
-            
+
             <div style="text-align:center; margin: 20px;">
                 <label>
-                    <input type="checkbox" id="checkboxSimular" onchange="controlarTabela()" checked> Simular consumos horários?
+                    <input type="checkbox" id="checkboxSimular" onchange="controlarTabela()" checked> <span id="labelSimular">Simular consumos quarto-horários?</span>
                 </label>
             </div>
 
-            <div id="tipoTabelaContainer" style="display:none;">
-                <div class="tipo-tabela-container">
-                    <label><input type="radio" name="tipoTabela" value="horaria" checked onchange="controlarTabela()"> <span>Tabela Horária</span></label>
-                    <label><input type="radio" name="tipoTabela" value="quartohoraria" onchange="controlarTabela()"> <span>Tabela Quarto-horária</span></label>
-                </div>
-            </div>
-
             <div id="tabelaContainer" style="display:none;">
-                <h3 id="tabelaTitulo">Tabela Horária</h3>
+                <h3 id="tabelaTitulo">Tabela Quarto-horária</h3>
                 <p id="subtituloTabela"></p>
+                <div class="tabela-acoes">
+                    <button type="button" id="btnLimparConsumos" class="btn-limpar-consumos" title="Limpa todos os consumos gravados desta vista (Horária ou Quarto-horária)">Limpar consumos gravados</button>
+                </div>
                 <table id="tabelaHoraria" border="1">
                     <thead>
                         <tr>
                             <th id="thHora">Hora PT</th>
-                            <th>OMIE Médio (€/MWh)</th>
+                            <th id="thOmie">OMIE (€/MWh)</th>
                             <th>Preço Médio (€/kWh)</th>
                             <th id="thConsumo">Consumo horário (kWh)</th>
                             <th id="thCusto">Custo horário (€)</th>
@@ -169,6 +178,7 @@
                         </tr>
                     </tfoot>
                 </table>
+                <div id="comparacaoOpcoes" class="comparacao-opcoes" aria-live="polite"></div>
             </div>
             <article class="content-support" style="margin-top: 30px;">
                 <h2>Como Otimizar o Consumo com Preços Horários</h2>
@@ -198,14 +208,64 @@
         [data-theme="dark"] #formula-details summary { color: #cbd5e1 !important; }
         [data-theme="dark"] .input-consumo { background: #1e293b !important; color: #e2e8f0 !important; border-color: #475569 !important; }
         [data-theme="dark"] .content-support { color: #cbd5e1; }
-        [data-theme="dark"] .tipo-tabela-container { background: #1e293b; border-color: #475569; }
-        [data-theme="dark"] .tipo-tabela-container label { color: #cbd5e1; }
-        [data-theme="dark"] .tipo-tabela-container input[type="radio"]:checked + span { color: #e2e8f0; }
+        [data-theme="dark"] .vista-container,
+        [data-theme="dark"] .sobrepor-amanha { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .vista-container .vista-label,
+        [data-theme="dark"] .vista-container label,
+        [data-theme="dark"] .sobrepor-amanha { color: #cbd5e1; }
+        [data-theme="dark"] .vista-container input[type="radio"]:checked + span { color: #e2e8f0; }
+        [data-theme="dark"] .mini-resumo-chip { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .mini-resumo-chip strong { color: #e2e8f0; }
+        [data-theme="dark"] .mini-resumo-chip.up strong { color: #ff7675; }
+        [data-theme="dark"] .mini-resumo-chip.down strong { color: #55efc4; }
+        [data-theme="dark"] .btn-limpar-consumos { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .btn-limpar-consumos:hover { background: #334155; }
 
         /* === Estilos light desta página === */
-        .tipo-tabela-container { display: flex; gap: 20px; justify-content: center; align-items: center; margin: 10px auto; padding: 8px 16px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; max-width: 400px; font-size: 0.93em; }
-        .tipo-tabela-container label { cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        .tipo-tabela-container input[type="radio"] { accent-color: #495057; }
+        .controles-vista { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; margin: 6px auto 12px auto; max-width: 95%; }
+        .vista-container { display: flex; gap: 16px; align-items: center; padding: 8px 16px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; font-size: 0.92em; }
+        .vista-container .vista-label { font-weight: bold; color: #495057; }
+        .vista-container label { cursor: pointer; display: flex; align-items: center; gap: 5px; margin: 0; }
+        .vista-container input[type="radio"] { accent-color: #495057; }
+        .sobrepor-amanha { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; font-size: 0.92em; cursor: pointer; }
+        .sobrepor-amanha input[type="checkbox"] { accent-color: #495057; }
+
+        .mini-resumo { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 4px auto 14px auto; max-width: 95%; }
+        .mini-resumo-chip { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 16px; padding: 5px 12px; font-size: 0.88em; color: #495057; }
+        .mini-resumo-chip strong { color: #2c3e50; margin-left: 4px; }
+        .mini-resumo-chip.up strong { color: #c0392b; }
+        .mini-resumo-chip.down strong { color: #27ae60; }
+
+        .tabela-acoes { text-align: center; margin: 4px auto 10px auto; }
+        .btn-limpar-consumos { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 12px; font-size: 0.85em; color: #495057; cursor: pointer; }
+        .btn-limpar-consumos:hover { background: #e9ecef; }
+
+        /* Comparação entre opções horárias (mesmo padrão de consumo) */
+        .comparacao-opcoes { max-width: 700px; margin: 16px auto 8px auto; }
+        .comparacao-opcoes:empty { display: none; }
+        .comparacao-titulo { text-align: center; margin: 12px 0 6px 0; font-size: 0.95em; color: #495057; font-weight: 600; }
+        .comparacao-subtitulo { text-align: center; font-size: 0.82em; color: #6c757d; margin: 0 0 8px 0; }
+        .comparacao-tabela { border-collapse: collapse; width: 100%; font-size: 0.9em; }
+        .comparacao-tabela th, .comparacao-tabela td { padding: 6px 10px; border: 1px solid #dee2e6; text-align: center; }
+        .comparacao-tabela th { background: #f8f9fa; font-weight: bold; color: #495057; }
+        .comparacao-tabela td:first-child { text-align: left; }
+        .comparacao-tabela tr.atual { background: #fff3cd; }
+        .comparacao-tabela tr.mais-barato td:nth-child(2),
+        .comparacao-tabela tr.mais-barato td:nth-child(3) { color: #198754; font-weight: bold; }
+        .badge-pill { display: inline-block; font-size: 0.78em; padding: 1px 7px; border-radius: 10px; margin-left: 6px; vertical-align: middle; font-weight: 600; }
+        .badge-pill.atual { background: #cfe2ff; color: #084298; }
+        .badge-pill.mb { background: #d1e7dd; color: #0f5132; }
+
+        [data-theme="dark"] .comparacao-titulo { color: #cbd5e1; }
+        [data-theme="dark"] .comparacao-subtitulo { color: #94a3b8; }
+        [data-theme="dark"] .comparacao-tabela th { background: #1e293b; color: #e2e8f0; }
+        [data-theme="dark"] .comparacao-tabela th,
+        [data-theme="dark"] .comparacao-tabela td { border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .comparacao-tabela tr.atual { background: #3a2f06; }
+        [data-theme="dark"] .comparacao-tabela tr.mais-barato td:nth-child(2),
+        [data-theme="dark"] .comparacao-tabela tr.mais-barato td:nth-child(3) { color: #55efc4; }
+        [data-theme="dark"] .badge-pill.atual { background: #1e3a8a; color: #bfdbfe; }
+        [data-theme="dark"] .badge-pill.mb { background: #064e3b; color: #6ee7b7; }
 
         #formula-container {
             background: #f8f9fa;

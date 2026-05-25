@@ -1,18 +1,63 @@
 document.addEventListener('DOMContentLoaded', function () {
     // --- VARIÁVEIS GLOBAIS ---
-    let dadosEstruturados = {};
+    let dadosEstruturados = {};       // Dados quarto-horários (96 pontos por dia/tarifário/opção)
+    let dadosEstruturadosHora = {};   // Dados horários (24 pontos), derivados por média das QH
     let dadosCSVGlobal = "";
     let chartInstance = null; // Guardar referência ao gráfico
     let constantes = {}; // Constantes carregadas da TABELA_CONSTANTES
-    
+
     // Estado da tabela
     let estadoTabela = {
-        dados: [],         
-        quartisOmie: {},   
-        quartisPreco: {},  
-        colunaOrdenada: null, 
-        direcaoOrdenacao: 1   
+        dados: [],
+        quartisOmie: {},
+        quartisPreco: {},
+        colunaOrdenada: null,
+        direcaoOrdenacao: 1
     };
+
+    // --- HELPERS: data ---
+    function getHojeStr() {
+        return new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date());
+    }
+    function getAmanhaStr() {
+        return new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    }
+
+    // --- HELPERS: vista atual ---
+    function getVistaAtual() {
+        return document.querySelector('input[name="vista"]:checked')?.value || "quartohoraria";
+    }
+    function getFonteDadosAtual() {
+        return getVistaAtual() === "horaria" ? dadosEstruturadosHora : dadosEstruturados;
+    }
+
+    // --- HELPER: formato numérico português (vírgula decimal) ---
+    function fmtPt(v, casas) {
+        if (v === null || v === undefined || isNaN(v)) return "—";
+        return Number(v).toFixed(casas).replace('.', ',');
+    }
+
+    // --- HELPERS: localStorage para consumos ---
+    function chaveConsumos(vista) {
+        return `precosHorariosConsumos:${vista}`;
+    }
+    function carregarConsumosGravados(vista) {
+        try {
+            const raw = localStorage.getItem(chaveConsumos(vista));
+            return raw ? JSON.parse(raw) : {};
+        } catch (e) { return {}; }
+    }
+    function gravarConsumo(vista, intervalo, valor) {
+        try {
+            const atual = carregarConsumosGravados(vista);
+            if (valor && valor > 0) atual[intervalo] = valor;
+            else delete atual[intervalo];
+            localStorage.setItem(chaveConsumos(vista), JSON.stringify(atual));
+        } catch (e) {}
+    }
+    function limparConsumosGravados(vista) {
+        try { localStorage.removeItem(chaveConsumos(vista)); } catch (e) {}
+    }
 
     // --- PARSE DAS CONSTANTES ---
     function parseConstantes(csv) {
@@ -78,6 +123,41 @@ document.addEventListener('DOMContentLoaded', function () {
             grupo.tar.push(tar);
             grupo.omieTar.push(omieTar);
         });
+    }
+
+    // --- CONSTRUIR DADOS HORÁRIOS (média das 4 QH de cada hora) ---
+    // Equivale matematicamente ao bloco TABELA_HORARIA do CSV, mas obtemos
+    // tar e omieTar para que as linhas opcionais do gráfico funcionem na vista Horária.
+    function construirDadosHorarios() {
+        dadosEstruturadosHora = {};
+        const acumular = (arr, h) => {
+            let sum = 0, cnt = 0;
+            for (let q = 0; q < 4; q++) {
+                const v = arr[h * 4 + q];
+                if (v !== null && v !== undefined && !isNaN(v)) { sum += v; cnt++; }
+            }
+            return cnt > 0 ? sum / cnt : null;
+        };
+        for (const dia in dadosEstruturados) {
+            dadosEstruturadosHora[dia] = {};
+            for (const tarifario in dadosEstruturados[dia]) {
+                dadosEstruturadosHora[dia][tarifario] = {};
+                for (const opcao in dadosEstruturados[dia][tarifario]) {
+                    const qh = dadosEstruturados[dia][tarifario][opcao];
+                    const hora = { categorias: [], colunas: [], omie: [], tar: [], omieTar: [] };
+                    for (let h = 0; h < 24; h++) {
+                        const start = h.toString().padStart(2, '0') + ':00';
+                        const endLabel = h === 23 ? '00:00' : (h + 1).toString().padStart(2, '0') + ':00';
+                        hora.categorias.push(`[${start}-${endLabel}[`);
+                        hora.colunas.push(acumular(qh.colunas, h));
+                        hora.omie.push(acumular(qh.omie, h));
+                        hora.tar.push(acumular(qh.tar, h));
+                        hora.omieTar.push(acumular(qh.omieTar, h));
+                    }
+                    dadosEstruturadosHora[dia][tarifario][opcao] = hora;
+                }
+            }
+        }
     }
 
     // --- DROPDOWNS ---
@@ -201,9 +281,10 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    function formatValue(value) {
+    function formatValue(value, casas) {
         if (value === null) return "Não disponível";
-        const formatted = `${value.toFixed(5)} €/kWh`;
+        const n = (typeof casas === 'number') ? casas : 5;
+        const formatted = `${fmtPt(value, n)} €/kWh`;
         return value < 0 ? `<span class="valor-negativo">${formatted}</span>` : formatted;
     }
 
@@ -360,28 +441,123 @@ document.addEventListener('DOMContentLoaded', function () {
         details.style.display = 'block';
     }
 
+    // --- MINI-RESUMO DO DIA (chips acima do gráfico) ---
+    function atualizarMiniResumo(dados, fonte, dia, tarifario, opcao) {
+        const container = document.getElementById('miniResumo');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (!dados || !Array.isArray(dados.colunas) || !Array.isArray(dados.categorias)) return;
+
+        const valores = dados.colunas
+            .map((v, i) => ({ v, i }))
+            .filter(x => x.v !== null && x.v !== undefined && !isNaN(x.v));
+        if (valores.length === 0) return;
+
+        const ordenados = valores.slice().sort((a, b) => a.v - b.v);
+        const minimo = ordenados[0];
+        const maximo = ordenados[ordenados.length - 1];
+        const media = valores.reduce((s, x) => s + x.v, 0) / valores.length;
+
+        // Média do dia anterior (no dataset; pode não ser literalmente "ontem" se houver gaps)
+        const parseDia = (s) => {
+            const [d, m, y] = s.split('/');
+            return new Date(parseInt(y), parseInt(m) - 1, parseInt(d)).getTime();
+        };
+        const diasOrdenados = Object.keys(fonte).sort((a, b) => parseDia(a) - parseDia(b));
+        const idxAtual = diasOrdenados.indexOf(dia);
+        let mediaAnterior = null;
+        let diaAnteriorLabel = null;
+        if (idxAtual > 0) {
+            diaAnteriorLabel = diasOrdenados[idxAtual - 1];
+            const datAnt = fonte[diaAnteriorLabel]?.[tarifario]?.[opcao];
+            if (datAnt?.colunas) {
+                const vAnt = datAnt.colunas.filter(v => v !== null && v !== undefined && !isNaN(v));
+                if (vAnt.length > 0) {
+                    mediaAnterior = vAnt.reduce((s, v) => s + v, 0) / vAnt.length;
+                }
+            }
+        }
+
+        const decimaisMR = getVistaAtual() === "horaria" ? 4 : 5;
+        const fmtPreco = v => v.toFixed(decimaisMR).replace('.', ',') + ' €/kWh';
+        const fmtHora = cat => (cat || '').replace('[', '').split('-')[0];
+
+        let html = '';
+        html += `<div class="mini-resumo-chip">Mais barato: <strong>${fmtHora(dados.categorias[minimo.i])} (${fmtPreco(minimo.v)})</strong></div>`;
+        html += `<div class="mini-resumo-chip">Mais caro: <strong>${fmtHora(dados.categorias[maximo.i])} (${fmtPreco(maximo.v)})</strong></div>`;
+        html += `<div class="mini-resumo-chip">Média do dia: <strong>${fmtPreco(media)}</strong></div>`;
+
+        if (mediaAnterior !== null && mediaAnterior !== 0) {
+            const diff = (media - mediaAnterior) / mediaAnterior * 100;
+            const cls = diff > 0.05 ? 'up' : (diff < -0.05 ? 'down' : '');
+            const sinal = diff > 0 ? '+' : '';
+            const tipLabel = diaAnteriorLabel ? ` (vs. ${diaAnteriorLabel})` : '';
+            html += `<div class="mini-resumo-chip ${cls}" title="Comparação com a média do dia anterior disponível${tipLabel}">Vs. dia anterior: <strong>${sinal}${diff.toFixed(1).replace('.', ',')}%</strong></div>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    // --- VISIBILIDADE DO TOGGLE "SOBREPOR AMANHÃ" ---
+    // Mostrar apenas quando: dia selecionado = hoje, AND amanhã existe no dataset para (tarifário, opção).
+    function atualizarVisibilidadeSobreporAmanha() {
+        const container = document.getElementById('sobreporAmanhaContainer');
+        const checkbox = document.getElementById('checkboxSobreporAmanha');
+        if (!container || !checkbox) return;
+
+        const dia = document.getElementById('dropdownDia').value;
+        const tarifario = document.getElementById('dropdownTarifario').value;
+        const opcao = document.getElementById('dropdownOpcao').value;
+        const hojeStr = getHojeStr();
+        const amanhaStr = getAmanhaStr();
+
+        const isHoje = (dia === hojeStr);
+        const amanhaTemDados = !!(dadosEstruturados[amanhaStr]?.[tarifario]?.[opcao]);
+
+        if (isHoje && amanhaTemDados) {
+            container.style.display = 'flex';
+        } else {
+            container.style.display = 'none';
+            if (checkbox.checked) checkbox.checked = false;
+        }
+    }
+
     // --- DESENHO DO GRÁFICO ---
     window.desenhaGrafico = function() {
         const dia = document.getElementById("dropdownDia").value;
         const tarifario = document.getElementById("dropdownTarifario").value;
         const opcao = document.getElementById("dropdownOpcao").value;
-        const dados = dadosEstruturados[dia]?.[tarifario]?.[opcao];
+
+        const vista = getVistaAtual();
+        const fonte = getFonteDadosAtual();
+        const dados = fonte[dia]?.[tarifario]?.[opcao];
         if (!dados) return;
+
+        // Texto da checkbox do simulador, conforme vista
+        const lblSim = document.getElementById('labelSimular');
+        if (lblSim) lblSim.textContent = vista === "horaria" ? "Simular consumos horários?" : "Simular consumos quarto-horários?";
+
+        // Atualizar visibilidade do checkbox "Sobrepor amanhã" antes de o lermos
+        atualizarVisibilidadeSobreporAmanha();
+        const sobreporAmanhaActivo = document.getElementById("checkboxSobreporAmanha")?.checked;
+        const amanhaStr = getAmanhaStr();
+        const dadosAmanha = (sobreporAmanhaActivo && dia === getHojeStr())
+            ? fonte[amanhaStr]?.[tarifario]?.[opcao]
+            : null;
 
         // --- Atualizar URL com o estado atual (Omitir valores por defeito) ---
         (function() {
-            const fmtLx = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric' });
-            const hojeStr = fmtLx.format(new Date());
-            const amanhaStr = fmtLx.format(new Date(Date.now() + 24 * 60 * 60 * 1000));
+            const hojeStr = getHojeStr();
             const diaSelect = document.getElementById("dropdownDia");
             const tarifarioSelect = document.getElementById("dropdownTarifario");
             const opcaoSelect = document.getElementById("dropdownOpcao");
-            
+
             let diaParam;
             if (dia === hojeStr) diaParam = 'hoje';
             else if (dia === amanhaStr) diaParam = 'amanha';
             else diaParam = diaSelect.selectedIndex.toString();
-            
+
             const tarifarioParam = tarifarioSelect.selectedIndex.toString();
             const opcaoParam = opcaoSelect.selectedIndex.toString();
 
@@ -403,6 +579,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         mostrarFormula(tarifario);
 
+        // Mini-resumo do dia (chips acima do gráfico)
+        atualizarMiniResumo(dados, fonte, dia, tarifario, opcao);
+
         // Destruir gráfico existente se houver
         if (chartInstance) {
             chartInstance.destroy();
@@ -411,13 +590,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Atualiza a tabela se a checkbox estiver ativa
         if (document.getElementById("checkboxSimular").checked) {
-            document.getElementById("tipoTabelaContainer").style.display = "block";
-            const tipoSelecionado = document.querySelector('input[name="tipoTabela"]:checked')?.value || "horaria";
-            if (tipoSelecionado === "quartohoraria") {
-                prepararDadosQuartoHoraria(dia, tarifario, opcao);
-            } else {
-                prepararDadosTabela(dia, tarifario, opcao);
-            }
+            prepararDadosTabela(dia, tarifario, opcao, vista);
             document.getElementById("tabelaContainer").style.display = "block";
         }
 
@@ -446,7 +619,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const horaAtualLisboa = parseInt(partesLisboa.find(p => p.type === 'hour').value);
         const minutoAtualLisboa = parseInt(partesLisboa.find(p => p.type === 'minute').value);
         const isHoje = (dia === hojeEmLisboaDDMMYYYY);
-        const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
+        // Índice "Agora" depende da vista: 0..23 (horária) ou 0..95 (QH)
+        const idxAgora = vista === "horaria" ? horaAtualLisboa : (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
 
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const chartTextColor = isDark ? '#e2e8f0' : '#333';
@@ -460,10 +634,10 @@ document.addEventListener('DOMContentLoaded', function () {
             crosshair: true
         };
 
-        if (isHoje && qhIndex >= 0 && qhIndex < dados.categorias.length) {
+        if (isHoje && idxAgora >= 0 && idxAgora < dados.categorias.length) {
             xAxisConfig.plotBands.push({
-                from: qhIndex - 0.5,
-                to: qhIndex + 0.5,
+                from: idxAgora - 0.5,
+                to: idxAgora + 0.5,
                 color: 'rgba(255, 165, 0, 0.3)',
                 label: {
                     text: 'Agora',
@@ -476,8 +650,59 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
+        // Largura das barras adaptada à vista (24 vs 96 pontos)
+        const pointWidthDesktop = vista === "horaria" ? 22 : 9;
+        const pointWidthMobile  = vista === "horaria" ? 22 : 15;
+        // Espaçamento entre etiquetas no mobile (horária = de 2 em 2; QH = de 4 em 4 = hora a hora)
+        const labelStepMobile = vista === "horaria" ? 2 : 4;
+        // Casas decimais: QH = 5 (mais detalhe); H = 4 (mais legível)
+        const decimaisPreco = vista === "horaria" ? 4 : 5;
+
+        // DataLabels acima/à frente das barras — só na vista Horária (24 barras cabem; em QH ficaria poluído)
+        // Caixa com fundo semi-transparente para contraste, sobretudo quando o valor calha sobre a linha do eixo Y
+        const dataLabelsBarra = vista === "horaria" ? {
+            enabled: true,
+            formatter: function () {
+                return (this.y === null || this.y === undefined) ? '' : this.y.toFixed(4).replace('.', ',');
+            },
+            style: { fontSize: '10px', color: chartTextColor, textOutline: 'none', fontWeight: 'normal' },
+            backgroundColor: isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)',
+            borderColor: isDark ? '#475569' : '#dee2e6',
+            borderRadius: 3,
+            borderWidth: 1,
+            padding: 3,
+            y: -10, // Sobe a caixa para libertar o topo da barra (Highcharts default é -6)
+            crop: false,
+            overflow: 'allow',
+            inside: false
+        } : { enabled: false };
+
+        const seriesArr = [
+            { name: "Baixo", color: "#548235", data: stack1.map(v => ({ y: v, color: v < 0 ? 'red' : '#548235' })), stack: "stack1", pointWidth: pointWidthDesktop, dataLabels: dataLabelsBarra },
+            { name: "Baixo/Médio", color: "#C5E0B4", data: stack2.map(v => ({ y: v, color: v < 0 ? 'red' : '#C5E0B4' })), stack: "stack1", pointWidth: pointWidthDesktop, dataLabels: dataLabelsBarra },
+            { name: "Médio/Elevado", color: "#FFD966", data: stack3.map(v => ({ y: v, color: v < 0 ? 'red' : '#FFD966' })), stack: "stack1", pointWidth: pointWidthDesktop, dataLabels: dataLabelsBarra },
+            { name: "Elevado", color: "red", data: stack4.map(v => ({ y: v, color: v < 0 ? 'red' : 'red' })), stack: "stack1", pointWidth: pointWidthDesktop, dataLabels: dataLabelsBarra },
+            { name: "OMIE PT", type: "line", data: dados.omie, color: omieLineColor, marker: { enabled: false } },
+            { name: "TAR", type: "line", data: dados.tar, color: "#B4C7E7", marker: { enabled: false }, visible: false },
+            { name: "OMIE*Perdas+TAR", type: "line", data: dados.omieTar, color: "#D3B5E9", marker: { enabled: false }, visible: false }
+        ];
+
+        // Linha tracejada com os preços de amanhã, quando aplicável
+        if (dadosAmanha && Array.isArray(dadosAmanha.colunas)) {
+            seriesArr.push({
+                name: `Amanhã (${amanhaStr})`,
+                type: 'line',
+                data: dadosAmanha.colunas,
+                color: '#8e44ad',
+                dashStyle: 'ShortDash',
+                lineWidth: 2,
+                marker: { enabled: false },
+                zIndex: 4
+            });
+        }
+
         chartInstance = Highcharts.chart("container-chart", {
-            chart: { 
+            chart: {
                 type: "column",
                 marginTop: 30,
                 backgroundColor: chartBg,
@@ -485,20 +710,19 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             title: { text: `${tarifario} | ${opcao} | ${dia}`, style: { color: chartTextColor } },
             xAxis: xAxisConfig,
-            yAxis: { title: { text: "", style: { color: chartTextColor } }, labels: { formatter: function () { return `${this.value} €/kWh`; }, style: { color: chartTextColor } } },
+            yAxis: { title: { text: "", style: { color: chartTextColor } }, labels: { formatter: function () { return `${String(this.value).replace('.', ',')} €/kWh`; }, style: { color: chartTextColor } } },
             legend: { itemStyle: { color: chartTextColor } },
-            tooltip: { pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${formatValue(this.y)}</b><br/>`; } },
-            series: [
-                { name: "Baixo", color: "#548235", data: stack1.map(v => ({ y: v, color: v < 0 ? 'red' : '#548235' })), stack: "stack1", pointWidth: 9 },
-                { name: "Baixo/Médio", color: "#C5E0B4", data: stack2.map(v => ({ y: v, color: v < 0 ? 'red' : '#C5E0B4' })), stack: "stack1", pointWidth: 9 },
-                { name: "Médio/Elevado", color: "#FFD966", data: stack3.map(v => ({ y: v, color: v < 0 ? 'red' : '#FFD966' })), stack: "stack1", pointWidth: 9 },
-                { name: "Elevado", color: "red", data: stack4.map(v => ({ y: v, color: v < 0 ? 'red' : 'red' })), stack: "stack1", pointWidth: 9 },
-                { name: "OMIE PT", type: "line", data: dados.omie, color: omieLineColor, marker: { enabled: false } },
-                { name: "TAR", type: "line", data: dados.tar, color: "#B4C7E7", marker: { enabled: false }, visible: false },
-                { name: "OMIE*Perdas+TAR", type: "line", data: dados.omieTar, color: "#D3B5E9", marker: { enabled: false }, visible: false }
-            ],
+            tooltip: { pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${formatValue(this.y, decimaisPreco)}</b><br/>`; } },
+            series: seriesArr,
             credits: { enabled: false },
-            
+
+            // Desliga o pixel-snapping das colunas/barras para que o centro visual da coluna
+            // bata certo com o ponto da linha (que usa posições fracionais).
+            plotOptions: {
+                column: { crisp: false },
+                bar:    { crisp: false }
+            },
+
             // --- RESPONSIVIDADE COM HIGHCHARTS ---
             responsive: {
                 rules: [{
@@ -514,14 +738,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             reversed: true, // 00:00 no topo
                             labels: {
                                 rotation: 0,
-                                step: 4,      // Mostra apenas de hora em hora (00:00, 01:00...) para não atulhar
+                                step: labelStepMobile, // Etiqueta a cada N pontos (varia entre H e QH)
                                 style: {
                                     fontSize: '11px',
                                     color: chartTextColor
                                 }
                             },
-                            // Garante que desenha todas as grelhas, mesmo que não mostre o texto
-                            tickInterval: 1 
+                            tickInterval: 1
                         },
                         yAxis: {
                             labels: {
@@ -537,8 +760,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
                         },
                         plotOptions: {
+                            column: { crisp: false },
+                            bar:    { crisp: false },
                             series: {
-                                pointWidth: 15, // Largura fixa da barra para ficar "gordinha" e legível
+                                pointWidth: pointWidthMobile,
                                 pointPadding: 0.1,
                                 groupPadding: 0
                             }
@@ -552,18 +777,18 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isHoje) {
             setTimeout(() => {
                 try {
-                    if (qhIndex >= 0 && qhIndex < dados.categorias.length) {
+                    if (idxAgora >= 0 && idxAgora < dados.categorias.length) {
                         const seriesEnergia = chartInstance.series.slice(0, 4);
                         let targetPoint = null;
                         for (const serie of seriesEnergia) {
-                            const point = chartInstance.series[serie.index].points[qhIndex];
+                            const point = chartInstance.series[serie.index].points[idxAgora];
                             if (point && point.y !== null) {
                                 targetPoint = point;
                                 break;
                             }
                         }
                         if (targetPoint) {
-                            chartInstance.xAxis[0].drawCrosshair(null, targetPoint); 
+                            chartInstance.xAxis[0].drawCrosshair(null, targetPoint);
                             chartInstance.tooltip.refresh(targetPoint);
                         }
                     }
@@ -572,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }, 0);
         }
-        
+
         // --- FORÇAR REFLOW APÓS CRIAÇÃO ---
         setTimeout(() => {
             if (chartInstance) {
@@ -607,27 +832,38 @@ document.addEventListener('DOMContentLoaded', function () {
     window.controlarTabela = function() {
         const checkbox = document.getElementById("checkboxSimular");
         const tabelaContainer = document.getElementById("tabelaContainer");
-        const tipoTabelaContainer = document.getElementById("tipoTabelaContainer");
-        
+
         if (checkbox.checked) {
-            tipoTabelaContainer.style.display = "block";
-            
             const dia = document.getElementById("dropdownDia").value;
             const tarifario = document.getElementById("dropdownTarifario").value;
             const opcao = document.getElementById("dropdownOpcao").value;
-            
-            const tipoSelecionado = document.querySelector('input[name="tipoTabela"]:checked').value;
-            
-            if (tipoSelecionado === "quartohoraria") {
-                prepararDadosQuartoHoraria(dia, tarifario, opcao);
-            } else {
-                prepararDadosTabela(dia, tarifario, opcao);
-            }
+            const vista = getVistaAtual();
+            prepararDadosTabela(dia, tarifario, opcao, vista);
             tabelaContainer.style.display = "block";
         } else {
             tabelaContainer.style.display = "none";
-            tipoTabelaContainer.style.display = "none";
+            const cmp = document.getElementById('comparacaoOpcoes');
+            if (cmp) cmp.innerHTML = '';
         }
+    }
+
+    // --- LIGAÇÃO DO BOTÃO "LIMPAR CONSUMOS" ---
+    function ligarBotaoLimparConsumos() {
+        const btn = document.getElementById("btnLimparConsumos");
+        if (!btn) return;
+        btn.addEventListener("click", () => {
+            const vista = getVistaAtual();
+            const label = vista === "horaria" ? "horária" : "quarto-horária";
+            if (!confirm(`Limpar todos os consumos gravados da vista ${label}?`)) return;
+            limparConsumosGravados(vista);
+            // Re-renderiza a tabela com os consumos a zero
+            if (document.getElementById("checkboxSimular").checked) {
+                const dia = document.getElementById("dropdownDia").value;
+                const tarifario = document.getElementById("dropdownTarifario").value;
+                const opcao = document.getElementById("dropdownOpcao").value;
+                prepararDadosTabela(dia, tarifario, opcao, vista);
+            }
+        });
     }
 
     // --- TABELA ---
@@ -636,73 +872,33 @@ document.addEventListener('DOMContentLoaded', function () {
         const isQH = (tipo === "quartohoraria");
         const titulo = document.getElementById("tabelaTitulo");
         const thHora = document.getElementById("thHora");
+        const thOmie = document.getElementById("thOmie");
         const thConsumo = document.getElementById("thConsumo");
         const thCusto = document.getElementById("thCusto");
         if (titulo) titulo.textContent = isQH ? "Tabela Quarto-horária" : "Tabela Horária";
         if (thHora) thHora.textContent = isQH ? "Quarto-hora PT" : "Hora PT";
+        // Em vista Horária o OMIE mostrado é a média das 4 QH; em QH é o valor "instantâneo" de cada quarto
+        if (thOmie) thOmie.textContent = isQH ? "OMIE (€/MWh)" : "OMIE Médio (€/MWh)";
         if (thConsumo) thConsumo.textContent = isQH ? "Consumo quarto-horário (kWh)" : "Consumo horário (kWh)";
         if (thCusto) thCusto.textContent = isQH ? "Custo quarto-horário (€)" : "Custo horário (€)";
     }
 
-    function prepararDadosTabela(dia, tarifario, opcao) {
-        atualizarCabecalhosTabela("horaria");
-        const linhas = dadosCSVGlobal.split("\n").filter(l => l.trim());
-        const linhaTabelaIndex = linhas.findIndex(linha => linha.includes("TABELA_HORARIA"));
+    // --- TABELA UNIFICADA (Horária ou Quarto-horária) ---
+    // Usa dadosEstruturados (QH) ou dadosEstruturadosHora (H) — mesma estrutura.
+    // OMIE é mostrado em €/MWh em ambas as vistas (consistente com o comportamento anterior).
+    function prepararDadosTabela(dia, tarifario, opcao, vista) {
+        vista = vista || getVistaAtual();
+        atualizarCabecalhosTabela(vista);
 
-        const subtitulo = document.querySelector("#subtituloTabela");
-        if (subtitulo) subtitulo.textContent = `${tarifario} | ${opcao} | ${dia}`;
-
-        if (linhaTabelaIndex === -1) return;
-
-        const linhasTabela = linhas.slice(linhaTabelaIndex + 1);
-        
-        let omieValores = [];
-        let precoValores = [];
-        let novosDados = [];
-
-        // 1. Extrair dados
-        linhasTabela.forEach((linha) => {
-            const colunas = linha.split(",").map(c => c.trim());
-            if (colunas.length < 16) return;
-
-            // Formato esperado do CSV: ... Hora, OMIE, PrecoMedio
-            const [csvDia, csvTarifario, csvOpcao, hora, omieRaw, precoRaw] = colunas.slice(10, 16);
-
-            if (csvDia === dia && csvTarifario === tarifario && csvOpcao === opcao) {
-                const precoMedioValido = (!isNaN(precoRaw) && precoRaw !== "") ? parseFloat(precoRaw) : null;
-                const omieValido = (!isNaN(omieRaw) && omieRaw !== "") ? parseFloat(omieRaw) : null;
-
-                if (omieValido !== null) omieValores.push(omieValido);
-                if (precoMedioValido !== null) precoValores.push(precoMedioValido);
-                
-                novosDados.push({ 
-                    hora: hora, // Ex: "[00:00-01:00["
-                    omie: omieValido,
-                    precoMedio: precoMedioValido,
-                    consumo: 0, 
-                    custo: 0
-                });
-            }
-        });
-
-        estadoTabela.dados = novosDados;
-        // Usa EXATAMENTE a mesma lógica matemática do gráfico
-        estadoTabela.quartisOmie = calcularQuartisEstatisticos(omieValores);
-        estadoTabela.quartisPreco = calcularQuartisEstatisticos(precoValores);
-        estadoTabela.colunaOrdenada = null; 
-        
-        configurarOrdenacao(); 
-        renderizarTabela();
-    }
-
-    // --- TABELA QUARTO-HORÁRIA (usa dados do gráfico) ---
-    function prepararDadosQuartoHoraria(dia, tarifario, opcao) {
-        atualizarCabecalhosTabela("quartohoraria");
-        const dados = dadosEstruturados[dia]?.[tarifario]?.[opcao];
+        const fonte = vista === "horaria" ? dadosEstruturadosHora : dadosEstruturados;
+        const dados = fonte[dia]?.[tarifario]?.[opcao];
         if (!dados) return;
 
         const subtitulo = document.querySelector("#subtituloTabela");
-        if (subtitulo) subtitulo.textContent = `${tarifario} | ${opcao} | ${dia} (Quarto-horária)`;
+        const sufixo = vista === "horaria" ? "(Horária)" : "(Quarto-horária)";
+        if (subtitulo) subtitulo.textContent = `${tarifario} | ${opcao} | ${dia} ${sufixo}`;
+
+        const consumosGravados = carregarConsumosGravados(vista);
 
         let omieValores = [];
         let precoValores = [];
@@ -710,21 +906,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         for (let i = 0; i < dados.categorias.length; i++) {
             const intervalo = dados.categorias[i];
-            const precoKwh = dados.colunas[i]; // Preço final €/kWh (mesmo que o gráfico)
-            const omieMWh = dados.omie[i];      // OMIE em €/MWh (convertemos para exibição)
-
-            // Converter OMIE de €/kWh (como vem no array) para €/MWh para a coluna da tabela
-            const omieParaTabela = (omieMWh !== null && omieMWh !== undefined) ? omieMWh * 1000 : null;
+            const precoKwh = dados.colunas[i];                  // €/kWh
+            const omieKwh = dados.omie[i];                      // €/kWh
+            const omieParaTabela = (omieKwh !== null && omieKwh !== undefined && !isNaN(omieKwh)) ? omieKwh * 1000 : null; // €/MWh
 
             if (omieParaTabela !== null) omieValores.push(omieParaTabela);
             if (precoKwh !== null) precoValores.push(precoKwh);
+
+            const consumoGravado = (precoKwh !== null && consumosGravados[intervalo]) ? consumosGravados[intervalo] : 0;
+            const custo = (consumoGravado > 0 && precoKwh !== null) ? consumoGravado * precoKwh : 0;
 
             novosDados.push({
                 hora: intervalo,
                 omie: omieParaTabela,
                 precoMedio: precoKwh,
-                consumo: 0,
-                custo: 0
+                consumo: consumoGravado,
+                custo: custo
             });
         }
 
@@ -742,6 +939,8 @@ document.addEventListener('DOMContentLoaded', function () {
         corpoTabela.innerHTML = "";
 
         const isDarkTable = document.documentElement.getAttribute('data-theme') === 'dark';
+        // Preço Médio: QH = 5 casas; H = 4 casas
+        const decimaisPrecoTabela = getVistaAtual() === "horaria" ? 4 : 5;
 
         // Função de cor baseada nos quartis estatísticos
         const obterCorDeFundo = (valor, quartis) => {
@@ -768,18 +967,16 @@ document.addEventListener('DOMContentLoaded', function () {
             tdHora.textContent = dado.hora;
             tr.appendChild(tdHora);
 
-            // Coluna OMIE (ALTERADO AQUI: .toFixed(2))
+            // Coluna OMIE — 2 casas decimais, vírgula
             const tdOmie = document.createElement('td');
-            // Se for null mostra traço, senão formata com 2 casas decimais
-            tdOmie.textContent = dado.omie !== null ? dado.omie.toFixed(2) : "—";
+            tdOmie.textContent = fmtPt(dado.omie, 2);
             tdOmie.style.backgroundColor = obterCorDeFundo(dado.omie, estadoTabela.quartisOmie);
             if (dado.omie < 0) tdOmie.style.color = 'red';
             tr.appendChild(tdOmie);
 
-            // Coluna Preço Médio (ALTERADO AQUI: .toFixed(4))
+            // Coluna Preço Médio — casas decimais variam por vista (QH = 5, H = 4)
             const tdPreco = document.createElement('td');
-            // Se for null mostra traço, senão formata com 4 casas decimais
-            tdPreco.textContent = dado.precoMedio !== null ? dado.precoMedio.toFixed(4) : "—";
+            tdPreco.textContent = fmtPt(dado.precoMedio, decimaisPrecoTabela);
             tdPreco.style.backgroundColor = obterCorDeFundo(dado.precoMedio, estadoTabela.quartisPreco);
             if (dado.precoMedio < 0) tdPreco.style.color = 'red';
             tr.appendChild(tdPreco);
@@ -798,17 +995,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 const valor = parseFloat(e.target.value.replace(",", "."));
                 dado.consumo = isNaN(valor) ? 0 : valor;
                 dado.custo = dado.consumo * (dado.precoMedio || 0);
-                tdCusto.textContent = dado.custo.toFixed(4);
+                tdCusto.textContent = fmtPt(dado.custo, 4);
                 atualizarTotaisNaPagina();
+                // Persistir em localStorage por (vista, intervalo)
+                gravarConsumo(getVistaAtual(), dado.hora, dado.consumo);
             });
-            
+
             tdConsumo.appendChild(input);
             tr.appendChild(tdConsumo);
 
-            // Coluna Custo
+            // Coluna Custo — 4 casas decimais, vírgula
             const tdCusto = document.createElement('td');
-            // Mantivemos o custo com 4 casas também para consistência
-            tdCusto.textContent = dado.custo > 0 ? dado.custo.toFixed(4) : (dado.precoMedio !== null ? "0.0000" : "");
+            tdCusto.textContent = dado.custo > 0 ? fmtPt(dado.custo, 4) : (dado.precoMedio !== null ? "0,0000" : "");
             tr.appendChild(tdCusto);
 
             corpoTabela.appendChild(tr);
@@ -820,15 +1018,120 @@ document.addEventListener('DOMContentLoaded', function () {
     function atualizarTotaisNaPagina() {
         let somaConsumo = 0;
         let somaCusto = 0;
-        
+
         estadoTabela.dados.forEach(d => {
             somaConsumo += d.consumo;
             somaCusto += d.custo;
         });
 
-        document.getElementById("somaConsumo").textContent = somaConsumo.toFixed(3);
-        document.getElementById("somaCusto").textContent = somaCusto.toFixed(4);
-        document.getElementById("mediaPonderada").textContent = somaConsumo > 0 ? (somaCusto / somaConsumo).toFixed(5) : "—";
+        document.getElementById("somaConsumo").textContent = fmtPt(somaConsumo, 3);
+        document.getElementById("somaCusto").textContent = fmtPt(somaCusto, 4);
+        document.getElementById("mediaPonderada").textContent = somaConsumo > 0 ? fmtPt(somaCusto / somaConsumo, 5) : "—";
+
+        atualizarComparacaoOpcoes();
+    }
+
+    // --- COMPARAÇÃO DE OPÇÕES HORÁRIAS ---
+    // Aplica o mesmo padrão de consumo introduzido pelo utilizador às outras opções
+    // (Simples / Bi / Tri-horário) do mesmo tarifário e mostra quanto pagaria em cada uma.
+    function atualizarComparacaoOpcoes() {
+        const container = document.getElementById('comparacaoOpcoes');
+        if (!container) return;
+
+        // Esconde se o simulador estiver desligado (mas o container já está dentro do tabelaContainer)
+        if (!document.getElementById("checkboxSimular")?.checked) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const dia = document.getElementById("dropdownDia").value;
+        const tarifario = document.getElementById("dropdownTarifario").value;
+        const opcaoAtual = document.getElementById("dropdownOpcao").value;
+        const vista = getVistaAtual();
+        const fonte = vista === "horaria" ? dadosEstruturadosHora : dadosEstruturados;
+        const tarifarioDados = fonte[dia]?.[tarifario];
+
+        if (!tarifarioDados) { container.innerHTML = ''; return; }
+
+        const opcoes = Object.keys(tarifarioDados);
+
+        // Se só existe uma opção horária, a comparação não tem sentido
+        if (opcoes.length < 2) { container.innerHTML = ''; return; }
+
+        // Soma do consumo do utilizador
+        let consumoTotalUtilizador = 0;
+        estadoTabela.dados.forEach(d => { consumoTotalUtilizador += (d.consumo || 0); });
+        if (consumoTotalUtilizador <= 0) { container.innerHTML = ''; return; }
+
+        // Indexa consumos por intervalo (chave = "[HH:MM-HH:MM[")
+        const consumosPorIntervalo = {};
+        estadoTabela.dados.forEach(d => {
+            if (d.consumo > 0) consumosPorIntervalo[d.hora] = d.consumo;
+        });
+
+        // Para cada opção, calcula o custo aplicando os preços dessa opção ao padrão do utilizador
+        const resultados = opcoes.map(opcao => {
+            const dadosOp = tarifarioDados[opcao];
+            let custo = 0;
+            let consumoCoberto = 0;
+            for (let i = 0; i < dadosOp.categorias.length; i++) {
+                const intervalo = dadosOp.categorias[i];
+                const preco = dadosOp.colunas[i];
+                const consumo = consumosPorIntervalo[intervalo];
+                if (consumo && preco !== null && preco !== undefined && !isNaN(preco)) {
+                    custo += consumo * preco;
+                    consumoCoberto += consumo;
+                }
+            }
+            return { opcao, custo, consumoCoberto };
+        });
+
+        // Mais barato — apenas entre os que cobrem (pelo menos) o mesmo consumo da opção atual
+        const consumoCobertoAtual = resultados.find(r => r.opcao === opcaoAtual)?.consumoCoberto || 0;
+        const elegiveisMB = resultados.filter(r => Math.abs(r.consumoCoberto - consumoCobertoAtual) < 1e-6);
+        const maisBarato = elegiveisMB.length > 0
+            ? elegiveisMB.reduce((min, r) => r.custo < min.custo ? r : min)
+            : null;
+
+        const custoAtual = resultados.find(r => r.opcao === opcaoAtual)?.custo;
+
+        // Render
+        let html = '';
+        html += `<h4 class="comparacao-titulo">Comparação de opções horárias</h4>`;
+        html += `<p class="comparacao-subtitulo">Custo que pagaria com o mesmo padrão de consumo introduzido, para cada opção do tarifário <strong>${tarifario}</strong></p>`;
+        html += `<table class="comparacao-tabela"><thead><tr><th>Opção horária e ciclo</th><th>Custo total (€)</th><th>vs. atual</th></tr></thead><tbody>`;
+
+        resultados.forEach(r => {
+            const isAtual = r.opcao === opcaoAtual;
+            const isMaisBarato = (maisBarato && r === maisBarato && !isAtual);
+            const classes = [];
+            if (isAtual) classes.push('atual');
+            if (isMaisBarato) classes.push('mais-barato');
+
+            let badges = '';
+            if (isAtual) badges += ` <span class="badge-pill atual">Atual</span>`;
+            if (isMaisBarato) badges += ` <span class="badge-pill mb">Mais barato</span>`;
+
+            let diffStr;
+            if (isAtual) {
+                diffStr = '—';
+            } else if (custoAtual && custoAtual !== 0) {
+                const diff = (r.custo - custoAtual) / custoAtual * 100;
+                const sinal = diff > 0 ? '+' : '';
+                diffStr = `${sinal}${fmtPt(diff, 1)}%`;
+            } else {
+                diffStr = '—';
+            }
+
+            html += `<tr class="${classes.join(' ')}">
+                <td>${r.opcao}${badges}</td>
+                <td>${fmtPt(r.custo, 4)}</td>
+                <td>${diffStr}</td>
+            </tr>`;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
     }
 
     function configurarOrdenacao() {
@@ -895,8 +1198,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 dadosCSVGlobal = data;
                 parseCSV(data);
+                construirDadosHorarios();
                 parseConstantes(data);
-                const hojeEmLisboa = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date());
+                ligarBotaoLimparConsumos();
+                const hojeEmLisboa = getHojeStr();
                 populaDropdowns(hojeEmLisboa);
             })
             .catch(error => {
