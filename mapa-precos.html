@@ -999,7 +999,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "SE1": "Suécia Norte (SE1)", "SE2": "Suécia Centro-Norte (SE2)",
         "SE3": "Suécia Centro-Sul (SE3)", "SE4": "Suécia Sul (SE4)",
         "SI": "Eslovénia", "SK": "Eslováquia",
-        "IE": "Irlanda", "IE(SEM)": "Irlanda",
+        "IE": "Irlanda", "IE(SEM)": "Irlanda", "GB-NIR": "Irlanda do Norte (SEM)",
         "LU": "Luxemburgo",
         "IT-SACOAC": "Córsega (SACOAC)"
     };
@@ -1007,6 +1007,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mapeamento: ecZone do GeoJSON -> chave nos dados (para zonas com codigo diferente)
     var ZONE_DATA_MAP = {
         "IE": "IE(SEM)",
+        "GB-NIR": "IE(SEM)",   // Irlanda do Norte partilha o SEM com a Republica
         "LU": "DE-LU"
     };
 
@@ -1063,7 +1064,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Zonas cujo label nao deve aparecer no mapa (apenas tooltip e cor)
-    var ZONES_SEM_LABEL = { "LU": true };
+    var ZONES_SEM_LABEL = { "LU": true, "GB-NIR": true };  // Irlanda do Norte usa o label da IE
 
     // Mapeamento zona -> código ISO de país (lowercase, para flagcdn.com)
     var ZONE_COUNTRY = {
@@ -1080,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "PL": "pl", "PT": "pt", "RO": "ro", "RS": "rs",
         "SE1": "se", "SE2": "se", "SE3": "se", "SE4": "se",
         "SI": "si", "SK": "sk",
-        "IE": "ie", "IE(SEM)": "ie", "LU": "lu"
+        "IE": "ie", "IE(SEM)": "ie", "GB-NIR": "gb-nir", "LU": "lu"
     };
     function zoneFlag(z) {
         var cc = ZONE_COUNTRY[z];
