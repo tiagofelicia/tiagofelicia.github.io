@@ -37,15 +37,19 @@ jobs:
       - name: Correr script de atualização da REN
         run: python scripts/atualizar_producao_REN.py # (Caminho para o seu script)
 
+      # 4b. Corre o script da Produção por Bombagem (diária, serviço 1363)
+      - name: Atualizar Produção por Bombagem (diária)
+        run: python scripts/atualizar_producao_bombagem.py # incremental: últimos 7 dias
+
       # 5. Faz commit e push do ficheiro de dados atualizado
       - name: Fazer Commit e Push dos dados atualizados
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           # Mensagem de commit personalizada
           commit_message: "Atualização automática dos dados de produção REN"
-          
-          # Ficheiro específico que este script deve guardar
-          file_pattern: data/producao_dados_atuais.csv 
+
+          # Ficheiros que este workflow deve guardar
+          file_pattern: "data/producao_dados_atuais.csv data/producao_bombagem_diaria.csv"
           
           # Copiado do seu ficheiro (mantém o 'main' ou mude para 'master' se for o seu caso)
           branch: main 

@@ -73,6 +73,12 @@ jobs:
       - name: Executar Fase 2 - precos-horarios_csv
         run: python scripts/atualizar_precos-horarios_csv.py
 
+      - name: Executar Fase 2 - records.json (incremental)
+        # Atualiza data/records.json com os recordes históricos OMIE.
+        # Lê apenas data/omie_dados_atuais.csv e funde com records.json existente.
+        # Para recalcular do zero, correr manualmente: python scripts/gerar_records.py --full
+        run: python scripts/gerar_records.py
+
       # =========================================================
       # 7. COMMIT FASE 2 (Ficheiros Finais)
       # =========================================================
@@ -82,4 +88,4 @@ jobs:
         with:
           commit_message: "BOT: Atualização (Fase 2) Ficheiros processados"
           # Padrão que apanha os ficheiros de output da fase 2
-          file_pattern: "data/omie_dados_atuais.csv data/precos-horarios.csv"
+          file_pattern: "data/omie_dados_atuais.csv data/precos-horarios.csv data/records.json"
