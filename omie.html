@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://raw.githubusercontent.com https://www.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
@@ -31,12 +31,29 @@
     <link rel="stylesheet" href="style.css" />
     
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
-    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+    gtag('consent', 'update', { 'analytics_storage': 'granted' });
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
 
     <script type="application/ld+json">
     {
@@ -90,7 +107,7 @@
         .card:has(.card-title-ts) .label-cheias { background-color: #F8CBAD; color: #000000; }
         .card:has(.card-title-ts) .label-ponta { background-color: #FCE4D6; color: #000000; }
 
-        .grafico-container { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; }
+        .grafico-container { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; min-height: 60px; }
         .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
         #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
         #media-mes-futuros-container p {
@@ -126,6 +143,247 @@
         [data-theme="dark"] #erro-periodo { background-color: #332b00; border-color: #665600; color: #ffd54f; }
         [data-theme="dark"] #media-mes-futuros-container p { background-color: #1e293b; border-color: #475569; color: #cbd5e1; }
         [data-theme="dark"] #media-mes-futuros-container strong { color: #e2e8f0; }
+
+        /* ===== KPIs do Histograma e do Spread PT-ES ===== */
+        #histograma-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .histograma-kpi { display: inline-flex; flex-direction: column; align-items: center; padding: 6px 14px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; min-width: 80px; }
+        .histograma-kpi .kpi-label { font-size: 0.72em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .histograma-kpi .kpi-value { font-size: 1em; font-weight: 700; color: #212529; margin-top: 2px; }
+
+        #spread-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
+        .spread-kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .spread-kpi-label { font-size: 0.8em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .spread-kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .spread-kpi-sub { font-size: 0.72em; color: #888; margin-top: 4px; }
+
+        @media (max-width: 700px) {
+            #spread-kpis { grid-template-columns: repeat(2, 1fr); }
+            .spread-kpi-value { font-size: 1.1em; }
+            .histograma-kpi { min-width: 64px; padding: 5px 10px; }
+            .histograma-kpi .kpi-value { font-size: 0.9em; }
+        }
+
+        [data-theme="dark"] .histograma-kpi { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .histograma-kpi .kpi-label { color: #94a3b8; }
+        [data-theme="dark"] .histograma-kpi .kpi-value { color: #e2e8f0; }
+        [data-theme="dark"] .spread-kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .spread-kpi-label { color: #94a3b8; }
+        [data-theme="dark"] .spread-kpi-value { color: #e2e8f0; }
+        [data-theme="dark"] .spread-kpi-sub { color: #94a3b8; }
+
+        /* ===== Botões de período pré-definido (estilo mapa-precos.html) ===== */
+        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; overflow-x: auto; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
+        .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+        .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
+        .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+
+        [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+
+        /* Esconder inputs de data quando o preset não é "custom" */
+        .date-selector-periodo.no-dates .date-input-wrapper { display: none; }
+
+        /* Botão Partilhar */
+        #btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 7px 14px; font-size: 0.95em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        [data-theme="dark"] #btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+
+        /* Toast de feedback */
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; animation: toast-in 0.2s ease-out; }
+        @keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 700px) {
+            .periodo-presets .hh-mode-btn { padding: 5px 10px; font-size: 0.82em; }
+            #btn-partilhar { padding: 6px 10px; font-size: 0.85em; }
+        }
+
+        /* ===== Range intra-diário: KPIs reutilizam .spread-kpi-card ===== */
+        #range-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
+
+        /* ===== Toggles do gráfico de extremos (limiar + unidade) ===== */
+        #extremos-toggles { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; margin-bottom: 15px; }
+        #extremos-toggles .extremos-toggle-label { font-size: 0.85em; color: #6c757d; font-weight: 600; }
+        .extremos-custom { display: inline-flex; align-items: center; gap: 6px; }
+        .extremos-custom select, .extremos-custom input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85em; background: #fff; color: #2c3e50; }
+        .extremos-custom input[type="number"] { width: 76px; text-align: right; }
+        .extremos-custom-unit { font-size: 0.85em; color: #6c757d; }
+        [data-theme="dark"] #extremos-toggles .extremos-toggle-label { color: #94a3b8; }
+        [data-theme="dark"] .extremos-custom select, [data-theme="dark"] .extremos-custom input { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .extremos-custom-unit { color: #94a3b8; }
+
+        /* ===== Top dias extremos: tabelas lado-a-lado ===== */
+        #top-dias-section { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; }
+        #top-dias-section h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 20px; }
+        .top-dias-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .top-dia-titulo-caro, .top-dia-titulo-barato { text-align: center; font-size: 1em; margin: 0 0 10px 0; padding: 8px; border-radius: 6px; }
+        .top-dia-titulo-caro { background: #fdecea; color: #b71c1c; }
+        .top-dia-titulo-barato { background: #e6f4ea; color: #1b5e20; }
+        .top-dia-table { width: 100%; border-collapse: collapse; font-size: 0.85em; background: #fff; border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden; }
+        .top-dia-table th, .top-dia-table td { padding: 7px 9px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        .top-dia-table th { background: #f8f9fa; font-weight: 600; color: #495057; font-size: 0.88em; }
+        .top-dia-table tbody tr { cursor: pointer; transition: background 0.12s; }
+        .top-dia-table tbody tr:hover { background: #f1f5f9; }
+        .top-dia-table tbody tr:last-child td { border-bottom: none; }
+        .top-dia-table td.numeric, .top-dia-table th.numeric { text-align: right; font-variant-numeric: tabular-nums; }
+        .top-dia-table td.rank { width: 28px; text-align: center; color: #6c757d; font-weight: 600; }
+
+        @media (max-width: 700px) {
+            #range-kpis { grid-template-columns: repeat(2, 1fr); }
+            .top-dias-grid { grid-template-columns: 1fr; }
+            .top-dia-table { font-size: 0.78em; }
+            .top-dia-table th, .top-dia-table td { padding: 5px 6px; }
+        }
+
+        /* ===== Mini-navegação (B3) ===== */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; }
+        .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s; }
+        .mini-nav-chip:hover { background: #e2e8f0; }
+        .mini-nav-chip.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        [data-theme="dark"] .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .mini-nav-chip.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+        /* ===== YoY Delta nas KPI cards (A1) ===== */
+        .yoy-principal { font-size: 0.85em; text-align: center; margin: 4px 0 8px 0; min-height: 1.2em; }
+        .yoy-inline { font-size: 0.78em; margin-left: 6px; font-weight: 500; white-space: nowrap; }
+        .yoy-up   { color: #dc3545; }
+        .yoy-down { color: #28a745; }
+        .yoy-flat { color: #888; }
+        [data-theme="dark"] .yoy-up   { color: #f87171; }
+        [data-theme="dark"] .yoy-down { color: #4ade80; }
+        [data-theme="dark"] .yoy-flat { color: #94a3b8; }
+
+        /* ===== Insight automático (A2) ===== */
+        #insight-periodo { width: 95%; max-width: 1200px; margin: 20px auto 10px auto; padding: 16px 20px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 10px; border-left: 4px solid #2563eb; font-size: 0.95em; line-height: 1.55; color: #1e3a5f; }
+        #insight-periodo strong { color: #1e40af; }
+        #insight-periodo .insight-titulo { font-size: 0.85em; color: #2563eb; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block; }
+        [data-theme="dark"] #insight-periodo { background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%); color: #cbd5e1; border-left-color: #3b82f6; }
+        [data-theme="dark"] #insight-periodo strong { color: #93c5fd; }
+        [data-theme="dark"] #insight-periodo .insight-titulo { color: #60a5fa; }
+
+        /* ===== Secção "Análise do período" (A3 + A4) ===== */
+        #analise-periodo { width: 95%; max-width: 1200px; margin: 30px auto 20px auto; }
+        #analise-periodo h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 20px; }
+        .analise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 850px) { .analise-grid { grid-template-columns: 1fr; } }
+        [data-theme="dark"] #analise-periodo h2 { color: #e2e8f0; }
+
+        /* ===== Glossário (D2) ===== */
+        abbr.glossario {
+            text-decoration: underline dotted;
+            text-decoration-color: #94a3b8;
+            text-underline-offset: 3px;
+            cursor: help;
+            border-bottom: none;
+        }
+        abbr.glossario:hover { text-decoration-color: #2563eb; }
+        [data-theme="dark"] abbr.glossario { text-decoration-color: #64748b; }
+        [data-theme="dark"] abbr.glossario:hover { text-decoration-color: #60a5fa; }
+
+        /* ===== Modo Impressão (D1) ===== */
+        @page { size: A4; margin: 12mm; }
+        @media print {
+            /* Esconder elementos de UI/navegação */
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link,
+            #btn-voltar-topo, #btn-partilhar,
+            .periodo-presets, .date-selector-periodo,
+            .mini-nav,
+            .extremos-custom, #extremos-toggles,
+            #ciclos-donut-toggles,
+            .highcharts-exporting-group, .highcharts-button {
+                display: none !important;
+            }
+            /* Garantir cores e fundos */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            main { padding: 0 !important; }
+            .painel-header h1 { font-size: 1.3em !important; margin: 12px 0 !important; }
+            .card { box-shadow: none !important; break-inside: avoid; page-break-inside: avoid; }
+            .card-pair-row { gap: 10px !important; }
+            .grafico-container { break-inside: avoid; page-break-inside: avoid; margin: 12px auto !important; }
+            /* Forçar Recordes aberto na impressão */
+            #recordes-section > div, #recordes-section > p { display: block !important; }
+            #recordes-section summary { list-style: none; cursor: default; }
+            /* FAQ: forçar todas as entradas abertas */
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+            details.faq-item summary { cursor: default; }
+            /* Cabeçalho de página com URL */
+            .painel-header::after {
+                content: 'tiagofelicia.pt/omie.html — impresso em ' attr(data-print-date);
+                display: block;
+                font-size: 0.7em;
+                color: #666;
+                text-align: center;
+                margin-top: 8px;
+            }
+        }
+
+        /* ===== Botão Voltar ao Topo (B1) ===== */
+        #btn-voltar-topo {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            font-size: 1.5em;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s, background 0.15s;
+            z-index: 998;
+        }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+        [data-theme="dark"] #btn-voltar-topo { background: #3b82f6; }
+        [data-theme="dark"] #btn-voltar-topo:hover { background: #2563eb; }
+
+        /* ===== Recordes históricos ===== */
+        #recordes-section { width: 95%; max-width: 1200px; margin: 20px auto; }
+        #recordes-section summary { cursor: pointer; padding: 12px 16px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; font-size: 1em; color: #78350f; list-style: none; display: flex; align-items: center; gap: 8px; border: 1px solid #fcd34d; }
+        #recordes-section summary::-webkit-details-marker { display: none; }
+        #recordes-section summary::after { content: '▾'; margin-left: auto; transition: transform 0.2s; }
+        #recordes-section[open] summary::after, #recordes-section details[open] summary::after { transform: rotate(180deg); }
+        .recordes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; }
+        .recorde-card { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+        .recorde-label { font-size: 0.78em; color: #6c757d; font-weight: 600; letter-spacing: 0.3px; }
+        .recorde-valor { font-size: 1.15em; font-weight: 700; color: #212529; }
+        .recorde-valor.negativo { color: #16a34a; }
+        .recorde-valor.positivo { color: #dc2626; }
+        .recorde-detalhe { font-size: 0.78em; color: #6c757d; }
+        .recordes-footer { font-size: 0.75em; color: #888; margin-top: 12px; text-align: right; }
+        @media (max-width: 700px) {
+            .recordes-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .recorde-valor { font-size: 1em; }
+        }
+        [data-theme="dark"] #recordes-section summary { background: linear-gradient(135deg, #422006 0%, #78350f 100%); color: #fef3c7; border-color: #92400e; }
+        [data-theme="dark"] .recorde-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .recorde-label { color: #94a3b8; }
+        [data-theme="dark"] .recorde-valor { color: #e2e8f0; }
+        [data-theme="dark"] .recorde-detalhe { color: #94a3b8; }
+        [data-theme="dark"] .recordes-footer { color: #94a3b8; }
+
+        /* Dark mode para Top dias */
+        [data-theme="dark"] #top-dias-section h2 { color: #e2e8f0; }
+        [data-theme="dark"] .top-dia-titulo-caro { background: #4a1a1a; color: #f8d7da; }
+        [data-theme="dark"] .top-dia-titulo-barato { background: #1a3320; color: #c3e6cb; }
+        [data-theme="dark"] .top-dia-table { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .top-dia-table th { background: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .top-dia-table th, [data-theme="dark"] .top-dia-table td { border-bottom-color: #334155; }
+        [data-theme="dark"] .top-dia-table tbody tr:hover { background: #334155; }
+        [data-theme="dark"] .top-dia-table td { color: #e2e8f0; }
+        [data-theme="dark"] .top-dia-table td.rank { color: #94a3b8; }
     </style>
     <script type="application/ld+json">
 {
@@ -165,14 +423,40 @@
 
 <main id="main-content">
     <div class="painel-header" id="painel-header-main">
-        <div class="date-selector-periodo"> 
-            <div> <label for="seletor-data-inicio">Data Início:</label> <input type="date" id="seletor-data-inicio"> </div> 
-            <div> <label for="seletor-data-fim">Data Fim:</label> <input type="date" id="seletor-data-fim"> </div> 
+        <div class="periodo-presets">
+            <div class="hh-mode-toggle" role="radiogroup" aria-label="Período pré-definido">
+                <button type="button" class="hh-mode-btn" data-preset="7d" title="Últimos 7 dias até à última data disponível">Últimos 7 dias</button>
+                <button type="button" class="hh-mode-btn active" data-preset="mes" title="Do dia 1 do mês corrente até à última data disponível">Este mês</button>
+                <button type="button" class="hh-mode-btn" data-preset="mesPassado" title="Mês de calendário anterior, completo">Mês passado</button>
+                <button type="button" class="hh-mode-btn" data-preset="ultimos12m" title="Últimos 12 meses até à última data disponível">Últimos 12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="ano" title="De 1 de janeiro do ano corrente até à última data disponível">Ano corrente</button>
+                <button type="button" class="hh-mode-btn" data-preset="custom" title="Selecionar manualmente um período">Personalizado</button>
+            </div>
+        </div>
+        <div class="date-selector-periodo">
+            <div class="date-input-wrapper"> <label for="seletor-data-inicio">Data Início:</label> <input type="date" id="seletor-data-inicio"> </div>
+            <div class="date-input-wrapper"> <label for="seletor-data-fim">Data Fim:</label> <input type="date" id="seletor-data-fim"> </div>
+            <button type="button" id="btn-partilhar" title="Copiar ou partilhar link com a vista atual" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
         </div>
 
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
-            Dados históricos disponíveis desde 01/01/2010
+            Dados históricos disponíveis desde 01/01/2010 · Última atualização: <strong id="fresh-data-valor">--</strong>
         </p>
+
+        <details id="recordes-section">
+            <summary><strong>🏆 Recordes Históricos OMIE PT</strong> <span style="font-weight:normal;font-size:0.85em;opacity:0.85;">(desde 01/01/2010)</span></summary>
+            <div class="recordes-grid" id="recordes-grid"></div>
+            <p class="recordes-footer" id="recordes-footer"></p>
+        </details>
+
+        <nav class="mini-nav" aria-label="Navegação rápida da página">
+            <a href="#dashboard-cards"           class="mini-nav-chip" data-target="resumo">💰 Resumo</a>
+            <a href="#grafico-diario-container"  class="mini-nav-chip" data-target="evolucao">📈 Evolução</a>
+            <a href="#grafico-histograma-wrapper" class="mini-nav-chip" data-target="distribuicao">📊 Distribuição</a>
+            <a href="#grafico-volatilidade-container" class="mini-nav-chip" data-target="analise">⚡ Análise</a>
+            <a href="#top-dias-section"          class="mini-nav-chip" data-target="top-dias">🔥 Top dias</a>
+        </nav>
+
         <h1>Eletricidade - Preços médios Mercado Diário OMIE para o período de <span id="data-inicio-titulo">Portugal</span> a <span id="data-fim-titulo">hoje</span></h1>
         <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
@@ -181,20 +465,30 @@
 
     <div id="loading-indicator" role="status" aria-live="polite">A carregar dados históricos...</div>
 
-    <div class="dashboard-grid-periodo">
+    <div id="dashboard-cards" class="dashboard-grid-periodo">
         <div class="card-pair-row">
-             <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
-             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
+             <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="yoy-principal" id="yoy-pt-principal"></div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
+             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small>(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="yoy-principal" id="yoy-es-principal"></div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
         </div>
         <div class="card-pair-row">
-             <div class="card"> <h3 class="card-title-bd">Bi-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-diario-fora-vazio">--,-- €</span></div> </div>
-             <div class="card"> <h3 class="card-title-td">Tri-horário Diário</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-diario-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-diario-ponta">--,-- €</span></div> </div>
+             <div class="card"> <h3 class="card-title-bd"><abbr class="glossario" title="Plano com 2 períodos: Vazio (mais barato) e Fora Vazio. No ciclo Diário, os horários são iguais todos os dias da semana.">Bi-horário Diário</abbr></h3> <div class="data-item"><span class="label label-vazio"><abbr class="glossario" title="Vazio: período de menor consumo (tipicamente noturno). Tarifa mais barata.">Vazio</abbr></span><span class="valor" id="bh-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio"><abbr class="glossario" title="Fora Vazio: período de maior consumo, oposto ao Vazio. Tarifa mais cara em planos bi-horários.">Fora Vazio</abbr></span><span class="valor" id="bh-diario-fora-vazio">--,-- €</span></div> </div>
+             <div class="card"> <h3 class="card-title-td"><abbr class="glossario" title="Plano com 3 períodos: Vazio, Cheias e Ponta. No ciclo Diário, os horários são iguais todos os dias da semana.">Tri-horário Diário</abbr></h3> <div class="data-item"><span class="label label-vazio"><abbr class="glossario" title="Vazio: período de menor consumo (tipicamente noturno).">Vazio</abbr></span><span class="valor" id="th-diario-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias"><abbr class="glossario" title="Cheias: período intermédio em planos tri-horários.">Cheias</abbr></span><span class="valor" id="th-diario-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta"><abbr class="glossario" title="Ponta: período de pico de consumo, com tarifa mais elevada em planos tri-horários.">Ponta</abbr></span><span class="valor" id="th-diario-ponta">--,-- €</span></div> </div>
         </div>
         <div class="card-pair-row">
-             <div class="card"> <h3 class="card-title-bs">Bi-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="bh-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio">Fora Vazio</span><span class="valor" id="bh-semanal-fora-vazio">--,-- €</span></div> </div>
-             <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
+             <div class="card"> <h3 class="card-title-bs"><abbr class="glossario" title="Plano bi-horário (Vazio / Fora Vazio) em ciclo Semanal: os horários diferem entre dias úteis e fins-de-semana.">Bi-horário Semanal</abbr></h3> <div class="data-item"><span class="label label-vazio"><abbr class="glossario" title="Vazio: período de menor consumo.">Vazio</abbr></span><span class="valor" id="bh-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-fora-vazio"><abbr class="glossario" title="Fora Vazio: período de maior consumo.">Fora Vazio</abbr></span><span class="valor" id="bh-semanal-fora-vazio">--,-- €</span></div> </div>
+             <div class="card"> <h3 class="card-title-ts"><abbr class="glossario" title="Plano tri-horário (Vazio / Cheias / Ponta) em ciclo Semanal: os horários diferem entre dias úteis e fins-de-semana.">Tri-horário Semanal</abbr></h3> <div class="data-item"><span class="label label-vazio"><abbr class="glossario" title="Vazio: período de menor consumo.">Vazio</abbr></span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias"><abbr class="glossario" title="Cheias: período intermédio.">Cheias</abbr></span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta"><abbr class="glossario" title="Ponta: período de pico de consumo.">Ponta</abbr></span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
         </div>
     </div>
+
+    <div id="insight-periodo" style="display: none;" aria-live="polite"></div>
+
+    <section id="analise-periodo" style="display: none;">
+        <h2>📖 Análise do período</h2>
+        <div class="analise-grid">
+            <div id="grafico-dia-semana"></div>
+            <div id="grafico-ciclos-donut"></div>
+        </div>
+    </section>
 
     <div id="media-mes-futuros-container" style="display: none; width: 95%; max-width: 1200px; margin: 30px auto 20px auto; text-align: center;">
     </div>
@@ -202,8 +496,45 @@
     <div class="link-section"> <p>https://www.tiagofelicia.pt/omie.html</p> </div>
 
     <div id="grafico-diario-container" class="grafico-container"></div>
-    <div id="grafico-horario-container" class="grafico-container"></div>
+
+    <div id="grafico-horario-wrapper" class="grafico-container">
+        <div id="grafico-horario-toggles" style="display:flex;justify-content:center;margin-bottom:10px;"></div>
+        <div id="grafico-horario-container"></div>
+    </div>
+
     <div id="grafico-quartos-detalhado-container" class="grafico-container"></div>
+
+    <div id="grafico-histograma-wrapper" class="grafico-container">
+        <div id="histograma-stats"></div>
+        <div id="grafico-histograma-container"></div>
+    </div>
+
+    <div id="grafico-duration-curve-container" class="grafico-container"></div>
+
+    <div class="grafico-container">
+        <div id="range-kpis"></div>
+        <div id="grafico-range-container"></div>
+    </div>
+
+    <div class="grafico-container">
+        <div id="spread-kpis"></div>
+        <div id="grafico-spread-container"></div>
+    </div>
+
+    <div id="grafico-volatilidade-container" class="grafico-container"></div>
+
+    <div class="grafico-container">
+        <div id="extremos-toggles"></div>
+        <div id="grafico-extremos-container"></div>
+    </div>
+
+    <section id="top-dias-section">
+        <h2>Top dias do período (mais caros vs mais baratos)</h2>
+        <div class="top-dias-grid">
+            <div id="top-dias-caros"></div>
+            <div id="top-dias-baratos"></div>
+        </div>
+    </section>
 
     <article class="content-support">
         <h2>Compreender os Preços do Mercado Diário (Day-Ahead) OMIE</h2>
@@ -263,6 +594,64 @@
             </details>
 
             <details class="faq-item">
+                <summary><strong>Como interpretar o histograma de distribuição?</strong></summary>
+                <div class="faq-content">
+                    <p>O histograma agrupa os preços quarto-horários do período em <strong>buckets de 10 €/MWh</strong> e conta a frequência de cada um. Mostra com que regularidade os preços ficam em cada gama.</p>
+                    <p>As linhas verticais marcam:</p>
+                    <ul>
+                        <li><strong>Mediana (vermelho):</strong> valor central — metade do tempo o preço esteve abaixo, metade acima. Menos sensível a picos do que a média.</li>
+                        <li><strong>Média (laranja):</strong> média aritmética simples. Pode ser empurrada para cima por valores extremos.</li>
+                    </ul>
+                    <p>Os indicadores numéricos no topo (Min, P10, P25, Mediana, Média, P75, P90, Máx) resumem a distribuição. Por exemplo, <strong>P90 = 150 €/MWh</strong> significa que durante 90% do tempo o preço esteve <em>abaixo</em> desse valor.</p>
+                    <p>Uma distribuição estreita revela preços estáveis; uma cauda longa à direita indica picos esporádicos. Quando a <strong>média é muito superior à mediana</strong>, há outliers altos a inflar a média.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que é a "Curva de Duração de Preços"?</strong></summary>
+                <div class="faq-content">
+                    <p>A <strong>curva de duração</strong> (Price Duration Curve) ordena todos os preços do período do mais alto (à esquerda, 0%) para o mais baixo (à direita, 100%). É uma ferramenta clássica em análise energética.</p>
+                    <p>Lê-se assim: se a linha de Portugal indica <strong>150 €/MWh aos 10%</strong>, isso significa que durante <strong>10% do tempo o preço esteve igual ou acima de 150 €/MWh</strong>.</p>
+                    <p>É útil para:</p>
+                    <ul>
+                        <li>Comparar quão "extremos" foram os preços em PT vs ES</li>
+                        <li>Avaliar quanto tempo o mercado esteve acima de limiares relevantes (ex: 100 €/MWh)</li>
+                        <li>Comparar a forma da curva com o ano anterior (série "PT (ano anterior)" — ativável na legenda)</li>
+                    </ul>
+                    <p>Uma curva muito íngreme no início significa picos extremos; uma curva mais achatada indica preços uniformes.</p>
+                    <p><strong>Nota:</strong> a série Portugal usa o dia português (24h em hora de PT), enquanto a série Espanha usa o <strong>dia espanhol</strong> (24h em hora de ES) — consistente com os cards e o gráfico de médias diárias.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que é o Spread PT-ES e o "market splitting"?</strong></summary>
+                <div class="faq-content">
+                    <p>O <strong>Spread PT-ES</strong> é a diferença <strong>Preço PT − Preço ES</strong> num dado momento. O gráfico mostra a média diária deste diferencial:</p>
+                    <ul>
+                        <li><strong>Spread positivo (vermelho):</strong> Portugal mais caro que Espanha</li>
+                        <li><strong>Spread negativo (verde):</strong> Portugal mais barato que Espanha</li>
+                        <li><strong>Spread zero:</strong> mercado unificado (situação habitual)</li>
+                    </ul>
+                    <p>Os preços de PT e ES são definidos no mesmo mercado (MIBEL), mas a <strong>capacidade de interligação</strong> entre os dois países é limitada. Quando a procura ou oferta num lado não pode ser totalmente satisfeita pelo outro, os preços <strong>divergem</strong> — chama-se a este fenómeno <strong>market splitting</strong>.</p>
+                    <p>Os indicadores no topo mostram o spread médio, o maior diferencial diário, e a percentagem do tempo (medido nos quartos-horários) com PT mais caro e em situação de splitting (considerado quando <code>|spread| > 0,01 €/MWh</code>).</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que são os eventos anotados no gráfico de Médias Diárias?</strong></summary>
+                <div class="faq-content">
+                    <p>O gráfico de Médias Diárias inclui marcadores verticais de <strong>eventos relevantes</strong> que ajudam a contextualizar picos e oscilações nos preços. As cores indicam o tipo:</p>
+                    <ul>
+                        <li><span style="color:#dc3545;font-weight:bold;">●</span> <strong>Crise</strong> — eventos geopolíticos, sanitários ou de mercado (Invasão da Ucrânia, COVID, Hamas-Israel, Apagão ibérico)</li>
+                        <li><span style="color:#fd7e14;font-weight:bold;">●</span> <strong>Política / Regulação</strong> — medidas de mercado (Mecanismo Ibérico, etc.) — mostradas como faixas coloridas se tiverem duração</li>
+                        <li><span style="color:#0d6efd;font-weight:bold;">●</span> <strong>Mercado</strong> — mudanças estruturais (entrada do mercado 15-min)</li>
+                        <li><span style="color:#6c757d;font-weight:bold;">●</span> <strong>Tempo / Clima</strong> — fenómenos meteorológicos extremos (Tempestade Filomena)</li>
+                    </ul>
+                    <p>Apenas eventos que caem dentro do período selecionado aparecem no gráfico. Selecione um período mais longo (ex: "Ano corrente" ou um intervalo personalizado entre 2020 e 2026) para ver mais eventos.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
                 <summary><strong>Como interagir com os gráficos?</strong></summary>
                 <div class="faq-content">
                     <p>Os gráficos de "Médias Diárias" e "Valores Quarto-Horários" são interativos e permitem zoom.</p>
@@ -274,6 +663,8 @@
             </details>
     </article>
 </main>
+
+<button id="btn-voltar-topo" type="button" aria-label="Voltar ao topo" title="Voltar ao topo">↑</button>
 
 <div id="footer-placeholder"></div>
 
@@ -331,6 +722,134 @@ document.addEventListener('DOMContentLoaded', function() {
     let anoMinimoAtual = null;
     let defaultDataInicio = '';
     let defaultDataFim = '';
+    let dataMaximaValida = null;
+
+    // --- EVENTOS MARCANTES (B6) — anotações no gráfico diário ---
+    const EVENTOS_MARCANTES = [
+        { data: '2020-03-18', label: 'Lockdown COVID',            tipo: 'crise'    },
+        { data: '2021-01-06', label: 'Tempestade Filomena',       tipo: 'tempo'    },
+        { data: '2022-02-24', label: 'Invasão da Ucrânia',        tipo: 'crise'    },
+        { data: '2022-06-15', label: 'Mecanismo Ibérico',         tipo: 'politica', fim: '2023-12-31' },
+        { data: '2023-10-07', label: 'Ataque Hamas-Israel',       tipo: 'crise'    },
+        { data: '2025-04-28', label: 'Apagão ibérico',            tipo: 'crise'    },
+        { data: '2025-10-01', label: 'Mercado 15-min',            tipo: 'mercado'  }
+    ];
+    const EVENTO_CORES = {
+        crise:    '#dc3545',
+        politica: '#fd7e14',
+        mercado:  '#0d6efd',
+        tempo:    '#6c757d'
+    };
+    function _isoToTimestamp(iso) {
+        const [y, m, d] = iso.split('-').map(Number);
+        return Date.UTC(y, m - 1, d);
+    }
+    // --- YoY Delta helpers (A1) ---
+    // Devolve o delta percentual; null se a base for muito pequena (|anterior| < 1) — nesse caso
+    // o caller deve recorrer ao delta absoluto para evitar percentagens explosivas.
+    function calcularDeltaPct(atual, anterior) {
+        if (atual === null || anterior === null) return null;
+        if (!isFinite(atual) || !isFinite(anterior)) return null;
+        if (Math.abs(anterior) < 1) return null;
+        return ((atual - anterior) / Math.abs(anterior)) * 100;
+    }
+    function _arrowKlass(value, threshold) {
+        const isUp   = value >  threshold;
+        const isDown = value < -threshold;
+        return {
+            arrow: isUp ? '↗' : (isDown ? '↘' : '➡'),
+            klass: isUp ? 'yoy-up' : (isDown ? 'yoy-down' : 'yoy-flat')
+        };
+    }
+    function _tooltipAnterior(anterior, contexto) {
+        if (anterior === null || !isFinite(anterior)) {
+            return 'Sem dado equivalente do ano anterior';
+        }
+        const v = anterior.toFixed(2).replace('.', ',');
+        return `${contexto || 'Período do ano anterior'}: ${v} €/MWh`;
+    }
+    function formatarDeltaPrincipal(atual, anterior) {
+        const tooltip = _tooltipAnterior(anterior, 'Média do período do ano anterior');
+        const deltaPct = calcularDeltaPct(atual, anterior);
+        if (deltaPct !== null) {
+            const abs = Math.abs(deltaPct);
+            const { arrow, klass } = _arrowKlass(deltaPct, 0.5);
+            const sig = deltaPct > 0 ? '+' : '';
+            return `<span class="${klass}" title="${tooltip}">${arrow} ${sig}${abs.toFixed(1).replace('.', ',')}% vs ano anterior</span>`;
+        }
+        if (atual !== null && anterior !== null && isFinite(atual) && isFinite(anterior)) {
+            const diff = atual - anterior;
+            const { arrow, klass } = _arrowKlass(diff, 0.01);
+            const sig = diff > 0 ? '+' : '';
+            return `<span class="${klass}" title="${tooltip}">${arrow} ${sig}${diff.toFixed(2).replace('.', ',')} € vs ano anterior</span>`;
+        }
+        return '';
+    }
+    function formatarDeltaInline(atual, anterior) {
+        const tooltip = _tooltipAnterior(anterior);
+        const deltaPct = calcularDeltaPct(atual, anterior);
+        if (deltaPct !== null) {
+            const abs = Math.abs(deltaPct);
+            const { arrow, klass } = _arrowKlass(deltaPct, 0.5);
+            const sig = deltaPct > 0 ? '+' : '';
+            return ` <small class="yoy-inline ${klass}" title="${tooltip}">${arrow} ${sig}${abs.toFixed(1).replace('.', ',')}%</small>`;
+        }
+        if (atual !== null && anterior !== null && isFinite(atual) && isFinite(anterior)) {
+            const diff = atual - anterior;
+            const { arrow, klass } = _arrowKlass(diff, 0.01);
+            const sig = diff > 0 ? '+' : '';
+            return ` <small class="yoy-inline ${klass}" title="${tooltip}">${arrow} ${sig}${diff.toFixed(2).replace('.', ',')} €</small>`;
+        }
+        return '';
+    }
+    function setYoyPrincipal(elId, atual, anterior) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        el.innerHTML = formatarDeltaPrincipal(atual, anterior);
+    }
+    function appendYoyInline(elId, atual, anterior) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        // Não altera o conteúdo principal; só adiciona o badge ao final
+        const valorBase = el.innerHTML.replace(/<small class="yoy-inline[^>]*>.*?<\/small>/g, '');
+        el.innerHTML = valorBase + formatarDeltaInline(atual, anterior);
+    }
+
+    function gerarAnotacoesEventos(dataInicioISO, dataFimISO) {
+        const inicioTs = _isoToTimestamp(dataInicioISO);
+        const fimTs = _isoToTimestamp(dataFimISO);
+        const plotLines = [];
+        const plotBands = [];
+        EVENTOS_MARCANTES.forEach(ev => {
+            const cor = EVENTO_CORES[ev.tipo] || '#6c757d';
+            if (ev.fim) {
+                const fromTs = _isoToTimestamp(ev.data);
+                const toTs = _isoToTimestamp(ev.fim);
+                if (toTs >= inicioTs && fromTs <= fimTs) {
+                    plotBands.push({
+                        from: Math.max(fromTs, inicioTs),
+                        to: Math.min(toTs, fimTs),
+                        color: cor + '22', // ~13% opacity
+                        label: { text: ev.label, style: { color: cor, fontSize: '0.72em', fontWeight: 'bold' }, y: 14, x: 6 },
+                        zIndex: 1
+                    });
+                }
+            } else {
+                const ts = _isoToTimestamp(ev.data);
+                if (ts >= inicioTs && ts <= fimTs) {
+                    plotLines.push({
+                        value: ts,
+                        color: cor,
+                        dashStyle: 'Dash',
+                        width: 1.5,
+                        zIndex: 3,
+                        label: { text: ev.label, style: { color: cor, fontSize: '0.72em', fontWeight: 'bold' }, rotation: -90, textAlign: 'right', y: 20, x: -4 }
+                    });
+                }
+            }
+        });
+        return { plotLines, plotBands };
+    }
 
     // --- FUNÇÕES AUXILIARES ---
     function formatarDataParaInput(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('/')) { return null; } const [dia, mes, ano] = dataStr.split('/'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${ano}-${mes}-${dia}`; }
@@ -362,6 +881,239 @@ document.addEventListener('DOMContentLoaded', function() {
     function formatarValor(valor, casasDecimais = 2) { if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,-- €'; } const textoFormatado = valor.toFixed(casasDecimais).replace('.', ',') + ' €'; return valor < 0 ? `<span style="color: red;">${textoFormatado}</span>` : textoFormatado; }
     function calcularMedia(arr) { if (!Array.isArray(arr)) return null; const nums = arr.filter(v => v !== null && !isNaN(v)); return nums.length > 0 ? nums.reduce((a, b) => a + b, 0) / nums.length : null; }
     function isDateInRange(dateStrDDMMYYYY, startStrYYYYMMDD, endStrYYYYMMDD) { try { const dateInput = formatarDataParaInput(dateStrDDMMYYYY); if (!dateInput) return false; return dateInput >= startStrYYYYMMDD && dateInput <= endStrYYYYMMDD; } catch (e) { console.error("Erro ao comparar datas:", e); return false; } }
+
+    // --- B2: LAZY LOAD ---
+    // Charts dentro/perto da viewport renderizam imediatamente.
+    // Charts fora ficam em fila; renderizam quando o user faz scroll (IntersectionObserver + fallback scroll).
+    const _lazyQueue = new Map();    // containerId → renderFn
+    let   _lazyObserver = null;
+    let   _scrollHandlerInstalled = false;
+
+    function _processLazyQueueOnScroll() {
+        const ids = Array.from(_lazyQueue.keys());
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) { _lazyQueue.delete(id); return; }
+            const rect = el.getBoundingClientRect();
+            const near = rect.top < window.innerHeight + 500 && rect.bottom > -500;
+            if (near) {
+                const fn = _lazyQueue.get(id);
+                _lazyQueue.delete(id);
+                if (_lazyObserver) _lazyObserver.unobserve(el);
+                try { fn(); } catch(e) { console.error('Erro a renderizar (scroll)', id, e); }
+            }
+        });
+    }
+
+    function _ensureScrollHandler() {
+        if (_scrollHandlerInstalled) return;
+        _scrollHandlerInstalled = true;
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                if (_lazyQueue.size > 0) _processLazyQueueOnScroll();
+                ticking = false;
+            });
+        }, { passive: true });
+    }
+
+    function _ensureLazyObserver() {
+        if (_lazyObserver) return;
+        _lazyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const id = entry.target.id;
+                const fn = _lazyQueue.get(id);
+                if (fn) {
+                    _lazyQueue.delete(id);
+                    _lazyObserver.unobserve(entry.target);
+                    try { fn(); } catch(e) { console.error('Erro a renderizar (lazy)', id, e); }
+                }
+            });
+        }, { rootMargin: '500px 0px 500px 0px' });
+    }
+
+    function lazyOrEager(containerId, renderFn) {
+        const el = document.getElementById(containerId);
+        if (!el) { try { renderFn(); } catch(e) { console.error(e); } return; }
+        const rect = el.getBoundingClientRect();
+        const inOrNearViewport = rect.top < window.innerHeight + 500 && rect.bottom > -500;
+        if (inOrNearViewport) {
+            if (_lazyQueue.has(containerId)) {
+                _lazyQueue.delete(containerId);
+                if (_lazyObserver) _lazyObserver.unobserve(el);
+            }
+            try { renderFn(); } catch(e) { console.error('Erro a renderizar', containerId, e); }
+        } else {
+            _ensureLazyObserver();
+            _ensureScrollHandler();
+            _lazyQueue.set(containerId, renderFn);
+            _lazyObserver.observe(el);
+        }
+    }
+
+    // --- PRESETS DE PERÍODO, URL STATE, PARTILHA ---
+    function getPresetDates(preset) {
+        if (!dataMaximaValida) return null;
+        const fim = dataMaximaValida;
+        const fimDate = new Date(fim + "T12:00:00Z");
+        const dataMin = `${ANO_INICIO_HISTORICO}-01-01`;
+        const clamp = (s) => s < dataMin ? dataMin : s;
+
+        if (preset === '7d') {
+            const inicioDate = new Date(fimDate);
+            inicioDate.setUTCDate(inicioDate.getUTCDate() - 6);
+            return { inicio: clamp(inicioDate.toISOString().split('T')[0]), fim };
+        }
+        if (preset === 'mes') {
+            const ano = fimDate.getUTCFullYear();
+            const mes = String(fimDate.getUTCMonth() + 1).padStart(2, '0');
+            return { inicio: clamp(`${ano}-${mes}-01`), fim };
+        }
+        if (preset === 'mesPassado') {
+            const ano = fimDate.getUTCFullYear();
+            const mes = fimDate.getUTCMonth(); // 0-indexed
+            const inicioDate = new Date(Date.UTC(ano, mes - 1, 1));      // dia 1 do mês anterior
+            const fimDateMP   = new Date(Date.UTC(ano, mes, 0));         // último dia do mês anterior
+            return {
+                inicio: clamp(inicioDate.toISOString().split('T')[0]),
+                fim:    fimDateMP.toISOString().split('T')[0]
+            };
+        }
+        if (preset === 'ultimos12m') {
+            const inicioDate = new Date(fimDate);
+            inicioDate.setUTCFullYear(inicioDate.getUTCFullYear() - 1);
+            inicioDate.setUTCDate(inicioDate.getUTCDate() + 1); // 12 meses inclusivos = 365/366 dias
+            return { inicio: clamp(inicioDate.toISOString().split('T')[0]), fim };
+        }
+        if (preset === 'ano') {
+            const ano = fimDate.getUTCFullYear();
+            return { inicio: clamp(`${ano}-01-01`), fim };
+        }
+        if (preset === 'custom') {
+            const inicioDate = new Date(fimDate);
+            inicioDate.setUTCDate(inicioDate.getUTCDate() - 14);
+            return { inicio: clamp(inicioDate.toISOString().split('T')[0]), fim };
+        }
+        return null;
+    }
+
+    function detectActivePreset(inicio, fim) {
+        if (!dataMaximaValida) return 'custom';
+        // Ordem: do mais específico para o mais genérico (resolve empates em casos limite,
+        // ex: 1 jan onde "Este mês" e "Ano corrente" têm as mesmas datas — vence "Este mês")
+        const ordem = ['mes', '7d', 'mesPassado', 'ultimos12m', 'ano'];
+        for (const p of ordem) {
+            const d = getPresetDates(p);
+            if (d && inicio === d.inicio && fim === d.fim) return p;
+        }
+        return 'custom';
+    }
+
+    function atualizarBotoesPreset(preset) {
+        document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.preset === preset);
+        });
+        // Mostrar inputs de data apenas quando o preset é "custom"
+        const dateSelector = document.querySelector('.date-selector-periodo');
+        if (dateSelector) {
+            dateSelector.classList.toggle('no-dates', preset !== 'custom');
+        }
+    }
+
+    function aplicarPreset(preset) {
+        const dates = getPresetDates(preset);
+        if (!dates) return;
+        seletorDataInicio.value = dates.inicio;
+        seletorDataFim.value = dates.fim;
+        atualizarBotoesPreset(preset);
+        atualizarURL();
+        atualizarDashboardPeriodo();
+    }
+
+    function lerURLState() {
+        const params = new URLSearchParams(window.location.search);
+        const inicio = params.get('inicio');
+        const fim = params.get('fim');
+        if (!inicio || !fim) return null;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(inicio) || !/^\d{4}-\d{2}-\d{2}$/.test(fim)) return null;
+        if (inicio > fim) return null;
+        return { inicio, fim };
+    }
+
+    function atualizarURL() {
+        if (!seletorDataInicio.value || !seletorDataFim.value) return;
+        const inicio = seletorDataInicio.value;
+        const fim = seletorDataFim.value;
+        let newURL;
+        if (inicio === defaultDataInicio && fim === defaultDataFim) {
+            // Estado igual ao default ("Este mês") → URL limpo
+            newURL = `${window.location.pathname}${window.location.hash}`;
+        } else {
+            const params = new URLSearchParams();
+            params.set('inicio', inicio);
+            params.set('fim', fim);
+            newURL = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+        }
+        window.history.replaceState(null, '', newURL);
+    }
+
+    function mostrarFeedback(msg) {
+        const existing = document.getElementById('toast-feedback');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.id = 'toast-feedback';
+        toast.className = 'toast-feedback';
+        toast.setAttribute('role', 'status');
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => { if (toast.parentNode) toast.remove(); }, 2500);
+    }
+
+    async function partilharVista() {
+        const inicio = seletorDataInicio.value;
+        const fim = seletorDataFim.value;
+        // URL de partilha — sempre com params explícitos (independente do que o browser mostra)
+        const params = new URLSearchParams();
+        params.set('inicio', inicio);
+        params.set('fim', fim);
+        const shareURL = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+
+        const mediaPT = (document.getElementById('media-pt').textContent || '--').trim();
+        const fmtData = (s) => { const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
+        const titulo = 'OMIE — Histórico de Preços (Tiago Felícia)';
+        const resumo = `📊 OMIE Day-Ahead — ${fmtData(inicio)} a ${fmtData(fim)}\nMédia PT: ${mediaPT}`;
+        const textoCompleto = `${resumo}\n${shareURL}`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: titulo, text: resumo, url: shareURL });
+                return;
+            } catch (e) {
+                if (e && e.name === 'AbortError') return;
+            }
+        }
+        try {
+            await navigator.clipboard.writeText(textoCompleto);
+            mostrarFeedback('✓ Link e resumo copiados');
+            return;
+        } catch (e) {}
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = textoCompleto;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            mostrarFeedback('✓ Link e resumo copiados');
+        } catch (e) {
+            prompt('Copie este link:', textoCompleto);
+        }
+    }
 
     // --- FUNÇÃO PARA CARREGAR DADOS HISTÓRICOS ---
     async function carregarDadosHistoricos(ano) {
@@ -414,6 +1166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         let dataInicioExtAnterior = _subYearISO(dataInicioExtendida);
         const dataFimAnterior = _subYearISO(dataFimSelecionada);
+        const dataInicioAnterior = _subYearISO(dataInicioSelecionada);
         if (dataInicioExtAnterior < `${ANO_INICIO_HISTORICO}-01-01`) dataInicioExtAnterior = `${ANO_INICIO_HISTORICO}-01-01`;
         const anoInicioExtAnterior = parseInt(dataInicioExtAnterior.substring(0, 4));
         const anoFimAnterior = parseInt(dataFimAnterior.substring(0, 4));
@@ -568,21 +1321,169 @@ document.addEventListener('DOMContentLoaded', function() {
             }, {}); 
         } 
         
-        document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['V'])); 
-        document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['F'])); 
-        document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['V'])); 
-        document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['F'])); 
-        document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['V'])); 
-        document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['C'])); 
-        document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['P'])); 
-        document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['V'])); 
-        document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['C'])); 
+        document.getElementById('bh-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['V']));
+        document.getElementById('bh-diario-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bd?.['F']));
+        document.getElementById('bh-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['V']));
+        document.getElementById('bh-semanal-fora-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.bs?.['F']));
+        document.getElementById('th-diario-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['V']));
+        document.getElementById('th-diario-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['C']));
+        document.getElementById('th-diario-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.td?.['P']));
+        document.getElementById('th-semanal-vazio').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['V']));
+        document.getElementById('th-semanal-cheias').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['C']));
         document.getElementById('th-semanal-ponta').innerHTML = formatarValor(calcularMedia(ciclosPeriodo.ts?.['P']));
 
-        // Atualizar Gráficos
-        atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioSelecionada, dataFimSelecionada, dadosAnoAnteriorParaYoY);
-        atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
-        atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE);
+        // === A1: VARIAÇÃO YoY (vs período equivalente do ano anterior) ===
+        // Filtrar o ano anterior ao período exato (sem 30 dias extra usados nas MAs)
+        const dadosAnoAntPeriodo = (dadosAnoAnteriorParaYoY || []).filter(d => {
+            const inputDate = formatarDataParaInput(d.dia);
+            return inputDate && inputDate >= dataInicioAnterior && inputDate <= dataFimAnterior;
+        });
+        // PT — média + max + min (mesma lógica que dadosReaisDoPeriodo, mas sem o "último dia OMIE" filtro)
+        const precosPTAnt = dadosAnoAntPeriodo.map(d => d.preco_pt).filter(p => p !== null && !isNaN(p));
+        const mediaPTAnt = calcularMedia(precosPTAnt);
+        const maxPTAnt = precosPTAnt.length ? Math.max(...precosPTAnt) : null;
+        const minPTAnt = precosPTAnt.length ? Math.min(...precosPTAnt) : null;
+
+        // ES — APLICAR o mesmo Spanish-day alignment que o período atual (consistência com mediaGeralES)
+        // Constrói mapa por dia para o ano anterior (incluindo 30d extra para apanhar dia-1 ao período)
+        const mapaAnoAnterior = new Map();
+        (dadosAnoAnteriorParaYoY || []).forEach(d => {
+            if (!mapaAnoAnterior.has(d.dia)) mapaAnoAnterior.set(d.dia, []);
+            mapaAnoAnterior.get(d.dia).push(d);
+        });
+        const datasUnicasAnoAnt = [...new Set(dadosAnoAntPeriodo.map(d => d.dia))]
+            .sort((a, b) => formatarDataParaInput(a).localeCompare(formatarDataParaInput(b)));
+        // Dia anterior ao 1º dia do período do ano anterior (formato DD/MM/YYYY)
+        let dataAnteriorInicioAntCSV = null;
+        if (datasUnicasAnoAnt[0]) {
+            try {
+                const isoFirst = formatarDataParaInput(datasUnicasAnoAnt[0]);
+                const d = new Date(isoFirst + 'T12:00:00Z');
+                d.setUTCDate(d.getUTCDate() - 1);
+                dataAnteriorInicioAntCSV = `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}/${d.getUTCFullYear()}`;
+            } catch(e) {}
+        }
+        let somaMediasDiariasESAnt = 0, countMediasDiariasESAnt = 0;
+        let todosPrecosESAnt = [];
+        datasUnicasAnoAnt.forEach((diaDDMMYYYY, index) => {
+            const diaAnteriorLoop = (index === 0) ? dataAnteriorInicioAntCSV : datasUnicasAnoAnt[index - 1];
+            const dadosDiaAtual = mapaAnoAnterior.get(diaDDMMYYYY) || [];
+            const dadosDiaAnterior = mapaAnoAnterior.get(diaAnteriorLoop) || [];
+            const precosESDiaD = dadosDiaAtual.map(d => d.preco_es).filter(p => p !== null);
+            const ultimos4ES = dadosDiaAnterior.slice(-4).map(d => d.preco_es).filter(p => p !== null);
+            const numQuartosUsar = dadosDiaAtual.length - 4;
+            const precosDiaEspanhol = ultimos4ES.concat(precosESDiaD.slice(0, numQuartosUsar));
+            todosPrecosESAnt.push(...precosDiaEspanhol);
+            const mediaDia = calcularMedia(precosDiaEspanhol);
+            if (mediaDia !== null) { somaMediasDiariasESAnt += mediaDia; countMediasDiariasESAnt++; }
+        });
+        const mediaESAnt = countMediasDiariasESAnt > 0 ? somaMediasDiariasESAnt / countMediasDiariasESAnt : null;
+        const maxESAnt = todosPrecosESAnt.length ? Math.max(...todosPrecosESAnt) : null;
+        const minESAnt = todosPrecosESAnt.length ? Math.min(...todosPrecosESAnt) : null;
+        // Ciclos do ano anterior
+        const ciclosAnt = { bd: {}, bs: {}, td: {}, ts: {} };
+        for (const ciclo in ciclosAnt) {
+            ciclosAnt[ciclo] = dadosAnoAntPeriodo.reduce((acc, row) => {
+                const periodo = row[ciclo.toUpperCase()];
+                if (!periodo) return acc;
+                if (!acc[periodo]) acc[periodo] = [];
+                if (row.preco_pt !== null && !isNaN(row.preco_pt)) acc[periodo].push(row.preco_pt);
+                return acc;
+            }, {});
+        }
+        // Mostrar deltas — principal e inline
+        setYoyPrincipal('yoy-pt-principal',  calcularMedia(precosReaisPTPeriodo), mediaPTAnt);
+        setYoyPrincipal('yoy-es-principal',  mediaGeralES,                          mediaESAnt);
+        appendYoyInline('max-pt', precosReaisPTPeriodo.length ? Math.max(...precosReaisPTPeriodo) : null, maxPTAnt);
+        appendYoyInline('min-pt', precosReaisPTPeriodo.length ? Math.min(...precosReaisPTPeriodo) : null, minPTAnt);
+        appendYoyInline('max-es', todosPrecosESPeriodo.length ? Math.max(...todosPrecosESPeriodo) : null, maxESAnt);
+        appendYoyInline('min-es', todosPrecosESPeriodo.length ? Math.min(...todosPrecosESPeriodo) : null, minESAnt);
+        appendYoyInline('bh-diario-vazio',      calcularMedia(ciclosPeriodo.bd?.['V']), calcularMedia(ciclosAnt.bd?.['V']));
+        appendYoyInline('bh-diario-fora-vazio', calcularMedia(ciclosPeriodo.bd?.['F']), calcularMedia(ciclosAnt.bd?.['F']));
+        appendYoyInline('bh-semanal-vazio',     calcularMedia(ciclosPeriodo.bs?.['V']), calcularMedia(ciclosAnt.bs?.['V']));
+        appendYoyInline('bh-semanal-fora-vazio',calcularMedia(ciclosPeriodo.bs?.['F']), calcularMedia(ciclosAnt.bs?.['F']));
+        appendYoyInline('th-diario-vazio',      calcularMedia(ciclosPeriodo.td?.['V']), calcularMedia(ciclosAnt.td?.['V']));
+        appendYoyInline('th-diario-cheias',     calcularMedia(ciclosPeriodo.td?.['C']), calcularMedia(ciclosAnt.td?.['C']));
+        appendYoyInline('th-diario-ponta',      calcularMedia(ciclosPeriodo.td?.['P']), calcularMedia(ciclosAnt.td?.['P']));
+        appendYoyInline('th-semanal-vazio',     calcularMedia(ciclosPeriodo.ts?.['V']), calcularMedia(ciclosAnt.ts?.['V']));
+        appendYoyInline('th-semanal-cheias',    calcularMedia(ciclosPeriodo.ts?.['C']), calcularMedia(ciclosAnt.ts?.['C']));
+        appendYoyInline('th-semanal-ponta',     calcularMedia(ciclosPeriodo.ts?.['P']), calcularMedia(ciclosAnt.ts?.['P']));
+
+        // === A2: Calcular stats para insight automático ===
+        // Identificar dia mais caro/barato do período
+        const porDiaPT = {};
+        dadosReaisDoPeriodo.forEach(row => {
+            if (row.preco_pt === null || isNaN(row.preco_pt)) return;
+            if (!porDiaPT[row.dia]) porDiaPT[row.dia] = [];
+            porDiaPT[row.dia].push(row.preco_pt);
+        });
+        const diasArrayInsight = Object.keys(porDiaPT)
+            .filter(d => porDiaPT[d].length > 0)
+            .map(dia => ({ dia, media: porDiaPT[dia].reduce((a,b)=>a+b,0) / porDiaPT[dia].length }));
+        let diaMaisCaroInsight = null, diaMaisBaratoInsight = null;
+        if (diasArrayInsight.length > 0) {
+            diaMaisCaroInsight = diasArrayInsight.reduce((a, b) => a.media > b.media ? a : b);
+            diaMaisCaroInsight = { dia: diaMaisCaroInsight.dia, valor: diaMaisCaroInsight.media };
+            diaMaisBaratoInsight = diasArrayInsight.reduce((a, b) => a.media < b.media ? a : b);
+            diaMaisBaratoInsight = { dia: diaMaisBaratoInsight.dia, valor: diaMaisBaratoInsight.media };
+        }
+        // Contar horas com preço extremo (média horária)
+        const horasAggInsight = {};
+        dadosReaisDoPeriodo.forEach(row => {
+            if (row.preco_pt === null || isNaN(row.preco_pt) || !row.timestamp) return;
+            const d = new Date(row.timestamp);
+            const k = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')} ${String(d.getUTCHours()).padStart(2,'0')}`;
+            if (!horasAggInsight[k]) horasAggInsight[k] = { sum: 0, count: 0 };
+            horasAggInsight[k].sum += row.preco_pt;
+            horasAggInsight[k].count++;
+        });
+        let horasNegativasInsight = 0, horasAcima100Insight = 0;
+        Object.values(horasAggInsight).forEach(h => {
+            const m = h.sum / h.count;
+            if (m < 0) horasNegativasInsight++;
+            if (m >= 100) horasAcima100Insight++;
+        });
+        // Spread médio
+        let spreadMedioInsight = null;
+        const paresValidos = dadosReaisDoPeriodo.filter(d => d.preco_pt !== null && d.preco_es !== null && !isNaN(d.preco_pt) && !isNaN(d.preco_es));
+        if (paresValidos.length > 0) {
+            spreadMedioInsight = paresValidos.reduce((s, r) => s + (r.preco_pt - r.preco_es), 0) / paresValidos.length;
+        }
+        // Calcular variação YoY
+        const mediaPTAtualInsight = calcularMedia(precosReaisPTPeriodo);
+        const deltaPctInsight = calcularDeltaPct(mediaPTAtualInsight, mediaPTAnt);
+        const numDiasInsight = Math.ceil((new Date(dataFimSelecionada) - new Date(dataInicioSelecionada)) / 86400000) + 1;
+        atualizarInsightPeriodo({
+            dataInicio: dataInicioCSV,
+            dataFim: dataFimCSV,
+            numDias: numDiasInsight,
+            mediaPT: mediaPTAtualInsight,
+            mediaPTAnt: mediaPTAnt,
+            deltaYoYpct: deltaPctInsight,
+            diaMaisCaro: diaMaisCaroInsight,
+            diaMaisBarato: diaMaisBaratoInsight,
+            horasNegativas: horasNegativasInsight,
+            horasAcima100: horasAcima100Insight,
+            spreadMedio: spreadMedioInsight
+        });
+
+        // === A3 + A4: Análise por dia da semana + Donut ciclos ===
+        document.getElementById('analise-periodo').style.display = 'block';
+        atualizarGraficoDiaSemana(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV);
+        atualizarGraficoCiclosDonut(ciclosPeriodo, dataInicioCSV, dataFimCSV);
+
+        // Atualizar Gráficos — com lazy load (B2)
+        // Gráfico diário é sempre eager (é o principal). Os restantes carregam à medida que entram na viewport.
+        atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioSelecionada, dataFimSelecionada, dadosAnoAnteriorParaYoY, diasArrayInsight);
+        lazyOrEager('grafico-horario-wrapper',            () => atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE));
+        lazyOrEager('grafico-quartos-detalhado-container',() => atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE));
+        lazyOrEager('grafico-histograma-wrapper',         () => atualizarGraficoHistograma(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV));
+        lazyOrEager('grafico-duration-curve-container',   () => atualizarGraficoDurationCurve(dadosReaisDoPeriodo, dadosAnoAnteriorParaYoY, dataInicioAnterior, dataFimAnterior, todosPrecosESPeriodo, dataInicioCSV, dataFimCSV));
+        lazyOrEager('grafico-range-container',            () => atualizarGraficoRangeDiario(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV));
+        lazyOrEager('grafico-spread-container',           () => atualizarGraficoSpreadPTES(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV));
+        lazyOrEager('grafico-volatilidade-container',     () => atualizarGraficoVolatilidade(dadosExtendidosParaMA, dataInicioSelecionada, dataFimSelecionada, dataInicioCSV, dataFimCSV));
+        lazyOrEager('grafico-extremos-container',         () => atualizarGraficoExtremos(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV));
+        lazyOrEager('top-dias-section',                   () => atualizarTopDias(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV));
 
 
         // --- INÍCIO DA NOVA LÓGICA --- (MOVIDA PARA AQUI)
@@ -598,7 +1499,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // --- FIM DA NOVA LÓGICA ---
     }
     // --- Gráfico de Médias DIÁRIAS ---
-    function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioISO, dataFimISO, dadosAnoAnteriorParaYoY) {
+    function atualizarGraficoDiarioPeriodo(dadosDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, dataInicioSelecionada, datasUnicasPeriodo, mapaDosDados, dadosExtendidosParaMA, dataInicioISO, dataFimISO, dadosAnoAnteriorParaYoY, diasArrayParaMarkers) {
         const dadosAgrupados = dadosDoPeriodo.reduce((acc, row) => { 
             if (!acc[row.dia]) { acc[row.dia] = { precosPT: [], precosES: [] }; } 
             if (row.preco_pt !== null) acc[row.dia].precosPT.push(row.preco_pt); 
@@ -832,6 +1733,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         ];
 
+        // === D3: top/bottom 3 markers ===
+        let dataTopCaros = [], dataTopBaratos = [];
+        if (diasArrayParaMarkers && diasArrayParaMarkers.length >= 2) {
+            const ordenadosCaros = [...diasArrayParaMarkers].sort((a, b) => b.media - a.media).slice(0, 3);
+            const ordenadosBaratos = [...diasArrayParaMarkers].sort((a, b) => a.media - b.media).slice(0, 3);
+            function toMarker(d) {
+                const [dd, mm, yyyy] = d.dia.split('/');
+                const ts = Date.UTC(parseInt(yyyy), parseInt(mm) - 1, parseInt(dd));
+                return { x: ts, y: d.media, diaTxt: d.dia };
+            }
+            dataTopCaros = ordenadosCaros.map(toMarker);
+            dataTopBaratos = ordenadosBaratos.map(toMarker);
+        }
+
         const tituloGrafico = `Médias Diárias OMIE de ${dataInicioCSV} a ${dataFimCSV} ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`;
         const nomeFicheiroBase = `medias-diarias-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
         
@@ -840,18 +1755,23 @@ document.addEventListener('DOMContentLoaded', function() {
             chart: { type: 'line', zoomType: 'x', height: 600, backgroundColor: _d1.bg, style: { color: _d1.txt } }, 
             title: { text: tituloGrafico, style: { color: _d1.txt } }, 
             subtitle: { text: 'Pode arrastar horizontalmente no gráfico para fazer zoom.', style: { color: _d1.txt } },
-            xAxis: { 
-                type: 'datetime', 
-                title: { text: 'Data', style: { color: _d1.txt } }, 
-                crosshair: true, 
-                labels: { style: { color: _d1.txt } },
-                dateTimeLabelFormats: { 
-                    day: '%e %b %Y', 
-                    week: '%e %b %Y', 
-                    month: '%b %Y', 
-                    year: '%Y' 
-                } 
-            }, 
+            xAxis: (function() {
+                const anot = gerarAnotacoesEventos(dataInicioISO, dataFimISO);
+                return {
+                    type: 'datetime',
+                    title: { text: 'Data', style: { color: _d1.txt } },
+                    crosshair: true,
+                    labels: { style: { color: _d1.txt } },
+                    dateTimeLabelFormats: {
+                        day: '%e %b %Y',
+                        week: '%e %b %Y',
+                        month: '%b %Y',
+                        year: '%Y'
+                    },
+                    plotLines: anot.plotLines,
+                    plotBands: anot.plotBands
+                };
+            })(),
             yAxis: { 
                 title: { text: 'Preço Médio Diário (€/MWh)', style: { color: _d1.txt } }, 
                 labels: { format: '{value:,.0f} €', style: { color: _d1.txt } } 
@@ -887,10 +1807,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 
             plotOptions: {
                 series: {
+                    cursor: 'pointer',
                     events: {
                         legendItemClick: function() {
                             // Guarda visibilidade após o clique (toggle ainda não ocorreu)
                             lsSetVis(this.name, !this.visible);
+                        }
+                    },
+                    point: {
+                        events: {
+                            click: function() {
+                                // D4: click num ponto abre esse dia em omie-diario.html (nova tab)
+                                const seriesName = this.series.name || '';
+                                // Excluir séries derivadas (MAs e ano anterior) — só ligar nos preços PT/ES
+                                if (/MA7|MA30|ano anterior/i.test(seriesName)) return;
+                                if (!this.x) return;
+                                const dt = new Date(this.x);
+                                const dataStr = `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}-${String(dt.getUTCDate()).padStart(2,'0')}`;
+                                window.open(`omie-diario.html?data=${dataStr}`, '_blank', 'noopener');
+                            }
                         }
                     }
                 }
@@ -899,19 +1834,173 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: 'Espanha', color: '#28a745', data: seriesDataES },
                 { name: 'Portugal', color: '#007bff', data: seriesDataPT },
                 ...seriesYoY,
-                ...seriesMA
+                ...seriesMA,
+                // D3: marcadores de top/bottom 3 do período
+                {
+                    name: 'Top 3 mais caros',
+                    type: 'scatter',
+                    data: dataTopCaros,
+                    color: '#dc3545',
+                    marker: { symbol: 'triangle', radius: 8, lineColor: '#fff', lineWidth: 1.5 },
+                    visible: resolveVisible('Top 3 mais caros', true),
+                    tooltip: { pointFormatter: function() { return `<b>🔥 ${this.diaTxt}</b><br>Média PT: <b>${this.y.toFixed(2).replace('.', ',')} €/MWh</b>`; } },
+                    enableMouseTracking: true,
+                    showInLegend: dataTopCaros.length > 0
+                },
+                {
+                    name: 'Top 3 mais baratos',
+                    type: 'scatter',
+                    data: dataTopBaratos,
+                    color: '#28a745',
+                    marker: { symbol: 'triangle-down', radius: 8, lineColor: '#fff', lineWidth: 1.5 },
+                    visible: resolveVisible('Top 3 mais baratos', true),
+                    tooltip: { pointFormatter: function() { return `<b>❄️ ${this.diaTxt}</b><br>Média PT: <b>${this.y.toFixed(2).replace('.', ',')} €/MWh</b>`; } },
+                    enableMouseTracking: true,
+                    showInLegend: dataTopBaratos.length > 0
+                }
             ]
         });
     }
 
-    // --- Gráfico de Médias HORÁRIAS ---
+    // --- Gráfico de Médias HORÁRIAS (com toggle Média/Distribuição — C1) ---
+    let _horarioModo = (function() {
+        try {
+            const v = localStorage.getItem('omie_horario_modo');
+            return (v === 'distribuicao') ? 'distribuicao' : 'media';
+        } catch(e) { return 'media'; }
+    })();
+    function _horarioModoSet(v) {
+        try { localStorage.setItem('omie_horario_modo', v); } catch(e) {}
+    }
+
     function atualizarGraficoHorarioPeriodo(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE) {
-        const hourlyAverages = Array(24).fill(null).map(() => ({ sumPT: 0, countPT: 0, sumES: 0, countES: 0 }));
-        dadosReaisDoPeriodo.forEach(row => { let hour = -1; if (row.localTimestamp) { hour = row.localTimestamp.getHours(); } else { try { hour = parseInt(row.hora.split(':')[0]); } catch(e){} } if (hour >= 0 && hour < 24) { if (row.preco_pt !== null) { hourlyAverages[hour].sumPT += row.preco_pt; hourlyAverages[hour].countPT++; } if (row.preco_es !== null) { hourlyAverages[hour].sumES += row.preco_es; hourlyAverages[hour].countES++; } } });
-        const categories = hourlyAverages.map((_, h) => `[${String(h).padStart(2,'0')}:00-${String(h+1).padStart(2,'0') === '24' ? '00' : String(h+1).padStart(2,'0')}:00[`); const seriesDataPT = hourlyAverages.map(h => h.countPT > 0 ? h.sumPT / h.countPT : null); const seriesDataES = hourlyAverages.map(h => h.countES > 0 ? h.sumES / h.countES : null);
-        const tituloGrafico = `Média Horária no Período (${dataInicioCSV} a ${dataFimCSV}) ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`; const nomeFicheiroBase = `media-horaria-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
-        const _d2 = _hcDark();
-        Highcharts.chart('grafico-horario-container', { chart: { type: 'column', height: 600, backgroundColor: _d2.bg, style: { color: _d2.txt } }, title: { text: tituloGrafico, style: { color: _d2.txt } }, xAxis: { categories: categories, title: { text: 'Hora PT', style: { color: _d2.txt } }, crosshair: true, labels: { style: { color: _d2.txt } } }, yAxis: { title: { text: 'Preço Médio Horário (€/MWh)', style: { color: _d2.txt } }, labels: { format: '{value:,.0f} €', style: { color: _d2.txt } } }, tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 }, legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom', itemStyle: { color: _d2.txt } }, exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: [ 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData' ] } } }, series: [ { name: 'Espanha', color: '#28a745', data: seriesDataES }, { name: 'Portugal', color: '#007bff', data: seriesDataPT } ] });
+        const togglesEl = document.getElementById('grafico-horario-toggles');
+        // Construir/atualizar toggles
+        if (togglesEl) {
+            togglesEl.innerHTML = '';
+            const grp = document.createElement('div');
+            grp.className = 'hh-mode-toggle';
+            grp.setAttribute('role', 'radiogroup');
+            grp.setAttribute('aria-label', 'Modo de visualização horária');
+            const modos = [
+                { key: 'media', label: 'Média', title: 'Mostra a média de preço por hora-do-dia' },
+                { key: 'distribuicao', label: 'Distribuição', title: 'Mostra a dispersão (P10/P25/Mediana/P75/P90) por hora-do-dia — só PT' }
+            ];
+            modos.forEach(m => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'hh-mode-btn' + (m.key === _horarioModo ? ' active' : '');
+                btn.textContent = m.label;
+                btn.title = m.title;
+                btn.dataset.modo = m.key;
+                btn.addEventListener('click', () => {
+                    _horarioModo = m.key;
+                    _horarioModoSet(m.key);
+                    grp.querySelectorAll('.hh-mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+                    renderHorario();
+                });
+                grp.appendChild(btn);
+            });
+            togglesEl.appendChild(grp);
+        }
+
+        const nomeFicheiroBase = `${_horarioModo === 'distribuicao' ? 'distribuicao' : 'media'}-horaria-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
+
+        function renderHorario() {
+            const _d2 = _hcDark();
+            const categories = Array(24).fill(0).map((_, h) => `[${String(h).padStart(2,'0')}:00-${String(h+1).padStart(2,'0') === '24' ? '00' : String(h+1).padStart(2,'0')}:00[`);
+
+            if (_horarioModo === 'media') {
+                const hourlyAvg = Array(24).fill(null).map(() => ({ sumPT: 0, countPT: 0, sumES: 0, countES: 0 }));
+                dadosReaisDoPeriodo.forEach(row => {
+                    let hour = -1;
+                    if (row.localTimestamp) hour = row.localTimestamp.getHours();
+                    else { try { hour = parseInt(row.hora.split(':')[0]); } catch(e){} }
+                    if (hour < 0 || hour >= 24) return;
+                    if (row.preco_pt !== null) { hourlyAvg[hour].sumPT += row.preco_pt; hourlyAvg[hour].countPT++; }
+                    if (row.preco_es !== null) { hourlyAvg[hour].sumES += row.preco_es; hourlyAvg[hour].countES++; }
+                });
+                const seriesDataPT = hourlyAvg.map(h => h.countPT > 0 ? h.sumPT / h.countPT : null);
+                const seriesDataES = hourlyAvg.map(h => h.countES > 0 ? h.sumES / h.countES : null);
+
+                Highcharts.chart('grafico-horario-container', {
+                    chart: { type: 'column', height: 600, backgroundColor: _d2.bg, style: { color: _d2.txt } },
+                    title: { text: `Média Horária no Período (${dataInicioCSV} a ${dataFimCSV}) ${isDataFimUltimoDiaOMIE ? '(PT até 23h)' : ''}`, style: { color: _d2.txt } },
+                    xAxis: { categories, title: { text: 'Hora PT', style: { color: _d2.txt } }, crosshair: true, labels: { style: { color: _d2.txt } } },
+                    yAxis: { title: { text: 'Preço Médio Horário (€/MWh)', style: { color: _d2.txt } }, labels: { format: '{value:,.0f} €', style: { color: _d2.txt } } },
+                    tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 },
+                    legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom', itemStyle: { color: _d2.txt } },
+                    exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } } },
+                    series: [
+                        { name: 'Espanha',  color: '#28a745', data: seriesDataES },
+                        { name: 'Portugal', color: '#007bff', data: seriesDataPT }
+                    ]
+                });
+            } else {
+                // Distribuição: box-plot por hora — só PT
+                const hourlyData = Array(24).fill(null).map(() => []);
+                dadosReaisDoPeriodo.forEach(row => {
+                    if (row.preco_pt === null || isNaN(row.preco_pt)) return;
+                    let hour = -1;
+                    if (row.localTimestamp) hour = row.localTimestamp.getHours();
+                    else { try { hour = parseInt(row.hora.split(':')[0]); } catch(e){} }
+                    if (hour >= 0 && hour < 24) hourlyData[hour].push(row.preco_pt);
+                });
+                function pct(arr, p) {
+                    if (!arr.length) return null;
+                    const idx = (arr.length - 1) * (p / 100);
+                    const lo = Math.floor(idx), hi = Math.ceil(idx);
+                    if (lo === hi) return arr[lo];
+                    return arr[lo] + (arr[hi] - arr[lo]) * (idx - lo);
+                }
+                const boxData = hourlyData.map(arr => {
+                    if (arr.length < 2) return null;
+                    const sorted = [...arr].sort((a, b) => a - b);
+                    return [pct(sorted, 10), pct(sorted, 25), pct(sorted, 50), pct(sorted, 75), pct(sorted, 90)];
+                });
+                // Outliers (abaixo P10 ou acima P90)
+                const outliers = [];
+                hourlyData.forEach((arr, h) => {
+                    if (arr.length < 2) return;
+                    const sorted = [...arr].sort((a, b) => a - b);
+                    const p10 = pct(sorted, 10), p90 = pct(sorted, 90);
+                    arr.forEach(v => { if (v < p10 || v > p90) outliers.push([h, v]); });
+                });
+
+                Highcharts.chart('grafico-horario-container', {
+                    chart: { type: 'boxplot', height: 600, backgroundColor: _d2.bg, style: { color: _d2.txt } },
+                    title: { text: `Distribuição Horária PT (${dataInicioCSV} a ${dataFimCSV})`, style: { color: _d2.txt } },
+                    subtitle: { text: 'Caixa: P25–P75 · linha: mediana · bigodes: P10/P90 · pontos: outliers', style: { color: _d2.txt, fontSize: '0.8em' } },
+                    xAxis: { categories, title: { text: 'Hora PT', style: { color: _d2.txt } }, labels: { style: { color: _d2.txt } } },
+                    yAxis: { title: { text: 'Preço (€/MWh)', style: { color: _d2.txt } }, labels: { format: '{value:,.0f} €', style: { color: _d2.txt } } },
+                    legend: { itemStyle: { color: _d2.txt } },
+                    tooltip: { headerFormat: '<b>{point.category}</b><br>', pointFormat: 'P90: <b>{point.high:.2f}</b><br>P75: <b>{point.q3:.2f}</b><br>Mediana: <b>{point.median:.2f}</b><br>P25: <b>{point.q1:.2f}</b><br>P10: <b>{point.low:.2f}</b><br>(€/MWh)' },
+                    exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } } },
+                    series: [
+                        {
+                            name: 'Portugal',
+                            data: boxData,
+                            color: '#0d4d8c',
+                            fillColor: '#007bff',
+                            lineWidth: 1.5,
+                            medianColor: '#fff',
+                            medianWidth: 2,
+                            whiskerLength: '55%'
+                        },
+                        {
+                            name: 'Outliers',
+                            type: 'scatter',
+                            data: outliers,
+                            color: 'rgba(220,53,69,0.4)',
+                            marker: { fillColor: 'rgba(220,53,69,0.5)', lineWidth: 0, radius: 2 },
+                            tooltip: { headerFormat: '<b>Hora {point.x}</b><br>', pointFormat: 'Outlier: <b>{point.y:.2f} €/MWh</b>' }
+                        }
+                    ]
+                });
+            }
+        }
+
+        renderHorario();
     }
 
     // --- GRÁFICO QUARTO-HORÁRIO DETALHADO ---
@@ -934,6 +2023,1128 @@ document.addEventListener('DOMContentLoaded', function() {
             exporting: { filename: nomeFicheiroBase, enabled: true, buttons: { contextButton: { menuItems: [ 'viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData' ] } } },
             series: [ { name: 'Espanha', color: '#28a745', data: seriesDataES, connectNulls: false }, { name: 'Portugal', color: '#007bff', data: seriesDataPT, connectNulls: false } ]
         });
+    }
+
+    // --- HISTOGRAMA DE DISTRIBUIÇÃO (PT) ---
+    function atualizarGraficoHistograma(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV) {
+        const statsContainer = document.getElementById('histograma-stats');
+        const chartContainer = document.getElementById('grafico-histograma-container');
+        if (!statsContainer || !chartContainer) return;
+
+        const precosPT = dadosReaisDoPeriodo.map(d => d.preco_pt).filter(p => p !== null && !isNaN(p));
+        if (precosPT.length === 0) {
+            statsContainer.innerHTML = '';
+            chartContainer.innerHTML = '<p style="text-align:center;color:orange;padding:20px;">Sem dados disponíveis.</p>';
+            return;
+        }
+
+        const BUCKET_SIZE = 10;
+        const minPT = Math.min(...precosPT);
+        const maxPT = Math.max(...precosPT);
+        const bucketMin = Math.floor(minPT / BUCKET_SIZE) * BUCKET_SIZE;
+        const bucketMax = Math.ceil(maxPT / BUCKET_SIZE) * BUCKET_SIZE;
+        const numBuckets = Math.max(1, Math.round((bucketMax - bucketMin) / BUCKET_SIZE));
+
+        const buckets = Array(numBuckets).fill(0);
+        precosPT.forEach(p => {
+            let idx = Math.floor((p - bucketMin) / BUCKET_SIZE);
+            if (idx >= numBuckets) idx = numBuckets - 1;
+            if (idx < 0) idx = 0;
+            buckets[idx]++;
+        });
+
+        const categories = [];
+        const data = [];
+        const totalCount = precosPT.length;
+        for (let i = 0; i < numBuckets; i++) {
+            const start = bucketMin + i * BUCKET_SIZE;
+            const end = start + BUCKET_SIZE;
+            categories.push(`${start} a ${end}`);
+            data.push({
+                y: buckets[i],
+                count: buckets[i],
+                pct: (buckets[i] / totalCount * 100),
+                rangeStart: start,
+                rangeEnd: end
+            });
+        }
+
+        function _pct(arr, p) {
+            if (!arr.length) return null;
+            const idx = (arr.length - 1) * (p / 100);
+            const low = Math.floor(idx);
+            const high = Math.ceil(idx);
+            if (low === high) return arr[low];
+            return arr[low] + (arr[high] - arr[low]) * (idx - low);
+        }
+
+        const sorted = [...precosPT].sort((a, b) => a - b);
+        const media = precosPT.reduce((a, b) => a + b, 0) / precosPT.length;
+        const mediana = _pct(sorted, 50);
+        const p10 = _pct(sorted, 10);
+        const p25 = _pct(sorted, 25);
+        const p75 = _pct(sorted, 75);
+        const p90 = _pct(sorted, 90);
+        const minVal = sorted[0];
+        const maxVal = sorted[sorted.length - 1];
+
+        const fmtStat = (v) => (v === null || isNaN(v)) ? '--' : v.toFixed(2).replace('.', ',') + ' €';
+        statsContainer.innerHTML = `
+            <div class="histograma-kpi"><span class="kpi-label">Min</span><span class="kpi-value">${fmtStat(minVal)}</span></div>
+            <div class="histograma-kpi"><span class="kpi-label">P10</span><span class="kpi-value">${fmtStat(p10)}</span></div>
+            <div class="histograma-kpi"><span class="kpi-label">P25</span><span class="kpi-value">${fmtStat(p25)}</span></div>
+            <div class="histograma-kpi"><span class="kpi-label">Mediana</span><span class="kpi-value">${fmtStat(mediana)}</span></div>
+            <div class="histograma-kpi"><span class="kpi-label">Média</span><span class="kpi-value">${fmtStat(media)}</span></div>
+            <div class="histograma-kpi"><span class="kpi-label">P75</span><span class="kpi-value">${fmtStat(p75)}</span></div>
+            <div class="histograma-kpi"><span class="kpi-label">P90</span><span class="kpi-value">${fmtStat(p90)}</span></div>
+            <div class="histograma-kpi"><span class="kpi-label">Máx</span><span class="kpi-value">${fmtStat(maxVal)}</span></div>
+        `;
+
+        const priceToIdx = (p) => (p - bucketMin) / BUCKET_SIZE - 0.5;
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-histograma-container', {
+            chart: { type: 'column', height: 500, backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: `Distribuição de Preços OMIE Portugal (${dataInicioCSV} a ${dataFimCSV})`, style: { color: _d.txt } },
+            subtitle: { text: 'Frequência de quartos-horários por intervalo de 10 €/MWh', style: { color: _d.txt } },
+            xAxis: {
+                categories: categories,
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt, fontSize: '0.7em' }, rotation: -45 },
+                plotLines: [
+                    {
+                        value: priceToIdx(media),
+                        color: '#fd7e14',
+                        dashStyle: 'Dash',
+                        width: 2,
+                        zIndex: 5,
+                        label: { text: `Média: ${media.toFixed(1).replace('.', ',')} €`, style: { color: '#fd7e14', fontWeight: 'bold' }, rotation: 0, y: 14 }
+                    },
+                    {
+                        value: priceToIdx(mediana),
+                        color: '#dc3545',
+                        dashStyle: 'Dash',
+                        width: 2,
+                        zIndex: 5,
+                        label: { text: `Mediana: ${mediana.toFixed(1).replace('.', ',')} €`, style: { color: '#dc3545', fontWeight: 'bold' }, rotation: 0, y: 32 }
+                    }
+                ]
+            },
+            yAxis: {
+                title: { text: 'Nº de quartos-horários', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } }
+            },
+            tooltip: {
+                useHTML: true,
+                formatter: function() {
+                    return `<b>${this.point.rangeStart} a ${this.point.rangeEnd} €/MWh</b><br>` +
+                           `${this.point.count.toLocaleString('pt-PT')} quartos-horários<br>` +
+                           `<b>${this.point.pct.toFixed(1).replace('.', ',')}%</b> do tempo`;
+                }
+            },
+            legend: { enabled: false },
+            plotOptions: {
+                column: { borderWidth: 0, color: '#007bff', pointPadding: 0.02, groupPadding: 0 }
+            },
+            exporting: {
+                filename: `histograma-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [{ name: 'Frequência', data: data }]
+        });
+    }
+
+    // --- CURVA DE DURAÇÃO DE PREÇOS (PT, ES, PT ano anterior) ---
+    // ES usa alinhamento ao dia espanhol (24h ES), tal como nos cards e gráfico diário
+    function atualizarGraficoDurationCurve(dadosReaisDoPeriodo, dadosAnoAnteriorParaYoY, dataInicioAnterior, dataFimAnterior, precosESDiaEspanhol, dataInicioCSV, dataFimCSV) {
+        const precosPT = dadosReaisDoPeriodo.map(d => d.preco_pt).filter(p => p !== null && !isNaN(p));
+        const precosES = (precosESDiaEspanhol || []).filter(p => p !== null && !isNaN(p));
+
+        const dadosAnoAntPeriodo = (dadosAnoAnteriorParaYoY || []).filter(d => {
+            const inputDate = formatarDataParaInput(d.dia);
+            return inputDate && inputDate >= dataInicioAnterior && inputDate <= dataFimAnterior;
+        });
+        const precosPTAnt = dadosAnoAntPeriodo.map(d => d.preco_pt).filter(p => p !== null && !isNaN(p));
+
+        function buildCurve(prices) {
+            if (prices.length === 0) return [];
+            const sorted = [...prices].sort((a, b) => b - a);
+            const N = sorted.length;
+            const TARGET_POINTS = 1000;
+            if (N <= TARGET_POINTS) {
+                return sorted.map((p, i) => N === 1 ? [50, p] : [(i / (N - 1)) * 100, p]);
+            }
+            const result = [];
+            for (let k = 0; k < TARGET_POINTS; k++) {
+                const x = (k / (TARGET_POINTS - 1)) * 100;
+                const i = Math.round((k / (TARGET_POINTS - 1)) * (N - 1));
+                result.push([x, sorted[i]]);
+            }
+            return result;
+        }
+
+        const dataPT = buildCurve(precosPT);
+        const dataES = buildCurve(precosES);
+        const dataPTAnt = buildCurve(precosPTAnt);
+
+        // Persistência de visibilidade (partilha chave com gráfico diário — nomes únicos)
+        const LS_KEY = 'omie_grafico_diario_series_visiveis';
+        function lsGetVis() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
+        function lsSetVis(name, visible) { try { const obj = lsGetVis(); obj[name] = visible; localStorage.setItem(LS_KEY, JSON.stringify(obj)); } catch(e) {} }
+        const visStore = lsGetVis();
+        const ptAntVis = Object.prototype.hasOwnProperty.call(visStore, 'PT (ano anterior)') ? !!visStore['PT (ano anterior)'] : false;
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-duration-curve-container', {
+            chart: { type: 'line', zoomType: 'x', height: 600, backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: `Curva de Duração de Preços (${dataInicioCSV} a ${dataFimCSV})`, style: { color: _d.txt } },
+            subtitle: { text: 'Preços ordenados do mais alto (0%) ao mais baixo (100%)', style: { color: _d.txt } },
+            xAxis: {
+                title: { text: '% do tempo (preço igual ou superior)', style: { color: _d.txt } },
+                min: 0,
+                max: 100,
+                tickInterval: 10,
+                labels: { format: '{value}%', style: { color: _d.txt } },
+                crosshair: true
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } },
+                plotLines: [
+                    { value: 0, color: '#888', width: 1, dashStyle: 'Dot', zIndex: 2 },
+                    { value: 100, color: '#888', width: 1, dashStyle: 'Dot', zIndex: 2, label: { text: '100 €/MWh', align: 'right', x: -10, style: { color: '#888', fontSize: '0.75em' } } }
+                ]
+            },
+            tooltip: {
+                shared: true,
+                valueSuffix: ' €/MWh',
+                valueDecimals: 2,
+                headerFormat: '<b>Acima deste preço durante {point.x:.1f}% do tempo:</b><br>'
+            },
+            legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom', itemStyle: { color: _d.txt } },
+            exporting: {
+                filename: `duration-curve-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            plotOptions: {
+                series: {
+                    marker: { enabled: false },
+                    events: {
+                        legendItemClick: function() { lsSetVis(this.name, !this.visible); }
+                    }
+                }
+            },
+            series: [
+                { name: 'Portugal', color: '#007bff', data: dataPT, lineWidth: 2 },
+                { name: 'Espanha', color: '#28a745', data: dataES, lineWidth: 2 },
+                { name: 'PT (ano anterior)', color: '#9aa0a6', dashStyle: 'ShortDash', lineWidth: 1.5, data: dataPTAnt, visible: ptAntVis }
+            ]
+        });
+    }
+
+    // --- SPREAD PT-ES (diário) ---
+    function atualizarGraficoSpreadPTES(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV) {
+        const SPLITTING_THRESHOLD = 0.01;
+        const kpisContainer = document.getElementById('spread-kpis');
+        const chartContainer = document.getElementById('grafico-spread-container');
+        if (!kpisContainer || !chartContainer) return;
+
+        const paresValidos = dadosReaisDoPeriodo.filter(d =>
+            d.preco_pt !== null && d.preco_es !== null &&
+            !isNaN(d.preco_pt) && !isNaN(d.preco_es)
+        );
+
+        if (paresValidos.length === 0) {
+            kpisContainer.innerHTML = '';
+            chartContainer.innerHTML = '<p style="text-align:center;color:orange;padding:20px;">Sem dados disponíveis.</p>';
+            return;
+        }
+
+        // KPIs sobre quartos-horários
+        const spreads = paresValidos.map(d => d.preco_pt - d.preco_es);
+        const spreadMedio = spreads.reduce((a, b) => a + b, 0) / spreads.length;
+        const ptMaisCaroCount = spreads.filter(s => s > SPLITTING_THRESHOLD).length;
+        const splittingCount = spreads.filter(s => Math.abs(s) > SPLITTING_THRESHOLD).length;
+        const ptMaisCaroPct = (ptMaisCaroCount / spreads.length) * 100;
+        const splittingPct = (splittingCount / spreads.length) * 100;
+
+        // Agregar por dia
+        const spreadsPorDia = {};
+        paresValidos.forEach(row => {
+            const spread = row.preco_pt - row.preco_es;
+            if (!spreadsPorDia[row.dia]) spreadsPorDia[row.dia] = [];
+            spreadsPorDia[row.dia].push(spread);
+        });
+
+        const datasOrdenadas = Object.keys(spreadsPorDia).sort((a, b) =>
+            formatarDataParaInput(a).localeCompare(formatarDataParaInput(b))
+        );
+        const seriesData = [];
+        let maxAbsDailyAbs = 0;
+        let maxAbsDailyVal = 0;
+        let maxAbsDailyData = null;
+
+        datasOrdenadas.forEach(dia => {
+            const [d, m, y] = dia.split('/');
+            const ts = Date.UTC(parseInt(y), parseInt(m) - 1, parseInt(d));
+            const arr = spreadsPorDia[dia];
+            const media = arr.reduce((a, b) => a + b, 0) / arr.length;
+            seriesData.push([ts, media]);
+            if (Math.abs(media) > maxAbsDailyAbs) {
+                maxAbsDailyAbs = Math.abs(media);
+                maxAbsDailyVal = media;
+                maxAbsDailyData = dia;
+            }
+        });
+
+        const fmt = (v, casas = 2) => v.toFixed(casas).replace('.', ',');
+        const sinal = (v) => v > 0 ? '+' : '';
+        const corMedio = spreadMedio > SPLITTING_THRESHOLD ? '#dc3545' : (spreadMedio < -SPLITTING_THRESHOLD ? '#28a745' : '#666');
+        const corMax = maxAbsDailyVal > 0 ? '#dc3545' : '#28a745';
+        const labelMedio = spreadMedio > SPLITTING_THRESHOLD ? 'PT mais caro em média' : (spreadMedio < -SPLITTING_THRESHOLD ? 'PT mais barato em média' : 'Mercado unificado');
+        const labelMax = maxAbsDailyData ? `${maxAbsDailyData} (${maxAbsDailyVal > 0 ? 'PT mais caro' : 'PT mais barato'})` : '—';
+
+        kpisContainer.innerHTML = `
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">Spread médio (PT − ES)</div>
+                <div class="spread-kpi-value" style="color: ${corMedio};">${sinal(spreadMedio)}${fmt(spreadMedio)} €</div>
+                <div class="spread-kpi-sub">${labelMedio}</div>
+            </div>
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">Maior spread diário</div>
+                <div class="spread-kpi-value" style="color: ${corMax};">${sinal(maxAbsDailyVal)}${fmt(maxAbsDailyVal)} €</div>
+                <div class="spread-kpi-sub">${labelMax}</div>
+            </div>
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">% tempo PT > ES</div>
+                <div class="spread-kpi-value">${fmt(ptMaisCaroPct, 1)}%</div>
+                <div class="spread-kpi-sub">(spread > 0,01 €)</div>
+            </div>
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">% tempo em splitting</div>
+                <div class="spread-kpi-value">${fmt(splittingPct, 1)}%</div>
+                <div class="spread-kpi-sub">(|spread| > 0,01 €)</div>
+            </div>
+        `;
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-spread-container', {
+            chart: { type: 'area', zoomType: 'x', height: 500, backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: `Spread PT − ES (média diária) — ${dataInicioCSV} a ${dataFimCSV}`, style: { color: _d.txt } },
+            subtitle: { text: 'Vermelho: PT mais caro · Verde: PT mais barato · Zero: mercado unificado', style: { color: _d.txt } },
+            xAxis: {
+                type: 'datetime',
+                title: { text: 'Data', style: { color: _d.txt } },
+                crosshair: true,
+                labels: { style: { color: _d.txt } },
+                dateTimeLabelFormats: { day: '%e %b %Y', week: '%e %b %Y', month: '%b %Y', year: '%Y' }
+            },
+            yAxis: {
+                title: { text: 'Spread PT − ES (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.2f} €', style: { color: _d.txt } },
+                plotLines: [{ value: 0, color: _d.txt, width: 1, zIndex: 4 }]
+            },
+            tooltip: {
+                useHTML: true,
+                formatter: function() {
+                    const cor = this.y > SPLITTING_THRESHOLD ? '#dc3545' : (this.y < -SPLITTING_THRESHOLD ? '#28a745' : '#666');
+                    const lbl = this.y > SPLITTING_THRESHOLD ? 'PT mais caro' : (this.y < -SPLITTING_THRESHOLD ? 'PT mais barato' : 'Mercado unificado');
+                    const sig = this.y > 0 ? '+' : '';
+                    return `<b>${Highcharts.dateFormat('%A, %e de %B de %Y', this.x)}</b><br>` +
+                           `Spread: <span style="color:${cor};font-weight:bold">${sig}${this.y.toFixed(2).replace('.', ',')} €/MWh</span><br>` +
+                           `<i>${lbl}</i>`;
+                }
+            },
+            legend: { enabled: false },
+            plotOptions: {
+                area: {
+                    color: '#dc3545',
+                    negativeColor: '#28a745',
+                    fillOpacity: 0.5,
+                    threshold: 0,
+                    lineWidth: 1.5,
+                    marker: { enabled: false }
+                }
+            },
+            exporting: {
+                filename: `spread-pt-es-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [{ name: 'Spread PT − ES', data: seriesData }]
+        });
+    }
+
+    // --- RANGE INTRA-DIÁRIO (PT + ES) ---
+    function atualizarGraficoRangeDiario(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV) {
+        const kpisContainer = document.getElementById('range-kpis');
+        const chartContainer = document.getElementById('grafico-range-container');
+        if (!kpisContainer || !chartContainer) return;
+
+        const porDia = {};
+        dadosReaisDoPeriodo.forEach(row => {
+            if (!porDia[row.dia]) porDia[row.dia] = { pt: [], es: [] };
+            if (row.preco_pt !== null && !isNaN(row.preco_pt)) porDia[row.dia].pt.push(row.preco_pt);
+            if (row.preco_es !== null && !isNaN(row.preco_es)) porDia[row.dia].es.push(row.preco_es);
+        });
+
+        const dias = Object.keys(porDia).sort((a, b) => formatarDataParaInput(a).localeCompare(formatarDataParaInput(b)));
+        const dataPT = [], dataES = [];
+        let rMaxPT = 0, rMaxPTDia = null, rMaxES = 0, rMaxESDia = null;
+        let rSomaPT = 0, rSomaES = 0;
+
+        dias.forEach(dia => {
+            const [d, m, y] = dia.split('/');
+            const ts = Date.UTC(parseInt(y), parseInt(m) - 1, parseInt(d));
+            const ptArr = porDia[dia].pt;
+            const esArr = porDia[dia].es;
+
+            if (ptArr.length >= 2) {
+                const r = Math.max(...ptArr) - Math.min(...ptArr);
+                dataPT.push([ts, r]);
+                rSomaPT += r;
+                if (r > rMaxPT) { rMaxPT = r; rMaxPTDia = dia; }
+            }
+            if (esArr.length >= 2) {
+                const r = Math.max(...esArr) - Math.min(...esArr);
+                dataES.push([ts, r]);
+                rSomaES += r;
+                if (r > rMaxES) { rMaxES = r; rMaxESDia = dia; }
+            }
+        });
+
+        if (dataPT.length === 0 && dataES.length === 0) {
+            kpisContainer.innerHTML = '';
+            chartContainer.innerHTML = '<p style="text-align:center;color:orange;padding:20px;">Sem dados disponíveis.</p>';
+            return;
+        }
+
+        const rMediaPT = dataPT.length ? rSomaPT / dataPT.length : null;
+        const rMediaES = dataES.length ? rSomaES / dataES.length : null;
+        const fmt = (v) => v.toFixed(1).replace('.', ',');
+
+        kpisContainer.innerHTML = `
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">Range médio PT</div>
+                <div class="spread-kpi-value" style="color: #007bff;">${rMediaPT !== null ? fmt(rMediaPT) + ' €' : '--'}</div>
+                <div class="spread-kpi-sub">${dataPT.length} dias com dados</div>
+            </div>
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">Maior range PT</div>
+                <div class="spread-kpi-value" style="color: #007bff;">${fmt(rMaxPT)} €</div>
+                <div class="spread-kpi-sub">${rMaxPTDia || '--'}</div>
+            </div>
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">Range médio ES</div>
+                <div class="spread-kpi-value" style="color: #28a745;">${rMediaES !== null ? fmt(rMediaES) + ' €' : '--'}</div>
+                <div class="spread-kpi-sub">${dataES.length} dias com dados</div>
+            </div>
+            <div class="spread-kpi-card">
+                <div class="spread-kpi-label">Maior range ES</div>
+                <div class="spread-kpi-value" style="color: #28a745;">${fmt(rMaxES)} €</div>
+                <div class="spread-kpi-sub">${rMaxESDia || '--'}</div>
+            </div>
+        `;
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-range-container', {
+            chart: { type: 'line', zoomType: 'x', height: 500, backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: `Range Diário (Máx − Mín no mesmo dia) — ${dataInicioCSV} a ${dataFimCSV}`, style: { color: _d.txt } },
+            subtitle: { text: 'Amplitude intra-diária — quanto maior, mais oportunidade de arbitragem (BESS, autoconsumo com bateria)', style: { color: _d.txt } },
+            xAxis: {
+                type: 'datetime',
+                title: { text: 'Data', style: { color: _d.txt } },
+                crosshair: true,
+                labels: { style: { color: _d.txt } },
+                dateTimeLabelFormats: { day: '%e %b %Y', week: '%e %b %Y', month: '%b %Y', year: '%Y' }
+            },
+            yAxis: {
+                title: { text: 'Range (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } },
+                min: 0
+            },
+            tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2, xDateFormat: '%A, %e de %B de %Y' },
+            legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom', itemStyle: { color: _d.txt } },
+            exporting: {
+                filename: `range-diario-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            plotOptions: { series: { marker: { enabled: false } } },
+            series: [
+                { name: 'Portugal', color: '#007bff', data: dataPT, lineWidth: 1.5 },
+                { name: 'Espanha', color: '#28a745', data: dataES, lineWidth: 1.5 }
+            ]
+        });
+    }
+
+    // --- VOLATILIDADE ROLLING (7d + 30d) ---
+    function atualizarGraficoVolatilidade(dadosExtendidosParaMA, dataInicioISO, dataFimISO, dataInicioCSV, dataFimCSV) {
+        const chartContainer = document.getElementById('grafico-volatilidade-container');
+        if (!chartContainer) return;
+
+        // Agregar por dia: sum, sumSq, count dos preços quarto-horários PT
+        const porDia = {};
+        (dadosExtendidosParaMA || []).forEach(row => {
+            if (row.preco_pt === null || isNaN(row.preco_pt)) return;
+            if (!porDia[row.dia]) porDia[row.dia] = { sum: 0, sumSq: 0, count: 0 };
+            porDia[row.dia].sum   += row.preco_pt;
+            porDia[row.dia].sumSq += row.preco_pt * row.preco_pt;
+            porDia[row.dia].count += 1;
+        });
+
+        const dias = Object.keys(porDia).sort((a, b) => formatarDataParaInput(a).localeCompare(formatarDataParaInput(b)));
+        const dailyAggs = dias.map(dia => {
+            const [d, m, y] = dia.split('/');
+            const ts = Date.UTC(parseInt(y), parseInt(m) - 1, parseInt(d));
+            return { dia, ts, sum: porDia[dia].sum, sumSq: porDia[dia].sumSq, count: porDia[dia].count };
+        });
+
+        function rollingStd(windowDays) {
+            const out = [];
+            const DIA_MS = 86400000;
+            for (let i = windowDays - 1; i < dailyAggs.length; i++) {
+                const slice = dailyAggs.slice(i - windowDays + 1, i + 1);
+                if (slice[slice.length - 1].ts - slice[0].ts !== (windowDays - 1) * DIA_MS) continue;
+                let sum = 0, sumSq = 0, count = 0;
+                for (const a of slice) { sum += a.sum; sumSq += a.sumSq; count += a.count; }
+                if (count < 2) continue;
+                const mean = sum / count;
+                const variance = sumSq / count - mean * mean;
+                if (variance < 0) continue; // erros numéricos
+                const stddev = Math.sqrt(variance);
+                const diaInput = formatarDataParaInput(dailyAggs[i].dia);
+                if (diaInput >= dataInicioISO && diaInput <= dataFimISO) {
+                    out.push([dailyAggs[i].ts, stddev]);
+                }
+            }
+            return out;
+        }
+
+        const dataVol30 = rollingStd(30);
+        const dataVol7 = rollingStd(7);
+
+        // Linha de referência: média da volatilidade 30d no período
+        const vol30Values = dataVol30.map(p => p[1]);
+        const refLine = vol30Values.length ? vol30Values.reduce((a, b) => a + b, 0) / vol30Values.length : null;
+
+        const LS_KEY = 'omie_grafico_diario_series_visiveis';
+        function lsGetVis() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
+        function lsSetVis(name, visible) { try { const obj = lsGetVis(); obj[name] = visible; localStorage.setItem(LS_KEY, JSON.stringify(obj)); } catch(e) {} }
+        const visStore = lsGetVis();
+        const vol7Vis = Object.prototype.hasOwnProperty.call(visStore, 'Volatilidade 7d') ? !!visStore['Volatilidade 7d'] : false;
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-volatilidade-container', {
+            chart: { type: 'line', zoomType: 'x', height: 500, backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: `Volatilidade Móvel dos Preços PT (${dataInicioCSV} a ${dataFimCSV})`, style: { color: _d.txt } },
+            subtitle: { text: 'Desvio-padrão dos preços quarto-horários na janela móvel · 30d sólido / 7d tracejado', style: { color: _d.txt } },
+            xAxis: {
+                type: 'datetime',
+                title: { text: 'Data', style: { color: _d.txt } },
+                crosshair: true,
+                labels: { style: { color: _d.txt } },
+                dateTimeLabelFormats: { day: '%e %b %Y', week: '%e %b %Y', month: '%b %Y', year: '%Y' }
+            },
+            yAxis: {
+                title: { text: 'Volatilidade (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } },
+                min: 0,
+                plotLines: refLine !== null ? [{
+                    value: refLine,
+                    color: '#888',
+                    width: 1,
+                    dashStyle: 'Dot',
+                    zIndex: 4,
+                    label: { text: `Média do período: ${refLine.toFixed(1).replace('.', ',')} €`, align: 'right', x: -10, style: { color: '#888', fontSize: '0.75em' } }
+                }] : []
+            },
+            tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2, xDateFormat: '%A, %e de %B de %Y' },
+            legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom', itemStyle: { color: _d.txt } },
+            exporting: {
+                filename: `volatilidade-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            plotOptions: {
+                series: {
+                    marker: { enabled: false },
+                    events: { legendItemClick: function() { lsSetVis(this.name, !this.visible); } }
+                }
+            },
+            series: [
+                { name: 'Volatilidade 30d', color: '#9c27b0', data: dataVol30, lineWidth: 2 },
+                { name: 'Volatilidade 7d', color: '#e91e63', dashStyle: 'ShortDash', data: dataVol7, visible: vol7Vis, lineWidth: 1.5 }
+            ]
+        });
+    }
+
+    // --- FREQUÊNCIA DE PREÇOS EXTREMOS POR MÊS (toggle limiares + unidade + custom) ---
+    let _extremosLimiarAtivo = 'leZero';
+    let _extremosUnidadeAtiva = 'horas'; // 'horas' ou 'quartos'
+    // Custom: operador + valor persistidos em localStorage
+    const _EXTREMOS_LS_KEY = 'omie_extremos_custom';
+    function _extremosLsGet() {
+        try {
+            const obj = JSON.parse(localStorage.getItem(_EXTREMOS_LS_KEY) || '{}');
+            return {
+                op:  (obj.op === 'le' || obj.op === 'ge') ? obj.op : 'ge',
+                val: (typeof obj.val === 'number' && !isNaN(obj.val)) ? obj.val : 50
+            };
+        } catch(e) { return { op: 'ge', val: 50 }; }
+    }
+    function _extremosLsSet(op, val) {
+        try { localStorage.setItem(_EXTREMOS_LS_KEY, JSON.stringify({ op, val })); } catch(e) {}
+    }
+    let _extremosCustomOperador = _extremosLsGet().op;
+    let _extremosCustomValor = _extremosLsGet().val;
+
+    function atualizarGraficoExtremos(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV) {
+        const togglesContainer = document.getElementById('extremos-toggles');
+        const chartContainer = document.getElementById('grafico-extremos-container');
+        if (!togglesContainer || !chartContainer) return;
+
+        // Pré-computar duas representações: por hora (média da hora) e por quarto-horário
+        const horasAgg = {};
+        const quartos = [];
+        dadosReaisDoPeriodo.forEach(row => {
+            if (row.preco_pt === null || isNaN(row.preco_pt) || !row.timestamp) return;
+            const date = new Date(row.timestamp);
+            const yyyy = date.getUTCFullYear();
+            const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const dd = String(date.getUTCDate()).padStart(2, '0');
+            const hh = String(date.getUTCHours()).padStart(2, '0');
+            const mesKey = `${yyyy}-${mm}`;
+
+            // Por quarto-horário (granularidade fina)
+            quartos.push({ valor: row.preco_pt, mes: mesKey });
+
+            // Por hora (média da hora)
+            const hourKey = `${yyyy}-${mm}-${dd} ${hh}`;
+            if (!horasAgg[hourKey]) horasAgg[hourKey] = { sum: 0, count: 0, mes: mesKey };
+            horasAgg[hourKey].sum += row.preco_pt;
+            horasAgg[hourKey].count += 1;
+        });
+        const horas = Object.values(horasAgg).map(h => ({ valor: h.sum / h.count, mes: h.mes }));
+
+        const itensPorUnidade = { horas, quartos };
+        const mesesUnicos = [...new Set(horas.map(h => h.mes))].sort();
+
+        const limiares = {
+            leZero: { label: '≤ 0 €/MWh', test: v => v <= 0, color: '#28a745' },
+            ge100:  { label: '≥ 100 €/MWh', test: v => v >= 100, color: '#fd7e14' },
+            ge200:  { label: '≥ 200 €/MWh', test: v => v >= 200, color: '#dc3545' },
+            custom: { label: 'Personalizado', color: '#6f42c1' }
+        };
+
+        const unidades = {
+            horas:   { labelBtn: 'Horas',             labelEixo: 'Nº de horas',             unidade: 'horas' },
+            quartos: { labelBtn: 'Quartos-horários',  labelEixo: 'Nº de quartos-horários',  unidade: 'quartos' }
+        };
+
+        // Resolve o limiar ativo (incluindo o personalizado)
+        function getActiveLim() {
+            if (_extremosLimiarAtivo === 'custom') {
+                const op = _extremosCustomOperador;
+                const val = _extremosCustomValor;
+                return {
+                    label: `${op === 'le' ? '≤' : '≥'} ${val} €/MWh`,
+                    test:  op === 'le' ? (v => v <= val) : (v => v >= val),
+                    color: '#6f42c1'
+                };
+            }
+            return limiares[_extremosLimiarAtivo];
+        }
+
+        // Construir toggles
+        togglesContainer.innerHTML = '';
+
+        // Grupo 1: Limiares
+        const grpLimiar = document.createElement('div');
+        grpLimiar.className = 'hh-mode-toggle';
+        grpLimiar.setAttribute('role', 'radiogroup');
+        grpLimiar.setAttribute('aria-label', 'Limiar de preço extremo');
+        Object.entries(limiares).forEach(([key, lim]) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'hh-mode-btn' + (key === _extremosLimiarAtivo ? ' active' : '');
+            btn.textContent = lim.label;
+            btn.dataset.limiar = key;
+            btn.addEventListener('click', () => {
+                _extremosLimiarAtivo = key;
+                grpLimiar.querySelectorAll('.hh-mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+                customControls.style.display = (key === 'custom') ? 'inline-flex' : 'none';
+                renderChart();
+            });
+            grpLimiar.appendChild(btn);
+        });
+        togglesContainer.appendChild(grpLimiar);
+
+        // Controlos do limiar personalizado (visíveis apenas quando "Personalizado" está ativo)
+        const customControls = document.createElement('div');
+        customControls.className = 'extremos-custom';
+        customControls.style.display = (_extremosLimiarAtivo === 'custom') ? 'inline-flex' : 'none';
+
+        const opSelect = document.createElement('select');
+        opSelect.setAttribute('aria-label', 'Operador');
+        opSelect.title = 'Operador de comparação';
+        opSelect.innerHTML = `
+            <option value="le" ${_extremosCustomOperador === 'le' ? 'selected' : ''}>≤</option>
+            <option value="ge" ${_extremosCustomOperador === 'ge' ? 'selected' : ''}>≥</option>
+        `;
+        opSelect.addEventListener('change', () => {
+            _extremosCustomOperador = opSelect.value;
+            _extremosLsSet(_extremosCustomOperador, _extremosCustomValor);
+            renderChart();
+        });
+
+        const valInput = document.createElement('input');
+        valInput.type = 'number';
+        valInput.step = '1';
+        valInput.value = _extremosCustomValor;
+        valInput.setAttribute('aria-label', 'Valor do limiar em €/MWh');
+        valInput.title = 'Limiar em €/MWh';
+        // Debounce para evitar re-render a cada keystroke
+        let _valTimer = null;
+        valInput.addEventListener('input', () => {
+            clearTimeout(_valTimer);
+            _valTimer = setTimeout(() => {
+                const v = parseFloat(valInput.value);
+                if (isNaN(v)) return;
+                _extremosCustomValor = v;
+                _extremosLsSet(_extremosCustomOperador, _extremosCustomValor);
+                renderChart();
+            }, 400);
+        });
+
+        const unitLabel = document.createElement('span');
+        unitLabel.className = 'extremos-custom-unit';
+        unitLabel.textContent = '€/MWh';
+
+        customControls.appendChild(opSelect);
+        customControls.appendChild(valInput);
+        customControls.appendChild(unitLabel);
+        togglesContainer.appendChild(customControls);
+
+        // Separador visual + Grupo 2: Unidade
+        const lblUnidade = document.createElement('span');
+        lblUnidade.className = 'extremos-toggle-label';
+        lblUnidade.textContent = 'Unidade:';
+        togglesContainer.appendChild(lblUnidade);
+
+        const grpUnidade = document.createElement('div');
+        grpUnidade.className = 'hh-mode-toggle';
+        grpUnidade.setAttribute('role', 'radiogroup');
+        grpUnidade.setAttribute('aria-label', 'Unidade de contagem');
+        Object.entries(unidades).forEach(([key, un]) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'hh-mode-btn' + (key === _extremosUnidadeAtiva ? ' active' : '');
+            btn.textContent = un.labelBtn;
+            btn.dataset.unidade = key;
+            btn.title = key === 'horas'
+                ? 'Contar horas em que a média da hora cumpre o limiar'
+                : 'Contar quartos-horários (15 min) individuais — útil para dados após 01/10/2025';
+            btn.addEventListener('click', () => {
+                _extremosUnidadeAtiva = key;
+                grpUnidade.querySelectorAll('.hh-mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+                renderChart();
+            });
+            grpUnidade.appendChild(btn);
+        });
+        togglesContainer.appendChild(grpUnidade);
+
+        if (mesesUnicos.length < 2) {
+            chartContainer.innerHTML = '<p style="text-align:center;color:#999;padding:30px;">Dados insuficientes para análise mensal. Seleciona um período com pelo menos 2 meses.</p>';
+            return;
+        }
+
+        const MES_NOMES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+        function renderChart() {
+            const lim = getActiveLim();
+            const un = unidades[_extremosUnidadeAtiva];
+            const itens = itensPorUnidade[_extremosUnidadeAtiva];
+
+            // Calcular total + count por mês (numa única passagem)
+            const totalByMes = {};
+            const countByMes = {};
+            itens.forEach(it => {
+                totalByMes[it.mes] = (totalByMes[it.mes] || 0) + 1;
+                if (lim.test(it.valor)) countByMes[it.mes] = (countByMes[it.mes] || 0) + 1;
+            });
+
+            const categories = [];
+            const data = [];
+            mesesUnicos.forEach(mes => {
+                const [yyyy, mm] = mes.split('-');
+                categories.push(`${MES_NOMES[parseInt(mm) - 1]} ${yyyy}`);
+                const count = countByMes[mes] || 0;
+                const total = totalByMes[mes] || 0;
+                const pct = total > 0 ? (count / total * 100) : 0;
+                data.push({ y: count, total: total, pct: pct });
+            });
+
+            const unidadeStr = un.unidade;
+            const limLabelStr = lim.label;
+            const _d = _hcDark();
+            Highcharts.chart('grafico-extremos-container', {
+                chart: { type: 'column', height: 450, backgroundColor: _d.bg, style: { color: _d.txt } },
+                title: { text: `${un.labelBtn} com preço PT ${lim.label} por mês (${dataInicioCSV} a ${dataFimCSV})`, style: { color: _d.txt } },
+                subtitle: {
+                    text: _extremosUnidadeAtiva === 'horas'
+                        ? 'Cada barra = nº de horas em que a média da hora cumpriu o limiar'
+                        : 'Cada barra = nº de quartos-horários (15 min) individuais que cumpriram o limiar',
+                    style: { color: _d.txt }
+                },
+                xAxis: {
+                    categories: categories,
+                    labels: { style: { color: _d.txt, fontSize: '0.78em' }, rotation: -45, autoRotation: false }
+                },
+                yAxis: {
+                    title: { text: un.labelEixo, style: { color: _d.txt } },
+                    labels: { style: { color: _d.txt } },
+                    min: 0,
+                    allowDecimals: false
+                },
+                tooltip: {
+                    useHTML: true,
+                    formatter: function() {
+                        const fmt = (v) => v.toLocaleString('pt-PT');
+                        const pctStr = this.point.pct.toFixed(1).replace('.', ',');
+                        return `<b>${this.x}</b><br>` +
+                               `${limLabelStr}: <b>${fmt(this.y)}</b> ${unidadeStr}<br>` +
+                               `Total no mês: ${fmt(this.point.total)} ${unidadeStr}<br>` +
+                               `Percentagem: <b>${pctStr}%</b>`;
+                    }
+                },
+                legend: { enabled: false },
+                plotOptions: { column: { borderWidth: 0, color: lim.color, pointPadding: 0.05 } },
+                exporting: {
+                    filename: `extremos-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                    enabled: true,
+                    buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+                },
+                series: [{ name: lim.label, data: data }]
+            });
+        }
+        renderChart();
+    }
+
+    // --- TOP DIAS EXTREMOS (tabelas mais caros + mais baratos) ---
+    function atualizarTopDias(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV) {
+        const containerCaros = document.getElementById('top-dias-caros');
+        const containerBaratos = document.getElementById('top-dias-baratos');
+        if (!containerCaros || !containerBaratos) return;
+
+        const porDia = {};
+        dadosReaisDoPeriodo.forEach(row => {
+            if (row.preco_pt === null || isNaN(row.preco_pt)) return;
+            if (!porDia[row.dia]) porDia[row.dia] = [];
+            porDia[row.dia].push(row.preco_pt);
+        });
+
+        const diasArr = Object.keys(porDia)
+            .filter(d => porDia[d].length > 0)
+            .map(dia => {
+                const precos = porDia[dia];
+                return {
+                    dia,
+                    media: precos.reduce((a, b) => a + b, 0) / precos.length,
+                    max: Math.max(...precos),
+                    min: Math.min(...precos)
+                };
+            });
+
+        if (diasArr.length === 0) {
+            containerCaros.innerHTML = '<p style="color:#999;text-align:center;">Sem dados.</p>';
+            containerBaratos.innerHTML = '';
+            return;
+        }
+
+        const TOP_N = Math.min(10, diasArr.length);
+        const caros   = [...diasArr].sort((a, b) => b.media - a.media).slice(0, TOP_N);
+        const baratos = [...diasArr].sort((a, b) => a.media - b.media).slice(0, TOP_N);
+
+        const fmtPreco = (v) => v.toFixed(2).replace('.', ',');
+        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+        function buildTable(dias, titulo, tituloClass) {
+            const rows = dias.map((d, i) => {
+                const [dd, mm, yyyy] = d.dia.split('/');
+                const date = new Date(parseInt(yyyy), parseInt(mm) - 1, parseInt(dd));
+                const ds = diasSemana[date.getDay()];
+                const dataISO = `${yyyy}-${mm}-${dd}`;
+                const url = `omie-diario.html?data=${dataISO}`;
+                return `<tr onclick="window.location.href='${url}'" title="Abrir ${d.dia} em omie-diario.html">
+                    <td class="rank">${i + 1}</td>
+                    <td>${d.dia}</td>
+                    <td>${ds}</td>
+                    <td class="numeric">${fmtPreco(d.media)}</td>
+                    <td class="numeric">${fmtPreco(d.max)}</td>
+                    <td class="numeric">${fmtPreco(d.min)}</td>
+                </tr>`;
+            }).join('');
+            return `
+                <h3 class="${tituloClass}">${titulo}</h3>
+                <table class="top-dia-table">
+                    <thead><tr>
+                        <th class="rank">#</th>
+                        <th>Data</th>
+                        <th>Dia</th>
+                        <th class="numeric">Média</th>
+                        <th class="numeric">Máx</th>
+                        <th class="numeric">Mín</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        containerCaros.innerHTML   = buildTable(caros,   `🔥 Top ${TOP_N} mais caros`,   'top-dia-titulo-caro');
+        containerBaratos.innerHTML = buildTable(baratos, `❄️ Top ${TOP_N} mais baratos`, 'top-dia-titulo-barato');
+    }
+
+    // --- A2: INSIGHT AUTOMÁTICO ---
+    function atualizarInsightPeriodo(stats) {
+        const el = document.getElementById('insight-periodo');
+        if (!el) return;
+        if (!stats || !stats.mediaPT) { el.style.display = 'none'; return; }
+
+        const fmt = (v) => v.toFixed(2).replace('.', ',');
+        const fmtInt = (n) => n.toLocaleString('pt-PT');
+        const partes = [];
+
+        // Frase 1: período + média
+        partes.push(`No período de <strong>${stats.dataInicio}</strong> a <strong>${stats.dataFim}</strong> (${stats.numDias} ${stats.numDias === 1 ? 'dia' : 'dias'}), o preço médio em Portugal foi de <strong>${fmt(stats.mediaPT)} €/MWh</strong>.`);
+
+        // Frase 2: variação YoY (só se base válida)
+        if (stats.deltaYoYpct !== null) {
+            const sentido = stats.deltaYoYpct > 0.5 ? 'mais caro' : (stats.deltaYoYpct < -0.5 ? 'mais barato' : 'praticamente igual ao');
+            const pctTxt = Math.abs(stats.deltaYoYpct).toFixed(1).replace('.', ',');
+            partes.push(`Isto é <strong>${pctTxt}% ${sentido}</strong> que no mesmo período do ano anterior (${fmt(stats.mediaPTAnt)} €/MWh).`);
+        }
+
+        // Frase 3: dia mais caro / barato (só se >= 3 dias com dados)
+        if (stats.diaMaisCaro && stats.diaMaisBarato && stats.numDias >= 3) {
+            partes.push(`O dia mais caro foi <strong>${stats.diaMaisCaro.dia}</strong> (${fmt(stats.diaMaisCaro.valor)} €/MWh) e o mais barato foi <strong>${stats.diaMaisBarato.dia}</strong> (${fmt(stats.diaMaisBarato.valor)} €/MWh).`);
+        }
+
+        // Frase 4: horas com preço extremo (só se houver)
+        const extremos = [];
+        if (stats.horasNegativas > 0)  extremos.push(`<strong>${fmtInt(stats.horasNegativas)} horas com preço negativo</strong>`);
+        if (stats.horasAcima100 > 0)   extremos.push(`<strong>${fmtInt(stats.horasAcima100)} horas acima de 100 €/MWh</strong>`);
+        if (extremos.length) {
+            partes.push(`Foram registadas ${extremos.join(' e ')}.`);
+        }
+
+        // Frase 5: spread médio com Espanha
+        if (stats.spreadMedio !== null && Math.abs(stats.spreadMedio) > 0.5) {
+            const sentido = stats.spreadMedio > 0 ? 'mais caro' : 'mais barato';
+            partes.push(`No mesmo período, Portugal esteve em média <strong>${fmt(Math.abs(stats.spreadMedio))} €/MWh ${sentido}</strong> que Espanha.`);
+        }
+
+        el.innerHTML = `<span class="insight-titulo">📖 Análise rápida</span>${partes.join(' ')}`;
+        el.style.display = 'block';
+    }
+
+    // --- A3: ANÁLISE POR DIA DA SEMANA ---
+    function atualizarGraficoDiaSemana(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV) {
+        const container = document.getElementById('grafico-dia-semana');
+        if (!container) return;
+
+        // Agrupar quartos-horários por dia da semana (0=Dom, 1=Seg, ... 6=Sáb)
+        const nomes = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+        // Index: 0=Seg ... 6=Dom
+        const acumPT = Array(7).fill(0).map(() => ({ sum: 0, count: 0 }));
+        const acumES = Array(7).fill(0).map(() => ({ sum: 0, count: 0 }));
+
+        dadosReaisDoPeriodo.forEach(row => {
+            if (!row.timestamp) return;
+            const date = new Date(row.timestamp);
+            // JS: 0=Dom ... 6=Sáb; queremos 0=Seg ... 6=Dom
+            const jsDay = date.getUTCDay();
+            const idx = (jsDay === 0) ? 6 : jsDay - 1;
+            if (row.preco_pt !== null && !isNaN(row.preco_pt)) {
+                acumPT[idx].sum += row.preco_pt;
+                acumPT[idx].count++;
+            }
+            if (row.preco_es !== null && !isNaN(row.preco_es)) {
+                acumES[idx].sum += row.preco_es;
+                acumES[idx].count++;
+            }
+        });
+
+        const dataPT = acumPT.map(a => a.count > 0 ? a.sum / a.count : null);
+        const dataES = acumES.map(a => a.count > 0 ? a.sum / a.count : null);
+        const counts = acumPT.map(a => a.count);
+
+        // Não mostrar se não houver dados suficientes em pelo menos 3 dias da semana
+        const diasComDados = dataPT.filter(v => v !== null).length;
+        if (diasComDados < 3) { container.innerHTML = ''; return; }
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-dia-semana', {
+            chart: { type: 'column', height: 380, backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: 'Média por dia da semana', style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: 'Preço médio PT/ES ponderado pelos quartos-horários do período', style: { color: _d.txt, fontSize: '0.78em' } },
+            xAxis: {
+                categories: nomes,
+                labels: { style: { color: _d.txt } }
+            },
+            yAxis: {
+                title: { text: '€/MWh', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }
+            },
+            tooltip: {
+                shared: true,
+                valueSuffix: ' €/MWh',
+                valueDecimals: 2
+            },
+            legend: { itemStyle: { color: _d.txt } },
+            plotOptions: { column: { borderWidth: 0, pointPadding: 0.05 } },
+            exporting: {
+                filename: `dia-semana-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [
+                { name: 'Portugal', color: '#007bff', data: dataPT },
+                { name: 'Espanha',  color: '#28a745', data: dataES }
+            ]
+        });
+    }
+
+    // --- A4: DECOMPOSIÇÃO POR CICLOS (DONUT — toggle BD/BS/TD/TS) ---
+    let _ciclosDonutAtivo = (function() {
+        try {
+            const v = localStorage.getItem('omie_ciclos_donut_ativo');
+            return ['bd', 'bs', 'td', 'ts'].includes(v) ? v : 'td';
+        } catch(e) { return 'td'; }
+    })();
+    function _ciclosDonutLsSet(v) {
+        try { localStorage.setItem('omie_ciclos_donut_ativo', v); } catch(e) {}
+    }
+
+    function atualizarGraficoCiclosDonut(ciclosPeriodo, dataInicioCSV, dataFimCSV) {
+        const wrapper = document.getElementById('grafico-ciclos-donut');
+        if (!wrapper) return;
+
+        // Configuração dos 4 ciclos — cores alinhadas com os cards
+        const ciclosCfg = {
+            bd: { label: 'Bi Diário',  labelLong: 'Bi-horário Diário',  tipo: 'bi',  cores: { V: '#C6E0B4', F: '#E2EFDA' } },
+            bs: { label: 'Bi Semanal', labelLong: 'Bi-horário Semanal', tipo: 'bi',  cores: { V: '#B4C6E7', F: '#D9E1F2' } },
+            td: { label: 'Tri Diário', labelLong: 'Tri-horário Diário', tipo: 'tri', cores: { V: '#FFD966', C: '#FFE699', P: '#FFF2CC' } },
+            ts: { label: 'Tri Semanal',labelLong: 'Tri-horário Semanal',tipo: 'tri', cores: { V: '#F4B084', C: '#F8CBAD', P: '#FCE4D6' } }
+        };
+
+        // Construir estrutura: toggles + chart
+        wrapper.innerHTML = `
+            <div id="ciclos-donut-toggles" style="display:flex;justify-content:center;margin-bottom:10px;"></div>
+            <div id="ciclos-donut-chart" style="min-height:340px;"></div>
+        `;
+        const togglesEl = wrapper.querySelector('#ciclos-donut-toggles');
+
+        // Construir grupo de 4 botões
+        const grp = document.createElement('div');
+        grp.className = 'hh-mode-toggle';
+        grp.setAttribute('role', 'radiogroup');
+        grp.setAttribute('aria-label', 'Ciclo horário');
+        Object.entries(ciclosCfg).forEach(([key, cfg]) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'hh-mode-btn' + (key === _ciclosDonutAtivo ? ' active' : '');
+            btn.textContent = cfg.label;
+            btn.title = cfg.labelLong;
+            btn.dataset.ciclo = key;
+            btn.addEventListener('click', () => {
+                _ciclosDonutAtivo = key;
+                _ciclosDonutLsSet(key);
+                grp.querySelectorAll('.hh-mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+                renderDonut();
+            });
+            grp.appendChild(btn);
+        });
+        togglesEl.appendChild(grp);
+
+        function renderDonut() {
+            const cfg = ciclosCfg[_ciclosDonutAtivo];
+            const cycleData = ciclosPeriodo[_ciclosDonutAtivo] || {};
+            const fmt = (v) => v.toFixed(2).replace('.', ',');
+            let dataSlices = [];
+            let totalCusto = 0;
+            let totalQuartos = 0;
+
+            function buildSlice(periodo, label, cor) {
+                const arr = cycleData[periodo] || [];
+                const horas = arr.length;
+                const media = horas ? arr.reduce((a, b) => a + b, 0) / horas : 0;
+                const custo = media * horas;
+                totalCusto += custo;
+                totalQuartos += horas;
+                return { name: label, y: custo, color: cor, precoMedio: media, horasQuartos: horas };
+            }
+
+            if (cfg.tipo === 'bi') {
+                dataSlices = [
+                    buildSlice('V', 'Vazio',     cfg.cores.V),
+                    buildSlice('F', 'Fora Vazio',cfg.cores.F)
+                ];
+            } else {
+                dataSlices = [
+                    buildSlice('V', 'Vazio',  cfg.cores.V),
+                    buildSlice('C', 'Cheias', cfg.cores.C),
+                    buildSlice('P', 'Ponta',  cfg.cores.P)
+                ];
+            }
+
+            const chartEl = wrapper.querySelector('#ciclos-donut-chart');
+            if (Math.abs(totalCusto) < 0.001 || totalQuartos === 0) {
+                chartEl.innerHTML = '<p style="text-align:center;color:#999;padding:30px;">Sem dados para este ciclo.</p>';
+                return;
+            }
+
+            const _d = _hcDark();
+            Highcharts.chart('ciclos-donut-chart', {
+                chart: { type: 'pie', height: 340, backgroundColor: _d.bg, style: { color: _d.txt } },
+                title: { text: `Contributo ao custo total — ${cfg.labelLong}`, style: { color: _d.txt, fontSize: '1em' } },
+                subtitle: { text: '% do custo total que veio de cada período (preço × duração)', style: { color: _d.txt, fontSize: '0.78em' } },
+                tooltip: {
+                    useHTML: true,
+                    pointFormatter: function() {
+                        return `<b>${this.name}</b><br>` +
+                               `Contributo ao custo: <b>${this.percentage.toFixed(1).replace('.', ',')}%</b><br>` +
+                               `Preço médio: ${fmt(this.precoMedio)} €/MWh<br>` +
+                               `Duração: ${(this.horasQuartos / 4).toLocaleString('pt-PT')} horas`;
+                    }
+                },
+                legend: { itemStyle: { color: _d.txt } },
+                plotOptions: {
+                    pie: {
+                        innerSize: '55%',
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}<br>{point.percentage:.1f}%',
+                            style: { color: _d.txt, fontSize: '0.85em', textOutline: 'none' },
+                            connectorColor: _d.txt
+                        },
+                        borderWidth: 2,
+                        borderColor: _d.bg,
+                        showInLegend: true
+                    }
+                },
+                exporting: {
+                    filename: `ciclos-donut-${_ciclosDonutAtivo}-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`,
+                    enabled: true,
+                    buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+                },
+                series: [{ name: 'Custo', colorByPoint: true, data: dataSlices }]
+            });
+        }
+
+        renderDonut();
     }
 
     /**
@@ -1022,6 +3233,85 @@ document.addEventListener('DOMContentLoaded', function() {
             container.style.display = 'none';
         }
     }
+    // --- RECORDES HISTÓRICOS (fetch independente, não bloqueia o resto) ---
+    function popularRecordesHistoricos(data) {
+        const sec = document.getElementById('recordes-section');
+        const grid = document.getElementById('recordes-grid');
+        const footer = document.getElementById('recordes-footer');
+        if (!sec || !grid || !data || !data.recordes) {
+            if (sec) sec.style.display = 'none';
+            return;
+        }
+        const r = data.recordes;
+        const fmtPreco = (v) => v.toFixed(2).replace('.', ',') + ' €/MWh';
+        const fmtSpread = (v) => (v > 0 ? '+' : '') + v.toFixed(2).replace('.', ',') + ' €/MWh';
+
+        const cards = [];
+
+        function card(label, valor, detalhe, classe) {
+            return `<div class="recorde-card">
+                <div class="recorde-label">${label}</div>
+                <div class="recorde-valor ${classe || ''}">${valor}</div>
+                <div class="recorde-detalhe">${detalhe}</div>
+            </div>`;
+        }
+
+        // Preços extremos
+        if (r.diaMaisCaro)   cards.push(card('🔥 Dia mais caro',     fmtPreco(r.diaMaisCaro.valor),   `${r.diaMaisCaro.data} (${r.diaMaisCaro.diaSemana})`,     'positivo'));
+        if (r.diaMaisBarato) cards.push(card('❄️ Dia mais barato',   fmtPreco(r.diaMaisBarato.valor), `${r.diaMaisBarato.data} (${r.diaMaisBarato.diaSemana})`, 'negativo'));
+        if (r.horaMaisCara)  cards.push(card('⏰ Hora mais cara',    fmtPreco(r.horaMaisCara.valor),  `${r.horaMaisCara.data} às ${r.horaMaisCara.hora}`,        'positivo'));
+        if (r.horaMaisBarata)cards.push(card('🕒 Hora mais barata',  fmtPreco(r.horaMaisBarata.valor),`${r.horaMaisBarata.data} às ${r.horaMaisBarata.hora}`,    'negativo'));
+
+        // Períodos
+        if (r.mesMaisCaro)    cards.push(card('📅 Mês mais caro',      fmtPreco(r.mesMaisCaro.valor),    `${r.mesMaisCaro.mes}`,         'positivo'));
+        if (r.anoMaisCaro)    cards.push(card('📆 Ano mais caro',      fmtPreco(r.anoMaisCaro.valor),    `${r.anoMaisCaro.ano}`,         'positivo'));
+        if (r.anoMaisBarato)  cards.push(card('📆 Ano mais barato',    fmtPreco(r.anoMaisBarato.valor),  `${r.anoMaisBarato.ano}`,       'negativo'));
+        if (r.anoMaisVolatil) cards.push(card('🌪️ Ano mais volátil',  fmtPreco(r.anoMaisVolatil.desvioPadrao), `${r.anoMaisVolatil.ano} (desvio-padrão)`, ''));
+
+        // Negativos / extremos
+        if (r.primeiraHoraNegativa)   cards.push(card('⚡ 1ª hora negativa', fmtPreco(r.primeiraHoraNegativa.valor), `${r.primeiraHoraNegativa.data} às ${r.primeiraHoraNegativa.hora}`, 'negativo'));
+        if (r.mesMaisHorasNegativas)  cards.push(card('☀️ Mês com mais horas negativas', `${r.mesMaisHorasNegativas.horas} h`, `${r.mesMaisHorasNegativas.mes}`, 'negativo'));
+        if (r.sequenciaMaiorDe100)    cards.push(card('🔥 Sequência > 100 €/MWh', `${r.sequenciaMaiorDe100.dias} dias`, `${r.sequenciaMaiorDe100.inicio} → ${r.sequenciaMaiorDe100.fim}`, 'positivo'));
+
+        // Mercado MIBEL
+        if (r.maiorSpreadPTmaiorES)   cards.push(card('🇵🇹 Maior spread PT > ES', fmtSpread(r.maiorSpreadPTmaiorES.valor), `${r.maiorSpreadPTmaiorES.data}`,    'positivo'));
+        if (r.maiorSpreadESmaiorPT)   cards.push(card('🇪🇸 Maior spread ES > PT', fmtSpread(r.maiorSpreadESmaiorPT.valor), `${r.maiorSpreadESmaiorPT.data}`,    'negativo'));
+        if (r.maiorRangeIntraDiario)  cards.push(card('📊 Maior range intra-diário', fmtPreco(r.maiorRangeIntraDiario.valor), `${r.maiorRangeIntraDiario.data} (máx − mín)`, ''));
+
+        grid.innerHTML = cards.join('');
+
+        if (data.geradoEm && footer) {
+            try {
+                const dt = new Date(data.geradoEm);
+                footer.textContent = `Dados analisados de 01/01/2010 a ${dadosAtualizacao.Data_Valores_OMIE || '...'}`;
+            } catch(e) {}
+        }
+    }
+
+    function carregarRecordesHistoricos() {
+        // Tenta primeiro o ficheiro local (relativo ao site), depois o GitHub raw (fallback).
+        // Cada fetch é independente — um erro em popularRecordesHistoricos NÃO trata como falha do fetch.
+        function tentarUrl(url) {
+            return fetch(url)
+                .then(r => { if (!r.ok) throw new Error('Status ' + r.status); return r.json(); });
+        }
+        tentarUrl('data/records.json')
+            .catch(err => {
+                console.info('records.json local indisponível, a tentar GitHub raw:', err && err.message);
+                return tentarUrl(URL_BASE + 'records.json');
+            })
+            .then(data => {
+                try { popularRecordesHistoricos(data); }
+                catch(e) { console.error('Erro a popular recordes (mantendo section visível):', e); }
+            })
+            .catch(err => {
+                // Ambos os URLs falharam: esconder silenciosamente
+                console.warn('records.json indisponível em ambos os locais — recordes ocultos:', err && err.message);
+                const sec = document.getElementById('recordes-section');
+                if (sec) sec.style.display = 'none';
+            });
+    }
+
 // --- PROCESSO DE INICIALIZAÇÃO ---
     fetch(URL_DADOS_ATUAIS) // Carregar apenas dados atuais
         .then(response => { if (!response.ok) throw new Error(`Erro rede: ${response.statusText}`); return response.text(); })
@@ -1037,29 +3327,65 @@ document.addEventListener('DOMContentLoaded', function() {
             if (anosAtuais.length > 0) { anoMinimoAtual = Math.min(...anosAtuais); }
             else { anoMinimoAtual = new Date().getFullYear(); }
 
-            const dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE);
+            dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE);
             if (!dataMaximaValida) { throw new Error("Data_Valores_OMIE inválida."); }
 
-            // Configurar Seletores
-            seletorDataInicio.min = `${ANO_INICIO_HISTORICO}-01-01`; seletorDataInicio.max = dataMaximaValida;
-            let dataInicioDefault = new Date(dataMaximaValida + "T12:00:00Z"); dataInicioDefault.setUTCDate(1); let dataInicioDefaultStr = dataInicioDefault.toISOString().split('T')[0];
-            const dataMinimaGeral = `${ANO_INICIO_HISTORICO}-01-01`; // Usar constante
-            if (dataInicioDefaultStr < dataMinimaGeral) dataInicioDefaultStr = dataMinimaGeral; // Ajustar se for antes do início histórico
-            seletorDataInicio.value = dataInicioDefaultStr;
+            // Configurar limites dos seletores
+            const dataMinimaGeral = `${ANO_INICIO_HISTORICO}-01-01`;
+            seletorDataInicio.min = dataMinimaGeral; seletorDataInicio.max = dataMaximaValida;
+            seletorDataFim.min = dataMinimaGeral; seletorDataFim.max = dataMaximaValida;
 
-            seletorDataFim.min = `${ANO_INICIO_HISTORICO}-01-01`; seletorDataFim.max = dataMaximaValida; seletorDataFim.value = dataMaximaValida;
+            // Default = "Este mês" (1º dia do mês corrente até última data disponível)
+            const presetMes = getPresetDates('mes');
+            defaultDataInicio = presetMes.inicio;
+            defaultDataFim = presetMes.fim;
 
-            defaultDataInicio = seletorDataInicio.value;
-            defaultDataFim = seletorDataFim.value;
+            // Aplicar URL state se válido; caso contrário, default "Este mês"
+            const urlState = lerURLState();
+            let inicioInicial = presetMes.inicio;
+            let fimInicial = presetMes.fim;
+            if (urlState
+                && urlState.inicio >= dataMinimaGeral && urlState.inicio <= dataMaximaValida
+                && urlState.fim >= dataMinimaGeral && urlState.fim <= dataMaximaValida) {
+                inicioInicial = urlState.inicio;
+                fimInicial = urlState.fim;
+            }
+            seletorDataInicio.value = inicioInicial;
+            seletorDataFim.value = fimInicial;
 
-            // Adicionar ouvintes com debounce: a atualização só dispara 600ms
-            // após a última alteração, evitando erros a meio da edição manual das datas
-            const atualizarComDebounce = debounce(atualizarDashboardPeriodo, 600);
+            // Refletir o estado nos botões e no URL
+            atualizarBotoesPreset(detectActivePreset(inicioInicial, fimInicial));
+            atualizarURL();
+
+            // Edição manual das datas: debounced (600ms) — actualiza botões, URL e dashboard
+            const atualizarComDebounce = debounce(() => {
+                atualizarBotoesPreset(detectActivePreset(seletorDataInicio.value, seletorDataFim.value));
+                atualizarURL();
+                atualizarDashboardPeriodo();
+            }, 600);
             seletorDataInicio.addEventListener('change', atualizarComDebounce);
             seletorDataFim.addEventListener('change', atualizarComDebounce);
 
+            // Botões de período pré-definido
+            document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => aplicarPreset(btn.dataset.preset));
+            });
+
+            // Botão Partilhar
+            const btnPartilhar = document.getElementById('btn-partilhar');
+            if (btnPartilhar) btnPartilhar.addEventListener('click', partilharVista);
+
+            // B4: Indicador "fresh data" — mostra apenas o dia de Data_Valores_OMIE
+            const freshEl = document.getElementById('fresh-data-valor');
+            if (freshEl && dadosAtualizacao.Data_Valores_OMIE) {
+                freshEl.textContent = dadosAtualizacao.Data_Valores_OMIE;
+            }
+
             // Carga inicial
-            atualizarDashboardPeriodo(); // Chama a função principal
+            atualizarDashboardPeriodo();
+
+            // Carregar recordes históricos (independente do período)
+            carregarRecordesHistoricos();
 
         })
         .catch(error => { console.error('Falha CRÍTICA:', error, error.stack); document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.</p>`; });
@@ -1067,9 +3393,95 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('themeChanged', function() {
         atualizarDashboardPeriodo();
     });
+
+    // === D1: Preparar impressão (data + abrir Recordes) ===
+    window.addEventListener('beforeprint', function() {
+        const painel = document.getElementById('painel-header-main');
+        if (painel) {
+            const now = new Date();
+            const dataStr = now.toLocaleDateString('pt-PT') + ' ' + now.toLocaleTimeString('pt-PT').substring(0, 5);
+            painel.setAttribute('data-print-date', dataStr);
+        }
+        const rec = document.getElementById('recordes-section');
+        if (rec && !rec.hasAttribute('open')) {
+            rec.setAttribute('open', '');
+            rec.dataset.openedForPrint = '1';
+        }
+    });
+    window.addEventListener('afterprint', function() {
+        const rec = document.getElementById('recordes-section');
+        if (rec && rec.dataset.openedForPrint === '1') {
+            rec.removeAttribute('open');
+            delete rec.dataset.openedForPrint;
+        }
+    });
+
+    // === B1: Botão "voltar ao topo" ===
+    const btnVoltarTopo = document.getElementById('btn-voltar-topo');
+    if (btnVoltarTopo) {
+        let scrollTicking = false;
+        function updateVoltarTopo() {
+            btnVoltarTopo.classList.toggle('visible', window.pageYOffset > 500);
+            scrollTicking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!scrollTicking) {
+                requestAnimationFrame(updateVoltarTopo);
+                scrollTicking = true;
+            }
+        }, { passive: true });
+        btnVoltarTopo.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // === B3: Mini-navegação com scroll-spy ===
+    (function initMiniNav() {
+        const chips = document.querySelectorAll('.mini-nav-chip');
+        if (!chips.length) return;
+        // Smooth scroll para todos os chips (compensar altura do menu, ~80px)
+        chips.forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = chip.getAttribute('href').substring(1);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    const y = target.getBoundingClientRect().top + window.pageYOffset - 80;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+            });
+        });
+        // Scroll-spy via IntersectionObserver
+        const chipByTarget = {};
+        chips.forEach(c => { chipByTarget[c.dataset.target] = c; });
+        const sectionsMap = [
+            { id: 'recordes-section',              target: 'recordes' },
+            { id: 'dashboard-cards',               target: 'resumo' },
+            { id: 'grafico-diario-container',      target: 'evolucao' },
+            { id: 'grafico-histograma-wrapper',    target: 'distribuicao' },
+            { id: 'grafico-volatilidade-container',target: 'analise' },
+            { id: 'top-dias-section',              target: 'top-dias' }
+        ];
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target.dataset.miniNavTarget;
+                    chips.forEach(c => c.classList.toggle('active', c.dataset.target === target));
+                }
+            });
+        }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+        sectionsMap.forEach(s => {
+            const el = document.getElementById(s.id);
+            if (el) {
+                el.dataset.miniNavTarget = s.target;
+                observer.observe(el);
+            }
+        });
+    })();
 });
 </script>
 
 <script src="script.js"></script>
+<script src="cookie-consent.js"></script>
 </body>
 </html>

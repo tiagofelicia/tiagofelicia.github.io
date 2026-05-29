@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://raw.githubusercontent.com https://www.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
@@ -30,8 +30,29 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
-    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-J4NWP00S4F'); </script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+    gtag('consent', 'update', { 'analytics_storage': 'granted' });
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
 
     <script type="application/ld+json">
     {
@@ -80,10 +101,31 @@
         }
       },{
         "@type": "Question",
+        "name": "Estes são os preços que vou pagar na minha fatura?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não diretamente. Os consumidores (residenciais ou pequenos negócios) pagam as tarifas definidas pelos seus comercializadores, que já incluem outras componentes (custos de rede, taxas, margem do comercializador). No entanto, os preços negociados no OMIP influenciam a forma como os comercializadores compram energia e definem as suas estratégias de preço, especialmente para tarifas fixas ou de longo prazo."
+        }
+      },{
+        "@type": "Question",
         "name": "De onde vêm estes dados?",
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "Os dados apresentados são extraídos automaticamente das informações publicadas pelo OMIP. A Data de Atualização indicada no topo da página corresponde à data da última atualização."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como ler o gráfico da Curva Forward?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O gráfico tem várias vistas. A vista Contínua (12 meses) mostra a curva real do próximo ano: para cada dia usa o contrato mais específico disponível, por ordem de prioridade Diário, Semanal, Mensal, Trimestral, Anual; as bandas de fundo coloridas indicam que tipo de contrato cobre cada secção. As vistas Diários, Semanais, Mensais, Trimestrais e Anuais mostram todos os contratos de um único tipo. A linha azul é Portugal e a verde é Espanha."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que significam os indicadores de resumo no topo?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Próximo Semanal, Mensal, Trimestral e Anual (PT) mostram o preço do primeiro contrato de cada tipo ainda por liquidar (o mais próximo no tempo)."
         }
       }]
     }
@@ -156,6 +198,53 @@
         [data-theme="dark"] .futures-table tbody tr:nth-child(even) { background-color: #0f172a; }
         [data-theme="dark"] .futures-table tbody tr:nth-child(odd) { background-color: #1e293b; }
         [data-theme="dark"] .futures-table tbody tr.tipo-header td { background-color: #334155; color: #e2e8f0; border-top-color: #475569; }
+
+        /* ===== KPIs de resumo ===== */
+        #omip-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 25px auto; }
+        @media (max-width: 700px) { #omip-kpis { grid-template-columns: repeat(2, 1fr); } }
+        .omip-kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .omip-kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .omip-kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .omip-kpi-sub { font-size: 0.72em; color: #888; margin-top: 4px; }
+        [data-theme="dark"] .omip-kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .omip-kpi-label { color: #94a3b8; }
+        [data-theme="dark"] .omip-kpi-value { color: #e2e8f0; }
+        [data-theme="dark"] .omip-kpi-sub { color: #94a3b8; }
+
+        /* ===== Gráfico Curva Forward ===== */
+        #curva-forward-section { width: 95%; max-width: 1200px; margin: 20px auto 30px auto; }
+        #curva-forward-section h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 14px; }
+        #curva-forward-toggles { display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+        .cf-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .cf-toggle-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 14px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .cf-toggle-btn:last-child { border-right: none; }
+        .cf-toggle-btn:hover { background: #f1f5f9; }
+        .cf-toggle-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] #curva-forward-section h2 { color: #e2e8f0; }
+        [data-theme="dark"] .cf-toggle { border-color: #475569; }
+        [data-theme="dark"] .cf-toggle-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .cf-toggle-btn:hover { background: #334155; }
+        [data-theme="dark"] .cf-toggle-btn.active { background: #2563eb; color: #fff; }
+        #grafico-curva-forward { background: transparent; }
+        .col-contrato[title] { cursor: help; }
+
+        /* ===== Modo Impressão ===== */
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link,
+            .link-section, #curva-forward-toggles,
+            .highcharts-exporting-group, .highcharts-button {
+                display: none !important;
+            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .painel-header h1 { font-size: 1.3em !important; }
+            .table-container { break-inside: avoid; page-break-inside: avoid; }
+            .omip-kpi-card { break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+            details.faq-item summary { cursor: default; }
+        }
     </style>
     <script type="application/ld+json">
 {
@@ -198,7 +287,15 @@
         <div class="painel-header">
             <h1>Eletricidade - Futuros OMIP</h1>
             <p>Valores dos contratos a prazo (€/MWh)</p>
+            <p class="data-atualizacao" style="margin: 8px 0 0; font-size: 0.9em; color: #666; font-weight: normal;">Dados atualizados em: <span class="badge-data-omip">--/--/----</span></p>
+        </div>
 
+        <div id="omip-kpis"></div>
+
+        <div id="curva-forward-section">
+            <h2>Curva Forward — preços por período de entrega</h2>
+            <div id="curva-forward-toggles"></div>
+            <div id="grafico-curva-forward"></div>
         </div>
 
         <div class="futures-grid">
@@ -313,6 +410,27 @@
                     <p>Os dados apresentados são extraídos automaticamente das informações publicadas pelo OMIP. A <strong>Data de Atualização</strong> indicada no topo da página corresponde à data da última atualização.</p>
                 </div>
             </details>
+
+            <details class="faq-item">
+                <summary><strong>Como ler o gráfico da Curva Forward?</strong></summary>
+                <div class="faq-content">
+                    <p>O gráfico tem várias vistas, selecionáveis nos botões acima dele:</p>
+                    <ul>
+                        <li><strong>Contínua (12 meses):</strong> a curva "real" do próximo ano. Para <strong>cada dia</strong>, usa o contrato mais específico disponível, por ordem de prioridade: <strong>Diário → Semanal → Mensal → Trimestral → Anual</strong>. As bandas de fundo coloridas indicam que tipo de contrato cobre cada secção (ex: os primeiros dias são "Diários", depois entram os "Semanais", etc.).</li>
+                        <li><strong>Diários / Semanais / Mensais / Trimestrais / Anuais:</strong> mostra todos os contratos de um único tipo, para análise detalhada de cada categoria.</li>
+                    </ul>
+                    <p>Em todas as vistas, a linha <strong style="color:#007bff;">azul</strong> é Portugal e a <strong style="color:#28a745;">verde</strong> é Espanha. Pode arrastar horizontalmente para fazer zoom.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que significam os indicadores de resumo no topo?</strong></summary>
+                <div class="faq-content">
+                    <ul>
+                        <li><strong>Próximo Semanal / Mensal / Trimestral / Anual (PT):</strong> o preço do primeiro contrato de cada tipo ainda por liquidar (o mais próximo no tempo).</li>
+                    </ul>
+                </div>
+            </details>
         </article>
     </section>
 </main>
@@ -331,6 +449,335 @@ document.addEventListener('DOMContentLoaded', function () {
     function formatarValor(valor, casasDecimais = 2) {
         if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,--'; }
         return valor.toFixed(casasDecimais).replace('.', ',');
+    }
+
+    // Guardar dados para re-render do gráfico (toggle / dark mode)
+    let _futurosPT = [], _futurosES = [];
+    let _cfTipoAtivo = 'continua';
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333' };
+    }
+
+    // Decodificar contrato para tooltip (ex: "FPB M Jun-26" → "Futuro Portugal Base · Mensal · Junho 2026")
+    function decodificarContrato(contrato, descricao) {
+        if (!contrato) return '';
+        const base = contrato.startsWith('FPB') ? 'Futuro Portugal Base'
+                   : contrato.startsWith('FTB') ? 'Futuro Espanha Base' : 'Futuro';
+        let tipo = '';
+        if (contrato.includes(' D ')) tipo = 'Diário';
+        else if (contrato.includes(' Wk')) tipo = 'Semanal';
+        else if (contrato.includes(' M ')) tipo = 'Mensal';
+        else if (/ Q\d/.test(contrato)) tipo = 'Trimestral';
+        else if (contrato.includes(' YR-')) tipo = 'Anual';
+        return `${base} · ${tipo}${descricao ? ' · ' + descricao : ''}`;
+    }
+
+    // Converter o número da semana ISO para a data da Segunda-feira
+    function isoWeekToDate(year, week) {
+        const simple = new Date(Date.UTC(year, 0, 1 + (week - 1) * 7));
+        const dow = simple.getUTCDay();
+        if (dow <= 4) simple.setUTCDate(simple.getUTCDate() - simple.getUTCDay() + 1);
+        else simple.setUTCDate(simple.getUTCDate() + 8 - simple.getUTCDay());
+        return simple;
+    }
+    const _MESES_EN = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };
+
+    // Extrair data de início do período de entrega + chave de alinhamento PT/ES a partir do contrato
+    function parseContrato(contrato, tipo, descricao) {
+        if (!contrato) return null;
+        // chave = contrato sem o prefixo FPB/FTB (ex: "M Jun-26")
+        const chave = contrato.replace(/^F[PT]B\s+/, '').trim();
+        let dataInicio = null;
+        try {
+            if (tipo === 'Diários') {
+                const [d, m, y] = descricao.split('/');
+                dataInicio = Date.UTC(+y, +m - 1, +d);
+            } else if (tipo === 'Semanais') {
+                const mm = contrato.match(/Wk(\d+)-(\d+)/);
+                if (mm) dataInicio = isoWeekToDate(2000 + (+mm[2]), +mm[1]).getTime();
+            } else if (tipo === 'Mensais') {
+                const mm = contrato.match(/M\s+([A-Za-z]{3})-(\d+)/);
+                if (mm) dataInicio = Date.UTC(2000 + (+mm[2]), _MESES_EN[mm[1]], 1);
+            } else if (tipo === 'Trimestrais') {
+                const mm = contrato.match(/Q(\d)-(\d+)/);
+                if (mm) dataInicio = Date.UTC(2000 + (+mm[2]), (+mm[1] - 1) * 3, 1);
+            } else if (tipo === 'Anuais') {
+                const mm = contrato.match(/YR-(\d+)/);
+                if (mm) dataInicio = Date.UTC(2000 + (+mm[1]), 0, 1);
+            }
+        } catch(e) { dataInicio = null; }
+        return { chave, dataInicio };
+    }
+
+    // === CURVA CONTÍNUA (cascata Diário→Semanal→Mensal→Trimestral→Anual) ===
+    // Semana ISO (ano + número) de um timestamp UTC
+    function getISOWeekYear(ts) {
+        const d = new Date(ts);
+        const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+        const dayNum = date.getUTCDay() || 7;
+        date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+        const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+        const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+        return { year: date.getUTCFullYear(), week: weekNo };
+    }
+    // Indexar contratos por período para a cascata
+    function indexarFuturos(futuros) {
+        const idx = { dia: new Map(), sem: new Map(), mes: new Map(), tri: new Map(), ano: new Map() };
+        futuros.forEach(f => {
+            if (f.Tipo === 'Diários') {
+                const [d, m, y] = (f.Descricao || '').split('/');
+                if (d && m && y) idx.dia.set(`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`, f.Valor);
+            } else if (f.Tipo === 'Semanais') {
+                const mm = (f.Contrato || '').match(/Wk(\d+)-(\d+)/);
+                if (mm) idx.sem.set(`${2000 + (+mm[2])}-W${+mm[1]}`, f.Valor);
+            } else if (f.Tipo === 'Mensais') {
+                const mm = (f.Contrato || '').match(/M\s+([A-Za-z]{3})-(\d+)/);
+                if (mm) idx.mes.set(`${2000 + (+mm[2])}-${_MESES_EN[mm[1]] + 1}`, f.Valor);
+            } else if (f.Tipo === 'Trimestrais') {
+                const mm = (f.Contrato || '').match(/Q(\d)-(\d+)/);
+                if (mm) idx.tri.set(`${2000 + (+mm[2])}-Q${+mm[1]}`, f.Valor);
+            } else if (f.Tipo === 'Anuais') {
+                const mm = (f.Contrato || '').match(/YR-(\d+)/);
+                if (mm) idx.ano.set(`${2000 + (+mm[1])}`, f.Valor);
+            }
+        });
+        return idx;
+    }
+    // Preço de um dia por cascata (mais específico primeiro)
+    function precoCascata(idx, ts) {
+        const d = new Date(ts);
+        const y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, dd = d.getUTCDate();
+        const q = Math.floor((m - 1) / 3) + 1;
+        const iso = getISOWeekYear(ts);
+        const kDia = `${y}-${String(m).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+        if (idx.dia.has(kDia)) return { valor: idx.dia.get(kDia), tipo: 'Diário' };
+        if (idx.sem.has(`${iso.year}-W${iso.week}`)) return { valor: idx.sem.get(`${iso.year}-W${iso.week}`), tipo: 'Semanal' };
+        if (idx.mes.has(`${y}-${m}`)) return { valor: idx.mes.get(`${y}-${m}`), tipo: 'Mensal' };
+        if (idx.tri.has(`${y}-Q${q}`)) return { valor: idx.tri.get(`${y}-Q${q}`), tipo: 'Trimestral' };
+        if (idx.ano.has(`${y}`)) return { valor: idx.ano.get(`${y}`), tipo: 'Anual' };
+        return null;
+    }
+    // Data de início da curva = 1º diário disponível (ou amanhã)
+    function getDataInicioCurva(futuros) {
+        let minTs = null;
+        futuros.filter(f => f.Tipo === 'Diários').forEach(f => {
+            const [d, m, y] = (f.Descricao || '').split('/');
+            if (d && m && y) { const ts = Date.UTC(+y, +m - 1, +d); if (minTs === null || ts < minTs) minTs = ts; }
+        });
+        if (minTs !== null) return minTs;
+        const h = new Date();
+        return Date.UTC(h.getUTCFullYear(), h.getUTCMonth(), h.getUTCDate() + 1);
+    }
+
+    // === KPIs ===
+    function renderKpis(futurosPT) {
+        const container = document.getElementById('omip-kpis');
+        if (!container) return;
+        function primeiroDoTipo(tipo) {
+            const arr = futurosPT.filter(f => f.Tipo === tipo)
+                .map(f => ({ f, p: parseContrato(f.Contrato, tipo, f.Descricao) }))
+                .filter(x => x.p && x.p.dataInicio !== null)
+                .sort((a, b) => a.p.dataInicio - b.p.dataInicio);
+            return arr.length ? arr[0].f : null;
+        }
+        const semanal = primeiroDoTipo('Semanais');
+        const mensal = primeiroDoTipo('Mensais');
+        const trimestral = primeiroDoTipo('Trimestrais');
+        const anual = primeiroDoTipo('Anuais');
+
+        function cardKpi(label, futuro) {
+            const val = futuro ? formatarValor(futuro.Valor) + ' €' : '--';
+            const sub = futuro ? futuro.Descricao : 'indisponível';
+            return `<div class="omip-kpi-card"><div class="omip-kpi-label">${label}</div><div class="omip-kpi-value">${val}</div><div class="omip-kpi-sub">${sub}</div></div>`;
+        }
+        container.innerHTML =
+            cardKpi('Próximo Semanal (PT)', semanal) +
+            cardKpi('Próximo Mensal (PT)', mensal) +
+            cardKpi('Próximo Trimestral (PT)', trimestral) +
+            cardKpi('Próximo Anual (PT)', anual);
+    }
+
+    // === Curva Forward (gráfico com toggle) ===
+    function setupCurvaForward(futurosPT, futurosES) {
+        const togglesEl = document.getElementById('curva-forward-toggles');
+        if (!togglesEl) return;
+        // 'continua' = curva contínua por cascata; restantes = um tipo de cada vez
+        const opcoes = [
+            { id: 'continua', label: 'Contínua (12 meses)' },
+            { id: 'Diários', label: 'Diários' },
+            { id: 'Semanais', label: 'Semanais' },
+            { id: 'Mensais', label: 'Mensais' },
+            { id: 'Trimestrais', label: 'Trimestrais' },
+            { id: 'Anuais', label: 'Anuais' }
+        ];
+
+        togglesEl.innerHTML = '';
+        const grp = document.createElement('div');
+        grp.className = 'cf-toggle';
+        grp.setAttribute('role', 'radiogroup');
+        grp.setAttribute('aria-label', 'Vista da curva forward');
+        opcoes.forEach(op => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'cf-toggle-btn' + (op.id === _cfTipoAtivo ? ' active' : '');
+            btn.textContent = op.label;
+            btn.dataset.tipo = op.id;
+            btn.addEventListener('click', () => {
+                _cfTipoAtivo = op.id;
+                grp.querySelectorAll('.cf-toggle-btn').forEach(b => b.classList.toggle('active', b === btn));
+                renderCurvaForward();
+            });
+            grp.appendChild(btn);
+        });
+        togglesEl.appendChild(grp);
+        renderCurvaForward();
+    }
+
+    function renderCurvaForward() {
+        if (_cfTipoAtivo === 'continua') { renderCurvaContinua(); return; }
+        const tipo = _cfTipoAtivo;
+        // chave normalizada já sem prefixo FPB/FTB, então PT e ES partilham a mesma chave
+        const mapaPT = new Map(), mapaES = new Map();
+        preencherMapaCurva(mapaPT, _futurosPT, tipo);
+        preencherMapaCurva(mapaES, _futurosES, tipo);
+
+        // União ordenada de chaves por dataInicio
+        const todasChaves = new Set([...mapaPT.keys(), ...mapaES.keys()]);
+        const linhas = [...todasChaves].map(k => {
+            const ref = mapaPT.get(k) || mapaES.get(k);
+            return { chave: k, dataInicio: ref.dataInicio, descricao: ref.descricao };
+        }).sort((a, b) => a.dataInicio - b.dataInicio);
+
+        const categories = linhas.map(l => l.descricao);
+        const dataPT = linhas.map(l => mapaPT.has(l.chave) ? mapaPT.get(l.chave).valor : null);
+        const dataES = linhas.map(l => mapaES.has(l.chave) ? mapaES.get(l.chave).valor : null);
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-curva-forward', {
+            chart: { type: 'line', height: 460, backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: { text: `Curva Forward OMIP — Contratos ${tipo}`, style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: 'Preço de fecho por período de entrega · azul = Portugal · verde = Espanha', style: { color: _d.txt, fontSize: '0.78em' } },
+            xAxis: {
+                categories: categories,
+                title: { text: 'Período de entrega', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt, fontSize: '0.78em' }, rotation: categories.length > 8 ? -45 : 0 },
+                crosshair: true
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }
+            },
+            tooltip: { shared: true, valueSuffix: ' €/MWh', valueDecimals: 2 },
+            legend: { itemStyle: { color: _d.txt } },
+            plotOptions: { line: { marker: { enabled: true, radius: 3 } }, series: { connectNulls: true } },
+            exporting: {
+                filename: `curva-forward-omip-${tipo.toLowerCase()}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [
+                { name: 'Portugal', color: '#007bff', data: dataPT },
+                { name: 'Espanha', color: '#28a745', data: dataES }
+            ]
+        });
+    }
+    // Curva contínua diária por cascata, próximos 12 meses
+    function renderCurvaContinua() {
+        const idxPT = indexarFuturos(_futurosPT);
+        const idxES = indexarFuturos(_futurosES);
+        const inicioTs = getDataInicioCurva(_futurosPT);
+        const fimD = new Date(inicioTs);
+        fimD.setUTCMonth(fimD.getUTCMonth() + 12);
+        const fimTs = fimD.getTime();
+        const DIA = 86400000;
+
+        const dataPT = [], dataES = [];
+        const zonas = []; // para plotBands (atribuição visual de cada tipo)
+        let zonaAtual = null;
+        const CORES_ZONA = {
+            'Diário':     'rgba(0,123,255,0.07)',
+            'Semanal':    'rgba(40,167,69,0.07)',
+            'Mensal':     'rgba(191,143,0,0.08)',
+            'Trimestral': 'rgba(198,89,17,0.08)',
+            'Anual':      'rgba(220,53,69,0.07)'
+        };
+
+        for (let ts = inicioTs; ts <= fimTs; ts += DIA) {
+            const pPT = precoCascata(idxPT, ts);
+            const pES = precoCascata(idxES, ts);
+            if (pPT) dataPT.push({ x: ts, y: pPT.valor, tipoContrato: pPT.tipo });
+            if (pES) dataES.push({ x: ts, y: pES.valor, tipoContrato: pES.tipo });
+            // Zonas baseadas no tipo PT
+            const tipoAqui = pPT ? pPT.tipo : (pES ? pES.tipo : null);
+            if (tipoAqui) {
+                if (!zonaAtual || zonaAtual.tipo !== tipoAqui) {
+                    if (zonaAtual) zonaAtual.to = ts;
+                    zonaAtual = { tipo: tipoAqui, from: ts, to: ts + DIA };
+                    zonas.push(zonaAtual);
+                } else {
+                    zonaAtual.to = ts + DIA;
+                }
+            }
+        }
+
+        const plotBands = zonas.map(z => ({
+            from: z.from, to: z.to, color: CORES_ZONA[z.tipo] || 'transparent',
+            label: { text: z.tipo, style: { color: '#999', fontSize: '0.65em' }, rotation: 90, align: 'left', verticalAlign: 'top', y: 8, x: 2 }
+        }));
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-curva-forward', {
+            chart: { type: 'line', height: 480, backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: { text: 'Curva Forward Contínua OMIP — próximos 12 meses', style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: 'Cada dia usa o contrato mais específico disponível (Diário → Semanal → Mensal → Trimestral). Bandas de fundo indicam o tipo.', style: { color: _d.txt, fontSize: '0.78em' } },
+            xAxis: {
+                type: 'datetime',
+                title: { text: 'Data de entrega', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } },
+                crosshair: true,
+                plotBands: plotBands,
+                dateTimeLabelFormats: { day: '%e %b', week: '%e %b', month: '%b %Y', year: '%Y' }
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                formatter: function() {
+                    let s = `<b>${Highcharts.dateFormat('%A, %e de %B de %Y', this.x)}</b>`;
+                    (this.points || []).forEach(p => {
+                        s += `<br><span style="color:${p.color}">●</span> ${p.series.name}: <b>${p.y.toFixed(2).replace('.', ',')} €/MWh</b>`;
+                    });
+                    const tipo = this.points && this.points[0] && this.points[0].point.tipoContrato;
+                    if (tipo) s += `<br><i style="font-size:0.85em;color:#888">Contrato: ${tipo}</i>`;
+                    return s;
+                }
+            },
+            legend: { itemStyle: { color: _d.txt } },
+            plotOptions: { series: { marker: { enabled: false }, lineWidth: 1.8, connectNulls: true } },
+            exporting: {
+                filename: 'curva-forward-continua-omip',
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [
+                { name: 'Portugal', color: '#007bff', data: dataPT },
+                { name: 'Espanha', color: '#28a745', data: dataES }
+            ]
+        });
+    }
+
+    // Preenche um mapa chave→{valor,dataInicio,descricao} para um tipo
+    function preencherMapaCurva(mapa, futuros, tipo) {
+        futuros.filter(f => f.Tipo === tipo).forEach(f => {
+            const p = parseContrato(f.Contrato, tipo, f.Descricao);
+            if (!p || p.dataInicio === null) return;
+            mapa.set(p.chave, { valor: f.Valor, dataInicio: p.dataInicio, descricao: f.Descricao });
+        });
     }
 
     // ===== Ler dia da semana pelo código do contrato =====
@@ -431,6 +878,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tableHTML += `<tr class="tipo-header"><td colspan="4">${tipo}</td></tr>`;
                 fData.forEach(futuro => {
                     let descricao = futuro['Descricao'] || '';
+                    const descricaoOriginal = descricao; // sem HTML, para o tooltip
                     let contrato = futuro['Contrato'] || '';
                     const variacao = futuro['Variacao'] || 'new:0';
                     const icone = renderVariacao(variacao);
@@ -443,7 +891,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     tableHTML += `<tr>`;
-                    tableHTML += `<td class="col-contrato">${contrato}</td>`;
+                    tableHTML += `<td class="col-contrato" title="${decodificarContrato(contrato, descricaoOriginal)}">${contrato}</td>`;
                     tableHTML += `<td class="col-descricao">${descricao}</td>`;
                     tableHTML += `<td class="col-valor">${futuro['Valor'] !== undefined ? formatarValor(futuro['Valor']) : ''}</td>`;
                     tableHTML += `<td class="col-variacao">${icone}</td>`;
@@ -476,8 +924,16 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.badge-data-omip').forEach(el => { el.textContent = dataAtualizacao; });
 
             const dataSeg = diaSeguinte(dataAtualizacao);
-            tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(filtrarFuturos(futurosPT, dataSeg));
-            tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(filtrarFuturos(futurosES, dataSeg));
+            const ptFiltrado = filtrarFuturos(futurosPT, dataSeg);
+            const esFiltrado = filtrarFuturos(futurosES, dataSeg);
+            tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(ptFiltrado);
+            tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(esFiltrado);
+
+            // Guardar para gráfico / KPIs (usa os dados filtrados, sem o "dia seguinte" já no OMIE)
+            _futurosPT = ptFiltrado;
+            _futurosES = esFiltrado;
+            renderKpis(_futurosPT);
+            setupCurvaForward(_futurosPT, _futurosES);
         })
         .catch(error => {
             console.error('Falha ao carregar ou processar os dados OMIP:', error);
@@ -486,10 +942,28 @@ document.addEventListener('DOMContentLoaded', function () {
             tabelaOmipEsBody.innerHTML = errorMsg;
             document.querySelectorAll('.badge-data-omip').forEach(el => { el.textContent = 'Erro'; });
         });
+
+    // Re-renderizar o gráfico ao mudar o tema (dark mode)
+    document.addEventListener('themeChanged', function() {
+        if (_futurosPT.length > 0) renderCurvaForward();
+    });
+
+    // Modo impressão: abrir FAQ
+    window.addEventListener('beforeprint', function() {
+        document.querySelectorAll('details.faq-item').forEach(d => {
+            if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+        });
+    });
+    window.addEventListener('afterprint', function() {
+        document.querySelectorAll('details.faq-item[data-opened-for-print="1"]').forEach(d => {
+            d.removeAttribute('open'); delete d.dataset.openedForPrint;
+        });
+    });
 });
 </script>
 
 <script src="script.js"></script>
+<script src="cookie-consent.js"></script>
 </body>
 
 </html>
