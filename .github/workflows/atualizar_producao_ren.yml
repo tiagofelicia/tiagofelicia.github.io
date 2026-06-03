@@ -41,6 +41,10 @@ jobs:
       - name: Atualizar Produção por Bombagem (diária)
         run: python scripts/atualizar_producao_bombagem.py # incremental: últimos 7 dias
 
+      # 4c. Atualiza recordes históricos (incremental)
+      - name: Atualizar recordes de produção (incremental)
+        run: python scripts/gerar_records_producao.py
+
       # 5. Faz commit e push do ficheiro de dados atualizado
       - name: Fazer Commit e Push dos dados atualizados
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -49,7 +53,7 @@ jobs:
           commit_message: "Atualização automática dos dados de produção REN"
 
           # Ficheiros que este workflow deve guardar
-          file_pattern: "data/producao_dados_atuais.csv data/producao_bombagem_diaria.csv"
+          file_pattern: "data/producao_dados_atuais.csv data/producao_bombagem_diaria.csv data/records_producao.json"
           
           # Copiado do seu ficheiro (mantém o 'main' ou mude para 'master' se for o seu caso)
           branch: main 
