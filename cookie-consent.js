@@ -49,24 +49,30 @@
 
     if (!showBanner) return;
 
-    // Criar banner
+    // Criar banner (estilos em style.css, classe .tf-cookie-banner)
     var banner = document.createElement('div');
     banner.id = 'tf-cookie-banner';
-    banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1e293b;color:#e2e8f0;padding:16px 24px;box-shadow:0 -4px 20px rgba(0,0,0,0.3);font-family:Arial,sans-serif;font-size:0.88rem;line-height:1.5;';
+    banner.className = 'tf-cookie-banner';
+    banner.setAttribute('role', 'dialog');
+    banner.setAttribute('aria-label', 'Consentimento de cookies');
 
-    banner.innerHTML = '<div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:space-between;">'
-        + '<div style="flex:1;min-width:280px;">'
-        + '<strong>🍪 Este site utiliza cookies</strong><br>'
-        + 'Utilizamos cookies essenciais para o funcionamento do site e cookies analíticos '
-        + 'para compreender como é utilizado e melhorar a sua experiência. '
-        + 'Estes cookies só são ativados com o seu consentimento. '
-        + '<br><span style="font-size:0.82rem;color:#94a3b8;">Pode aceitar ou rejeitar a utilização de cookies analíticos. '
-        + '<a href="/politica-de-cookies.html" style="color:#60a5fa;text-decoration:underline;">Saber mais</a></span>'
-        + '</div>'
-        + '<div style="display:flex;gap:10px;flex-shrink:0;">'
-        + '<button id="tf-cc-accept" style="padding:10px 24px;background:#16a34a;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.88rem;">Aceitar</button>'
-        + '<button id="tf-cc-reject" style="padding:10px 24px;background:none;color:#94a3b8;border:1px solid #475569;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.88rem;">Rejeitar</button>'
-        + '</div></div>';
+    banner.innerHTML =
+        '<div class="tf-cookie-banner-inner">' +
+            '<div class="tf-cookie-banner-msg">' +
+                '<strong>🍪 Este site utiliza cookies</strong><br>' +
+                'Utilizamos cookies essenciais para o funcionamento do site e cookies analíticos ' +
+                'para compreender como é utilizado e melhorar a sua experiência. ' +
+                'Estes cookies só são ativados com o seu consentimento.' +
+                '<span class="tf-cookie-banner-sub">' +
+                    'Pode aceitar ou rejeitar a utilização de cookies analíticos. ' +
+                    '<a href="/politica-de-cookies.html">Saber mais</a>' +
+                '</span>' +
+            '</div>' +
+            '<div class="tf-cookie-banner-actions">' +
+                '<button id="tf-cc-accept" type="button" class="tf-cookie-banner-btn tf-cookie-banner-accept">Aceitar</button>' +
+                '<button id="tf-cc-reject" type="button" class="tf-cookie-banner-btn tf-cookie-banner-reject">Rejeitar</button>' +
+            '</div>' +
+        '</div>';
 
     document.body.appendChild(banner);
 

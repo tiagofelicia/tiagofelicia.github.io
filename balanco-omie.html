@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    
+    <title>Balanço Energético Portugal vs Preços Mercado Diário OMIE | Tiago Felícia</title>
+    <meta name="description" content="Balanço energético horário em Portugal: produção por fonte (renováveis, gás, baterias), consumo, importação/exportação e bombagem, cruzado com o preço do mercado OMIE." />
+    
+    <link rel="canonical" href="https://www.tiagofelicia.pt/balanco-omie.html" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/balanco-omie.html" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/balanco-omie.html" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Balanço Energético em Portugal vs Preço OMIE" />
+    <meta property="og:description" content="Gráfico interativo do balanço energético horário: produção por fonte, consumo, importação/exportação e armazenamento, e o seu impacto no preço da luz." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/balanco-omie.html" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Tiago Felícia — Simuladores de Energia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+    gtag('consent', 'update', { 'analytics_storage': 'granted' });
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DataFeed",
+      "name": "Balanço Energético Portugal vs Preços Mercado Diário (Day-Ahead) OMIE Spot",
+      "description": "Dados horários do balanço energético (produção por fonte, consumo, importação/exportação, armazenamento) cruzados com o preço do mercado diário OMIE.",
+      "provider": {
+        "@type": "Organization",
+        "name": "Tiago Felícia"
+      }
+    }
+    </script>
+
+    <style>
+        .grafico-wrapper {
+            width: 95%;
+            max-width: 1800px; 
+            margin: 40px auto 20px auto;
+        }
+
+        /* Indicador de Loading*/
+        #loading-indicator { 
+            display: none; 
+            text-align: center; 
+            padding: 20px; 
+            font-size: 1.2em;
+        }
+
+        /* ===== REGRAS DE CSS ===== */
+        .painel-header { text-align: center; margin-bottom: 20px; }
+        .painel-header h1 { margin: 0 0 10px 0; font-size: 1.5em; color: #2c3e50; }
+        .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
+
+        .date-selector { margin-bottom: 20px; text-align: center; }
+        .date-selector label { font-weight: bold; margin-right: 10px; }
+        .date-selector input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+
+        /* Contentor das setas e input */
+        .date-nav-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;}
+        /* Estilo dos botões de seta */
+        .btn-nav { background: #fff; border: 1px solid #ccc; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center; transition: background 0.2s; color: #2c3e50;}
+        .btn-nav:hover { background: #e2e8f0; }
+        
+        .link-section { text-align: center; margin: 30px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+
+        /* === DARK MODE — Estilos específicos desta página === */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p { color: #94a3b8; }
+        [data-theme="dark"] .date-selector label { color: #cbd5e1; }
+        [data-theme="dark"] .date-selector input { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #loading-indicator { color: #e2e8f0; }
+        [data-theme="dark"] #grafico-container { background: #1e293b; border-radius: 8px; }
+        [data-theme="dark"] .btn-nav { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-nav:hover { background: #334155; }
+
+        /* ===== Botões pré-definidos de dia ===== */
+        .date-presets { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .date-preset-btn { background: #fff; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 16px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
+        .date-preset-btn:hover:not(:disabled) { background: #e2e8f0; }
+        .date-preset-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .date-preset-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        [data-theme="dark"] .date-preset-btn { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .date-preset-btn:hover:not(:disabled) { background: #334155; }
+
+        /* ===== Botão Partilhar ===== */
+        #btn-partilhar-prod { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; }
+        #btn-partilhar-prod:hover { background: #e2e8f0; }
+        [data-theme="dark"] #btn-partilhar-prod { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar-prod:hover { background: #334155; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+
+        /* ===== Banner de valores provisórios ===== */
+        #prod-provisorio { width: 95%; max-width: 1200px; margin: 10px auto; padding: 10px 16px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; color: #856404; font-size: 0.9em; text-align: center; font-weight: 600; }
+        [data-theme="dark"] #prod-provisorio { background: #332b00; border-color: #665600; color: #ffd54f; }
+
+        /* ===== KPIs do dia ===== */
+        #prod-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 95%; max-width: 1200px; margin: 10px auto 20px auto; }
+        @media (max-width: 1000px) { #prod-kpis { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 640px) { #prod-kpis { grid-template-columns: repeat(2, 1fr); } }
+        .prod-kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .prod-kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .prod-kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .prod-kpi-sub { font-size: 0.72em; color: #888; margin-top: 4px; }
+        .prod-kpi-card.kpi-renovavel .prod-kpi-value { color: #16a34a; }
+        .prod-kpi-card.kpi-importador .prod-kpi-value { color: #ED7D31; }
+        .prod-kpi-card.kpi-dominante .prod-kpi-value { color: #2563eb; }
+        [data-theme="dark"] .prod-kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .prod-kpi-label { color: #94a3b8; }
+        [data-theme="dark"] .prod-kpi-value { color: #e2e8f0; }
+        [data-theme="dark"] .prod-kpi-sub { color: #94a3b8; }
+        [data-theme="dark"] .prod-kpi-card.kpi-renovavel .prod-kpi-value { color: #4ade80; }
+        [data-theme="dark"] .prod-kpi-card.kpi-importador .prod-kpi-value { color: #f59e0b; }
+        [data-theme="dark"] .prod-kpi-card.kpi-dominante .prod-kpi-value { color: #60a5fa; }
+
+        /* ===== Insight automático ===== */
+        #insight-producao { width: 95%; max-width: 1200px; margin: 0 auto 20px auto; padding: 16px 20px; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 10px; border-left: 4px solid #16a34a; font-size: 0.95em; line-height: 1.55; color: #14532d; }
+        #insight-producao strong { color: #166534; }
+        #insight-producao .insight-titulo { font-size: 0.85em; color: #16a34a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block; }
+        [data-theme="dark"] #insight-producao { background: linear-gradient(135deg, #1e293b 0%, #14331f 100%); color: #cbd5e1; border-left-color: #4ade80; }
+        [data-theme="dark"] #insight-producao strong { color: #86efac; }
+        [data-theme="dark"] #insight-producao .insight-titulo { color: #4ade80; }
+
+        /* ===== Donut do mix diário ===== */
+        #donut-section { width: 95%; max-width: 1200px; margin: 10px auto 20px auto; }
+        #donut-section h2 { text-align: center; font-size: 1.15em; color: #2c3e50; margin-bottom: 10px; }
+        [data-theme="dark"] #donut-section h2 { color: #e2e8f0; }
+
+        /* ===== Tabela de Balanço (estilo REN) ===== */
+        #balanco-section { width: 95%; max-width: 720px; margin: 10px auto 30px auto; }
+        #balanco-section h2 { text-align: center; font-size: 1.15em; color: #2c3e50; margin-bottom: 12px; }
+        [data-theme="dark"] #balanco-section h2 { color: #e2e8f0; }
+        .tabela-balanco { width: 100%; border-collapse: collapse; font-size: 0.9em; background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .tabela-balanco thead th { background: #343a40; color: #fff; padding: 10px 12px; text-align: left; vertical-align: bottom; }
+        .tabela-balanco thead th small { color: #ccc; font-weight: normal; }
+        .tabela-balanco td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+        .tabela-balanco td.num, .tabela-balanco th.num { text-align: right; font-variant-numeric: tabular-nums; }
+        /* Ponta + Energia a negrito apenas nas linhas cujo nome (1ª coluna) está a negrito */
+        .tabela-balanco .nivel-0 td.num { font-weight: 700; }
+        .tabela-balanco .nivel-1 td.num { font-weight: 600; }
+        /* Níveis hierárquicos */
+        .tabela-balanco .nivel-0 td { border-top: 1px solid #ccc; background: #f1f3f5; }
+        .tabela-balanco .nivel-0 td:first-child { font-weight: 700; text-transform: uppercase; font-size: 0.95em; color: #2c3e50; }
+        .tabela-balanco .nivel-1 td:first-child { font-weight: 600; padding-left: 26px; }
+        .tabela-balanco .nivel-2 td:first-child { padding-left: 44px; color: #444; }
+        .tabela-balanco .bal-consumo td { background: #e9eef2; }
+        .tabela-balanco .bal-consumo td:first-child { color: #2f6b8f; }
+        .bal-notas { font-size: 0.72em; color: #888; margin-top: 8px; line-height: 1.5; }
+        [data-theme="dark"] .tabela-balanco { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .tabela-balanco thead th { background: #0f172a; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-balanco td { border-bottom-color: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-balanco .nivel-0 td { background: #334155; border-top-color: #475569; }
+        [data-theme="dark"] .tabela-balanco .nivel-0 td:first-child { color: #e2e8f0; }
+        [data-theme="dark"] .tabela-balanco .nivel-2 td:first-child { color: #cbd5e1; }
+        [data-theme="dark"] .tabela-balanco .bal-consumo td { background: #2a3f52; }
+        [data-theme="dark"] .bal-notas { color: #94a3b8; }
+
+        /* ===== Subtítulo de secção (data) ===== */
+        .section-sub { text-align: center; font-size: 0.85em; color: #6c757d; margin: -4px 0 12px 0; font-weight: 600; }
+        [data-theme="dark"] .section-sub { color: #94a3b8; }
+
+        /* ===== Botão de alternância do Mix (Produção / Consumo) ===== */
+        .mix-toggle { display: flex; justify-content: center; gap: 0; margin-bottom: 14px; }
+        .mix-toggle-btn { background: #fff; border: 1px solid #cbd5e1; padding: 6px 18px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
+        .mix-toggle-btn:first-child { border-radius: 16px 0 0 16px; }
+        .mix-toggle-btn:last-child { border-radius: 0 16px 16px 0; border-left: none; }
+        .mix-toggle-btn:hover:not(.active) { background: #e2e8f0; }
+        .mix-toggle-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        [data-theme="dark"] .mix-toggle-btn { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mix-toggle-btn:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .mix-toggle-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+        /* ===== Mix: donut + tabela lado-a-lado ===== */
+        .mix-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: center; }
+        @media (max-width: 800px) { .mix-grid { grid-template-columns: 1fr; } }
+        .tabela-mix { width: 100%; border-collapse: collapse; font-size: 0.9em; background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .tabela-mix thead th { background: #343a40; color: #fff; padding: 9px 12px; text-align: left; }
+        .tabela-mix th.num, .tabela-mix td.num { text-align: right; font-variant-numeric: tabular-nums; }
+        .tabela-mix td { padding: 6px 12px; border-bottom: 1px solid #eee; text-align: left; }
+        /* Macro-categorias encostadas à esquerda; sub-fontes recuadas para indicar que pertencem à categoria */
+        .tabela-mix .mix-macro td:first-child { padding-left: 12px; }
+        .tabela-mix .mix-macro td { font-weight: 700; background: #f1f3f5; border-top: 1px solid #ccc; }
+        .tabela-mix .mix-fonte td:first-child { padding-left: 34px; font-weight: 400; }
+        .tabela-mix .mix-total td { font-weight: 700; background: #e9ecef; border-top: 2px solid #ccc; }
+        .tabela-mix .fonte-cor { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
+        [data-theme="dark"] .tabela-mix { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .tabela-mix thead th { background: #0f172a; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-mix td { border-bottom-color: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-mix .mix-macro td { background: #334155; border-top-color: #475569; }
+        [data-theme="dark"] .tabela-mix .mix-total td { background: #334155; border-top-color: #475569; }
+
+        .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
+
+        /* ===== Modo Impressão ===== */
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link,
+            .date-presets, .date-selector, #btn-partilhar-prod, .link-section,
+            .highcharts-exporting-group, .highcharts-button {
+                display: none !important;
+            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .painel-header h1 { font-size: 1.3em !important; }
+            .grafico-wrapper, #donut-section, #prod-kpis { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+            details.faq-item summary { cursor: default; }
+        }
+</style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://www.tiagofelicia.pt/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Balanço Energético vs OMIE",
+      "item": "https://www.tiagofelicia.pt/balanco-omie.html"
+    }
+  ]
+}
+    </script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li>Produção</li>
+        <li aria-current="page">Balanço Energético vs OMIE</li>
+    </ol>
+</nav>
+
+
+<main id="main-content">
+    <div class="painel-header" id="painel-header-main">
+        <div class="date-presets" role="group" aria-label="Atalhos de dia">
+            <button type="button" class="date-preset-btn" data-preset="ontem" title="Dia de ontem">« Ontem</button>
+            <button type="button" class="date-preset-btn" data-preset="hoje" title="Dia de hoje (PT)">Hoje</button>
+        </div>
+
+        <div class="date-selector">
+            <label for="seletor-data">Selecione o dia:</label>
+            <div class="date-nav-wrapper">
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior (tecla ←)" aria-label="Dia anterior">&#10094;</button>
+                <input type="date" id="seletor-data">
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte (tecla →)" aria-label="Dia seguinte">&#10095;</button>
+                <button type="button" id="btn-partilhar-prod" title="Copiar/partilhar link e resumo deste dia" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
+            </div>
+        </div>
+
+        <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
+            Dados históricos disponíveis desde 01/01/2010
+        </p>
+        <h1>Balanço Energético em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">Portugal</span></h1>
+        <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
+        </div>
+
+    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
+
+    <div id="prod-provisorio" role="status" style="display: none;"></div>
+
+    <div id="prod-kpis"></div>
+
+    <div id="insight-producao" style="display: none;" aria-live="polite"></div>
+
+    <div class="grafico-wrapper">
+        <div id="grafico-container"></div>
+    </div>
+
+    <div id="balanco-section" style="display: none;">
+        <h2>Balanço Energético do dia</h2>
+        <div class="section-sub" id="balanco-sub"></div>
+        <div id="tabela-balanco-container"></div>
+    </div>
+
+    <div id="donut-section" style="display: none;">
+        <h2>Mix do dia</h2>
+        <div class="section-sub" id="mix-sub"></div>
+        <div class="mix-toggle" role="group" aria-label="Vista do mix">
+            <button type="button" class="mix-toggle-btn active" data-view="producao">Produção</button>
+            <button type="button" class="mix-toggle-btn" data-view="consumo">Consumo</button>
+        </div>
+        <div class="mix-grid">
+            <div id="grafico-donut-container"></div>
+            <div id="tabela-mix-container"></div>
+        </div>
+    </div>
+
+    <div class="link-section"> <p>https://www.tiagofelicia.pt/balanco-omie.html</p> </div>
+
+    <article class="content-support">
+        <h2>Compreender o Balanço Energético vs Preço OMIE</h2>
+
+        <details class="faq-item">
+            <summary><strong>O que mostra este gráfico (Balanço Energético)?</strong></summary>
+            <div class="faq-content">
+                <p>O gráfico mostra o <strong>balanço energético</strong> do dia selecionado, em intervalos de 15 minutos, cruzando potência (MW) com o preço:</p>
+                <ul>
+                    <li><strong>Áreas positivas (acima de zero):</strong> a <strong>oferta</strong> — potência produzida por cada fonte (Solar, Eólica, Hídrica, Gás, etc.) + Importação + Injeção de Baterias.</li>
+                    <li><strong>Áreas negativas (abaixo de zero):</strong> os <strong>sumidouros</strong> — Bombagem (consumo para bombear água), Exportação e Consumo de Baterias (carregamento). Ocultas por defeito (clique na legenda para mostrar).</li>
+                    <li><strong>Linha de Consumo:</strong> a procura total de eletricidade.</li>
+                    <li><strong>Linha de Consumo + Armazenamento (tracejada):</strong> o consumo mais a energia usada para encher os armazenamentos (bombagem + carregamento de baterias). É a "procura total" da rede, incluindo o que vai para reservas.</li>
+                    <li><strong>Linha vermelha (eixo direito, €/MWh):</strong> o preço do Mercado Diário OMIE para Portugal nessa hora.</li>
+                </ul>
+                <p>Permite ver como o mix de produção e os fluxos de armazenamento/intercâmbio influenciam o preço ao longo do dia.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Porque é que mais renováveis fazem descer o preço?</strong></summary>
+            <div class="faq-content">
+                <p>O preço do mercado grossista é definido pela <strong>"ordem de mérito" (merit order)</strong>: as centrais com custo de produção mais baixo entram primeiro. As renováveis (solar, eólica, hídrica) têm <strong>custo marginal quase nulo</strong> — não pagam combustível.</p>
+                <p>Quando há muita produção renovável (ex: sol forte ao meio-dia), as centrais a gás caras deixam de ser necessárias e o preço <strong>desce</strong>. Quando as renováveis baixam (noite sem sol/vento), entram as centrais a gás e o preço <strong>sobe</strong>. Por isso a linha de preço tende a fazer o "espelho" da produção renovável.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>O que significam "Importação", "Bombagem", "Baterias" e as outras componentes?</strong></summary>
+            <div class="faq-content">
+                <p><strong>Oferta (áreas positivas):</strong></p>
+                <ul>
+                    <li><strong>Renováveis:</strong> Hídrica, Eólica, Solar, Biomassa e Ondas.</li>
+                    <li><strong>Gás Natural:</strong> soma do Ciclo Combinado e da Cogeração. <strong>Outra Térmica:</strong> outras centrais térmicas.</li>
+                    <li><strong>Importação:</strong> energia comprada a Espanha através da interligação.</li>
+                    <li><strong>Injeção de Baterias:</strong> energia armazenada e devolvida à rede (tipicamente nas horas de maior preço).</li>
+                </ul>
+                <p><strong>Sumidouros (áreas negativas):</strong></p>
+                <ul>
+                    <li><strong>Bombagem (consumo):</strong> energia usada para bombear água para albufeiras superiores (armazenamento).</li>
+                    <li><strong>Exportação:</strong> energia vendida a Espanha.</li>
+                    <li><strong>Consumo Baterias:</strong> energia usada para carregar baterias.</li>
+                </ul>
+                <p><strong>Produção por Bombagem:</strong> energia gerada ao turbinar a água previamente bombeada. <strong>Não é renovável</strong> (é energia armazenada da rede). Ver pergunta sobre a % Renováveis.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Como é calculada a "% Renováveis" do dia?</strong></summary>
+            <div class="faq-content">
+                <p>É a percentagem da <strong>produção nacional do dia</strong> que veio de fontes renováveis (Hídrica + Eólica + Solar + Biomassa + Ondas), face à <strong>produção total</strong> (todas as fontes nacionais, incluindo gás e baterias). A <strong>importação não entra</strong> neste cálculo por não ser produção nacional. Este é o valor mostrado nos KPI e na vista <em>Produção</em> do "Mix do dia".</p>
+                <p>No "Mix do dia", o botão <strong>Consumo</strong> acrescenta o <strong>saldo importador</strong> como fatia; mantêm-se os <strong>GWh reais</strong> (iguais ao Balanço) e a percentagem passa a ser sobre o total <em>produção + importação</em>. Por usarmos valores reais (sem escalar ao consumo), estas percentagens <strong>não coincidem</strong> com as publicadas pela REN.</p>
+                <p><strong>Separação da bombagem:</strong> a coluna "Hídrica" dos dados a 15 minutos inclui a turbinagem de hidroelétricas reversíveis (água previamente bombeada). Essa parcela — a <strong>"Produção por Bombagem"</strong> — <strong>não é renovável</strong> (é energia armazenada da rede). Por isso, nos dias completos, subtraímos a "Produção por Bombagem" (valor diário da REN) à Hídrica antes de calcular a % renováveis, obtendo um valor mais rigoroso. A indicação "(s/ bombagem)" aparece quando este ajuste é aplicado.</p>
+                <p>Nota: em dias ainda em curso (provisórios), o ajuste não é aplicado (o valor diário da bombagem só é publicado após o fecho do dia) e os valores são marcados como provisórios.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>De onde vêm os dados?</strong></summary>
+            <div class="faq-content">
+                <p>Os dados de <strong>produção</strong> (15 min) têm origem na <strong>REN</strong> (Repartição da Produção), os de <strong>preço</strong> no <strong>OMIE</strong>, e a <strong>"Produção por Bombagem"</strong> diária no <strong>Balanço Diário da REN</strong>. São processados automaticamente e disponibilizados desde 01/01/2010.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>Como interagir com o gráfico e atalhos?</strong></summary>
+            <div class="faq-content">
+                <ul>
+                    <li><strong>Setas ← / →</strong> (teclado) — dia anterior / seguinte.</li>
+                    <li><strong>Botões « Ontem · Hoje · Mais recente »</strong> — atalhos rápidos.</li>
+                    <li><strong>📤 Partilhar</strong> — copia/partilha um resumo do dia com link direto.</li>
+                    <li><strong>Ctrl+P</strong> — imprime relatório do dia.</li>
+                    <li><strong>Zoom</strong> — arrasta horizontalmente sobre o gráfico para ampliar.</li>
+                </ul>
+            </div>
+        </details>
+    </article>
+
+</main>
+
+<div id="footer-placeholder"></div>
+
+
+<script src="theme.js"></script>
+<script>
+// Define o formato de números PT (sem separador de milhares)
+Highcharts.setOptions({
+    lang: {
+        decimalPoint: ',',
+        thousandsSep: ''
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- 1. VERIFICAÇÃO DE ELEMENTOS HTML ---
+    const seletorData = document.getElementById('seletor-data');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const graficoContainer = document.getElementById('grafico-container');
+
+    if (!seletorData || !loadingIndicator || !graficoContainer) {
+        console.error("ERRO CRÍTICO: IDs 'seletor-data', 'loading-indicator' ou 'grafico-container' não encontrados.");
+        return; 
+    }
+    // --- FIM DA CORREÇÃO ---
+
+
+    // --- 2. CONFIGURAÇÕES ---
+    const ANO_INICIO_HISTORICO = 2010;
+    const URL_BASE = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/";
+    const URL_OMIE_ATUAIS = URL_BASE + "omie_dados_atuais.csv";
+    const URL_OMIE_HISTORICO_BASE = URL_BASE + "omie_historico_";
+    const URL_PRODUCAO_ATUAIS = URL_BASE + "producao_dados_atuais.csv";
+    const URL_PRODUCAO_HISTORICO_BASE = URL_BASE + "producao_historico_";
+    
+    // --- 3. ARMAZENAMENTO DE DADOS ---
+    let dadosOmieAtuais = [];
+    let dadosProducaoAtuais = [];
+    let dadosOmieHistoricos = {};
+    let dadosProducaoHistoricos = {};
+    let anoMinimoAtual = null;
+    let dataMaximaDados = null; // última data com dados (YYYY-MM-DD)
+    let _bombagemDiaria = {};   // { 'DD/MM/YYYY': gwh_string } — Produção por Bombagem (serviço 1363)
+
+    // --- 4. FUNÇÕES AUXILIARES ---
+    function formatarDataParaInput(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('/')) { return null; } const [dia, mes, ano] = dataStr.split('/'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${ano}-${mes}-${dia}`; }
+    function formatarDataParaCSV(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('-')) { return null; } const [ano, mes, dia] = dataStr.split('-'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${dia}/${mes}/${ano}`; }
+    function getLisboaDateString() { const agora = new Date(); return new Date(agora.toLocaleString("en-US", { timeZone: "Europe/Lisbon" })).toLocaleDateString('en-CA'); }
+    
+    function parseCSV(text) {
+        if (text.charCodeAt(0) === 0xFEFF) { text = text.substring(1); }
+        const lines = text.trim().split('\n');
+        if (lines.length < 2) return [];
+        const headers = lines.shift().split(',').map(h => h.trim());
+        
+        return lines
+            .filter(line => line.trim() !== '')
+            .map(line => {
+                const values = line.split(',');
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = values[index] ? values[index].trim() : '';
+                });
+                return obj;
+            });
+    }
+
+    // --- 5. CARREGAMENTO DE DADOS HISTÓRICOS ---
+    async function carregarDadosCombinados(ano) {
+        if (dadosOmieHistoricos[ano] && dadosProducaoHistoricos[ano]) {
+            return; 
+        }
+        loadingIndicator.style.display = 'block';
+        const urlOmie = `${URL_OMIE_HISTORICO_BASE}${ano}.csv`;
+        const urlProducao = `${URL_PRODUCAO_HISTORICO_BASE}${ano}.csv`;
+
+        try {
+            const [respostaOmie, respostaProducao] = await Promise.all([
+                fetch(urlOmie),
+                fetch(urlProducao)
+            ]);
+            if (!respostaOmie.ok) throw new Error(`Falha ao carregar OMIE ${ano}`);
+            if (!respostaProducao.ok) throw new Error(`Falha ao carregar Produção ${ano}`);
+            const textoOmie = await respostaOmie.text();
+            const textoProducao = await respostaProducao.text();
+            dadosOmieHistoricos[ano] = parseCSV(textoOmie);
+            dadosProducaoHistoricos[ano] = parseCSV(textoProducao);
+        } catch (error) {
+            console.error(`Falha ao carregar dados de ${ano}:`, error);
+            dadosOmieHistoricos[ano] = [];
+            dadosProducaoHistoricos[ano] = [];
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+
+    // --- URL state (deep-linking de um dia) ---
+    function lerDataURL() {
+        const params = new URLSearchParams(window.location.search);
+        const data = params.get('data');
+        return (data && /^\d{4}-\d{2}-\d{2}$/.test(data)) ? data : null;
+    }
+    function atualizarURLDia(dataStr, dataMax) {
+        let newURL;
+        if (dataStr === dataMax) {
+            newURL = `${window.location.pathname}${window.location.hash}`;
+        } else {
+            const params = new URLSearchParams();
+            params.set('data', dataStr);
+            newURL = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+        }
+        window.history.replaceState(null, '', newURL);
+    }
+    function _toastFeedback(msg) {
+        const old = document.getElementById('toast-feedback');
+        if (old) old.remove();
+        const t = document.createElement('div');
+        t.id = 'toast-feedback'; t.className = 'toast-feedback'; t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { if (t.parentNode) t.remove(); }, 2500);
+    }
+
+    // --- Produção por Bombagem (diária, serviço 1363) ---
+    function parseBombagemCSV(txt) {
+        _bombagemDiaria = {};
+        const linhas = txt.trim().split('\n');
+        linhas.shift(); // cabeçalho
+        linhas.forEach(l => {
+            const partes = l.split(',');
+            const dia = (partes[0] || '').trim();
+            if (dia) _bombagemDiaria[dia] = (partes[1] || '').trim();
+        });
+    }
+    function carregarBombagem() {
+        // Cache-busting: evita servir uma versão antiga do CSV (browser/CDN)
+        const _bust = '?_=' + Date.now();
+        // Local primeiro (preview/produção mesmo domínio), depois GitHub raw
+        return fetch('data/producao_bombagem_diaria.csv' + _bust, { cache: 'no-store' })
+            .then(r => r.ok ? r.text() : Promise.reject('local'))
+            .catch(() => fetch(URL_BASE + 'producao_bombagem_diaria.csv' + _bust, { cache: 'no-store' }).then(r => r.ok ? r.text() : Promise.reject('raw')))
+            .then(txt => { parseBombagemCSV(txt); })
+            .catch(() => { _bombagemDiaria = {}; /* indisponível — segue sem separar bombagem */ });
+    }
+
+    // --- ANÁLISE: KPIs, Insight, Donut ---
+    const _RENOVAVEIS = ['Hídrica', 'Eólica', 'Solar', 'Biomassa', 'Ondas'];
+    // Fontes para agregação (Gás Natural = soma das 2 colunas)
+    const _FONTES_DONUT = [
+        { nome: 'Solar', cor: '#FFC000' },
+        { nome: 'Eólica', cor: '#C6E0B4' },
+        { nome: 'Hídrica', cor: '#9DC3E6' },
+        { nome: 'Biomassa', cor: '#70AD47' },
+        { nome: 'Ondas', cor: '#00B0F0' },
+        { nome: 'Gás Natural', cor: '#808080' },
+        { nome: 'Carvão', cor: '#C00000' },
+        { nome: 'Outra Térmica', cor: '#C0C0C0' },
+        { nome: 'Importação', cor: '#ED7D31' },
+        { nome: 'Injeção de Baterias', cor: '#38578C' }
+    ];
+
+    function _horaInicioDoIntervalo(intervalo) {
+        const m = (intervalo || '').match(/^\[(\d{2}:\d{2})/);
+        return m ? m[1] : '';
+    }
+
+    function calcularAnaliseProducao(dados, firstNullIndex) {
+        const totais = {};
+        _FONTES_DONUT.forEach(f => totais[f.nome] = 0);
+        let picoRenovavel = 0, picoIntervalo = null;
+        let picoConsumo = 0, picoConsumoIntervalo = null;
+        let picoProducao = 0, picoProducaoIntervalo = null;
+        const precos = [];
+        let count = 0;
+
+        for (let i = 0; i < dados.length && i < firstNullIndex; i++) {
+            const d = dados[i];
+            const get = (c) => parseFloat(d[c]) || 0;
+            totais['Solar']     += get('Solar');
+            totais['Eólica']    += get('Eólica');
+            totais['Hídrica']   += get('Hídrica');
+            totais['Biomassa']  += get('Biomassa');
+            totais['Ondas']     += get('Ondas');
+            totais['Gás Natural'] += get('Gás Natural - Ciclo Combinado') + get('Gás natural - Cogeração');
+            totais['Carvão']    += get('Carvão');
+            totais['Outra Térmica'] += get('Outra Térmica');
+            totais['Importação'] += get('Importação');
+            totais['Injeção de Baterias'] += get('Injeção de Baterias');
+            // Pico renovável instantâneo
+            const r = get('Hídrica') + get('Eólica') + get('Solar') + get('Biomassa') + get('Ondas');
+            if (r > picoRenovavel) { picoRenovavel = r; picoIntervalo = d.intervalo; }
+            // Pico de consumo
+            const cons = get('Consumo');
+            if (cons > picoConsumo) { picoConsumo = cons; picoConsumoIntervalo = d.intervalo; }
+            // Pico de produção total (todas as fontes nacionais)
+            const prodTot = get('Hídrica') + get('Eólica') + get('Solar') + get('Biomassa') + get('Ondas')
+                + get('Gás Natural - Ciclo Combinado') + get('Gás natural - Cogeração')
+                + get('Carvão') + get('Outra Térmica') + get('Injeção de Baterias');
+            if (prodTot > picoProducao) { picoProducao = prodTot; picoProducaoIntervalo = d.intervalo; }
+            // Preço
+            const p = parseFloat(d.preco_pt);
+            if (!isNaN(p)) precos.push(p);
+            count++;
+        }
+
+        // Total = produção NACIONAL (exclui Importação, para alinhar com o Mix "Produção")
+        const totalGeral = Object.entries(totais).reduce((s, [k, v]) => s + (k === 'Importação' ? 0 : v), 0);
+        const renovavel = _RENOVAVEIS.reduce((a, c) => a + (totais[c] || 0), 0);
+        const pctRenovavel = totalGeral > 0 ? renovavel / totalGeral * 100 : 0;
+
+        let fonteDom = null, fonteDomVal = -1;
+        Object.entries(totais).forEach(([k, v]) => { if (k === 'Importação') return; if (v > fonteDomVal) { fonteDomVal = v; fonteDom = k; } });
+        const pctDom = totalGeral > 0 ? fonteDomVal / totalGeral * 100 : 0;
+
+        const precoMedio = precos.length ? precos.reduce((a, b) => a + b, 0) / precos.length : null;
+
+        return { totais, totalGeral, pctRenovavel, fonteDom, pctDom, picoRenovavel, picoIntervalo, picoConsumo, picoConsumoIntervalo, picoProducao, picoProducaoIntervalo, precoMedio, count };
+    }
+
+    // Emoji por fonte (equiparado a balanco-historico.html)
+    const EMOJI_FONTE = {
+        'Solar': '☀️', 'Hídrica': '💧', 'Eólica': '💨', 'Biomassa': '🌿',
+        'Gás Natural': '🔥', 'Outros fósseis': '🏭', 'Carvão': '⚫',
+        'Bombagem': '🔁', 'Baterias': '🔋'
+    };
+
+    // Formatação de energia em GWh com auto-escolha de unidade (equiparado a balanco-historico.html)
+    function formatarEnergiaGWh(gwh) {
+        if (gwh === null || gwh === undefined || !isFinite(gwh)) return '—';
+        if (Math.abs(gwh) >= 1000) return (gwh / 1000).toFixed(2).replace('.', ',') + ' TWh';
+        if (Math.abs(gwh) >= 1)    return gwh.toFixed(1).replace('.', ',') + ' GWh';
+        return Math.round(gwh * 1000).toLocaleString('pt-PT') + ' MWh';
+    }
+
+    function renderKpisProducao(a, dataTitulo, isProvisorio, horaLimite) {
+        const el = document.getElementById('prod-kpis');
+        if (!el) return;
+        if (!a || a.count === 0) { el.innerHTML = ''; return; }
+        const fmtPct = (v) => v.toFixed(1).replace('.', ',') + '%';
+        const fmtMW = (v) => Math.round(v).toLocaleString('pt-PT') + ' MW';
+        const fmtGWh = (v) => v.toFixed(1).replace('.', ',') + ' GWh';
+        const fmtEur = (v) => v === null ? '--' : v.toFixed(2).replace('.', ',') + ' €';
+        const picoHora = a.picoIntervalo ? _horaInicioDoIntervalo(a.picoIntervalo) : '--';
+        const picoConsHora = a.picoConsumoIntervalo ? _horaInicioDoIntervalo(a.picoConsumoIntervalo) : '--';
+        const picoProdHora = a.picoProducaoIntervalo ? _horaInicioDoIntervalo(a.picoProducaoIntervalo) : '--';
+        const sufixo = isProvisorio ? ` (até ${horaLimite || '--:--'})` : ' do dia';
+        const sufixoCurto = isProvisorio ? ` (prov.)` : '';
+        const ctx = isProvisorio ? `até ${horaLimite || '--:--'}` : 'no dia';
+        const pctRen = (a.pctRenovavelFinal !== undefined) ? a.pctRenovavelFinal : a.pctRenovavel;
+        const subRen = a.aplicouBombagem ? `da produção${sufixo} (s/ bombagem)` : `da produção${sufixo}`;
+        const producaoGwh = a.totalGwh || 0;
+        const renovGwh = a.renovGwh || 0;
+        const consumoGwh = a.consumoGwh || 0;
+        const saldo = a.saldoImportadorGwh || 0;
+        const saldoStr = (saldo >= 0 ? '+' : '') + formatarEnergiaGWh(saldo);
+        const saldoSub = (Math.abs(saldo) < 0.005) ? 'equilibrado' : (saldo > 0 ? 'importador líquido' : 'exportador líquido');
+        const fonteDomTxt = a.fonteDom
+            ? `${EMOJI_FONTE[a.fonteDom] || ''} ${a.fonteDom}`.trim()
+            : '--';
+        const card = (cls, label, valor, fs, sub) =>
+            `<div class="prod-kpi-card${cls ? ' ' + cls : ''}"><div class="prod-kpi-label">${label}${sufixoCurto}</div><div class="prod-kpi-value"${fs ? ` style="font-size:${fs};"` : ''}>${valor}</div><div class="prod-kpi-sub">${sub}</div></div>`;
+        el.innerHTML =
+            // Linha 1 (topo de cada coluna)
+            card('kpi-renovavel', '☀️ Renováveis', fmtPct(pctRen), '', subRen) +
+            card('', '🏭 Produção nacional', fmtGWh(producaoGwh), '', 'no dia') +
+            card('kpi-renovavel', '🌱 Produção renovável', fmtGWh(renovGwh), '', a.aplicouBombagem ? `s/ bombagem · ${ctx}` : ctx) +
+            card('', '🔌 Consumo total', fmtGWh(consumoGwh), '', `consumo nacional ${ctx}`) +
+            card('kpi-importador', '🔄 Saldo c/ Espanha', saldoStr, '', saldoSub) +
+            // Linha 2 (por baixo de cada coluna)
+            card('kpi-dominante', '🏆 Fonte dominante', fonteDomTxt, '', `${fmtPct(a.pctDom)} da produção`) +
+            card('', '🔺 Pico produção', fmtMW(a.picoProducao), '', `às ${picoProdHora}`) +
+            card('kpi-renovavel', '⚡ Pico renovável', fmtMW(a.picoRenovavel), '', `às ${picoHora}`) +
+            card('', '📈 Pico consumo', fmtMW(a.picoConsumo), '', `às ${picoConsHora}`) +
+            card('', '💶 Preço médio OMIE', fmtEur(a.precoMedio), '', `média /MWh ${ctx}`);
+    }
+
+    function renderInsightProducao(a, dataTitulo, isProvisorio, horaLimite) {
+        const el = document.getElementById('insight-producao');
+        if (!el) return;
+        if (!a || a.count === 0) { el.style.display = 'none'; return; }
+        const fmtPct = (v) => v.toFixed(0).replace('.', ',') + '%';
+        const fmtMW = (v) => Math.round(v).toLocaleString('pt-PT');
+        const picoHora = a.picoIntervalo ? _horaInicioDoIntervalo(a.picoIntervalo) : '--';
+        // No dia em curso, falar "até agora" em vez de "no dia"
+        const refDia = isProvisorio
+            ? `No dia <strong>${dataTitulo}</strong>, <strong>até às ${horaLimite || '--:--'}</strong>,`
+            : `No dia <strong>${dataTitulo}</strong>,`;
+        const pctRen = (a.pctRenovavelFinal !== undefined) ? a.pctRenovavelFinal : a.pctRenovavel;
+        const partes = [];
+        partes.push(`${refDia} <strong>${fmtPct(pctRen)}</strong> da <strong>produção</strong> de eletricidade em Portugal veio de fontes <strong>renováveis</strong>${a.aplicouBombagem ? ' (já excluindo a turbinagem de bombagem)' : ''}.`);
+        const fonteDomEmoji = a.fonteDom ? `${EMOJI_FONTE[a.fonteDom] || ''} ${a.fonteDom}`.trim() : a.fonteDom;
+        partes.push(`A fonte dominante foi <strong>${fonteDomEmoji}</strong> (${fmtPct(a.pctDom)} da produção).`);
+        partes.push(`O pico de produção renovável foi de <strong>${fmtMW(a.picoRenovavel)} MW</strong> às <strong>${picoHora}</strong>.`);
+        if (a.aplicouBombagem && a.bombagemGwh > 0) {
+            partes.push(`A <strong>Produção por Bombagem</strong> (hídrica reversível, não renovável) foi de <strong>${a.bombagemGwh.toFixed(1).replace('.', ',')} GWh</strong>.`);
+        }
+        if (a.precoMedio !== null) {
+            partes.push(`O preço médio do Mercado Diário OMIE foi de <strong>${a.precoMedio.toFixed(2).replace('.', ',')} €/MWh</strong>.`);
+        }
+        const titulo = isProvisorio ? '📊 Análise do dia (provisória)' : '📊 Análise do dia';
+        let html = `<span class="insight-titulo">${titulo}</span>${partes.join(' ')}`;
+        if (isProvisorio) {
+            html += ` <em style="opacity:0.85;">Valores provisórios — o dia ainda não está completo.</em>`;
+        }
+        el.innerHTML = html;
+        el.style.display = 'block';
+    }
+
+    // === Mix do dia: duas vistas (botão de alternância) ===
+    //  • 'producao': DONUT do mix de produção nacional (sem importação); % sobre o total produzido.
+    //  • 'consumo' : BARRAS com cada fonte em % do CONSUMO (energia real ÷ consumo), com linha aos 100%.
+    //                A produção total pode passar 100% (dias exportadores) ou ficar abaixo (importadores);
+    //                inclui Importação e Exportação, também em % do consumo. Tudo em VALORES REAIS.
+    let _mixView = 'producao';
+    let _mixCtx = null; // { a, dataTitulo, isProvisorio }
+
+    // --- Vista PRODUÇÃO (donut): mix da produção nacional, % sobre o total produzido ---
+    function calcularMix(a) {
+        const QH_H = 0.25;
+        const toGWh = (mw) => mw * QH_H / 1000;
+        const T = a.totais || {};
+        const macros = [
+            { nome: 'Renovável', cor: '#A9D18E', fontes: [
+                { nome: 'Hídrica', gwh: a.hidricaRenovGwh || 0, cor: '#9DC3E6' },
+                { nome: 'Eólica', gwh: toGWh(T['Eólica'] || 0), cor: '#70AD47' },
+                { nome: 'Solar', gwh: toGWh(T['Solar'] || 0), cor: '#FFC000' },
+                { nome: 'Biomassa', gwh: toGWh((T['Biomassa'] || 0) + (T['Ondas'] || 0)), cor: '#C55A11' },
+            ]},
+            { nome: 'Fóssil', cor: '#D9D9D9', fontes: [
+                { nome: 'Gás Natural', gwh: toGWh(T['Gás Natural'] || 0), cor: '#808080' },
+                { nome: 'Outros fósseis', gwh: toGWh((T['Outra Térmica'] || 0) + (T['Carvão'] || 0)), cor: '#BFBFBF' },
+            ]},
+            { nome: 'Armazenamento', cor: '#4472C4', fontes: [
+                { nome: 'Bombagem', gwh: a.aplicouBombagem ? (a.bombagemGwh || 0) : 0, cor: '#2E75B6' },
+                { nome: 'Baterias', gwh: toGWh(T['Injeção de Baterias'] || 0), cor: '#38578C' },
+            ]},
+        ];
+        macros.forEach(m => {
+            m.fontes = m.fontes.filter(x => x.gwh > 0.001);
+            m.gwh = m.fontes.reduce((s, x) => s + x.gwh, 0);
+        });
+        const macrosF = macros.filter(m => m.gwh > 0.001);
+        const total = macrosF.reduce((s, m) => s + m.gwh, 0);
+        return { macros: macrosF, total };
+    }
+
+    function renderMixDonut(mix, dataTitulo, isProvisorio) {
+        const inner = [], outer = [];
+        mix.macros.forEach(m => {
+            outer.push({ name: m.nome, y: m.gwh, color: m.cor });
+            m.fontes.forEach(f => inner.push({ name: f.nome, y: f.gwh, color: f.cor }));
+        });
+        const _dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        const _txtC = _dk ? '#e2e8f0' : '#333';
+        const _bgC = _dk ? '#1e293b' : '#ffffff';
+
+        Highcharts.chart('grafico-donut-container', {
+            chart: { type: 'pie', height: 460, backgroundColor: _bgC, style: { color: _txtC } },
+            title: { text: null },
+            subtitle: { text: '% da produção nacional', style: { color: _txtC, fontSize: '0.8em' } },
+            tooltip: {
+                useHTML: true,
+                pointFormatter: function() {
+                    return `<b>${this.name}</b><br>${this.y.toFixed(2).replace('.', ',')} GWh · ${this.percentage.toFixed(1).replace('.', ',')}%`;
+                }
+            },
+            legend: { itemStyle: { color: _txtC } },
+            plotOptions: { pie: { borderWidth: 1, borderColor: _bgC } },
+            exporting: {
+                filename: `mix-producao-${(dataTitulo || '').replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [
+                {
+                    name: 'Fonte', size: '62%', innerSize: '38%', data: inner,
+                    dataLabels: {
+                        enabled: true, distance: -22, format: '{point.percentage:.0f}%',
+                        style: { color: '#fff', fontSize: '0.72em', fontWeight: 'bold', textOutline: '1px contrast' },
+                        filter: { property: 'percentage', operator: '>', value: 4 }
+                    },
+                    showInLegend: true
+                },
+                {
+                    name: 'Categoria', size: '92%', innerSize: '66%', data: outer,
+                    dataLabels: {
+                        enabled: true, format: '{point.name}<br><b>{point.percentage:.1f}%</b>',
+                        style: { color: _txtC, fontSize: '0.85em', textOutline: 'none' },
+                        connectorColor: _txtC, distance: 20,
+                        filter: { property: 'percentage', operator: '>', value: 1 }
+                    },
+                    showInLegend: false
+                }
+            ]
+        });
+    }
+
+    function renderMixTabela(mix, a, isProvisorio) {
+        const cont = document.getElementById('tabela-mix-container');
+        if (!cont) return;
+        const fG = (v) => v.toFixed(2).replace('.', ',');
+        const fP = (v) => (mix.total > 0 ? (v / mix.total * 100) : 0).toFixed(1).replace('.', ',');
+        const sw = (cor) => `<span class="fonte-cor" style="background:${cor};"></span>`;
+
+        let h = `<table class="tabela-mix"><thead><tr><th>Fonte</th><th class="num">GWh</th><th class="num">%</th></tr></thead><tbody>`;
+        mix.macros.forEach(m => {
+            h += `<tr class="mix-macro"><td>${sw(m.cor)}${m.nome}</td><td class="num">${fG(m.gwh)}</td><td class="num">${fP(m.gwh)}%</td></tr>`;
+            if (m.fontes.length > 1) {
+                m.fontes.forEach(f => {
+                    h += `<tr class="mix-fonte"><td>${sw(f.cor)}${f.nome}</td><td class="num">${fG(f.gwh)}</td><td class="num">${fP(f.gwh)}%</td></tr>`;
+                });
+            }
+        });
+        h += `<tr class="mix-total"><td>Total</td><td class="num">${fG(mix.total)}</td><td class="num">100,0%</td></tr>`;
+        h += `</tbody></table>`;
+        const notas = [];
+        if (a.aplicouBombagem) notas.push('A Hídrica exclui a turbinagem de bombagem (em Armazenamento).');
+        if (isProvisorio) notas.push('Valores provisórios — dia ainda em curso.');
+        if (notas.length) h += `<p class="bal-notas">${notas.join('<br>')}</p>`;
+        cont.innerHTML = h;
+    }
+
+    // --- Vista CONSUMO (barras): cada fonte em % do consumo do dia ---
+    function calcularConsumo(a) {
+        const QH_H = 0.25;
+        const toGWh = (mw) => mw * QH_H / 1000;
+        const T = a.totais || {};
+        const C = a.consumoGwh || 0;
+        const defs = [
+            { nome: 'Hídrica', gwh: a.hidricaRenovGwh || 0, cor: '#9DC3E6', macro: 'Renovável' },
+            { nome: 'Eólica', gwh: toGWh(T['Eólica'] || 0), cor: '#70AD47', macro: 'Renovável' },
+            { nome: 'Solar', gwh: toGWh(T['Solar'] || 0), cor: '#FFC000', macro: 'Renovável' },
+            { nome: 'Biomassa', gwh: toGWh((T['Biomassa'] || 0) + (T['Ondas'] || 0)), cor: '#C55A11', macro: 'Renovável' },
+            { nome: 'Gás Natural', gwh: toGWh(T['Gás Natural'] || 0), cor: '#808080', macro: 'Fóssil' },
+            { nome: 'Outros fósseis', gwh: toGWh((T['Outra Térmica'] || 0) + (T['Carvão'] || 0)), cor: '#BFBFBF', macro: 'Fóssil' },
+            { nome: 'Bombagem', gwh: a.aplicouBombagem ? (a.bombagemGwh || 0) : 0, cor: '#2E75B6', macro: 'Armazenamento' },
+            { nome: 'Baterias', gwh: toGWh(T['Injeção de Baterias'] || 0), cor: '#38578C', macro: 'Armazenamento' },
+        ];
+        const fontes = defs.filter(f => f.gwh > 0.001);
+        const producaoTotal = fontes.reduce((s, f) => s + f.gwh, 0);
+        const coresMacro = { 'Renovável': '#A9D18E', 'Fóssil': '#D9D9D9', 'Armazenamento': '#4472C4' };
+        const macros = ['Renovável', 'Fóssil', 'Armazenamento'].map(mn => {
+            const fs = fontes.filter(f => f.macro === mn);
+            return { nome: mn, cor: coresMacro[mn], fontes: fs, gwh: fs.reduce((s, f) => s + f.gwh, 0) };
+        }).filter(m => m.gwh > 0.001);
+        return {
+            C, fontes, macros, producaoTotal,
+            importacao: a.importacaoGwh || 0,
+            exportacao: a.exportacaoGwh || 0,
+            consumoArmaz: a.consumoArmazGwh || 0,
+            aplicouBombagem: !!a.aplicouBombagem,
+            pct: (g) => C > 0 ? g / C * 100 : 0
+        };
+    }
+
+    function renderConsumoBarras(cons, dataTitulo, isProvisorio) {
+        const _dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        const _txtC = _dk ? '#e2e8f0' : '#333';
+        const _bgC = _dk ? '#1e293b' : '#ffffff';
+        // Ordem de exibição (cima → baixo): Produção total, fontes, Importação, Exportação
+        const itens = [{ name: 'Produção total', gwh: cons.producaoTotal, color: '#475569' }]
+            .concat(cons.fontes.map(f => ({ name: f.nome, gwh: f.gwh, color: f.cor })));
+        if (cons.importacao > 0.001) itens.push({ name: 'Importação', gwh: cons.importacao, color: '#ED7D31' });
+        if (cons.exportacao > 0.001) itens.push({ name: 'Exportação', gwh: cons.exportacao, color: '#8E44AD' });
+        if (cons.consumoArmaz > 0.001) itens.push({ name: 'Para armazenam.', gwh: cons.consumoArmaz, color: '#8497B0' });
+        // No 'bar' do Highcharts, a 1ª categoria fica no TOPO → 'Produção total' em cima.
+        const categorias = itens.map(it => it.name);
+        const dados = itens.map(it => ({ y: cons.pct(it.gwh), color: it.color, gwh: it.gwh }));
+        const maxBar = Math.max(125, ...dados.map(d => d.y)) * 1.12; // folga p/ a linha dos 100% + etiqueta
+        const prodPct = cons.pct(cons.producaoTotal);
+
+        Highcharts.chart('grafico-donut-container', {
+            chart: { type: 'bar', height: 460, backgroundColor: _bgC, style: { color: _txtC } },
+            title: { text: null },
+            subtitle: { text: `% do consumo · Produção = ${prodPct.toFixed(0)}% do consumo`, style: { color: _txtC, fontSize: '0.8em' } },
+            xAxis: { categories: categorias, labels: { style: { color: _txtC, fontSize: '0.8em' } } },
+            yAxis: {
+                min: 0, max: maxBar,
+                title: { text: '% do consumo', style: { color: _txtC } },
+                labels: { format: '{value:.0f}%', style: { color: _txtC } },
+                gridLineColor: _dk ? '#334155' : '#e9ecef',
+                plotLines: [{
+                    value: 100, color: '#e53935', width: 2, dashStyle: 'ShortDash', zIndex: 5,
+                    label: {
+                        useHTML: true, verticalAlign: 'bottom', align: 'right', textAlign: 'right', rotation: 0, x: -5, y: -6,
+                        text: '<span style="background:#c62828;color:#fff;font-weight:bold;padding:1px 6px;border-radius:3px;white-space:nowrap;">Consumo (100%)</span>'
+                    }
+                }]
+            },
+            legend: { enabled: false },
+            tooltip: {
+                useHTML: true,
+                pointFormatter: function () {
+                    return `<b>${this.category}</b><br>${this.gwh.toFixed(2).replace('.', ',')} GWh · ${this.y.toFixed(1).replace('.', ',')}% do consumo`;
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () { return this.y.toFixed(1).replace('.', ',') + '%'; },
+                        style: { color: _txtC, textOutline: 'none', fontSize: '0.72em', fontWeight: 'normal' }
+                    }
+                }
+            },
+            exporting: {
+                filename: `mix-consumo-${(dataTitulo || '').replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [{ name: '% do consumo', data: dados, colorByPoint: true }]
+        });
+    }
+
+    function renderTabelaConsumo(cons, isProvisorio) {
+        const cont = document.getElementById('tabela-mix-container');
+        if (!cont) return;
+        const fG = (v) => v.toFixed(2).replace('.', ',');
+        const fP = (v) => cons.pct(v).toFixed(1).replace('.', ',');
+        const sw = (cor) => `<span class="fonte-cor" style="background:${cor};"></span>`;
+
+        let h = `<table class="tabela-mix"><thead><tr><th>Fonte</th><th class="num">GWh</th><th class="num">% consumo</th></tr></thead><tbody>`;
+        cons.macros.forEach(m => {
+            h += `<tr class="mix-macro"><td>${sw(m.cor)}${m.nome}</td><td class="num">${fG(m.gwh)}</td><td class="num">${fP(m.gwh)}%</td></tr>`;
+            if (m.fontes.length > 1) {
+                m.fontes.forEach(f => {
+                    h += `<tr class="mix-fonte"><td>${sw(f.cor)}${f.nome}</td><td class="num">${fG(f.gwh)}</td><td class="num">${fP(f.gwh)}%</td></tr>`;
+                });
+            }
+        });
+        h += `<tr class="mix-total"><td>Produção total</td><td class="num">${fG(cons.producaoTotal)}</td><td class="num">${fP(cons.producaoTotal)}%</td></tr>`;
+        if (cons.importacao > 0.001) h += `<tr class="mix-fonte"><td>${sw('#ED7D31')}+ Importação</td><td class="num">${fG(cons.importacao)}</td><td class="num">+${fP(cons.importacao)}%</td></tr>`;
+        if (cons.exportacao > 0.001) h += `<tr class="mix-fonte"><td>${sw('#8E44AD')}− Exportação</td><td class="num">${fG(cons.exportacao)}</td><td class="num">−${fP(cons.exportacao)}%</td></tr>`;
+        if (cons.consumoArmaz > 0.001) h += `<tr class="mix-fonte"><td>${sw('#8497B0')}− Consumo p/ armazenamento</td><td class="num">${fG(cons.consumoArmaz)}</td><td class="num">−${fP(cons.consumoArmaz)}%</td></tr>`;
+        h += `<tr class="mix-total"><td>= Consumo</td><td class="num">${fG(cons.C)}</td><td class="num">100,0%</td></tr>`;
+        h += `</tbody></table>`;
+
+        const notas = [];
+        notas.push('Consumo = Produção + Importação − Exportação − Consumo para armazenamento (bombagem + carga de baterias). Pequenos desvios (~0,3%) resultam do arredondamento dos dados a 15 min.');
+        notas.push('A produção total pode passar 100% do consumo (o excedente vai para exportação e armazenamento) ou ficar abaixo (a importação cobre a diferença).');
+        if (cons.aplicouBombagem) notas.push('A Hídrica conta como renovável já sem a turbinagem de bombagem (em Armazenamento).');
+        if (isProvisorio) notas.push('Valores provisórios — dia ainda em curso.');
+        h += `<p class="bal-notas">${notas.join('<br>')}</p>`;
+        cont.innerHTML = h;
+    }
+
+    // Orquestrador: lê _mixCtx + _mixView e desenha a vista certa; atualiza botões e subtítulo (data).
+    function renderMix() {
+        const sec = document.getElementById('donut-section');
+        if (!sec || !_mixCtx) return;
+        const { a, dataTitulo, isProvisorio } = _mixCtx;
+        if (!a || a.totalGeral <= 0) { sec.style.display = 'none'; return; }
+        sec.style.display = 'block';
+
+        sec.querySelectorAll('.mix-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.view === _mixView);
+        });
+        const sub = document.getElementById('mix-sub');
+        if (sub) sub.textContent = dataTitulo + (isProvisorio ? ' · provisório' : '');
+
+        if (_mixView === 'consumo') {
+            const cons = calcularConsumo(a);
+            if (cons.C > 0 && cons.producaoTotal > 0) {
+                renderConsumoBarras(cons, dataTitulo, isProvisorio);
+                renderTabelaConsumo(cons, isProvisorio);
+                return;
+            }
+            // sem dados de consumo → mostra a vista de produção
+        }
+        const mix = calcularMix(a);
+        if (mix.total <= 0) { sec.style.display = 'none'; return; }
+        renderMixDonut(mix, dataTitulo, isProvisorio);
+        renderMixTabela(mix, a, isProvisorio);
+    }
+
+    // Calcula somas (energia) e máximos (ponta) por categoria para o Balanço
+    function calcularBalanco(dados, firstNullIndex) {
+        const QH_H = 0.25;
+        const cols = ['Hídrica', 'Eólica', 'Solar', 'Ondas', 'Biomassa', 'Carvão', 'Outra Térmica', 'Importação', 'Exportação', 'Bombagem', 'Injeção de Baterias', 'Consumo Baterias', 'Consumo'];
+        const somas = {}, maxs = {};
+        cols.forEach(c => { somas[c] = 0; maxs[c] = 0; });
+        somas['Gás Natural'] = 0; maxs['Gás Natural'] = 0;
+        const gmax = { producaoTotal: 0, renovavel: 0, naoRenovavel: 0, consumoArmaz: 0, saldoImp: 0 };
+        let count = 0;
+        for (let i = 0; i < dados.length && i < firstNullIndex; i++) {
+            const d = dados[i];
+            const g = (c) => parseFloat(d[c]) || 0;
+            const gas = g('Gás Natural - Ciclo Combinado') + g('Gás natural - Cogeração');
+            cols.forEach(c => { const v = g(c); somas[c] += v; if (v > maxs[c]) maxs[c] = v; });
+            somas['Gás Natural'] += gas; if (gas > maxs['Gás Natural']) maxs['Gás Natural'] = gas;
+            const renov = g('Hídrica') + g('Eólica') + g('Solar') + g('Ondas') + g('Biomassa');
+            const naoRenov = gas + g('Carvão') + g('Outra Térmica');
+            const prodTotal = renov + naoRenov + g('Injeção de Baterias');
+            const consArmaz = g('Bombagem') + g('Consumo Baterias');
+            const saldo = g('Importação') - g('Exportação');
+            if (renov > gmax.renovavel) gmax.renovavel = renov;
+            if (naoRenov > gmax.naoRenovavel) gmax.naoRenovavel = naoRenov;
+            if (prodTotal > gmax.producaoTotal) gmax.producaoTotal = prodTotal;
+            if (consArmaz > gmax.consumoArmaz) gmax.consumoArmaz = consArmaz;
+            if (saldo > gmax.saldoImp) gmax.saldoImp = saldo;
+            count++;
+        }
+        const en = {};
+        Object.keys(somas).forEach(c => en[c] = somas[c] * QH_H / 1000);
+        return { somas, maxs, gmax, en, count };
+    }
+
+    // Tabela de Balanço (estilo REN): Ponta [MW] + Energia [GWh], hierárquica
+    function renderBalanco(bal, bombagemGwh, isProvisorio) {
+        const sec = document.getElementById('balanco-section');
+        const cont = document.getElementById('tabela-balanco-container');
+        if (!sec || !cont) return;
+        if (!bal || bal.count === 0) { sec.style.display = 'none'; return; }
+        const en = bal.en, mx = bal.maxs, gm = bal.gmax;
+        const fG = (v) => v.toFixed(2).replace('.', ',');
+        const fM = (v) => Math.round(v).toLocaleString('pt-PT');
+        const aplicaBomb = (bombagemGwh !== null && bombagemGwh !== undefined && !isProvisorio);
+        const bomb = aplicaBomb ? Math.min(bombagemGwh, en['Hídrica']) : 0;
+        const hidricaRenov = en['Hídrica'] - bomb;
+        const renovEnergia = (en['Hídrica'] + en['Eólica'] + en['Solar'] + en['Ondas'] + en['Biomassa']) - bomb;
+        const naoRenovEnergia = en['Gás Natural'] + en['Carvão'] + en['Outra Térmica'];
+        const armazEnergia = bomb + en['Injeção de Baterias'];
+        const prodTotalEnergia = renovEnergia + naoRenovEnergia + armazEnergia;
+        const consArmazEnergia = en['Bombagem'] + en['Consumo Baterias'];
+        const saldoEnergia = en['Importação'] - en['Exportação'];
+
+        function row(nome, ponta, energia, classe) {
+            const pStr = (ponta === null || ponta === undefined) ? '—' : fM(ponta);
+            const eStr = (energia === null || energia === undefined) ? '—' : fG(energia);
+            return `<tr class="${classe || ''}"><td>${nome}</td><td class="num">${pStr}</td><td class="num bal-energia">${eStr}</td></tr>`;
+        }
+
+        let h = `<table class="tabela-balanco"><thead><tr><th></th><th class="num">Ponta diária<br><small>[MW]</small></th><th class="num bal-energia">Energia diária<br><small>[GWh]</small></th></tr></thead><tbody>`;
+        h += row('Produção Total', gm.producaoTotal, prodTotalEnergia, 'nivel-0');
+        h += row('Produção Renovável', gm.renovavel, renovEnergia, 'nivel-1');
+        h += row('Hídrica' + (aplicaBomb ? ' ¹' : ''), mx['Hídrica'], hidricaRenov, 'nivel-2');
+        h += row('Eólica', mx['Eólica'], en['Eólica'], 'nivel-2');
+        h += row('Solar', mx['Solar'], en['Solar'], 'nivel-2');
+        h += row('Ondas', mx['Ondas'], en['Ondas'], 'nivel-2');
+        h += row('Biomassa', mx['Biomassa'], en['Biomassa'], 'nivel-2');
+        h += row('Produção não Renovável', gm.naoRenovavel, naoRenovEnergia, 'nivel-1');
+        h += row('Gás Natural', mx['Gás Natural'], en['Gás Natural'], 'nivel-2');
+        h += row('Outra Térmica', mx['Outra Térmica'], en['Outra Térmica'], 'nivel-2');
+        if (en['Carvão'] > 0.001) h += row('Carvão', mx['Carvão'], en['Carvão'], 'nivel-2');
+        h += row('Produção por Armazenamento', null, armazEnergia, 'nivel-1');
+        h += row('Produção por Bombagem' + (aplicaBomb ? '' : ' ²'), null, aplicaBomb ? bomb : null, 'nivel-2');
+        h += row('Injeção de Baterias', mx['Injeção de Baterias'], en['Injeção de Baterias'], 'nivel-2');
+        h += row('Consumo para Armazenamento', gm.consumoArmaz, consArmazEnergia, 'nivel-0');
+        h += row('Bombagem', mx['Bombagem'], en['Bombagem'], 'nivel-2');
+        h += row('Baterias', mx['Consumo Baterias'], en['Consumo Baterias'], 'nivel-2');
+        h += row('Saldo Importador', gm.saldoImp, saldoEnergia, 'nivel-0');
+        h += row('Importação', mx['Importação'], en['Importação'], 'nivel-2');
+        h += row('Exportação', mx['Exportação'], en['Exportação'], 'nivel-2');
+        h += row('Consumo', mx['Consumo'], en['Consumo'], 'nivel-0 bal-consumo');
+        h += `</tbody></table>`;
+
+        const notas = [];
+        if (aplicaBomb) notas.push('¹ Hídrica renovável: a energia já exclui a turbinagem de bombagem; a ponta inclui-a (não é separável a 15 min).');
+        if (!aplicaBomb) notas.push('² Produção por Bombagem indisponível para este dia (valor diário da REN só após o fecho do dia).');
+        if (isProvisorio) notas.push('Valores provisórios — dia ainda em curso.');
+        notas.push('Fontes: REN (produção 15 min e balanço diário) e OMIE.');
+        h += `<p class="bal-notas">${notas.join('<br>')}</p>`;
+        cont.innerHTML = h;
+        sec.style.display = 'block';
+    }
+
+    function atualizarAnaliseProducao(dadosConjugados, firstNullIndex, dataTitulo, isProvisorio, horaLimite) {
+        const a = calcularAnaliseProducao(dadosConjugados, firstNullIndex);
+
+        // === Ajuste com Produção por Bombagem (geração não-renovável dentro da Hídrica) ===
+        // Só aplicável em dias COMPLETOS e com valor diário disponível (serviço 1363).
+        const QH_H = 0.25;
+        const toGWh = (mw) => mw * QH_H / 1000;
+        const hidricaGwh = toGWh(a.totais['Hídrica'] || 0);
+        const renovBrutoGwh = toGWh(_RENOVAVEIS.reduce((s, c) => s + (a.totais[c] || 0), 0));
+        a.totalGwh = toGWh(a.totalGeral);
+        let bombGwh = null;
+        if (!isProvisorio) {
+            const v = _bombagemDiaria[dataTitulo];
+            if (v !== undefined && v !== '' && !isNaN(parseFloat(v))) bombGwh = parseFloat(v);
+        }
+        if (bombGwh !== null) {
+            a.bombagemGwh = Math.min(bombGwh, hidricaGwh); // não exceder a Hídrica total
+            a.hidricaRenovGwh = Math.max(0, hidricaGwh - a.bombagemGwh);
+            a.renovGwh = Math.max(0, renovBrutoGwh - a.bombagemGwh);
+            a.pctRenovavelFinal = a.totalGwh > 0 ? a.renovGwh / a.totalGwh * 100 : 0;
+            a.aplicouBombagem = true;
+        } else {
+            a.bombagemGwh = null;
+            a.hidricaRenovGwh = hidricaGwh;
+            a.renovGwh = renovBrutoGwh;
+            a.pctRenovavelFinal = a.pctRenovavel;
+            a.aplicouBombagem = false;
+        }
+
+        // Banner de provisoriedade
+        const banner = document.getElementById('prod-provisorio');
+        if (banner) {
+            if (isProvisorio && a.count > 0) {
+                banner.innerHTML = `⏳ Valores <strong>provisórios</strong> — dia ainda em curso. Cálculos baseados nos dados disponíveis até às <strong>${horaLimite || '--:--'}</strong>.`;
+                banner.style.display = 'block';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+        // Balanço (também dá o saldo importador e o consumo para o Mix)
+        const bal = calcularBalanco(dadosConjugados, firstNullIndex);
+        a.saldoImportadorGwh = (bal.en['Importação'] || 0) - (bal.en['Exportação'] || 0);
+        a.importacaoGwh = bal.en['Importação'] || 0;
+        a.exportacaoGwh = bal.en['Exportação'] || 0;
+        a.consumoArmazGwh = (bal.en['Bombagem'] || 0) + (bal.en['Consumo Baterias'] || 0); // carga (bombagem + baterias)
+        a.consumoGwh = bal.en['Consumo'] || 0;
+
+        // Fonte dominante coerente com o Mix (Hídrica renovável, bombagem separada) — evita divergência KPI vs tabela
+        const _mixKpi = calcularMix(a);
+        let _domF = null;
+        _mixKpi.macros.forEach(m => m.fontes.forEach(f => { if (!_domF || f.gwh > _domF.gwh) _domF = f; }));
+        if (_domF && _mixKpi.total > 0) { a.fonteDom = _domF.nome; a.pctDom = _domF.gwh / _mixKpi.total * 100; }
+
+        renderKpisProducao(a, dataTitulo, isProvisorio, horaLimite);
+        renderInsightProducao(a, dataTitulo, isProvisorio, horaLimite);
+        renderBalanco(bal, a.bombagemGwh, isProvisorio);
+        // subtítulo (data) do Balanço Energético
+        const balSub = document.getElementById('balanco-sub');
+        if (balSub) balSub.textContent = dataTitulo + (isProvisorio ? ' · provisório' : '');
+        // Mix do dia (donut + tabela) com botão Produção/Consumo
+        _mixCtx = { a, dataTitulo, isProvisorio };
+        renderMix();
+        // Título dinâmico da tab
+        const pctTitulo = (a && a.pctRenovavelFinal !== undefined) ? a.pctRenovavelFinal : (a ? a.pctRenovavel : 0);
+        const pct = a && a.count ? Math.round(pctTitulo) + '% renov.' : '';
+        document.title = `Produção PT ${dataTitulo}${pct ? ' · ' + pct : ''}${isProvisorio ? ' (prov.)' : ''} — Tiago Felícia`;
+    }
+
+    // --- 6. FUNÇÃO PRINCIPAL (ATUALIZAR DASHBOARD) ---
+    async function atualizarDashboard(dataSelecionada) {
+        
+        const dataFormatadaCSV = formatarDataParaCSV(dataSelecionada);
+        if (!dataFormatadaCSV) return;
+
+        const dataTituloSpan = document.getElementById('data-titulo-painel');
+        if (!dataTituloSpan) {
+            console.error("ERRO: 'data-titulo-painel' não encontrado em atualizarDashboard.");
+            return;
+        }
+        // Obtemos o pai (que agora é H1)
+        const tituloPrincipal = dataTituloSpan.parentElement;
+        
+        // 1. "Resetar" o título (remove o "até hh:mm" antigo)
+        tituloPrincipal.innerHTML = `Balanço Energético em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span>`;
+
+
+        loadingIndicator.style.display = 'block';
+
+        const anoSelecionado = parseInt(dataSelecionada.substring(0, 4));
+
+        const agoraLisboa = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+        const hojeFormatado = agoraLisboa.toLocaleDateString('en-CA');
+        const isHoje = (dataSelecionada === hojeFormatado);
+
+        let fonteDadosOmie, fonteDadosProducao;
+
+        if (anoSelecionado >= anoMinimoAtual) {
+            fonteDadosOmie = dadosOmieAtuais;
+            fonteDadosProducao = dadosProducaoAtuais;
+        } else {
+            await carregarDadosCombinados(anoSelecionado);
+            fonteDadosOmie = dadosOmieHistoricos[anoSelecionado];
+            fonteDadosProducao = dadosProducaoHistoricos[anoSelecionado];
+        }
+
+        if (!fonteDadosOmie || !fonteDadosProducao || fonteDadosOmie.length === 0 || fonteDadosProducao.length === 0) {
+            loadingIndicator.style.display = 'none';
+            graficoContainer.innerHTML = `<p style="color:red; text-align:center;">Dados não disponíveis para ${dataFormatadaCSV}.</p>`;
+            return;
+        }
+
+        const dadosOmieDoDia = fonteDadosOmie.filter(d => d.dia === dataFormatadaCSV);
+        const dadosProducaoDoDia = fonteDadosProducao.filter(d => d.dia === dataFormatadaCSV);
+
+        if (dadosOmieDoDia.length === 0 && dadosProducaoDoDia.length === 0) {
+            loadingIndicator.style.display = 'none';
+            graficoContainer.innerHTML = `<p style="color:orange; text-align:center;">Não existem dados de produção ou OMIE para ${dataFormatadaCSV}.</p>`;
+            return;
+        }
+
+        const dadosConjugados = [];
+        for (const prodReg of dadosProducaoDoDia) {
+            const omieReg = dadosOmieDoDia.find(d => d.intervalo === prodReg.intervalo);
+            if (omieReg) {
+                dadosConjugados.push({ ...omieReg, ...prodReg });
+            } else {
+                dadosConjugados.push({ ...prodReg });
+            }
+        }
+        if (dadosConjugados.length === 0 && dadosOmieDoDia.length > 0) {
+            dadosOmieDoDia.forEach(reg => dadosConjugados.push(reg));
+        }
+
+        // --- Passar o elemento H1 para a função ---
+        atualizarGrafico(dadosConjugados, dataFormatadaCSV, tituloPrincipal);
+        loadingIndicator.style.display = 'none';
+    }
+
+
+// --- 7. O GRÁFICO (HIGHCHARTS) ---
+    function atualizarGrafico(dadosConjugados, dataTitulo, tituloPrincipal) {
+        
+        let firstNullIndex = dadosConjugados.findIndex(d => (parseFloat(d.Biomassa) || 0) === 0);
+        if (firstNullIndex === -1) {
+            firstNullIndex = 96; 
+        }
+
+
+        const paraNumeroComCorte = (val, index) => {
+            if (index >= firstNullIndex) { return null; }
+            const num = parseFloat(val);
+            return isNaN(num) ? null : num;
+        };
+        // Para os sumidouros (consumo): valores negativos no balanço
+        const negar = (val, index) => {
+            const n = paraNumeroComCorte(val, index);
+            return n === null ? null : -n;
+        };
+
+        const categoriasX = dadosConjugados.map(d => d.intervalo);
+
+        const gasNaturalSerie = dadosConjugados.map((d, i) => {
+            const cc = paraNumeroComCorte(d['Gás Natural - Ciclo Combinado'], i) || 0;
+            const cog = paraNumeroComCorte(d['Gás natural - Cogeração'], i) || 0;
+            if (i >= firstNullIndex && cc === 0 && cog === 0) { return null; }
+            return cc + cog;
+        });
+        
+        const precosOmieValidos = dadosConjugados
+            .map((d, i) => paraNumeroComCorte(d.preco_pt, i))
+            .filter(p => p !== null);
+
+        const maxOmie = precosOmieValidos.length > 0 ? precosOmieValidos.reduce((a, b) => Math.max(a, b), -Infinity) : null;
+        const minOmie = precosOmieValidos.length > 0 ? precosOmieValidos.reduce((a, b) => Math.min(a, b), Infinity) : null;
+
+        const plotLinesOMIE = [];
+        const formatarPlotLine = (val) => Highcharts.numberFormat(val, 2, ',', '');
+        const _dkLinha = document.documentElement.getAttribute('data-theme') === 'dark';
+        const _haloCor = _dkLinha ? '#0f172a' : '#ffffff';
+
+        // Adiciona uma linha de preço (Máx/Mín) com halo de contraste + etiqueta em caixa sólida,
+        // para se destacar das áreas coloridas onde muitas vezes fica camuflada.
+        function adicionarLinhaPreco(valor, corLinha, corCaixa, prefixo, tipo) {
+            // Linhas de referência ACIMA das áreas (zIndex 3-4) mas ABAIXO da linha do preço OMIE
+            // (zIndex 5), para nunca a taparem quando o preço fica no mínimo/máximo.
+            // Têm id para poderem ser removidas/repostas conforme a série do preço esteja oculta/visível.
+            plotLinesOMIE.push({ id: 'omie-' + tipo + '-halo', value: valor, color: _haloCor, width: 4, zIndex: 3 });
+            plotLinesOMIE.push({
+                id: 'omie-' + tipo,
+                value: valor, color: corLinha, width: 2, dashStyle: 'ShortDash', zIndex: 4,
+                label: {
+                    useHTML: true,
+                    text: '<span style="background:' + corCaixa + ';color:#fff;font-weight:bold;'
+                        + 'padding:1px 6px;border-radius:3px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.35);">'
+                        + prefixo + formatarPlotLine(valor) + ' €</span>',
+                    align: 'right', x: -6, y: -3
+                }
+            });
+        }
+
+        if (maxOmie !== null) adicionarLinhaPreco(maxOmie, '#e53935', '#c62828', 'Máx: ', 'max');
+        if (minOmie !== null) adicionarLinhaPreco(minOmie, '#2e9e3f', '#1b7a2b', 'Mín: ', 'min');
+        
+        
+        let tituloGrafico = `Balanço Energético em Portugal vs Preços Mercado Diário OMIE para ${dataTitulo}`;
+        let hhmmLimite;
+
+        if (firstNullIndex >= 96) {
+            hhmmLimite = '2400';
+        } else {
+            const totalMinutos = firstNullIndex * 15;
+            const horas = Math.floor(totalMinutos / 60);
+            const minutos = totalMinutos % 60;
+            
+            const hh = String(horas).padStart(2, '0');
+            const mm = String(minutos).padStart(2, '0');
+            hhmmLimite = hh + mm;
+            
+            const horaLimiteStr = hh + ':' + mm;
+            
+            // Atualiza o H1 com a hora limite se não for o dia todo
+            tituloPrincipal.innerHTML = `Balanço Energético em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">${dataTitulo}</span> (até ${horaLimiteStr})`;
+            tituloGrafico = `Balanço Energético em Portugal vs Preços Mercado Diário OMIE para ${dataTitulo} (até ${horaLimiteStr})`;
+        }
+
+        const nomeFicheiroBase = `Balanço Energético vs OMIE Spot_${dataTitulo.replace(/\//g, '')}_${hhmmLimite}`;
+
+        const _dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        const _txtC = _dk ? '#e2e8f0' : '#333';
+        const _bgC = _dk ? '#1e293b' : '#ffffff';
+
+        try {
+            Highcharts.chart('grafico-container', {
+                
+                chart: {
+                    type: 'area', zoomType: 'x', height: 800, backgroundColor: _bgC, style: { color: _txtC },
+                    events: {
+                        // Alinha o 0 do eixo da Produção (MW) com o 0 do eixo do Preço (OMIE),
+                        // mesmo ao ligar/desligar as áreas negativas (sumidouros). Recalcula a cada
+                        // redesenho com base nos dados visíveis; usa a maior fração negativa dos dois
+                        // eixos para nunca cortar dados.
+                        render: function () {
+                            const chart = this;
+                            if (chart._alinhandoZero) return;
+                            const yp = chart.yAxis[0], yo = chart.yAxis[1];
+                            if (!yp || yp.dataMax == null) return;
+                            const pad = 1.04;
+                            const pdmax = Math.max(yp.dataMax, 1e-6);
+                            const pdmin = Math.min(yp.dataMin, 0);
+                            const hasProdNeg = pdmin < -1;                       // sumidouros (negativos) visíveis?
+                            const oHasData = !!(yo && yo.dataMax != null);
+                            const odmax = oHasData ? Math.max(yo.dataMax, 1e-6) : null;
+                            const odmin = oHasData ? Math.min(yo.dataMin, 0) : null;
+
+                            let pMaxN, pMinN, oMaxN, oMinN;
+                            if (hasProdNeg && oHasData) {
+                                // Alinhar o zero dos dois eixos — só quando há negativos de PRODUÇÃO.
+                                // Usa a maior fração negativa para não cortar dados (ex.: preço negativo).
+                                const fProd = (pdmax - pdmin) > 0 ? -pdmin / (pdmax - pdmin) : 0;
+                                const fPrice = (odmax - odmin) > 0 ? -odmin / (odmax - odmin) : 0;
+                                const fZero = Math.max(fProd, fPrice, 0);
+                                const k = fZero < 0.999 ? fZero / (1 - fZero) : 0; // min = -k * max
+                                pMaxN = pdmax * pad; pMinN = -k * pMaxN;
+                                oMaxN = odmax * pad; oMinN = -k * oMaxN;
+                            } else {
+                                // Sem negativos de produção: cada eixo na sua escala natural.
+                                // (Produção a partir de 0; preço a partir de 0 se não houver preços negativos.)
+                                pMaxN = pdmax * pad; pMinN = hasProdNeg ? pdmin * pad : 0;
+                                if (oHasData) { oMaxN = odmax * pad; oMinN = (odmin < 0) ? odmin * pad : 0; }
+                            }
+
+                            const tolP = Math.max(1, pdmax * 0.004);
+                            const dif = (a, b, t) => (a == null) || Math.abs(a - b) > t;
+                            let mudar = dif(yp.min, pMinN, tolP) || dif(yp.max, pMaxN, tolP);
+                            if (oHasData) {
+                                const tolO = Math.max(0.05, odmax * 0.004);
+                                mudar = mudar || dif(yo.min, oMinN, tolO) || dif(yo.max, oMaxN, tolO);
+                            }
+                            if (mudar) {
+                                chart._alinhandoZero = true;
+                                yp.setExtremes(pMinN, pMaxN, false, false);
+                                if (oHasData) yo.setExtremes(oMinN, oMaxN, false, false);
+                                chart.redraw(false);
+                                chart._alinhandoZero = false;
+                            }
+                        }
+                    }
+                },
+                title: { text: tituloGrafico, style: { color: _txtC } },
+                subtitle: { text: 'Pode arrastar horizontalmente no gráfico para fazer zoom.', style: { color: _txtC } },
+
+                xAxis: { categories: categoriasX, labels: { rotation: -45, step: 4, align: 'right', style: { color: _txtC } } },
+                
+                yAxis: [
+                    {
+                        title: { text: 'Produção (MW)', style: { color: _txtC } },
+                        labels: { format: '{value:.0f} MW', style: { color: _txtC } },
+                        opposite: false,
+                        // extremos definidos no handler 'render' (alinhamento do zero) — sem arredondar a ticks
+                        startOnTick: false, endOnTick: false
+                    },
+                    {
+                        title: { text: 'Preço OMIE (€/MWh)', style: { color: _txtC } },
+                        labels: { format: '{value:.0f} €', style: { color: _txtC } },
+                        opposite: true,
+                        startOnTick: false, endOnTick: false,
+                        plotLines: plotLinesOMIE
+                    }
+                ],
+                
+                tooltip: {
+                    shared: true,
+                    formatter: function () {
+                        let s = '<b>' + this.points[0].key + '</b>';
+                        
+                        this.points.reverse().forEach((point) => {
+                            s += '<br/>';
+                            s += '<span style="color:' + point.series.color + '">\u25CF</span> ';
+                            s += point.series.name + ': ';
+                            
+                            if (point.series.yAxis.index === 0) {
+                                s += '<b>' + Highcharts.numberFormat(point.y, 0, ',', '') + ' MW</b>';
+                            } else {
+                                s += '<b>' + Highcharts.numberFormat(point.y, 2, ',', '') + ' €/MWh</b>';
+                            }
+                        });
+                        return s;
+                    }
+                },
+
+                exporting: {
+                    filename: nomeFicheiroBase,
+                    csv: {
+                        columnHeaderFormatter: function(item, key) {
+
+                            if (item && item.name) {
+                                return item.name;
+                            } else {
+                                // Senão, é a coluna da categoria (Eixo X)
+                                return 'Hora';
+                            }
+                        }
+                    }
+                },
+
+                plotOptions: { 
+                    area: { stacking: 'normal', lineColor: '#666666', lineWidth: 1, marker: { enabled: false }, connectNulls: false },
+                    line: { connectNulls: false }
+                },
+                legend: { itemStyle: { color: _txtC } },
+                
+                series: [
+                    // (Ordem e cores)
+                    { name: 'Solar', type: 'area', yAxis: 0, stack: 'producao', color: '#FFC000', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Solar, i)) },
+                    { name: 'Hídrica', type: 'area', yAxis: 0, stack: 'producao', color: '#9DC3E6', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Hídrica, i)) },
+                    { name: 'Importação', type: 'area', yAxis: 0, stack: 'producao', color: '#ED7D31', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Importação, i)) },
+                    { name: 'Eólica', type: 'area', yAxis: 0, stack: 'producao', color: '#C6E0B4', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Eólica, i)) },
+                    { name: 'Gás Natural', type: 'area', yAxis: 0, stack: 'producao', color: '#808080', data: gasNaturalSerie },
+                    { name: 'Outra Térmica', type: 'area', yAxis: 0, stack: 'producao', color: '#C0C0C0', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d['Outra Térmica'], i)) },
+                    { name: 'Carvão', type: 'area', yAxis: 0, stack: 'producao', color: '#C00000', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Carvão, i)) },
+                    { name: 'Biomassa', type: 'area', yAxis: 0, stack: 'producao', color: '#70AD47', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Biomassa, i)) },
+                    { name: 'Ondas', type: 'area', yAxis: 0, stack: 'producao', color: '#00B0F0', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Ondas, i)) },
+                    { name: 'Injeção de Baterias', type: 'area', yAxis: 0, stack: 'producao', color: '#38578C', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d['Injeção de Baterias'], i)) },
+                    // --- Sumidouros (consumo): áreas negativas, stack próprio, OCULTAS por defeito ---
+                    { name: 'Bombagem (consumo)', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#2E75B6', visible: false, data: dadosConjugados.map((d, i) => negar(d['Bombagem'], i)) },
+                    { name: 'Consumo Baterias', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#D63384', visible: false, data: dadosConjugados.map((d, i) => negar(d['Consumo Baterias'], i)) },
+                    { name: 'Exportação', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#8E44AD', visible: false, data: dadosConjugados.map((d, i) => negar(d['Exportação'], i)) },
+                    // --- Linha de Consumo total (LIGADA por defeito) ---
+                    {
+                        name: 'Consumo',
+                        type: 'line', yAxis: 0,
+                        color: _dk ? '#e2e8f0' : '#000000',
+                        lineWidth: 2,
+                        visible: true,
+                        data: dadosConjugados.map((d, i) => paraNumeroComCorte(d['Consumo'], i)),
+                        zIndex: 5, marker: { enabled: false }
+                    },
+                    // --- Linha de Consumo + Armazenamento (= Consumo + Bombagem + Consumo Baterias) ---
+                    {
+                        name: 'Consumo + Armazenamento',
+                        type: 'line', yAxis: 0,
+                        color: _dk ? '#2dd4bf' : '#0E7C7B',
+                        lineWidth: 2,
+                        dashStyle: 'ShortDash',
+                        visible: true,
+                        data: dadosConjugados.map((d, i) => {
+                            const c = paraNumeroComCorte(d['Consumo'], i);
+                            if (c === null) return null;
+                            const b = paraNumeroComCorte(d['Bombagem'], i) || 0;
+                            const cb = paraNumeroComCorte(d['Consumo Baterias'], i) || 0;
+                            return c + b + cb;
+                        }),
+                        zIndex: 4, marker: { enabled: false }
+                    },
+                    {
+                        name: 'Preço OMIE (PT)',
+                        type: 'line', yAxis: 1,
+                        color: '#FF0000',
+                        lineWidth: 3,
+                        data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.preco_pt, i)),
+                        zIndex: 5, marker: { enabled: false },
+                        events: {
+                            // As linhas Máx/Mín só fazem sentido com o preço visível.
+                            hide: function () {
+                                this.chart.yAxis[1].update({ plotLines: [] }, true);
+                            },
+                            show: function () {
+                                this.chart.yAxis[1].update({ plotLines: plotLinesOMIE }, true);
+                            }
+                        }
+                    }
+                ]
+            });
+        } catch (e) {
+            console.error("Erro ao criar gráfico Highcharts:", e);
+        }
+
+        // KPIs + Insight + Donut do dia (com info de provisoriedade)
+        const isProvisorio = firstNullIndex < 96;
+        let horaLimiteAnalise = null;
+        if (isProvisorio) {
+            const totalMin = firstNullIndex * 15;
+            horaLimiteAnalise = String(Math.floor(totalMin / 60)).padStart(2, '0') + ':' + String(totalMin % 60).padStart(2, '0');
+        }
+        atualizarAnaliseProducao(dadosConjugados, firstNullIndex, dataTitulo, isProvisorio, horaLimiteAnalise);
+    }
+
+
+    // --- 8. PROCESSO DE INICIALIZAÇÃO ---
+    const dataDeHoje = getLisboaDateString();
+
+    Promise.all([
+        fetch(URL_OMIE_ATUAIS),
+        fetch(URL_PRODUCAO_ATUAIS)
+    ])
+    .then(async ([respostaOmie, respostaProducao]) => {
+        if (!respostaOmie.ok) throw new Error("Falha ao carregar OMIE atuais");
+        if (!respostaProducao.ok) throw new Error("Falha ao carregar Produção atuais");
+
+        const textoOmie = await respostaOmie.text();
+        const textoProducao = await respostaProducao.text();
+
+        const tabelasOmie = textoOmie.split('\nTABELA_');
+        const precosOmieCSV = tabelasOmie[0];
+        
+        dadosOmieAtuais = parseCSV(precosOmieCSV);
+        dadosProducaoAtuais = parseCSV(textoProducao);
+        
+        if (!dadosOmieAtuais || dadosOmieAtuais.length === 0) {
+             throw new Error("Ficheiro OMIE atual está vazio ou é inválido após 'parse'.");
+        }
+        
+        const anosNoFicheiroAtual = [...new Set(dadosOmieAtuais.map(d => d.dia ? d.dia.substring(6, 10) : null))];
+        const anosAtuaisValidos = anosNoFicheiroAtual
+            .filter(ano => ano && !isNaN(parseInt(ano)))
+            .map(ano => parseInt(ano));
+
+        if (anosAtuaisValidos.length === 0) {
+            throw new Error("Não foi possível encontrar nenhum ano válido no ficheiro OMIE atual.");
+        }
+        
+        anoMinimoAtual = Math.min(...anosAtuaisValidos);
+
+        
+        const ultimoRegisto = dadosOmieAtuais[dadosOmieAtuais.length - 1];
+        if (!ultimoRegisto || !ultimoRegisto.dia) {
+             throw new Error("Último registo do OMIE é inválido ou não tem 'dia'.");
+        }
+        
+        const dataMaxDoFicheiro = formatarDataParaInput(ultimoRegisto.dia);
+        if (!dataMaxDoFicheiro) {
+            console.error("Valor que falhou no 'formatarDataParaInput':", ultimoRegisto.dia);
+            throw new Error("Data máxima inválida no ficheiro OMIE.");
+        }
+
+        seletorData.min = `${ANO_INICIO_HISTORICO}-01-01`;
+        seletorData.max = dataDeHoje;
+        dataMaximaDados = dataMaxDoFicheiro;
+
+        let dataParaSelecionar = dataDeHoje;
+        if (dataDeHoje > dataMaxDoFicheiro) {
+            dataParaSelecionar = dataMaxDoFicheiro;
+        }
+
+        // URL state: se ?data= válido e dentro do intervalo, aplicar
+        const dataURL = lerDataURL();
+        if (dataURL && dataURL >= seletorData.min && dataURL <= dataMaxDoFicheiro) {
+            dataParaSelecionar = dataURL;
+        }
+
+        seletorData.value = dataParaSelecionar;
+        atualizarURLDia(dataParaSelecionar, dataMaxDoFicheiro);
+
+        seletorData.addEventListener('change', (e) => {
+            atualizarURLDia(e.target.value, dataMaximaDados);
+            atualizarBotoesPresetDia();
+            atualizarDashboard(e.target.value);
+        });
+
+        // Botões pré-definidos (Ontem / Hoje)
+        configurarBotoesPreset();
+        atualizarBotoesPresetDia();
+
+        // Carregar Produção por Bombagem (diária) antes da 1ª análise
+        await carregarBombagem();
+
+        atualizarDashboard(dataParaSelecionar);
+
+    })
+    .catch(error => {
+        console.error('Falha CRÍTICA na inicialização:', error);
+        const mainElement = document.querySelector('main');
+        if (mainElement) {
+            mainElement.innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.<br><small>${error.message}</small></p>`;
+        }
+    });
+
+    // Reagir a mudanças de tema (dark mode toggle)
+    document.addEventListener('themeChanged', function() {
+        if (seletorData.value) atualizarDashboard(seletorData.value);
+    });
+
+    // --- Lógica das Setas de Navegação ---
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+
+    function alterarData(dias) {
+        if (!seletorData.value) return; // Evita erros se o campo estiver vazio
+
+        // Separar ano, mês e dia para evitar problemas de mudança de hora (ex: 29 de Março)
+        const partes = seletorData.value.split('-');
+        const dataAtual = new Date(partes[0], partes[1] - 1, partes[2]);
+        
+        // Somar ou subtrair o dia
+        dataAtual.setDate(dataAtual.getDate() + dias);
+        
+        // Reconstruir a string no formato AAAA-MM-DD
+        const y = dataAtual.getFullYear();
+        const m = String(dataAtual.getMonth() + 1).padStart(2, '0');
+        const d = String(dataAtual.getDate()).padStart(2, '0');
+        const novaDataStr = `${y}-${m}-${d}`;
+
+        // Validar limites antes de aplicar
+        if (novaDataStr >= seletorData.min && novaDataStr <= seletorData.max) {
+            seletorData.value = novaDataStr;
+            seletorData.dispatchEvent(new Event('change')); // Dispara a atualização dos gráficos
+        }
+    }
+
+    btnPrev.addEventListener('click', () => alterarData(-1));
+    btnNext.addEventListener('click', () => alterarData(1));
+
+    // === Botão de alternância do Mix (Produção / Consumo) ===
+    document.querySelectorAll('.mix-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const v = btn.dataset.view;
+            if (!v || v === _mixView) return;
+            _mixView = v;
+            renderMix();
+        });
+    });
+
+    // === Botões pré-definidos (Ontem / Hoje / Mais recente) ===
+    function getHojeLisboaYYYYMMDD() {
+        const ag = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Lisbon" }));
+        return `${ag.getFullYear()}-${String(ag.getMonth() + 1).padStart(2, '0')}-${String(ag.getDate()).padStart(2, '0')}`;
+    }
+    function deslocarDiaISO(iso, n) {
+        const d = new Date(iso + "T12:00:00Z");
+        d.setUTCDate(d.getUTCDate() + n);
+        return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+    }
+    function atualizarBotoesPresetDia() {
+        const hoje = getHojeLisboaYYYYMMDD();
+        const ontem = deslocarDiaISO(hoje, -1);
+        const min = seletorData.min;
+        const max = dataMaximaDados || seletorData.max;
+        const atual = seletorData.value;
+        const map = { ontem, hoje };
+        document.querySelectorAll('.date-preset-btn').forEach(btn => {
+            const preset = btn.dataset.preset;
+            const target = map[preset];
+            if (!target) return;
+            const fora = (target < min) || (target > max);
+            btn.disabled = fora;
+            btn.classList.toggle('active', !fora && target === atual);
+        });
+    }
+    function configurarBotoesPreset() {
+        document.querySelectorAll('.date-preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.disabled) return;
+                const preset = btn.dataset.preset;
+                const hoje = getHojeLisboaYYYYMMDD();
+                const max = dataMaximaDados || seletorData.max;
+                let target = null;
+                if (preset === 'ontem') target = deslocarDiaISO(hoje, -1);
+                else if (preset === 'hoje') target = hoje;
+                if (!target) return;
+                if (target < seletorData.min) target = seletorData.min;
+                if (target > max) target = max;
+                seletorData.value = target;
+                seletorData.dispatchEvent(new Event('change'));
+            });
+        });
+    }
+
+    // === Atalhos de teclado ←/→ ===
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+        const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+        if (e.target && e.target.isContentEditable) return;
+        if (e.key === 'ArrowLeft') { e.preventDefault(); alterarData(-1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); alterarData(1); }
+    });
+
+    // === Botão Partilhar ===
+    const btnPartilhar = document.getElementById('btn-partilhar-prod');
+    if (btnPartilhar) {
+        btnPartilhar.addEventListener('click', async () => {
+            atualizarURLDia(seletorData.value, dataMaximaDados);
+            const url = window.location.href;
+            const dataCSV = formatarDataParaCSV(seletorData.value) || seletorData.value;
+            const kpiRenovavel = document.querySelector('.kpi-renovavel .prod-kpi-value');
+            const renovTxt = kpiRenovavel ? kpiRenovavel.textContent.trim() : '--';
+            const titulo = 'Produção vs OMIE (Tiago Felícia)';
+            const resumo = `⚡ Produção de eletricidade PT — ${dataCSV}\nRenováveis: ${renovTxt} da produção`;
+            const textoCompleto = `${resumo}\n${url}`;
+            if (navigator.share) {
+                try { await navigator.share({ title: titulo, text: resumo, url }); return; }
+                catch(e) { if (e && e.name === 'AbortError') return; }
+            }
+            try { await navigator.clipboard.writeText(textoCompleto); _toastFeedback('✓ Link e resumo copiados'); return; } catch(e) {}
+            try {
+                const ta = document.createElement('textarea'); ta.value = textoCompleto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+                document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                _toastFeedback('✓ Link e resumo copiados');
+            } catch(e) { prompt('Copie este link:', textoCompleto); }
+        });
+    }
+
+    // === Modo impressão: abrir FAQ ===
+    window.addEventListener('beforeprint', function() {
+        document.querySelectorAll('details.faq-item').forEach(d => { if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; } });
+    });
+    window.addEventListener('afterprint', function() {
+        document.querySelectorAll('details.faq-item[data-opened-for-print="1"]').forEach(d => { d.removeAttribute('open'); delete d.dataset.openedForPrint; });
+    });
+    // -------------------------------------
+});
+</script>
+
+<script src="script.js"></script>
+
+<script src="cookie-consent.js"></script>
+</body>
+</html>

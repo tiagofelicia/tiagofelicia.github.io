@@ -36,6 +36,17 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(function (error) { console.error('Erro ao carregar o menu:', error); });
     }
 
+    // --- GLOSSÁRIO (decoração global de termos técnicos) ---
+    // Injetar glossario.js apenas se ainda não estiver carregado e se a página tiver <main>.
+    // O próprio script respeita o toggle do utilizador (localStorage tf_glossario_decoracao).
+    if (!window._glossarioJSLoaded && (document.getElementById('main-content') || document.querySelector('main'))) {
+        window._glossarioJSLoaded = true;
+        var glScript = document.createElement('script');
+        glScript.src = '/glossario.js';
+        glScript.defer = true;
+        document.body.appendChild(glScript);
+    }
+
     // --- FOOTER ---
     var footerPlaceholder = document.getElementById('footer-placeholder');
     if (footerPlaceholder) {

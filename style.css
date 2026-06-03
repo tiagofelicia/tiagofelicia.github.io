@@ -153,7 +153,7 @@ section {
 }
 
 /* Estilos para Títulos Principais (H1) e Secundários (H2) das páginas de conteúdo */
-main h1, h2 {
+main h1, main h2 {
     color: #2c3e50;
     border-bottom: 2px solid #3498db;
     padding-bottom: 10px;
@@ -1058,8 +1058,7 @@ nav > ul > li:hover > .dropdown-content {
 
 /* --- Títulos e texto --- */
 [data-theme="dark"] main h1,
-[data-theme="dark"] main h2,
-[data-theme="dark"] h2 {
+[data-theme="dark"] main h2 {
     color: #e2e8f0;
     border-bottom-color: #3b82f6;
 }
@@ -1640,4 +1639,263 @@ li.dropdown:hover > .mega-dropdown {
 
     /* Esconde megamenu em mobile */
     .mega-dropdown { display: none !important; }
+}
+
+/* ============================================================== */
+/* Banner de consentimento de cookies                              */
+/* ============================================================== */
+.tf-cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    background: #f8fafc;
+    color: #1e293b;
+    padding: 16px 24px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.18);
+    font-family: Arial, sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    border-top: 1px solid #cbd5e1;
+}
+.tf-cookie-banner-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.tf-cookie-banner-msg {
+    flex: 1;
+    min-width: 280px;
+    color: #1e293b;
+}
+.tf-cookie-banner-msg strong { color: #0f172a; }
+.tf-cookie-banner-sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.82rem;
+    color: #475569;
+}
+.tf-cookie-banner-sub a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+.tf-cookie-banner-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.tf-cookie-banner-btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.88rem;
+    font-family: inherit;
+    border: 1px solid transparent;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.tf-cookie-banner-accept {
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+}
+.tf-cookie-banner-accept:hover { background: #15803d; border-color: #15803d; }
+.tf-cookie-banner-reject {
+    background: transparent;
+    color: #475569;
+    border-color: #cbd5e1;
+}
+.tf-cookie-banner-reject:hover { background: #e2e8f0; color: #1e293b; }
+
+/* Dark mode */
+[data-theme="dark"] .tf-cookie-banner {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-top-color: #334155;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.45);
+}
+[data-theme="dark"] .tf-cookie-banner-msg { color: #e2e8f0; }
+[data-theme="dark"] .tf-cookie-banner-msg strong { color: #f1f5f9; }
+[data-theme="dark"] .tf-cookie-banner-sub { color: #94a3b8; }
+[data-theme="dark"] .tf-cookie-banner-sub a { color: #60a5fa; }
+[data-theme="dark"] .tf-cookie-banner-reject {
+    color: #cbd5e1;
+    border-color: #475569;
+}
+[data-theme="dark"] .tf-cookie-banner-reject:hover {
+    background: #334155;
+    color: #e2e8f0;
+}
+
+@media (max-width: 600px) {
+    .tf-cookie-banner { padding: 14px 16px; }
+    .tf-cookie-banner-actions { width: 100%; }
+    .tf-cookie-banner-btn { flex: 1; padding: 10px 16px; }
+}
+
+/* ============================================================== */
+/* Glossário global — decoração de termos técnicos                  */
+/* ============================================================== */
+abbr.gl-term {
+    text-decoration: underline dotted;
+    text-decoration-color: #94a3b8;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    border-bottom: none;
+    text-decoration-thickness: 1px;
+    color: inherit;
+}
+abbr.gl-term:hover,
+abbr.gl-term:focus-visible {
+    text-decoration-color: #2563eb;
+}
+abbr.gl-term:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+[data-theme="dark"] abbr.gl-term {
+    text-decoration-color: #64748b;
+}
+[data-theme="dark"] abbr.gl-term:hover,
+[data-theme="dark"] abbr.gl-term:focus-visible {
+    text-decoration-color: #60a5fa;
+}
+
+/* Tooltip popover do glossário */
+.gl-tooltip {
+    position: absolute;
+    z-index: 9998;
+    width: max-content;
+    max-width: 320px;
+    background: #ffffff;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15), 0 2px 6px rgba(15, 23, 42, 0.08);
+    padding: 12px 14px 10px;
+    font-family: Arial, sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    pointer-events: auto;
+}
+.gl-tooltip.gl-tooltip-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.gl-tooltip-cabec {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.gl-tooltip-sigla {
+    font-weight: 700;
+    font-size: 1.05em;
+    color: #0f172a;
+    font-family: 'Courier New', monospace;
+}
+.gl-tooltip-full {
+    font-size: 0.9em;
+    color: #475569;
+}
+.gl-tooltip-cat { margin: 4px 0 6px; }
+.gl-tooltip-cat .gl-cat-badge {
+    display: inline-block;
+    font-size: 0.7em;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+.gl-tooltip-cat .gl-cat-badge.mercado      { background: #dbeafe; color: #1e40af; }
+.gl-tooltip-cat .gl-cat-badge.regulacao    { background: #ede9fe; color: #5b21b6; }
+.gl-tooltip-cat .gl-cat-badge.eletricidade { background: #fef3c7; color: #92400e; }
+.gl-tooltip-cat .gl-cat-badge.gas          { background: #ffedd5; color: #9a3412; }
+.gl-tooltip-cat .gl-cat-badge.solar        { background: #fef9c3; color: #854d0e; }
+.gl-tooltip-cat .gl-cat-badge.unidades     { background: #d1fae5; color: #065f46; }
+.gl-tooltip-cat .gl-cat-badge.horarios     { background: #cffafe; color: #155e75; }
+.gl-tooltip-cat .gl-cat-badge.docs         { background: #fce7f3; color: #9d174d; }
+.gl-tooltip-cat .gl-cat-badge.tarif        { background: #e0e7ff; color: #3730a3; }
+.gl-tooltip-def {
+    color: #334155;
+    margin: 4px 0 10px;
+}
+.gl-tooltip-btn {
+    display: inline-block;
+    background: #2563eb;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85em;
+    transition: background 0.15s;
+}
+.gl-tooltip-btn:hover,
+.gl-tooltip-btn:focus-visible { background: #1d4ed8; color: #ffffff; }
+.gl-tooltip-btn:focus-visible {
+    outline: 2px solid #1d4ed8;
+    outline-offset: 2px;
+}
+.gl-tooltip-arrow {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    transform: rotate(45deg);
+}
+/* Tooltip acima do termo → seta no fundo */
+.gl-tooltip-above .gl-tooltip-arrow {
+    bottom: -8px;
+    border-top: none;
+    border-left: none;
+}
+/* Tooltip abaixo do termo → seta no topo */
+.gl-tooltip-below .gl-tooltip-arrow {
+    top: -8px;
+    border-bottom: none;
+    border-right: none;
+}
+
+/* Dark mode */
+[data-theme="dark"] .gl-tooltip {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-color: #334155;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] .gl-tooltip-sigla { color: #f1f5f9; }
+[data-theme="dark"] .gl-tooltip-full { color: #94a3b8; }
+[data-theme="dark"] .gl-tooltip-def { color: #cbd5e1; }
+[data-theme="dark"] .gl-tooltip-arrow {
+    background: #1e293b;
+    border-color: #334155;
+}
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.mercado      { background: #1e3a8a; color: #bfdbfe; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.regulacao    { background: #3b1d6e; color: #ddd6fe; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.eletricidade { background: #3a3010; color: #fde68a; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.gas          { background: #3a2518; color: #fed7aa; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.solar        { background: #3a3010; color: #fde68a; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.unidades     { background: #14532d; color: #6ee7b7; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.horarios     { background: #155e75; color: #a5f3fc; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.docs         { background: #831843; color: #fbcfe8; }
+[data-theme="dark"] .gl-tooltip-cat .gl-cat-badge.tarif        { background: #312e81; color: #c7d2fe; }
+
+/* Mobile — tooltip ocupa quase todo o ecrã */
+@media (max-width: 480px) {
+    .gl-tooltip { max-width: calc(100vw - 24px); font-size: 0.85rem; }
+    .gl-tooltip-btn { padding: 8px 14px; font-size: 0.9em; }
 }
