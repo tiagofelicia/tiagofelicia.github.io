@@ -432,8 +432,13 @@ def main():
 
     # --- Definir constantes ---
     URL_CONFIG = "https://raw.githubusercontent.com/tiagofelicia/simulador-tarifarios-eletricidade/main/Tarifarios_%F0%9F%94%8C_Eletricidade_Tiago_Felicia.xlsx"
-    FICHEIRO_MIBEL_CSV = "data/MIBEL_ano_atual_ACUM.csv" # Input
-    FICHEIRO_SAIDA_CSV = "data/precos-horarios.csv" # Output
+    # Caminhos ancorados no diretório do script (e não no cwd), para funcionar
+    # tanto quando é corrido a partir da raiz do repositório como de scripts/.
+    import os as _os
+    _SCRIPT_DIR = _os.path.dirname(_os.path.abspath(__file__))
+    _ROOT_DIR = _os.path.dirname(_SCRIPT_DIR)
+    FICHEIRO_MIBEL_CSV = _os.path.join(_ROOT_DIR, "data", "MIBEL_ano_atual_ACUM.csv") # Input
+    FICHEIRO_SAIDA_CSV = _os.path.join(_ROOT_DIR, "data", "precos-horarios.csv")     # Output
 
     try:
         # 1. Carregar dados locais

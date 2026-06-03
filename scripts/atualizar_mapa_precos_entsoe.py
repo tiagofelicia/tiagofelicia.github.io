@@ -38,7 +38,11 @@ import requests
 
 
 API_URL = "https://web-api.tp.entsoe.eu/api"
-DATA_DIR = os.path.join("data", "mapa_precos_qh")
+# Caminho ancorado no diretório do script (e não no cwd), para funcionar
+# tanto quando é corrido a partir da raiz do repositório como de scripts/.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(ROOT_DIR, "data", "mapa_precos_qh")
 BACKFILL_START = "2026-01-01"
 BACKFILL_END = None   # None = ate ontem; ou "2026-12-31"
 

@@ -7,14 +7,19 @@ import csv
 from datetime import datetime
 import io
 import re
+import os
 
 print("✅ Bibliotecas carregadas para [Atualizar omie dados atuais]")
 
 # ===================================================================
 # ---- CONFIGURAÇÕES ----
 # ===================================================================
-FICHEIRO_CSV = "data/omie_dados_atuais.csv" # O ficheiro de output final
-FICHEIRO_MIBEL_CSV = "data/MIBEL_ano_atual_ACUM.csv" # O ficheiro de input
+# Caminhos ancorados no diretório do script (e não no cwd), para funcionar
+# tanto quando é corrido a partir da raiz do repositório como de scripts/.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+FICHEIRO_CSV = os.path.join(ROOT_DIR, "data", "omie_dados_atuais.csv")        # output final
+FICHEIRO_MIBEL_CSV = os.path.join(ROOT_DIR, "data", "MIBEL_ano_atual_ACUM.csv") # input
 
 print(f"ℹ️ Fonte de dados: '{FICHEIRO_MIBEL_CSV}'")
 print("⚠️ Dados OMIE e futuros")

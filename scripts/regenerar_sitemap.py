@@ -22,9 +22,6 @@ EXCLUDE = {
     "404.html",
     "footer.html",
     "menu.html",
-    "simulador-eletricidade-excel.html",
-    "simulador-eletricidade-webapp.html",
-    "simulador-gas-natural-excel.html",
 }
 
 # Priority + changefreq por padrão de filename
@@ -38,8 +35,8 @@ RULES = [
     # Dashboards e dados de mercado (atualizam todos os dias)
     ({"omie-diario.html", "mapa-precos.html", "mapa-producao.html"},
      "daily", "0.9"),
-    ({"omie.html", "omip.html", "producao-omie.html", "precos-horarios.html",
-      "formulas-tarifarios-indexados.html"}, "daily", "0.8"),
+    ({"omie.html", "omip.html", "balanco-omie.html", "balanco-historico.html",
+      "precos-horarios.html", "formulas-tarifarios-indexados.html"}, "daily", "0.8"),
     # Regulação eletricidade/gás
     ({"periodos-horarios.html", "tarifas-acesso-redes.html", "tarifa-social.html",
       "tarifa-regulada-eletricidade.html", "perfil-perdas.html",
@@ -47,13 +44,22 @@ RULES = [
       "tarifa-regulada-gas-natural.html"}, "yearly", "0.7"),
     # Regulamentação
     ({"regulamentos.html"}, "yearly", "0.6"),
+    # Calendário energético (atualizado quando há eventos novos)
+    ({"calendario-energetico.html"}, "monthly", "0.6"),
+    # Como ler a fatura (informacional, atualizado raramente)
+    ({"como-ler-fatura.html"}, "yearly", "0.7"),
+    # Glossário (acrescenta termos com alguma frequência)
+    ({"glossario.html"}, "monthly", "0.7"),
+    # Lista CUR e ORD de gás (relativamente estável)
+    ({"lista-cur-gas.html"}, "yearly", "0.6"),
     # Excel alternativo
     ({"simulador-autoconsumo-excel.html"}, "monthly", "0.5"),
     # Institucionais
     ({"sobre.html", "apoio.html"}, "monthly", "0.5"),
     ({"contacto.html"}, "yearly", "0.4"),
     # Legal
-    ({"termos-e-condicoes.html", "politica-de-cookies.html"}, "yearly", "0.3"),
+    ({"termos-e-condicoes.html", "politica-de-privacidade.html",
+      "politica-de-cookies.html"}, "yearly", "0.3"),
 ]
 
 

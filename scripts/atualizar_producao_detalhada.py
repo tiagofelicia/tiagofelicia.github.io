@@ -69,7 +69,11 @@ COUNTRY_TIMEZONES = {
     "ro": "Europe/Bucharest",
 }
 
-DATA_DIR = os.path.join("data", "producao_detalhada")
+# Caminho ancorado no diretório do script (e não no cwd), para funcionar
+# tanto quando é corrido a partir da raiz do repositório como de scripts/.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(ROOT_DIR, "data", "producao_detalhada")
 BACKFILL_START = "2026-01-01"
 ROUND_DECIMALS = 1     # MW
 PRICE_DECIMALS = 2     # EUR/MWh

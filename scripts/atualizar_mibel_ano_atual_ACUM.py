@@ -13,8 +13,12 @@ RUNNING_IN_GITHUB = "GITHUB_ACTIONS" in os.environ
 # ============================================================
 # CONFIGURAÇÕES
 # ============================================================
-FICHEIRO_MIBEL_CSV = "data/MIBEL_ano_atual_ACUM.csv"
-FICHEIRO_MIBEL_XLS = "data/MIBEL_ano_atual_ACUM.xlsx"
+# Caminhos ancorados no diretório do script (e não no cwd), para funcionar
+# tanto quando é corrido a partir da raiz do repositório como de scripts/.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+FICHEIRO_MIBEL_CSV = os.path.join(ROOT_DIR, "data", "MIBEL_ano_atual_ACUM.csv")
+FICHEIRO_MIBEL_XLS = os.path.join(ROOT_DIR, "data", "MIBEL_ano_atual_ACUM.xlsx")
 DIAS_MINIMOS_ACUM = 365
 BACKUP_SUFFIX = ".bak"
 

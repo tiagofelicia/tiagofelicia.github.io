@@ -15,6 +15,7 @@ import json
 import os
 import sys
 import time
+import argparse
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -111,7 +112,11 @@ EXTRA_CATS = ["cross_border", "pumped_storage_consumption", "load", "residual_lo
 # Todas as categorias (ordem fixa para consistencia)
 ALL_CATS = PRODUCTION_CATS + EXTRA_CATS
 
-DATA_DIR = os.path.join("data", "mapa_producao")
+# Caminho ancorado no diretório do script (e não no cwd), para funcionar
+# tanto quando é corrido a partir da raiz do repositório como de scripts/.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(ROOT_DIR, "data", "mapa_producao")
 BACKFILL_START = "2026-01-01"
 API_BASE = "https://api.energy-charts.info/public_power"
 API_FORECAST_BASE = "https://api.energy-charts.info/public_power_forecast"
@@ -357,7 +362,17 @@ def get_month_ranges(start_date, end_date):
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    backfill = "--backfill" in sys.argv
+    # Configuração dos argumentos de linha de comando
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--backfill", action="store_true", help="Modo de recolha histórica")
+    parser.add_argument("--countries", nargs="+", help="Lista de países (ex: pt es)")
+    args = parser.parse_args()
+
+    backfill = args.backfill
+    
+    # Se fornecer países, usa esses. Se não, usa a lista completa (COUNTRIES)
+    countries_to_run = [c.lower() for c in args.countries] if args.countries else COUNTRIES
+   
     yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).date()
     today = datetime.now(timezone.utc).date()
 
@@ -378,9 +393,9 @@ def main():
     # Cache de ficheiros mensais carregados
     monthly_cache = {}
     latest_date = None
-    total_countries = len(COUNTRIES)
+    total_countries = len(countries_to_run)
 
-    for i, country in enumerate(COUNTRIES, 1):
+    for i, country in enumerate(countries_to_run, 1):
         print(f"[{i}/{total_countries}] A recolher {country.upper()}...", end=" ")
 
         if backfill:
@@ -451,7 +466,7 @@ def main():
         yesterday_str = str(yesterday)
 
         print(f"\nA recolher previsões day-ahead ({today_str}, {tomorrow_str})...")
-        for i, country in enumerate(COUNTRIES, 1):
+        for i, country in enumerate(countries_to_run, 1):
             print(f"  [{i}/{total_countries}] Previsão {country.upper()}...", end=" ")
             try:
                 tz_name = COUNTRY_TIMEZONES.get(country, "Europe/Berlin")

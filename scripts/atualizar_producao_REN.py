@@ -1,13 +1,18 @@
 import requests
 import pandas as pd
 import io
-from datetime import date 
+import os
+from datetime import date
 
 # --- 1. CONFIGURAÇÕES ---
 
 API_REN_SERVICE_ID = "1354"
 URL_REN_API = f"https://datahub.ren.pt/service/download/csv/{API_REN_SERVICE_ID}"
-NOME_FICHEIRO_SAIDA = "data/producao_dados_atuais.csv" # <- Corrigi o caminho
+# Caminho ancorado no diretório do script (e não no cwd), para funcionar
+# tanto quando é corrido a partir da raiz do repositório como de scripts/.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+NOME_FICHEIRO_SAIDA = os.path.join(ROOT_DIR, "data", "producao_dados_atuais.csv")
 
 
 def buscar_dados_ren(data_inicio, data_fim):

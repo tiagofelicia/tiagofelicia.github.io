@@ -7,14 +7,23 @@ do serviço 1363 da REN (Balanço Diário), que só está disponível à escala 
 
 Output: data/producao_bombagem_diaria.csv  (colunas: dia, producao_bombagem_gwh)
 
-Esta série permite separar, nos agregados diários da página producao-omie.html,
+Esta série permite separar, nos agregados diários da página balanco-omie.html,
 a parcela NÃO renovável (turbinagem de bombagem) que vem "escondida" dentro da
 coluna "Hídrica" do serviço 15-min (1354).
 
 Uso:
   python atualizar_producao_bombagem.py                 # últimos 7 dias (incremental)
   python atualizar_producao_bombagem.py --dias 30       # últimos 30 dias
-  python atualizar_producao_bombagem.py --from 2026-01-01 --to 2026-05-28   # intervalo (backfill)
+  python atualizar_producao_bombagem.py --from 2010-01-01 --to 2025-12-31  # backfill grande
+  python atualizar_producao_bombagem.py --from 2026-01-01 --to 2026-06-03  # backfill recente
+  python atualizar_producao_bombagem.py --from 2026-01-01 --to 2026-06-03 --force  # re-pedir tudo
+
+Comportamento:
+  • Dias já presentes no CSV são SALTADOS por defeito (re-corridas são instantâneas
+    nos dias OK; apenas re-pede os que falharam ou em falta).
+  • Cada pedido tem retry com exponential backoff (3 tentativas: 2s, 4s, 8s).
+  • Timeout aumentado para 60s (REN datahub tem latência variável).
+  • Usar --force para re-pedir todos os dias (útil se a REN re-publicar dados).
 """
 
 import argparse
@@ -38,27 +47,36 @@ HEADERS = {
 }
 
 
-def buscar_bombagem(dia_iso):
-    """Devolve a Produção por Bombagem (GWh) para um dia (YYYY-MM-DD), ou None se indisponível."""
+def buscar_bombagem(dia_iso, max_tentativas=3, timeout=60):
+    """
+    Devolve a Produção por Bombagem (GWh) para um dia (YYYY-MM-DD), ou None se indisponível.
+    Retry com exponential backoff em erros de rede/timeout.
+    """
     params = {'startDateString': dia_iso, 'endDateString': dia_iso, 'culture': 'pt-PT'}
-    try:
-        resp = requests.get(URL_BASE, params=params, headers=HEADERS, timeout=30)
-        resp.raise_for_status()
-        texto = resp.content.decode('utf-8-sig')
-        for linha in texto.splitlines():
-            # Formato: "Produção por Bombagem;;8;11;8;-30.4"
-            # Colunas: [0]=nome [1]=Ponta MW [2]=Energia diária GWh [3]=dia eq. [4]=acumulada [5]=variação
-            if linha.startswith('Produção por Bombagem'):
-                partes = linha.split(';')
-                if len(partes) > 2:
-                    val = partes[2].strip().replace(',', '.')
-                    if val in ('', '-'):
-                        return 0.0
-                    return float(val)
-        return None
-    except Exception as e:
-        print(f"  [ERR] {dia_iso}: {e}", file=sys.stderr)
-        return None
+    for tentativa in range(1, max_tentativas + 1):
+        try:
+            resp = requests.get(URL_BASE, params=params, headers=HEADERS, timeout=timeout)
+            resp.raise_for_status()
+            texto = resp.content.decode('utf-8-sig')
+            for linha in texto.splitlines():
+                # Formato: "Produção por Bombagem;;8;11;8;-30.4"
+                # Colunas: [0]=nome [1]=Ponta MW [2]=Energia diária GWh [3]=dia eq. [4]=acumulada [5]=variação
+                if linha.startswith('Produção por Bombagem'):
+                    partes = linha.split(';')
+                    if len(partes) > 2:
+                        val = partes[2].strip().replace(',', '.')
+                        if val in ('', '-'):
+                            return 0.0
+                        return float(val)
+            return None  # dia sem entrada de bombagem (resposta válida mas vazia)
+        except Exception as e:
+            if tentativa < max_tentativas:
+                espera = 2 ** tentativa  # 2s, 4s, 8s
+                print(f"  [!] {dia_iso}: tentativa {tentativa}/{max_tentativas} falhou ({type(e).__name__}); a tentar de novo em {espera}s...", file=sys.stderr)
+                time.sleep(espera)
+            else:
+                print(f"  [ERR] {dia_iso}: {max_tentativas} tentativas falharam: {e}", file=sys.stderr)
+    return None
 
 
 def carregar_existente():
@@ -88,6 +106,8 @@ def main():
     ap.add_argument('--from', dest='dfrom', help='Data início YYYY-MM-DD (backfill)')
     ap.add_argument('--to', dest='dto', help='Data fim YYYY-MM-DD (backfill)')
     ap.add_argument('--dias', type=int, default=7, help='Nº de dias recentes a atualizar (default 7)')
+    ap.add_argument('--force', action='store_true',
+                    help='Re-pedir à REN dias já presentes no CSV (default: salta-os).')
     args = ap.parse_args()
 
     if args.dfrom and args.dto:
@@ -100,22 +120,33 @@ def main():
     print(f"A recolher Produção por Bombagem de {d0} a {d1}...")
     dados = carregar_existente()
     novos = 0
+    saltados = 0
+    falhados = 0
     d = d0
     while d <= d1:
         iso = d.strftime('%Y-%m-%d')
         dia_csv = d.strftime('%d/%m/%Y')
+        if not args.force and dia_csv in dados and dados[dia_csv] not in ('', None):
+            # Já temos dados para este dia — saltar (re-correr o script torna-se incremental)
+            saltados += 1
+            d += timedelta(days=1)
+            continue
         val = buscar_bombagem(iso)
         if val is not None:
             dados[dia_csv] = f"{val:.2f}"
             novos += 1
             print(f"  [OK] {dia_csv}: {val:.2f} GWh")
         else:
+            falhados += 1
             print(f"  [--] {dia_csv}: sem dados")
         d += timedelta(days=1)
         time.sleep(0.3)  # gentileza com o servidor da REN
 
     gravar(dados)
-    print(f"\n[OK] {OUT_PATH} — {novos} dias atualizados, {len(dados)} no total.")
+    print(f"\n[OK] {OUT_PATH}")
+    print(f"  {novos} novos · {saltados} saltados · {falhados} falhados · {len(dados)} no total.")
+    if falhados:
+        print(f"  Volta a correr o script (sem --force) para re-tentar apenas os {falhados} dias falhados.")
 
 
 if __name__ == '__main__':
