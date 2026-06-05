@@ -189,18 +189,6 @@
         /* Tabs de modo */
         .modo-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 auto 14px auto; }
         .modo-tab { background: #fff; border: 1px solid #cbd5e1; padding: 6px 14px; cursor: pointer; font-size: 0.9em; color: #2c3e50; border-radius: 5px; transition: background 0.2s; }
-
-        /* ===== Toggle Fuso horário (local / mercado) ===== */
-        .fuso-toggle { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0 auto 14px auto; }
-        .fuso-toggle .fuso-label { font-size: 0.82em; color: #64748b; font-weight: 600; margin-right: 4px; }
-        .fuso-btn { background: #fff; border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 14px; font-size: 0.82em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
-        .fuso-btn:hover:not(.active) { background: #e2e8f0; }
-        .fuso-btn.active { background: #0ea5e9; color: #fff; border-color: #0ea5e9; font-weight: 600; }
-        [data-theme="dark"] .fuso-toggle .fuso-label { color: #94a3b8; }
-        [data-theme="dark"] .fuso-btn { background: #1e293b; color: #cbd5e1; border-color: #475569; }
-        [data-theme="dark"] .fuso-btn:hover:not(.active) { background: #334155; }
-        [data-theme="dark"] .fuso-btn.active { background: #0284c7; border-color: #0284c7; color: #fff; }
-        @media print { .fuso-toggle { display: none !important; } }
         .modo-tab:hover { background: #e2e8f0; }
         .modo-tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
         .modo-tab:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
@@ -706,12 +694,6 @@
             <button type="button" class="modo-tab" data-modo="mensal" role="tab" aria-selected="false" title="Mês deslizante terminado no dia selecionado (28-31 dias consoante o mês)">Mensal</button>
             <button type="button" class="modo-tab" data-modo="custom" role="tab" aria-selected="false">Personalizado</button>
         </div>
-
-        <div class="fuso-toggle" role="group" aria-label="Fuso horário de visualização">
-            <span class="fuso-label">Fuso:</span>
-            <button type="button" class="fuso-btn active" data-fuso="local" title="Cada zona mostrada no seu fuso local (default)">🌍 Hora local</button>
-            <button type="button" class="fuso-btn" data-fuso="mercado" title="Todas as zonas alinhadas em CET (hora de mercado europeu day-ahead)">🇪🇺 Hora de mercado (CET)</button>
-        </div>
         <div class="range-wrapper" id="range-wrapper" style="display:none;">
             <label for="data-inicio">Início:</label>
             <input type="date" id="data-inicio" aria-describedby="range-error">
@@ -729,7 +711,7 @@
             </div>
         </div>
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
-            Dados disponíveis desde 01/01/2018 &mdash; <span id="fuso-label-header">Valores nas horas locais de cada zona</span>
+            Dados disponíveis desde 01/01/2018 &mdash; Valores nas horas locais de cada zona
             <span id="data-freshness" class="data-freshness"></span>
         </p>
         <div id="resumo-rapido" class="resumo-rapido" role="status" aria-live="polite" style="display:none;"></div>
@@ -748,7 +730,7 @@
         <div id="mapa-container" role="img" aria-label="Mapa interativo dos preços de eletricidade nas zonas de licitação europeias" aria-describedby="ranked-list-content"></div>
     </div>
 
-    <p class="nota-horas" id="nota-horas-mapa">Valores nas horas locais de cada zona</p>
+    <p class="nota-horas">Valores nas horas locais de cada zona</p>
     <p class="nota-fonte">Fonte: <a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a> | tiagofelicia.pt</p>
     <p class="export-credit" id="credit-mapa"></p>
 
@@ -864,20 +846,10 @@
         </details>
 
         <details class="faq-item">
-            <summary><strong>Os valores são nas horas locais ou na hora de mercado?</strong></summary>
+            <summary><strong>Os valores são nas horas locais?</strong></summary>
             <div class="faq-content">
-                <p>Pode escolher entre dois modos através do toggle <strong>Fuso</strong> no topo da página:</p>
-                <ul>
-                    <li><strong>🌍 Hora local (default):</strong> os preços médios diários são calculados na <strong>hora local de cada zona de licitação</strong>. Por exemplo, um dia em Portugal (UTC+0/+1) não corresponde exatamente ao mesmo período UTC que um dia na Finlândia (UTC+2/+3). Esta é a forma como os preços são publicados pelas bolsas locais e pelo ENTSO-E.</li>
-                    <li><strong>🇪🇺 Hora de mercado (CET):</strong> todas as zonas são apresentadas alinhadas ao <strong>market day day-ahead europeu</strong> (CET 00:00 → 24:00). Isto permite comparar zonas no mesmo intervalo de mercado e elimina o aviso "(parcial até 23h)" para Portugal/Irlanda. Tecnicamente:
-                        <ul>
-                            <li>39 zonas em fuso CET (ES, FR, DE-LU, IT, NL, SE, NO, PL, etc.) não mudam — já estão alinhadas.</li>
-                            <li><strong>PT</strong> e <strong>IE(SEM)</strong> (CET-1h) → recolhem a última hora do dia local anterior para completar o market day.</li>
-                            <li><strong>BG, EE, FI, GR, LT, LV, RO</strong> (CET+1h) → recolhem a primeira hora do dia local seguinte para completar o market day.</li>
-                        </ul>
-                    </li>
-                </ul>
-                <p>A escolha é guardada localmente (localStorage) e mantém-se entre visitas.</p>
+                <p>Sim. Os preços médios diários são calculados com base na <strong>hora local de cada zona de licitação</strong>. Por exemplo, um dia em Portugal (UTC+0/+1) pode não corresponder exatamente ao mesmo período UTC que um dia na Finlândia (UTC+2/+3).</p>
+                <p>Isto garante que os valores apresentados coincidem com os publicados pelas bolsas locais e pelo ENTSO-E.</p>
             </div>
         </details>
 
@@ -1044,8 +1016,8 @@ document.addEventListener('DOMContentLoaded', function() {
         "IE": "Irlanda", "IE(SEM)": "Irlanda", "GB-NIR": "Irlanda do Norte (SEM)",
         "LU": "Luxemburgo",
         "FR-COR": "Córsega (FR)",
-        "IT-SACOAC": "Itália SACOAC",
-        "IT-SACODC": "Itália SACODC"
+        "IT-SACOAC": "Itália Sardenha NW (SACOAC)",
+        "IT-SACODC": "Itália Sardenha NE (SACODC)"
     };
 
     // Mapeamento: ecZone do GeoJSON -> chave nos dados (para zonas com codigo diferente)
@@ -1087,12 +1059,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var tz = ZONE_TZ[zone] || ZONE_TZ[ZONE_DATA_MAP[zone]];
         if (!tz) return 0;
         try {
-            // BUGFIX B3: usar meio-dia LOCAL da zona (em vez de meio-dia UTC)
-            // para evitar inconsistências em dias de transição DST. Construir
-            // um ponto no tempo que cai claramente "depois" da transição.
-            // 12:00 UTC do dia X pode estar antes (Atlântico Norte) ou depois
-            // (Europa Oriental) da transição local — usar 12:00 local resolve.
-            var d = new Date((dateStr || '2026-01-15') + 'T12:00:00');
+            var d = new Date((dateStr || '2026-01-15') + 'T12:00:00Z');
             var fmt = new Intl.DateTimeFormat('en-GB', { timeZone: tz, timeZoneName: 'longOffset' });
             var parts = fmt.formatToParts(d);
             var tzp = parts.find(function(p) { return p.type === 'timeZoneName'; });
@@ -1120,8 +1087,8 @@ document.addEventListener('DOMContentLoaded', function() {
         "LU": true,         // Luxemburgo usa label de DE-LU
         "GB-NIR": true,     // Irlanda do Norte usa label da IE
         "FR-COR": true,     // Corsega usa label de FR
-        "IT-SACOAC": true,  // SACOAC/SACODC sao zonas virtuais de interligacao
-        "IT-SACODC": true   // (sem poligono no mapa; apenas dados na tabela)
+        "IT-SACOAC": true,  // SACOAC/SACODC mantem cor mas sem etiqueta no mapa
+        "IT-SACODC": true   // (zonas muito pequenas no NW/NE da Sardenha)
     };
 
     // Mapeamento zona -> código ISO de país (lowercase, para flagcdn.com)
@@ -1161,14 +1128,10 @@ document.addEventListener('DOMContentLoaded', function() {
      * Pode usar o Google Maps para encontrar as coordenadas (lat, lng) de um ponto.
      */
     var LABEL_POSITIONS = {
-        "AL": [40.8, 20.0],    // Albânia
         "EE": [58.8, 26.0],    // Estónia
         "FI": [63.0, 26.0],    // Finlândia
-        "GR": [39.0, 22.0],    // Grécia
-        "IT-Centre-South": [42.0, 13.0],   // Itália Centro-Sul
         "LT": [55.5, 24.0],    // Lituânia
         "LV": [57.0, 26.0],    // Letónia
-        "ME": [43.2, 19.5],    // Montenegro
         "NO3": [62.5, 9.0],    // Noruega Central
         "NO4": [69.25, 23.6],   // Noruega Norte
         "NO5": [60.75, 7.0],     // Noruega Oeste
@@ -1208,19 +1171,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function getZoneIntradayStats(zone, dateStr) {
         // Devolve {values, resolution, slotMinutes, labels} para um dia em modo Diário, ou null.
-        // Em modo mercado, devolve a vista CET (deslocada) se a zona não estiver em CET.
-        var stats = _isMarketTime() ? getStatsZonaVista(zone, dateStr) : null;
-        var raw;
-        if (stats && stats.values) {
-            raw = stats;
-        } else {
-            var dataZone = ZONE_DATA_MAP[zone] || zone;
-            var ym = dateStr.substring(0, 7);
-            var month = dataCache[ym];
-            if (!month || !month[dateStr]) return null;
-            raw = month[dateStr][dataZone];
-            if (!raw || typeof raw === 'number' || !raw.values) return null;
-        }
+        var dataZone = ZONE_DATA_MAP[zone] || zone;
+        var ym = dateStr.substring(0, 7);
+        var month = dataCache[ym];
+        if (!month || !month[dateStr]) return null;
+        var raw = month[dateStr][dataZone];
+        if (!raw || typeof raw === 'number' || !raw.values) return null;
         var res = raw.resolution || 'PT60M';
         var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
         var n = raw.values.length;
@@ -1302,124 +1258,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var ultimaDataDisponivel = null;
     var currentMode = 'diario';   // 'diario' | 'semanal' | 'mensal' | 'custom'
     var currentPeriod = null;     // { start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' } quando aplicável
-
-    // --- FUSO HORÁRIO (local vs mercado) ---
-    // 'local'  = cada zona no seu fuso (default — comportamento histórico)
-    // 'mercado'= todas as zonas alinhadas em CET (day-ahead market clock)
-    var _fusoAtivo = 'local';
-    try {
-        var _savedFuso = localStorage.getItem('mapa_precos_fuso');
-        if (_savedFuso === 'mercado' || _savedFuso === 'local') _fusoAtivo = _savedFuso;
-    } catch(e) {}
-    function _isMarketTime() { return _fusoAtivo === 'mercado'; }
-
-    // Cache do shift por zona (winterDate é estável; DST sincronizada em toda a UE)
-    var _zoneShiftCache = {};
-    function zoneShiftVsCET(zone) {
-        if (_zoneShiftCache[zone] !== undefined) return _zoneShiftCache[zone];
-        var winter = '2026-01-15';
-        var cetOff = getZoneOffsetMinutes('DE-LU', winter); // CET reference
-        var zoneOff = getZoneOffsetMinutes(zone, winter);
-        var shift = (zoneOff - cetOff) / 60; // PT/IE: -1; CET: 0; EET: +1
-        _zoneShiftCache[zone] = shift;
-        return shift;
-    }
-
-    function _isoNextDate(dateStr, n) {
-        var d = new Date(dateStr + 'T12:00:00Z');
-        d.setUTCDate(d.getUTCDate() + (n || 1));
-        return d.toISOString().split('T')[0];
-    }
-    function _slotIdxToTime(idx, slotMinutes) {
-        var mins = idx * slotMinutes;
-        return String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0');
-    }
-
-    /**
-     * Devolve estatísticas da zona+dia, na vista de mercado (CET) ou local.
-     * - Local mode: stats originais (avg/min/max + values do CSV).
-     * - Mercado mode + zona em CET: idem (já alinhada).
-     * - Mercado mode + zona WET (PT/IE, shift=-1):
-     *     valores = últimas 1h do dia D-1 + primeiras 23h do dia D
-     * - Mercado mode + zona EET (BG/EE/FI/GR/LT/LV/RO, shift=+1):
-     *     valores = últimas 23h do dia D + primeira 1h do dia D+1
-     *   avg/min/max/min_hour/max_hour recalculados a partir do array shifted.
-     */
-    function getStatsZonaVista(zone, dateStr) {
-        var dataZone = ZONE_DATA_MAP[zone] || zone;
-        var ym = dateStr.substring(0, 7);
-        var month = dataCache[ym];
-        var raw = month && month[dateStr] ? month[dateStr][dataZone] : null;
-        if (raw == null) return null;
-        // Compactar acesso ao objecto raw (pode ser number puro em datasets antigos)
-        if (typeof raw === 'number') return { avg: raw, min: null, max: null, min_hour: '', max_hour: '', values: null, resolution: null };
-
-        if (!_isMarketTime()) return raw; // local — devolve raw tal-qual
-
-        var shift = zoneShiftVsCET(zone);
-        if (shift === 0) return raw; // já em CET — sem mudança
-
-        if (!raw.values) return raw; // sem valores intradiários — devolve agregado do dia local (fallback)
-        var res = raw.resolution || 'PT60M';
-        var slotMin = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
-        var slotsPerHour = 60 / slotMin;
-        var nShift = Math.round(Math.abs(shift) * slotsPerHour);
-        var nLocal = raw.values.length;
-        var values;
-        if (shift < 0) {
-            // WET: prepend última hora do dia anterior local
-            var prevDate = _isoNextDate(dateStr, -1);
-            var prevMonth = dataCache[prevDate.substring(0, 7)];
-            var prevRaw = prevMonth && prevMonth[prevDate] ? prevMonth[prevDate][dataZone] : null;
-            var prevValues = (prevRaw && prevRaw.values) ? prevRaw.values : [];
-            var fromPrev = prevValues.slice(-nShift);
-            var fromCurr = raw.values.slice(0, Math.max(0, nLocal - nShift));
-            values = fromPrev.concat(fromCurr);
-        } else {
-            // EET: append primeira hora do dia seguinte local
-            var nextDate = _isoNextDate(dateStr, 1);
-            var nextMonth = dataCache[nextDate.substring(0, 7)];
-            var nextRaw = nextMonth && nextMonth[nextDate] ? nextMonth[nextDate][dataZone] : null;
-            var nextValues = (nextRaw && nextRaw.values) ? nextRaw.values : [];
-            var fromCurr = raw.values.slice(nShift);
-            var fromNext = nextValues.slice(0, nShift);
-            values = fromCurr.concat(fromNext);
-        }
-        // Reagrega avg/min/max
-        var validVals = values.filter(function(v) { return v != null && !isNaN(v); });
-        if (validVals.length === 0) return null;
-        var sum = 0, minV = Infinity, maxV = -Infinity, minIdx = -1, maxIdx = -1;
-        for (var i = 0; i < values.length; i++) {
-            var v = values[i];
-            if (v == null || isNaN(v)) continue;
-            sum += v;
-            if (v < minV) { minV = v; minIdx = i; }
-            if (v > maxV) { maxV = v; maxIdx = i; }
-        }
-        return {
-            avg: sum / validVals.length,
-            min: minV, max: maxV,
-            min_hour: minIdx >= 0 ? _slotIdxToTime(minIdx, slotMin) : '',
-            max_hour: maxIdx >= 0 ? _slotIdxToTime(maxIdx, slotMin) : '',
-            values: values,
-            resolution: res
-        };
-    }
-
-    /**
-     * Lista de meses (YYYY-MM) que precisam de estar carregados para suportar a vista de mercado
-     * sobre o período [start, end]. Adiciona o mês de D-1 (start) e D+1 (end) quando em mercado.
-     */
-    function _addAdjacentMonths(months, start, end) {
-        if (!_isMarketTime()) return months;
-        var set = {};
-        months.forEach(function(m) { set[m] = true; });
-        var prev = _isoNextDate(start, -1).substring(0, 7);
-        var next = _isoNextDate(end, 1).substring(0, 7);
-        set[prev] = true;
-        set[next] = true;
-        return Object.keys(set).sort();
-    }
 
     var seletorData = document.getElementById('seletor-data');
     var loadingIndicator = document.getElementById('loading-indicator');
@@ -1540,29 +1378,14 @@ document.addEventListener('DOMContentLoaded', function() {
         return out;
     }
     async function ensureMonthsLoaded(months) {
-        // Considera "por carregar" tanto inexistentes como falhados ha >5 min
-        var now = Date.now();
-        var toLoad = months.filter(function(m) {
-            var c = dataCache[m];
-            if (!c) return true;
-            if (c._failed && (now - (c._at || 0)) > 5 * 60 * 1000) return true;
-            return false;
-        });
+        var toLoad = months.filter(function(m) { return !dataCache[m]; });
         if (!toLoad.length) return;
         await Promise.all(toLoad.map(async function(ym) {
             try {
                 var resp = await fetchComFallback(ym + ".json");
-                if (resp && resp.ok) {
-                    dataCache[ym] = await resp.json();
-                } else {
-                    // BUGFIX B2: não cachear 404s permanentemente. Marcar com
-                    // _failed para distinguir de "carregado vazio" e permitir
-                    // retry numa próxima chamada (ex: ao voltar ao tab via
-                    // visibilitychange auto-refresh).
-                    dataCache[ym] = { _failed: true, _at: Date.now() };
-                }
+                dataCache[ym] = resp.ok ? await resp.json() : {};
             } catch (e) {
-                dataCache[ym] = { _failed: true, _at: Date.now() };
+                dataCache[ym] = {};
             }
         }));
     }
@@ -1578,10 +1401,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!dayData) continue;
             for (var zone in dayData) {
                 if (!dayData.hasOwnProperty(zone)) continue;
-                // Em modo mercado, usar a vista CET (eventualmente recalculada) por zona+dia
-                var stats = _isMarketTime() ? getStatsZonaVista(zone, ds) : dayData[zone];
-                if (stats == null) continue;
-                if (typeof stats === 'number') stats = { avg: stats };
+                var raw = dayData[zone];
+                if (raw == null) continue;
+                var stats = (typeof raw === 'number') ? { avg: raw } : raw;
                 if (stats.avg == null) continue;
                 if (!perZone[zone]) perZone[zone] = { avgs: [], min: null, min_date: null, min_hour: null, max: null, max_date: null, max_hour: null };
                 perZone[zone].avgs.push(stats.avg);
@@ -2189,8 +2011,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var refDate = (document.getElementById('seletor-data') || {}).value;
             for (var i = 0; i < list.length; i++) {
                 var z = list[i];
-                // Em modo mercado todas as zonas estão alinhadas em CET → offset deixa de fazer sentido
-                var off = (mainZ && !_isMarketTime()) ? offsetVsMain(z, mainZ, refDate) : '';
+                var off = mainZ ? offsetVsMain(z, mainZ, refDate) : '';
                 var offTxt = off ? ' <span class="cmp-chip-offset" title="Diferença de fuso horário face a ' + (ZONE_NAMES[mainZ] || mainZ) + '">' + off + '</span>' : '';
                 html += '<span class="cmp-chip" role="listitem" style="border-left-color:' + COMPARE_COLORS[i] + '">'
                       + zoneFlag(z) + ' <span class="cmp-chip-name">' + (ZONE_NAMES[z] || z) + '</span>' + offTxt
@@ -2358,17 +2179,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var isPeriodo = (currentMode !== 'diario');
 
-        // Titulo com aviso provisorio se for o ultimo dia (e em hora local) — em mercado, todas as zonas estão alinhadas em CET
+        // Titulo com aviso provisorio se for o ultimo dia
         if (tituloLista) {
-            var sufixoMercadoLista = _isMarketTime() ? ' — em hora de mercado (CET)' : '';
             if (isPeriodo) {
                 var p = computePeriod();
                 var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
-                tituloLista.textContent = 'Preços por zona de licitação — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')' + sufixoMercadoLista;
+                tituloLista.textContent = 'Preços por zona de licitação — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')';
             } else {
                 var diaStr = fmtDateBR(seletorData.value);
-                var sufixoUltDia = (isUltimoDia && !_isMarketTime()) ? ' (até às 23h de PT)' : '';
-                tituloLista.textContent = 'Preços por zona de licitação — ' + diaStr + sufixoUltDia + sufixoMercadoLista;
+                tituloLista.textContent = isUltimoDia
+                    ? 'Preços por zona de licitação — ' + diaStr + ' (até às 23h de PT)'
+                    : 'Preços por zona de licitação — ' + diaStr;
             }
         }
 
@@ -2514,25 +2335,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (showDeltaPt) html += '<td class="num" title="Diferença vs Portugal">' + (e.zone === 'PT' ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
             if (showVarDia) html += '<td class="num" title="Variação vs dia anterior">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
             html += '<td class="num' + negCls(e.min) + '" title="Preço mínimo do dia">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
-            var horaTipPrefix = _isMarketTime() ? 'Hora CET (mercado) do' : 'Hora local do';
-            html += '<td class="hour-col" title="' + horaTipPrefix + ' mínimo">' + (e.minHour || '—') + '</td>';
+            html += '<td class="hour-col" title="Hora local do mínimo">' + (e.minHour || '—') + '</td>';
             html += '<td class="num' + negCls(e.max) + '" title="Preço máximo do dia">' + (e.max != null ? fmtN(e.max, 2) : '—') + '</td>';
-            html += '<td class="hour-col" title="' + horaTipPrefix + ' máximo">' + (e.maxHour || '—') + '</td>';
+            html += '<td class="hour-col" title="Hora local do máximo">' + (e.maxHour || '—') + '</td>';
             html += '<td class="num" title="Diferença Máx − Mín">' + (e.amplitude != null ? fmtN(e.amplitude, 2) : '—') + '</td>';
             html += '</tr>';
         }
 
         html += '</tbody></table></div>';
-        // BUGFIX B1: destruir todas as instancias Chart.js das linhas
-        // intradiarias antes de reescrever o HTML (que apaga os <canvas>).
-        // Sem isto, Chart.js mantem referencias internas a canvases mortos
-        // -> memory leak + warnings ao tentar redesenhar.
-        if (typeof rowCharts !== 'undefined' && rowCharts) {
-            Object.keys(rowCharts).forEach(function(z) {
-                try { rowCharts[z].destroy(); } catch (_) {}
-            });
-            for (var rk in rowCharts) { if (rowCharts.hasOwnProperty(rk)) delete rowCharts[rk]; }
-        }
         container.innerHTML = html;
 
         // Listeners de ordenação
@@ -2859,11 +2669,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Carregar todos os meses do ano (ou até o último disponível)
         var months = [];
         for (var m = 1; m <= 12; m++) months.push(year + '-' + String(m).padStart(2, '0'));
-        // Em modo mercado, garantir Dez do ano-1 e Jan do ano+1 para o shift WET/EET de 1º/31 do ano
-        if (_isMarketTime()) {
-            months.unshift((year - 1) + '-12');
-            months.push((year + 1) + '-01');
-        }
         await ensureMonthsLoaded(months);
 
         // Recolher valores
@@ -2874,8 +2679,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var monthData = dataCache[ym] || {};
             for (var ds in monthData) {
                 if (!monthData.hasOwnProperty(ds)) continue;
-                // Em modo mercado, usa a vista CET-shifted; senão raw
-                var raw = _isMarketTime() ? getStatsZonaVista(zone, ds) : monthData[ds][dataZone];
+                var raw = monthData[ds][dataZone];
                 if (raw == null) continue;
                 var v = (typeof raw === 'number') ? raw : (raw.avg != null ? raw.avg : null);
                 if (v == null) continue;
@@ -3193,14 +2997,8 @@ document.addEventListener('DOMContentLoaded', function() {
         while (cur <= endD) {
             var ds = formatDateStr(cur);
             var ym = ds.substring(0, 7);
-            // Em modo mercado, usa a vista CET-shifted; senão raw
-            var val;
-            if (_isMarketTime()) {
-                val = getStatsZonaVista(zone, ds);
-            } else {
-                var dayData = (dataCache[ym] || {})[ds];
-                val = dayData ? dayData[dataZone] : null;
-            }
+            var dayData = (dataCache[ym] || {})[ds];
+            var val = dayData ? dayData[dataZone] : null;
             labels.push(ds.substring(8, 10) + '/' + ds.substring(5, 7));
             if (val == null) { avgs.push(null); mins.push(null); maxs.push(null); }
             else if (typeof val === 'number') { avgs.push(val); mins.push(null); maxs.push(null); }
@@ -3280,18 +3078,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Q4: aplicar tema do Chart.js de forma coordenada (chamado no init e
-    // no MutationObserver de data-theme — nao mais por chart-update, para
-    // evitar mutacao de globais durante renderizacao isolada de um chart).
-    function syncChartTheme() {
+    async function updateChart() {
         if (typeof Chart === 'undefined') return;
+        // Forçar cor base de TODOS os textos do Chart.js para coincidir com o
+        // tema atual. Necessario porque Chart.js cacheia esta cor por chart.
         var _dark = document.documentElement.getAttribute('data-theme') === 'dark';
         Chart.defaults.color = _dark ? '#f1f5f9' : '#0f172a';
         Chart.defaults.borderColor = _dark ? '#334155' : '#e2e8f0';
-    }
-
-    async function updateChart() {
-        if (typeof Chart === 'undefined') return;
         var zoneSel = document.getElementById('global-zone-select');
         var canvas = document.getElementById('chart-precos');
         if (!zoneSel || !canvas) return;
@@ -3314,8 +3107,7 @@ document.addEventListener('DOMContentLoaded', function() {
             chartStart = pp.start;
             chartEnd = pp.end;
         }
-        // Em modo mercado, carrega também D-1 do início e D+1 do fim do intervalo
-        await ensureMonthsLoaded(_addAdjacentMonths(monthsInRange(chartStart, chartEnd), chartStart, chartEnd));
+        await ensureMonthsLoaded(monthsInRange(chartStart, chartEnd));
 
         var s1 = buildSeriesForZoneRange(zone, chartStart, chartEnd);
         var name1 = ZONE_NAMES[zone] || zone;
@@ -3328,7 +3120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         extStartD.setDate(extStartD.getDate() - 29);
         var extStartStr = formatDateStr(extStartD);
         if (extStartStr < DATA_INICIO) extStartStr = DATA_INICIO;
-        await ensureMonthsLoaded(_addAdjacentMonths(monthsInRange(extStartStr, chartStart), extStartStr, chartStart));
+        await ensureMonthsLoaded(monthsInRange(extStartStr, chartStart));
         var sExt = buildSeriesForZoneRange(zone, extStartStr, chartEnd);
         // Índice no array estendido onde o gráfico realmente começa
         var prefixLen = sExt.avgs.length - s1.avgs.length;
@@ -3724,15 +3516,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (hasCompare) {
                 compTxt = ' vs ' + compares.map(function(z) { return ZONE_NAMES[z] || z; }).join(', ');
             }
-            // Nota explicita: cada zona em hora local (importante para multi-zona), ou em CET em market mode
-            var hourNote;
-            if (_isMarketTime()) {
-                hourNote = ' · em hora de mercado (CET)';
-            } else if (hasCompare) {
-                hourNote = ' · em hora local de cada zona';
-            } else {
-                hourNote = '';
-            }
+            // Nota explicita: cada zona em hora local (importante para multi-zona)
+            var hourNote = hasCompare ? ' · em hora local de cada zona' : '';
             titulo.textContent = 'Curva intradiária — ' + labelMode + ' — ' + name1 + compTxt + resTxt + hourNote;
         }
         // Estatisticas (media/min/max) abaixo do titulo
@@ -3829,8 +3614,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (startStr < DATA_INICIO) startStr = DATA_INICIO;
 
         var monthsNeeded = monthsInRange(startStr, endStr);
-        // Em modo mercado, garantir D-1 / D+1 dos meses adjacentes (shift WET/EET)
-        monthsNeeded = _addAdjacentMonths(monthsNeeded, startStr, endStr);
         var missing = monthsNeeded.filter(function(ym) { return !dataCache[ym]; });
         if (missing.length) {
             ensureMonthsLoaded(missing).then(updateWeeklyProfile);
@@ -3855,8 +3638,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var ds = allDays[di];
             var ym = ds.substring(0, 7);
             var monthData = dataCache[ym] || {};
-            // Em modo mercado, usa a vista CET-shifted da zona; senão raw
-            var raw = _isMarketTime() ? getStatsZonaVista(zone, ds) : (monthData[ds] && monthData[ds][dataZone]);
+            var raw = monthData[ds] && monthData[ds][dataZone];
             if (!raw || typeof raw === 'number' || !raw.values) continue;
             // Calcular dia da semana ISO (0 = Seg, 6 = Dom)
             var d = parseDateStr(ds);
@@ -4079,8 +3861,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Carregar todos os meses cobertos pelo intervalo
         var monthsNeeded = monthsInRange(startStr, endStr);
-        // Em modo mercado, garantir D-1 / D+1 para shift WET/EET
-        monthsNeeded = _addAdjacentMonths(monthsNeeded, startStr, endStr);
         var missing = monthsNeeded.filter(function(ym) { return !dataCache[ym]; });
         if (missing.length) {
             ensureMonthsLoaded(missing).then(updateHourlyHeatmap);
@@ -4104,8 +3884,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var ds = allDays[d];
             var ym = ds.substring(0, 7);
             var monthData = dataCache[ym] || {};
-            // Em modo mercado, usa a vista CET-shifted; senão raw
-            var raw = _isMarketTime() ? getStatsZonaVista(zone, ds) : (monthData[ds] && monthData[ds][dataZone]);
+            var raw = monthData[ds] && monthData[ds][dataZone];
             if (!raw || typeof raw === 'number' || !raw.values) continue;
             var res = raw.resolution || 'PT60M';
             var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
@@ -4315,25 +4094,12 @@ document.addEventListener('DOMContentLoaded', function() {
         var prevDay = parseDateStr(dateStr); prevDay.setDate(prevDay.getDate() - 1);
         var prevDayMonth = formatDateStr(prevDay).substring(0, 7);
         var allMonths = months.concat(sparkMonths).concat([prevDayMonth]).filter(function(v, i, a) { return a.indexOf(v) === i; });
-        // Em modo mercado, carregar também D-1 (para WET zones) e D+1 (para EET zones) do período
-        allMonths = _addAdjacentMonths(allMonths, period.start, period.end);
         await ensureMonthsLoaded(allMonths);
 
         // Construir currentData
         if (currentMode === 'diario') {
             var ym = dateStr.substring(0, 7);
-            var rawDay = (dataCache[ym] || {})[dateStr] || {};
-            if (_isMarketTime()) {
-                // Em modo mercado, reagregar por zona com shift apropriado
-                var shifted = {};
-                Object.keys(rawDay).forEach(function(z) {
-                    var s = getStatsZonaVista(z, dateStr);
-                    if (s != null) shifted[z] = s;
-                });
-                currentData = shifted;
-            } else {
-                currentData = rawDay;
-            }
+            currentData = (dataCache[ym] || {})[dateStr] || {};
         } else {
             currentData = aggregatePeriod(period.start, period.end);
         }
@@ -4356,15 +4122,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Atualizar titulo
         var titulo;
-        var sufixoFusoMercado = _isMarketTime() ? ' [hora de mercado / CET]' : '';
         if (currentMode === 'diario') {
             titulo = 'Mapa de Preços Médios da Eletricidade - ' + fmtDateBR(dateStr);
-            // "(até às 23h de PT)" só faz sentido em hora local — em CET o dia PT está completo
-            if (isUltimoDia && !_isMarketTime()) titulo += ' (até às 23h de PT)';
-            titulo += sufixoFusoMercado;
+            if (isUltimoDia) titulo += ' (até às 23h de PT)';
         } else {
             var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
-            titulo = 'Mapa de Preços Médios da Eletricidade - ' + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')' + sufixoFusoMercado;
+            titulo = 'Mapa de Preços Médios da Eletricidade - ' + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')';
         }
         document.getElementById('titulo-mapa').textContent = titulo;
         // Crédito de exportação do mapa
@@ -4377,10 +4140,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         setExportCredit('credit-mapa', ctxMapa);
 
-        // Aviso provisorio — só aparece em hora local; em hora de mercado o dia PT está completo
+        // Aviso provisorio
         var avisoEl = document.getElementById('aviso-provisorio');
         if (avisoEl) {
-            if (isUltimoDia && !_isMarketTime()) {
+            if (isUltimoDia) {
                 avisoEl.textContent = 'A média para Portugal não é final — falta o valor da última hora do dia (23h às 24h de PT), que ainda não foi negociado.';
                 avisoEl.style.display = 'block';
             } else {
@@ -4491,20 +4254,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     geojsonLayer.setStyle(style);
                     updatePriceLabels();
                 }
-                // Q4: aplicar tema do Chart.js uma vez (afeta defaults globais)
-                if (typeof syncChartTheme === 'function') syncChartTheme();
                 // Destruir charts Chart.js para que sejam recriados com as
                 // cores corretas do novo tema (Chart.js cacheia algumas
                 // opcoes, por isso apenas .update() nao basta).
                 if (precosChart) { precosChart.destroy(); precosChart = null; }
                 if (intradayChart) { intradayChart.destroy(); intradayChart = null; }
-                // BUGFIX B1 (corolário): também destruir rowCharts ao mudar tema
-                if (typeof rowCharts !== 'undefined' && rowCharts) {
-                    Object.keys(rowCharts).forEach(function(z) {
-                        try { rowCharts[z].destroy(); } catch (_) {}
-                    });
-                    for (var rk in rowCharts) { if (rowCharts.hasOwnProperty(rk)) delete rowCharts[rk]; }
-                }
                 if (typeof updateChart === 'function') updateChart();
                 if (typeof updateIntradayChart === 'function') updateIntradayChart();
                 if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
@@ -4666,7 +4420,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (link) link.href = 'mapa-producao.html?date=' + seletorData.value;
             }
 
-            // Construir URL partilhavel (com salvaguarda de comprimento)
+            // Construir URL partilhavel
             function buildShareUrl() {
                 var url = window.location.origin + window.location.pathname;
                 var params = new URLSearchParams();
@@ -4678,23 +4432,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 var zoneSel = document.getElementById('global-zone-select');
                 if (zoneSel && zoneSel.value) params.set('zone', zoneSel.value);
-                // Compares: até 4 zonas; ZoneIDs curtos (max ~16 chars cada)
-                if (typeof getCompareZones === 'function') {
-                    var cmp = getCompareZones();
-                    if (cmp && cmp.length) params.set('compare', cmp.join(','));
-                }
-                // Fuso de visualização (local/mercado) se diferente do default
-                if (typeof _fusoAtivo !== 'undefined' && _fusoAtivo === 'mercado') {
-                    params.set('fuso', 'mercado');
-                }
-                var finalUrl = url + '?' + params.toString();
-                // Q3: salvaguarda — URL > 2000 chars é problemático em alguns servers
-                if (finalUrl.length > 1800) {
-                    // Dropar compare (a parte mais "expansível")
-                    params.delete('compare');
-                    finalUrl = url + '?' + params.toString();
-                }
-                return finalUrl;
+                return url + '?' + params.toString();
             }
 
             // Botao de partilha
@@ -4802,39 +4540,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // --- Toggle Fuso (Hora local vs Hora de mercado) ---
-            var fusoBtns = document.querySelectorAll('.fuso-btn');
-            function aplicarFusoBotoesMP() {
-                fusoBtns.forEach(function(b) { b.classList.toggle('active', b.dataset.fuso === _fusoAtivo); });
-                // Etiquetas dinâmicas
-                var headerLbl = document.getElementById('fuso-label-header');
-                var notaMapa = document.getElementById('nota-horas-mapa');
-                if (_isMarketTime()) {
-                    if (headerLbl) headerLbl.textContent = 'Valores em hora de mercado (CET)';
-                    if (notaMapa) notaMapa.textContent = 'Valores em hora de mercado (CET) — todas as zonas alinhadas';
-                } else {
-                    if (headerLbl) headerLbl.textContent = 'Valores nas horas locais de cada zona';
-                    if (notaMapa) notaMapa.textContent = 'Valores nas horas locais de cada zona';
-                }
-            }
-            aplicarFusoBotoesMP();
-            fusoBtns.forEach(function(b) {
-                b.addEventListener('click', function() {
-                    var novo = this.dataset.fuso;
-                    if (!novo || novo === _fusoAtivo) return;
-                    _fusoAtivo = novo;
-                    try { localStorage.setItem('mapa_precos_fuso', _fusoAtivo); } catch(e) {}
-                    aplicarFusoBotoesMP();
-                    // loadPriceData() já chama updateChart() + updateIntradayChart() no fim.
-                    // Mas as restantes visualizações (heatmap horário, perfil semanal,
-                    // heatmap anual) também dependem do fuso → forçar re-render explícito.
-                    loadPriceData();
-                    if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
-                    if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
-                    if (typeof updateHeatmap === 'function') updateHeatmap();
-                });
-            });
-
             // Validacao live do intervalo personalizado
             var rangeError = document.getElementById('range-error');
             var MAX_RANGE_DAYS = 366;
@@ -4923,36 +4628,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 zoneSel.innerHTML = optsHtml;
                 zoneSel.value = 'PT';
-                var _urlParams = new URLSearchParams(window.location.search);
-                var urlZone = _urlParams.get('zone') || prefs.zone;
+                var urlZone = new URLSearchParams(window.location.search).get('zone') || prefs.zone;
                 if (urlZone && ZONE_NAMES[urlZone]) zoneSel.value = urlZone;
 
                 // Migracao soft do legado 'compareZone' (string) -> 'compareZones' (array)
                 if (!prefs.compareZones && prefs.compareZone && ZONE_NAMES[prefs.compareZone]) {
                     prefs.compareZones = [prefs.compareZone];
                     savePref('compareZones', prefs.compareZones);
-                }
-
-                // Compare zones via URL: lista separada por virgulas
-                // (sanitiza: max 4, sem duplicados, sem a zona principal, todas validas)
-                var urlCompare = _urlParams.get('compare');
-                if (urlCompare) {
-                    var validCmp = urlCompare.split(',')
-                        .map(function(s) { return s.trim(); })
-                        .filter(function(s, i, arr) {
-                            return s && s !== zoneSel.value && ZONE_NAMES[s] && arr.indexOf(s) === i;
-                        })
-                        .slice(0, 4);
-                    if (validCmp.length) {
-                        prefs.compareZones = validCmp;
-                        savePref('compareZones', validCmp);
-                    }
-                }
-                // Fuso via URL
-                var urlFuso = _urlParams.get('fuso');
-                if (urlFuso === 'mercado' && typeof _fusoAtivo !== 'undefined') {
-                    _fusoAtivo = 'mercado';
-                    try { localStorage.setItem('mapa_precos_fuso', 'mercado'); } catch (e) {}
                 }
 
                 // Mudanca de zona global -> atualizar TODAS as visualizacoes
@@ -5129,9 +4811,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
                 });
             }
-
-            // Q4: aplicar tema do Chart.js uma vez no init
-            syncChartTheme();
 
             await loadPriceData();
 
