@@ -71,12 +71,15 @@ ZONE_EIC = {
     "IT-South": "10Y1001A1001A788",
     "IT-Sicily": "10Y1001A1001A75E",
     "IT-Sardinia": "10Y1001A1001A74G",
-    "IT-Calabria": "10Y1001A1001A893",
+    "IT-Calabria": "10Y1001C--00096J",
     "IT-SACOAC": "10Y1001A1001A885",
+    "IT-SACODC": "10Y1001A1001A893",
     "LT": "10YLT-1001A0008Q",
     "LV": "10YLV-1001A00074",
+    "AL": "10YAL-KESH-----5",
     "ME": "10YCS-CG-TSO---S",
     "MK": "10YMK-MEPSO----8",
+    "XK": "10Y1001C--00100H",
     "NL": "10YNL----------L",
     "NO1": "10YNO-1--------2",
     "NO2": "10YNO-2--------T",
@@ -105,7 +108,9 @@ ZONE_TIMEZONES = {
     "IT-Centre-South": "Europe/Rome", "IT-South": "Europe/Rome",
     "IT-Sicily": "Europe/Rome", "IT-Sardinia": "Europe/Rome",
     "IT-Calabria": "Europe/Rome", "IT-SACOAC": "Europe/Rome", "IT-SACODC": "Europe/Rome",
-    "ME": "Europe/Podgorica", "MK": "Europe/Skopje", "NL": "Europe/Amsterdam",
+    "AL": "Europe/Tirane",
+    "ME": "Europe/Podgorica", "MK": "Europe/Skopje", "XK": "Europe/Belgrade",
+    "NL": "Europe/Amsterdam",
     "NO1": "Europe/Oslo", "NO2": "Europe/Oslo", "NO2NSL": "Europe/Oslo",
     "NO3": "Europe/Oslo", "NO4": "Europe/Oslo", "NO5": "Europe/Oslo",
     "PL": "Europe/Warsaw", "RS": "Europe/Belgrade",
@@ -574,6 +579,7 @@ def main():
     today = datetime.now(timezone.utc).date()
     yesterday = today - timedelta(days=1)
     tomorrow = today + timedelta(days=1)
+    overmorrow = today + timedelta(days=2)
 
     if args.backfill:
         start_date = datetime.strptime(BACKFILL_START, "%Y-%m-%d").date()
@@ -583,9 +589,16 @@ def main():
             end_date = yesterday
         print(f"Modo BACKFILL: {start_date} -> {end_date}")
     else:
+        # Recolhemos ate +2 dias (em vez de +1) para garantir que zonas EET
+        # (BG, EE, FI, GR, LT, LV, RO; UTC+2/+3) tem a totalidade da CET-day
+        # de amanha disponivel — os ultimos 4 slots CET 23:00-23:45 caem no
+        # dia LOCAL seguinte para estas zonas, que so e capturado se pedirmos
+        # tambem "depois-de-amanha".
+        # Custo: ~45 pedidos extra/dia. Para zonas CET/oeste, depois-de-amanha
+        # devolve "No matching data found" e o script salta silenciosamente.
         start_date = yesterday
-        end_date = tomorrow
-        print(f"Modo DIARIO: {start_date} -> {end_date} (ontem + hoje + amanha)")
+        end_date = overmorrow
+        print(f"Modo DIARIO: {start_date} -> {end_date} (ontem + hoje + amanha + depois)")
 
     zones = args.zones if args.zones else list(ZONE_EIC.keys())
     monthly_cache = {}
@@ -595,6 +608,12 @@ def main():
     for i, zone in enumerate(zones, 1):
         print(f"[{i}/{total}] {zone}...", end=" ", flush=True)
         try:
+            # Limite ate ao qual um dia conta para 'ultima_data' do metadata.
+            # Em diario, 'depois-de-amanha' so e recolhido para preencher slots
+            # iniciais de zonas EET na vista CET — nao representa um dia
+            # completo, nao deve ser apresentado como "ultimo dia disponivel".
+            metadata_limit = tomorrow.isoformat() if not args.backfill else None
+
             if args.backfill:
                 # Buscar mes a mes
                 month_ranges = get_month_ranges(start_date, end_date)
@@ -607,7 +626,7 @@ def main():
                             monthly_cache[ym] = load_monthly_file(ym)
                         monthly_cache[ym].setdefault(day_str, {})[zone] = stats
                         zone_days += 1
-                        if latest_date is None or day_str > latest_date:
+                        if (latest_date is None or day_str > latest_date) and (metadata_limit is None or day_str <= metadata_limit):
                             latest_date = day_str
                     time.sleep(0.5)
                 print(f"{zone_days} dias")
@@ -618,7 +637,7 @@ def main():
                     if ym not in monthly_cache:
                         monthly_cache[ym] = load_monthly_file(ym)
                     monthly_cache[ym].setdefault(day_str, {})[zone] = stats
-                    if latest_date is None or day_str > latest_date:
+                    if (latest_date is None or day_str > latest_date) and (metadata_limit is None or day_str <= metadata_limit):
                         latest_date = day_str
                 print(f"OK ({len(daily)} dias)")
                 time.sleep(0.5)
