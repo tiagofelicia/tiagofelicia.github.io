@@ -12,7 +12,7 @@ a parcela NÃO renovável (turbinagem de bombagem) que vem "escondida" dentro da
 coluna "Hídrica" do serviço 15-min (1354).
 
 Uso:
-  python atualizar_producao_bombagem.py                 # últimos 7 dias (incremental)
+  python atualizar_producao_bombagem.py                 # últimos 14 dias (re-pedidos sempre)
   python atualizar_producao_bombagem.py --dias 30       # últimos 30 dias
   python atualizar_producao_bombagem.py --from 2010-01-01 --to 2025-12-31  # backfill grande
   python atualizar_producao_bombagem.py --from 2026-01-01 --to 2026-06-03  # backfill recente
@@ -107,7 +107,7 @@ def main():
     ap = argparse.ArgumentParser(description='Recolhe Produção por Bombagem diária (REN serviço 1363).')
     ap.add_argument('--from', dest='dfrom', help='Data início YYYY-MM-DD (backfill)')
     ap.add_argument('--to', dest='dto', help='Data fim YYYY-MM-DD (backfill)')
-    ap.add_argument('--dias', type=int, default=7, help='Nº de dias recentes a atualizar (default 7)')
+    ap.add_argument('--dias', type=int, default=14, help='Nº de dias recentes a atualizar (default 14)')
     ap.add_argument('--force', action='store_true',
                     help='Re-pedir à REN dias já presentes no CSV (default: salta-os).')
     args = ap.parse_args()
