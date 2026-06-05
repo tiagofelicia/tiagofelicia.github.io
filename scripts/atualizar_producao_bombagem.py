@@ -19,11 +19,13 @@ Uso:
   python atualizar_producao_bombagem.py --from 2026-01-01 --to 2026-06-03 --force  # re-pedir tudo
 
 Comportamento:
-  • Dias já presentes no CSV são SALTADOS por defeito (re-corridas são instantâneas
-    nos dias OK; apenas re-pede os que falharam ou em falta).
+  • Modo "últimos N dias" (default, sem --from/--to): SEMPRE re-pede os N dias
+    recentes (a REN pode publicar correções retroativas em dias provisórios).
+  • Modo backfill (--from/--to): SALTA dias já presentes no CSV — torna re-corridas
+    quase instantâneas, apenas re-pede dias em falta ou que falharam. Usar --force
+    para re-pedir todos.
   • Cada pedido tem retry com exponential backoff (3 tentativas: 2s, 4s, 8s).
   • Timeout aumentado para 60s (REN datahub tem latência variável).
-  • Usar --force para re-pedir todos os dias (útil se a REN re-publicar dados).
 """
 
 import argparse
@@ -110,14 +112,22 @@ def main():
                     help='Re-pedir à REN dias já presentes no CSV (default: salta-os).')
     args = ap.parse_args()
 
-    if args.dfrom and args.dto:
+    modo_backfill = bool(args.dfrom and args.dto)
+    if modo_backfill:
         d0 = datetime.strptime(args.dfrom, '%Y-%m-%d').date()
         d1 = datetime.strptime(args.dto, '%Y-%m-%d').date()
     else:
         d1 = date.today()
         d0 = d1 - timedelta(days=max(1, args.dias) - 1)
 
+    # Saltar dias já existentes APENAS em backfill (e sem --force).
+    # No modo "últimos N dias", re-pedir sempre — a REN pode publicar correções
+    # retroativas para dias recentes (valores provisórios → definitivos).
+    salta_existentes = modo_backfill and not args.force
+
     print(f"A recolher Produção por Bombagem de {d0} a {d1}...")
+    if not salta_existentes:
+        print("  (modo: re-pedir todos os dias do intervalo)")
     dados = carregar_existente()
     novos = 0
     saltados = 0
@@ -126,8 +136,8 @@ def main():
     while d <= d1:
         iso = d.strftime('%Y-%m-%d')
         dia_csv = d.strftime('%d/%m/%Y')
-        if not args.force and dia_csv in dados and dados[dia_csv] not in ('', None):
-            # Já temos dados para este dia — saltar (re-correr o script torna-se incremental)
+        if salta_existentes and dia_csv in dados and dados[dia_csv] not in ('', None):
+            # Já temos dados para este dia — saltar (re-correr o backfill torna-se incremental)
             saltados += 1
             d += timedelta(days=1)
             continue
