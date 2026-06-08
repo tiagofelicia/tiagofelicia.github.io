@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -10,14 +10,14 @@
     <title>Futuros OMIP: Preços da Eletricidade a Prazo | Tiago Felícia</title>
     <meta name="description" content="Consulte os valores dos contratos futuros do OMIP para Portugal e Espanha. Dados atualizados do mercado a prazo de eletricidade (Diário, Mensal, Anual)." />
 
-    <link rel="canonical" href="https://www.tiagofelicia.pt/omip.html" />
-    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/omip.html" />
-    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/omip.html" />
+    <link rel="canonical" href="https://www.tiagofelicia.pt/omip" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/omip" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/omip" />
     
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Futuros da Eletricidade (OMIP): A tendência dos preços" />
     <meta property="og:description" content="Veja quanto o mercado espera que a eletricidade custe no futuro. Tabelas completas Portugal e Espanha." />
-    <meta property="og:url" content="https://www.tiagofelicia.pt/omip.html" />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/omip" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -264,7 +264,7 @@
       "@type": "ListItem",
       "position": 2,
       "name": "OMIP — Futuros",
-      "item": "https://www.tiagofelicia.pt/omip.html"
+      "item": "https://www.tiagofelicia.pt/omip"
     }
   ]
 }
@@ -304,7 +304,7 @@
         <div class="futures-grid">
             <div class="table-group">
                  <div class="link-section">
-                    <p>https://www.tiagofelicia.pt/omip.html</p>
+                    <p>https://www.tiagofelicia.pt/omip</p>
                 </div>
                 <p class="data-atualizacao" style="margin: 8px 0 10px; font-size: 0.9em; color: #666; font-weight: normal;">Dados atualizados em: <span class="badge-data-omip">--/--/----</span></p>
                 <div class="table-container">
@@ -327,7 +327,7 @@
 
             </div> <div class="table-group">
                  <div class="link-section">
-                     <p>https://www.tiagofelicia.pt/omip.html</p>
+                     <p>https://www.tiagofelicia.pt/omip</p>
                  </div>
                 <p class="data-atualizacao" style="margin: 8px 0 10px; font-size: 0.9em; color: #666; font-weight: normal;">Dados atualizados em: <span class="badge-data-omip">--/--/----</span></p>
                 <div class="table-container">
@@ -444,7 +444,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    const csvUrl = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/omie_dados_atuais.csv";
+    // Origem: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
+    // Override: ?source=local força ler da cópia local.
+    const csvUrl = (function() {
+        const _p = new URLSearchParams(window.location.search);
+        if (_p.get('source') === 'local') return "/data/omie_dados_atuais.csv";
+        const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/omie_dados_atuais.csv" : "/data/omie_dados_atuais.csv";
+    })();
     const tabelaOmipPtBody = document.querySelector("#tabela-omip-pt tbody");
     const tabelaOmipEsBody = document.querySelector("#tabela-omip-es tbody");
 

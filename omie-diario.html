@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -10,14 +10,14 @@
     <title>Preços Mercado Diário (Day-Ahead) OMIE Spot: Eletricidade Hora-a-Hora | Tiago Felícia</title>
     <meta name="description" content="Consulte os preços diários e horários do Mercado Diário (Day-Ahead) de eletricidade (OMIE Spot) para Portugal. Consulte médias diárias, bi-horárias e tri-horárias atualizadas." />
 
-    <link rel="canonical" href="https://www.tiagofelicia.pt/omie-diario.html" />
-    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/omie-diario.html" />
-    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/omie-diario.html" />
+    <link rel="canonical" href="https://www.tiagofelicia.pt/omie-diario" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/omie-diario" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/omie-diario" />
     
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Preço da Eletricidade Hoje (OMIE Spot Portugal)" />
     <meta property="og:description" content="Veja o preço da luz para amanhã e os futuros. Gráficos e tabelas hora-a-hora." />
-    <meta property="og:url" content="https://www.tiagofelicia.pt/omie-diario.html" />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/omie-diario" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -32,6 +32,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Preload do CSV "atuais" — o browser começa o fetch ainda antes do JS arrancar -->
+    <link rel="preload" as="fetch" href="/data/omie_dados_atuais.csv" type="text/csv" crossorigin="anonymous">
 
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
@@ -62,7 +65,7 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "Dashboard Mercado Diário (Day-Ahead) OMIE Spot Portugal",
-      "url": "https://www.tiagofelicia.pt/omie-diario.html",
+      "url": "https://www.tiagofelicia.pt/omie-diario",
       "description": "Ferramenta de visualização de preços do Mercado Diário (Day-Ahead) de eletricidade (OMIE Spot) e futuros (OMIP) para Portugal.",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Web browser",
@@ -286,7 +289,7 @@
             details.faq-item summary { cursor: default; }
             /* Rodapé com URL e timestamp */
             .painel-header::after {
-                content: 'tiagofelicia.pt/omie-diario.html — impresso em ' attr(data-print-date);
+                content: 'tiagofelicia.pt/omie-diario — impresso em ' attr(data-print-date);
                 display: block;
                 font-size: 0.7em;
                 color: #666;
@@ -314,7 +317,7 @@
       "@type": "ListItem",
       "position": 2,
       "name": "OMIE Diário",
-      "item": "https://www.tiagofelicia.pt/omie-diario.html"
+      "item": "https://www.tiagofelicia.pt/omie-diario"
     }
   ]
 }
@@ -539,7 +542,7 @@
                         <li><strong>Bi-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Vazio</strong> e <strong>Fora de Vazio</strong>.</li>
                         <li><strong>Tri-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Ponta</strong>, <strong>Cheias</strong> e <strong>Vazio</strong>.</li>
                     </ul>
-                    <p>Pode consultar as horas dos períodos em <a href="https://www.tiagofelicia.pt/periodos-horarios.html" target="_blank" rel="noopener noreferrer">https://www.tiagofelicia.pt/periodos-horarios.html</a></p>
+                    <p>Pode consultar as horas dos períodos em <a href="https://www.tiagofelicia.pt/periodos-horarios" target="_blank" rel="noopener noreferrer">https://www.tiagofelicia.pt/periodos-horarios</a></p>
 
                     <p><strong>Nota Importante:</strong> No dia mais recente apresentado, os cálculos de médias, máximo e mínimo para Portugal <strong>excluem</strong> os últimos quartos de hora (normalmente após as 23h PT), pois os mesmos ainda não são conhecidos.</p>
                 </div>
@@ -647,7 +650,16 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- CONFIGURAÇÕES ---
-    const URL_BASE = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/";
+    // Origem dos dados:
+    //   - Produção (www.tiagofelicia.pt): /data/ → Fastly CDN, brotli, HTTP/2 multiplex
+    //   - Dev (localhost/file://): raw.github → vê sempre o branch main, dados frescos sem precisar de git pull
+    // Override opcional: ?source=local força ler da cópia local mesmo em localhost (debug).
+    const URL_BASE = (function() {
+        const _p = new URLSearchParams(window.location.search);
+        if (_p.get('source') === 'local') return "/data/";
+        const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/" : "/data/";
+    })();
     const URL_DADOS_ATUAIS = URL_BASE + "omie_dados_atuais.csv";
     const URL_HISTORICO_BASE = URL_BASE + "omie_historico_";
     const ANO_INICIO_HISTORICO = 2010;

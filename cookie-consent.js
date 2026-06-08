@@ -1,4 +1,4 @@
-/* cookie-consent.js — Banner RGPD para Google Analytics (GA4)
+﻿/* cookie-consent.js — Banner RGPD para Google Analytics (GA4)
    Tiago Felícia | www.tiagofelicia.pt
 
    Uso: adicionar em cada página antes de </body>:
@@ -65,7 +65,7 @@
                 'Estes cookies só são ativados com o seu consentimento.' +
                 '<span class="tf-cookie-banner-sub">' +
                     'Pode aceitar ou rejeitar a utilização de cookies analíticos. ' +
-                    '<a href="/politica-de-cookies.html">Saber mais</a>' +
+                    '<a href="/politica-de-cookies">Saber mais</a>' +
                 '</span>' +
             '</div>' +
             '<div class="tf-cookie-banner-actions">' +

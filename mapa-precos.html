@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -10,14 +10,14 @@
     <meta name="keywords" content="preços eletricidade Europa, day-ahead, mapa preços eletricidade, OMIE, EPEX, Nord Pool, zonas licitação, mercado elétrico, ENTSO-E, Tiago Felícia" />
     <meta name="author" content="Tiago Felícia" />
 
-    <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-precos.html" />
-    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mapa-precos.html" />
-    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mapa-precos.html" />
+    <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-precos" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mapa-precos" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mapa-precos" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Mapa de Preços da Eletricidade na Europa — Day-Ahead" />
     <meta property="og:description" content="Preços médios diários da eletricidade em 47 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução e heatmap anual." />
-    <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-precos.html" />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-precos" />
     <meta property="og:locale" content="pt_PT" />
     <meta property="og:site_name" content="Tiago Felícia" />
 
@@ -40,6 +40,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Preload do metadata.json (sempre carregado primeiro para validar disponibilidade) -->
+    <link rel="preload" as="fetch" href="/data/mapa_precos_qh/metadata.json" type="application/json" crossorigin="anonymous">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -71,11 +74,11 @@
       "@graph": [
         {
           "@type": "Dataset",
-          "@id": "https://www.tiagofelicia.pt/mapa-precos.html#dataset",
+          "@id": "https://www.tiagofelicia.pt/mapa-precos#dataset",
           "name": "Preços diários da eletricidade por zona de licitação europeia",
           "alternateName": "European Day-Ahead Electricity Prices by Bidding Zone",
           "description": "Conjunto de dados com preços médios diários da eletricidade (mercado day-ahead) em 47 zonas de licitação europeias, incluindo média, mínimo, máximo, respetivas horas locais e valores intradiários (15 min/horário). Atualizado diariamente. Fonte: ENTSO-E Transparency Platform.",
-          "url": "https://www.tiagofelicia.pt/mapa-precos.html",
+          "url": "https://www.tiagofelicia.pt/mapa-precos",
           "keywords": ["eletricidade", "day-ahead", "preços", "Europa", "OMIE", "EPEX", "Nord Pool", "zonas de licitação", "mercado elétrico"],
           "license": "https://creativecommons.org/licenses/by/4.0/",
           "isAccessibleForFree": true,
@@ -112,9 +115,9 @@
         },
         {
           "@type": "WebApplication",
-          "@id": "https://www.tiagofelicia.pt/mapa-precos.html#app",
+          "@id": "https://www.tiagofelicia.pt/mapa-precos#app",
           "name": "Mapa de Preços da Eletricidade na Europa",
-          "url": "https://www.tiagofelicia.pt/mapa-precos.html",
+          "url": "https://www.tiagofelicia.pt/mapa-precos",
           "description": "Mapa interativo com preços médios diários de eletricidade por zona de licitação europeia, com vistas diária, semanal, mensal e personalizada, gráfico de evolução, heatmap anual e pesquisa de zona.",
           "applicationCategory": "FinanceApplication",
           "operatingSystem": "Web browser",
@@ -137,13 +140,13 @@
             "Link de partilha por data",
             "Modo escuro"
           ],
-          "about": { "@id": "https://www.tiagofelicia.pt/mapa-precos.html#dataset" }
+          "about": { "@id": "https://www.tiagofelicia.pt/mapa-precos#dataset" }
         },
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
-            { "@type": "ListItem", "position": 2, "name": "Mapa de Preços da Eletricidade", "item": "https://www.tiagofelicia.pt/mapa-precos.html" }
+            { "@type": "ListItem", "position": 2, "name": "Mapa de Preços da Eletricidade", "item": "https://www.tiagofelicia.pt/mapa-precos" }
           ]
         }
       ]
@@ -1017,7 +1020,14 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- CONFIGURACOES ---
-    var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos_qh/";
+    // Origem dos dados: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
+    // Override: ?source=local força ler da cópia local.
+    var URL_GITHUB = (function() {
+        var _p = new URLSearchParams(window.location.search);
+        if (_p.get('source') === 'local') return "/data/mapa_precos_qh/";
+        var _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos_qh/" : "/data/mapa_precos_qh/";
+    })();
     var DATA_INICIO = "2018-01-01";
 
     // Nomes das zonas para display (português com acentos)
@@ -1497,8 +1507,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- CRÉDITO DE EXPORTAÇÃO (URL + data + contexto) ---
     // Aparece sob cada gráfico/tabela: visível em screenshots manuais e prints
     // do browser. Discreto no ecrã, ligeiramente reforçado em impressão.
-    var CREDIT_URL = 'tiagofelicia.pt/mapa-precos.html';
-    var CREDIT_FULL_URL = 'https://www.tiagofelicia.pt/mapa-precos.html';
+    var CREDIT_URL = 'tiagofelicia.pt/mapa-precos';
+    var CREDIT_FULL_URL = 'https://www.tiagofelicia.pt/mapa-precos';
     function nowDateBR() {
         var d = new Date();
         return String(d.getDate()).padStart(2, '0') + '/'

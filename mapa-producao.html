@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -12,14 +12,14 @@
     <meta name="keywords" content="produção eletricidade Europa, mix energético, energia renovável, solar, eólica, hídrica, nuclear, percentagem renovável, Energy-Charts, Fraunhofer ISE, Tiago Felícia" />
     <meta name="author" content="Tiago Felícia" />
 
-    <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-producao.html" />
-    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mapa-producao.html" />
-    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mapa-producao.html" />
+    <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-producao" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mapa-producao" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mapa-producao" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Mapa de Produção de Eletricidade na Europa — Mix Renovável" />
     <meta property="og:description" content="Produção de eletricidade por fonte e percentagem renovável em 28 países europeus, com vistas diária, semanal, mensal e personalizada, gráfico de evolução e tabela ordenável." />
-    <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-producao.html" />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-producao" />
     <meta property="og:locale" content="pt_PT" />
     <meta property="og:site_name" content="Tiago Felícia" />
 
@@ -63,11 +63,11 @@
       "@graph": [
         {
           "@type": "Dataset",
-          "@id": "https://www.tiagofelicia.pt/mapa-producao.html#dataset",
+          "@id": "https://www.tiagofelicia.pt/mapa-producao#dataset",
           "name": "Produção diária de eletricidade por país europeu e fonte",
           "alternateName": "European Daily Electricity Production by Country and Source",
           "description": "Conjunto de dados com a produção pública líquida de eletricidade em 28 países europeus, desagregada por fonte (solar, eólica onshore/offshore, hídrica fio-de-água/albufeira/bombagem, nuclear, gás, carvão, biomassa, geotermia, resíduos, outras renováveis), bem como totais diários e percentagem de origem renovável. Atualizado diariamente. Fonte: API Energy-Charts (Fraunhofer ISE).",
-          "url": "https://www.tiagofelicia.pt/mapa-producao.html",
+          "url": "https://www.tiagofelicia.pt/mapa-producao",
           "keywords": ["eletricidade", "produção", "mix energético", "renovável", "solar", "eólica", "hídrica", "nuclear", "Europa", "Energy-Charts"],
           "license": "https://creativecommons.org/licenses/by/4.0/",
           "isAccessibleForFree": true,
@@ -89,7 +89,7 @@
             {
               "@type": "DataDownload",
               "encodingFormat": "application/json",
-              "contentUrl": "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_producao/"
+              "contentUrl": "/data/mapa_producao/"
             }
           ],
           "isBasedOn": {
@@ -101,9 +101,9 @@
         },
         {
           "@type": "WebApplication",
-          "@id": "https://www.tiagofelicia.pt/mapa-producao.html#app",
+          "@id": "https://www.tiagofelicia.pt/mapa-producao#app",
           "name": "Mapa de Produção de Eletricidade na Europa",
-          "url": "https://www.tiagofelicia.pt/mapa-producao.html",
+          "url": "https://www.tiagofelicia.pt/mapa-producao",
           "description": "Mapa interativo com produção de eletricidade e percentagem renovável por país europeu, com vistas diária, semanal, mensal e personalizada, gráfico de evolução, tabela ordenável com ΔPT e pesquisa de país.",
           "applicationCategory": "UtilitiesApplication",
           "operatingSystem": "Web browser",
@@ -123,13 +123,13 @@
             "Link de partilha por data",
             "Modo escuro"
           ],
-          "about": { "@id": "https://www.tiagofelicia.pt/mapa-producao.html#dataset" }
+          "about": { "@id": "https://www.tiagofelicia.pt/mapa-producao#dataset" }
         },
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
-            { "@type": "ListItem", "position": 2, "name": "Mapa de Produção de Eletricidade", "item": "https://www.tiagofelicia.pt/mapa-producao.html" }
+            { "@type": "ListItem", "position": 2, "name": "Mapa de Produção de Eletricidade", "item": "https://www.tiagofelicia.pt/mapa-producao" }
           ]
         }
       ]
@@ -713,7 +713,7 @@
             <summary><strong>Porque é que todas as zonas de um país têm a mesma cor?</strong></summary>
             <div class="faq-content">
                 <p>A API Energy-Charts devolve dados de produção ao nível do <strong>país</strong>, não por zona de licitação. Por isso, países como a <strong>Noruega</strong> (5 zonas), <strong>Suécia</strong> (4 zonas) ou <strong>Itália</strong> (6+ zonas) partilham a mesma cor em todas as suas zonas.</p>
-                <p>Os preços de eletricidade, por outro lado, variam entre zonas &mdash; consulte o <a href="mapa-precos.html">Mapa de Preços</a> para essa informação.</p>
+                <p>Os preços de eletricidade, por outro lado, variam entre zonas &mdash; consulte o <a href="mapa-precos">Mapa de Preços</a> para essa informação.</p>
             </div>
         </details>
 
@@ -870,7 +870,14 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 
     // --- CONFIGURAÇÕES ---
-    var URL_GITHUB = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_producao/";
+    // Origem dos dados: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
+    // Override: ?source=local força ler da cópia local.
+    var URL_GITHUB = (function() {
+        var _p = new URLSearchParams(window.location.search);
+        if (_p.get('source') === 'local') return "/data/mapa_producao/";
+        var _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_producao/" : "/data/mapa_producao/";
+    })();
     var DATA_INICIO = "2026-01-01";
 
     // Mapeamento: ecZone (GeoJSON) → código de país (dados JSON)

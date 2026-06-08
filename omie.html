@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -10,14 +10,14 @@
     <title>Histórico de Preços do Mercado Diário (Day-Ahead) OMIE (desde 2010) | Tiago Felícia</title>
     <meta name="description" content="Analise o histórico de preços do Mercado Diário (Day-Ahead) de eletricidade (OMIE) em Portugal e Espanha. Médias diárias, mensais e anuais desde 2010 até hoje." />
     
-    <link rel="canonical" href="https://www.tiagofelicia.pt/omie.html" />
-    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/omie.html" />
-    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/omie.html" />
+    <link rel="canonical" href="https://www.tiagofelicia.pt/omie" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/omie" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/omie" />
     
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Histórico de Preços do Mercado Diário de Eletricidade (OMIE)" />
     <meta property="og:description" content="Base de dados completa de preços de energia desde 2010. Analise a evolução do mercado." />
-    <meta property="og:url" content="https://www.tiagofelicia.pt/omie.html" />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/omie" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -32,6 +32,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Preload do CSV "atuais" — o browser começa o fetch ainda antes do JS arrancar -->
+    <link rel="preload" as="fetch" href="/data/omie_dados_atuais.csv" type="text/csv" crossorigin="anonymous">
     
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
@@ -64,7 +67,7 @@
       "@type": "DataCatalog",
       "name": "Histórico de Preços do Mercado Diário (Day-Ahead) OMIE Portugal",
       "description": "Dados históricos de preços do Mercado Diário de eletricidade no mercado ibérico (MIBEL) para Portugal.",
-      "url": "https://www.tiagofelicia.pt/omie.html",
+      "url": "https://www.tiagofelicia.pt/omie",
       "keywords": "OMIE, Eletricidade, Portugal, Preços Históricos, Mercado Diário, Day-Ahead",
       "creator": {
         "@type": "Person",
@@ -113,7 +116,15 @@
 
         .grafico-container { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; min-height: 60px; }
         .content-support { max-width: 1200px; margin: 40px auto; padding: 0 15px; }
-        #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
+        #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.75); color: white; padding: 16px 22px; border-radius: 8px; z-index: 1000; font-size: 1em; min-width: 240px; box-shadow: 0 8px 28px rgba(0,0,0,0.35); }
+        #loading-indicator .loading-row { display: flex; align-items: center; gap: 12px; }
+        #loading-indicator .loading-spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; flex-shrink: 0; animation: omie-spin 0.8s linear infinite; }
+        #loading-indicator .loading-text { flex: 1; line-height: 1.3; }
+        #loading-indicator .loading-progress-wrap { margin-top: 10px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
+        #loading-indicator .loading-progress-bar { height: 100%; background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%); width: 0%; transition: width 0.25s ease; }
+        #loading-indicator .loading-counter { display: block; font-size: 0.75em; opacity: 0.85; margin-top: 6px; }
+        @keyframes omie-spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { #loading-indicator .loading-spinner { animation: none; } }
         #media-mes-futuros-container p {
             font-size: 1em; 
             margin: 0; 
@@ -338,7 +349,7 @@
             details.faq-item summary { cursor: default; }
             /* Cabeçalho de página com URL */
             .painel-header::after {
-                content: 'tiagofelicia.pt/omie.html — impresso em ' attr(data-print-date);
+                content: 'tiagofelicia.pt/omie — impresso em ' attr(data-print-date);
                 display: block;
                 font-size: 0.7em;
                 color: #666;
@@ -423,7 +434,7 @@
       "@type": "ListItem",
       "position": 2,
       "name": "OMIE — Histórico",
-      "item": "https://www.tiagofelicia.pt/omie.html"
+      "item": "https://www.tiagofelicia.pt/omie"
     }
   ]
 }
@@ -495,7 +506,16 @@
 
     <div id="erro-periodo" role="alert"></div>
 
-    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados históricos...</div>
+    <div id="loading-indicator" role="status" aria-live="polite">
+        <div class="loading-row">
+            <span class="loading-spinner" aria-hidden="true"></span>
+            <span class="loading-text" id="loading-text">A carregar dados...</span>
+        </div>
+        <div class="loading-progress-wrap" id="loading-progress-wrap" aria-hidden="true">
+            <div class="loading-progress-bar" id="loading-progress-bar"></div>
+        </div>
+        <span class="loading-counter" id="loading-counter"></span>
+    </div>
 
     <div id="dashboard-cards" class="dashboard-grid-periodo">
         <div class="card-pair-row">
@@ -578,7 +598,12 @@
                 <summary><strong>O que é o OMIE e que preços são mostrados aqui?</strong></summary>
                 <div class="faq-content">
                     <p>O <strong>OMIE (Operador do Mercado Ibérico de Energia)</strong> gere o mercado grossista diário e intradiário de eletricidade para Portugal e Espanha (MIBEL). Os preços resultam de leilões onde a energia é comprada e vendida para o dia seguinte.</p>
-                    <p>Esta página mostra esses preços (€/MWh) para cada <strong>intervalo de 15 minutos (quarto-horário)</strong>, já corrigidos para a <strong>hora de Portugal Continental (PT)</strong>. Também são apresentados os preços originais para Espanha (ES) para comparação.</p>
+                    <p>Esta página mostra esses preços (€/MWh) para cada <strong>intervalo de 15 minutos (quarto-horário)</strong>. Pode escolher entre duas vistas através do toggle <strong>Fuso</strong> no topo:</p>
+                    <ul>
+                        <li><strong>🇵🇹 Hora PT (default):</strong> os valores são apresentados na hora de Portugal Continental, tal como aparecem nos relógios em Portugal.</li>
+                        <li><strong>🇪🇺 Hora CET (mercado):</strong> os valores são alinhados em hora CET — a hora a que decorre o leilão day-ahead europeu e a mesma que Espanha. Útil para comparações entre PT e ES no mesmo instante de mercado. Em CET o dia PT está sempre completo (não há aviso "(até às 23h)").</li>
+                    </ul>
+                    <p>São apresentados em paralelo os preços para Portugal (PT) e Espanha (ES). A escolha é guardada localmente e mantém-se entre visitas (partilhada com a página OMIE Diário).</p>
                 </div>
             </details>
 
@@ -591,7 +616,7 @@
                         <li><strong>Bi-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Vazio</strong> e <strong>Fora de Vazio</strong>.</li>
                         <li><strong>Tri-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Ponta</strong>, <strong>Cheias</strong> e <strong>Vazio</strong>.</li>
                     </ul>
-                    <p>Pode consultar as horas dos períodos em <a href="https://www.tiagofelicia.pt/periodos-horarios.html" target="_blank" rel="noopener noreferrer">periodos-horarios.html</a></p>
+                    <p>Pode consultar as horas dos períodos em <a href="https://www.tiagofelicia.pt/periodos-horarios" target="_blank" rel="noopener noreferrer">periodos-horarios.html</a></p>
 
                     <p><strong>Nota Importante:</strong> No dia mais recente apresentado, os cálculos de médias, máximo e mínimo para Portugal <strong>excluem</strong> os últimos quartos de hora (normalmente após as 23h PT), pois os mesmos ainda não são conhecidos.</p>
                 </div>
@@ -600,11 +625,13 @@
             <details class="faq-item">
                 <summary><strong>Como é calculada a média de Espanha?</strong></summary>
                 <div class="faq-content">
-                    <p>A média, máximo e mínimo para Espanha apresentados referem-se às <strong>24 horas do dia espanhol</strong>. Como o dia espanhol começa e acaba uma hora mais cedo que o português, o cálculo inclui:</p>
+                    <p>A média, máximo e mínimo para Espanha apresentados referem-se às <strong>24 horas do dia espanhol</strong> (CET — coincide com o dia de mercado day-ahead).</p>
+                    <p>Como o dia espanhol começa e acaba uma hora mais cedo que o português, em modo <strong>Hora PT</strong> o cálculo inclui:</p>
                     <ul>
                         <li>Os preços de Espanha da última hora (23:00-24:00) na hora de Portugal do <strong>dia anterior</strong>.</li>
                         <li>Os preços de Espanha das primeiras 23 horas (00:00-23:00) na hora de Portugal do <strong>dia selecionado</strong>.</li>
                     </ul>
+                    <p>Em modo <strong>Hora CET</strong>, os valores de Portugal são igualmente alinhados ao mesmo dia de mercado, pelo que PT e ES partilham a mesma janela de 24h CET — facilitando a comparação direta sem desfasamento.</p>
                 </div>
             </details>
 
@@ -708,7 +735,16 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- CONFIGURAÇÕES ---
-    const URL_BASE = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/";
+    // Origem dos dados:
+    //   - Produção (www.tiagofelicia.pt): /data/ → Fastly CDN, brotli, HTTP/2 multiplex
+    //   - Dev (localhost/file://): raw.github → vê sempre o branch main, dados frescos sem precisar de git pull
+    // Override opcional: ?source=local força ler da cópia local mesmo em localhost (debug).
+    const URL_BASE = (function() {
+        const _p = new URLSearchParams(window.location.search);
+        if (_p.get('source') === 'local') return "/data/";
+        const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/" : "/data/";
+    })();
     const URL_DADOS_ATUAIS = URL_BASE + "omie_dados_atuais.csv";
     const URL_HISTORICO_BASE = URL_BASE + "omie_historico_";
     const ANO_INICIO_HISTORICO = 2010;
@@ -848,6 +884,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // Não altera o conteúdo principal; só adiciona o badge ao final
         const valorBase = el.innerHTML.replace(/<small class="yoy-inline[^>]*>.*?<\/small>/g, '');
         el.innerHTML = valorBase + formatarDeltaInline(atual, anterior);
+    }
+
+    /**
+     * Cria um helper de persistência de visibilidade de séries Highcharts em localStorage,
+     * partilhando o mesmo objecto-store sob uma key única. Devolve { getStore, setVis, isVisible }.
+     * Centraliza o que antes estava duplicado em 3 funções idênticas.
+     */
+    function _criarVisPersistente(key) {
+        function getStore() {
+            try { return JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { return {}; }
+        }
+        function setVis(name, visible) {
+            try {
+                const obj = getStore();
+                obj[name] = visible;
+                localStorage.setItem(key, JSON.stringify(obj));
+            } catch(e) {}
+        }
+        function isVisible(name, defaultVis) {
+            const obj = getStore();
+            return Object.prototype.hasOwnProperty.call(obj, name) ? !!obj[name] : defaultVis;
+        }
+        return { getStore: getStore, setVis: setVis, isVisible: isVisible };
     }
 
     function gerarAnotacoesEventos(dataInicioISO, dataFimISO) {
@@ -1028,8 +1087,32 @@ document.addEventListener('DOMContentLoaded', function() {
             return { inicio: clamp(`${ano}-01-01`), fim };
         }
         if (preset === 'custom') {
-            const inicioDate = new Date(fimDate);
-            inicioDate.setUTCDate(inicioDate.getUTCDate() - 14);
+            // Default tipo "período de faturação" (mesma fórmula que mapa-precos.html → rollingMonthStart):
+            //   start = (fim + 1 dia) - 1 mês, com clamp para meses curtos.
+            // Trata fim-de-mês naturalmente (sem casos especiais):
+            //   fim 06/06 → +1 = 07/06 → -1m = 07/05 (rolling, 31 dias)
+            //   fim 06/05 → +1 = 07/05 → -1m = 07/04 (rolling, 30 dias)
+            //   fim 31/01 → +1 = 01/02 → -1m = 01/01 (mês completo)
+            //   fim 28/02 → +1 = 01/03 → -1m = 01/02 (mês completo)
+            //   fim 30/04 → +1 = 01/05 → -1m = 01/04 (mês completo)
+            //   fim 30/03 → +1 = 31/03 → -1m = 31/02 (clamp p/ 28/02)
+            const y = fimDate.getUTCFullYear();
+            const m = fimDate.getUTCMonth();
+            const d = fimDate.getUTCDate();
+            // Avançar um dia
+            let dayPlus = d + 1, monthPlus = m, yearPlus = y;
+            const lastDayOfM = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+            if (dayPlus > lastDayOfM) {
+                dayPlus = 1;
+                monthPlus = m + 1;
+                if (monthPlus > 11) { monthPlus = 0; yearPlus = y + 1; }
+            }
+            // Recuar um mês (com clamp para o último dia do mês destino)
+            let newMonth = monthPlus - 1, newYear = yearPlus;
+            if (newMonth < 0) { newMonth = 11; newYear -= 1; }
+            const lastDayPrev = new Date(Date.UTC(newYear, newMonth + 1, 0)).getUTCDate();
+            const clampedDay = Math.min(dayPlus, lastDayPrev);
+            const inicioDate = new Date(Date.UTC(newYear, newMonth, clampedDay));
             return { inicio: clamp(inicioDate.toISOString().split('T')[0]), fim };
         }
         return null;
@@ -1084,18 +1167,31 @@ document.addEventListener('DOMContentLoaded', function() {
         return { inicio, fim };
     }
 
+    // Lê ?fuso=cet|pt do URL — usado na init para precedência sobre localStorage,
+    // permite partilhar links que forcem a vista de mercado/PT independente do receptor.
+    function lerFusoURL() {
+        const params = new URLSearchParams(window.location.search);
+        const f = params.get('fuso');
+        return (f === 'cet' || f === 'pt') ? f : null;
+    }
+
     function atualizarURL() {
         if (!seletorDataInicio.value || !seletorDataFim.value) return;
         const inicio = seletorDataInicio.value;
         const fim = seletorDataFim.value;
+        const isDefaultDates = (inicio === defaultDataInicio && fim === defaultDataFim);
+        // Preserva fuso só se diferir do default 'pt' (URL limpo para o estado padrão)
+        const fusoToShare = (typeof _fusoAtivo !== 'undefined' && _fusoAtivo === 'cet') ? 'cet' : null;
         let newURL;
-        if (inicio === defaultDataInicio && fim === defaultDataFim) {
-            // Estado igual ao default ("Este mês") → URL limpo
+        if (isDefaultDates && !fusoToShare) {
             newURL = `${window.location.pathname}${window.location.hash}`;
         } else {
             const params = new URLSearchParams();
-            params.set('inicio', inicio);
-            params.set('fim', fim);
+            if (!isDefaultDates) {
+                params.set('inicio', inicio);
+                params.set('fim', fim);
+            }
+            if (fusoToShare) params.set('fuso', fusoToShare);
             newURL = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
         }
         window.history.replaceState(null, '', newURL);
@@ -1120,6 +1216,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const params = new URLSearchParams();
         params.set('inicio', inicio);
         params.set('fim', fim);
+        // Em CET mode, preservar o fuso no link partilhado para que o destinatário veja o mesmo
+        if (typeof _fusoAtivo !== 'undefined' && _fusoAtivo === 'cet') params.set('fuso', 'cet');
         const shareURL = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 
         const mediaPT = (document.getElementById('media-pt').textContent || '--').trim();
@@ -1157,12 +1255,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // === Estado: fuso horário ativo ('pt' default | 'cet' = hora de mercado/Espanha) ===
-    // Usamos a mesma key do localStorage que omie-diario.html para partilhar a preferência.
+    // Precedência: ?fuso=cet|pt na URL > localStorage > default 'pt'.
+    // O localStorage é partilhado com omie-diario.html para a preferência persistir cross-page.
     let _fusoAtivo = 'pt';
-    try {
-        const _savedFuso = localStorage.getItem('omie_diario_fuso');
-        if (_savedFuso === 'cet' || _savedFuso === 'pt') _fusoAtivo = _savedFuso;
-    } catch(e) {}
+    const _fusoUrl = lerFusoURL();
+    if (_fusoUrl) {
+        _fusoAtivo = _fusoUrl;
+        // Quando vem da URL, sincroniza com localStorage para futuras visitas
+        try { localStorage.setItem('omie_diario_fuso', _fusoAtivo); } catch(e) {}
+    } else {
+        try {
+            const _savedFuso = localStorage.getItem('omie_diario_fuso');
+            if (_savedFuso === 'cet' || _savedFuso === 'pt') _fusoAtivo = _savedFuso;
+        } catch(e) {}
+    }
 
     /**
      * Re-etiqueta o intervalo de uma linha vistaCET para refletir CET.
@@ -1228,12 +1334,48 @@ document.addEventListener('DOMContentLoaded', function() {
         return { mapaCET, arrayLinear };
     }
 
+    // --- Estado do indicador de progresso (anos a carregar) ---
+    const _loadingState = { total: 0, done: 0, currentLabel: '' };
+    function _atualizarLoadingUI() {
+        const textEl = document.getElementById('loading-text');
+        const counterEl = document.getElementById('loading-counter');
+        const barEl = document.getElementById('loading-progress-bar');
+        const wrapEl = document.getElementById('loading-progress-wrap');
+        const ativo = _loadingState.done < _loadingState.total;
+        if (!ativo) {
+            loadingIndicator.style.display = 'none';
+            // Reset quando termina
+            _loadingState.total = 0; _loadingState.done = 0; _loadingState.currentLabel = '';
+            if (barEl) barEl.style.width = '0%';
+            return;
+        }
+        loadingIndicator.style.display = 'block';
+        const pct = Math.round((_loadingState.done / _loadingState.total) * 100);
+        if (textEl) textEl.textContent = _loadingState.currentLabel
+            ? `A carregar histórico de ${_loadingState.currentLabel}…`
+            : 'A carregar dados históricos…';
+        if (counterEl) counterEl.textContent = `${_loadingState.done} de ${_loadingState.total} anos carregados (${pct}%)`;
+        if (barEl) barEl.style.width = pct + '%';
+        if (wrapEl) wrapEl.style.display = _loadingState.total > 1 ? '' : 'none';
+    }
+
     // --- FUNÇÃO PARA CARREGAR DADOS HISTÓRICOS ---
     async function carregarDadosHistoricos(ano) {
         if (dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise)) { return dadosHistoricos[ano]; }
         if (dadosHistoricos[ano] instanceof Promise) { return await dadosHistoricos[ano]; }
-        const url = `${URL_HISTORICO_BASE}${ano}.csv`; loadingIndicator.style.display = 'block';
-        dadosHistoricos[ano] = fetch(url).then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); }) .then(csvText => { const dados = parseCSVSimples(csvText); dadosHistoricos[ano] = dados; return dados; }) .catch(error => { console.error(`Falha ${ano}:`, error); dadosHistoricos[ano] = []; return []; }) .finally(() => { const aCarregar = Object.values(dadosHistoricos).some(v => v instanceof Promise); if (!aCarregar) loadingIndicator.style.display = 'none'; });
+        const url = `${URL_HISTORICO_BASE}${ano}.csv`;
+        // Registar este ano no contador de progresso
+        _loadingState.total += 1;
+        _loadingState.currentLabel = String(ano);
+        _atualizarLoadingUI();
+        dadosHistoricos[ano] = fetch(url)
+            .then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); })
+            .then(csvText => { const dados = parseCSVSimples(csvText); dadosHistoricos[ano] = dados; return dados; })
+            .catch(error => { console.error(`Falha ${ano}:`, error); dadosHistoricos[ano] = []; return []; })
+            .finally(() => {
+                _loadingState.done += 1;
+                _atualizarLoadingUI();
+            });
         return await dadosHistoricos[ano];
     }
 
@@ -1678,7 +1820,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('analise-periodo').style.display = 'block';
         atualizarGraficoDiaSemana(dadosReaisDoView, dataInicioCSV, dataFimCSV, emCET);
         // Ciclos donut sempre em PT (períodos ERSE são PT-anchored)
-        atualizarGraficoCiclosDonut(ciclosPeriodo, dataInicioCSV, dataFimCSV);
+        atualizarGraficoCiclosDonut(ciclosPeriodo, dataInicioCSV, dataFimCSV, emCET);
 
         // Atualizar Gráficos — com lazy load (B2)
         // Gráfico diário é sempre eager (é o principal). Os restantes carregam à medida que entram na viewport.
@@ -1832,20 +1974,10 @@ document.addEventListener('DOMContentLoaded', function() {
             { key: 'pontaS',  label: 'Ponta Semanal',     color: '#843C0C', visivel: false }
         ];
 
-        // --- Persistência de visibilidade (localStorage) ---
-        const LS_KEY_SERIES_VIS = 'omie_grafico_diario_series_visiveis';
-        function lsGetVis() { try { return JSON.parse(localStorage.getItem(LS_KEY_SERIES_VIS)) || {}; } catch(e) { return {}; } }
-        function lsSetVis(name, visible) {
-            try {
-                const obj = lsGetVis();
-                obj[name] = visible;
-                localStorage.setItem(LS_KEY_SERIES_VIS, JSON.stringify(obj));
-            } catch(e) {}
-        }
-        const visStore = lsGetVis();
-        function resolveVisible(name, defaultVis) {
-            return Object.prototype.hasOwnProperty.call(visStore, name) ? !!visStore[name] : defaultVis;
-        }
+        // --- Persistência de visibilidade (localStorage) — helper partilhado ---
+        const _visDiario = _criarVisPersistente('omie_grafico_diario_series_visiveis');
+        const lsSetVis = _visDiario.setVis;
+        const resolveVisible = _visDiario.isVisible;
 
         const seriesMA = [];
         metricasMA.forEach(m => {
@@ -2036,7 +2168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (!this.x) return;
                                 const dt = new Date(this.x);
                                 const dataStr = `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}-${String(dt.getUTCDate()).padStart(2,'0')}`;
-                                window.open(`omie-diario.html?data=${dataStr}`, '_blank', 'noopener');
+                                window.open(`omie-diario?data=${dataStr}`, '_blank', 'noopener');
                             }
                         }
                     }
@@ -2401,11 +2533,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const dataPTAnt = buildCurve(precosPTAnt);
 
         // Persistência de visibilidade (partilha chave com gráfico diário — nomes únicos)
-        const LS_KEY = 'omie_grafico_diario_series_visiveis';
-        function lsGetVis() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
-        function lsSetVis(name, visible) { try { const obj = lsGetVis(); obj[name] = visible; localStorage.setItem(LS_KEY, JSON.stringify(obj)); } catch(e) {} }
-        const visStore = lsGetVis();
-        const ptAntVis = Object.prototype.hasOwnProperty.call(visStore, 'PT (ano anterior)') ? !!visStore['PT (ano anterior)'] : false;
+        const _visDC = _criarVisPersistente('omie_grafico_diario_series_visiveis');
+        const lsSetVis = _visDC.setVis;
+        const ptAntVis = _visDC.isVisible('PT (ano anterior)', false);
 
         const _d = _hcDark();
         Highcharts.chart('grafico-duration-curve-container', {
@@ -2742,11 +2872,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const vol30Values = dataVol30.map(p => p[1]);
         const refLine = vol30Values.length ? vol30Values.reduce((a, b) => a + b, 0) / vol30Values.length : null;
 
-        const LS_KEY = 'omie_grafico_diario_series_visiveis';
-        function lsGetVis() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
-        function lsSetVis(name, visible) { try { const obj = lsGetVis(); obj[name] = visible; localStorage.setItem(LS_KEY, JSON.stringify(obj)); } catch(e) {} }
-        const visStore = lsGetVis();
-        const vol7Vis = Object.prototype.hasOwnProperty.call(visStore, 'Volatilidade 7d') ? !!visStore['Volatilidade 7d'] : false;
+        const _visVol = _criarVisPersistente('omie_grafico_diario_series_visiveis');
+        const lsSetVis = _visVol.setVis;
+        const vol7Vis = _visVol.isVisible('Volatilidade 7d', false);
 
         const _d = _hcDark();
         Highcharts.chart('grafico-volatilidade-container', {
@@ -3087,13 +3215,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
         function buildTable(dias, titulo, tituloClass) {
+            // Cada linha guarda o dia em data-dia para um listener delegado abrir omie-diario.html
+            // (substitui onclick inline para compatibilidade com CSP estrita)
             const rows = dias.map((d, i) => {
                 const [dd, mm, yyyy] = d.dia.split('/');
                 const date = new Date(parseInt(yyyy), parseInt(mm) - 1, parseInt(dd));
                 const ds = diasSemana[date.getDay()];
                 const dataISO = `${yyyy}-${mm}-${dd}`;
-                const url = `omie-diario.html?data=${dataISO}`;
-                return `<tr onclick="window.location.href='${url}'" title="Abrir ${d.dia} em omie-diario.html">
+                return `<tr data-data-iso="${dataISO}" title="Abrir ${d.dia} em omie-diario.html">
                     <td class="rank">${i + 1}</td>
                     <td>${d.dia}</td>
                     <td>${ds}</td>
@@ -3105,13 +3234,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return `
                 <h3 class="${tituloClass}">${titulo}</h3>
                 <table class="top-dia-table">
+                    <caption class="sr-only">${titulo} — Tabela com ${dias.length} dias do período, ordenada por preço médio. Cada linha pode ser clicada para abrir o dia detalhado em OMIE Diário.</caption>
                     <thead><tr>
-                        <th class="rank">#</th>
-                        <th>Data</th>
-                        <th>Dia</th>
-                        <th class="numeric">Média</th>
-                        <th class="numeric">Máx</th>
-                        <th class="numeric">Mín</th>
+                        <th class="rank" scope="col">#</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Dia</th>
+                        <th class="numeric" scope="col">Média</th>
+                        <th class="numeric" scope="col">Máx</th>
+                        <th class="numeric" scope="col">Mín</th>
                     </tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
@@ -3120,6 +3250,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         containerCaros.innerHTML   = buildTable(caros,   `🔥 Top ${TOP_N} mais caros`,   'top-dia-titulo-caro');
         containerBaratos.innerHTML = buildTable(baratos, `❄️ Top ${TOP_N} mais baratos`, 'top-dia-titulo-barato');
+
+        // Listener delegado em ambos os contentores (substitui onclick inline)
+        [containerCaros, containerBaratos].forEach(container => {
+            container.addEventListener('click', function(ev) {
+                const tr = ev.target.closest('tr[data-data-iso]');
+                if (!tr) return;
+                const iso = tr.getAttribute('data-data-iso');
+                if (iso) window.location.href = 'omie-diario?data=' + iso;
+            });
+        });
     }
 
     // --- A2: INSIGHT AUTOMÁTICO ---
@@ -3243,9 +3383,19 @@ document.addEventListener('DOMContentLoaded', function() {
         try { localStorage.setItem('omie_ciclos_donut_ativo', v); } catch(e) {}
     }
 
-    function atualizarGraficoCiclosDonut(ciclosPeriodo, dataInicioCSV, dataFimCSV) {
+    function atualizarGraficoCiclosDonut(ciclosPeriodo, dataInicioCSV, dataFimCSV, emCET) {
         const wrapper = document.getElementById('grafico-ciclos-donut');
         if (!wrapper) return;
+
+        // Destruir instância Highcharts anterior (se existir) antes de substituir o innerHTML —
+        // evita acumular charts órfãos em Highcharts.charts[] a cada re-render
+        // (toggle de fuso / mudança de período / clique noutro ciclo).
+        try {
+            if (window.Highcharts && Array.isArray(Highcharts.charts)) {
+                const old = Highcharts.charts.find(c => c && c.renderTo && c.renderTo.id === 'ciclos-donut-chart');
+                if (old) old.destroy();
+            }
+        } catch(e) {}
 
         // Configuração dos 4 ciclos — cores alinhadas com os cards
         const ciclosCfg = {
@@ -3324,8 +3474,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const _d = _hcDark();
             Highcharts.chart('ciclos-donut-chart', {
                 chart: { type: 'pie', height: 340, backgroundColor: _d.bg, style: { color: _d.txt } },
-                title: { text: `Contributo ao custo total — ${cfg.labelLong}`, style: { color: _d.txt, fontSize: '1em' } },
-                subtitle: { text: '% do custo total que veio de cada período (preço × duração)', style: { color: _d.txt, fontSize: '0.78em' } },
+                title: {
+                    text: `Contributo ao custo total — ${cfg.labelLong}` + (emCET ? ' (em hora CET)' : ''),
+                    style: { color: _d.txt, fontSize: '1em' }
+                },
+                subtitle: {
+                    text: '% do custo total que veio de cada período (preço × duração)' + (emCET ? ' · períodos ERSE em hora PT' : ''),
+                    style: { color: _d.txt, fontSize: '0.78em' }
+                },
                 tooltip: {
                     useHTML: true,
                     pointFormatter: function() {
@@ -3601,6 +3757,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     _fusoAtivo = novo;
                     try { localStorage.setItem('omie_diario_fuso', _fusoAtivo); } catch(e) {}
                     aplicarFusoBotoes();
+                    atualizarURL(); // Mantém ?fuso= sincronizado com o estado atual
                     atualizarDashboardPeriodo();
                 });
             });

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
     // --- VARIÁVEIS GLOBAIS ---
     let dadosEstruturados = {};       // Dados quarto-horários (96 pontos por dia/tarifário/opção)
     let dadosEstruturadosHora = {};   // Dados horários (24 pontos), derivados por média das QH
@@ -1190,7 +1190,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function init() {
-        const baseURL = "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/precos-horarios.csv";
+        // Origem: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
+        // Override: ?source=local força ler da cópia local.
+        const baseURL = (function() {
+            const _p = new URLSearchParams(window.location.search);
+            if (_p.get('source') === 'local') return "/data/precos-horarios.csv";
+            const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+            return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/precos-horarios.csv" : "/data/precos-horarios.csv";
+        })();
         const CSV_URL = baseURL + "?cache_bust=" + new Date().getTime();
         
         fetch(CSV_URL)
