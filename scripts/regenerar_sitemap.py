@@ -88,10 +88,11 @@ def main():
 
     urls = []
     for f in files:
-        loc = BASE_URL + "/" + ("" if f == "index.html" else f)
-        # index.html → URL termina em "/"
+        # URLs canónicas sem extensão .html (coerente com rel="canonical" das páginas)
         if f == "index.html":
-            loc = BASE_URL + "/"
+            loc = BASE_URL + "/"  # index.html → URL termina em "/"
+        else:
+            loc = BASE_URL + "/" + f.removesuffix(".html")
         lastmod = get_last_commit_date(f)
         freq, prio = get_priority_freq(f)
         urls.append((loc, lastmod, freq, prio, f))
