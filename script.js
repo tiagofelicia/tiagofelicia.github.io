@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- HEADER + MENU ---
     var menuPlaceholder = document.getElementById('menu-placeholder');
     if (menuPlaceholder) {
-        fetch('menu.html')
+        fetch('/menu.html')
             .then(function (response) {
                 if (!response.ok) {
                     throw new Error('Erro na rede ao carregar menu: ' + response.statusText);
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!window._menuJSLoaded) {
                     window._menuJSLoaded = true;
                     var menuJsScript = document.createElement('script');
-                    menuJsScript.src = 'menu.js';
+                    menuJsScript.src = '/menu.js';
                     menuJsScript.defer = true;
                     document.body.appendChild(menuJsScript);
                 }
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- FOOTER ---
     var footerPlaceholder = document.getElementById('footer-placeholder');
     if (footerPlaceholder) {
-        fetch('footer.html')
+        fetch('/footer.html')
             .then(function (response) {
                 if (!response.ok) {
                     throw new Error('Erro na rede ao carregar rodapé: ' + response.statusText);

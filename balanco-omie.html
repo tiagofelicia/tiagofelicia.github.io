@@ -18,7 +18,7 @@
     <meta property="og:title" content="Balanço Energético em Portugal vs Preço OMIE" />
     <meta property="og:description" content="Gráfico interativo do balanço energético horário: produção por fonte, consumo, importação/exportação e armazenamento, e o seu impacto no preço da luz." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/balanco-omie" />
-    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social-share.jpg" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/jpeg" />
@@ -32,6 +32,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
@@ -423,7 +424,6 @@
 <div id="footer-placeholder"></div>
 
 
-<script src="theme.js"></script>
 <script>
 // Define o formato de números PT (sem separador de milhares)
 Highcharts.setOptions({
@@ -830,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const fP = (v) => (mix.total > 0 ? (v / mix.total * 100) : 0).toFixed(1).replace('.', ',');
         const sw = (cor) => `<span class="fonte-cor" style="background:${cor};"></span>`;
 
-        let h = `<table class="tabela-mix"><thead><tr><th>Fonte</th><th class="num">GWh</th><th class="num">%</th></tr></thead><tbody>`;
+        let h = `<table class="tabela-mix"><thead><tr><th scope="col">Fonte</th><th scope="col" class="num">GWh</th><th scope="col" class="num">%</th></tr></thead><tbody>`;
         mix.macros.forEach(m => {
             h += `<tr class="mix-macro"><td>${sw(m.cor)}${m.nome}</td><td class="num">${fG(m.gwh)}</td><td class="num">${fP(m.gwh)}%</td></tr>`;
             if (m.fontes.length > 1) {
@@ -948,7 +948,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const fP = (v) => cons.pct(v).toFixed(1).replace('.', ',');
         const sw = (cor) => `<span class="fonte-cor" style="background:${cor};"></span>`;
 
-        let h = `<table class="tabela-mix"><thead><tr><th>Fonte</th><th class="num">GWh</th><th class="num">% consumo</th></tr></thead><tbody>`;
+        let h = `<table class="tabela-mix"><thead><tr><th scope="col">Fonte</th><th scope="col" class="num">GWh</th><th scope="col" class="num">% consumo</th></tr></thead><tbody>`;
         cons.macros.forEach(m => {
             h += `<tr class="mix-macro"><td>${sw(m.cor)}${m.nome}</td><td class="num">${fG(m.gwh)}</td><td class="num">${fP(m.gwh)}%</td></tr>`;
             if (m.fontes.length > 1) {
@@ -1059,7 +1059,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return `<tr class="${classe || ''}"><td>${nome}</td><td class="num">${pStr}</td><td class="num bal-energia">${eStr}</td></tr>`;
         }
 
-        let h = `<table class="tabela-balanco"><thead><tr><th></th><th class="num">Ponta diária<br><small>[MW]</small></th><th class="num bal-energia">Energia diária<br><small>[GWh]</small></th></tr></thead><tbody>`;
+        let h = `<table class="tabela-balanco"><thead><tr><th scope="col"></th><th scope="col" class="num">Ponta diária<br><small>[MW]</small></th><th scope="col" class="num bal-energia">Energia diária<br><small>[GWh]</small></th></tr></thead><tbody>`;
         h += row('Produção Total', gm.producaoTotal, prodTotalEnergia, 'nivel-0');
         h += row('Produção Renovável', gm.renovavel, renovEnergia, 'nivel-1');
         h += row('Hídrica' + (aplicaBomb ? ' ¹' : ''), mx['Hídrica'], hidricaRenov, 'nivel-2');

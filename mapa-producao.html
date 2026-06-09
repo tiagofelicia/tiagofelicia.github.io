@@ -33,6 +33,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -825,8 +826,6 @@
 
 <div id="footer-placeholder"></div>
 
-<!-- theme.js pode não existir localmente - ignorar erro -->
-<script src="theme.js" onerror="console.log('theme.js não encontrado (normal em teste local)')"></script>
 
 <!-- GeoJSON das zonas inline (carregado como ficheiro JS externo) -->
 <script src="europe_zones_compact.js"></script>
@@ -1846,16 +1845,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var html = '<div class="table-scroll"><table class="ranked-table">';
         html += '<thead><tr>';
-        html += '<th class="rank-cell">#</th>';
-        html += '<th class="sortable" data-sort="name" tabindex="0" role="button" aria-label="Ordenar por país">País' + getSortIndicator('name') + '</th>';
-        if (showSpark) { html += '<th class="spark-cell" title="Tendência de % renovável nos últimos 7 dias">Tendência 7d</th>'; }
+        html += '<th scope="col" class="rank-cell">#</th>';
+        html += '<th scope="col" class="sortable" data-sort="name" tabindex="0" role="button" aria-label="Ordenar por país">País' + getSortIndicator('name') + '</th>';
+        if (showSpark) { html += '<th scope="col" class="spark-cell" title="Tendência de % renovável nos últimos 7 dias">Tendência 7d</th>'; }
         for (var c = 0; c < columns.length; c++) {
-            html += '<th class="sortable" data-sort="' + columns[c].key + '" tabindex="0" role="button" aria-label="Ordenar por ' + columns[c].label + '">' + columns[c].label + getSortIndicator(columns[c].key) + '</th>';
+            html += '<th scope="col" class="sortable" data-sort="' + columns[c].key + '" tabindex="0" role="button" aria-label="Ordenar por ' + columns[c].label + '">' + columns[c].label + getSortIndicator(columns[c].key) + '</th>';
             if (columns[c].key === 'ren' && showDeltaPt) {
-                html += '<th class="sortable" data-sort="deltaPt" tabindex="0" role="button" aria-label="Ordenar por diferença vs Portugal" title="Diferença em pontos percentuais vs Portugal">ΔPT' + getSortIndicator('deltaPt') + '</th>';
+                html += '<th scope="col" class="sortable" data-sort="deltaPt" tabindex="0" role="button" aria-label="Ordenar por diferença vs Portugal" title="Diferença em pontos percentuais vs Portugal">ΔPT' + getSortIndicator('deltaPt') + '</th>';
             }
             if (columns[c].key === 'total' && showAutonomy) {
-                html += '<th class="sortable" data-sort="autonomy" tabindex="0" role="button" aria-label="Ordenar por auto-suficiência" title="Produção / Consumo × 100 — >100% = exportador líquido">Auto-sufic.' + getSortIndicator('autonomy') + '</th>';
+                html += '<th scope="col" class="sortable" data-sort="autonomy" tabindex="0" role="button" aria-label="Ordenar por auto-suficiência" title="Produção / Consumo × 100 — >100% = exportador líquido">Auto-sufic.' + getSortIndicator('autonomy') + '</th>';
             }
         }
         html += '</tr></thead><tbody>';
@@ -3440,7 +3439,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var lnk = document.getElementById('link-precos');
                 if (!lnk) return;
                 var d = (currentMode === 'custom' && customEnd) ? customEnd : seletorData.value;
-                lnk.href = 'mapa-precos.html?date=' + encodeURIComponent(d);
+                lnk.href = 'mapa-precos?date=' + encodeURIComponent(d);
             }
             updateCrossLink();
 

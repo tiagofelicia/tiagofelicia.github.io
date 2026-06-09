@@ -1206,8 +1206,9 @@
         // Não correr em páginas sem <main>
         var main = document.getElementById('main-content') || document.querySelector('main');
         if (!main) return;
-        // Não correr na própria página do glossário (ia interferir com listas)
-        if (window.location.pathname.endsWith('/glossario.html')) return;
+        // Não correr na própria página do glossário (ia interferir com listas).
+        // O site é servido com URLs sem extensão (/glossario) — aceitar ambas as formas.
+        if (/\/glossario(\.html)?$/.test(window.location.pathname)) return;
 
         var processar = function() {
             jaDecorado = {};
@@ -1290,7 +1291,7 @@
         html += '</div>';
         html += '<div class="gl-tooltip-cat"><span class="gl-cat-badge ' + t.cat + '">' + icon + ' ' + escapeHtml(catLabel) + '</span></div>';
         html += '<div class="gl-tooltip-def">' + escapeHtml(t.short) + '</div>';
-        html += '<a class="gl-tooltip-btn" href="/glossario.html#' + anchor + '" target="_blank" rel="noopener" aria-label="Abrir ' + escapeHtml(termoKey) + ' no glossário (nova aba)">Saber mais <span aria-hidden="true">↗</span></a>';
+        html += '<a class="gl-tooltip-btn" href="/glossario#' + anchor + '" target="_blank" rel="noopener" aria-label="Abrir ' + escapeHtml(termoKey) + ' no glossário (nova aba)">Saber mais <span aria-hidden="true">↗</span></a>';
         html += '<div class="gl-tooltip-arrow"></div>';
         tooltipEl.innerHTML = html;
     }
