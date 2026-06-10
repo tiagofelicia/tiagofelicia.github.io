@@ -59,6 +59,13 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(function (data) {
                 footerPlaceholder.innerHTML = data;
+
+                // Ano do copyright sempre atual (o footer.html mantém um fallback estático)
+                var yearEl = document.getElementById('footer-year');
+                if (yearEl) {
+                    yearEl.textContent = new Date().getFullYear();
+                }
+
                 document.dispatchEvent(new Event('footerLoaded'));
             })
             .catch(function (error) { console.error('Erro ao carregar o rodapé:', error); });

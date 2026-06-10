@@ -21,6 +21,9 @@
             hamburger.classList.add('active');
             hamburger.setAttribute('aria-expanded', 'true');
             document.body.style.overflow = 'hidden';
+            // Adiar o foco: o drawer só fica focável quando a transição de
+            // visibility arranca (frame seguinte).
+            setTimeout(function() { closeBtn.focus(); }, 50);
         }
 
         function closeDrawer() {
@@ -30,6 +33,7 @@
             hamburger.setAttribute('aria-expanded', 'false');
             document.body.style.overflow = '';
             setTimeout(function() { navigateTo('main'); }, 350);
+            hamburger.focus();
         }
 
         function navigateTo(viewName) {
@@ -68,6 +72,29 @@
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && drawer.classList.contains('active')) closeDrawer();
+
+            /* Focus-trap: com o drawer aberto, Tab circula apenas dentro dele */
+            if (e.key === 'Tab' && drawer.classList.contains('active')) {
+                var focusables = drawer.querySelectorAll('a[href], button:not([disabled])');
+                var visible = Array.prototype.filter.call(focusables, function(el) {
+                    var view = el.closest('.drawer-view');
+                    return !view || view.classList.contains('visible');
+                });
+                if (!visible.length) return;
+                var first = visible[0];
+                var last = visible[visible.length - 1];
+
+                if (!drawer.contains(document.activeElement)) {
+                    e.preventDefault();
+                    first.focus();
+                } else if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
         });
 
         window.addEventListener('resize', function() {
@@ -110,24 +137,25 @@
             });
         })();
 
-        /* ── SUBMENUS INTELIGENTES (não saem do ecrã) ── */
-        (function smartSubmenus() {
-            var submenus = document.querySelectorAll('.submenu-content');
-            submenus.forEach(function(sub) {
-                var parent = sub.closest('.submenu');
-                if (!parent) return;
+        /* ── ARIA-EXPANDED nos dropdowns desktop ── */
+        // O estado aberto/fechado é controlado por CSS (:hover/:focus-within);
+        // aqui apenas refletimos esse estado no atributo, para leitores de ecrã.
+        (function syncAriaExpanded() {
+            var dropdowns = document.querySelectorAll('nav > ul > li.dropdown');
+            dropdowns.forEach(function(li) {
+                var topLink = li.querySelector(':scope > a[aria-haspopup]');
+                if (!topLink) return;
 
-                parent.addEventListener('mouseenter', function() {
-                    // Reset para posição padrão (direita)
-                    sub.classList.remove('flip-left');
+                function setExpanded(value) {
+                    topLink.setAttribute('aria-expanded', value ? 'true' : 'false');
+                }
 
-                    // Verifica se sai do viewport
-                    requestAnimationFrame(function() {
-                        var rect = sub.getBoundingClientRect();
-                        if (rect.right > window.innerWidth) {
-                            sub.classList.add('flip-left');
-                        }
-                    });
+                li.addEventListener('mouseenter', function() { setExpanded(true); });
+                li.addEventListener('mouseleave', function() { setExpanded(false); });
+                li.addEventListener('focusin', function() { setExpanded(true); });
+                li.addEventListener('focusout', function(e) {
+                    // Só fecha se o foco saiu mesmo do <li> (e não para um filho)
+                    if (!li.contains(e.relatedTarget)) setExpanded(false);
                 });
             });
         })();

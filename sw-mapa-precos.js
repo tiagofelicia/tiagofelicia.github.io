@@ -9,7 +9,7 @@
 // Atualizar CACHE_VERSION sempre que houver alteracoes ao SW para forcar
 // limpeza da versao antiga.
 
-const CACHE_VERSION = 'mapa-precos-v1';
+const CACHE_VERSION = 'mapa-precos-v2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 const CDN_CACHE = `${CACHE_VERSION}-cdn`;
@@ -18,6 +18,7 @@ const STATIC_ASSETS = [
     'mapa-precos.html',
     'style.css',
     'theme.js',
+    'dados.js',
     'menu.html',
     'footer.html',
     'europe_zones_compact.js',

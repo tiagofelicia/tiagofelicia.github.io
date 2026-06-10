@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -34,6 +34,7 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
@@ -450,18 +451,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 2. CONFIGURAÇÕES ---
     const ANO_INICIO_HISTORICO = 2010;
-    // Origem dos dados: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
-    // Override: ?source=local força ler da cópia local.
-    const URL_BASE = (function() {
-        const _p = new URLSearchParams(window.location.search);
-        if (_p.get('source') === 'local') return "/data/";
-        const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/" : "/data/";
-    })();
-    const URL_OMIE_ATUAIS = URL_BASE + "omie_dados_atuais.csv";
-    const URL_OMIE_HISTORICO_BASE = URL_BASE + "omie_historico_";
-    const URL_PRODUCAO_ATUAIS = URL_BASE + "producao_dados_atuais.csv";
-    const URL_PRODUCAO_HISTORICO_BASE = URL_BASE + "producao_historico_";
+    // Caminhos relativos a data/ — a origem (same-origin vs GitHub raw) e o
+    // fallback entre ambas são geridos por fetchDados() (dados.js).
+    const URL_OMIE_ATUAIS = "omie_dados_atuais.csv";
+    const URL_OMIE_HISTORICO_BASE = "omie_historico_";
+    const URL_PRODUCAO_ATUAIS = "producao_dados_atuais.csv";
+    const URL_PRODUCAO_HISTORICO_BASE = "producao_historico_";
     
     // --- 3. ARMAZENAMENTO DE DADOS ---
     let dadosOmieAtuais = [];
@@ -506,8 +501,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const [respostaOmie, respostaProducao] = await Promise.all([
-                fetch(urlOmie),
-                fetch(urlProducao)
+                fetchDados(urlOmie),
+                fetchDados(urlProducao)
             ]);
             if (!respostaOmie.ok) throw new Error(`Falha ao carregar OMIE ${ano}`);
             if (!respostaProducao.ok) throw new Error(`Falha ao carregar Produção ${ano}`);
@@ -562,12 +557,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     function carregarBombagem() {
-        // Cache-busting: evita servir uma versão antiga do CSV (browser/CDN)
+        // Cache-busting: evita servir uma versão antiga do CSV (browser/CDN).
+        // fetchDados (dados.js) trata do fallback entre /data/ e GitHub raw.
         const _bust = '?_=' + Date.now();
-        // Local primeiro (preview/produção mesmo domínio), depois GitHub raw
-        return fetch('data/producao_bombagem_diaria.csv' + _bust, { cache: 'no-store' })
-            .then(r => r.ok ? r.text() : Promise.reject('local'))
-            .catch(() => fetch(URL_BASE + 'producao_bombagem_diaria.csv' + _bust, { cache: 'no-store' }).then(r => r.ok ? r.text() : Promise.reject('raw')))
+        return fetchDados('producao_bombagem_diaria.csv' + _bust, { cache: 'no-store' })
+            .then(r => r.ok ? r.text() : Promise.reject('indisponível'))
             .then(txt => { parseBombagemCSV(txt); })
             .catch(() => { _bombagemDiaria = {}; /* indisponível — segue sem separar bombagem */ });
     }
@@ -1526,8 +1520,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const dataDeHoje = getLisboaDateString();
 
     Promise.all([
-        fetch(URL_OMIE_ATUAIS),
-        fetch(URL_PRODUCAO_ATUAIS)
+        fetchDados(URL_OMIE_ATUAIS),
+        fetchDados(URL_PRODUCAO_ATUAIS)
     ])
     .then(async ([respostaOmie, respostaProducao]) => {
         if (!respostaOmie.ok) throw new Error("Falha ao carregar OMIE atuais");

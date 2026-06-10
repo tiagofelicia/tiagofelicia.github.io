@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -35,6 +35,7 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -870,14 +871,8 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 
     // --- CONFIGURAÇÕES ---
-    // Origem dos dados: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
-    // Override: ?source=local força ler da cópia local.
-    var URL_GITHUB = (function() {
-        var _p = new URLSearchParams(window.location.search);
-        if (_p.get('source') === 'local') return "/data/mapa_producao/";
-        var _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_producao/" : "/data/mapa_producao/";
-    })();
+    // Os dados vivem em data/mapa_producao/ — a origem (same-origin vs
+    // GitHub raw) e o fallback entre ambas são geridos por fetchDados() (dados.js).
     var DATA_INICIO = "2026-01-01";
 
     // Mapeamento: ecZone (GeoJSON) → código de país (dados JSON)
@@ -1119,12 +1114,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FETCH COM FALLBACK ---
     async function fetchComFallback(relativePath) {
-        try {
-            var resp = await fetch("data/mapa_producao/" + relativePath, {cache: 'no-cache'});
-            if (resp.ok) return resp;
-        } catch(e) { /* ignorar - pode ser file:// */ }
-        var resp2 = await fetch(URL_GITHUB + relativePath, {cache: 'no-cache'});
-        return resp2;
+        // fetchDados (dados.js) trata do fallback entre /data/ e GitHub raw.
+        return fetchDados("mapa_producao/" + relativePath, {cache: 'no-cache'});
     }
 
     // --- UTILITÁRIO: clarear cor hex ---

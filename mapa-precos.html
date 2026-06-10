@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -47,6 +47,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
 
     <!-- Preload do metadata.json (sempre carregado primeiro para validar disponibilidade) -->
     <link rel="preload" as="fetch" href="/data/mapa_precos_qh/metadata.json" type="application/json" crossorigin="anonymous">
@@ -1025,14 +1026,8 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- CONFIGURACOES ---
-    // Origem dos dados: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
-    // Override: ?source=local força ler da cópia local.
-    var URL_GITHUB = (function() {
-        var _p = new URLSearchParams(window.location.search);
-        if (_p.get('source') === 'local') return "/data/mapa_precos_qh/";
-        var _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/mapa_precos_qh/" : "/data/mapa_precos_qh/";
-    })();
+    // Os dados vivem em data/mapa_precos_qh/ — a origem (same-origin vs
+    // GitHub raw) e o fallback entre ambas são geridos por fetchDados() (dados.js).
     var DATA_INICIO = "2018-01-01";
 
     // Nomes das zonas para display (português com acentos)
@@ -1634,12 +1629,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FUNCAO AUXILIAR: fetch com fallback ---
     async function fetchComFallback(relativePath) {
-        try {
-            var resp = await fetch("data/mapa_precos_qh/" + relativePath);
-            if (resp.ok) return resp;
-        } catch(e) { /* ignorar - pode ser file:// */ }
-        var resp2 = await fetch(URL_GITHUB + relativePath);
-        return resp2;
+        // fetchDados (dados.js) trata do fallback entre /data/ e GitHub raw.
+        return fetchDados("mapa_precos_qh/" + relativePath);
     }
 
     // Indicador visual de frescura dos dados (badge ao lado do subtitulo).

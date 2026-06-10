@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -34,6 +34,7 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
 
     <!-- Preload do CSV "atuais" — o browser começa o fetch ainda antes do JS arrancar -->
     <link rel="preload" as="fetch" href="/data/omie_dados_atuais.csv" type="text/csv" crossorigin="anonymous">
@@ -651,18 +652,10 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- CONFIGURAÇÕES ---
-    // Origem dos dados:
-    //   - Produção (www.tiagofelicia.pt): /data/ → Fastly CDN, brotli, HTTP/2 multiplex
-    //   - Dev (localhost/file://): raw.github → vê sempre o branch main, dados frescos sem precisar de git pull
-    // Override opcional: ?source=local força ler da cópia local mesmo em localhost (debug).
-    const URL_BASE = (function() {
-        const _p = new URLSearchParams(window.location.search);
-        if (_p.get('source') === 'local') return "/data/";
-        const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/" : "/data/";
-    })();
-    const URL_DADOS_ATUAIS = URL_BASE + "omie_dados_atuais.csv";
-    const URL_HISTORICO_BASE = URL_BASE + "omie_historico_";
+    // Caminhos relativos a data/ — a origem (same-origin vs GitHub raw) e o
+    // fallback entre ambas são geridos por fetchDados() (dados.js).
+    const URL_DADOS_ATUAIS = "omie_dados_atuais.csv";
+    const URL_HISTORICO_BASE = "omie_historico_";
     const ANO_INICIO_HISTORICO = 2010;
     // --- FIM CONFIGURAÇÕES ---
 
@@ -755,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dadosHistoricos[ano] && !(dadosHistoricos[ano] instanceof Promise)) { return dadosHistoricos[ano]; }
         if (dadosHistoricos[ano] instanceof Promise) { return await dadosHistoricos[ano]; }
         const url = `${URL_HISTORICO_BASE}${ano}.csv`; loadingIndicator.style.display = 'block';
-        dadosHistoricos[ano] = fetch(url).then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); }) .then(csvText => { const dados = parseCSVSimples(csvText); dadosHistoricos[ano] = dados; return dados; }) .catch(error => { console.error(`Falha ${ano}:`, error); dadosHistoricos[ano] = []; return []; }) .finally(() => { const aCarregar = Object.values(dadosHistoricos).some(v => v instanceof Promise); if (!aCarregar) loadingIndicator.style.display = 'none'; });
+        dadosHistoricos[ano] = fetchDados(url).then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); }) .then(csvText => { const dados = parseCSVSimples(csvText); dadosHistoricos[ano] = dados; return dados; }) .catch(error => { console.error(`Falha ${ano}:`, error); dadosHistoricos[ano] = []; return []; }) .finally(() => { const aCarregar = Object.values(dadosHistoricos).some(v => v instanceof Promise); if (!aCarregar) loadingIndicator.style.display = 'none'; });
         return await dadosHistoricos[ano];
     }
 
@@ -1385,7 +1378,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- PROCESSO DE INICIALIZAÇÃO ---
-    fetch(URL_DADOS_ATUAIS)
+    fetchDados(URL_DADOS_ATUAIS)
         .then(response => { if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`); return response.text(); })
         .then(data => {
             const parsedData = parseCSVAtual(data);

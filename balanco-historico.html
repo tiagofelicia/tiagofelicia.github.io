@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -34,6 +34,7 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
@@ -624,17 +625,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // 1. CONSTANTES E ESTADO
     // ============================================================
     const ANO_INICIO_HISTORICO = 2010;
-    // Origem dos dados: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
-    // Override: ?source=local força ler da cópia local.
-    const URL_BASE = (function() {
-        const _p = new URLSearchParams(window.location.search);
-        if (_p.get('source') === 'local') return "/data/";
-        const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/" : "/data/";
-    })();
-    const URL_PRODUCAO_ATUAIS = URL_BASE + "producao_dados_atuais.csv";
-    const URL_PRODUCAO_HISTORICO_BASE = URL_BASE + "producao_historico_";
-    const URL_BOMBAGEM = URL_BASE + "producao_bombagem_diaria.csv";
+    // Caminhos relativos a data/ — a origem (same-origin vs GitHub raw) e o
+    // fallback entre ambas são geridos por fetchDados() (dados.js).
+    const URL_PRODUCAO_ATUAIS = "producao_dados_atuais.csv";
+    const URL_PRODUCAO_HISTORICO_BASE = "producao_historico_";
+    const URL_BOMBAGEM = "producao_bombagem_diaria.csv";
 
     const CORES_FONTES = {
         'Solar': '#FFC000',
@@ -846,27 +841,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     // 4. CARREGAMENTO DE DADOS
     // ============================================================
-    async function fetchTexto(url) {
-        const r = await fetch(url, { cache: 'no-store' });
-        if (!r.ok) throw new Error('HTTP ' + r.status + ' a carregar ' + url);
-        return r.text();
-    }
-
-    // Estratégia de dados: GitHub raw primeiro (sempre fresco, ≤4h),
-    // fallback local apenas em caso de erro de rede.
-    async function fetchOnlineFirst(urlOnline, pathLocal) {
+    // Lê um ficheiro de data/ como texto, com cache-busting.
+    // fetchDados (dados.js) trata do fallback entre /data/ e GitHub raw.
+    async function fetchDadosTexto(caminho) {
         const bust = '?_=' + Date.now();
-        try {
-            return await fetchTexto(urlOnline + bust);
-        } catch (e) {
-            return await fetchTexto(pathLocal);
-        }
+        const r = await fetchDados(caminho + bust, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' a carregar ' + caminho);
+        return r.text();
     }
 
     async function carregarBombagem() {
         if (_bombagemCarregada) return;
         try {
-            const txt = await fetchOnlineFirst(URL_BOMBAGEM, 'data/producao_bombagem_diaria.csv');
+            const txt = await fetchDadosTexto(URL_BOMBAGEM);
             txt.trim().split('\n').slice(1).forEach(l => {
                 const [d, gwh] = l.split(',');
                 if (d) _bombagemDiaria[d.trim()] = parseFloat((gwh || '0').replace(',', '.')) || 0;
@@ -882,11 +869,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (_cacheDiario[ano]) return _cacheDiario[ano];
         const anoAtualLisboa = parseInt(getLisboaDateString().slice(0, 4), 10);
         const usaAtuais = (ano === anoAtualLisboa);
-        const urlOnline = usaAtuais ? URL_PRODUCAO_ATUAIS : (URL_PRODUCAO_HISTORICO_BASE + ano + '.csv');
-        const pathLocal = usaAtuais ? 'data/producao_dados_atuais.csv' : ('data/producao_historico_' + ano + '.csv');
+        const caminho = usaAtuais ? URL_PRODUCAO_ATUAIS : (URL_PRODUCAO_HISTORICO_BASE + ano + '.csv');
         let txt;
         try {
-            txt = await fetchOnlineFirst(urlOnline, pathLocal);
+            txt = await fetchDadosTexto(caminho);
         } catch (e) {
             console.error('Erro a carregar ano ' + ano, e);
             throw e;
@@ -2215,8 +2201,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let _aggregatesCache = null;
     async function _carregarAggregates() {
         if (_aggregatesCache) return _aggregatesCache;
-        const txt = await fetchOnlineFirst(URL_BASE + 'records_producao.json',
-                                           'data/records_producao.json');
+        const txt = await fetchDadosTexto('records_producao.json');
         const j = JSON.parse(txt);
         _aggregatesCache = j.aggregates || {};
         return _aggregatesCache;
@@ -2384,8 +2369,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return m ? `${m[3]}-${m[2]}-${m[1]}` : null;
     }
     async function calcularRecordesViaJSON() {
-        const txt = await fetchOnlineFirst(URL_BASE + 'records_producao.json',
-                                           'data/records_producao.json');
+        const txt = await fetchDadosTexto('records_producao.json');
         const j = JSON.parse(txt);
         const r = j.recordes || {};
         const ms = (gwh) => (gwh ?? 0) * 1000; // GWh → MWh (para compat com renderRecordes)

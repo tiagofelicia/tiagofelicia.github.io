@@ -500,39 +500,6 @@ nav > ul > li:hover > .dropdown-content {
     margin: 20px auto; /* Centra a imagem com margens verticais */
     border-radius: 8px; /* Adiciona cantos arredondados */
 }
-/* ================================== */
-/* Estilos para o Sub-Menu Suspenso   */
-/* ================================== */
-
-/* O item de lista que contém um submenu */
-.submenu {
-    position: relative;
-}
-
-/* O conteúdo do submenu (escondido por defeito) */
-.submenu-content {
-    display: none;
-    position: absolute;
-    left: 100%; /* Posiciona o submenu à direita do item pai */
-    top: 0;      /* Alinha o topo do submenu com o topo do item pai */
-    background-color: #34495e; /* Mesma cor do dropdown principal */
-    min-width: 250px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 2; /* Z-index maior para ficar por cima de tudo */
-    border-radius: 0 5px 5px 5px;
-    border-left: 1px solid #4a627a;
-}
-
-/* Adiciona uma seta para a direita para indicar que há um submenu */
-.submenu > a::after {
-    content: ' ▸';
-    float: right; /* Flutua a seta para a direita */
-}
-
-/* Mostra o submenu quando se passa o rato por cima do item pai */
-.submenu:hover > .submenu-content {
-    display: block;
-}
 /* Estilos para o link/botão de acesso a sites externos */
 .link-portal {
     background-color: #f5f5f5;
@@ -1045,11 +1012,6 @@ nav > ul > li:hover > .dropdown-content {
 [data-theme="dark"] .dropdown-content a:hover {
     background-color: #334155;
 }
-[data-theme="dark"] .submenu-content {
-    background-color: #1e293b;
-    border-left-color: #475569;
-}
-
 /* --- Footer --- */
 [data-theme="dark"] footer {
     background-color: #0f172a;
@@ -1264,6 +1226,19 @@ nav > ul > li:hover > .dropdown-content {
 /* Mover para aqui evita FOUC ao injetar o menu via fetch.          */
 /* ============================================================== */
 
+/* Reserva de altura para o header+nav injetados via fetch (reduz CLS).
+   Valores medidos: desktop ≈182px (constante); mobile varia 151–192px
+   conforme o texto do subtítulo quebra — usar o mínimo para nunca criar
+   espaço vazio permanente. */
+#menu-placeholder {
+    min-height: 181px;
+}
+@media (max-width: 768px) {
+    #menu-placeholder {
+        min-height: 150px;
+    }
+}
+
 /* === DESKTOP: Transições suaves nos dropdowns === */
 .dropdown-content {
     display: block !important;
@@ -1294,48 +1269,12 @@ nav > ul > li.dropdown:focus-within > a::after {
     transform: rotate(180deg);
 }
 
-/* Submenus (nível 2+) com transição */
-.submenu-content {
-    display: block !important;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(8px);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
-    pointer-events: none;
-}
-
-.submenu:hover > .submenu-content,
-.submenu:focus-within > .submenu-content {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(0);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0s;
-    pointer-events: auto;
-}
-
-/* Submenu que abre à esquerda (quando não há espaço à direita) */
-.submenu-content.flip-left {
-    left: auto !important;
-    right: 100% !important;
-    border-left: none !important;
-    border-right: 1px solid #4a627a;
-    border-radius: 5px 0 5px 5px !important;
-    transform: translateX(-8px);
-}
-
-.submenu:hover > .submenu-content.flip-left,
-.submenu:focus-within > .submenu-content.flip-left {
-    transform: translateX(0);
-}
-
 /* Hover suave nos itens do dropdown */
-.dropdown-content a,
-.submenu-content a {
+.dropdown-content a {
     transition: background-color 0.2s ease, padding-left 0.2s ease !important;
 }
 
-.dropdown-content a:hover,
-.submenu-content a:hover {
+.dropdown-content a:hover {
     padding-left: 22px !important;
 }
 
@@ -1562,11 +1501,13 @@ li.dropdown:focus-within > .mega-dropdown {
 .drawer-view {
     padding: 0;
     width: 100%;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, visibility 0s 0.3s;
 }
-.drawer-view.hidden-left  { position: absolute; top: 0; left: 0; transform: translateX(-100%); opacity: 0; pointer-events: none; }
-.drawer-view.hidden-right { position: absolute; top: 0; left: 0; transform: translateX(100%);  opacity: 0; pointer-events: none; }
-.drawer-view.visible      { position: relative; transform: translateX(0); opacity: 1; pointer-events: auto; }
+/* visibility:hidden (com delay igual à animação) impede que links de vistas
+   invisíveis recebam foco por teclado, sem cortar a transição de saída. */
+.drawer-view.hidden-left  { position: absolute; top: 0; left: 0; transform: translateX(-100%); opacity: 0; pointer-events: none; visibility: hidden; }
+.drawer-view.hidden-right { position: absolute; top: 0; left: 0; transform: translateX(100%);  opacity: 0; pointer-events: none; visibility: hidden; }
+.drawer-view.visible      { position: relative; transform: translateX(0); opacity: 1; pointer-events: auto; visibility: visible; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, visibility 0s 0s; }
 
 .mobile-back-btn {
     display: flex;

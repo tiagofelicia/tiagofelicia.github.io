@@ -1,4 +1,4 @@
-﻿/* cookie-consent.js — Banner RGPD para Google Analytics (GA4)
+/* cookie-consent.js — Banner RGPD para Google Analytics (GA4)
    Tiago Felícia | www.tiagofelicia.pt
 
    Uso: adicionar em cada página antes de </body>:

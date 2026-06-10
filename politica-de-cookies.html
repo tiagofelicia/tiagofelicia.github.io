@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
@@ -194,6 +194,10 @@
 // Revogar consentimento
 function revogarConsentimento() {
     localStorage.removeItem('tf_cookie_consent');
+    // Atualizar o Consent Mode imediatamente (sem esperar pelo reload)
+    if (typeof gtag === 'function') {
+        gtag('consent', 'update', { 'analytics_storage': 'denied' });
+    }
     // Apagar cookies GA
     document.cookie.split(';').forEach(function(c) {
         var name = c.split('=')[0].trim();

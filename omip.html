@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
@@ -34,6 +34,7 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
@@ -445,14 +446,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Origem: produção → /data/ (Fastly), dev local → raw.github (sempre branch main).
-    // Override: ?source=local força ler da cópia local.
-    const csvUrl = (function() {
-        const _p = new URLSearchParams(window.location.search);
-        if (_p.get('source') === 'local') return "/data/omie_dados_atuais.csv";
-        const _isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-        return _isLocal ? "https://raw.githubusercontent.com/tiagofelicia/tiagofelicia.github.io/main/data/omie_dados_atuais.csv" : "/data/omie_dados_atuais.csv";
-    })();
+    // Caminho relativo a data/ — origem e fallback geridos por fetchDados() (dados.js).
+    const csvUrl = "omie_dados_atuais.csv";
     const tabelaOmipPtBody = document.querySelector("#tabela-omip-pt tbody");
     const tabelaOmipEsBody = document.querySelector("#tabela-omip-es tbody");
 
@@ -927,7 +922,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return futuros.filter(f => !(f.Tipo === 'Diários' && f.Descricao === dataSeguinte));
     }
 
-    fetch(csvUrl)
+    fetchDados(csvUrl)
         .then(response => { if (!response.ok) throw new Error(`Erro ${response.status} ao carregar CSV.`); return response.text(); })
         .then(csvText => {
             const { atualizacoes, futurosPT, futurosES } = parseCSV(csvText);
