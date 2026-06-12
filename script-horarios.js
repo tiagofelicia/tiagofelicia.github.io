@@ -1192,7 +1192,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function init() {
         // fetchDados (dados.js) trata da origem (same-origin vs GitHub raw)
         // e do fallback entre ambas. Cache-busting para dados sempre frescos.
-        const CSV_URL = "precos-horarios.csv?cache_bust=" + new Date().getTime();
+        const CSV_URL = "omie/precos-horarios.csv?cache_bust=" + new Date().getTime();
 
         fetchDados(CSV_URL)
             .then(res => res.text())

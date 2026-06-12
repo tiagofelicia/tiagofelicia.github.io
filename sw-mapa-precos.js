@@ -9,7 +9,7 @@
 // Atualizar CACHE_VERSION sempre que houver alteracoes ao SW para forcar
 // limpeza da versao antiga.
 
-const CACHE_VERSION = 'mapa-precos-v2';
+const CACHE_VERSION = 'mapa-precos-v3';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 const CDN_CACHE = `${CACHE_VERSION}-cdn`;
@@ -68,8 +68,7 @@ self.addEventListener('fetch', (event) => {
 
     // Dados de precos (mesma origem ou raw.githubusercontent.com)
     if (
-        url.pathname.includes('/mapa_precos_qh/') ||
-        url.pathname.includes('/data/mapa_precos_qh/')
+        url.pathname.includes('/precos_qh/')
     ) {
         event.respondWith(networkFirst(req, DATA_CACHE));
         return;
