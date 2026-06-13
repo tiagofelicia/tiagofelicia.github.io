@@ -17,6 +17,12 @@
  * Overrides de debug via query string:
  *   ?source=dados (ou local) → lê APENAS de dados.tiagofelicia.pt
  *   ?source=raw              → lê APENAS do GitHub raw
+ *   ?source=fs               → lê APENAS de /dados-energia/data/ (caminho
+ *                              same-origin). Em dev exige um servidor que
+ *                              monte o repo dados-energia ao lado do site
+ *                              (ver scripts/serve_dev.py). Em produção, esse
+ *                              caminho faz 301 para dados.tiagofelicia.pt —
+ *                              funciona, paga só o redirect.
  *
  * Uso (caminhos relativos a data/ do repo dados-energia):
  *   fetchDados('omie/omie_dados_atuais.csv')             → Promise<Response>
@@ -35,12 +41,14 @@
 
     var BASE_DADOS = 'https://dados.tiagofelicia.pt/data/';
     var BASE_RAW = 'https://raw.githubusercontent.com/tiagofelicia/dados-energia/main/data/';
+    var BASE_FS = '/dados-energia/data/';
 
     function ordemBases() {
         var p = new URLSearchParams(window.location.search);
         var source = p.get('source');
         if (source === 'dados' || source === 'local') return [BASE_DADOS];
         if (source === 'raw') return [BASE_RAW];
+        if (source === 'fs') return [BASE_FS];
 
         var isDev = window.location.hostname === 'localhost' ||
                     window.location.hostname === '127.0.0.1' ||

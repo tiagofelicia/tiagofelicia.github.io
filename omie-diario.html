@@ -802,12 +802,17 @@ document.addEventListener('DOMContentLoaded', function() {
         let dadosDoDia = [];
         if (anoSelecionado >= anoMinimoAtual) { dadosDoDia = dadosAtuais.filter(d => d.dia === dataFormatadaCSV); }
         else if (dadosHistoricos[anoSelecionado]) { dadosDoDia = dadosHistoricos[anoSelecionado].filter(d => d.dia === dataFormatadaCSV); }
-        // Validar se conseguimos carregar os dados históricos
+        // Validar se conseguimos carregar os dados históricos.
+        // A mensagem vai para o contentor do gráfico (NÃO para o <main>,
+        // que contém o seletor de data — destruí-lo prendia o utilizador).
         if (dadosDoDia.length === 0 && anoSelecionado < anoMinimoAtual) {
-            document.querySelector('main').innerHTML =
-                `<p style="color: orange; text-align: center; padding: 20px;">
-                📅 Dados históricos para ${dataFormatadaCSV} não disponíveis.<br>
-                Por favor, selecione outra data.</p>`;
+            const _alvoMsg = document.getElementById('grafico-container');
+            if (_alvoMsg) {
+                _alvoMsg.innerHTML =
+                    `<p style="color: orange; text-align: center; padding: 20px;">
+                    📅 Dados históricos para ${dataFormatadaCSV} não disponíveis.<br>
+                    Por favor, selecione outra data.</p>`;
+            }
             return;
         }
         const fetchDia = (csvLabel, ano) => {
@@ -1526,7 +1531,12 @@ document.addEventListener('DOMContentLoaded', function() {
             atualizarDashboard(seletorData.value); // Chamar UMA VEZ
             atualizarFuturosProximos();
         })
-        .catch(error => { console.error('Falha CRÍTICA:', error, error.stack); document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.</p>`; });
+        .catch(error => {
+            console.error('Falha CRÍTICA:', error, error.stack);
+            // Mensagem no contentor do gráfico — preserva o seletor de data e o resto da página
+            const _alvoErro = document.getElementById('grafico-container');
+            if (_alvoErro) _alvoErro.innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.</p>`;
+        });
 
     // --- Lógica das Setas de Navegação ---
     const btnPrev = document.getElementById('btn-prev');

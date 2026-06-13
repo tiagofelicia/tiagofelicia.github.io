@@ -1599,9 +1599,10 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .catch(error => {
         console.error('Falha CRÍTICA na inicialização:', error);
-        const mainElement = document.querySelector('main');
-        if (mainElement) {
-            mainElement.innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.<br><small>${error.message}</small></p>`;
+        // Mensagem no contentor do gráfico — preserva o seletor de data e o resto da página
+        const _alvoErro = document.getElementById('grafico-container');
+        if (_alvoErro) {
+            _alvoErro.innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.<br><small>${error.message}</small></p>`;
         }
     });
 

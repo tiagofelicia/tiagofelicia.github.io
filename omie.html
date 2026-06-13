@@ -67,16 +67,65 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "DataCatalog",
-      "name": "Histórico de Preços do Mercado Diário (Day-Ahead) OMIE Portugal",
-      "description": "Dados históricos de preços do Mercado Diário de eletricidade no mercado ibérico (MIBEL) para Portugal.",
+      "@type": "Dataset",
+      "name": "Histórico de Preços do Mercado Diário (Day-Ahead) OMIE — Portugal e Espanha",
+      "alternateName": "OMIE Histórico Day-Ahead MIBEL",
+      "description": "Série histórica completa dos preços horários do Mercado Diário de eletricidade no mercado ibérico (MIBEL), gerido pelo OMIE, para Portugal e Espanha. Desde 1 de janeiro de 2010 até ao dia atual, com resolução horária (e quarto-horária a partir de 1 de outubro de 2025), preços em €/MWh, classificação dos períodos horários BTN (Simples, Bi-horário Diário/Semanal, Tri-horário Diário/Semanal) e indicação de período (Vazio, Cheias, Ponta, Fora de Vazio). Inclui recordes históricos (dia mais caro, mais barato, horas extremas) e agregados mensais/anuais pré-calculados.",
       "url": "https://www.tiagofelicia.pt/omie",
-      "keywords": "OMIE, Eletricidade, Portugal, Preços Históricos, Mercado Diário, Day-Ahead",
+      "keywords": [
+        "OMIE", "MIBEL", "Day-Ahead", "Mercado Diário", "Eletricidade",
+        "Portugal", "Espanha", "Preços Históricos", "Preços Horários",
+        "Períodos Horários", "BTN", "Vazio", "Cheias", "Ponta"
+      ],
       "creator": {
         "@type": "Person",
         "@id": "https://www.tiagofelicia.pt/#person",
-        "name": "Tiago Felícia"
-      }
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "sourceOrganization": {
+        "@type": "Organization",
+        "name": "OMIE — Operador del Mercado Ibérico de Energía",
+        "url": "https://www.omie.es/"
+      },
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creditText": "Dados originais: OMIE (omie.es). Processamento e visualização: Tiago Felícia.",
+      "temporalCoverage": "2010-01-01/..",
+      "spatialCoverage": {
+        "@type": "Place",
+        "name": "Mercado Ibérico de Eletricidade (Portugal e Espanha)"
+      },
+      "variableMeasured": [
+        {"@type": "PropertyValue", "name": "Preço Day-Ahead Portugal", "unitText": "€/MWh"},
+        {"@type": "PropertyValue", "name": "Preço Day-Ahead Espanha", "unitText": "€/MWh"},
+        {"@type": "PropertyValue", "name": "Período horário BTN", "description": "Classificação Simples/Bi/Tri (V/C/P/F)"}
+      ],
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Preços OMIE — ano atual (quarto-horários, inclui futuros OMIP)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/omie/omie_dados_atuais.csv"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Preços OMIE — histórico anual desde 2010",
+          "contentUrl": "https://github.com/tiagofelicia/dados-energia/tree/main/data/omie/historico"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "name": "Recordes históricos OMIE (dia/hora mais caro e mais barato, agregados)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/omie/records_omie.json"
+        }
+      ]
     }
     </script>
 
@@ -1493,9 +1542,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        if (dadosDoPeriodo.length === 0) { 
-            document.querySelector('main').innerHTML = `<p style="color: orange; text-align: center; padding: 20px;">📅 Nenhum dado disponível para o período selecionado.</p>`;
-            return; 
+        if (dadosDoPeriodo.length === 0) {
+            // Mensagem no contentor do gráfico — preserva os seletores de período
+            const _alvoMsg = document.getElementById('grafico-diario-container');
+            if (_alvoMsg) _alvoMsg.innerHTML = `<p style="color: orange; text-align: center; padding: 20px;">📅 Nenhum dado disponível para o período selecionado. Por favor, escolha outro período.</p>`;
+            return;
         }
 
         // Criar mapa de dias PT para acesso rápido (O(1))
@@ -3766,7 +3817,12 @@ document.addEventListener('DOMContentLoaded', function() {
             carregarRecordesHistoricos();
 
         })
-        .catch(error => { console.error('Falha CRÍTICA:', error, error.stack); document.querySelector('main').innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.</p>`; });
+        .catch(error => {
+            console.error('Falha CRÍTICA:', error, error.stack);
+            // Mensagem no contentor do gráfico — preserva os seletores e o resto da página
+            const _alvoErro = document.getElementById('grafico-diario-container');
+            if (_alvoErro) _alvoErro.innerHTML = `<p style="color: red; text-align: center; font-size: 1.2em; padding: 20px;">Ocorreu um erro crítico ao carregar os dados. Verifique a consola.</p>`;
+        });
     // Reagir a mudanças de tema (dark mode toggle)
     document.addEventListener('themeChanged', function() {
         atualizarDashboardPeriodo();

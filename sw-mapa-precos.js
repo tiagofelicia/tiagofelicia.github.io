@@ -1,15 +1,15 @@
 // Service Worker minimo para a pagina do Mapa de Precos.
 //
 // Estrategias:
-//  - HTML/JS/CSS proprios (mesmo origem):     stale-while-revalidate
-//  - Ficheiros JSON em data/mapa_precos_qh/:  network-first com fallback cache
-//  - Bibliotecas CDN (Leaflet, Chart.js):     cache-first
-//  - Tudo o resto: passa direto para a rede
+//  - Assets do mapa (allowlist SWR_ALLOWLIST): stale-while-revalidate
+//  - Ficheiros JSON de precos (/precos_qh/):   network-first com fallback cache
+//  - Bibliotecas CDN (Leaflet, etc.):          cache-first
+//  - Tudo o resto (incl. as outras paginas do site): passa direto para a rede
 //
 // Atualizar CACHE_VERSION sempre que houver alteracoes ao SW para forcar
 // limpeza da versao antiga.
 
-const CACHE_VERSION = 'mapa-precos-v3';
+const CACHE_VERSION = 'mapa-precos-v4';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 const CDN_CACHE = `${CACHE_VERSION}-cdn`;
@@ -20,9 +20,26 @@ const STATIC_ASSETS = [
     'theme.js',
     'dados.js',
     'menu.html',
+    'menu.js',
     'footer.html',
+    'script.js',
+    'cookie-consent.js',
+    'glossario.js',
     'europe_zones_compact.js',
 ];
+
+// Únicos caminhos same-origin servidos com stale-while-revalidate.
+// O SW tem scope global ('/'): sem esta allowlist, TODAS as páginas do site
+// passariam a ser servidas da cache após uma visita ao mapa, e os visitantes
+// veriam versões antigas até ao refresh seguinte. Tudo o que não está aqui
+// passa direto para a rede.
+const SWR_ALLOWLIST = new Set([
+    '/mapa-precos', '/mapa-precos.html',
+    '/style.css', '/theme.js', '/dados.js',
+    '/menu.html', '/menu.js', '/footer.html',
+    '/script.js', '/cookie-consent.js', '/glossario.js',
+    '/europe_zones_compact.js',
+]);
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
@@ -74,8 +91,10 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Mesma origem — stale-while-revalidate
-    if (url.origin === self.location.origin) {
+    // Mesma origem — stale-while-revalidate APENAS para os assets do mapa
+    // (ver SWR_ALLOWLIST). As restantes páginas/recursos do site vão direto
+    // à rede, para nunca servirmos versões desatualizadas do site inteiro.
+    if (url.origin === self.location.origin && SWR_ALLOWLIST.has(url.pathname)) {
         event.respondWith(staleWhileRevalidate(req, STATIC_CACHE));
         return;
     }
