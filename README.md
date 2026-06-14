@@ -29,7 +29,7 @@ Tarifas de Acesso às Redes (TAR), Tarifa Social, tarifas reguladas (CUR), perí
 
 ## 🔄 Dados e automação
 
-Os dados de mercado são atualizados automaticamente via **GitHub Actions** (pasta [`.github/workflows`](.github/workflows)) a partir de fontes oficiais — OMIE, OMIP, REN, ERSE, E-Redes e ENTSO-E — e publicados em CSV/JSON na pasta [`data/`](data/), de acesso livre. Ver também o [`llms.txt`](llms.txt) para um índice orientado a máquinas.
+Os dados de mercado (preços OMIE/OMIP, produção REN, mapas europeus ENTSO-E) vivem num repositório dedicado — **[dados-energia](https://github.com/tiagofelicia/dados-energia)** — e são servidos publicamente em **[dados.tiagofelicia.pt](https://dados.tiagofelicia.pt)**, com licença CC BY 4.0 e CORS aberto. A atualização é feita por GitHub Actions a partir das fontes oficiais (OMIE, OMIP, REN, ERSE, E-Redes, ENTSO-E, Energy-Charts). Ver também o [`llms.txt`](llms.txt) para um índice orientado a máquinas.
 
 ## 💻 Tecnologias
 
@@ -48,6 +48,6 @@ Se estas ferramentas o ajudaram a poupar, considere [apoiar o projeto](https://w
 
 ## 📄 Licença
 
-Todos os direitos reservados — ver [LICENSE.txt](LICENSE.txt). Os dados publicados em `data/` provêm de fontes públicas oficiais; ao citar, indique *"Simulador de Tarifários de Tiago Felícia"* com link para a página utilizada.
+Código deste repositório: todos os direitos reservados — ver [LICENSE.txt](LICENSE.txt). Os dados publicados em [dados.tiagofelicia.pt](https://dados.tiagofelicia.pt) provêm de fontes públicas oficiais e estão sob CC BY 4.0; ao citar, indique *"Simulador de Tarifários de Tiago Felícia"* com link para a página utilizada.
 
 *© 2022–2026 Tiago Felícia.*
