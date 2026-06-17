@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     
     <title>Balanço Energético Portugal vs Preços Mercado Diário OMIE | Tiago Felícia</title>
-    <meta name="description" content="Balanço energético horário em Portugal: produção por fonte (renováveis, gás, baterias), consumo, importação/exportação e bombagem, cruzado com o preço do mercado OMIE." />
+    <meta name="description" content="Balanço energético horário em Portugal: produção por fonte (renováveis, gás, baterias), consumo, importação/exportação e bombagem, cruzado com o preço do Mercado Diário OMIE — com preços médios ponderados e custo/receita do intercâmbio com Espanha." />
     
     <link rel="canonical" href="https://www.tiagofelicia.pt/balanco-omie" />
     <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/balanco-omie" />
@@ -16,7 +16,7 @@
     
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Balanço Energético em Portugal vs Preço OMIE" />
-    <meta property="og:description" content="Gráfico interativo do balanço energético horário: produção por fonte, consumo, importação/exportação e armazenamento, e o seu impacto no preço da luz." />
+    <meta property="og:description" content="Gráfico interativo do balanço energético horário: produção por fonte, consumo, importação/exportação e armazenamento, com preços OMIE médios ponderados e o seu impacto no preço da luz." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/balanco-omie" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -65,7 +65,7 @@
       "@context": "https://schema.org",
       "@type": "DataFeed",
       "name": "Balanço Energético Portugal vs Preços Mercado Diário (Day-Ahead) OMIE Spot",
-      "description": "Dados horários do balanço energético (produção por fonte, consumo, importação/exportação, armazenamento) cruzados com o preço do mercado diário OMIE.",
+      "description": "Dados horários do balanço energético (produção por fonte, consumo, importação/exportação, armazenamento) cruzados com o preço do Mercado Diário OMIE, incluindo preço médio, preços médios ponderados de importação (Espanha) e exportação (Portugal), custo/receita do intercâmbio e preço do consumo ponderado pela procura.",
       "provider": {
         "@type": "Organization",
         "name": "Tiago Felícia"
@@ -138,15 +138,25 @@
         [data-theme="dark"] #prod-provisorio { background: #332b00; border-color: #665600; color: #ffd54f; }
 
         /* ===== KPIs do dia ===== */
-        #prod-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 95%; max-width: 1200px; margin: 10px auto 20px auto; }
-        @media (max-width: 1000px) { #prod-kpis { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 640px) { #prod-kpis { grid-template-columns: repeat(2, 1fr); } }
+        #prod-kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; width: 95%; max-width: 1200px; margin: 10px auto 20px auto; }
+        @media (max-width: 1100px) { #prod-kpis { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { #prod-kpis { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 560px) { #prod-kpis { grid-template-columns: repeat(2, 1fr); } }
         .prod-kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
         .prod-kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
         .prod-kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
         .prod-kpi-sub { font-size: 0.72em; color: #888; margin-top: 4px; }
+        /* Ícone de ajuda (ⓘ) com tooltip explicativo por KPI */
+        .prod-kpi-info { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 5px; border-radius: 50%; background: #cbd5e1; color: #fff; font-size: 10px; font-weight: 700; font-style: normal; line-height: 1; cursor: help; vertical-align: middle; user-select: none; }
+        .prod-kpi-info:hover, .prod-kpi-info:focus { background: #64748b; outline: none; }
+        [data-theme="dark"] .prod-kpi-info { background: #475569; }
+        /* Caixa de tooltip (singleton), posicionada por JS com clamp ao viewport */
+        .kpi-tip-box { position: absolute; display: none; max-width: 260px; background: #0f172a; color: #fff; font-size: 11px; line-height: 1.45; text-align: left; padding: 8px 11px; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.28); z-index: 9999; opacity: 0; transition: opacity 0.12s; }
+        .kpi-tip-box.vis { opacity: 1; }
+        [data-theme="dark"] .kpi-tip-box { background: #0b1220; box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
         .prod-kpi-card.kpi-renovavel .prod-kpi-value { color: #16a34a; }
         .prod-kpi-card.kpi-importador .prod-kpi-value { color: #ED7D31; }
+        .prod-kpi-card.kpi-exportador .prod-kpi-value { color: #8E44AD; }
         .prod-kpi-card.kpi-dominante .prod-kpi-value { color: #2563eb; }
         [data-theme="dark"] .prod-kpi-card { background: #1e293b; border-color: #475569; }
         [data-theme="dark"] .prod-kpi-label { color: #94a3b8; }
@@ -154,6 +164,7 @@
         [data-theme="dark"] .prod-kpi-sub { color: #94a3b8; }
         [data-theme="dark"] .prod-kpi-card.kpi-renovavel .prod-kpi-value { color: #4ade80; }
         [data-theme="dark"] .prod-kpi-card.kpi-importador .prod-kpi-value { color: #f59e0b; }
+        [data-theme="dark"] .prod-kpi-card.kpi-exportador .prod-kpi-value { color: #a78bfa; }
         [data-theme="dark"] .prod-kpi-card.kpi-dominante .prod-kpi-value { color: #60a5fa; }
 
         /* ===== Insight automático ===== */
@@ -308,7 +319,7 @@
             Dados históricos disponíveis desde 01/01/2010
         </p>
         <h1>Balanço Energético em Portugal vs. Preços Mercado Diário OMIE para <span id="data-titulo-painel">Portugal</span></h1>
-        <p>Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
+        <p>Dados de 15 minutos da REN cruzados com os preços do Mercado Diário OMIE (€/MWh), corrigidos para a hora de Portugal.</p>
         </div>
 
     <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
@@ -397,6 +408,19 @@
                 <p>No "Mix do dia", o botão <strong>Consumo</strong> acrescenta o <strong>saldo importador</strong> como fatia; mantêm-se os <strong>GWh reais</strong> (iguais ao Balanço) e a percentagem passa a ser sobre o total <em>produção + importação</em>. Por usarmos valores reais (sem escalar ao consumo), estas percentagens <strong>não coincidem</strong> com as publicadas pela REN.</p>
                 <p><strong>Separação da bombagem:</strong> a coluna "Hídrica" dos dados a 15 minutos inclui a turbinagem de hidroelétricas reversíveis (água previamente bombeada). Essa parcela — a <strong>"Produção por Bombagem"</strong> — <strong>não é renovável</strong> (é energia armazenada da rede). Por isso, nos dias completos, subtraímos a "Produção por Bombagem" (valor diário da REN) à Hídrica antes de calcular a % renováveis, obtendo um valor mais rigoroso. A indicação "(s/ bombagem)" aparece quando este ajuste é aplicado.</p>
                 <p>Nota: em dias ainda em curso (provisórios), o ajuste não é aplicado (o valor diário da bombagem só é publicado após o fecho do dia) e os valores são marcados como provisórios.</p>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><strong>O que dizem os KPIs de preço (médias ponderadas, custo, receita e VWAP)?</strong></summary>
+            <div class="faq-content">
+                <p>Cada intervalo de 15 minutos é cruzado com o preço do <strong>Mercado Diário OMIE</strong> da mesma hora. A partir daí, os cartões mostram:</p>
+                <ul>
+                    <li><strong>Preço médio OMIE:</strong> média simples (temporal) do preço de Portugal no dia — o preço <em>spot</em> médio.</li>
+                    <li><strong>Importação / Exportação:</strong> energia trocada com Espanha e o respetivo <strong>preço médio ponderado</strong> pela energia — a importação ao <strong>preço de Espanha</strong> (onde é comprada) e a exportação ao <strong>preço de Portugal</strong>. O <strong>custo</strong> e a <strong>receita</strong> são a energia × esse preço.</li>
+                    <li><strong>Saldo c/ Espanha:</strong> além do saldo de energia (importação − exportação), o valor financeiro líquido (custo − receita) indica se Portugal <em>pagou</em> ou <em>recebeu</em> — e pode ter sinal <strong>diferente</strong> do saldo de energia (importar barato e exportar caro).</li>
+                    <li><strong>Consumo total:</strong> o preço é o <strong>VWAP do consumo</strong> (preço de Portugal ponderado pela procura de cada quarto-hora); o <strong>custo grossista</strong> é a energia consumida × esse preço — apenas a componente de energia do mercado, <strong>sem</strong> redes, taxas nem margens.</li>
+                </ul>
             </div>
         </details>
 
@@ -655,6 +679,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.round(gwh * 1000).toLocaleString('pt-PT') + ' MWh';
     }
 
+    // Formatação de um valor monetário total, com auto-escolha de unidade (€ / mil € / M€)
+    function formatarEurTotal(eur) {
+        if (eur === null || eur === undefined || !isFinite(eur)) return '—';
+        const abs = Math.abs(eur);
+        if (abs >= 1e6) return (eur / 1e6).toFixed(2).replace('.', ',') + ' M€';
+        if (abs >= 1e3) return (eur / 1e3).toFixed(1).replace('.', ',') + ' mil €';
+        return Math.round(eur).toLocaleString('pt-PT') + ' €';
+    }
+
     function renderKpisProducao(a, dataTitulo, isProvisorio, horaLimite) {
         const el = document.getElementById('prod-kpis');
         if (!el) return;
@@ -676,25 +709,48 @@ document.addEventListener('DOMContentLoaded', function() {
         const consumoGwh = a.consumoGwh || 0;
         const saldo = a.saldoImportadorGwh || 0;
         const saldoStr = (saldo >= 0 ? '+' : '') + formatarEnergiaGWh(saldo);
-        const saldoSub = (Math.abs(saldo) < 0.005) ? 'equilibrado' : (saldo > 0 ? 'importador líquido' : 'exportador líquido');
+        const saldoSubEnergia = (Math.abs(saldo) < 0.005) ? 'equilibrado' : (saldo > 0 ? 'importador líquido' : 'exportador líquido');
+        // Saldo financeiro (custo importação − receita exportação). Sinal independente do saldo de energia.
+        const _custoImp = a.importacaoEur || 0;
+        const _receitaExp = a.exportacaoEur || 0;
+        const _saldoFin = _custoImp - _receitaExp;
+        let saldoSubFin = '';
+        if (a.importacaoEur != null || a.exportacaoEur != null) {
+            if (Math.abs(_saldoFin) < 1) saldoSubFin = 'saldo financeiro ~0 €';
+            else if (_saldoFin > 0) saldoSubFin = `pagou ${formatarEurTotal(_saldoFin)} líq.`;
+            else saldoSubFin = `recebeu ${formatarEurTotal(-_saldoFin)} líq.`;
+        }
+        const saldoSub = saldoSubFin ? `${saldoSubEnergia}<br>${saldoSubFin}` : saldoSubEnergia;
         const fonteDomTxt = a.fonteDom
             ? `${EMOJI_FONTE[a.fonteDom] || ''} ${a.fonteDom}`.trim()
             : '--';
-        const card = (cls, label, valor, fs, sub) =>
-            `<div class="prod-kpi-card${cls ? ' ' + cls : ''}"><div class="prod-kpi-label">${label}${sufixoCurto}</div><div class="prod-kpi-value"${fs ? ` style="font-size:${fs};"` : ''}>${valor}</div><div class="prod-kpi-sub">${sub}</div></div>`;
+        const info = (tip) => tip ? ` <span class="prod-kpi-info" tabindex="0" role="note" aria-label="${tip}" data-tip="${tip}">i</span>` : '';
+        const card = (cls, label, valor, fs, sub, tip) =>
+            `<div class="prod-kpi-card${cls ? ' ' + cls : ''}"><div class="prod-kpi-label">${label}${sufixoCurto}${info(tip)}</div><div class="prod-kpi-value"${fs ? ` style="font-size:${fs};"` : ''}>${valor}</div><div class="prod-kpi-sub">${sub}</div></div>`;
+        // Sub-texto dos cards de intercâmbio: preço médio ponderado do OMIE da fronteira
+        // correspondente + valor total da transação (custo da importação / receita da exportação).
+        const subFronteira = (energiaGwh, preco, mercado, eur, rotuloValor) => {
+            if (!(energiaGwh > 0.001)) return 'sem fluxo no dia';
+            if (preco === null || preco === undefined || isNaN(preco)) return `preço ${mercado} indisponível`;
+            let s = `${fmtEur(preco)}/MWh · OMIE ${mercado}`;
+            if (eur !== null && eur !== undefined && !isNaN(eur)) s += `<br>${rotuloValor} ${formatarEurTotal(eur)}`;
+            return s;
+        };
         el.innerHTML =
             // Linha 1 (topo de cada coluna)
-            card('kpi-renovavel', '☀️ Renováveis', fmtPct(pctRen), '', subRen) +
-            card('', '🏭 Produção nacional', fmtGWh(producaoGwh), '', 'no dia') +
-            card('kpi-renovavel', '🌱 Produção renovável', fmtGWh(renovGwh), '', a.aplicouBombagem ? `s/ bombagem · ${ctx}` : ctx) +
-            card('', '🔌 Consumo total', fmtGWh(consumoGwh), '', `consumo nacional ${ctx}`) +
-            card('kpi-importador', '🔄 Saldo c/ Espanha', saldoStr, '', saldoSub) +
+            card('kpi-renovavel', '☀️ Renováveis', fmtPct(pctRen), '', subRen, '% da produção nacional do dia vinda de fontes renováveis (hídrica, eólica, solar, biomassa, ondas). Quando disponível, exclui a turbinagem de bombagem.') +
+            card('', '🏭 Produção nacional', fmtGWh(producaoGwh), '', 'no dia', 'Energia total produzida em Portugal no dia (todas as fontes nacionais, incluindo baterias). Não inclui a importação.') +
+            card('kpi-renovavel', '🌱 Produção renovável', fmtGWh(renovGwh), '', a.aplicouBombagem ? `s/ bombagem · ${ctx}` : ctx, 'Energia de fontes renováveis no dia. Quando disponível, exclui a turbinagem de bombagem (hídrica reversível, não renovável).') +
+            card('', '🔌 Consumo total', fmtGWh(consumoGwh), '', a.vwapConsumo != null ? `${fmtEur(a.vwapConsumo)}/MWh (pond. consumo)<br>custo grossista ${formatarEurTotal(a.consumoEur)}` : `consumo nacional ${ctx}`, 'Consumo nacional do dia. O preço é o VWAP do consumo: preço OMIE PT ponderado pela procura de cada quarto-hora. Custo grossista = energia × esse preço (só Mercado Diário, sem redes nem taxas).') +
+            card('kpi-importador', '📥 Importação', formatarEnergiaGWh(a.importacaoGwh || 0), '', subFronteira(a.importacaoGwh, a.precoMedioImportacao, 'ES', a.importacaoEur, 'custo'), 'Energia importada de Espanha e o seu preço médio ponderado (VWAP) ao preço OMIE de Espanha. Custo = energia importada × esse preço.') +
+            card('kpi-importador', '🔄 Saldo c/ Espanha', saldoStr, '', saldoSub, 'Saldo de energia (Importação − Exportação): positivo = importador líquido. O valor em € é custo de importação − receita de exportação e pode ter sinal independente do saldo de energia.') +
             // Linha 2 (por baixo de cada coluna)
-            card('kpi-dominante', '🏆 Fonte dominante', fonteDomTxt, '', `${fmtPct(a.pctDom)} da produção`) +
-            card('', '🔺 Pico produção', fmtMW(a.picoProducao), '', `às ${picoProdHora}`) +
-            card('kpi-renovavel', '⚡ Pico renovável', fmtMW(a.picoRenovavel), '', `às ${picoHora}`) +
-            card('', '📈 Pico consumo', fmtMW(a.picoConsumo), '', `às ${picoConsHora}`) +
-            card('', '💶 Preço médio OMIE', fmtEur(a.precoMedio), '', `média /MWh ${ctx}`);
+            card('kpi-dominante', '🏆 Fonte dominante', fonteDomTxt, '', `${fmtPct(a.pctDom)} da produção`, 'Fonte com maior produção no dia e o seu peso na produção nacional.') +
+            card('', '🔺 Pico produção', fmtMW(a.picoProducao), '', `às ${picoProdHora}`, 'Maior potência de produção nacional total registada num quarto-hora do dia, e a hora a que ocorreu.') +
+            card('kpi-renovavel', '⚡ Pico renovável', fmtMW(a.picoRenovavel), '', `às ${picoHora}`, 'Maior potência renovável instantânea registada num quarto-hora do dia, e a hora.') +
+            card('', '📈 Pico consumo', fmtMW(a.picoConsumo), '', `às ${picoConsHora}`, 'Maior potência de consumo registada num quarto-hora do dia, e a hora.') +
+            card('kpi-exportador', '📤 Exportação', formatarEnergiaGWh(a.exportacaoGwh || 0), '', subFronteira(a.exportacaoGwh, a.precoMedioExportacao, 'PT', a.exportacaoEur, 'receita'), 'Energia exportada para Espanha e o seu preço médio ponderado (VWAP) ao preço OMIE de Portugal. Receita = energia exportada × esse preço.') +
+            card('', '💶 Preço médio OMIE', fmtEur(a.precoMedio), '', `média /MWh ${ctx}`, 'Média simples (temporal) do preço do Mercado Diário OMIE em Portugal nos quartos-hora do dia.');
     }
 
     function renderInsightProducao(a, dataTitulo, isProvisorio, horaLimite) {
@@ -719,6 +775,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (a.precoMedio !== null) {
             partes.push(`O preço médio do Mercado Diário OMIE foi de <strong>${a.precoMedio.toFixed(2).replace('.', ',')} €/MWh</strong>.`);
+        }
+        const _fEur = (v) => v.toFixed(2).replace('.', ',');
+        const _segIntercambio = [];
+        if (a.precoMedioImportacao != null && !isNaN(a.precoMedioImportacao) && a.importacaoGwh > 0.001) {
+            _segIntercambio.push(`importou a <strong>${_fEur(a.precoMedioImportacao)} €/MWh</strong> (OMIE Espanha)`);
+        }
+        if (a.precoMedioExportacao != null && !isNaN(a.precoMedioExportacao) && a.exportacaoGwh > 0.001) {
+            _segIntercambio.push(`exportou a <strong>${_fEur(a.precoMedioExportacao)} €/MWh</strong> (OMIE Portugal)`);
+        }
+        if (_segIntercambio.length) {
+            partes.push(`Em média ponderada, Portugal ${_segIntercambio.join(' e ')}.`);
         }
         const titulo = isProvisorio ? '📊 Análise do dia (provisória)' : '📊 Análise do dia';
         let html = `<span class="insight-titulo">${titulo}</span>${partes.join(' ')}`;
@@ -1006,6 +1073,13 @@ document.addEventListener('DOMContentLoaded', function() {
         somas['Gás Natural'] = 0; maxs['Gás Natural'] = 0;
         const gmax = { producaoTotal: 0, renovavel: 0, naoRenovavel: 0, consumoArmaz: 0, saldoImp: 0 };
         let count = 0;
+        // Média ponderada do OMIE por fronteira: Importação (ES→PT) ao preço de Espanha,
+        // Exportação (PT→ES) ao preço de Portugal. Pondera-se pela potência (a duração de
+        // 15 min é igual em todos os intervalos, logo equivale a ponderar pela energia).
+        let impSomaPreco = 0, impSomaPot = 0;
+        let expSomaPreco = 0, expSomaPot = 0;
+        // VWAP Consumo: preço PT ponderado pela procura (load-weighted average price)
+        let consSomaPreco = 0, consSomaPot = 0;
         for (let i = 0; i < dados.length && i < firstNullIndex; i++) {
             const d = dados[i];
             const g = (c) => parseFloat(d[c]) || 0;
@@ -1016,17 +1090,32 @@ document.addEventListener('DOMContentLoaded', function() {
             const naoRenov = gas + g('Carvão') + g('Outra Térmica');
             const prodTotal = renov + naoRenov + g('Injeção de Baterias');
             const consArmaz = g('Bombagem') + g('Consumo Baterias');
-            const saldo = g('Importação') - g('Exportação');
+            const imp = g('Importação');
+            const exp = g('Exportação');
+            const saldo = imp - exp;
             if (renov > gmax.renovavel) gmax.renovavel = renov;
             if (naoRenov > gmax.naoRenovavel) gmax.naoRenovavel = naoRenov;
             if (prodTotal > gmax.producaoTotal) gmax.producaoTotal = prodTotal;
             if (consArmaz > gmax.consumoArmaz) gmax.consumoArmaz = consArmaz;
             if (saldo > gmax.saldoImp) gmax.saldoImp = saldo;
+            const pEs = parseFloat(d.preco_es);
+            const pPt = parseFloat(d.preco_pt);
+            if (imp > 0 && !isNaN(pEs)) { impSomaPreco += imp * pEs; impSomaPot += imp; }
+            if (exp > 0 && !isNaN(pPt)) { expSomaPreco += exp * pPt; expSomaPot += exp; }
+            const cons = g('Consumo');
+            if (cons > 0 && !isNaN(pPt)) { consSomaPreco += cons * pPt; consSomaPot += cons; }
             count++;
         }
         const en = {};
         Object.keys(somas).forEach(c => en[c] = somas[c] * QH_H / 1000);
-        return { somas, maxs, gmax, en, count };
+        const precoMedioImportacao = impSomaPot > 0 ? impSomaPreco / impSomaPot : null;
+        const precoMedioExportacao = expSomaPot > 0 ? expSomaPreco / expSomaPot : null;
+        // Valor total das transações: €/intervalo = MW × 0,25 h × €/MWh → soma × QH_H.
+        const importacaoEur = impSomaPot > 0 ? impSomaPreco * QH_H : null; // custo pago a Espanha
+        const exportacaoEur = expSomaPot > 0 ? expSomaPreco * QH_H : null; // receita recebida de Espanha
+        const vwapConsumo = consSomaPot > 0 ? consSomaPreco / consSomaPot : null; // preço PT ponderado pela procura
+        const consumoEur = consSomaPot > 0 ? consSomaPreco * QH_H : null; // custo grossista do consumo
+        return { somas, maxs, gmax, en, count, precoMedioImportacao, precoMedioExportacao, importacaoEur, exportacaoEur, vwapConsumo, consumoEur };
     }
 
     // Tabela de Balanço (estilo REN): Ponta [MW] + Energia [GWh], hierárquica
@@ -1132,6 +1221,12 @@ document.addEventListener('DOMContentLoaded', function() {
         a.saldoImportadorGwh = (bal.en['Importação'] || 0) - (bal.en['Exportação'] || 0);
         a.importacaoGwh = bal.en['Importação'] || 0;
         a.exportacaoGwh = bal.en['Exportação'] || 0;
+        a.precoMedioImportacao = bal.precoMedioImportacao; // €/MWh ponderado pelo OMIE Espanha
+        a.precoMedioExportacao = bal.precoMedioExportacao; // €/MWh ponderado pelo OMIE Portugal
+        a.importacaoEur = bal.importacaoEur; // custo total da importação (€)
+        a.exportacaoEur = bal.exportacaoEur; // receita total da exportação (€)
+        a.vwapConsumo = bal.vwapConsumo;     // preço PT ponderado pela procura (€/MWh)
+        a.consumoEur = bal.consumoEur;       // custo grossista do consumo (€)
         a.consumoArmazGwh = (bal.en['Bombagem'] || 0) + (bal.en['Consumo Baterias'] || 0); // carga (bombagem + baterias)
         a.consumoGwh = bal.en['Consumo'] || 0;
 
@@ -1745,5 +1840,60 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="script.js"></script>
 
 <script src="cookie-consent.js"></script>
+<script>
+// Tooltip dos KPIs: caixa singleton posicionada por JS (clamp ao viewport, sem corte
+// nas colunas de extremidade). Dispara em hover (rato fino), foco (teclado) e toque.
+(function () {
+    var box = null, curr = null, hideT = null;
+    function ensure() {
+        if (box) return box;
+        box = document.createElement('div');
+        box.className = 'kpi-tip-box';
+        box.setAttribute('role', 'tooltip');
+        box.addEventListener('mouseenter', function () { if (hideT) { clearTimeout(hideT); hideT = null; } });
+        box.addEventListener('mouseleave', function () { sched(200); });
+        document.body.appendChild(box);
+        return box;
+    }
+    function posicionar(t) {
+        var r = t.getBoundingClientRect();
+        var sx = window.pageXOffset, sy = window.pageYOffset, m = 8;
+        box.style.left = '0px'; box.style.top = '0px';
+        var b = box.getBoundingClientRect(), w = b.width, h = b.height;
+        var left = r.left + r.width / 2 - w / 2;
+        if (left < m) left = m;
+        if (left + w > window.innerWidth - m) left = window.innerWidth - w - m;
+        var top = r.bottom + 8;
+        if (top + h > window.innerHeight - m && r.top - h - 8 > m) top = r.top - h - 8;
+        box.style.left = (left + sx) + 'px';
+        box.style.top = (top + sy) + 'px';
+    }
+    function mostrar(t) {
+        var tip = t.getAttribute('data-tip'); if (!tip) return;
+        curr = t; ensure(); box.textContent = tip; box.style.display = 'block';
+        posicionar(t);
+        requestAnimationFrame(function () { box.classList.add('vis'); });
+    }
+    function ocultar() {
+        if (!box) return;
+        box.classList.remove('vis'); box.style.display = 'none'; curr = null;
+    }
+    function sched(d) { if (hideT) clearTimeout(hideT); hideT = setTimeout(function () { hideT = null; ocultar(); }, d); }
+    function fino() { return window.matchMedia && window.matchMedia('(pointer: fine)').matches; }
+    function alvo(e) { return e.target.closest ? e.target.closest('[data-tip]') : null; }
+    document.addEventListener('mouseover', function (e) { var t = alvo(e); if (!t || !fino()) return; if (hideT) { clearTimeout(hideT); hideT = null; } mostrar(t); });
+    document.addEventListener('mouseout', function (e) { var t = alvo(e); if (!t || !fino()) return; sched(200); });
+    document.addEventListener('focusin', function (e) { var t = alvo(e); if (t) mostrar(t); });
+    document.addEventListener('focusout', function (e) { var t = alvo(e); if (t) sched(100); });
+    document.addEventListener('click', function (e) {
+        var t = alvo(e);
+        if (t) { if (curr === t && box && box.classList.contains('vis')) ocultar(); else mostrar(t); }
+        else if (box && !box.contains(e.target)) ocultar();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ocultar(); });
+    window.addEventListener('scroll', function () { if (curr && box && box.classList.contains('vis')) posicionar(curr); }, { passive: true });
+    window.addEventListener('resize', function () { if (curr && box && box.classList.contains('vis')) posicionar(curr); });
+})();
+</script>
 </body>
 </html>
