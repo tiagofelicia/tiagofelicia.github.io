@@ -5,30 +5,31 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Mapa de Preços de Eletricidade na Europa - Day-Ahead | Tiago Felícia</title>
+    <title>Preços Médios de Eletricidade na Europa - Day-Ahead | Tiago Felícia</title>
     <meta name="description" content="Mapa interativo dos preços médios diários de eletricidade (day-ahead) em 47 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, curva intradiária, heatmaps e comparação entre zonas. Dados oficiais ENTSO-E Transparency Platform." />
     <meta name="keywords" content="preços eletricidade Europa, day-ahead, mapa preços eletricidade, OMIE, EPEX, Nord Pool, zonas licitação, mercado elétrico, ENTSO-E, Tiago Felícia" />
     <meta name="author" content="Tiago Felícia" />
 
-    <link rel="canonical" href="https://www.tiagofelicia.pt/mapa-precos" />
-    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mapa-precos" />
-    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mapa-precos" />
+    <link rel="canonical" href="https://www.tiagofelicia.pt/europe-prices" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/europe-prices" />
+    <link rel="alternate" hreflang="en" href="https://www.tiagofelicia.pt/europe-prices?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/europe-prices" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Mapa de Preços de Eletricidade na Europa — Day-Ahead" />
+    <meta property="og:title" content="Preços Médios de Eletricidade na Europa — Day-Ahead" />
     <meta property="og:description" content="Preços médios diários de eletricidade em 47 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução e heatmap anual." />
-    <meta property="og:url" content="https://www.tiagofelicia.pt/mapa-precos" />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/europe-prices" />
     <meta property="og:locale" content="pt_PT" />
     <meta property="og:site_name" content="Tiago Felícia" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-mapa-precos.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:alt" content="Mapa de preços de eletricidade na Europa — Tiago Felícia" />
+    <meta property="og:image:alt" content="Preços Médios de Eletricidade na Europa — Tiago Felícia" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@tiagofelicia" />
-    <meta name="twitter:title" content="Mapa de Preços de Eletricidade na Europa" />
+    <meta name="twitter:title" content="Preços Médios de Eletricidade na Europa" />
     <meta name="twitter:description" content="Preços médios diários de eletricidade em 47 zonas de licitação europeias." />
 
     <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
@@ -40,9 +41,9 @@
     <!-- PWA / Mobile install -->
     <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
-    <meta name="application-name" content="Mapa de Preços" />
+    <meta name="application-name" content="Preços Europa" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Mapa de Preços" />
+    <meta name="apple-mobile-web-app-title" content="Preços Europa" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="stylesheet" href="style.css" />
@@ -82,11 +83,11 @@
       "@graph": [
         {
           "@type": "Dataset",
-          "@id": "https://www.tiagofelicia.pt/mapa-precos#dataset",
+          "@id": "https://www.tiagofelicia.pt/europe-prices#dataset",
           "name": "Preços diários de eletricidade por zona de licitação europeia",
           "alternateName": "European Day-Ahead Electricity Prices by Bidding Zone",
           "description": "Conjunto de dados com preços médios diários de eletricidade (mercado day-ahead) em 47 zonas de licitação europeias, incluindo média, mínimo, máximo, respetivas horas locais e valores intradiários (15 min/horário). Atualizado diariamente. Fonte: ENTSO-E Transparency Platform.",
-          "url": "https://www.tiagofelicia.pt/mapa-precos",
+          "url": "https://www.tiagofelicia.pt/europe-prices",
           "keywords": ["eletricidade", "day-ahead", "preços", "Europa", "OMIE", "EPEX", "Nord Pool", "zonas de licitação", "mercado elétrico"],
           "license": "https://creativecommons.org/licenses/by/4.0/",
           "isAccessibleForFree": true,
@@ -123,9 +124,9 @@
         },
         {
           "@type": "WebApplication",
-          "@id": "https://www.tiagofelicia.pt/mapa-precos#app",
-          "name": "Mapa de Preços de Eletricidade na Europa",
-          "url": "https://www.tiagofelicia.pt/mapa-precos",
+          "@id": "https://www.tiagofelicia.pt/europe-prices#app",
+          "name": "Preços Médios de Eletricidade na Europa",
+          "url": "https://www.tiagofelicia.pt/europe-prices",
           "description": "Mapa interativo com preços médios diários de eletricidade por zona de licitação europeia, com vistas diária, semanal, mensal e personalizada, gráfico de evolução, heatmap anual e pesquisa de zona.",
           "applicationCategory": "FinanceApplication",
           "operatingSystem": "Web browser",
@@ -148,13 +149,13 @@
             "Link de partilha por data",
             "Modo escuro"
           ],
-          "about": { "@id": "https://www.tiagofelicia.pt/mapa-precos#dataset" }
+          "about": { "@id": "https://www.tiagofelicia.pt/europe-prices#dataset" }
         },
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
-            { "@type": "ListItem", "position": 2, "name": "Mapa de Preços de Eletricidade", "item": "https://www.tiagofelicia.pt/mapa-precos" }
+            { "@type": "ListItem", "position": 2, "name": "Preços Médios de Eletricidade", "item": "https://www.tiagofelicia.pt/europe-prices" }
           ]
         }
       ]
@@ -223,6 +224,19 @@
         .range-error { color: #b91c1c; font-size: 0.85em; flex-basis: 100%; text-align: center; min-height: 1.1em; }
         [data-theme="dark"] .range-wrapper input.invalid { background: #450a0a; border-color: #f87171; color: #fecaca; }
         [data-theme="dark"] .range-error { color: #f87171; }
+        /* Seletor de idioma PT/EN */
+        .lang-switch { display:inline-flex; border:1px solid #cbd5e1; border-radius:5px; overflow:hidden; font-size:0.82em; vertical-align:middle; }
+        .lang-switch a { padding:5px 9px; color:#475569; text-decoration:none; font-weight:600; border-right:1px solid #cbd5e1; }
+        .lang-switch a:last-child { border-right:none; }
+        .lang-switch a.active { background:#2563eb; color:#fff; }
+        .lang-switch a:not(.active):hover { background:#e2e8f0; }
+        [data-theme="dark"] .lang-switch { border-color:#475569; }
+        [data-theme="dark"] .lang-switch a { color:#cbd5e1; border-color:#475569; }
+        [data-theme="dark"] .lang-switch a.active { background:#2563eb; color:#fff; }
+        [data-theme="dark"] .lang-switch a:not(.active):hover { background:#334155; }
+        /* FAQ bilingue: mostra apenas o bloco do idioma ativo */
+        html[lang="en"] [data-lang-block="pt"] { display: none; }
+        html:not([lang="en"]) [data-lang-block="en"] { display: none; }
         [data-theme="dark"] .modo-tab { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .modo-tab:hover { background: #334155; }
         [data-theme="dark"] .modo-tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
@@ -235,7 +249,7 @@
         .btn-nav:hover { background: #e2e8f0; }
         .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* Link cruzado para mapa-producao */
+        /* Link cruzado para europe-generation */
         .cross-link { text-align: center; margin: 8px auto 22px; }
         .cross-link a { display: inline-block; background: #f1f5f9; color: #2563eb; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 5px; text-decoration: none; font-size: 0.85em; transition: background 0.2s; }
         .cross-link a:hover { background: #dbeafe; }
@@ -702,181 +716,193 @@
 <div id="menu-placeholder"></div>
 <nav class="breadcrumb" aria-label="breadcrumb">
     <ol>
-        <li><a href="/">Início</a></li>
-        <li>Mapas</li>
-        <li aria-current="page">Mapa de Preços</li>
+        <li><a href="/" data-i18n="bcHome">Início</a></li>
+        <li data-i18n="bcEuropa">Europa</li>
+        <li aria-current="page" data-i18n="bcThis">Preços Europa</li>
     </ol>
 </nav>
 
 
 <main id="main-content">
     <div class="painel-header">
-        <div class="modo-tabs" role="tablist" aria-label="Modo de visualização">
-            <button type="button" class="modo-tab active" data-modo="diario" role="tab" aria-selected="true">Diário</button>
-            <button type="button" class="modo-tab" data-modo="semanal" role="tab" aria-selected="false">Semanal (7d)</button>
-            <button type="button" class="modo-tab" data-modo="mensal" role="tab" aria-selected="false" title="Mês deslizante terminado no dia selecionado (28-31 dias consoante o mês)">Mensal</button>
-            <button type="button" class="modo-tab" data-modo="custom" role="tab" aria-selected="false">Personalizado</button>
+        <div style="text-align:center; margin-bottom:10px;">
+            <span class="lang-switch" role="group" aria-label="Idioma / Language">
+                <a href="#" data-lang="pt">PT</a><a href="#" data-lang="en">EN</a>
+            </span>
+        </div>
+        <div class="modo-tabs" role="tablist" aria-label="Modo de visualização" data-i18n-aria="ariaModoVis">
+            <button type="button" class="modo-tab active" data-modo="diario" role="tab" aria-selected="true" data-i18n="mDiario">Diário</button>
+            <button type="button" class="modo-tab" data-modo="semanal" role="tab" aria-selected="false" data-i18n="mSemanal">Semanal (7d)</button>
+            <button type="button" class="modo-tab" data-modo="mensal" role="tab" aria-selected="false" data-i18n="mMensal" data-i18n-title="mMensalTitle" title="Mês deslizante terminado no dia selecionado (28-31 dias consoante o mês)">Mensal</button>
+            <button type="button" class="modo-tab" data-modo="custom" role="tab" aria-selected="false" data-i18n="mCustom">Personalizado</button>
         </div>
 
-        <div class="fuso-toggle" role="group" aria-label="Fuso horário de visualização">
-            <span class="fuso-label">Fuso:</span>
-            <button type="button" class="fuso-btn active" data-fuso="local" title="Cada zona mostrada no seu fuso local (default)">🌍 Hora local</button>
-            <button type="button" class="fuso-btn" data-fuso="mercado" title="Todas as zonas alinhadas em CET (hora de mercado europeu day-ahead)">🇪🇺 Hora de mercado (CET)</button>
+        <div class="fuso-toggle" role="group" aria-label="Fuso horário de visualização" data-i18n-aria="ariaFuso">
+            <span class="fuso-label" data-i18n="fusoLabel">Fuso:</span>
+            <button type="button" class="fuso-btn active" data-fuso="local" data-i18n="fusoLocal" data-i18n-title="fusoLocalTitle" title="Cada zona mostrada no seu fuso local (default)">🌍 Hora local</button>
+            <button type="button" class="fuso-btn" data-fuso="mercado" data-i18n="fusoMercado" data-i18n-title="fusoMercadoTitle" title="Todas as zonas alinhadas em CET (hora de mercado europeu day-ahead)">🇪🇺 Hora de mercado (CET)</button>
         </div>
         <div class="range-wrapper" id="range-wrapper" style="display:none;">
-            <label for="data-inicio">Início:</label>
+            <label for="data-inicio" data-i18n="lblInicio">Início:</label>
             <input type="date" id="data-inicio" aria-describedby="range-error">
-            <label for="data-fim">Fim:</label>
+            <label for="data-fim" data-i18n="lblFim">Fim:</label>
             <input type="date" id="data-fim" aria-describedby="range-error">
-            <button type="button" id="btn-aplicar-range" class="share-btn">Aplicar</button>
+            <button type="button" id="btn-aplicar-range" class="share-btn" data-i18n="btnAplicar">Aplicar</button>
             <span id="range-error" class="range-error" role="alert"></span>
         </div>
         <div class="date-selector" id="date-selector-wrapper">
-            <label for="seletor-data" id="label-seletor-data">Selecione o dia:</label>
+            <label for="seletor-data" id="label-seletor-data" data-i18n="lblSelDia">Selecione o dia:</label>
             <div class="date-nav-wrapper">
-                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior" aria-label="Dia anterior">&#10094;</button>
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior" aria-label="Dia anterior" data-i18n-title="btnPrevTitle" data-i18n-aria="btnPrevTitle">&#10094;</button>
                 <input type="date" id="seletor-data">
-                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte" aria-label="Dia seguinte">&#10095;</button>
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte" aria-label="Dia seguinte" data-i18n-title="btnNextTitle" data-i18n-aria="btnNextTitle">&#10095;</button>
             </div>
         </div>
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
-            Dados disponíveis desde 01/01/2018 &mdash; <span id="fuso-label-header">Valores nas horas locais de cada zona</span>
+            <span data-i18n="dadosDesde">Dados disponíveis desde 01/01/2018 &mdash;</span> <span id="fuso-label-header" data-i18n="notaLocal">Valores nas horas locais de cada zona</span>
             <span id="data-freshness" class="data-freshness"></span>
         </p>
         <div id="resumo-rapido" class="resumo-rapido" role="status" aria-live="polite" style="display:none;"></div>
         <div class="cross-link">
-            <a href="#" id="link-producao" title="Ver produção de eletricidade para o mesmo dia">&#128202; Ver produção de eletricidade</a>
+            <a href="#" id="link-producao" title="Ver produção de eletricidade para o mesmo dia" data-i18n="linkProducao" data-i18n-title="linkProducaoTitle">&#128202; Ver produção de eletricidade</a>
         </div>
-        <h1 id="titulo-mapa">Mapa de Preços Médios Diários de Eletricidade na Europa</h1>
-        <p>Preço médio diário por zona de licitação (€/MWh) &mdash; Mercado Day-Ahead</p>
+        <h1 id="titulo-mapa" data-i18n="mapTitleDaily">Preços Médios de Eletricidade Day-Ahead</h1>
+        <p data-i18n="subtitle">Preço médio diário por zona de licitação (€/MWh) &mdash; Mercado Day-Ahead</p>
         <p id="aviso-provisorio" class="aviso-provisorio" role="status" aria-live="polite" style="display:none;"></p>
     </div>
 
-    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
+    <div id="loading-indicator" role="status" aria-live="polite" data-i18n="loading">A carregar dados...</div>
 
     <div id="mapa-wrapper">
-        <button class="btn-fullscreen" onclick="toggleFullscreen()" id="btn-fullscreen" title="Abrir mapa em ecrã inteiro">&#x26F6; Ecrã inteiro</button>
-        <div id="mapa-container" role="img" aria-label="Mapa interativo dos preços de eletricidade nas zonas de licitação europeias" aria-describedby="ranked-list-content"></div>
+        <button class="btn-fullscreen" onclick="toggleFullscreen()" id="btn-fullscreen" title="Abrir mapa em ecrã inteiro" data-i18n="fsOpen" data-i18n-title="fsOpenTitle">&#x26F6; Ecrã inteiro</button>
+        <div id="mapa-container" role="img" aria-label="Mapa interativo dos preços de eletricidade nas zonas de licitação europeias" aria-describedby="ranked-list-content" data-i18n-aria="ariaMapa"></div>
     </div>
 
-    <p class="nota-horas" id="nota-horas-mapa">Valores nas horas locais de cada zona</p>
-    <p class="nota-fonte">Fonte: <a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a> | tiagofelicia.pt</p>
+    <p class="nota-horas" id="nota-horas-mapa" data-i18n="notaLocal">Valores nas horas locais de cada zona</p>
+    <p class="nota-fonte"><span data-i18n="notaFonte">Fonte:</span> <a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a> | tiagofelicia.pt</p>
     <p class="export-credit" id="credit-mapa"></p>
 
     <div id="ranked-list-wrapper">
-        <h2 id="ranked-list-titulo">Preços por zona de licitação</h2>
+        <h2 id="ranked-list-titulo" data-i18n="rankedTitle">Preços por zona de licitação</h2>
         <div id="favorites-panel" class="favorites-panel" style="display:none;"></div>
         <div class="zone-search-wrap">
-            <input type="search" id="zone-search" class="zone-search" placeholder="🔍 Procurar zona (ex: Portugal, PT, Itália)…" autocomplete="off" aria-label="Procurar zona">
-            <button type="button" id="zone-search-clear" class="zone-search-clear" title="Limpar pesquisa (Esc)" aria-label="Limpar pesquisa" hidden>×</button>
+            <input type="search" id="zone-search" class="zone-search" placeholder="🔍 Procurar zona (ex: Portugal, PT, Itália)…" autocomplete="off" aria-label="Procurar zona" data-i18n-ph="zoneSearchPh" data-i18n-aria="zoneSearchAria">
+            <button type="button" id="zone-search-clear" class="zone-search-clear" title="Limpar pesquisa (Esc)" aria-label="Limpar pesquisa" data-i18n-title="zoneSearchClearTitle" data-i18n-aria="zoneSearchClearAria" hidden>×</button>
             <span id="zone-search-count" class="zone-search-count" aria-live="polite"></span>
         </div>
         <div class="table-toolbar">
-            <label class="chart-toggle"><input type="checkbox" id="toggle-delta-pt"> Mostrar ΔPT (diferença vs Portugal)</label>
-            <label class="chart-toggle" id="toggle-var-wrapper" style="display:none;"><input type="checkbox" id="toggle-var-dia"> Mostrar variação vs dia anterior</label>
+            <label class="chart-toggle"><input type="checkbox" id="toggle-delta-pt"> <span data-i18n="toggleDeltaPt">Mostrar ΔPT (diferença vs Portugal)</span></label>
+            <label class="chart-toggle" id="toggle-var-wrapper" style="display:none;"><input type="checkbox" id="toggle-var-dia"> <span data-i18n="toggleVarDia">Mostrar variação vs dia anterior</span></label>
         </div>
-        <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de preços por zona">
-            <p class="no-data-msg">A carregar dados...</p>
+        <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de preços por zona" data-i18n-aria="ariaTabela">
+            <p class="no-data-msg" data-i18n="loading">A carregar dados...</p>
         </div>
         <div class="share-wrapper">
-            <button type="button" id="btn-share" class="share-btn" title="Copiar link partilhável para o dia atual">&#128279; Copiar link de partilha</button>
-            <span id="share-feedback" class="share-feedback">Copiado!</span>
+            <button type="button" id="btn-share" class="share-btn" title="Copiar link partilhável para o dia atual" data-i18n="btnShare" data-i18n-title="btnShareTitle">&#128279; Copiar link de partilha</button>
+            <span id="share-feedback" class="share-feedback" data-i18n="shareCopied">Copiado!</span>
         </div>
         <p class="export-credit" id="credit-table"></p>
     </div>
 
     <div id="zone-panel">
-        <label for="global-zone-select"><strong>Zona:</strong></label>
+        <label for="global-zone-select"><strong data-i18n="lblZona">Zona:</strong></label>
         <select id="global-zone-select"></select>
-        <span class="compare-label">Comparar com:</span>
-        <div id="compare-chips" class="compare-chips" role="list" aria-label="Zonas em comparação"></div>
-        <select id="add-compare-select" aria-label="Adicionar zona à comparação">
-            <option value="">+ Adicionar comparação</option>
+        <span class="compare-label" data-i18n="compareLabel">Comparar com:</span>
+        <div id="compare-chips" class="compare-chips" role="list" aria-label="Zonas em comparação" data-i18n-aria="compareAria"></div>
+        <select id="add-compare-select" aria-label="Adicionar zona à comparação" data-i18n-aria="addCompareAria">
+            <option value="" data-i18n="addCompare">+ Adicionar comparação</option>
         </select>
-        <button type="button" id="btn-viz-wide" class="btn-wide" title="Alternar largura total das visualizações">&#x2194; Largura total</button>
-        <span class="zone-panel-hint">Máx. 4 comparações · Dica: clica numa zona no mapa para mudar</span>
+        <button type="button" id="btn-viz-wide" class="btn-wide" title="Alternar largura total das visualizações" data-i18n="btnVizWide" data-i18n-title="btnVizWideTitle">&#x2194; Largura total</button>
+        <span class="zone-panel-hint" data-i18n="zonePanelHint">Máx. 4 comparações · Dica: clica numa zona no mapa para mudar</span>
     </div>
 
     <div id="intraday-wrapper">
-        <h2 id="intraday-titulo">Curva intradiária</h2>
+        <h2 id="intraday-titulo" data-i18n="intradayTitle">Curva intradiária</h2>
         <p id="intraday-stats" class="intraday-stats" aria-live="polite"></p>
         <div class="chart-canvas-wrap"><canvas id="chart-intraday"></canvas></div>
         <p class="export-credit" id="credit-intraday"></p>
     </div>
 
     <div id="chart-wrapper">
-        <h2 id="chart-titulo">Evolução de preços</h2>
+        <h2 id="chart-titulo" data-i18n="chartTitle">Evolução de preços</h2>
         <div class="chart-canvas-wrap"><canvas id="chart-precos"></canvas></div>
         <div id="chart-legend" class="chart-legend"></div>
         <p class="export-credit" id="credit-chart"></p>
     </div>
 
     <div id="heatmap-hour-wrapper">
-        <h2 id="heatmap-hour-titulo">Heatmap horário</h2>
+        <h2 id="heatmap-hour-titulo" data-i18n="hmHourTitle">Heatmap horário</h2>
         <div class="heatmap-controls">
-            <div class="hh-mode-toggle" role="radiogroup" aria-label="Modo de intervalo">
-                <button type="button" id="hh-mode-month" class="hh-mode-btn" data-mode="month" title="Mostrar um mês de calendário completo">Mês completo</button>
-                <button type="button" id="hh-mode-rolling" class="hh-mode-btn active" data-mode="rolling" title="Mostrar 30/31 dias terminados num dia à escolha">Mês deslizante</button>
+            <div class="hh-mode-toggle" role="radiogroup" aria-label="Modo de intervalo" data-i18n-aria="ariaIntervalo">
+                <button type="button" id="hh-mode-month" class="hh-mode-btn" data-mode="month" title="Mostrar um mês de calendário completo" data-i18n="hhModeMonth" data-i18n-title="hhModeMonthTitle">Mês completo</button>
+                <button type="button" id="hh-mode-rolling" class="hh-mode-btn active" data-mode="rolling" title="Mostrar 30/31 dias terminados num dia à escolha" data-i18n="hhModeRolling" data-i18n-title="hhModeRollingTitle">Mês deslizante</button>
             </div>
-            <label for="heatmap-hour-month-ym" id="hh-label-month" style="display:none;">Mês:</label>
+            <label for="heatmap-hour-month-ym" id="hh-label-month" style="display:none;" data-i18n="hhLabelMonth">Mês:</label>
             <input type="month" id="heatmap-hour-month-ym" style="display:none;">
-            <label for="heatmap-hour-month" id="hh-label-end">Dia final:</label>
-            <input type="date" id="heatmap-hour-month" title="A grelha mostra o mês deslizante terminado neste dia (30 ou 31 dias)">
-            <div class="hh-mode-toggle ho-orient-toggle" role="radiogroup" aria-label="Orientação da tabela" title="Aplica-se também ao Perfil semanal">
-                <button type="button" class="hh-mode-btn ho-orient-btn active" data-orient="rows-dates" title="Datas nas linhas">⬇ Datas</button>
-                <button type="button" class="hh-mode-btn ho-orient-btn" data-orient="rows-hours" title="Horas nas linhas">⬇ Horas</button>
+            <label for="heatmap-hour-month" id="hh-label-end" data-i18n="hhLabelEnd">Dia final:</label>
+            <input type="date" id="heatmap-hour-month" title="A grelha mostra o mês deslizante terminado neste dia (30 ou 31 dias)" data-i18n-title="hhEndInputTitle">
+            <div class="hh-mode-toggle ho-orient-toggle" role="radiogroup" aria-label="Orientação da tabela" title="Aplica-se também ao Perfil semanal" data-i18n-aria="ariaOrient" data-i18n-title="orientAplicaPerfil">
+                <button type="button" class="hh-mode-btn ho-orient-btn active" data-orient="rows-dates" title="Datas nas linhas" data-i18n="orientDates" data-i18n-title="orientDatesTitle">⬇ Datas</button>
+                <button type="button" class="hh-mode-btn ho-orient-btn" data-orient="rows-hours" title="Horas nas linhas" data-i18n="orientHours" data-i18n-title="orientHoursTitle">⬇ Horas</button>
             </div>
             <span class="heatmap-stats" id="heatmap-hour-stats"></span>
         </div>
-        <div id="heatmap-hour-container" role="img" aria-label="Heatmap horário"></div>
+        <div id="heatmap-hour-container" role="img" aria-label="Heatmap horário" data-i18n-aria="ariaHmHour"></div>
         <p class="export-credit" id="credit-heatmap-hour"></p>
     </div>
 
     <div id="heatmap-week-wrapper">
-        <h2 id="heatmap-week-titulo">Perfil semanal (24h × dia da semana)</h2>
+        <h2 id="heatmap-week-titulo" data-i18n="hmWeekTitle">Perfil semanal (24h × dia da semana)</h2>
         <div class="heatmap-controls">
-            <label for="hw-window">Período:</label>
+            <label for="hw-window" data-i18n="hwLabel">Período:</label>
             <select id="hw-window">
-                <option value="30">Últimos 30 dias</option>
-                <option value="60">Últimos 60 dias</option>
-                <option value="90">Últimos 90 dias</option>
-                <option value="365">Últimos 365 dias</option>
+                <option value="30" data-i18n="hwOpt30">Últimos 30 dias</option>
+                <option value="60" data-i18n="hwOpt60">Últimos 60 dias</option>
+                <option value="90" data-i18n="hwOpt90">Últimos 90 dias</option>
+                <option value="365" data-i18n="hwOpt365">Últimos 365 dias</option>
             </select>
-            <div class="hh-mode-toggle ho-orient-toggle" role="radiogroup" aria-label="Orientação da tabela" title="Aplica-se também ao Heatmap horário">
-                <button type="button" class="hh-mode-btn ho-orient-btn active" data-orient="rows-dates" title="Dias da semana nas linhas">⬇ Dias</button>
-                <button type="button" class="hh-mode-btn ho-orient-btn" data-orient="rows-hours" title="Horas nas linhas">⬇ Horas</button>
+            <div class="hh-mode-toggle ho-orient-toggle" role="radiogroup" aria-label="Orientação da tabela" title="Aplica-se também ao Heatmap horário" data-i18n-aria="ariaOrient" data-i18n-title="orientAplicaHm">
+                <button type="button" class="hh-mode-btn ho-orient-btn active" data-orient="rows-dates" title="Dias da semana nas linhas" data-i18n="orientDays" data-i18n-title="orientDaysTitle">⬇ Dias</button>
+                <button type="button" class="hh-mode-btn ho-orient-btn" data-orient="rows-hours" title="Horas nas linhas" data-i18n="orientHours" data-i18n-title="orientHoursTitle">⬇ Horas</button>
             </div>
             <span class="heatmap-stats" id="heatmap-week-stats"></span>
         </div>
-        <div id="heatmap-week-container" role="img" aria-label="Perfil semanal"></div>
+        <div id="heatmap-week-container" role="img" aria-label="Perfil semanal" data-i18n-aria="ariaHmWeek"></div>
         <p class="export-credit" id="credit-heatmap-week"></p>
     </div>
 
     <div id="heatmap-wrapper">
-        <h2 id="heatmap-titulo">Heatmap anual de preços</h2>
+        <h2 id="heatmap-titulo" data-i18n="hmYearTitle">Heatmap anual de preços</h2>
         <div class="heatmap-controls">
-            <label for="heatmap-year">Ano:</label>
+            <label for="heatmap-year" data-i18n="yearLabel">Ano:</label>
             <select id="heatmap-year"></select>
             <span class="heatmap-stats" id="heatmap-stats"></span>
         </div>
-        <div id="heatmap-container" role="img" aria-label="Calendário anual de preços por dia"></div>
+        <div id="heatmap-container" role="img" aria-label="Calendário anual de preços por dia" data-i18n-aria="ariaHmYear"></div>
         <p class="export-credit" id="credit-heatmap-anual"></p>
     </div>
 
     <article class="content-support">
-        <h2>Sobre este mapa</h2>
+        <h2 data-i18n="faqHeading">Sobre este mapa</h2>
 
         <details class="faq-item">
-            <summary><strong>O que mostra este mapa?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>O que mostra este mapa?</strong></span><span data-lang-block="en"><strong>What does this map show?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Este mapa apresenta o <strong>preço médio diário de eletricidade</strong> (mercado day-ahead) para cada zona de licitação europeia, expresso em <strong>€/MWh</strong>.</p>
                 <p>As cores variam do <strong style="color:#7c3aed;">roxo</strong> (preços <em>negativos</em>, evento raro de excesso de renovável) e <strong style="color:#2166ac;">azul</strong> (preços baixos), passando por <strong style="color:#fec44f;">amarelo</strong> e <strong style="color:#e08214;">laranja</strong>, até ao <strong style="color:#b2182b;">vermelho escuro</strong> (preços mais altos). Esta paleta foi escolhida para boa acessibilidade a utilizadores daltónicos e para destacar visualmente eventos de preços negativos.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>This map shows the <strong>daily average electricity price</strong> (day-ahead market) for each European bidding zone, expressed in <strong>€/MWh</strong>.</p>
+                <p>Colours range from <strong style="color:#7c3aed;">purple</strong> (<em>negative</em> prices, a rare event of renewable oversupply) and <strong style="color:#2166ac;">blue</strong> (low prices), through <strong style="color:#fec44f;">yellow</strong> and <strong style="color:#e08214;">orange</strong>, up to <strong style="color:#b2182b;">dark red</strong> (highest prices). This palette was chosen for good accessibility to colour-blind users and to visually highlight negative-price events.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Os valores são nas horas locais ou na hora de mercado?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Os valores são nas horas locais ou na hora de mercado?</strong></span><span data-lang-block="en"><strong>Are the values in local time or market time?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Pode escolher entre dois modos através do toggle <strong>Fuso</strong> no topo da página:</p>
                 <ul>
                     <li><strong>🌍 Hora local (default):</strong> os preços médios diários são calculados na <strong>hora local de cada zona de licitação</strong>. Por exemplo, um dia em Portugal (UTC+0/+1) não corresponde exatamente ao mesmo período UTC que um dia na Finlândia (UTC+2/+3). Esta é a forma como os preços são publicados pelas bolsas locais e pelo ENTSO-E.</li>
@@ -889,21 +915,44 @@
                     </li>
                 </ul>
                 <p>A escolha é guardada localmente (localStorage) e mantém-se entre visitas.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>You can choose between two modes via the <strong>Time zone</strong> toggle at the top of the page:</p>
+                <ul>
+                    <li><strong>🌍 Local time (default):</strong> daily average prices are computed in <strong>each bidding zone's local time</strong>. For example, a day in Portugal (UTC+0/+1) does not match exactly the same UTC period as a day in Finland (UTC+2/+3). This is how prices are published by the local exchanges and by ENTSO-E.</li>
+                    <li><strong>🇪🇺 Market time (CET):</strong> all zones are shown aligned to the <strong>European day-ahead market day</strong> (CET 00:00 → 24:00). This lets you compare zones over the same market interval and removes the "(partial until 23:00)" note for Portugal/Ireland. Technically:
+                        <ul>
+                            <li>39 zones in the CET time zone (ES, FR, DE-LU, IT, NL, SE, NO, PL, etc.) do not change — they are already aligned.</li>
+                            <li><strong>PT</strong> and <strong>IE(SEM)</strong> (CET-1h) → pull the last hour of the previous local day to complete the market day.</li>
+                            <li><strong>BG, EE, FI, GR, LT, LV, RO</strong> (CET+1h) → pull the first hour of the next local day to complete the market day.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p>The choice is stored locally (localStorage) and persists across visits.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Porque é que o último dia pode ter valores provisórios?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Porque é que o último dia pode ter valores provisórios?</strong></span><span data-lang-block="en"><strong>Why can the last day have provisional values?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>O OMIE negoceia em Hora Central Europeia (CET), que é a hora de Espanha.</p>
                 <p>Como <strong>Portugal</strong> está uma hora "atrás" de <strong>Espanha</strong> (hora local PT = hora CET - 1), quando olhamos para os resultados do mercado diário (Day-Ahead) que são divulgados para o dia seguinte, <strong>o intervalo correspondente a 23:00 - 24:00 (hora de Portugal)</strong> é conhecido apenas no dia seguinte.</p>
                 <p>Quando tal acontece, é apresentado o aviso <em>"até às 23h de PT"</em> no título.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>OMIE trades in Central European Time (CET), which is Spain's time.</p>
+                <p>Because <strong>Portugal</strong> is one hour "behind" <strong>Spain</strong> (PT local time = CET - 1), when we look at the day-ahead market results published for the next day, <strong>the interval corresponding to 23:00 - 24:00 (Portugal time)</strong> is only known the following day.</p>
+                <p>When this happens, the note <em>"until 23:00 PT"</em> is shown in the title.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>O que são zonas de licitação?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>O que são zonas de licitação?</strong></span><span data-lang-block="en"><strong>What are bidding zones?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>A Europa está dividida em <strong>zonas de licitação</strong> (bidding zones) para o mercado de eletricidade. A maioria dos países tem uma única zona, mas alguns estão divididos em várias:</p>
                 <ul>
                     <li><strong>Noruega:</strong> 5 zonas (NO1-NO5)</li>
@@ -911,12 +960,23 @@
                     <li><strong>Itália:</strong> 6 zonas (Norte, Centro-Norte, Centro-Sul, Sul, Sicília, Sardenha)</li>
                     <li><strong>Dinamarca:</strong> 2 zonas (DK1 Oeste, DK2 Este)</li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <p>Europe is divided into <strong>bidding zones</strong> for the electricity market. Most countries have a single zone, but some are split into several:</p>
+                <ul>
+                    <li><strong>Norway:</strong> 5 zones (NO1-NO5)</li>
+                    <li><strong>Sweden:</strong> 4 zones (SE1-SE4)</li>
+                    <li><strong>Italy:</strong> 6 zones (North, Centre-North, Centre-South, South, Sicily, Sardinia)</li>
+                    <li><strong>Denmark:</strong> 2 zones (DK1 West, DK2 East)</li>
+                </ul>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Visualizações disponíveis</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Visualizações disponíveis</strong></span><span data-lang-block="en"><strong>Available visualizations</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <ul>
                     <li><strong>Mapa coroplético europeu:</strong> 47 zonas de licitação coloridas pelo preço médio. Etiquetas numéricas sobre cada zona (asterisco se dados parciais).</li>
                     <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, variação vs ontem. Mostra hora local do mín/máx por zona.</li>
@@ -935,12 +995,34 @@
                     <li><strong>Heatmap anual:</strong> calendário 12 meses × 31 dias, células coloridas pelo preço — clica num dia para abrir esse dia no mapa.</li>
                     <li><strong>Sparkline no mapa (info-control):</strong> ao passar o rato (desktop) ou tocar (mobile) numa zona, mini-curva intradiária com marcadores mín/máx e barras coloridas.</li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <ul>
+                    <li><strong>European choropleth map:</strong> 47 bidding zones coloured by the average price. Numeric labels over each zone (asterisk if data is partial).</li>
+                    <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, ΔPT, change vs yesterday. Shows the local time of the min/max per zone.</li>
+                    <li><strong>Intraday curve:</strong> bar chart with the 24h curve of the selected zone. Colours on the same scale as the map. Resolution adapts to what the exchange publishes (15 min, 30 min or hourly). In aggregated modes it shows the period's hourly average. Dashed red line at y=0 when there are negative values.</li>
+                    <li><strong>Intraday curve per table row:</strong> click a zone's name (or the chevron <kbd>▸</kbd>) to open/close the 24h curve right below it. Several zones at once for comparison.</li>
+                    <li><strong>Price evolution chart:</strong> bars coloured by the map scale for the selected zone. Min, max and range always visible in the tooltip. Supports up to 4 simultaneous comparisons (overlaid lines in distinct colours). The legend below the chart lets you toggle extra series (hidden by default):
+                        <ul>
+                            <li><strong>MA7</strong> — 7-day moving average (weekly cycle, requires ≥14 days)</li>
+                            <li><strong>MA30</strong> — 30-day moving average (monthly cycle, requires ≥30 days)</li>
+                            <li><strong>Daily averages (line)</strong> — the same values as the bars, as a thick line in the period-average colour (useful to overlay with comparisons or see the trend)</li>
+                            <li><strong>Daily averages — previous year</strong> — purple dashed line with the daily values of the same period a year ago (aligned day by day)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Hourly heatmap (24h × ~30 days):</strong> grid of hours vs days, in "rolling month" mode ending on the chosen End day (between 28 and 31 days depending on the month). Includes a side column with the <strong>average per hour</strong>, a bottom row with the <strong>average per day</strong> and a corner with the <strong>overall average</strong>. In "↔ Full width" mode it shows values with 2 decimals.</li>
+                    <li><strong>Weekly profile (24h × 7 weekdays):</strong> aggregates every day in the period (30/60/90/365 days) by weekday. Helps identify recurring patterns ("Friday evenings are consistently more expensive", "Sundays have a deeper morning trough"). Includes the same side and overall averages.</li>
+                    <li><strong>Annual heatmap:</strong> a 12-month × 31-day calendar, cells coloured by price — click a day to open it on the map.</li>
+                    <li><strong>Map sparkline (info-control):</strong> hovering (desktop) or tapping (mobile) a zone shows a mini intraday curve with min/max markers and coloured bars.</li>
+                </ul>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Interatividade e navegação</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Interatividade e navegação</strong></span><span data-lang-block="en"><strong>Interactivity and navigation</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <ul>
                     <li><strong>Modos temporais:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês deslizante terminado no dia selecionado — 28 a 31 dias conforme o mês) e Personalizado (intervalo à escolha). Médias agregadas no mapa, tabela, gráfico e curva intradiária.</li>
                     <li><strong>Selector único de zona:</strong> um só dropdown "Zona" controla simultaneamente Evolução, Curva intradiária, Heatmap horário e Heatmap anual. Clicar numa zona do mapa atualiza tudo.</li>
@@ -953,12 +1035,28 @@
                     <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots não foram ainda publicados (ex: PT antes do leilão CET de amanhã) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip. Média/mín/máx usam só os slots conhecidos.</li>
                     <li><strong>Resumo dinâmico:</strong> texto contextual com a data (Hoje/Ontem/Amanhã/data), com zona mais barata e mais cara em destaque, e variação vs PT.</li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <ul>
+                    <li><strong>Time modes:</strong> Daily (one day), Weekly (7 days), Monthly (rolling month ending on the selected day — 28 to 31 days depending on the month) and Custom (range of your choice). Aggregated averages on the map, table, chart and intraday curve.</li>
+                    <li><strong>Single zone selector:</strong> a single "Zone" dropdown simultaneously controls Evolution, Intraday curve, Hourly heatmap and Annual heatmap. Clicking a zone on the map updates everything.</li>
+                    <li><strong>Multi-zone comparison:</strong> chips with up to 4 additional zones compared on the evolution chart and the intraday curve — each with its own colour and a distinct line over the main zone's bars. Each chip also shows the time-zone offset relative to the main zone (e.g. <kbd>+1h</kbd> for ES when the main one is PT). Values are shown in <em>each zone's local time</em>.</li>
+                    <li><strong>Zone search:</strong> the "🔍 Search zone" field filters the table, highlights the zone on the map and auto-zooms if there is a single result. Searches by code and name (PT and EN), ignoring accents.</li>
+                    <li><strong>Map tap (mobile):</strong> a single tap shows the info-control (with the intraday curve); a second tap on the same zone selects it across all visualizations. Tapping the map background closes the info-control.</li>
+                    <li><strong>Custom range validation:</strong> invalid dates (start > end, outside the data range, &gt;366 days) get a red border and an inline message; the "Apply" button is disabled until the error is resolved.</li>
+                    <li><strong>ΔPT (difference vs Portugal):</strong> optional in the table, in €/MWh and %. Useful to assess the cost of importing/exporting.</li>
+                    <li><strong>Change vs yesterday:</strong> optional in the table in Daily mode, shows how each zone moved compared with the previous day.</li>
+                    <li><strong>Partial-data indicator:</strong> zones whose last slots have not been published yet (e.g. PT before tomorrow's CET auction) get an asterisk on the map and a "partial" badge in the table/tooltip. Average/min/max use only the known slots.</li>
+                    <li><strong>Dynamic summary:</strong> contextual text with the date (Today/Yesterday/Tomorrow/date), highlighting the cheapest and most expensive zone, and the change vs PT.</li>
+                </ul>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Personalização e atalhos</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Personalização e atalhos</strong></span><span data-lang-block="en"><strong>Customization and shortcuts</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <ul>
                     <li><strong>Zonas favoritas:</strong> clica na estrela <kbd>☆</kbd> ao lado do nome para adicionar uma zona aos favoritos. Aparecem num painel "⭐ Favoritas" no topo da tabela com o preço atual e cor da escala. Click num chip seleciona a zona em todas as visualizações; <kbd>×</kbd> remove. Em desktop, podes <strong>arrastar</strong> os chips (⋮⋮) para reordenar. Persistidas no browser.</li>
                     <li><strong>Largura total (↔):</strong> botão no painel de zona faz com que as 4 visualizações (Curva intradiária, Evolução, Heatmap horário, Heatmap anual) ocupem toda a largura do ecrã. No heatmap horário, ativa formatação com 2 casas decimais nas células.</li>
@@ -974,39 +1072,84 @@
                         </ul>
                     </li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <ul>
+                    <li><strong>Favorite zones:</strong> click the star <kbd>☆</kbd> next to a name to add a zone to favorites. They appear in a "⭐ Favorites" panel at the top of the table with the current price and scale colour. Clicking a chip selects the zone across all visualizations; <kbd>×</kbd> removes it. On desktop you can <strong>drag</strong> the chips (⋮⋮) to reorder. Persisted in the browser.</li>
+                    <li><strong>Full width (↔):</strong> a button in the zone panel makes the 4 visualizations (Intraday curve, Evolution, Hourly heatmap, Annual heatmap) span the full screen width. In the hourly heatmap it enables 2-decimal formatting in the cells.</li>
+                    <li><strong>Dark mode:</strong> follows the site preference (toggle in the menu).</li>
+                    <li><strong>Map fullscreen:</strong> a button in the top corner of the map for an immersive view.</li>
+                    <li><strong>Persisted preferences:</strong> zone choices, comparisons, favorites, mode, toggles, full width — all stored in localStorage.</li>
+                    <li><strong>Keyboard shortcuts:</strong>
+                        <ul>
+                            <li><kbd>←</kbd> <kbd>→</kbd> — previous / next day</li>
+                            <li><kbd>T</kbd> — jump to the most recent available date</li>
+                            <li><kbd>/</kbd> — focus the zone search field</li>
+                            <li><kbd>Esc</kbd> — clear the zone search</li>
+                        </ul>
+                    </li>
+                </ul>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Atualização e partilha</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Atualização e partilha</strong></span><span data-lang-block="en"><strong>Updates and sharing</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <ul>
                     <li><strong>Indicador de frescura:</strong> badge ao lado do subtítulo mostra quão recente é a última atualização do dataset (verde &lt;26h, amarelo 26-48h, vermelho &gt;48h). O tooltip mostra a hora exata em UTC.</li>
                     <li><strong>Auto-refresh:</strong> ao voltar à tab depois de mais de 5 minutos sem foco, a página verifica silenciosamente se há dados mais recentes e refresca se necessário.</li>
                     <li><strong>Link de partilha:</strong> botão "🔗 Copiar link de partilha" gera URL com a data, modo e zona ativa — partilha com 1 clique.</li>
                     <li><strong>Instalável (PWA):</strong> a página pode ser instalada como aplicação no telemóvel (Adicionar ao ecrã principal) ou desktop (ícone na barra do browser). Funciona com cache offline para conteúdo estático e visitas recentes.</li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <ul>
+                    <li><strong>Freshness indicator:</strong> a badge next to the subtitle shows how recent the dataset's last update is (green &lt;26h, yellow 26-48h, red &gt;48h). The tooltip shows the exact time in UTC.</li>
+                    <li><strong>Auto-refresh:</strong> when you return to the tab after more than 5 minutes unfocused, the page silently checks for newer data and refreshes if needed.</li>
+                    <li><strong>Share link:</strong> the "🔗 Copy share link" button generates a URL with the active date, mode and zone — share it in 1 click.</li>
+                    <li><strong>Installable (PWA):</strong> the page can be installed as an app on mobile (Add to Home Screen) or desktop (icon in the browser bar). It works with an offline cache for static content and recent visits.</li>
+                </ul>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>De onde vêm os dados?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>De onde vêm os dados?</strong></span><span data-lang-block="en"><strong>Where does the data come from?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Os dados são obtidos diretamente da <strong><a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a></strong> — a fonte oficial dos operadores de redes elétricas europeus (TSOs). Os preços day-ahead provêm das bolsas de eletricidade europeias (EPEX SPOT, Nord Pool, GME, OMIE, etc.) e são disponibilizados na resolução publicada pela respetiva bolsa (15 minutos para a maioria das zonas, horário para algumas).</p>
                 <p>Os dados são atualizados diariamente de forma automática.</p>
                 <p><small>Fronteiras das zonas: <a href="https://github.com/electricitymaps/electricitymaps-contrib" target="_blank" rel="noopener">Electricity Maps</a> (MIT License)</small></p>
+                </div>
+                <div data-lang-block="en">
+                <p>The data is obtained directly from the <strong><a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a></strong> — the official source of the European electricity transmission system operators (TSOs). Day-ahead prices come from the European power exchanges (EPEX SPOT, Nord Pool, GME, OMIE, etc.) and are provided at the resolution published by each exchange (15 minutes for most zones, hourly for some).</p>
+                <p>The data is updated automatically every day.</p>
+                <p><small>Zone borders: <a href="https://github.com/electricitymaps/electricitymaps-contrib" target="_blank" rel="noopener">Electricity Maps</a> (MIT License)</small></p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Porque é que alguns países não têm dados?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Porque é que alguns países não têm dados?</strong></span><span data-lang-block="en"><strong>Why do some countries have no data?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Zonas a <strong>cinzento</strong> indicam ausência de dados para o dia selecionado. Isto pode acontecer porque:</p>
                 <ul>
                     <li>Os dados ainda não foram publicados</li>
                     <li>A zona não participou no mercado nesse dia</li>
                     <li>Houve uma falha temporária na recolha de dados</li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <p>Zones in <strong>grey</strong> indicate no data for the selected day. This can happen because:</p>
+                <ul>
+                    <li>The data has not been published yet</li>
+                    <li>The zone did not take part in the market that day</li>
+                    <li>There was a temporary failure in data collection</li>
+                </ul>
+                </div>
             </div>
         </details>
     </article>
@@ -1024,6 +1167,346 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    // ===================== i18n (PT/EN) =====================
+    // Língua a partir de ?lang=en (default pt). Replica o padrão da europe-balance.
+    var LANG = (function () {
+        var l = new URLSearchParams(window.location.search).get('lang');
+        return (l === 'en') ? 'en' : 'pt';
+    })();
+    var DEC_SEP  = (LANG === 'en') ? '.' : ',';
+    var THOU_SEP = (LANG === 'en') ? ',' : ' ';
+
+    var I18N = {
+        pt: {
+            htmlLang: 'pt-PT',
+            title: 'Preços Médios de Eletricidade na Europa - Day-Ahead | Tiago Felícia',
+            bcHome: 'Início', bcEuropa: 'Europa', bcThis: 'Preços Médios Europa',
+            ariaModoVis: 'Modo de visualização',
+            mDiario: 'Diário', mSemanal: 'Semanal (7d)', mMensal: 'Mensal', mCustom: 'Personalizado',
+            mMensalTitle: 'Mês deslizante terminado no dia selecionado (28-31 dias consoante o mês)',
+            fusoLabel: 'Fuso:', fusoLocal: '🌍 Hora local', fusoMercado: '🇪🇺 Hora de mercado (CET)',
+            fusoLocalTitle: 'Cada zona mostrada no seu fuso local (default)',
+            fusoMercadoTitle: 'Todas as zonas alinhadas em CET (hora de mercado europeu day-ahead)',
+            ariaFuso: 'Fuso horário de visualização',
+            lblInicio: 'Início:', lblFim: 'Fim:', btnAplicar: 'Aplicar',
+            lblSelDia: 'Selecione o dia:', btnPrevTitle: 'Dia anterior', btnNextTitle: 'Dia seguinte',
+            dadosDesde: 'Dados disponíveis desde 01/01/2018 —',
+            linkProducao: '📊 Ver produção de eletricidade',
+            linkProducaoTitle: 'Ver produção de eletricidade para o mesmo dia',
+            subtitle: 'Preço médio diário por zona de licitação (€/MWh) — Mercado Day-Ahead',
+            loading: 'A carregar dados...',
+            ariaMapa: 'Mapa interativo dos preços de eletricidade nas zonas de licitação europeias',
+            fsOpen: '⛶ Ecrã inteiro', fsOpenTitle: 'Abrir mapa em ecrã inteiro',
+            fsExit: '✖ Sair', fsExitTitle: 'Sair do ecrã inteiro',
+            notaFonte: 'Fonte:',
+            rankedTitle: 'Preços por zona de licitação',
+            zoneSearchPh: '🔍 Procurar zona (ex: Portugal, PT, Itália)…', zoneSearchAria: 'Procurar zona',
+            zoneSearchClearTitle: 'Limpar pesquisa (Esc)', zoneSearchClearAria: 'Limpar pesquisa',
+            toggleDeltaPt: 'Mostrar ΔPT (diferença vs Portugal)',
+            toggleVarDia: 'Mostrar variação vs dia anterior',
+            btnShare: '🔗 Copiar link de partilha', btnShareTitle: 'Copiar link partilhável para o dia atual',
+            shareCopied: 'Copiado!', shareCopiedOk: '✓ Link copiado!',
+            ariaTabela: 'Tabela de preços por zona',
+            lblZona: 'Zona:', compareLabel: 'Comparar com:', addCompare: '+ Adicionar comparação',
+            addCompareAria: 'Adicionar zona à comparação', compareAria: 'Zonas em comparação',
+            btnVizWide: '↔ Largura total', btnVizWideTitle: 'Alternar largura total das visualizações',
+            zonePanelHint: 'Máx. 4 comparações · Dica: clica numa zona no mapa para mudar',
+            intradayTitle: 'Curva intradiária',
+            chartTitle: 'Evolução de preços',
+            hmHourTitle: 'Heatmap horário', ariaHmHour: 'Heatmap horário',
+            hmWeekTitle: 'Perfil semanal (24h × dia da semana)', ariaHmWeek: 'Perfil semanal',
+            hmYearTitle: 'Heatmap anual de preços', ariaHmYear: 'Calendário anual de preços por dia',
+            hhModeMonth: 'Mês completo', hhModeMonthTitle: 'Mostrar um mês de calendário completo',
+            hhModeRolling: 'Mês deslizante', hhModeRollingTitle: 'Mostrar 30/31 dias terminados num dia à escolha',
+            hhLabelMonth: 'Mês:', hhLabelEnd: 'Dia final:',
+            hhEndInputTitle: 'A grelha mostra o mês deslizante terminado neste dia (30 ou 31 dias)',
+            ariaIntervalo: 'Modo de intervalo', ariaOrient: 'Orientação da tabela',
+            orientAplicaHm: 'Aplica-se também ao Heatmap horário', orientAplicaPerfil: 'Aplica-se também ao Perfil semanal',
+            orientDates: '⬇ Datas', orientDatesTitle: 'Datas nas linhas',
+            orientHours: '⬇ Horas', orientHoursTitle: 'Horas nas linhas',
+            orientDays: '⬇ Dias', orientDaysTitle: 'Dias da semana nas linhas',
+            hwLabel: 'Período:',
+            hwOpt30: 'Últimos 30 dias', hwOpt60: 'Últimos 60 dias', hwOpt90: 'Últimos 90 dias', hwOpt365: 'Últimos 365 dias',
+            yearLabel: 'Ano:',
+            faqHeading: 'Sobre este mapa',
+            lblDiario: 'Diário', lblSemanal: 'Semanal', lblMensal: 'Mensal', lblPersonalizado: 'Personalizado', lblPeriodo: 'Período',
+            today: 'Hoje', yesterday: 'Ontem', tomorrow: 'Amanhã',
+            noData: 'Sem dados', noDataDay: 'Sem dados para o dia selecionado.', noDataYear: 'Sem dados para este ano.',
+            loadingShort: 'A carregar…',
+            stAvg: 'Média', stMin: 'Mín', stMax: 'Máx',
+            updatedPre: '· Atualizado ', updatedTitle: 'Última atualização: ',
+            dataPre: '· Dados ', dataTitle: 'Última data com dados: ',
+            mapTitleDaily: 'Preços Médios de Eletricidade Day-Ahead',
+            mapTitleAgg: 'Preços Médios de Eletricidade Day-Ahead - ',
+            ogTitle: 'Preços Médios de Eletricidade Day-Ahead na Europa',
+            twTitle: 'Preços Médios de Eletricidade Day-Ahead na Europa',
+            metaDesc: 'Mapa interativo dos preços médios diários de eletricidade (day-ahead) em 47 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, curva intradiária, heatmaps e comparação entre zonas. Dados oficiais da ENTSO-E Transparency Platform.',
+            ogDesc: 'Preços médios diários de eletricidade em 47 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução, curva intradiária e heatmap anual.',
+            twDesc: 'Preços médios diários de eletricidade em 47 zonas de licitação europeias.',
+            rankedAgg: 'Preços por zona de licitação — ',
+            sufMarket: ' [hora de mercado / CET]', sufMarketList: ' (hora de mercado, CET)',
+            notaLocal: 'Valores nas horas locais de cada zona',
+            notaMarket: 'Valores em hora de mercado (CET)',
+            notaMarketFull: 'Valores em hora de mercado (CET) — todas as zonas alinhadas',
+            avisoProvisorioPT: 'A média para Portugal não é final — falta o valor da última hora do dia (23h às 24h de PT), que ainda não foi negociado.',
+            hmWeekShort: 'Perfil semanal',
+            resAbove: 'acima', resBelow: 'abaixo',
+            resEuAvg: 'da média europeia', resEuAvgOnly: 'Média europeia',
+            resCheap: 'Mais barato', resExpensive: 'Mais caro', resEm: 'Em ',
+            resHorario: 'horário',
+            thAvg: 'Médio (€/MWh)', thAvgPeriod: 'Médio período (€/MWh)',
+            thMin: 'Mín (€/MWh)', thMinPeriod: 'Mín período (€/MWh)',
+            thMax: 'Máx (€/MWh)', thMaxPeriod: 'Máx período (€/MWh)',
+            thHrMin: 'Hora mín', thDtMin: 'Data/Hora mín',
+            thHrMax: 'Hora máx', thDtMax: 'Data/Hora máx',
+            thZona: 'Zona', thZonaTitle: 'Ordenar por zona',
+            thAvgTitle: 'Ordenar por preço médio',
+            thDeltaTitle: 'Ordenar por ΔPT (€)',
+            thVsYesterday: 'vs Ontem', thVarTitle: 'Variação vs dia anterior',
+            thMinTitle: 'Ordenar por preço mínimo', thHrMinTitle: 'Quando ocorreu o mínimo',
+            thMaxTitle: 'Ordenar por preço máximo', thHrMaxTitle: 'Quando ocorreu o máximo',
+            thAmplitude: 'Amplitude (€/MWh)', thAmpTitle: 'Ordenar por amplitude (Máx - Mín)',
+            capDaily: 'Tabela de preços médios diários de eletricidade day-ahead por zona de licitação europeia, incluindo média, mínimo, máximo, respetivas horas locais e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.',
+            capPeriod: 'Tabela de preços médios de eletricidade day-ahead por zona de licitação europeia para o período selecionado, incluindo média, mínimo, máximo e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.',
+            favRemove: 'Remover dos favoritos', favAdd: 'Adicionar aos favoritos',
+            tdZoneTitle: 'Clique para mostrar/ocultar curva intradiária',
+            expandAria: 'Expandir curva intradiária',
+            partialBadge: 'parcial', partialDataPre: 'Dados parciais: ',
+            slotsPub: ' slots publicados', slotsWord: ' slots',
+            avgTitlePartialPre: 'Preço médio (parcial: ', avgTitlePartialSuf: ' slots publicados)',
+            avgTitleDaily: 'Preço médio diário',
+            tdDeltaTitle: 'Diferença vs Portugal', tdVarTitle: 'Variação vs dia anterior',
+            tdMinTitle: 'Preço mínimo do dia', tdMaxTitle: 'Preço máximo do dia',
+            tdAmpTitle: 'Diferença Máx − Mín',
+            hrCetPrefix: 'Hora CET (mercado) do', hrLocalPrefix: 'Hora local do',
+            hrMinSuf: ' mínimo', hrMaxSuf: ' máximo',
+            ampPre: 'Amplitude: ',
+            legMA: ' — Média', legPrevYear: 'Médias diárias — ano anterior', legDailyLine: 'Médias diárias (linha)',
+            legMA7: 'MA7 (média móvel 7 dias)', legMA30: 'MA30 (média móvel 30 dias)',
+            tipRange: 'Amplitude',
+            hmHora: 'Hora', hmData: 'Data', hmDia: 'Dia',
+            tipAvgMonth: 'Média mensal', tipAvg24: 'Média ao longo das 24 horas',
+            tipAvg7: 'Média 7 dias', tipAvgGlobal: 'Média global do período',
+            tipAvgHourPre: 'Média da hora ', tipAvg24Paren: '(média 24h)',
+            tipAvgDaysPre: 'Média ao longo dos ', tipAvgWeekPre: 'Média ',
+            tipDaysSuf: ' dias', tipWeekSuf: ' dias (todos os dias da semana)',
+            tipMonthAvg: ' — Média mensal: ', tipDaysParen: ' dias)',
+            lblEnd7: 'Dia final dos 7 dias:', lblEndRolling: 'Dia final do mês deslizante:',
+            icZona: 'Zona de licitação', icTouch: 'Toque numa zona do mapa', icHover: 'Passe o rato sobre uma zona',
+            cmpNone: '— nenhuma —',
+            tipAvgWeekHourPre: 'Média ', tipWeekHourSuf: ' ao longo da semana: ',
+            tipHourTitle: 'Hora ', daysDot: ' dias · '
+        },
+        en: {
+            htmlLang: 'en',
+            title: 'Average Electricity Prices in Europe - Day-Ahead | Tiago Felícia',
+            bcHome: 'Home', bcEuropa: 'Europe', bcThis: 'Europe Average Prices',
+            ariaModoVis: 'View mode',
+            mDiario: 'Daily', mSemanal: 'Weekly (7d)', mMensal: 'Monthly', mCustom: 'Custom',
+            mMensalTitle: 'Rolling month ending on the selected day (28-31 days depending on the month)',
+            fusoLabel: 'Time zone:', fusoLocal: '🌍 Local time', fusoMercado: '🇪🇺 Market time (CET)',
+            fusoLocalTitle: 'Each zone shown in its local time zone (default)',
+            fusoMercadoTitle: 'All zones aligned to CET (European day-ahead market time)',
+            ariaFuso: 'Display time zone',
+            lblInicio: 'Start:', lblFim: 'End:', btnAplicar: 'Apply',
+            lblSelDia: 'Select the day:', btnPrevTitle: 'Previous day', btnNextTitle: 'Next day',
+            dadosDesde: 'Data available since 01/01/2018 —',
+            linkProducao: '📊 View electricity generation',
+            linkProducaoTitle: 'View electricity generation for the same day',
+            subtitle: 'Daily average price by bidding zone (€/MWh) — Day-Ahead Market',
+            loading: 'Loading data...',
+            ariaMapa: 'Interactive map of electricity prices across European bidding zones',
+            fsOpen: '⛶ Fullscreen', fsOpenTitle: 'Open map in fullscreen',
+            fsExit: '✖ Exit', fsExitTitle: 'Exit fullscreen',
+            notaFonte: 'Source:',
+            rankedTitle: 'Prices by bidding zone',
+            zoneSearchPh: '🔍 Search zone (e.g. Portugal, PT, Italy)…', zoneSearchAria: 'Search zone',
+            zoneSearchClearTitle: 'Clear search (Esc)', zoneSearchClearAria: 'Clear search',
+            toggleDeltaPt: 'Show ΔPT (difference vs Portugal)',
+            toggleVarDia: 'Show change vs previous day',
+            btnShare: '🔗 Copy share link', btnShareTitle: 'Copy a shareable link to the current day',
+            shareCopied: 'Copied!', shareCopiedOk: '✓ Link copied!',
+            ariaTabela: 'Price table by zone',
+            lblZona: 'Zone:', compareLabel: 'Compare with:', addCompare: '+ Add comparison',
+            addCompareAria: 'Add zone to comparison', compareAria: 'Zones being compared',
+            btnVizWide: '↔ Full width', btnVizWideTitle: 'Toggle full width for the visualizations',
+            zonePanelHint: 'Max. 4 comparisons · Tip: click a zone on the map to switch',
+            intradayTitle: 'Intraday curve',
+            chartTitle: 'Price evolution',
+            hmHourTitle: 'Hourly heatmap', ariaHmHour: 'Hourly heatmap',
+            hmWeekTitle: 'Weekly profile (24h × day of week)', ariaHmWeek: 'Weekly profile',
+            hmYearTitle: 'Annual price heatmap', ariaHmYear: 'Annual calendar of daily prices',
+            hhModeMonth: 'Full month', hhModeMonthTitle: 'Show a full calendar month',
+            hhModeRolling: 'Rolling month', hhModeRollingTitle: 'Show 30/31 days ending on a chosen day',
+            hhLabelMonth: 'Month:', hhLabelEnd: 'End day:',
+            hhEndInputTitle: 'The grid shows the rolling month ending on this day (30 or 31 days)',
+            ariaIntervalo: 'Interval mode', ariaOrient: 'Table orientation',
+            orientAplicaHm: 'Also applies to the Hourly heatmap', orientAplicaPerfil: 'Also applies to the Weekly profile',
+            orientDates: '⬇ Dates', orientDatesTitle: 'Dates on the rows',
+            orientHours: '⬇ Hours', orientHoursTitle: 'Hours on the rows',
+            orientDays: '⬇ Days', orientDaysTitle: 'Weekdays on the rows',
+            hwLabel: 'Period:',
+            hwOpt30: 'Last 30 days', hwOpt60: 'Last 60 days', hwOpt90: 'Last 90 days', hwOpt365: 'Last 365 days',
+            yearLabel: 'Year:',
+            faqHeading: 'About this map',
+            lblDiario: 'Daily', lblSemanal: 'Weekly', lblMensal: 'Monthly', lblPersonalizado: 'Custom', lblPeriodo: 'Period',
+            today: 'Today', yesterday: 'Yesterday', tomorrow: 'Tomorrow',
+            noData: 'No data', noDataDay: 'No data for the selected day.', noDataYear: 'No data for this year.',
+            loadingShort: 'Loading…',
+            stAvg: 'Avg', stMin: 'Min', stMax: 'Max',
+            updatedPre: '· Updated ', updatedTitle: 'Last update: ',
+            dataPre: '· Data ', dataTitle: 'Latest date with data: ',
+            mapTitleDaily: 'Average Day-Ahead electricity prices',
+            mapTitleAgg: 'Average Day-Ahead electricity prices - ',
+            ogTitle: 'Average Day-Ahead Electricity Prices in Europe',
+            twTitle: 'Average Day-Ahead Electricity Prices in Europe',
+            metaDesc: 'Interactive map of daily average day-ahead electricity prices across 47 European bidding zones. Daily, weekly, monthly and custom views, price evolution chart, intraday curve, heatmaps and zone comparison. Official ENTSO-E Transparency Platform data.',
+            ogDesc: 'Daily average electricity prices across 47 European bidding zones, with daily/weekly/monthly views, price evolution chart, intraday curve and annual heatmap.',
+            twDesc: 'Daily average electricity prices across 47 European bidding zones.',
+            rankedAgg: 'Prices by bidding zone — ',
+            sufMarket: ' [market time / CET]', sufMarketList: ' (market time, CET)',
+            notaLocal: 'Values in local time of each zone',
+            notaMarket: 'Values in market time (CET)',
+            notaMarketFull: 'Values in market time (CET) — all zones aligned',
+            avisoProvisorioPT: 'The average for Portugal is not final — the last hour of the day (23:00–24:00 PT) has not been traded yet.',
+            hmWeekShort: 'Weekly profile',
+            resAbove: 'above', resBelow: 'below',
+            resEuAvg: 'the European average', resEuAvgOnly: 'European average',
+            resCheap: 'Cheapest', resExpensive: 'Most expensive', resEm: 'On ',
+            resHorario: 'hourly',
+            thAvg: 'Avg (€/MWh)', thAvgPeriod: 'Avg period (€/MWh)',
+            thMin: 'Min (€/MWh)', thMinPeriod: 'Min period (€/MWh)',
+            thMax: 'Max (€/MWh)', thMaxPeriod: 'Max period (€/MWh)',
+            thHrMin: 'Min hour', thDtMin: 'Min date/time',
+            thHrMax: 'Max hour', thDtMax: 'Max date/time',
+            thZona: 'Zone', thZonaTitle: 'Sort by zone',
+            thAvgTitle: 'Sort by average price',
+            thDeltaTitle: 'Sort by ΔPT (€)',
+            thVsYesterday: 'vs Yesterday', thVarTitle: 'Change vs previous day',
+            thMinTitle: 'Sort by minimum price', thHrMinTitle: 'When the minimum occurred',
+            thMaxTitle: 'Sort by maximum price', thHrMaxTitle: 'When the maximum occurred',
+            thAmplitude: 'Range (€/MWh)', thAmpTitle: 'Sort by range (Max - Min)',
+            capDaily: 'Table of daily average day-ahead electricity prices by European bidding zone, including average, minimum, maximum, their local hours and range (€/MWh). Source: ENTSO-E Transparency Platform.',
+            capPeriod: 'Table of average day-ahead electricity prices by European bidding zone for the selected period, including average, minimum, maximum and range (€/MWh). Source: ENTSO-E Transparency Platform.',
+            favRemove: 'Remove from favorites', favAdd: 'Add to favorites',
+            tdZoneTitle: 'Click to show/hide the intraday curve',
+            expandAria: 'Expand intraday curve',
+            partialBadge: 'partial', partialDataPre: 'Partial data: ',
+            slotsPub: ' slots published', slotsWord: ' slots',
+            avgTitlePartialPre: 'Average price (partial: ', avgTitlePartialSuf: ' slots published)',
+            avgTitleDaily: 'Daily average price',
+            tdDeltaTitle: 'Difference vs Portugal', tdVarTitle: 'Change vs previous day',
+            tdMinTitle: 'Lowest price of the day', tdMaxTitle: 'Highest price of the day',
+            tdAmpTitle: 'Difference Max − Min',
+            hrCetPrefix: 'Market (CET) time of', hrLocalPrefix: 'Local time of',
+            hrMinSuf: ' minimum', hrMaxSuf: ' maximum',
+            ampPre: 'Range: ',
+            legMA: ' — Avg', legPrevYear: 'Daily averages — previous year', legDailyLine: 'Daily averages (line)',
+            legMA7: 'MA7 (7-day moving average)', legMA30: 'MA30 (30-day moving average)',
+            tipRange: 'Range',
+            hmHora: 'Hour', hmData: 'Date', hmDia: 'Day',
+            tipAvgMonth: 'Monthly average', tipAvg24: 'Average across the 24 hours',
+            tipAvg7: '7-day average', tipAvgGlobal: 'Overall average for the period',
+            tipAvgHourPre: 'Average for hour ', tipAvg24Paren: '(24h average)',
+            tipAvgDaysPre: 'Average across the ', tipAvgWeekPre: 'Average ',
+            tipDaysSuf: ' days', tipWeekSuf: ' days (all weekdays)',
+            tipMonthAvg: ' — Monthly average: ', tipDaysParen: ' days)',
+            lblEnd7: 'End day of the 7 days:', lblEndRolling: 'End day of the rolling month:',
+            icZona: 'Bidding zone', icTouch: 'Tap a zone on the map', icHover: 'Hover over a zone',
+            cmpNone: '— none —',
+            tipAvgWeekHourPre: 'Average ', tipWeekHourSuf: ' across the week: ',
+            tipHourTitle: 'Hour ', daysDot: ' days · '
+        }
+    };
+
+    function T(k) {
+        var d = I18N[LANG] || I18N.pt;
+        return (d[k] !== undefined) ? d[k] : (I18N.pt[k] !== undefined ? I18N.pt[k] : k);
+    }
+
+    // Nomes de zona em inglês (o ZONE_NAMES PT é definido logo abaixo).
+    var ZONE_NAMES_EN = {
+        "AT": "Austria", "BE": "Belgium", "BG": "Bulgaria", "CH": "Switzerland",
+        "CZ": "Czechia", "DE-LU": "Germany",
+        "DK1": "Denmark West (DK1)", "DK2": "Denmark East (DK2)",
+        "EE": "Estonia", "ES": "Spain", "FI": "Finland", "FR": "France",
+        "GR": "Greece", "HR": "Croatia", "HU": "Hungary",
+        "IT-North": "Italy North", "IT-Centre-North": "Italy Centre-North",
+        "IT-Centre-South": "Italy Centre-South", "IT-South": "Italy South",
+        "IT-Sicily": "Italy Sicily", "IT-Sardinia": "Italy Sardinia",
+        "IT-Calabria": "Italy Calabria",
+        "AL": "Albania", "XK": "Kosovo",
+        "LT": "Lithuania", "LV": "Latvia", "ME": "Montenegro", "MK": "North Macedonia",
+        "NL": "Netherlands",
+        "NO1": "Norway East (NO1)", "NO2": "Norway South (NO2)",
+        "NO3": "Norway Central (NO3)", "NO4": "Norway North (NO4)",
+        "NO5": "Norway West (NO5)",
+        "PL": "Poland", "PT": "Portugal", "RO": "Romania", "RS": "Serbia",
+        "SE1": "Sweden North (SE1)", "SE2": "Sweden Centre-North (SE2)",
+        "SE3": "Sweden Centre-South (SE3)", "SE4": "Sweden South (SE4)",
+        "SI": "Slovenia", "SK": "Slovakia",
+        "IE": "Ireland", "IE(SEM)": "Ireland", "GB-NIR": "Northern Ireland (SEM)",
+        "LU": "Luxembourg",
+        "FR-COR": "Corsica (FR)",
+        "IT-SACOAC": "Italy SACOAC",
+        "IT-SACODC": "Italy SACODC"
+    };
+    // Nome de zona consoante a língua (ZONE_NAMES PT existe no mesmo escopo, abaixo).
+    function zoneName(z) {
+        var src = (LANG === 'en') ? ZONE_NAMES_EN : ZONE_NAMES;
+        return (src && src[z]) || (ZONE_NAMES && ZONE_NAMES[z]) || z;
+    }
+
+    // Aplica as traduções estáticas (elementos com data-i18n*).
+    function applyStaticI18n() {
+        try { document.documentElement.lang = (I18N[LANG] || I18N.pt).htmlLang; } catch (_) {}
+        document.title = T('title');
+        // Canonical/og:url auto-referenciais por língua (EN → ?lang=en) para SEO bilingue
+        try {
+            var selfUrl = 'https://www.tiagofelicia.pt/europe-prices' + (LANG === 'en' ? '?lang=en' : '');
+            var canon = document.querySelector('link[rel="canonical"]');
+            if (canon) canon.setAttribute('href', selfUrl);
+            var ogu = document.querySelector('meta[property="og:url"]');
+            if (ogu) ogu.setAttribute('content', selfUrl);
+            // Descrições/títulos sociais por língua (SEO bilingue)
+            var _setMeta = function (sel, val) { var el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+            _setMeta('meta[name="description"]', T('metaDesc'));
+            _setMeta('meta[property="og:title"]', T('ogTitle'));
+            _setMeta('meta[property="og:description"]', T('ogDesc'));
+            _setMeta('meta[name="twitter:title"]', T('twTitle'));
+            _setMeta('meta[name="twitter:description"]', T('twDesc'));
+        } catch (_) {}
+        var i, els;
+        els = document.querySelectorAll('[data-i18n]');
+        for (i = 0; i < els.length; i++) { var v = T(els[i].getAttribute('data-i18n')); if (v !== undefined) els[i].textContent = v; }
+        els = document.querySelectorAll('[data-i18n-html]');
+        for (i = 0; i < els.length; i++) { els[i].innerHTML = T(els[i].getAttribute('data-i18n-html')); }
+        els = document.querySelectorAll('[data-i18n-title]');
+        for (i = 0; i < els.length; i++) { els[i].setAttribute('title', T(els[i].getAttribute('data-i18n-title'))); }
+        els = document.querySelectorAll('[data-i18n-ph]');
+        for (i = 0; i < els.length; i++) { els[i].setAttribute('placeholder', T(els[i].getAttribute('data-i18n-ph'))); }
+        els = document.querySelectorAll('[data-i18n-aria]');
+        for (i = 0; i < els.length; i++) { els[i].setAttribute('aria-label', T(els[i].getAttribute('data-i18n-aria'))); }
+        var ls = document.querySelectorAll('.lang-switch a');
+        for (i = 0; i < ls.length; i++) { ls[i].classList.toggle('active', ls[i].getAttribute('data-lang') === LANG); }
+    }
+    // Seletor PT/EN — recarrega com ?lang (mantém os restantes parâmetros)
+    (function setupLangSwitch() {
+        var ls = document.querySelectorAll('.lang-switch a');
+        for (var i = 0; i < ls.length; i++) {
+            ls[i].addEventListener('click', function (ev) {
+                ev.preventDefault();
+                var to = ev.currentTarget.getAttribute('data-lang');
+                if (to === LANG) return;
+                var p = new URLSearchParams(window.location.search);
+                if (to === 'en') p.set('lang', 'en'); else p.delete('lang');
+                window.location.search = p.toString();
+            });
+        }
+    })();
+    applyStaticI18n();
+    // ===================== fim i18n =====================
 
     // --- CONFIGURACOES ---
     // Os dados vivem em https://dados.tiagofelicia.pt/data/mapas/precos_qh/.
@@ -1289,7 +1772,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function fmtN(v, dec) {
         if (v == null || isNaN(v)) return '—';
         if (dec == null) dec = 2;
-        return Number(v).toFixed(dec).replace('.', ',');
+        var out = Number(v).toFixed(dec);
+        return (DEC_SEP === ',') ? out.replace('.', ',') : out;
     }
     function fmtT(v, dec) {
         if (v == null || isNaN(v)) return '—';
@@ -1299,8 +1783,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (s.charAt(0) === '-') { sign = '-'; s = s.slice(1); }
         var parts = s.split('.');
         var intPart = parts[0];
-        if (intPart.length > 4) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        return sign + intPart + (parts[1] ? ',' + parts[1] : '');
+        if (intPart.length > 4) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, THOU_SEP);
+        return sign + intPart + (parts[1] ? DEC_SEP + parts[1] : '');
     }
 
     // --- ESTADO ---
@@ -1506,8 +1990,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- CRÉDITO DE EXPORTAÇÃO (URL + data + contexto) ---
     // Aparece sob cada gráfico/tabela: visível em screenshots manuais e prints
     // do browser. Discreto no ecrã, ligeiramente reforçado em impressão.
-    var CREDIT_URL = 'tiagofelicia.pt/mapa-precos';
-    var CREDIT_FULL_URL = 'https://www.tiagofelicia.pt/mapa-precos';
+    var CREDIT_URL = 'tiagofelicia.pt/europe-prices';
+    var CREDIT_FULL_URL = 'https://www.tiagofelicia.pt/europe-prices';
     function nowDateBR() {
         var d = new Date();
         return String(d.getDate()).padStart(2, '0') + '/'
@@ -1648,9 +2132,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 var ageH = Math.floor(ageMs / 3600000);
                 var ageMin = Math.floor((ageMs % 3600000) / 60000);
                 var label;
-                if (ageH < 1) label = 'há ' + Math.max(0, ageMin) + ' min';
-                else if (ageH < 24) label = 'há ' + ageH + 'h';
-                else label = 'há ' + Math.floor(ageH / 24) + ' dia' + (Math.floor(ageH / 24) > 1 ? 's' : '');
+                if (ageH < 1) label = (LANG === 'en') ? (Math.max(0, ageMin) + ' min ago') : ('há ' + Math.max(0, ageMin) + ' min');
+                else if (ageH < 24) label = (LANG === 'en') ? (ageH + 'h ago') : ('há ' + ageH + 'h');
+                else { var _nd = Math.floor(ageH / 24); label = (LANG === 'en') ? (_nd + ' day' + (_nd > 1 ? 's' : '') + ' ago') : ('há ' + _nd + ' dia' + (_nd > 1 ? 's' : '')); }
                 var cls = 'fresh';
                 if (ageH > 48) cls = 'outdated';
                 else if (ageH > 26) cls = 'stale';
@@ -1660,8 +2144,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 var hh = String(d.getUTCHours()).padStart(2, '0');
                 var mi = String(d.getUTCMinutes()).padStart(2, '0');
                 el.className = 'data-freshness ' + cls;
-                el.textContent = '· Atualizado ' + label;
-                el.title = 'Última atualização: ' + dd + '/' + mm + '/' + yyyy + ' ' + hh + ':' + mi + ' UTC';
+                el.textContent = T('updatedPre') + label;
+                el.title = T('updatedTitle') + dd + '/' + mm + '/' + yyyy + ' ' + hh + ':' + mi + ' UTC';
                 return;
             }
         }
@@ -1681,12 +2165,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 else if (diffDays > 1) clsF = 'stale';
                 el.className = 'data-freshness ' + clsF;
                 var labelF;
-                if (diffDays < 0) labelF = 'até amanhã (' + fmtDateBR(ultimaData) + ')';
-                else if (diffDays === 0) labelF = 'até hoje (' + fmtDateBR(ultimaData) + ')';
-                else if (diffDays === 1) labelF = 'até ontem (' + fmtDateBR(ultimaData) + ')';
-                else labelF = 'até ' + fmtDateBR(ultimaData) + ' (' + diffDays + ' dias)';
-                el.textContent = '· Dados ' + labelF;
-                el.title = 'Última data com dados: ' + ultimaData;
+                var _u = fmtDateBR(ultimaData);
+                if (diffDays < 0) labelF = (LANG === 'en' ? 'until tomorrow (' : 'até amanhã (') + _u + ')';
+                else if (diffDays === 0) labelF = (LANG === 'en' ? 'until today (' : 'até hoje (') + _u + ')';
+                else if (diffDays === 1) labelF = (LANG === 'en' ? 'until yesterday (' : 'até ontem (') + _u + ')';
+                else labelF = (LANG === 'en' ? 'until ' : 'até ') + _u + ' (' + diffDays + (LANG === 'en' ? ' days)' : ' dias)');
+                el.textContent = T('dataPre') + labelF;
+                el.title = T('dataTitle') + ultimaData;
                 return;
             }
         }
@@ -1856,7 +2341,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         var path = '<polyline fill="none" stroke="#2563eb" stroke-width="1.5" points="' + pts.join(' ') + '"/>';
         return '<div class="sparkline-wrap">'
-            + '<div class="sparkline-label">Últimos 7 dias (mín ' + fmtN(minV, 2) + ' / máx ' + fmtN(maxV, 2) + ')</div>'
+            + '<div class="sparkline-label">' + (LANG === 'en' ? 'Last 7 days (min ' : 'Últimos 7 dias (mín ') + fmtN(minV, 2) + (LANG === 'en' ? ' / max ' : ' / máx ') + fmtN(maxV, 2) + ')</div>'
             + '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" class="sparkline">' + path + circles + '</svg>'
             + '</div>';
     }
@@ -1922,9 +2407,9 @@ document.addEventListener('DOMContentLoaded', function() {
                        + '<text x="' + (w / 2 - 6) + '" y="' + (h - 1) + '" font-size="8" fill="#64748b">12h</text>'
                        + '<text x="' + (w - pad - 16) + '" y="' + (h - 1) + '" font-size="8" fill="#64748b">24h</text>';
 
-        var resLabel = intra.resolution === 'PT15M' ? '15 min' : (intra.resolution === 'PT30M' ? '30 min' : 'horário');
+        var resLabel = intra.resolution === 'PT15M' ? '15 min' : (intra.resolution === 'PT30M' ? '30 min' : T('resHorario'));
         return '<div class="sparkline-wrap">'
-            + '<div class="sparkline-label">Curva intradiária (' + resLabel + ')</div>'
+            + '<div class="sparkline-label">' + T('intradayTitle') + ' (' + resLabel + ')</div>'
             + '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" class="sparkline">' + bars + path + marks + axisLabels + '</svg>'
             + '</div>';
     }
@@ -1933,7 +2418,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (props) {
             var zone = props.ecZone;
             var stats = getZoneStats(zone);
-            var name = ZONE_NAMES[zone] || props.displayName || zone;
+            var name = ZONE_NAMES[zone] ? zoneName(zone) : (props.displayName || zone);
             if (stats) {
                 var isPeriodoMap = (currentMode !== 'diario');
                 var html = '<b>' + zoneFlag(zone) + ' ' + name + '</b>';
@@ -1944,17 +2429,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 var partialBadge = '';
                 if (isPartial(stats)) {
                     var pi = partialInfo(stats);
-                    if (pi) partialBadge = ' <span class="partial-badge" title="Dados parciais: ' + pi.known + '/' + pi.total + ' slots publicados">parcial</span>';
+                    if (pi) partialBadge = ' <span class="partial-badge" title="' + T('partialDataPre') + pi.known + '/' + pi.total + T('slotsPub') + '">' + T('partialBadge') + '</span>';
                 }
                 html += '<div class="price-value">' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
                 if (stats.min !== undefined && stats.min !== null) {
                     var minStamp = isPeriodoMap && stats.min_date ? (fmtDateBR(stats.min_date) + ' ' + (stats.min_hour || '')) : (stats.min_hour || '');
                     var maxStamp = isPeriodoMap && stats.max_date ? (fmtDateBR(stats.max_date) + ' ' + (stats.max_hour || '')) : (stats.max_hour || '');
                     html += '<div class="stats-detail">';
-                    html += 'Mín: ' + fmtN(stats.min, 2) + ' <span class="stats-hour">(' + minStamp + ')</span><br>';
-                    html += 'Máx: ' + fmtN(stats.max, 2) + ' <span class="stats-hour">(' + maxStamp + ')</span>';
+                    html += T('stMin') + ': ' + fmtN(stats.min, 2) + ' <span class="stats-hour">(' + minStamp + ')</span><br>';
+                    html += T('stMax') + ': ' + fmtN(stats.max, 2) + ' <span class="stats-hour">(' + maxStamp + ')</span>';
                     html += '</div>';
-                    html += '<div class="stats-amplitude">Amplitude: ' + fmtN(stats.max - stats.min, 2) + ' €/MWh</div>';
+                    html += '<div class="stats-amplitude">' + T('ampPre') + fmtN(stats.max - stats.min, 2) + ' €/MWh</div>';
                 }
                 var curDate = document.getElementById('seletor-data').value;
                 // Em modo Diário, mostrar sparkline intradiária; em período, sparkline 7 dias.
@@ -1973,12 +2458,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 this._div.innerHTML = html;
             } else {
-                this._div.innerHTML = '<b>' + zoneFlag(zone) + ' ' + name + '</b><div class="price-value" style="color:#999;">Sem dados</div>';
+                this._div.innerHTML = '<b>' + zoneFlag(zone) + ' ' + name + '</b><div class="price-value" style="color:#999;">' + T('noData') + '</div>';
             }
         } else {
             this._div.innerHTML = IS_TOUCH_DEVICE
-                ? '<h4>Zona de licitação</h4>Toque numa zona do mapa'
-                : '<h4>Zona de licitação</h4>Passe o rato sobre uma zona';
+                ? '<h4>' + T('icZona') + '</h4>' + T('icTouch')
+                : '<h4>' + T('icZona') + '</h4>' + T('icHover');
         }
     };
 
@@ -2188,7 +2673,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var list = getCompareZones();
         var html = '';
         if (!list.length) {
-            html = '<span class="cmp-chip" style="border-left-color:transparent; color:#94a3b8; font-style:italic;">— nenhuma —</span>';
+            html = '<span class="cmp-chip" style="border-left-color:transparent; color:#94a3b8; font-style:italic;">' + T('cmpNone') + '</span>';
         } else {
             var mainZ = (document.getElementById('global-zone-select') || {}).value;
             var refDate = (document.getElementById('seletor-data') || {}).value;
@@ -2196,10 +2681,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 var z = list[i];
                 // Em modo mercado todas as zonas estão alinhadas em CET → offset deixa de fazer sentido
                 var off = (mainZ && !_isMarketTime()) ? offsetVsMain(z, mainZ, refDate) : '';
-                var offTxt = off ? ' <span class="cmp-chip-offset" title="Diferença de fuso horário face a ' + (ZONE_NAMES[mainZ] || mainZ) + '">' + off + '</span>' : '';
+                var offTxt = off ? ' <span class="cmp-chip-offset" title="' + (LANG === 'en' ? 'Time-zone difference vs ' : 'Diferença de fuso horário face a ') + zoneName(mainZ) + '">' + off + '</span>' : '';
                 html += '<span class="cmp-chip" role="listitem" style="border-left-color:' + COMPARE_COLORS[i] + '">'
-                      + zoneFlag(z) + ' <span class="cmp-chip-name">' + (ZONE_NAMES[z] || z) + '</span>' + offTxt
-                      + '<span class="cmp-chip-remove" data-zone="' + z + '" title="Remover" aria-label="Remover ' + (ZONE_NAMES[z] || z) + '">×</span>'
+                      + zoneFlag(z) + ' <span class="cmp-chip-name">' + zoneName(z) + '</span>' + offTxt
+                      + '<span class="cmp-chip-remove" data-zone="' + z + '" title="Remover" aria-label="Remover ' + zoneName(z) + '">×</span>'
                       + '</span>';
             }
         }
@@ -2222,15 +2707,15 @@ document.addEventListener('DOMContentLoaded', function() {
             var atMax = current.length >= MAX_COMPARE;
             addSel.disabled = atMax;
             var sorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
-                return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
+                return zoneName(a).localeCompare(zoneName(b));
             });
             var opts = atMax
                 ? '<option value="">+ Máximo de ' + MAX_COMPARE + ' atingido</option>'
-                : '<option value="">+ Adicionar comparação</option>';
+                : '<option value="">' + T('addCompare') + '</option>';
             for (var s = 0; s < sorted.length; s++) {
                 var zk = sorted[s];
                 if (zk === main || current.indexOf(zk) !== -1) continue;
-                opts += '<option value="' + zk + '">' + (ZONE_NAMES[zk] || zk) + '</option>';
+                opts += '<option value="' + zk + '">' + zoneName(zk) + '</option>';
             }
             addSel.innerHTML = opts;
             addSel.value = '';
@@ -2277,7 +2762,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   + ' style="border-left-color:' + color + '"'
                   + ' title="Clica para selecionar · arrasta para reordenar">'
                   + '<span class="fav-chip-grip" aria-hidden="true">⋮⋮</span>'
-                  + zoneFlag(z) + ' <span class="fav-chip-name">' + (ZONE_NAMES[z] || z) + '</span>'
+                  + zoneFlag(z) + ' <span class="fav-chip-name">' + zoneName(z) + '</span>'
                   + ' <span class="fav-chip-price">' + priceTxt + '</span>'
                   + '<span class="fav-chip-remove" title="Remover dos favoritos" aria-label="Remover">×</span>'
                   + '</button>';
@@ -2365,15 +2850,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Titulo com aviso provisorio se for o ultimo dia (e em hora local) — em mercado, todas as zonas estão alinhadas em CET
         if (tituloLista) {
-            var sufixoMercadoLista = _isMarketTime() ? ' — em hora de mercado (CET)' : '';
+            var sufixoMercadoLista = _isMarketTime() ? (LANG === 'en' ? ' — in market time (CET)' : ' — em hora de mercado (CET)') : '';
             if (isPeriodo) {
                 var p = computePeriod();
-                var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
-                tituloLista.textContent = 'Preços por zona de licitação — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')' + sufixoMercadoLista;
+                var labelModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
+                tituloLista.textContent = T('rankedTitle') + ' — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')' + sufixoMercadoLista;
             } else {
                 var diaStr = fmtDateBR(seletorData.value);
-                var sufixoUltDia = (isUltimoDia && !_isMarketTime()) ? ' (até às 23h de PT)' : '';
-                tituloLista.textContent = 'Preços por zona de licitação — ' + diaStr + sufixoUltDia + sufixoMercadoLista;
+                var sufixoUltDia = (isUltimoDia && !_isMarketTime()) ? (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)') : '';
+                tituloLista.textContent = T('rankedTitle') + ' — ' + diaStr + sufixoUltDia + sufixoMercadoLista;
             }
         }
 
@@ -2402,7 +2887,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (val === null || val === undefined) continue;
                 var stats = (typeof val === 'number') ? { avg: val } : val;
                 if (stats.avg === null || stats.avg === undefined) continue;
-                var name = ZONE_NAMES[zone] || zone;
+                var name = zoneName(zone);
                 var amplitude = (stats.min != null && stats.max != null) ? (stats.max - stats.min) : null;
                 var minLabel = stats.min_hour || '';
                 var maxLabel = stats.max_hour || '';
@@ -2446,7 +2931,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (entries.length === 0) {
-            container.innerHTML = '<p class="no-data-msg">Sem dados para o dia selecionado.</p>';
+            container.innerHTML = '<p class="no-data-msg">' + T('noDataDay') + '</p>';
             return;
         }
 
@@ -2466,28 +2951,26 @@ document.addEventListener('DOMContentLoaded', function() {
             return sortState.dir === 'asc' ? '<span class="sort-arrow active">▲</span>' : '<span class="sort-arrow active">▼</span>';
         };
 
-        var avgLabel = isPeriodo ? 'Médio período (€/MWh)' : 'Médio (€/MWh)';
-        var minLabelTh = isPeriodo ? 'Mín período (€/MWh)' : 'Mín (€/MWh)';
-        var maxLabelTh = isPeriodo ? 'Máx período (€/MWh)' : 'Máx (€/MWh)';
-        var hourMinLabel = isPeriodo ? 'Data/Hora mín' : 'Hora mín';
-        var hourMaxLabel = isPeriodo ? 'Data/Hora máx' : 'Hora máx';
+        var avgLabel = isPeriodo ? T('thAvgPeriod') : T('thAvg');
+        var minLabelTh = isPeriodo ? T('thMinPeriod') : T('thMin');
+        var maxLabelTh = isPeriodo ? T('thMaxPeriod') : T('thMax');
+        var hourMinLabel = isPeriodo ? T('thDtMin') : T('thHrMin');
+        var hourMaxLabel = isPeriodo ? T('thDtMax') : T('thHrMax');
 
-        var captionText = isPeriodo
-            ? 'Tabela de preços médios de eletricidade day-ahead por zona de licitação europeia para o período selecionado, incluindo média, mínimo, máximo e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.'
-            : 'Tabela de preços médios diários de eletricidade day-ahead por zona de licitação europeia, incluindo média, mínimo, máximo, respetivas horas locais e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.';
+        var captionText = isPeriodo ? T('capPeriod') : T('capDaily');
         var html = '<div class="table-scroll"><table class="ranked-table">';
         html += '<caption class="sr-only">' + captionText + '</caption>';
         html += '<thead><tr>'
             + '<th class="rank-cell" scope="col">#</th>'
-            + '<th class="sortable" data-sort="name" scope="col" title="Ordenar por zona">Zona ' + arrow('name') + '</th>'
-            + '<th class="sortable" data-sort="avg" scope="col" title="Ordenar por preço médio">' + avgLabel + ' ' + arrow('avg') + '</th>'
-            + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" scope="col" title="Ordenar por ΔPT (€)">ΔPT ' + arrow('deltaPt') + '</th>' : '')
-            + (showVarDia ? '<th class="sortable" data-sort="varDia" scope="col" title="Variação vs dia anterior">vs Ontem ' + arrow('varDia') + '</th>' : '')
-            + '<th class="sortable" data-sort="min" scope="col" title="Ordenar por preço mínimo">' + minLabelTh + ' ' + arrow('min') + '</th>'
-            + '<th class="hour-col" scope="col" title="Quando ocorreu o mínimo">' + hourMinLabel + '</th>'
-            + '<th class="sortable" data-sort="max" scope="col" title="Ordenar por preço máximo">' + maxLabelTh + ' ' + arrow('max') + '</th>'
-            + '<th class="hour-col" scope="col" title="Quando ocorreu o máximo">' + hourMaxLabel + '</th>'
-            + '<th class="sortable" data-sort="amplitude" scope="col" title="Ordenar por amplitude (Máx - Mín)">Amplitude (€/MWh) ' + arrow('amplitude') + '</th>'
+            + '<th class="sortable" data-sort="name" scope="col" title="' + T('thZonaTitle') + '">' + T('thZona') + ' ' + arrow('name') + '</th>'
+            + '<th class="sortable" data-sort="avg" scope="col" title="' + T('thAvgTitle') + '">' + avgLabel + ' ' + arrow('avg') + '</th>'
+            + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" scope="col" title="' + T('thDeltaTitle') + '">ΔPT ' + arrow('deltaPt') + '</th>' : '')
+            + (showVarDia ? '<th class="sortable" data-sort="varDia" scope="col" title="' + T('thVarTitle') + '">' + T('thVsYesterday') + ' ' + arrow('varDia') + '</th>' : '')
+            + '<th class="sortable" data-sort="min" scope="col" title="' + T('thMinTitle') + '">' + minLabelTh + ' ' + arrow('min') + '</th>'
+            + '<th class="hour-col" scope="col" title="' + T('thHrMinTitle') + '">' + hourMinLabel + '</th>'
+            + '<th class="sortable" data-sort="max" scope="col" title="' + T('thMaxTitle') + '">' + maxLabelTh + ' ' + arrow('max') + '</th>'
+            + '<th class="hour-col" scope="col" title="' + T('thHrMaxTitle') + '">' + hourMaxLabel + '</th>'
+            + '<th class="sortable" data-sort="amplitude" scope="col" title="' + T('thAmpTitle') + '">' + T('thAmplitude') + ' ' + arrow('amplitude') + '</th>'
             + '</tr></thead>';
         html += '<tbody>';
 
@@ -2506,24 +2989,24 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<td class="rank-cell">' + (i + 1) + '</td>';
             var favCls = isFavorite(e.zone) ? ' active' : '';
             var favSymbol = isFavorite(e.zone) ? '★' : '☆';
-            var favTitle = isFavorite(e.zone) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
-            html += '<td class="zone-cell" title="Clique para mostrar/ocultar curva intradiária">'
+            var favTitle = isFavorite(e.zone) ? T('favRemove') : T('favAdd');
+            html += '<td class="zone-cell" title="' + T('tdZoneTitle') + '">'
                   + '<span class="zone-fav' + favCls + '" data-zone="' + e.zone + '" title="' + favTitle + '" role="button" aria-label="' + favTitle + '">' + favSymbol + '</span>'
-                  + '<span class="row-expand" aria-label="Expandir curva intradiária">▸</span>'
+                  + '<span class="row-expand" aria-label="' + T('expandAria') + '">▸</span>'
                   + '<span class="color-indicator" style="background:' + color + '"></span>'
                   + '<span class="zone-flag">' + zoneFlag(e.zone) + '</span> '
                   + '<span class="zone-name">' + e.name + '</span></td>';
-            var partialMark = e.partial ? ' <span class="partial-badge" title="Dados parciais: ' + e.partialKnown + '/' + e.partialTotal + ' slots">parcial</span>' : '';
-            var avgTitle = e.partial ? 'Preço médio (parcial: ' + e.partialKnown + '/' + e.partialTotal + ' slots publicados)' : 'Preço médio diário';
+            var partialMark = e.partial ? ' <span class="partial-badge" title="' + T('partialDataPre') + e.partialKnown + '/' + e.partialTotal + T('slotsWord') + '">' + T('partialBadge') + '</span>' : '';
+            var avgTitle = e.partial ? (T('avgTitlePartialPre') + e.partialKnown + '/' + e.partialTotal + T('avgTitlePartialSuf')) : T('avgTitleDaily');
             html += '<td class="price-cell num' + negCls(e.avg) + '" title="' + avgTitle + '">' + fmtN(e.avg, 2) + partialMark + '</td>';
-            if (showDeltaPt) html += '<td class="num" title="Diferença vs Portugal">' + (e.zone === 'PT' ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
-            if (showVarDia) html += '<td class="num" title="Variação vs dia anterior">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
-            html += '<td class="num' + negCls(e.min) + '" title="Preço mínimo do dia">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
-            var horaTipPrefix = _isMarketTime() ? 'Hora CET (mercado) do' : 'Hora local do';
-            html += '<td class="hour-col" title="' + horaTipPrefix + ' mínimo">' + (e.minHour || '—') + '</td>';
-            html += '<td class="num' + negCls(e.max) + '" title="Preço máximo do dia">' + (e.max != null ? fmtN(e.max, 2) : '—') + '</td>';
-            html += '<td class="hour-col" title="' + horaTipPrefix + ' máximo">' + (e.maxHour || '—') + '</td>';
-            html += '<td class="num" title="Diferença Máx − Mín">' + (e.amplitude != null ? fmtN(e.amplitude, 2) : '—') + '</td>';
+            if (showDeltaPt) html += '<td class="num" title="' + T('tdDeltaTitle') + '">' + (e.zone === 'PT' ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
+            if (showVarDia) html += '<td class="num" title="' + T('tdVarTitle') + '">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
+            html += '<td class="num' + negCls(e.min) + '" title="' + T('tdMinTitle') + '">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
+            var horaTipPrefix = _isMarketTime() ? T('hrCetPrefix') : T('hrLocalPrefix');
+            html += '<td class="hour-col" title="' + horaTipPrefix + T('hrMinSuf') + '">' + (e.minHour || '—') + '</td>';
+            html += '<td class="num' + negCls(e.max) + '" title="' + T('tdMaxTitle') + '">' + (e.max != null ? fmtN(e.max, 2) : '—') + '</td>';
+            html += '<td class="hour-col" title="' + horaTipPrefix + T('hrMaxSuf') + '">' + (e.maxHour || '—') + '</td>';
+            html += '<td class="num" title="' + T('tdAmpTitle') + '">' + (e.amplitude != null ? fmtN(e.amplitude, 2) : '—') + '</td>';
             html += '</tr>';
         }
 
@@ -2603,10 +3086,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var ctxParts;
         if (isPeriodo) {
             var pCtx = computePeriod();
-            var modoLabel = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
+            var modoLabel = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
             ctxParts = [modoLabel + ' ' + fmtDateBR(pCtx.start) + ' → ' + fmtDateBR(pCtx.end)];
         } else {
-            ctxParts = ['Diário ' + fmtDateBR(seletorData.value)];
+            ctxParts = [T('lblDiario') + ' ' + fmtDateBR(seletorData.value)];
         }
         setExportCredit('credit-table', ctxParts);
     }
@@ -2671,9 +3154,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function buildIntradayRowChart(zone, intra, isPeriodo) {
-        var name = ZONE_NAMES[zone] || zone;
+        var name = zoneName(zone);
         if (!intra || !intra.values || !intra.values.length) {
-            return '<div class="intraday-row-empty">Sem dados intradiários para ' + name + '.</div>';
+            return '<div class="intraday-row-empty">' + (LANG === 'en' ? 'No intraday data for ' : 'Sem dados intradiários para ') + name + '.</div>';
         }
         
         var n = intra.values.length;
@@ -2683,12 +3166,12 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var ii = n - 1; ii >= 0; ii--) if (intra.values[ii] != null) { lastNonNull = ii; break; }
         if (lastNonNull >= 0 && lastNonNull < n - 1) {
             var nullCount = n - 1 - lastNonNull;
-            partialNote = ' <span class="intraday-row-partial">parcial: faltam ' + nullCount + ' slot' + (nullCount > 1 ? 's' : '') + '</span>';
+            partialNote = ' <span class="intraday-row-partial">' + (LANG === 'en' ? ('partial: ' + nullCount + ' slot' + (nullCount > 1 ? 's' : '') + ' missing') : ('parcial: faltam ' + nullCount + ' slot' + (nullCount > 1 ? 's' : ''))) + '</span>';
         }
 
         var header = '<div class="intraday-row-header">'
             + '<strong>' + zoneFlag(zone) + ' ' + name + '</strong> · '
-            + (isPeriodo ? 'média horária do período' : 'curva 24h')
+            + (isPeriodo ? (LANG === 'en' ? 'hourly average of the period' : 'média horária do período') : (LANG === 'en' ? '24h curve' : 'curva 24h'))
             + ' (' + resTxt + ')' + partialNote
             + '</div>';
 
@@ -2703,7 +3186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var canvas = document.getElementById('chart-row-' + zone);
         if (!canvas) return;
 
-        var name1 = ZONE_NAMES[zone] || zone;
+        var name1 = zoneName(zone);
         
         // Usa as tuas próprias regras de cores do mapa
         var colorsFromValues = function(vals) {
@@ -2735,9 +3218,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     extremesLabels: { show: true },
                     tooltip: {
                         callbacks: {
-                            title: function(items) { return 'Hora ' + (items[0] && items[0].label); },
+                            title: function(items) { return T('tipHourTitle') + (items[0] && items[0].label); },
                             label: function(ctx) {
-                                if (ctx.parsed.y == null) return ctx.dataset.label + ': sem dados';
+                                if (ctx.parsed.y == null) return ctx.dataset.label + ': ' + T('noData');
                                 return ctx.dataset.label + ': ' + fmtN(ctx.parsed.y, 2) + ' €/MWh';
                             }
                         }
@@ -2764,9 +3247,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (normalizeStr(zone).indexOf(nq) !== -1) return true;
         var name = ZONE_NAMES[zone] || '';
         if (normalizeStr(name).indexOf(nq) !== -1) return true;
+        // Procura também pelo nome em inglês (funciona em qualquer idioma da UI)
+        var nameEn = ZONE_NAMES_EN[zone] || '';
+        if (nameEn && normalizeStr(nameEn).indexOf(nq) !== -1) return true;
         // Também tenta a chave de dados (ex: IE -> IE(SEM))
         var dataKey = ZONE_DATA_MAP[zone];
         if (dataKey && normalizeStr(ZONE_NAMES[dataKey] || '').indexOf(nq) !== -1) return true;
+        if (dataKey && normalizeStr(ZONE_NAMES_EN[dataKey] || '').indexOf(nq) !== -1) return true;
         return false;
     }
     function applyZoneSearch() {
@@ -2849,7 +3336,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- HEATMAP CALENDÁRIO ANUAL ---
-    var MES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var MES_NOMES = (LANG === 'en')
+        ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
     async function updateHeatmap() {
         var zoneSel = document.getElementById('global-zone-select');
         var yearSel = document.getElementById('heatmap-year');
@@ -2890,10 +3379,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (titulo) {
-            titulo.textContent = 'Heatmap anual de preços — ' + (ZONE_NAMES[zone] || zone) + ' · ' + year;
+            titulo.textContent = T('hmYearTitle') + ' — ' + zoneName(zone) + ' · ' + year;
         }
         if (!values.length) {
-            container.innerHTML = '<p class="no-data-msg" style="text-align:center;padding:20px;">Sem dados para este ano.</p>';
+            container.innerHTML = '<p class="no-data-msg" style="text-align:center;padding:20px;">' + T('noDataYear') + '</p>';
             if (statsEl) statsEl.textContent = '';
             return;
         }
@@ -2901,7 +3390,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var maxV = Math.max.apply(null, values);
         var avgV = values.reduce(function(a, b) { return a + b; }, 0) / values.length;
         if (statsEl) {
-            statsEl.innerHTML = values.length + ' dias · Média: <strong>' + fmtN(avgV, 2) + '</strong> · Mín: <strong>' + fmtN(minV, 2) + '</strong> · Máx: <strong>' + fmtN(maxV, 2) + '</strong> €/MWh';
+            statsEl.innerHTML = values.length + T('daysDot') + T('stAvg') + ': <strong>' + fmtN(avgV, 2) + '</strong> · ' + T('stMin') + ': <strong>' + fmtN(minV, 2) + '</strong> · ' + T('stMax') + ': <strong>' + fmtN(maxV, 2) + '</strong> €/MWh';
         }
 
         // Helper: detetar se a cor da escala precisa de texto preto (faixa central clara)
@@ -2916,7 +3405,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var html = '<div class="heatmap-grid">';
         html += '<div class="heatmap-day-header"><span class="heatmap-month-label"></span><div class="heatmap-day-numbers">';
         for (var d = 1; d <= 31; d++) html += '<span>' + d + '</span>';
-        html += '<span class="heatmap-spacer"></span><span class="heatmap-avg-header" title="Média mensal">Média</span>';
+        html += '<span class="heatmap-spacer"></span><span class="heatmap-avg-header" title="' + T('tipAvgMonth') + '">' + T('stAvg') + '</span>';
         html += '</div></div>';
 
         for (var mm = 1; mm <= 12; mm++) {
@@ -2933,7 +3422,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var dateStr = year + '-' + String(mm).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
                 var v2 = byDay[dateStr];
                 if (v2 == null) {
-                    html += '<div class="heatmap-cell no-data" title="' + fmtDateBR(dateStr) + ': sem dados"></div>';
+                    html += '<div class="heatmap-cell no-data" title="' + fmtDateBR(dateStr) + ': ' + (LANG === 'en' ? 'no data' : 'sem dados') + '"></div>';
                 } else {
                     var bg = getColor(v2);
                     var t = fmtDateBR(dateStr) + ': ' + fmtN(v2, 2) + ' €/MWh';
@@ -2946,10 +3435,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (monthCount > 0) {
                 var monthAvg = monthSum / monthCount;
                 var avgCls = 'heatmap-month-avg' + (isLightBg(monthAvg) ? ' light' : '');
-                var avgTip = MES_NOMES[mm - 1] + ' ' + year + ' — Média mensal: ' + fmtN(monthAvg, 2) + ' €/MWh (' + monthCount + ' dias)';
+                var avgTip = MES_NOMES[mm - 1] + ' ' + year + T('tipMonthAvg') + fmtN(monthAvg, 2) + ' €/MWh (' + monthCount + T('tipDaysParen');
                 html += '<div class="' + avgCls + '" style="background:' + getColor(monthAvg) + '" title="' + avgTip + '">' + fmtN(monthAvg, 2) + '</div>';
             } else {
-                html += '<div class="heatmap-month-avg no-data" title="' + MES_NOMES[mm - 1] + ' ' + year + ': sem dados">—</div>';
+                html += '<div class="heatmap-month-avg no-data" title="' + MES_NOMES[mm - 1] + ' ' + year + ': ' + (LANG === 'en' ? 'no data' : 'sem dados') + '">—</div>';
             }
             html += '</div></div>';
         }
@@ -2968,7 +3457,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         // Crédito de exportação
-        setExportCredit('credit-heatmap-anual', [(ZONE_NAMES[zone] || zone), 'Ano ' + year]);
+        setExportCredit('credit-heatmap-anual', [zoneName(zone), (LANG === 'en' ? 'Year ' : 'Ano ') + year]);
     }
 
     // --- GRÁFICO Chart.js (30 dias por zona) ---
@@ -3278,8 +3767,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (ds2 && ds2.label) {
                     if (ds2.label.indexOf('MA7') === 0) savePref('lineMA7', nowVisible);
                     else if (ds2.label.indexOf('MA30') === 0) savePref('lineMA30', nowVisible);
-                    else if (ds2.label.indexOf('Médias diárias (linha)') === 0) savePref('lineAvg', nowVisible);
-                    else if (ds2.label.indexOf('Médias diárias — ano anterior') === 0) savePref('linePrevYear', nowVisible);
+                    else if (ds2.label.indexOf(T('legDailyLine')) === 0) savePref('lineAvg', nowVisible);
+                    else if (ds2.label.indexOf(T('legPrevYear')) === 0) savePref('linePrevYear', nowVisible);
                 }
             });
         }
@@ -3323,7 +3812,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await ensureMonthsLoaded(_addAdjacentMonths(monthsInRange(chartStart, chartEnd), chartStart, chartEnd));
 
         var s1 = buildSeriesForZoneRange(zone, chartStart, chartEnd);
-        var name1 = ZONE_NAMES[zone] || zone;
+        var name1 = zoneName(zone);
 
         // Para MA7/MA30 sem "buracos" iniciais, calcular as médias móveis
         // sobre uma série ESTENDIDA com 29 dias antes de chartStart (suficiente
@@ -3343,7 +3832,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var datasets = [{
             type: 'bar',
-            label: name1 + ' — Média',
+            label: name1 + T('legMA'),
             data: s1.avgs,
             backgroundColor: barColors,
             borderColor: barColors,
@@ -3362,7 +3851,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var color = COMPARE_COLORS[ci % COMPARE_COLORS.length];
             datasets.push({
                 type: 'line',
-                label: (ZONE_NAMES[cz] || cz) + ' — Média',
+                label: zoneName(cz) + T('legMA'),
                 data: sC.avgs,
                 borderColor: color,
                 backgroundColor: color,
@@ -3429,7 +3918,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (canMA7) {
             datasets.push({
                 type: 'line',
-                label: 'MA7 (média móvel 7 dias)',
+                label: T('legMA7'),
                 data: ma7Data,
                 borderColor: ma7Color,
                 backgroundColor: 'rgba(0,0,0,0)',
@@ -3444,7 +3933,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (canMA30) {
             datasets.push({
                 type: 'line',
-                label: 'MA30 (média móvel 30 dias)',
+                label: T('legMA30'),
                 data: ma30Data,
                 borderColor: ma30Color,
                 backgroundColor: 'rgba(0,0,0,0)',
@@ -3462,7 +3951,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var avgColor = (periodAvg != null) ? getColor(periodAvg) : '#475569';
             datasets.push({
                 type: 'line',
-                label: 'Médias diárias (linha)',
+                label: T('legDailyLine'),
                 data: avgLineData,
                 borderColor: avgColor,
                 backgroundColor: 'rgba(0,0,0,0)',
@@ -3477,7 +3966,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var pyColor = '#9333ea';  // roxo, distinto das outras linhas
             datasets.push({
                 type: 'line',
-                label: 'Médias diárias — ano anterior',
+                label: T('legPrevYear'),
                 data: prevYearLineData,
                 borderColor: pyColor,
                 backgroundColor: 'rgba(0,0,0,0)',
@@ -3495,7 +3984,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (showMA7) {
             datasets.push({
                 type: 'line',
-                label: name1 + ' — MA7 (média móvel 7 dias)',
+                label: name1 + ' — ' + T('legMA7'),
                 data: ma7Data,
                 borderColor: '#1e293b',
                 backgroundColor: 'rgba(0,0,0,0)',
@@ -3511,7 +4000,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (showMA30) {
             datasets.push({
                 type: 'line',
-                label: name1 + ' — MA30 (média móvel 30 dias)',
+                label: name1 + ' — ' + T('legMA30'),
                 data: ma30Data,
                 borderColor: '#475569',
                 backgroundColor: 'rgba(0,0,0,0)',
@@ -3568,9 +4057,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 var mn = s1.mins[i], mx = s1.maxs[i];
                                 if (mn == null && mx == null) return '';
                                 var lines = [];
-                                lines.push('Mín: ' + (mn != null ? fmtN(mn, 2) + ' €/MWh' : '—'));
-                                lines.push('Máx: ' + (mx != null ? fmtN(mx, 2) + ' €/MWh' : '—'));
-                                if (mn != null && mx != null) lines.push('Amplitude: ' + fmtN(mx - mn, 2) + ' €/MWh');
+                                lines.push(T('stMin') + ': ' + (mn != null ? fmtN(mn, 2) + ' €/MWh' : '—'));
+                                lines.push(T('stMax') + ': ' + (mx != null ? fmtN(mx, 2) + ' €/MWh' : '—'));
+                                if (mn != null && mx != null) lines.push(T('tipRange') + ': ' + fmtN(mx - mn, 2) + ' €/MWh');
                                 return lines;
                             }
                         }
@@ -3595,14 +4084,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (titulo) {
             var nDias = Math.round((parseDateStr(chartEnd) - parseDateStr(chartStart)) / 86400000) + 1;
             var label;
-            if (currentMode === 'diario') label = nDias + ' dias (' + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
-            else label = nDias + ' dias (' + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
+            label = nDias + (LANG === 'en' ? ' days (' : ' dias (') + fmtDateBR(chartStart) + ' → ' + fmtDateBR(chartEnd) + ')';
             var comparesTxt = '';
             if (compares.length) {
-                var compareNames = compares.map(function(z) { return ZONE_NAMES[z] || z; });
+                var compareNames = compares.map(function(z) { return zoneName(z); });
                 comparesTxt = ' vs ' + compareNames.join(', ');
             }
-            titulo.textContent = 'Evolução de preços — ' + label + ' — ' + name1 + comparesTxt;
+            titulo.textContent = T('chartTitle') + ' — ' + label + ' — ' + name1 + comparesTxt;
         }
         // Crédito de exportação
         var ctxChart = [name1 + comparesTxt];
@@ -3644,7 +4132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             || (intrasC.find(function(x) { return x && x.labels; }) || {}).labels
             || [];
         var datasets = [];
-        var name1 = ZONE_NAMES[zone] || zone;
+        var name1 = zoneName(zone);
         var colorsFromValues = function(vals) {
             return vals.map(function(v) { return v == null ? 'rgba(0,0,0,0)' : getColor(v); });
         };
@@ -3671,7 +4159,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var color = COMPARE_COLORS[ci % COMPARE_COLORS.length];
             datasets.push({
                 type: 'line',
-                label: ZONE_NAMES[cz] || cz,
+                label: zoneName(cz),
                 data: ic.values,
                 borderColor: color,
                 backgroundColor: color,
@@ -3698,9 +4186,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     extremesLabels: { show: true },
                     tooltip: {
                         callbacks: {
-                            title: function(items) { return 'Hora ' + (items[0] && items[0].label); },
+                            title: function(items) { return T('tipHourTitle') + (items[0] && items[0].label); },
                             label: function(ctx) {
-                                if (ctx.parsed.y == null) return ctx.dataset.label + ': sem dados';
+                                if (ctx.parsed.y == null) return ctx.dataset.label + ': ' + T('noData');
                                 return ctx.dataset.label + ': ' + fmtN(ctx.parsed.y, 2) + ' €/MWh';
                             }
                         }
@@ -3722,23 +4210,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (titulo) {
             var labelMode = isDiario
                 ? fmtDateBR(seletorData.value)
-                : ('média ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
+                : ((LANG === 'en' ? 'avg ' : 'média ') + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
             var resTxt = (intra1 && intra1.resolution === 'PT15M') ? ' · 15 min'
-                       : (intra1 && intra1.resolution === 'PT30M') ? ' · 30 min' : ' · horário';
+                       : (intra1 && intra1.resolution === 'PT30M') ? ' · 30 min' : ' · ' + T('resHorario');
             var compTxt = '';
             if (hasCompare) {
-                compTxt = ' vs ' + compares.map(function(z) { return ZONE_NAMES[z] || z; }).join(', ');
+                compTxt = ' vs ' + compares.map(function(z) { return zoneName(z); }).join(', ');
             }
             // Nota explicita: cada zona em hora local (importante para multi-zona), ou em CET em market mode
             var hourNote;
             if (_isMarketTime()) {
-                hourNote = ' · em hora de mercado (CET)';
+                hourNote = (LANG === 'en') ? ' · in market time (CET)' : ' · em hora de mercado (CET)';
             } else if (hasCompare) {
-                hourNote = ' · em hora local de cada zona';
+                hourNote = (LANG === 'en') ? ' · in each zone local time' : ' · em hora local de cada zona';
             } else {
                 hourNote = '';
             }
-            titulo.textContent = 'Curva intradiária — ' + labelMode + ' — ' + name1 + compTxt + resTxt + hourNote;
+            titulo.textContent = T('intradayTitle') + ' — ' + labelMode + ' — ' + name1 + compTxt + resTxt + hourNote;
         }
         // Estatisticas (media/min/max) abaixo do titulo
         var statsEl = document.getElementById('intraday-stats');
@@ -3750,17 +4238,17 @@ document.addEventListener('DOMContentLoaded', function() {
             var buildStats = function(label, intra) {
                 if (!intra || !intra.values) return '';
                 var vv = intra.values.filter(function(v) { return v != null; });
-                if (!vv.length) return label + ': sem dados';
+                if (!vv.length) return label + ': ' + T('noData');
                 var mn = Math.min.apply(null, vv);
                 var mx = Math.max.apply(null, vv);
                 var av = vv.reduce(function(a, b) { return a + b; }, 0) / vv.length;
-                return label + ': Média ' + fmtSigned(av) + ' · Mín ' + fmtSigned(mn) + ' · Máx ' + fmtSigned(mx) + ' €/MWh';
+                return label + ': ' + T('stAvg') + ' ' + fmtSigned(av) + ' · ' + T('stMin') + ' ' + fmtSigned(mn) + ' · ' + T('stMax') + ' ' + fmtSigned(mx) + ' €/MWh';
             };
             var lines = [];
             var s1 = buildStats(name1, intra1);
             if (s1) lines.push(s1);
             for (var ci2 = 0; ci2 < compares.length; ci2++) {
-                var sx = buildStats(ZONE_NAMES[compares[ci2]] || compares[ci2], intrasC[ci2]);
+                var sx = buildStats(zoneName(compares[ci2]), intrasC[ci2]);
                 if (sx) lines.push(sx);
             }
             statsEl.innerHTML = lines.join('<br>');
@@ -3768,11 +4256,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crédito de exportação
         var ctxIntra = [name1];
         if (hasCompare) {
-            ctxIntra[0] += ' vs ' + compares.map(function(z) { return ZONE_NAMES[z] || z; }).join(', ');
+            ctxIntra[0] += ' vs ' + compares.map(function(z) { return zoneName(z); }).join(', ');
         }
         ctxIntra.push(isDiario
-            ? 'Curva 24h ' + fmtDateBR(seletorData.value)
-            : 'Média horária ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
+            ? (LANG === 'en' ? '24h curve ' : 'Curva 24h ') + fmtDateBR(seletorData.value)
+            : (LANG === 'en' ? 'Hourly average ' : 'Média horária ') + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
         setExportCredit('credit-intraday', ctxIntra);
     }
 
@@ -3811,7 +4299,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Para cada (hora, dia-da-semana), calcula a media dos precos de todos
     // os dias do periodo selecionado que cairam nesse dia da semana.
     // Util para identificar padroes recorrentes (ex: "fim de semana mais barato").
-    var WEEKDAY_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    var WEEKDAY_NAMES = (LANG === 'en')
+        ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        : ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 
     function updateWeeklyProfile() {
         var zoneSel = document.getElementById('global-zone-select');
@@ -3839,7 +4329,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var missing = monthsNeeded.filter(function(ym) { return !dataCache[ym]; });
         if (missing.length) {
             ensureMonthsLoaded(missing).then(updateWeeklyProfile);
-            container.innerHTML = '<p class="no-data-msg" style="text-align:center;">A carregar…</p>';
+            container.innerHTML = '<p class="no-data-msg" style="text-align:center;">' + T('loadingShort') + '</p>';
             return;
         }
 
@@ -3927,8 +4417,10 @@ document.addEventListener('DOMContentLoaded', function() {
             ? rawHourly.reduce(function(a, b) { return a + b; }, 0) / rawHourly.length
             : null;
         var rawAvgTip = rawAvg != null
-            ? 'Média do período (' + nDays + ' dias): ' + fmtN(rawAvg, 2) + ' €/MWh — coincide com o Heatmap horário'
-            : 'Sem dados';
+            ? ((LANG === 'en')
+                ? ('Period average (' + nDays + ' days): ' + fmtN(rawAvg, 2) + ' €/MWh — matches the Hourly heatmap')
+                : ('Média do período (' + nDays + ' dias): ' + fmtN(rawAvg, 2) + ' €/MWh — coincide com o Heatmap horário'))
+            : T('noData');
         var coloredCell = function(v, extraCls, tip) {
             if (v == null) {
                 var clsE = 'hh-cell hh-empty' + (extraCls ? ' ' + extraCls : '');
@@ -3948,7 +4440,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Helper para celula de dados
         var dataCell = function(h, d) {
             var v = grid[h][d];
-            var tip = WEEKDAY_NAMES[d] + ' ' + String(h).padStart(2, '0') + 'h: ' + (v != null ? fmtN(v, 2) + ' €/MWh' : 'sem dados');
+            var tip = WEEKDAY_NAMES[d] + ' ' + String(h).padStart(2, '0') + 'h: ' + (v != null ? fmtN(v, 2) + ' €/MWh' : (LANG === 'en' ? 'no data' : 'sem dados'));
             return coloredCell(v, null, tip);
         };
 
@@ -3956,23 +4448,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // Cols: Hora label + 7 dias + spacer + Média
             var gridStyle = 'grid-template-columns: 50px repeat(7, minmax(' + dataCol + 'px, 1fr)) 8px ' + avgCol + 'px;';
             html = '<div class="hh-grid" style="' + gridStyle + '">';
-            html += '<div class="hh-cell hh-header">Hora</div>';
+            html += '<div class="hh-cell hh-header">' + T('hmHora') + '</div>';
             for (var dh = 0; dh < 7; dh++) html += '<div class="hh-cell hh-header">' + WEEKDAY_NAMES[dh] + '</div>';
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += '<div class="hh-cell hh-avg-header" title="Média 7 dias">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvg7') + '">' + T('stAvg') + '</div>';
             // Linhas das horas
             for (var h3 = 0; h3 < 24; h3++) {
                 html += '<div class="hh-cell hh-header">' + String(h3).padStart(2, '0') + 'h</div>';
                 for (var d3 = 0; d3 < 7; d3++) html += dataCell(h3, d3);
                 html += '<div class="hh-cell hh-spacer"></div>';
-                html += coloredCell(hourAvg[h3], 'hh-avg', 'Média ' + String(h3).padStart(2, '0') + 'h ao longo da semana: ' + (hourAvg[h3] != null ? fmtN(hourAvg[h3], 2) + ' €/MWh' : '—'));
+                html += coloredCell(hourAvg[h3], 'hh-avg', T('tipAvgWeekHourPre') + String(h3).padStart(2, '0') + 'h' + T('tipWeekHourSuf') + (hourAvg[h3] != null ? fmtN(hourAvg[h3], 2) + ' €/MWh' : '—'));
             }
             // Linha espacadora
             for (var sp = 0; sp < 7 + 3; sp++) html += '<div class="hh-cell hh-spacer"></div>';
             // Linha das medias por dia da semana
-            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvg24') + '">' + T('stAvg') + '</div>';
             for (var d4 = 0; d4 < 7; d4++) {
-                html += coloredCell(dowAvg[d4], 'hh-avg', WEEKDAY_NAMES[d4] + ' (média 24h): ' + (dowAvg[d4] != null ? fmtN(dowAvg[d4], 2) + ' €/MWh' : '—'));
+                html += coloredCell(dowAvg[d4], 'hh-avg', WEEKDAY_NAMES[d4] + ' ' + T('tipAvg24Paren') + ': ' + (dowAvg[d4] != null ? fmtN(dowAvg[d4], 2) + ' €/MWh' : '—'));
             }
             html += '<div class="hh-cell hh-spacer"></div>';
             html += coloredCell(rawAvg, 'hh-avg', rawAvgTip);
@@ -3984,23 +4476,23 @@ document.addEventListener('DOMContentLoaded', function() {
             var hColMin = wWide ? 36 : 26;
             var gridStyle2 = 'grid-template-columns: ' + dayLabelW + 'px repeat(24, minmax(' + hColMin + 'px, 1fr)) 8px ' + avgCol + 'px;';
             html = '<div class="hh-grid" style="' + gridStyle2 + '">';
-            html += '<div class="hh-cell hh-header">Dia</div>';
+            html += '<div class="hh-cell hh-header">' + T('hmDia') + '</div>';
             for (var hh4 = 0; hh4 < 24; hh4++) html += '<div class="hh-cell hh-header">' + String(hh4).padStart(2, '0') + 'h</div>';
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvg24') + '">' + T('stAvg') + '</div>';
             // Linhas dos dias da semana
             for (var d5 = 0; d5 < 7; d5++) {
                 html += '<div class="hh-cell hh-header">' + WEEKDAY_NAMES[d5] + '</div>';
                 for (var h5 = 0; h5 < 24; h5++) html += dataCell(h5, d5);
                 html += '<div class="hh-cell hh-spacer"></div>';
-                html += coloredCell(dowAvg[d5], 'hh-avg', WEEKDAY_NAMES[d5] + ' (média 24h): ' + (dowAvg[d5] != null ? fmtN(dowAvg[d5], 2) + ' €/MWh' : '—'));
+                html += coloredCell(dowAvg[d5], 'hh-avg', WEEKDAY_NAMES[d5] + ' ' + T('tipAvg24Paren') + ': ' + (dowAvg[d5] != null ? fmtN(dowAvg[d5], 2) + ' €/MWh' : '—'));
             }
             // Linha espacadora
             for (var sp2 = 0; sp2 < 24 + 3; sp2++) html += '<div class="hh-cell hh-spacer"></div>';
             // Linha das medias por hora
-            html += '<div class="hh-cell hh-avg-header" title="Média ' + nDays + ' dias (todos os dias da semana)">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvgWeekPre') + nDays + T('tipWeekSuf') + '">' + T('stAvg') + '</div>';
             for (var h6 = 0; h6 < 24; h6++) {
-                html += coloredCell(hourAvg[h6], 'hh-avg', 'Média ' + String(h6).padStart(2, '0') + 'h ao longo da semana: ' + (hourAvg[h6] != null ? fmtN(hourAvg[h6], 2) + ' €/MWh' : '—'));
+                html += coloredCell(hourAvg[h6], 'hh-avg', T('tipAvgWeekHourPre') + String(h6).padStart(2, '0') + 'h' + T('tipWeekHourSuf') + (hourAvg[h6] != null ? fmtN(hourAvg[h6], 2) + ' €/MWh' : '—'));
             }
             html += '<div class="hh-cell hh-spacer"></div>';
             html += coloredCell(rawAvg, 'hh-avg', rawAvgTip);
@@ -4009,7 +4501,7 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = html;
 
         if (titulo) {
-            titulo.textContent = 'Perfil semanal — ' + (ZONE_NAMES[zone] || zone) + ' · últimos ' + nDays + ' dias (' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')';
+            titulo.textContent = T('hmWeekShort') + ' — ' + zoneName(zone) + (LANG === 'en' ? ' · last ' : ' · últimos ') + nDays + (LANG === 'en' ? ' days (' : ' dias (') + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')';
         }
         if (statsEl) {
             if (rawHourly.length) {
@@ -4018,15 +4510,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 var minV = Math.min.apply(null, rawHourly);
                 var maxV = Math.max.apply(null, rawHourly);
                 var avgV = rawHourly.reduce(function(a, b) { return a + b; }, 0) / rawHourly.length;
-                statsEl.textContent = 'Média: ' + fmtN(avgV, 2) + ' · Mín: ' + fmtN(minV, 2) + ' · Máx: ' + fmtN(maxV, 2) + ' €/MWh';
+                statsEl.textContent = T('stAvg') + ': ' + fmtN(avgV, 2) + ' · ' + T('stMin') + ': ' + fmtN(minV, 2) + ' · ' + T('stMax') + ': ' + fmtN(maxV, 2) + ' €/MWh';
             } else {
-                statsEl.textContent = 'Sem dados';
+                statsEl.textContent = T('noData');
             }
         }
         // Crédito de exportação
         setExportCredit('credit-heatmap-week', [
-            (ZONE_NAMES[zone] || zone),
-            'Últimos ' + nDays + ' dias (' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')'
+            zoneName(zone),
+            (LANG === 'en' ? 'Last ' : 'Últimos ') + nDays + (LANG === 'en' ? ' days (' : ' dias (') + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')'
         ]);
     }
 
@@ -4072,13 +4564,13 @@ document.addEventListener('DOMContentLoaded', function() {
             var lastDay = new Date(y, mo, 0).getDate();
             startStr = ym + '-01';
             endStr = ym + '-' + String(lastDay).padStart(2, '0');
-            modeLabel = 'mês completo';
+            modeLabel = (LANG === 'en') ? 'full month' : 'mês completo';
         } else {
             endStr = endInput && endInput.value;
             if (!endStr) return;
             startStr = rollingMonthStart(endStr);
             if (startStr < DATA_INICIO) startStr = DATA_INICIO;
-            modeLabel = 'mês deslizante';
+            modeLabel = (LANG === 'en') ? 'rolling month' : 'mês deslizante';
         }
         if (ultimaDataDisponivel && endStr > ultimaDataDisponivel) endStr = ultimaDataDisponivel;
 
@@ -4089,7 +4581,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var missing = monthsNeeded.filter(function(ym) { return !dataCache[ym]; });
         if (missing.length) {
             ensureMonthsLoaded(missing).then(updateHourlyHeatmap);
-            container.innerHTML = '<p class="no-data-msg">A carregar…</p>';
+            container.innerHTML = '<p class="no-data-msg">' + T('loadingShort') + '</p>';
             return;
         }
 
@@ -4202,29 +4694,29 @@ document.addEventListener('DOMContentLoaded', function() {
             var gridStyle = 'grid-template-columns: 50px repeat(' + nDays + ', minmax(' + dataColMin + 'px, 1fr)) 8px ' + avgColW + 'px;';
             html = '<div class="hh-grid" style="' + gridStyle + '">';
             // Cabecalho
-            html += '<div class="hh-cell hh-header">Hora</div>';
+            html += '<div class="hh-cell hh-header">' + T('hmHora') + '</div>';
             for (var dh = 0; dh < nDays; dh++) {
                 var dParts = allDays[dh].split('-');
                 html += '<div class="hh-cell hh-header" title="' + allDays[dh] + '">' + dParts[2] + '/' + dParts[1] + '</div>';
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += '<div class="hh-cell hh-avg-header" title="Média ao longo dos ' + nDays + ' dias">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvgDaysPre') + nDays + T('tipDaysSuf') + '">' + T('stAvg') + '</div>';
             // Linhas das horas
             for (var h2 = 0; h2 < 24; h2++) {
                 html += '<div class="hh-cell hh-header">' + String(h2).padStart(2, '0') + 'h</div>';
                 for (var d2 = 0; d2 < nDays; d2++) html += dataCell(h2, d2);
                 html += '<div class="hh-cell hh-spacer"></div>';
-                html += coloredCell(hourAvg[h2], 'hh-avg', 'Média da hora ' + String(h2).padStart(2, '0') + 'h: ' + (hourAvg[h2] != null ? fmtN(hourAvg[h2], 2) + ' €/MWh' : '—'));
+                html += coloredCell(hourAvg[h2], 'hh-avg', T('tipAvgHourPre') + String(h2).padStart(2, '0') + 'h: ' + (hourAvg[h2] != null ? fmtN(hourAvg[h2], 2) + ' €/MWh' : '—'));
             }
             // Linha espacadora
             for (var sp = 0; sp < nDays + 3; sp++) html += '<div class="hh-cell hh-spacer"></div>';
             // Linha das medias por dia
-            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvg24') + '">' + T('stAvg') + '</div>';
             for (var d3 = 0; d3 < nDays; d3++) {
-                html += coloredCell(dayAvg[d3], 'hh-avg', allDays[d3] + ' (média 24h): ' + (dayAvg[d3] != null ? fmtN(dayAvg[d3], 2) + ' €/MWh' : '—'));
+                html += coloredCell(dayAvg[d3], 'hh-avg', allDays[d3] + ' ' + T('tipAvg24Paren') + ': ' + (dayAvg[d3] != null ? fmtN(dayAvg[d3], 2) + ' €/MWh' : '—'));
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += coloredCell(globalAvg, 'hh-avg', 'Média global do período: ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
+            html += coloredCell(globalAvg, 'hh-avg', T('tipAvgGlobal') + ': ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
             html += '</div>';
         } else {
             // rows-dates (default OMIE-style): linhas = datas, colunas = horas
@@ -4234,52 +4726,52 @@ document.addEventListener('DOMContentLoaded', function() {
             var gridStyle2 = 'grid-template-columns: ' + dColW + 'px repeat(24, minmax(' + hColMin + 'px, 1fr)) 8px ' + avgColW + 'px;';
             html = '<div class="hh-grid" style="' + gridStyle2 + '">';
             // Cabecalho
-            html += '<div class="hh-cell hh-header">Data</div>';
+            html += '<div class="hh-cell hh-header">' + T('hmData') + '</div>';
             for (var hh2 = 0; hh2 < 24; hh2++) {
                 html += '<div class="hh-cell hh-header">' + String(hh2).padStart(2, '0') + 'h</div>';
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += '<div class="hh-cell hh-avg-header" title="Média ao longo das 24 horas">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvg24') + '">' + T('stAvg') + '</div>';
             // Linhas das datas
             for (var d4 = 0; d4 < nDays; d4++) {
                 var dParts2 = allDays[d4].split('-');
                 html += '<div class="hh-cell hh-header" title="' + allDays[d4] + '">' + dParts2[2] + '/' + dParts2[1] + '</div>';
                 for (var h3 = 0; h3 < 24; h3++) html += dataCell(h3, d4);
                 html += '<div class="hh-cell hh-spacer"></div>';
-                html += coloredCell(dayAvg[d4], 'hh-avg', allDays[d4] + ' (média 24h): ' + (dayAvg[d4] != null ? fmtN(dayAvg[d4], 2) + ' €/MWh' : '—'));
+                html += coloredCell(dayAvg[d4], 'hh-avg', allDays[d4] + ' ' + T('tipAvg24Paren') + ': ' + (dayAvg[d4] != null ? fmtN(dayAvg[d4], 2) + ' €/MWh' : '—'));
             }
             // Linha espacadora
             for (var sp2 = 0; sp2 < 24 + 3; sp2++) html += '<div class="hh-cell hh-spacer"></div>';
             // Linha das medias por hora
-            html += '<div class="hh-cell hh-avg-header" title="Média ao longo dos ' + nDays + ' dias">Média</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvgDaysPre') + nDays + T('tipDaysSuf') + '">' + T('stAvg') + '</div>';
             for (var h4 = 0; h4 < 24; h4++) {
-                html += coloredCell(hourAvg[h4], 'hh-avg', 'Média da hora ' + String(h4).padStart(2, '0') + 'h: ' + (hourAvg[h4] != null ? fmtN(hourAvg[h4], 2) + ' €/MWh' : '—'));
+                html += coloredCell(hourAvg[h4], 'hh-avg', T('tipAvgHourPre') + String(h4).padStart(2, '0') + 'h: ' + (hourAvg[h4] != null ? fmtN(hourAvg[h4], 2) + ' €/MWh' : '—'));
             }
             html += '<div class="hh-cell hh-spacer"></div>';
-            html += coloredCell(globalAvg, 'hh-avg', 'Média global do período: ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
+            html += coloredCell(globalAvg, 'hh-avg', T('tipAvgGlobal') + ': ' + (globalAvg != null ? fmtN(globalAvg, 2) + ' €/MWh' : '—'));
             html += '</div>';
         }
         container.innerHTML = html;
 
         if (titulo) {
-            titulo.textContent = 'Heatmap horário — ' + (ZONE_NAMES[zone] || zone)
+            titulo.textContent = T('hmHourTitle') + ' — ' + zoneName(zone)
                 + ' · ' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr)
-                + ' (' + nDays + ' dias, ' + modeLabel + ')';
+                + ' (' + nDays + (LANG === 'en' ? ' days, ' : ' dias, ') + modeLabel + ')';
         }
         if (statsEl) {
             if (allVals.length) {
                 var min = Math.min.apply(null, allVals);
                 var max = Math.max.apply(null, allVals);
                 var avg = allVals.reduce(function(a, b) { return a + b; }, 0) / allVals.length;
-                statsEl.textContent = 'Média: ' + fmtN(avg, 2) + ' · Mín: ' + fmtN(min, 2) + ' · Máx: ' + fmtN(max, 2) + ' €/MWh';
+                statsEl.textContent = T('stAvg') + ': ' + fmtN(avg, 2) + ' · ' + T('stMin') + ': ' + fmtN(min, 2) + ' · ' + T('stMax') + ': ' + fmtN(max, 2) + ' €/MWh';
             } else {
-                statsEl.textContent = 'Sem dados';
+                statsEl.textContent = T('noData');
             }
         }
         // Crédito de exportação
         setExportCredit('credit-heatmap-hour', [
-            (ZONE_NAMES[zone] || zone),
-            fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ' (' + nDays + ' dias)'
+            zoneName(zone),
+            fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ' (' + nDays + (LANG === 'en' ? ' days)' : ' dias)')
         ]);
     }
 
@@ -4361,23 +4853,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Atualizar titulo
         var titulo;
-        var sufixoFusoMercado = _isMarketTime() ? ' [hora de mercado / CET]' : '';
+        var sufixoFusoMercado = _isMarketTime() ? T('sufMarket') : '';
         if (currentMode === 'diario') {
-            titulo = 'Mapa de Preços Médios de Eletricidade - ' + fmtDateBR(dateStr);
+            titulo = T('mapTitleAgg') + fmtDateBR(dateStr);
             // "(até às 23h de PT)" só faz sentido em hora local — em CET o dia PT está completo
-            if (isUltimoDia && !_isMarketTime()) titulo += ' (até às 23h de PT)';
+            if (isUltimoDia && !_isMarketTime()) titulo += (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)');
             titulo += sufixoFusoMercado;
         } else {
-            var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
-            titulo = 'Mapa de Preços Médios de Eletricidade - ' + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')' + sufixoFusoMercado;
+            var labelModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
+            titulo = T('mapTitleAgg') + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')' + sufixoFusoMercado;
         }
         document.getElementById('titulo-mapa').textContent = titulo;
         // Crédito de exportação do mapa
         var ctxMapa;
         if (currentMode === 'diario') {
-            ctxMapa = ['Diário ' + fmtDateBR(dateStr)];
+            ctxMapa = [T('lblDiario') + ' ' + fmtDateBR(dateStr)];
         } else {
-            var lModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Personalizado');
+            var lModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
             ctxMapa = [lModo + ' ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end)];
         }
         setExportCredit('credit-mapa', ctxMapa);
@@ -4386,7 +4878,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var avisoEl = document.getElementById('aviso-provisorio');
         if (avisoEl) {
             if (isUltimoDia && !_isMarketTime()) {
-                avisoEl.textContent = 'A média para Portugal não é final — falta o valor da última hora do dia (23h às 24h de PT), que ainda não foi negociado.';
+                avisoEl.textContent = T('avisoProvisorioPT');
                 avisoEl.style.display = 'block';
             } else {
                 avisoEl.style.display = 'none';
@@ -4407,10 +4899,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var todayStr = formatDateStr(today);
         var ystr = new Date(today); ystr.setDate(ystr.getDate() - 1);
         var tstr = new Date(today); tstr.setDate(tstr.getDate() + 1);
-        if (dateStr === todayStr) return 'Hoje';
-        if (dateStr === formatDateStr(ystr)) return 'Ontem';
-        if (dateStr === formatDateStr(tstr)) return 'Amanhã';
-        return 'Em ' + fmtDateBR(dateStr);
+        if (dateStr === todayStr) return T('today');
+        if (dateStr === formatDateStr(ystr)) return T('yesterday');
+        if (dateStr === formatDateStr(tstr)) return T('tomorrow');
+        return T('resEm') + fmtDateBR(dateStr);
     }
     function updateResumoRapido() {
         var el = document.getElementById('resumo-rapido');
@@ -4440,7 +4932,7 @@ document.addEventListener('DOMContentLoaded', function() {
             prefix = dateLabelFor(seletorData.value);
         } else {
             var p = computePeriod();
-            var labelModo = currentMode === 'semanal' ? 'Semanal' : (currentMode === 'mensal' ? 'Mensal' : 'Período');
+            var labelModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPeriodo'));
             prefix = labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')';
         }
 
@@ -4448,16 +4940,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (ptVal != null) {
             var diff = ptVal - media;
             var pct = media !== 0 ? (diff / media * 100) : 0;
-            var sinal = pct >= 0 ? 'acima' : 'abaixo';
+            var sinal = pct >= 0 ? T('resAbove') : T('resBelow');
             var cls = pct >= 0 ? 'resumo-pt-bad' : 'resumo-pt-good';
             var arrow = pct >= 0 ? '▲' : '▼';
             html += zoneFlag('PT') + ' Portugal: <strong>' + fmtN(ptVal, 2) + ' €/MWh</strong> '
-                + '<span class="' + cls + '">(' + arrow + ' ' + fmtN(Math.abs(pct), 1) + '% ' + sinal + ' da média europeia ' + fmtN(media, 2) + ')</span>. ';
+                + '<span class="' + cls + '">(' + arrow + ' ' + fmtN(Math.abs(pct), 1) + '% ' + sinal + ' ' + T('resEuAvg') + ' ' + fmtN(media, 2) + ')</span>. ';
         } else {
-            html += 'Média europeia: <strong>' + fmtN(media, 2) + ' €/MWh</strong>. ';
+            html += T('resEuAvgOnly') + ': <strong>' + fmtN(media, 2) + ' €/MWh</strong>. ';
         }
-        html += 'Mais barato: <span class="resumo-cheap">' + zoneFlag(cheap.zone) + ' ' + (ZONE_NAMES[cheap.zone] || cheap.zone) + ' (' + fmtN(cheap.avg, 2) + ')</span>. ';
-        html += 'Mais caro: <span class="resumo-expensive">' + zoneFlag(expensive.zone) + ' ' + (ZONE_NAMES[expensive.zone] || expensive.zone) + ' (' + fmtN(expensive.avg, 2) + ')</span>.';
+        html += T('resCheap') + ': <span class="resumo-cheap">' + zoneFlag(cheap.zone) + ' ' + zoneName(cheap.zone) + ' (' + fmtN(cheap.avg, 2) + ')</span>. ';
+        html += T('resExpensive') + ': <span class="resumo-expensive">' + zoneFlag(expensive.zone) + ' ' + zoneName(expensive.zone) + ' (' + fmtN(expensive.avg, 2) + ')</span>.';
         el.innerHTML = html;
         el.style.display = 'block';
     }
@@ -4468,11 +4960,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var btn = document.getElementById('btn-fullscreen');
         wrapper.classList.toggle('fullscreen');
         if (wrapper.classList.contains('fullscreen')) {
-            btn.innerHTML = '&#x2716; Sair';
-            btn.title = 'Sair do ecrã inteiro';
+            btn.innerHTML = T('fsExit');
+            btn.title = T('fsExitTitle');
         } else {
-            btn.innerHTML = '&#x26F6; Ecrã inteiro';
-            btn.title = 'Abrir mapa em ecrã inteiro';
+            btn.innerHTML = T('fsOpen');
+            btn.title = T('fsOpenTitle');
         }
         // Leaflet precisa recalcular o tamanho
         setTimeout(function() { map.invalidateSize(); }, 100);
@@ -4665,10 +5157,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 btnNext.disabled = !!seletorData.max && seletorData.value >= seletorData.max;
             }
 
-            // Atualizar link cruzado para mapa-producao
+            // Atualizar link cruzado para europe-generation
             function updateCrossLink() {
                 var link = document.getElementById('link-producao');
-                if (link) link.href = 'mapa-producao?date=' + seletorData.value;
+                if (link) link.href = 'europe-generation?date=' + seletorData.value;
             }
 
             // Construir URL partilhavel (com salvaguarda de comprimento)
@@ -4710,7 +5202,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var url = buildShareUrl();
                     var showOk = function() {
                         if (!shareFeedback) return;
-                        shareFeedback.textContent = '✓ Link copiado!';
+                        shareFeedback.textContent = T('shareCopiedOk');
                         shareFeedback.style.display = 'inline';
                         setTimeout(function() { shareFeedback.style.display = 'none'; }, 2500);
                     };
@@ -4790,8 +5282,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     dateSelectorWrapper.style.display = 'block';
                     var lbl = document.getElementById('label-seletor-data');
                     if (lbl) {
-                        lbl.textContent = (modo === 'diario') ? 'Selecione o dia:'
-                            : (modo === 'semanal' ? 'Dia final dos 7 dias:' : 'Dia final do mês deslizante:');
+                        lbl.textContent = (modo === 'diario') ? T('lblSelDia')
+                            : (modo === 'semanal' ? T('lblEnd7') : T('lblEndRolling'));
                     }
                 }
                 if (!opts.skipReload) {
@@ -4815,11 +5307,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 var headerLbl = document.getElementById('fuso-label-header');
                 var notaMapa = document.getElementById('nota-horas-mapa');
                 if (_isMarketTime()) {
-                    if (headerLbl) headerLbl.textContent = 'Valores em hora de mercado (CET)';
-                    if (notaMapa) notaMapa.textContent = 'Valores em hora de mercado (CET) — todas as zonas alinhadas';
+                    if (headerLbl) headerLbl.textContent = T('notaMarket');
+                    if (notaMapa) notaMapa.textContent = T('notaMarketFull');
                 } else {
-                    if (headerLbl) headerLbl.textContent = 'Valores nas horas locais de cada zona';
-                    if (notaMapa) notaMapa.textContent = 'Valores nas horas locais de cada zona';
+                    if (headerLbl) headerLbl.textContent = T('notaLocal');
+                    if (notaMapa) notaMapa.textContent = T('notaLocal');
                 }
             }
             aplicarFusoBotoesMP();
@@ -4853,22 +5345,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 var inv1 = false, inv2 = false;
 
                 if (!v1 || !v2) {
-                    err = 'Indique data de início e fim.';
+                    err = (LANG === 'en') ? 'Please enter a start and end date.' : 'Indique data de início e fim.';
                     if (!v1) inv1 = true;
                     if (!v2) inv2 = true;
                 } else if (v1 < minD) {
-                    err = 'A data de início é anterior aos dados disponíveis (' + fmtDateBR(minD) + ').';
+                    err = (LANG === 'en' ? 'The start date is before the available data (' : 'A data de início é anterior aos dados disponíveis (') + fmtDateBR(minD) + ').';
                     inv1 = true;
                 } else if (maxD && v2 > maxD) {
-                    err = 'A data de fim é posterior aos dados disponíveis (' + fmtDateBR(maxD) + ').';
+                    err = (LANG === 'en' ? 'The end date is after the available data (' : 'A data de fim é posterior aos dados disponíveis (') + fmtDateBR(maxD) + ').';
                     inv2 = true;
                 } else if (v1 > v2) {
-                    err = 'A data de início tem de ser anterior ou igual à data de fim.';
+                    err = (LANG === 'en') ? 'The start date must be on or before the end date.' : 'A data de início tem de ser anterior ou igual à data de fim.';
                     inv1 = true; inv2 = true;
                 } else {
                     var diff = (parseDateStr(v2) - parseDateStr(v1)) / 86400000 + 1;
                     if (diff > MAX_RANGE_DAYS) {
-                        err = 'Intervalo demasiado longo (' + Math.round(diff) + ' dias). Máximo: ' + MAX_RANGE_DAYS + ' dias.';
+                        err = (LANG === 'en')
+                            ? ('Range too long (' + Math.round(diff) + ' days). Maximum: ' + MAX_RANGE_DAYS + ' days.')
+                            : ('Intervalo demasiado longo (' + Math.round(diff) + ' dias). Máximo: ' + MAX_RANGE_DAYS + ' dias.');
                         inv1 = true; inv2 = true;
                     }
                 }
@@ -4919,12 +5413,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (zoneSel) {
                 var zonesSorted = Object.keys(ZONE_NAMES).sort(function(a, b) {
-                    return (ZONE_NAMES[a] || a).localeCompare(ZONE_NAMES[b] || b);
+                    return zoneName(a).localeCompare(zoneName(b));
                 });
                 var optsHtml = '';
                 for (var z = 0; z < zonesSorted.length; z++) {
                     var zk = zonesSorted[z];
-                    optsHtml += '<option value="' + zk + '">' + (ZONE_NAMES[zk] || zk) + '</option>';
+                    optsHtml += '<option value="' + zk + '">' + zoneName(zk) + '</option>';
                 }
                 zoneSel.innerHTML = optsHtml;
                 zoneSel.value = 'PT';
@@ -5175,7 +5669,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Registar service worker (PWA basico) — apenas em HTTPS/localhost
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw-mapa-precos.js', { scope: './' })
+            navigator.serviceWorker.register('sw-europe-prices.js', { scope: './' })
                 .catch(function(err) { console.warn('SW registration failed:', err); });
         });
     }

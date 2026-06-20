@@ -1,4 +1,4 @@
-// Service Worker minimo para a pagina do Mapa de Precos.
+// Service Worker minimo para a pagina Europe Prices.
 //
 // Estrategias:
 //  - Assets do mapa (allowlist SWR_ALLOWLIST): stale-while-revalidate
@@ -9,13 +9,13 @@
 // Atualizar CACHE_VERSION sempre que houver alteracoes ao SW para forcar
 // limpeza da versao antiga.
 
-const CACHE_VERSION = 'mapa-precos-v4';
+const CACHE_VERSION = 'europe-prices-v5';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 const CDN_CACHE = `${CACHE_VERSION}-cdn`;
 
 const STATIC_ASSETS = [
-    'mapa-precos.html',
+    'europe-prices.html',
     'style.css',
     'theme.js',
     'dados.js',
@@ -34,7 +34,7 @@ const STATIC_ASSETS = [
 // veriam versões antigas até ao refresh seguinte. Tudo o que não está aqui
 // passa direto para a rede.
 const SWR_ALLOWLIST = new Set([
-    '/mapa-precos', '/mapa-precos.html',
+    '/europe-prices', '/europe-prices.html',
     '/style.css', '/theme.js', '/dados.js',
     '/menu.html', '/menu.js', '/footer.html',
     '/script.js', '/cookie-consent.js', '/glossario.js',

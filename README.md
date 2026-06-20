@@ -21,7 +21,7 @@ Todo o processamento corre **localmente no browser** — os dados de consumo do 
 
 - [OMIE Diário](https://www.tiagofelicia.pt/omie-diario) · [OMIE Histórico](https://www.tiagofelicia.pt/omie) (desde 2010) · [OMIP Futuros](https://www.tiagofelicia.pt/omip) · [Preços Horários](https://www.tiagofelicia.pt/precos-horarios)
 - [Balanço Energético vs OMIE](https://www.tiagofelicia.pt/balanco-omie) · [Balanço Energético Histórico](https://www.tiagofelicia.pt/balanco-historico)
-- [Mapa de Preços da Europa](https://www.tiagofelicia.pt/mapa-precos) (ENTSO-E, 45 zonas) · [Mapa de Produção](https://www.tiagofelicia.pt/mapa-producao)
+- [Mapa de Preços da Europa](https://www.tiagofelicia.pt/europe-prices) (ENTSO-E, 47 zonas) · [Mapa de Produção](https://www.tiagofelicia.pt/europe-generation) · [Balanço Energético Europa](https://www.tiagofelicia.pt/europe-balance)
 
 ## 📚 Regulação e recursos
 
