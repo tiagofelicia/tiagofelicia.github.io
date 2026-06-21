@@ -234,6 +234,11 @@
         [data-theme="dark"] .lang-switch a { color:#cbd5e1; border-color:#475569; }
         [data-theme="dark"] .lang-switch a.active { background:#2563eb; color:#fff; }
         [data-theme="dark"] .lang-switch a:not(.active):hover { background:#334155; }
+        /* Seletor de zona de referência (topo) */
+        .ref-zone-control { display:inline-flex; align-items:center; gap:6px; font-size:0.82em; color:#475569; font-weight:600; }
+        .ref-zone-control select { font-size:0.95em; padding:4px 6px; border:1px solid #cbd5e1; border-radius:5px; background:#fff; color:#1e293b; max-width:210px; }
+        [data-theme="dark"] .ref-zone-control { color:#cbd5e1; }
+        [data-theme="dark"] .ref-zone-control select { background:#1e293b; color:#e2e8f0; border-color:#475569; }
         /* FAQ bilingue: mostra apenas o bloco do idioma ativo */
         html[lang="en"] [data-lang-block="pt"] { display: none; }
         html:not([lang="en"]) [data-lang-block="en"] { display: none; }
@@ -725,7 +730,10 @@
 
 <main id="main-content">
     <div class="painel-header">
-        <div style="text-align:center; margin-bottom:10px;">
+        <div class="top-controls" style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+            <label class="ref-zone-control"><span data-i18n="refZoneLabel">🌍 A minha zona:</span>
+                <select id="ref-zone-select" aria-label="Zona de referência / Reference zone"></select>
+            </label>
             <span class="lang-switch" role="group" aria-label="Idioma / Language">
                 <a href="#" data-lang="pt">PT</a><a href="#" data-lang="en">EN</a>
             </span>
@@ -779,6 +787,7 @@
     </div>
 
     <p class="nota-horas" id="nota-horas-mapa" data-i18n="notaLocal">Valores nas horas locais de cada zona</p>
+    <p class="aviso-provisorio" id="aviso-parcial-local" role="status" aria-live="polite" style="display:none;"></p>
     <p class="nota-fonte"><span data-i18n="notaFonte">Fonte:</span> <a href="https://transparency.entsoe.eu/" target="_blank" rel="noopener">ENTSO-E Transparency Platform</a> | tiagofelicia.pt</p>
     <p class="export-credit" id="credit-mapa"></p>
 
@@ -791,7 +800,7 @@
             <span id="zone-search-count" class="zone-search-count" aria-live="polite"></span>
         </div>
         <div class="table-toolbar">
-            <label class="chart-toggle"><input type="checkbox" id="toggle-delta-pt"> <span data-i18n="toggleDeltaPt">Mostrar ΔPT (diferença vs Portugal)</span></label>
+            <label class="chart-toggle"><input type="checkbox" id="toggle-delta-pt"> <span data-i18n="toggleDeltaPt">Mostrar Δ vs zona de referência</span></label>
             <label class="chart-toggle" id="toggle-var-wrapper" style="display:none;"><input type="checkbox" id="toggle-var-dia"> <span data-i18n="toggleVarDia">Mostrar variação vs dia anterior</span></label>
         </div>
         <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de preços por zona" data-i18n-aria="ariaTabela">
@@ -915,6 +924,7 @@
                     </li>
                 </ul>
                 <p>A escolha é guardada localmente (localStorage) e mantém-se entre visitas.</p>
+                <p>A base temporal ativa (Hora local ou Hora de mercado) é sempre indicada nos títulos e na legenda <code>🔗</code> de cada visualização.</p>
                 </div>
                 <div data-lang-block="en">
                 <p>You can choose between two modes via the <strong>Time zone</strong> toggle at the top of the page:</p>
@@ -929,6 +939,7 @@
                     </li>
                 </ul>
                 <p>The choice is stored locally (localStorage) and persists across visits.</p>
+                <p>The active time basis (Local time or Market time) is always shown in the titles and in the <code>🔗</code> caption of each visualization.</p>
                 </div>
             </div>
         </details>
@@ -940,11 +951,13 @@
                 <p>O OMIE negoceia em Hora Central Europeia (CET), que é a hora de Espanha.</p>
                 <p>Como <strong>Portugal</strong> está uma hora "atrás" de <strong>Espanha</strong> (hora local PT = hora CET - 1), quando olhamos para os resultados do mercado diário (Day-Ahead) que são divulgados para o dia seguinte, <strong>o intervalo correspondente a 23:00 - 24:00 (hora de Portugal)</strong> é conhecido apenas no dia seguinte.</p>
                 <p>Quando tal acontece, é apresentado o aviso <em>"até às 23h de PT"</em> no título.</p>
+                <p>Se a zona de referência ("🌍 A minha zona") não for Portugal, o caso aplica-se na mesma às zonas em CET−1 (Portugal e Irlanda): em vez do aviso no título, essas zonas ficam marcadas com <strong>*</strong> e surge uma nota explicativa por baixo do mapa.</p>
                 </div>
                 <div data-lang-block="en">
                 <p>OMIE trades in Central European Time (CET), which is Spain's time.</p>
                 <p>Because <strong>Portugal</strong> is one hour "behind" <strong>Spain</strong> (PT local time = CET - 1), when we look at the day-ahead market results published for the next day, <strong>the interval corresponding to 23:00 - 24:00 (Portugal time)</strong> is only known the following day.</p>
                 <p>When this happens, the note <em>"until 23:00 PT"</em> is shown in the title.</p>
+                <p>If your reference zone ("🌍 My zone") is not Portugal, this still applies to the CET−1 zones (Portugal and Ireland): instead of the note in the title, those zones are marked with <strong>*</strong> and an explanatory note appears below the map.</p>
                 </div>
             </div>
         </details>
@@ -979,7 +992,7 @@
                 <div data-lang-block="pt">
                 <ul>
                     <li><strong>Mapa coroplético europeu:</strong> 47 zonas de licitação coloridas pelo preço médio. Etiquetas numéricas sobre cada zona (asterisco se dados parciais).</li>
-                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, ΔPT, variação vs ontem. Mostra hora local do mín/máx por zona.</li>
+                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, Δ (vs a zona de referência), variação vs ontem. Mostra hora local do mín/máx por zona.</li>
                     <li><strong>Curva intradiária:</strong> gráfico de barras com a curva 24h da zona selecionada. Cores na mesma escala do mapa. Resolução adapta-se ao publicado pela bolsa (15 min, 30 min ou horário). Em modos agregados mostra a média horária do período. Linha vermelha tracejada em y=0 quando há valores negativos.</li>
                     <li><strong>Curva intradiária por linha da tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva 24h logo por baixo. Várias zonas em simultâneo para comparar.</li>
                     <li><strong>Gráfico de evolução de preços:</strong> barras coloridas pela escala do mapa para a zona selecionada. Mín, máx e amplitude sempre visíveis no tooltip. Suporta até 4 comparações simultâneas (linhas sobrepostas com cores distintas). A legenda abaixo do gráfico permite ativar/ocultar séries adicionais (default ocultas):
@@ -999,7 +1012,7 @@
                 <div data-lang-block="en">
                 <ul>
                     <li><strong>European choropleth map:</strong> 47 bidding zones coloured by the average price. Numeric labels over each zone (asterisk if data is partial).</li>
-                    <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, ΔPT, change vs yesterday. Shows the local time of the min/max per zone.</li>
+                    <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, Δ (vs the reference zone), change vs yesterday. Shows the local time of the min/max per zone.</li>
                     <li><strong>Intraday curve:</strong> bar chart with the 24h curve of the selected zone. Colours on the same scale as the map. Resolution adapts to what the exchange publishes (15 min, 30 min or hourly). In aggregated modes it shows the period's hourly average. Dashed red line at y=0 when there are negative values.</li>
                     <li><strong>Intraday curve per table row:</strong> click a zone's name (or the chevron <kbd>▸</kbd>) to open/close the 24h curve right below it. Several zones at once for comparison.</li>
                     <li><strong>Price evolution chart:</strong> bars coloured by the map scale for the selected zone. Min, max and range always visible in the tooltip. Supports up to 4 simultaneous comparisons (overlaid lines in distinct colours). The legend below the chart lets you toggle extra series (hidden by default):
@@ -1025,29 +1038,31 @@
                 <div data-lang-block="pt">
                 <ul>
                     <li><strong>Modos temporais:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês deslizante terminado no dia selecionado — 28 a 31 dias conforme o mês) e Personalizado (intervalo à escolha). Médias agregadas no mapa, tabela, gráfico e curva intradiária.</li>
+                    <li><strong>🌍 A minha zona (zona de referência):</strong> seletor no topo da página que define a tua zona base — conduz a mensagem de comparação, a coluna Δ da tabela e a zona inicial dos gráficos. É guardada no browser e incluída no link de partilha (<code>?ref=</code>).</li>
                     <li><strong>Selector único de zona:</strong> um só dropdown "Zona" controla simultaneamente Evolução, Curva intradiária, Heatmap horário e Heatmap anual. Clicar numa zona do mapa atualiza tudo.</li>
                     <li><strong>Comparação multi-zona:</strong> chips com até 4 zonas adicionais comparadas no gráfico de evolução e na curva intradiária — cada uma com cor própria e linha distinta sobre as barras da zona principal. Cada chip mostra também o desfasamento de fuso horário face à zona principal (ex: <kbd>+1h</kbd> para ES quando a principal é PT). Os valores são apresentados em <em>hora local de cada zona</em>.</li>
-                    <li><strong>Pesquisa de zona:</strong> campo "🔍 Procurar zona" filtra a tabela, destaca a zona no mapa e faz auto-zoom se for um único resultado. Procura por código, nome PT, e ignora acentos.</li>
+                    <li><strong>Pesquisa de zona:</strong> campo "🔍 Procurar zona" filtra a tabela, destaca a zona no mapa e faz auto-zoom se for um único resultado. Procura por código e nome (PT e EN), e ignora acentos.</li>
                     <li><strong>Toque no mapa (mobile):</strong> tap único mostra o info-control (com curva intradiária); segundo tap na mesma zona seleciona-a em todas as visualizações. Toque no fundo do mapa fecha o info-control.</li>
                     <li><strong>Validação do intervalo personalizado:</strong> datas inválidas (início > fim, fora do intervalo de dados, &gt;366 dias) ficam com borda vermelha e mensagem inline; o botão "Aplicar" desativa-se até o erro ser resolvido.</li>
-                    <li><strong>ΔPT (diferença vs Portugal):</strong> opcional na tabela, em €/MWh e %. Útil para avaliar custo de importar/exportar.</li>
+                    <li><strong>Δ vs a zona de referência:</strong> coluna opcional na tabela (€/MWh e %) com a diferença de cada zona face à zona escolhida em "🌍 A minha zona". Útil para avaliar o custo de importar/exportar.</li>
                     <li><strong>Variação vs ontem:</strong> opcional na tabela em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
                     <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots não foram ainda publicados (ex: PT antes do leilão CET de amanhã) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip. Média/mín/máx usam só os slots conhecidos.</li>
-                    <li><strong>Resumo dinâmico:</strong> texto contextual com a data (Hoje/Ontem/Amanhã/data), com zona mais barata e mais cara em destaque, e variação vs PT.</li>
+                    <li><strong>Resumo dinâmico:</strong> texto contextual com a data (Hoje/Ontem/Amanhã/data), com a zona mais barata e mais cara em destaque, e a variação da zona de referência face à média europeia.</li>
                 </ul>
                 </div>
                 <div data-lang-block="en">
                 <ul>
                     <li><strong>Time modes:</strong> Daily (one day), Weekly (7 days), Monthly (rolling month ending on the selected day — 28 to 31 days depending on the month) and Custom (range of your choice). Aggregated averages on the map, table, chart and intraday curve.</li>
+                    <li><strong>🌍 My zone (reference zone):</strong> a selector at the top of the page that sets your base zone — it drives the comparison message, the table's Δ column and the initial chart zone. It is stored in the browser and included in the share link (<code>?ref=</code>).</li>
                     <li><strong>Single zone selector:</strong> a single "Zone" dropdown simultaneously controls Evolution, Intraday curve, Hourly heatmap and Annual heatmap. Clicking a zone on the map updates everything.</li>
                     <li><strong>Multi-zone comparison:</strong> chips with up to 4 additional zones compared on the evolution chart and the intraday curve — each with its own colour and a distinct line over the main zone's bars. Each chip also shows the time-zone offset relative to the main zone (e.g. <kbd>+1h</kbd> for ES when the main one is PT). Values are shown in <em>each zone's local time</em>.</li>
                     <li><strong>Zone search:</strong> the "🔍 Search zone" field filters the table, highlights the zone on the map and auto-zooms if there is a single result. Searches by code and name (PT and EN), ignoring accents.</li>
                     <li><strong>Map tap (mobile):</strong> a single tap shows the info-control (with the intraday curve); a second tap on the same zone selects it across all visualizations. Tapping the map background closes the info-control.</li>
                     <li><strong>Custom range validation:</strong> invalid dates (start > end, outside the data range, &gt;366 days) get a red border and an inline message; the "Apply" button is disabled until the error is resolved.</li>
-                    <li><strong>ΔPT (difference vs Portugal):</strong> optional in the table, in €/MWh and %. Useful to assess the cost of importing/exporting.</li>
+                    <li><strong>Δ vs the reference zone:</strong> optional table column (€/MWh and %) with each zone's difference against the zone chosen in "🌍 My zone". Useful to assess the cost of importing/exporting.</li>
                     <li><strong>Change vs yesterday:</strong> optional in the table in Daily mode, shows how each zone moved compared with the previous day.</li>
                     <li><strong>Partial-data indicator:</strong> zones whose last slots have not been published yet (e.g. PT before tomorrow's CET auction) get an asterisk on the map and a "partial" badge in the table/tooltip. Average/min/max use only the known slots.</li>
-                    <li><strong>Dynamic summary:</strong> contextual text with the date (Today/Yesterday/Tomorrow/date), highlighting the cheapest and most expensive zone, and the change vs PT.</li>
+                    <li><strong>Dynamic summary:</strong> contextual text with the date (Today/Yesterday/Tomorrow/date), highlighting the cheapest and most expensive zone, and the reference zone's variation against the European average.</li>
                 </ul>
                 </div>
             </div>
@@ -1203,11 +1218,12 @@ document.addEventListener('DOMContentLoaded', function() {
             rankedTitle: 'Preços por zona de licitação',
             zoneSearchPh: '🔍 Procurar zona (ex: Portugal, PT, Itália)…', zoneSearchAria: 'Procurar zona',
             zoneSearchClearTitle: 'Limpar pesquisa (Esc)', zoneSearchClearAria: 'Limpar pesquisa',
-            toggleDeltaPt: 'Mostrar ΔPT (diferença vs Portugal)',
+            toggleDeltaPt: 'Mostrar Δ vs zona de referência',
             toggleVarDia: 'Mostrar variação vs dia anterior',
             btnShare: '🔗 Copiar link de partilha', btnShareTitle: 'Copiar link partilhável para o dia atual',
             shareCopied: 'Copiado!', shareCopiedOk: '✓ Link copiado!',
             ariaTabela: 'Tabela de preços por zona',
+            refZoneLabel: '🌍 A minha zona:',
             lblZona: 'Zona:', compareLabel: 'Comparar com:', addCompare: '+ Adicionar comparação',
             addCompareAria: 'Adicionar zona à comparação', compareAria: 'Zonas em comparação',
             btnVizWide: '↔ Largura total', btnVizWideTitle: 'Alternar largura total das visualizações',
@@ -1246,10 +1262,12 @@ document.addEventListener('DOMContentLoaded', function() {
             twDesc: 'Preços médios diários de eletricidade em 47 zonas de licitação europeias.',
             rankedAgg: 'Preços por zona de licitação — ',
             sufMarket: ' [hora de mercado / CET]', sufMarketList: ' (hora de mercado, CET)',
+            creditLocal: 'Hora local', creditMarket: 'Hora de mercado (CET)',
             notaLocal: 'Valores nas horas locais de cada zona',
             notaMarket: 'Valores em hora de mercado (CET)',
             notaMarketFull: 'Valores em hora de mercado (CET) — todas as zonas alinhadas',
             avisoProvisorioPT: 'A média para Portugal não é final — falta o valor da última hora do dia (23h às 24h de PT), que ainda não foi negociado.',
+            avisoProvisorioGen: '⚠️ As zonas assinaladas com <strong>*</strong> (em CET−1, como Portugal e Irlanda) têm média ainda <strong>provisória</strong> neste dia: falta-lhes a última hora local, que o mercado day-ahead só publica no dia seguinte.',
             hmWeekShort: 'Perfil semanal',
             resAbove: 'acima', resBelow: 'abaixo',
             resEuAvg: 'da média europeia', resEuAvgOnly: 'Média europeia',
@@ -1262,7 +1280,7 @@ document.addEventListener('DOMContentLoaded', function() {
             thHrMax: 'Hora máx', thDtMax: 'Data/Hora máx',
             thZona: 'Zona', thZonaTitle: 'Ordenar por zona',
             thAvgTitle: 'Ordenar por preço médio',
-            thDeltaTitle: 'Ordenar por ΔPT (€)',
+            thDeltaTitle: 'Ordenar por Δ vs zona de referência',
             thVsYesterday: 'vs Ontem', thVarTitle: 'Variação vs dia anterior',
             thMinTitle: 'Ordenar por preço mínimo', thHrMinTitle: 'Quando ocorreu o mínimo',
             thMaxTitle: 'Ordenar por preço máximo', thHrMaxTitle: 'Quando ocorreu o máximo',
@@ -1276,7 +1294,7 @@ document.addEventListener('DOMContentLoaded', function() {
             slotsPub: ' slots publicados', slotsWord: ' slots',
             avgTitlePartialPre: 'Preço médio (parcial: ', avgTitlePartialSuf: ' slots publicados)',
             avgTitleDaily: 'Preço médio diário',
-            tdDeltaTitle: 'Diferença vs Portugal', tdVarTitle: 'Variação vs dia anterior',
+            tdDeltaTitle: 'Diferença vs a zona de referência', tdVarTitle: 'Variação vs dia anterior',
             tdMinTitle: 'Preço mínimo do dia', tdMaxTitle: 'Preço máximo do dia',
             tdAmpTitle: 'Diferença Máx − Mín',
             hrCetPrefix: 'Hora CET (mercado) do', hrLocalPrefix: 'Hora local do',
@@ -1323,11 +1341,12 @@ document.addEventListener('DOMContentLoaded', function() {
             rankedTitle: 'Prices by bidding zone',
             zoneSearchPh: '🔍 Search zone (e.g. Portugal, PT, Italy)…', zoneSearchAria: 'Search zone',
             zoneSearchClearTitle: 'Clear search (Esc)', zoneSearchClearAria: 'Clear search',
-            toggleDeltaPt: 'Show ΔPT (difference vs Portugal)',
+            toggleDeltaPt: 'Show Δ vs reference zone',
             toggleVarDia: 'Show change vs previous day',
             btnShare: '🔗 Copy share link', btnShareTitle: 'Copy a shareable link to the current day',
             shareCopied: 'Copied!', shareCopiedOk: '✓ Link copied!',
             ariaTabela: 'Price table by zone',
+            refZoneLabel: '🌍 My zone:',
             lblZona: 'Zone:', compareLabel: 'Compare with:', addCompare: '+ Add comparison',
             addCompareAria: 'Add zone to comparison', compareAria: 'Zones being compared',
             btnVizWide: '↔ Full width', btnVizWideTitle: 'Toggle full width for the visualizations',
@@ -1366,10 +1385,12 @@ document.addEventListener('DOMContentLoaded', function() {
             twDesc: 'Daily average electricity prices across 47 European bidding zones.',
             rankedAgg: 'Prices by bidding zone — ',
             sufMarket: ' [market time / CET]', sufMarketList: ' (market time, CET)',
+            creditLocal: 'Local time', creditMarket: 'Market time (CET)',
             notaLocal: 'Values in local time of each zone',
             notaMarket: 'Values in market time (CET)',
             notaMarketFull: 'Values in market time (CET) — all zones aligned',
             avisoProvisorioPT: 'The average for Portugal is not final — the last hour of the day (23:00–24:00 PT) has not been traded yet.',
+            avisoProvisorioGen: '⚠️ Zones marked with <strong>*</strong> (in CET−1, such as Portugal and Ireland) still have a <strong>provisional</strong> average for this day: their last local hour is missing, which the day-ahead market only publishes the next day.',
             hmWeekShort: 'Weekly profile',
             resAbove: 'above', resBelow: 'below',
             resEuAvg: 'the European average', resEuAvgOnly: 'European average',
@@ -1382,7 +1403,7 @@ document.addEventListener('DOMContentLoaded', function() {
             thHrMax: 'Max hour', thDtMax: 'Max date/time',
             thZona: 'Zone', thZonaTitle: 'Sort by zone',
             thAvgTitle: 'Sort by average price',
-            thDeltaTitle: 'Sort by ΔPT (€)',
+            thDeltaTitle: 'Sort by Δ vs reference zone',
             thVsYesterday: 'vs Yesterday', thVarTitle: 'Change vs previous day',
             thMinTitle: 'Sort by minimum price', thHrMinTitle: 'When the minimum occurred',
             thMaxTitle: 'Sort by maximum price', thHrMaxTitle: 'When the maximum occurred',
@@ -1396,7 +1417,7 @@ document.addEventListener('DOMContentLoaded', function() {
             slotsPub: ' slots published', slotsWord: ' slots',
             avgTitlePartialPre: 'Average price (partial: ', avgTitlePartialSuf: ' slots published)',
             avgTitleDaily: 'Daily average price',
-            tdDeltaTitle: 'Difference vs Portugal', tdVarTitle: 'Change vs previous day',
+            tdDeltaTitle: 'Difference vs the reference zone', tdVarTitle: 'Change vs previous day',
             tdMinTitle: 'Lowest price of the day', tdMaxTitle: 'Highest price of the day',
             tdAmpTitle: 'Difference Max − Min',
             hrCetPrefix: 'Market (CET) time of', hrLocalPrefix: 'Local time of',
@@ -1973,6 +1994,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var prefs = migratePrefs();
 
+    // Zona de referência (home zone): conduz a mensagem de comparação, a coluna Δ
+    // da tabela e a zona inicial dos gráficos. Persistida; default PT; pode vir de ?ref=.
+    var refZone = (prefs && prefs.refZone && ZONE_NAMES[prefs.refZone]) ? prefs.refZone : 'PT';
+
     // --- HELPERS DE DATA ---
     function parseDateStr(s) {
         var p = s.split('-');
@@ -2010,6 +2035,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (contextParts[i]) parts.push(contextParts[i]);
             }
         }
+        // Base temporal (sempre presente): Hora local vs Hora de mercado (CET)
+        parts.push(_isMarketTime() ? T('creditMarket') : T('creditLocal'));
         el.innerHTML = parts.join(' · ');
     }
     function datesInRange(startStr, endStr) {
@@ -2850,22 +2877,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Titulo com aviso provisorio se for o ultimo dia (e em hora local) — em mercado, todas as zonas estão alinhadas em CET
         if (tituloLista) {
-            var sufixoMercadoLista = _isMarketTime() ? (LANG === 'en' ? ' — in market time (CET)' : ' — em hora de mercado (CET)') : '';
+            // Base temporal sempre no título da tabela (mesma lógica do título do mapa).
+            var sufFusoLista = _isMarketTime()
+                ? (LANG === 'en' ? ' — in market time (CET)' : ' — em hora de mercado (CET)')
+                : ((!isPeriodo && isUltimoDia && refZone === 'PT')
+                    ? (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)')
+                    : (LANG === 'en' ? ' (local time)' : ' (Hora local)'));
             if (isPeriodo) {
                 var p = computePeriod();
                 var labelModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
-                tituloLista.textContent = T('rankedTitle') + ' — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')' + sufixoMercadoLista;
+                tituloLista.textContent = T('rankedTitle') + ' — ' + labelModo + ' (' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end) + ')' + sufFusoLista;
             } else {
                 var diaStr = fmtDateBR(seletorData.value);
-                var sufixoUltDia = (isUltimoDia && !_isMarketTime()) ? (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)') : '';
-                tituloLista.textContent = T('rankedTitle') + ' — ' + diaStr + sufixoUltDia + sufixoMercadoLista;
+                tituloLista.textContent = T('rankedTitle') + ' — ' + diaStr + sufFusoLista;
             }
         }
 
-        // PT reference
-        var ptVal = null;
-        if (currentData['PT'] != null) {
-            ptVal = (typeof currentData['PT'] === 'number') ? currentData['PT'] : (currentData['PT'].avg != null ? currentData['PT'].avg : null);
+        // Zona de referência (refZone) — base da coluna Δ
+        var refVal = null;
+        if (currentData[refZone] != null) {
+            refVal = (typeof currentData[refZone] === 'number') ? currentData[refZone] : (currentData[refZone].avg != null ? currentData[refZone].avg : null);
         }
 
         // Dia anterior (só Diário) para variação
@@ -2895,11 +2926,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (stats.min_date) minLabel = fmtDateBR(stats.min_date) + (stats.min_hour ? ' ' + stats.min_hour : '');
                     if (stats.max_date) maxLabel = fmtDateBR(stats.max_date) + (stats.max_hour ? ' ' + stats.max_hour : '');
                 }
-                // ΔPT
+                // Δ vs zona de referência
                 var deltaPt = null, deltaPtPct = null;
-                if (ptVal != null && zone !== 'PT') {
-                    deltaPt = stats.avg - ptVal;
-                    deltaPtPct = ptVal !== 0 ? (deltaPt / ptVal * 100) : null;
+                if (refVal != null && zone !== refZone) {
+                    deltaPt = stats.avg - refVal;
+                    deltaPtPct = refVal !== 0 ? (deltaPt / refVal * 100) : null;
                 }
                 // Variação vs dia anterior
                 var varDia = null, varDiaPct = null;
@@ -2964,7 +2995,7 @@ document.addEventListener('DOMContentLoaded', function() {
             + '<th class="rank-cell" scope="col">#</th>'
             + '<th class="sortable" data-sort="name" scope="col" title="' + T('thZonaTitle') + '">' + T('thZona') + ' ' + arrow('name') + '</th>'
             + '<th class="sortable" data-sort="avg" scope="col" title="' + T('thAvgTitle') + '">' + avgLabel + ' ' + arrow('avg') + '</th>'
-            + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" scope="col" title="' + T('thDeltaTitle') + '">ΔPT ' + arrow('deltaPt') + '</th>' : '')
+            + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" scope="col" title="' + T('thDeltaTitle') + '">Δ' + refZone + ' ' + arrow('deltaPt') + '</th>' : '')
             + (showVarDia ? '<th class="sortable" data-sort="varDia" scope="col" title="' + T('thVarTitle') + '">' + T('thVsYesterday') + ' ' + arrow('varDia') + '</th>' : '')
             + '<th class="sortable" data-sort="min" scope="col" title="' + T('thMinTitle') + '">' + minLabelTh + ' ' + arrow('min') + '</th>'
             + '<th class="hour-col" scope="col" title="' + T('thHrMinTitle') + '">' + hourMinLabel + '</th>'
@@ -2999,7 +3030,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var partialMark = e.partial ? ' <span class="partial-badge" title="' + T('partialDataPre') + e.partialKnown + '/' + e.partialTotal + T('slotsWord') + '">' + T('partialBadge') + '</span>' : '';
             var avgTitle = e.partial ? (T('avgTitlePartialPre') + e.partialKnown + '/' + e.partialTotal + T('avgTitlePartialSuf')) : T('avgTitleDaily');
             html += '<td class="price-cell num' + negCls(e.avg) + '" title="' + avgTitle + '">' + fmtN(e.avg, 2) + partialMark + '</td>';
-            if (showDeltaPt) html += '<td class="num" title="' + T('tdDeltaTitle') + '">' + (e.zone === 'PT' ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
+            if (showDeltaPt) html += '<td class="num" title="' + T('tdDeltaTitle') + '">' + (e.zone === refZone ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
             if (showVarDia) html += '<td class="num" title="' + T('tdVarTitle') + '">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
             html += '<td class="num' + negCls(e.min) + '" title="' + T('tdMinTitle') + '">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
             var horaTipPrefix = _isMarketTime() ? T('hrCetPrefix') : T('hrLocalPrefix');
@@ -4853,15 +4884,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Atualizar titulo
         var titulo;
-        var sufixoFusoMercado = _isMarketTime() ? T('sufMarket') : '';
+        // Base temporal sempre no título: mercado → CET; local → "(Hora local)";
+        // exceto a zona de referência PT no último dia, que mantém o caveat "(até às 23h de PT)".
+        var sufFuso = _isMarketTime()
+            ? T('sufMarket')
+            : ((isUltimoDia && refZone === 'PT')
+                ? (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)')
+                : (LANG === 'en' ? ' (local time)' : ' (Hora local)'));
         if (currentMode === 'diario') {
-            titulo = T('mapTitleAgg') + fmtDateBR(dateStr);
-            // "(até às 23h de PT)" só faz sentido em hora local — em CET o dia PT está completo
-            if (isUltimoDia && !_isMarketTime()) titulo += (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)');
-            titulo += sufixoFusoMercado;
+            titulo = T('mapTitleAgg') + fmtDateBR(dateStr) + sufFuso;
         } else {
             var labelModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
-            titulo = T('mapTitleAgg') + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')' + sufixoFusoMercado;
+            titulo = T('mapTitleAgg') + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')' + sufFuso;
         }
         document.getElementById('titulo-mapa').textContent = titulo;
         // Crédito de exportação do mapa
@@ -4874,16 +4908,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         setExportCredit('credit-mapa', ctxMapa);
 
-        // Aviso provisorio — só aparece em hora local; em hora de mercado o dia PT está completo
-        var avisoEl = document.getElementById('aviso-provisorio');
-        if (avisoEl) {
-            if (isUltimoDia && !_isMarketTime()) {
-                avisoEl.textContent = T('avisoProvisorioPT');
-                avisoEl.style.display = 'block';
-            } else {
-                avisoEl.style.display = 'none';
-            }
-        }
+        // Aviso de média provisória (último dia, hora local) — depende da zona de referência
+        updateAvisoProvisorio();
 
         info.update();
         if (typeof updateChart === 'function') updateChart();
@@ -4904,6 +4930,34 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dateStr === formatDateStr(tstr)) return T('tomorrow');
         return T('resEm') + fmtDateBR(dateStr);
     }
+    // Aviso de média provisória no último dia em hora local.
+    //  - Zona de referência = PT → aviso específico de PT (junto ao título), como antes.
+    //  - Outra zona → alerta genérico sobre as zonas marcadas com * (abaixo do mapa),
+    //    pois o caso aplica-se a todas as zonas em CET−1 (PT e IE), não só a Portugal.
+    function updateAvisoProvisorio() {
+        var showProv = (currentMode === 'diario'
+            && seletorData.value === ultimaDataDisponivel
+            && !_isMarketTime());
+        var avisoEl = document.getElementById('aviso-provisorio');
+        if (avisoEl) {
+            if (showProv && refZone === 'PT') {
+                avisoEl.textContent = T('avisoProvisorioPT');
+                avisoEl.style.display = 'block';
+            } else {
+                avisoEl.style.display = 'none';
+            }
+        }
+        var avisoLocalEl = document.getElementById('aviso-parcial-local');
+        if (avisoLocalEl) {
+            if (showProv && refZone !== 'PT') {
+                avisoLocalEl.innerHTML = T('avisoProvisorioGen');
+                avisoLocalEl.style.display = 'block';
+            } else {
+                avisoLocalEl.style.display = 'none';
+            }
+        }
+    }
+
     function updateResumoRapido() {
         var el = document.getElementById('resumo-rapido');
         if (!el) return;
@@ -4923,8 +4977,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var sum = 0; for (var i = 0; i < entries.length; i++) sum += entries[i].avg;
         var media = sum / entries.length;
 
-        var ptVal = currentData['PT'] != null
-            ? ((typeof currentData['PT'] === 'number') ? currentData['PT'] : currentData['PT'].avg)
+        var refVal = currentData[refZone] != null
+            ? ((typeof currentData[refZone] === 'number') ? currentData[refZone] : currentData[refZone].avg)
             : null;
 
         var prefix;
@@ -4937,13 +4991,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         var html = '<span class="resumo-label">' + prefix + '</span> — ';
-        if (ptVal != null) {
-            var diff = ptVal - media;
+        if (refVal != null) {
+            var diff = refVal - media;
             var pct = media !== 0 ? (diff / media * 100) : 0;
             var sinal = pct >= 0 ? T('resAbove') : T('resBelow');
             var cls = pct >= 0 ? 'resumo-pt-bad' : 'resumo-pt-good';
             var arrow = pct >= 0 ? '▲' : '▼';
-            html += zoneFlag('PT') + ' Portugal: <strong>' + fmtN(ptVal, 2) + ' €/MWh</strong> '
+            html += zoneFlag(refZone) + ' ' + zoneName(refZone) + ': <strong>' + fmtN(refVal, 2) + ' €/MWh</strong> '
                 + '<span class="' + cls + '">(' + arrow + ' ' + fmtN(Math.abs(pct), 1) + '% ' + sinal + ' ' + T('resEuAvg') + ' ' + fmtN(media, 2) + ')</span>. ';
         } else {
             html += T('resEuAvgOnly') + ': <strong>' + fmtN(media, 2) + ' €/MWh</strong>. ';
@@ -5175,6 +5229,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 var zoneSel = document.getElementById('global-zone-select');
                 if (zoneSel && zoneSel.value) params.set('zone', zoneSel.value);
+                if (refZone && refZone !== 'PT') params.set('ref', refZone);
                 // Compares: até 4 zonas; ZoneIDs curtos (max ~16 chars cada)
                 if (typeof getCompareZones === 'function') {
                     var cmp = getCompareZones();
@@ -5421,10 +5476,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     optsHtml += '<option value="' + zk + '">' + zoneName(zk) + '</option>';
                 }
                 zoneSel.innerHTML = optsHtml;
-                zoneSel.value = 'PT';
                 var _urlParams = new URLSearchParams(window.location.search);
+                // Zona de referência: ?ref= > pref guardada > PT
+                var urlRef = _urlParams.get('ref');
+                if (urlRef && ZONE_NAMES[urlRef]) { refZone = urlRef; savePref('refZone', refZone); }
+                // Zona dos gráficos: ?zone= > última zona navegada > zona de referência
+                zoneSel.value = refZone;
                 var urlZone = _urlParams.get('zone') || prefs.zone;
                 if (urlZone && ZONE_NAMES[urlZone]) zoneSel.value = urlZone;
+                // Seletor da zona de referência (topo) — conduz comparação, coluna Δ e gráficos
+                var refSel = document.getElementById('ref-zone-select');
+                if (refSel) {
+                    refSel.innerHTML = optsHtml;
+                    refSel.value = refZone;
+                    refSel.addEventListener('change', function () {
+                        if (!ZONE_NAMES[refSel.value]) return;
+                        refZone = refSel.value;
+                        savePref('refZone', refZone);
+                        // Aponta os gráficos à nova zona de referência (reaproveita o handler de zoneSel)
+                        zoneSel.value = refZone;
+                        zoneSel.dispatchEvent(new Event('change'));
+                        // Re-renderiza a tabela (coluna Δ) e a mensagem de comparação
+                        updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
+                        updateResumoRapido();
+                        updateAvisoProvisorio();
+                    });
+                }
 
                 // Migracao soft do legado 'compareZone' (string) -> 'compareZones' (array)
                 if (!prefs.compareZones && prefs.compareZone && ZONE_NAMES[prefs.compareZone]) {
