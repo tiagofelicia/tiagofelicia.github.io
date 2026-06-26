@@ -750,6 +750,13 @@
             <button type="button" class="fuso-btn active" data-fuso="local" data-i18n="fusoLocal" data-i18n-title="fusoLocalTitle" title="Cada zona mostrada no seu fuso local (default)">🌍 Hora local</button>
             <button type="button" class="fuso-btn" data-fuso="mercado" data-i18n="fusoMercado" data-i18n-title="fusoMercadoTitle" title="Todas as zonas alinhadas em CET (hora de mercado europeu day-ahead)">🇪🇺 Hora de mercado (CET)</button>
         </div>
+
+        <div class="fuso-toggle metric-toggle" role="group" aria-label="Métrica do mapa" data-i18n-aria="ariaMetric">
+            <span class="fuso-label" data-i18n="metricLabel">Métrica:</span>
+            <button type="button" class="fuso-btn metric-btn active" data-metric="avg" data-i18n="metricAvg" data-i18n-title="metricAvgTitle" title="Preço médio de cada zona (default)">📊 Média</button>
+            <button type="button" class="fuso-btn metric-btn" data-metric="min" data-i18n="metricMin" data-i18n-title="metricMinTitle" title="Preço mínimo de cada zona no período">🔻 Mínimo</button>
+            <button type="button" class="fuso-btn metric-btn" data-metric="max" data-i18n="metricMax" data-i18n-title="metricMaxTitle" title="Preço máximo de cada zona no período">🔺 Máximo</button>
+        </div>
         <div class="range-wrapper" id="range-wrapper" style="display:none;">
             <label for="data-inicio" data-i18n="lblInicio">Início:</label>
             <input type="date" id="data-inicio" aria-describedby="range-error">
@@ -1201,6 +1208,9 @@ document.addEventListener('DOMContentLoaded', function() {
             mDiario: 'Diário', mSemanal: 'Semanal (7d)', mMensal: 'Mensal', mCustom: 'Personalizado',
             mMensalTitle: 'Mês deslizante terminado no dia selecionado (28-31 dias consoante o mês)',
             fusoLabel: 'Fuso:', fusoLocal: '🌍 Hora local', fusoMercado: '🇪🇺 Hora de mercado (CET)',
+            metricLabel: 'Métrica:', metricAvg: '📊 Média', metricMin: '🔻 Mínimo', metricMax: '🔺 Máximo',
+            metricAvgTitle: 'Preço médio de cada zona (default)', metricMinTitle: 'Preço mínimo de cada zona no período', metricMaxTitle: 'Preço máximo de cada zona no período',
+            ariaMetric: 'Métrica do mapa',
             fusoLocalTitle: 'Cada zona mostrada no seu fuso local (default)',
             fusoMercadoTitle: 'Todas as zonas alinhadas em CET (hora de mercado europeu day-ahead)',
             ariaFuso: 'Fuso horário de visualização',
@@ -1255,6 +1265,8 @@ document.addEventListener('DOMContentLoaded', function() {
             dataPre: '· Dados ', dataTitle: 'Última data com dados: ',
             mapTitleDaily: 'Preços Médios de Eletricidade Day-Ahead',
             mapTitleAgg: 'Preços Médios de Eletricidade Day-Ahead - ',
+            mapTitleAggMin: 'Preços Mínimos de Eletricidade Day-Ahead - ',
+            mapTitleAggMax: 'Preços Máximos de Eletricidade Day-Ahead - ',
             ogTitle: 'Preços Médios de Eletricidade Day-Ahead na Europa',
             twTitle: 'Preços Médios de Eletricidade Day-Ahead na Europa',
             metaDesc: 'Mapa interativo dos preços médios diários de eletricidade (day-ahead) em 47 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, curva intradiária, heatmaps e comparação entre zonas. Dados oficiais da ENTSO-E Transparency Platform.',
@@ -1324,6 +1336,9 @@ document.addEventListener('DOMContentLoaded', function() {
             mDiario: 'Daily', mSemanal: 'Weekly (7d)', mMensal: 'Monthly', mCustom: 'Custom',
             mMensalTitle: 'Rolling month ending on the selected day (28-31 days depending on the month)',
             fusoLabel: 'Time zone:', fusoLocal: '🌍 Local time', fusoMercado: '🇪🇺 Market time (CET)',
+            metricLabel: 'Metric:', metricAvg: '📊 Average', metricMin: '🔻 Minimum', metricMax: '🔺 Maximum',
+            metricAvgTitle: 'Average price of each zone (default)', metricMinTitle: 'Minimum price of each zone in the period', metricMaxTitle: 'Maximum price of each zone in the period',
+            ariaMetric: 'Map metric',
             fusoLocalTitle: 'Each zone shown in its local time zone (default)',
             fusoMercadoTitle: 'All zones aligned to CET (European day-ahead market time)',
             ariaFuso: 'Display time zone',
@@ -1378,6 +1393,8 @@ document.addEventListener('DOMContentLoaded', function() {
             dataPre: '· Data ', dataTitle: 'Latest date with data: ',
             mapTitleDaily: 'Average Day-Ahead electricity prices',
             mapTitleAgg: 'Average Day-Ahead electricity prices - ',
+            mapTitleAggMin: 'Minimum Day-Ahead electricity prices - ',
+            mapTitleAggMax: 'Maximum Day-Ahead electricity prices - ',
             ogTitle: 'Average Day-Ahead Electricity Prices in Europe',
             twTitle: 'Average Day-Ahead Electricity Prices in Europe',
             metaDesc: 'Interactive map of daily average day-ahead electricity prices across 47 European bidding zones. Daily, weekly, monthly and custom views, price evolution chart, intraday curve, heatmaps and zone comparison. Official ENTSO-E Transparency Platform data.',
@@ -1694,6 +1711,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var val = currentData[dataZone];
         if (val === null || val === undefined) return null;
         if (typeof val === 'number') return val;  // formato antigo
+        // Métrica do mapa: min/max com fallback para a média se não existirem.
+        if (mapMetric === 'min' && val.min != null) return val.min;
+        if (mapMetric === 'max' && val.max != null) return val.max;
         return val.avg;
     }
 
@@ -1997,6 +2017,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Zona de referência (home zone): conduz a mensagem de comparação, a coluna Δ
     // da tabela e a zona inicial dos gráficos. Persistida; default PT; pode vir de ?ref=.
     var refZone = (prefs && prefs.refZone && ZONE_NAMES[prefs.refZone]) ? prefs.refZone : 'PT';
+
+    // Métrica mostrada no mapa: 'avg' (default), 'min' ou 'max'. Persistida.
+    // Afeta apenas a cor das zonas, os números das etiquetas e o título do mapa;
+    // tabela, gráficos e heatmaps mantêm-se sempre na média.
+    var mapMetric = (prefs && (prefs.mapMetric === 'min' || prefs.mapMetric === 'max')) ? prefs.mapMetric : 'avg';
 
     // --- HELPERS DE DATA ---
     function parseDateStr(s) {
@@ -4847,6 +4872,50 @@ document.addEventListener('DOMContentLoaded', function() {
         return { start: dateStr, end: dateStr };
     }
 
+    // Prefixo do título do mapa consoante a métrica ativa (média/mín/máx).
+    function metricTitlePrefix() {
+        if (mapMetric === 'min') return T('mapTitleAggMin');
+        if (mapMetric === 'max') return T('mapTitleAggMax');
+        return T('mapTitleAgg');
+    }
+
+    // Constrói o título do mapa a partir do estado atual (modo, data, fuso,
+    // métrica). Usado tanto no loadPriceData como ao trocar de métrica.
+    function buildMapTitle() {
+        var dateStr = seletorData.value;
+        var isUltimoDia = (currentMode === 'diario' && dateStr === ultimaDataDisponivel);
+        var sufFuso = _isMarketTime()
+            ? T('sufMarket')
+            : ((isUltimoDia && refZone === 'PT')
+                ? (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)')
+                : (LANG === 'en' ? ' (local time)' : ' (Hora local)'));
+        var prefix = metricTitlePrefix();
+        if (currentMode === 'diario') {
+            return prefix + fmtDateBR(dateStr) + sufFuso;
+        }
+        var labelModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
+        var period = computePeriod();
+        return prefix + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')' + sufFuso;
+    }
+
+    // Troca a métrica do mapa e re-renderiza apenas as visualizações do mapa
+    // (cor das zonas, etiquetas e título). Não toca em tabela/gráficos.
+    function applyMapMetric(m) {
+        if (m !== 'avg' && m !== 'min' && m !== 'max') return;
+        mapMetric = m;
+        savePref('mapMetric', m);
+        var btns = document.querySelectorAll('.metric-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.toggle('active', btns[i].dataset.metric === m);
+        }
+        if (geojsonLayer) {
+            geojsonLayer.setStyle(style);
+            updatePriceLabels();
+        }
+        var tEl = document.getElementById('titulo-mapa');
+        if (tEl) tEl.textContent = buildMapTitle();
+    }
+
     // --- CARREGAR DADOS DE PRECOS ---
     async function loadPriceData() {
         loadingIndicator.style.display = 'block';
@@ -4899,22 +4968,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-aplicar pesquisa de zona (se ativa)
         applyZoneSearch();
 
-        // Atualizar titulo
-        var titulo;
-        // Base temporal sempre no título: mercado → CET; local → "(Hora local)";
-        // exceto a zona de referência PT no último dia, que mantém o caveat "(até às 23h de PT)".
-        var sufFuso = _isMarketTime()
-            ? T('sufMarket')
-            : ((isUltimoDia && refZone === 'PT')
-                ? (LANG === 'en' ? ' (until 23:00 PT)' : ' (até às 23h de PT)')
-                : (LANG === 'en' ? ' (local time)' : ' (Hora local)'));
-        if (currentMode === 'diario') {
-            titulo = T('mapTitleAgg') + fmtDateBR(dateStr) + sufFuso;
-        } else {
-            var labelModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
-            titulo = T('mapTitleAgg') + labelModo + ' (' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end) + ')' + sufFuso;
-        }
-        document.getElementById('titulo-mapa').textContent = titulo;
+        // Atualizar titulo (prefixo depende da métrica média/mín/máx ativa)
+        document.getElementById('titulo-mapa').textContent = buildMapTitle();
         // Crédito de exportação do mapa
         var ctxMapa;
         if (currentMode === 'diario') {
@@ -5372,7 +5427,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // --- Toggle Fuso (Hora local vs Hora de mercado) ---
-            var fusoBtns = document.querySelectorAll('.fuso-btn');
+            // [data-fuso] em vez de .fuso-btn para não apanhar os botões de
+            // métrica do mapa (que partilham a classe .fuso-btn só por estilo).
+            var fusoBtns = document.querySelectorAll('[data-fuso]');
             function aplicarFusoBotoesMP() {
                 fusoBtns.forEach(function(b) { b.classList.toggle('active', b.dataset.fuso === _fusoAtivo); });
                 // Etiquetas dinâmicas
@@ -5401,6 +5458,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (typeof updateHourlyHeatmap === 'function') updateHourlyHeatmap();
                     if (typeof updateWeeklyProfile === 'function') updateWeeklyProfile();
                     if (typeof updateHeatmap === 'function') updateHeatmap();
+                });
+            });
+
+            // --- Toggle Métrica do mapa (Média / Mínimo / Máximo) ---
+            var metricBtns = document.querySelectorAll('.metric-btn');
+            metricBtns.forEach(function(b) {
+                b.classList.toggle('active', b.dataset.metric === mapMetric);
+                b.addEventListener('click', function() {
+                    applyMapMetric(this.dataset.metric);
                 });
             });
 

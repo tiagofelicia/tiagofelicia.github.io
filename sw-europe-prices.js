@@ -9,7 +9,7 @@
 // Atualizar CACHE_VERSION sempre que houver alteracoes ao SW para forcar
 // limpeza da versao antiga.
 
-const CACHE_VERSION = 'europe-prices-v5';
+const CACHE_VERSION = 'europe-prices-v6';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 const CDN_CACHE = `${CACHE_VERSION}-cdn`;
