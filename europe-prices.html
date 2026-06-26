@@ -865,7 +865,7 @@
         <div class="heatmap-controls">
             <label for="hw-window" data-i18n="hwLabel">Período:</label>
             <select id="hw-window">
-                <option value="30" data-i18n="hwOpt30">Últimos 30 dias</option>
+                <option value="rolling" data-i18n="hwOptRolling">Último mês deslizante</option>
                 <option value="60" data-i18n="hwOpt60">Últimos 60 dias</option>
                 <option value="90" data-i18n="hwOpt90">Últimos 90 dias</option>
                 <option value="365" data-i18n="hwOpt365">Últimos 365 dias</option>
@@ -1243,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', function() {
             orientHours: '⬇ Horas', orientHoursTitle: 'Horas nas linhas',
             orientDays: '⬇ Dias', orientDaysTitle: 'Dias da semana nas linhas',
             hwLabel: 'Período:',
-            hwOpt30: 'Últimos 30 dias', hwOpt60: 'Últimos 60 dias', hwOpt90: 'Últimos 90 dias', hwOpt365: 'Últimos 365 dias',
+            hwOptRolling: 'Último mês deslizante', hwOpt60: 'Últimos 60 dias', hwOpt90: 'Últimos 90 dias', hwOpt365: 'Últimos 365 dias',
             yearLabel: 'Ano:',
             faqHeading: 'Sobre este mapa',
             lblDiario: 'Diário', lblSemanal: 'Semanal', lblMensal: 'Mensal', lblPersonalizado: 'Personalizado', lblPeriodo: 'Período',
@@ -1366,7 +1366,7 @@ document.addEventListener('DOMContentLoaded', function() {
             orientHours: '⬇ Hours', orientHoursTitle: 'Hours on the rows',
             orientDays: '⬇ Days', orientDaysTitle: 'Weekdays on the rows',
             hwLabel: 'Period:',
-            hwOpt30: 'Last 30 days', hwOpt60: 'Last 60 days', hwOpt90: 'Last 90 days', hwOpt365: 'Last 365 days',
+            hwOptRolling: 'Last rolling month', hwOpt60: 'Last 60 days', hwOpt90: 'Last 90 days', hwOpt365: 'Last 365 days',
             yearLabel: 'Year:',
             faqHeading: 'About this map',
             lblDiario: 'Daily', lblSemanal: 'Weekly', lblMensal: 'Monthly', lblPersonalizado: 'Custom', lblPeriodo: 'Period',
@@ -4342,16 +4342,25 @@ document.addEventListener('DOMContentLoaded', function() {
         var statsEl = document.getElementById('heatmap-week-stats');
         if (!zoneSel || !winSel || !container) return;
         var zone = zoneSel.value;
-        var nDays = parseInt(winSel.value, 10) || 30;
+        var winVal = winSel.value;
+        var isRolling = (winVal === 'rolling');
+        var nDays = parseInt(winVal, 10) || 30;  // só usado no modo "N dias"
         if (!zone) return;
 
-        // Periodo: nDays dias terminados no dia mais recente disponivel (ou
-        // no seletor principal se for anterior)
+        // Periodo terminado no dia mais recente disponivel (ou no seletor
+        // principal se for anterior). No modo "mês deslizante" usa a MESMA
+        // logica do Heatmap horario (rollingMonthStart), garantindo datas
+        // default coincidentes entre as duas grelhas.
         var endStr = ultimaDataDisponivel || (seletorData && seletorData.value);
         if (!endStr) return;
-        var endD = parseDateStr(endStr);
-        var startD = new Date(endD); startD.setDate(startD.getDate() - (nDays - 1));
-        var startStr = formatDateStr(startD);
+        var startStr;
+        if (isRolling) {
+            startStr = rollingMonthStart(endStr);
+        } else {
+            var endD = parseDateStr(endStr);
+            var startD = new Date(endD); startD.setDate(startD.getDate() - (nDays - 1));
+            startStr = formatDateStr(startD);
+        }
         if (startStr < DATA_INICIO) startStr = DATA_INICIO;
 
         var monthsNeeded = monthsInRange(startStr, endStr);
@@ -4366,6 +4375,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var dataZone = ZONE_DATA_MAP[zone] || zone;
         var allDays = datesInRange(startStr, endStr);
+
+        // Rótulos da janela: no modo deslizante descreve "mês deslizante" e
+        // usa a contagem real de dias (28-31); nos restantes usa os N nominais.
+        var winCountForLabel = isRolling ? allDays.length : nDays;
+        var winLabel = isRolling
+            ? (LANG === 'en' ? 'last rolling month' : 'último mês deslizante')
+            : ((LANG === 'en' ? 'last ' : 'últimos ') + nDays + (LANG === 'en' ? ' days' : ' dias'));
+        var winLabelCap = winLabel.charAt(0).toUpperCase() + winLabel.slice(1);
 
         // Acumular por (hora, dia-da-semana ISO 0=Seg .. 6=Dom)
         var sums = []; var counts = [];
@@ -4449,8 +4466,8 @@ document.addEventListener('DOMContentLoaded', function() {
             : null;
         var rawAvgTip = rawAvg != null
             ? ((LANG === 'en')
-                ? ('Period average (' + nDays + ' days): ' + fmtN(rawAvg, 2) + ' €/MWh — matches the Hourly heatmap')
-                : ('Média do período (' + nDays + ' dias): ' + fmtN(rawAvg, 2) + ' €/MWh — coincide com o Heatmap horário'))
+                ? ('Period average (' + winCountForLabel + ' days): ' + fmtN(rawAvg, 2) + ' €/MWh — matches the Hourly heatmap')
+                : ('Média do período (' + winCountForLabel + ' dias): ' + fmtN(rawAvg, 2) + ' €/MWh — coincide com o Heatmap horário'))
             : T('noData');
         var coloredCell = function(v, extraCls, tip) {
             if (v == null) {
@@ -4521,7 +4538,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Linha espacadora
             for (var sp2 = 0; sp2 < 24 + 3; sp2++) html += '<div class="hh-cell hh-spacer"></div>';
             // Linha das medias por hora
-            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvgWeekPre') + nDays + T('tipWeekSuf') + '">' + T('stAvg') + '</div>';
+            html += '<div class="hh-cell hh-avg-header" title="' + T('tipAvgWeekPre') + winCountForLabel + T('tipWeekSuf') + '">' + T('stAvg') + '</div>';
             for (var h6 = 0; h6 < 24; h6++) {
                 html += coloredCell(hourAvg[h6], 'hh-avg', T('tipAvgWeekHourPre') + String(h6).padStart(2, '0') + 'h' + T('tipWeekHourSuf') + (hourAvg[h6] != null ? fmtN(hourAvg[h6], 2) + ' €/MWh' : '—'));
             }
@@ -4532,7 +4549,7 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = html;
 
         if (titulo) {
-            titulo.textContent = T('hmWeekShort') + ' — ' + zoneName(zone) + (LANG === 'en' ? ' · last ' : ' · últimos ') + nDays + (LANG === 'en' ? ' days (' : ' dias (') + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')';
+            titulo.textContent = T('hmWeekShort') + ' — ' + zoneName(zone) + ' · ' + winLabel + ' (' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')';
         }
         if (statsEl) {
             if (rawHourly.length) {
@@ -4549,7 +4566,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crédito de exportação
         setExportCredit('credit-heatmap-week', [
             zoneName(zone),
-            (LANG === 'en' ? 'Last ' : 'Últimos ') + nDays + (LANG === 'en' ? ' days (' : ' dias (') + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')'
+            winLabelCap + ' (' + fmtDateBR(startStr) + ' → ' + fmtDateBR(endStr) + ')'
         ]);
     }
 
@@ -5652,7 +5669,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // --- PERFIL SEMANAL: input "Período" ---
             var hwWindow = document.getElementById('hw-window');
             if (hwWindow) {
-                if (prefs.weeklyWindow && /^(30|60|90|365)$/.test(prefs.weeklyWindow)) {
+                if (prefs.weeklyWindow && /^(rolling|60|90|365)$/.test(prefs.weeklyWindow)) {
                     hwWindow.value = prefs.weeklyWindow;
                 }
                 hwWindow.addEventListener('change', function() {

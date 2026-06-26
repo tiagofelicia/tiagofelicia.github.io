@@ -14,6 +14,7 @@
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/europe-generation" />
     <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/europe-generation" />
+    <link rel="alternate" hreflang="en" href="https://www.tiagofelicia.pt/europe-generation?lang=en" />
     <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/europe-generation" />
 
     <meta property="og:type" content="website" />
@@ -125,7 +126,8 @@
             "Percentagem renovável sobre produção ou consumo",
             "Toggle de bombagem no denominador",
             "Vistas diária, semanal, mensal e personalizada",
-            "Tabela ordenável com ΔPT (diferença vs Portugal)",
+            "Tabela ordenável com coluna Δ (diferença vs a zona de referência escolhida)",
+            "Seletor de zona de referência (A minha zona) que conduz a comparação, a coluna Δ e os gráficos",
             "Gráfico de evolução (colunas ou áreas empilhadas)",
             "Pesquisa e filtro de país",
             "Link de partilha por data",
@@ -346,13 +348,13 @@
         .ranked-table td { padding: 6px 10px; border-bottom: 1px solid #eee; text-align: center; }
         .ranked-table td:nth-child(2) { text-align: left; }
         .ranked-table tr:hover { background: #f8fafc; }
-        .ranked-table tr[data-country="pt"] { background: #fef9c3; }
-        .ranked-table tr[data-country="pt"]:hover { background: #fde68a; }
+        .ranked-table tr.ref-row { background: #fef9c3; }
+        .ranked-table tr.ref-row:hover { background: #fde68a; }
         .ranked-table .spark-cell { padding: 2px 6px; min-width: 80px; }
         .ranked-table .spark-cell svg { display: block; margin: 0 auto; }
         [data-theme="dark"] .ranked-table .spark-cell svg polyline { stroke: #60a5fa; }
-        [data-theme="dark"] .ranked-table tr[data-country="pt"] { background: #422006; }
-        [data-theme="dark"] .ranked-table tr[data-country="pt"]:hover { background: #78350f; }
+        [data-theme="dark"] .ranked-table tr.ref-row { background: #422006; }
+        [data-theme="dark"] .ranked-table tr.ref-row:hover { background: #78350f; }
         .ranked-table .rank-cell { width: 40px; color: #888; }
         .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
         .flag-img { display: inline-block; vertical-align: middle; margin-right: 5px; border: 1px solid rgba(0,0,0,0.15); border-radius: 1px; }
@@ -442,6 +444,24 @@
         /* Keyboard shortcut hints */
         .kbd-hint { display: inline-block; padding: 1px 5px; border-radius: 3px; border: 1px solid #d1d5db; background: #f9fafb; font-family: monospace; font-size: 0.85em; color: #374151; }
         [data-theme="dark"] .kbd-hint { border-color: #475569; background: #1e293b; color: #cbd5e1; }
+        /* Seletor de idioma PT/EN */
+        .lang-switch { display:inline-flex; border:1px solid #cbd5e1; border-radius:5px; overflow:hidden; font-size:0.82em; vertical-align:middle; }
+        .lang-switch a { padding:5px 9px; color:#475569; text-decoration:none; font-weight:600; border-right:1px solid #cbd5e1; }
+        .lang-switch a:last-child { border-right:none; }
+        .lang-switch a.active { background:#2563eb; color:#fff; }
+        .lang-switch a:not(.active):hover { background:#e2e8f0; }
+        [data-theme="dark"] .lang-switch { border-color:#475569; }
+        /* Seletor de zona de referência (topo) */
+        .ref-zone-control { display:inline-flex; align-items:center; gap:6px; font-size:0.82em; color:#475569; font-weight:600; }
+        .ref-zone-control select { font-size:0.95em; padding:4px 6px; border:1px solid #cbd5e1; border-radius:5px; background:#fff; color:#1e293b; max-width:210px; }
+        [data-theme="dark"] .ref-zone-control { color:#cbd5e1; }
+        [data-theme="dark"] .ref-zone-control select { background:#1e293b; color:#e2e8f0; border-color:#475569; }
+        [data-theme="dark"] .lang-switch a { color:#cbd5e1; border-color:#475569; }
+        [data-theme="dark"] .lang-switch a.active { background:#2563eb; color:#fff; }
+        [data-theme="dark"] .lang-switch a:not(.active):hover { background:#334155; }
+        /* FAQ bilingue: mostra apenas o bloco do idioma ativo */
+        html[lang="en"] [data-lang-block="pt"] { display: none; }
+        html:not([lang="en"]) [data-lang-block="en"] { display: none; }
     </style>
 </head>
 <body>
@@ -454,90 +474,98 @@
 <div id="menu-placeholder"></div>
 <nav class="breadcrumb" aria-label="breadcrumb">
     <ol>
-        <li><a href="/">Início</a></li>
-        <li>Europa</li>
-        <li aria-current="page">Produção Europa</li>
+        <li><a href="/" data-i18n="bcHome">Início</a></li>
+        <li data-i18n="bcEuropa">Europa</li>
+        <li aria-current="page" data-i18n="bcThis">Produção Europa</li>
     </ol>
 </nav>
 
 
 <main id="main-content">
     <div class="painel-header">
-        <div class="mode-toggle" role="tablist" aria-label="Modo de agregação">
-            <button type="button" class="mode-btn active" data-mode="day" role="tab" aria-selected="true" aria-pressed="true">Diário</button>
-            <button type="button" class="mode-btn" data-mode="week" role="tab" aria-selected="false" aria-pressed="false">Semanal (7d)</button>
-            <button type="button" class="mode-btn" data-mode="month" role="tab" aria-selected="false" aria-pressed="false">Mensal (30d)</button>
-            <button type="button" class="mode-btn" data-mode="custom" role="tab" aria-selected="false" aria-pressed="false">Personalizado</button>
+        <div class="top-controls" style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+            <label class="ref-zone-control"><span data-i18n="refZoneLabel">🌍 A minha zona:</span>
+                <select id="ref-zone-select" aria-label="Zona de referência / Reference zone"></select>
+            </label>
+            <span class="lang-switch" role="group" aria-label="Idioma / Language">
+                <a href="#" data-lang="pt">PT</a><a href="#" data-lang="en">EN</a>
+            </span>
+        </div>
+        <div class="mode-toggle" role="tablist" aria-label="Modo de agregação" data-i18n-aria="ariaModoAgg">
+            <button type="button" class="mode-btn active" data-mode="day" role="tab" aria-selected="true" aria-pressed="true" data-i18n="mDiario">Diário</button>
+            <button type="button" class="mode-btn" data-mode="week" role="tab" aria-selected="false" aria-pressed="false" data-i18n="mSemanal">Semanal (7d)</button>
+            <button type="button" class="mode-btn" data-mode="month" role="tab" aria-selected="false" aria-pressed="false" data-i18n="mMensal">Mensal (30d)</button>
+            <button type="button" class="mode-btn" data-mode="custom" role="tab" aria-selected="false" aria-pressed="false" data-i18n="mCustom">Personalizado</button>
         </div>
 
         <div class="date-selector" id="date-selector-wrapper">
-            <label for="seletor-data" id="label-seletor-data">Selecione o dia:</label>
+            <label for="seletor-data" id="label-seletor-data" data-i18n="lblSelDia">Selecione o dia:</label>
             <div class="date-nav-wrapper">
-                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior">&#10094;</button>
+                <button type="button" class="btn-nav" id="btn-prev" title="Dia anterior" data-i18n-title="btnPrevTitle">&#10094;</button>
                 <input type="date" id="seletor-data">
-                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte">&#10095;</button>
+                <button type="button" class="btn-nav" id="btn-next" title="Dia seguinte" data-i18n-title="btnNextTitle">&#10095;</button>
             </div>
         </div>
 
-        <div class="range-pickers" id="range-pickers" role="group" aria-label="Intervalo personalizado">
-            <label for="range-start">Início:</label>
+        <div class="range-pickers" id="range-pickers" role="group" aria-label="Intervalo personalizado" data-i18n-aria="ariaIntervalo">
+            <label for="range-start" data-i18n="lblInicio">Início:</label>
             <input type="date" id="range-start">
-            <label for="range-end">Fim:</label>
+            <label for="range-end" data-i18n="lblFim">Fim:</label>
             <input type="date" id="range-end">
             <span id="range-info" style="font-size:0.85em; opacity:0.7;"></span>
         </div>
 
-        <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
+        <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;" data-i18n="dadosDesde">
             Dados disponíveis desde 01/01/2026 &mdash; Fonte: Energy-Charts API (Fraunhofer ISE)
         </p>
         <div id="resumo-rapido" class="resumo-rapido" role="status" aria-live="polite" style="display:none;"></div>
         <div class="cross-link">
-            <a href="#" id="link-precos" title="Ver preços de eletricidade para o mesmo dia">&#128202; Ver preços de eletricidade</a>
+            <a href="#" id="link-precos" title="Ver preços de eletricidade para o mesmo dia" data-i18n="linkPrecos" data-i18n-title="linkPrecosTitle">&#128202; Ver preços de eletricidade</a>
         </div>
-        <h1 id="titulo-mapa">Mapa de Produção de Eletricidade na Europa</h1>
-        <p>Percentagem de energia renovável no mix de produção por país</p>
+        <h1 id="titulo-mapa" data-i18n="mapH1">Mapa de Produção de Eletricidade na Europa</h1>
+        <p data-i18n="subtitle">Percentagem de energia renovável no mix de produção por país</p>
         <p id="source-badge" class="source-badge" role="status" aria-live="polite"></p>
     </div>
 
-    <div id="loading-indicator" role="status" aria-live="polite">A carregar dados...</div>
+    <div id="loading-indicator" role="status" aria-live="polite" data-i18n="loading">A carregar dados...</div>
 
     <div id="mapa-wrapper">
-        <button class="btn-fullscreen" onclick="toggleFullscreen()" id="btn-fullscreen" title="Abrir mapa em ecrã inteiro">&#x26F6; Ecrã inteiro</button>
-        <div id="calc-badge" class="calc-badge" title="Opções de cálculo actuais (clique para ajustar)" aria-label="Opções de cálculo actuais">⚙️ <span id="calc-badge-text">Base: Produção · Bombagem excluída · Médias diárias</span></div>
-        <div id="mapa-container" role="img" aria-label="Mapa interativo da produção de eletricidade por país europeu" aria-describedby="ranked-list-content"></div>
+        <button class="btn-fullscreen" onclick="toggleFullscreen()" id="btn-fullscreen" title="Abrir mapa em ecrã inteiro" data-i18n="fsOpen" data-i18n-title="fsOpenTitle">&#x26F6; Ecrã inteiro</button>
+        <div id="calc-badge" class="calc-badge" title="Opções de cálculo actuais (clique para ajustar)" aria-label="Opções de cálculo actuais" data-i18n-title="calcBadgeTitle" data-i18n-aria="ariaCalcBadge">⚙️ <span id="calc-badge-text">Base: Produção · Bombagem excluída · Médias diárias</span></div>
+        <div id="mapa-container" role="img" aria-label="Mapa interativo da produção de eletricidade por país europeu" aria-describedby="ranked-list-content" data-i18n-aria="ariaMapa"></div>
     </div>
 
     <details id="calc-options" class="calc-options">
-        <summary><span class="calc-options-gear">⚙️</span> <strong>Opções de cálculo:</strong> <span id="calc-options-summary">Base: Produção · Bombagem excluída · Médias diárias</span></summary>
+        <summary><span class="calc-options-gear">⚙️</span> <strong data-i18n="calcOptionsLabel">Opções de cálculo:</strong> <span id="calc-options-summary">Base: Produção · Bombagem excluída · Médias diárias</span></summary>
         <div class="calc-options-body">
             <div class="calc-options-row">
-                <span class="calc-options-label">Base da % renovável:</span>
-                <div class="agg-toggle visible" id="renbase-toggle" role="tablist" aria-label="Base de cálculo da percentagem renovável">
-                    <button type="button" class="mode-btn active" data-renbase="production" role="tab" aria-selected="true" aria-pressed="true" title="% calculada sobre a produção total">% sobre Produção</button>
-                    <button type="button" class="mode-btn" data-renbase="load" role="tab" aria-selected="false" aria-pressed="false" title="% calculada sobre o consumo (load)">% sobre Consumo</button>
+                <span class="calc-options-label" data-i18n="calcRowBase">Base da % renovável:</span>
+                <div class="agg-toggle visible" id="renbase-toggle" role="tablist" aria-label="Base de cálculo da percentagem renovável" data-i18n-aria="ariaRenbase">
+                    <button type="button" class="mode-btn active" data-renbase="production" role="tab" aria-selected="true" aria-pressed="true" title="% calculada sobre a produção total" data-i18n="renbaseProd" data-i18n-title="renbaseProdTitle">% sobre Produção</button>
+                    <button type="button" class="mode-btn" data-renbase="load" role="tab" aria-selected="false" aria-pressed="false" title="% calculada sobre o consumo (load)" data-i18n="renbaseLoad" data-i18n-title="renbaseLoadTitle">% sobre Consumo</button>
                 </div>
             </div>
             <div class="calc-options-row">
-                <span class="calc-options-label">Bombagem hidráulica:</span>
-                <div class="agg-toggle visible" id="pumped-toggle" role="tablist" aria-label="Contar bombagem como renovável">
-                    <button type="button" class="mode-btn active" data-pumped="exclude" role="tab" aria-selected="true" aria-pressed="true" title="Bombagem fora do denominador da produção (alinhado com energy-charts.info)">Excluir bombagem</button>
-                    <button type="button" class="mode-btn" data-pumped="include" role="tab" aria-selected="false" aria-pressed="false" title="Bombagem no denominador da produção — soma de todas as colunas = 100%">Incluir bombagem</button>
+                <span class="calc-options-label" data-i18n="calcRowPumped">Bombagem hidráulica:</span>
+                <div class="agg-toggle visible" id="pumped-toggle" role="tablist" aria-label="Contar bombagem como renovável" data-i18n-aria="ariaPumped">
+                    <button type="button" class="mode-btn active" data-pumped="exclude" role="tab" aria-selected="true" aria-pressed="true" title="Bombagem fora do denominador da produção (alinhado com energy-charts.info)" data-i18n="pumpedExclude" data-i18n-title="pumpedExcludeTitle">Excluir bombagem</button>
+                    <button type="button" class="mode-btn" data-pumped="include" role="tab" aria-selected="false" aria-pressed="false" title="Bombagem no denominador da produção — soma de todas as colunas = 100%" data-i18n="pumpedInclude" data-i18n-title="pumpedIncludeTitle">Incluir bombagem</button>
                 </div>
             </div>
             <div class="calc-options-row">
-                <span class="calc-options-label">Agregação (7d / 30d / personalizado):</span>
-                <div class="agg-toggle" id="agg-toggle" role="tablist" aria-label="Forma de agregação">
-                    <button type="button" class="mode-btn active" data-agg="mean" role="tab" aria-selected="true" aria-pressed="true">Médias diárias</button>
-                    <button type="button" class="mode-btn" data-agg="sum" role="tab" aria-selected="false" aria-pressed="false">Totais do período</button>
+                <span class="calc-options-label" data-i18n="calcRowAgg">Agregação (7d / 30d / personalizado):</span>
+                <div class="agg-toggle" id="agg-toggle" role="tablist" aria-label="Forma de agregação" data-i18n-aria="ariaAgg">
+                    <button type="button" class="mode-btn active" data-agg="mean" role="tab" aria-selected="true" aria-pressed="true" data-i18n="aggMean">Médias diárias</button>
+                    <button type="button" class="mode-btn" data-agg="sum" role="tab" aria-selected="false" aria-pressed="false" data-i18n="aggSum">Totais do período</button>
                 </div>
             </div>
         </div>
     </details>
 
-    <p class="nota-fonte">Fonte: Energy-Charts API (Fraunhofer ISE) &mdash; Produção pública líquida | tiagofelicia.pt</p>
+    <p class="nota-fonte" data-i18n="notaFonte">Fonte: Energy-Charts API (Fraunhofer ISE) &mdash; Produção pública líquida | tiagofelicia.pt</p>
 
     <div class="country-selector">
-        <label for="seletor-pais">País:</label>
+        <label for="seletor-pais" data-i18n="lblPais">País:</label>
         <select id="seletor-pais">
             <option value="de">Alemanha</option>
             <option value="at">Áustria</option>
@@ -571,72 +599,72 @@
     </div>
 
     <div id="chart-wrapper">
-        <h2 id="chart-titulo">Mix de Produção</h2>
+        <h2 id="chart-titulo" data-i18n="chartTitle">Mix de Produção</h2>
         <div id="chart-container-wrapper">
-            <canvas id="chart-container" tabindex="0" role="img" aria-label="Gráfico de mix de produção do país selecionado"></canvas>
+            <canvas id="chart-container" tabindex="0" role="img" aria-label="Gráfico de mix de produção do país selecionado" data-i18n-aria="ariaChartMix"></canvas>
         </div>
     </div>
 
     <div id="evolution-wrapper">
-        <h2 id="evolution-titulo">Evolução (30 dias)</h2>
-        <div class="mode-toggle" id="evolution-type-toggle" role="tablist" aria-label="Tipo de gráfico">
-            <button type="button" class="mode-btn active" data-evotype="bar" role="tab" aria-selected="true" aria-pressed="true">Colunas</button>
-            <button type="button" class="mode-btn" data-evotype="area" role="tab" aria-selected="false" aria-pressed="false">Áreas</button>
+        <h2 id="evolution-titulo" data-i18n="evoTitle">Evolução (30 dias)</h2>
+        <div class="mode-toggle" id="evolution-type-toggle" role="tablist" aria-label="Tipo de gráfico" data-i18n-aria="ariaEvoType">
+            <button type="button" class="mode-btn active" data-evotype="bar" role="tab" aria-selected="true" aria-pressed="true" data-i18n="evoColunas">Colunas</button>
+            <button type="button" class="mode-btn" data-evotype="area" role="tab" aria-selected="false" aria-pressed="false" data-i18n="evoAreas">Áreas</button>
         </div>
         <div class="compare-country-wrap" style="text-align:center; margin:8px auto 10px auto; font-size:0.9em;">
-            <label for="country-chart-compare">Comparar % renovável com:</label>
+            <label for="country-chart-compare" data-i18n="lblCompararRen">Comparar % renovável com:</label>
             <select id="country-chart-compare" style="margin-left:6px; padding:4px 8px; border:1px solid #cbd5e1; border-radius:5px;">
-                <option value="">— nenhum —</option>
+                <option value="" data-i18n="cmpNone">— nenhum —</option>
             </select>
-            <button type="button" id="btn-evolution-wide" class="btn-wide" title="Alternar largura total do gráfico">&#x2194; Largura total</button>
+            <button type="button" id="btn-evolution-wide" class="btn-wide" title="Alternar largura total do gráfico" data-i18n="btnEvoWide" data-i18n-title="btnEvoWideTitle">&#x2194; Largura total</button>
         </div>
         <div class="evo-options" style="text-align:center; margin:4px auto 10px auto; font-size:0.86em; display:flex; flex-wrap:wrap; justify-content:center; gap:10px 18px; align-items:center;">
-            <label title="Linha de média móvel de 7 dias sobre a % renovável"><input type="checkbox" id="toggle-evo-mavg"> 📈 Média móvel 7d</label>
-            <label title="Linha horizontal com a média do período"><input type="checkbox" id="toggle-evo-avg"> ➖ Média do período</label>
-            <label title="Linha horizontal de meta (%)">🎯 Meta:
+            <label title="Linha de média móvel de 7 dias sobre a % renovável" data-i18n-title="evoMavgTitle"><input type="checkbox" id="toggle-evo-mavg"> <span data-i18n="evoMavg">📈 Média móvel 7d</span></label>
+            <label title="Linha horizontal com a média do período" data-i18n-title="evoAvgTitle"><input type="checkbox" id="toggle-evo-avg"> <span data-i18n="evoAvg">➖ Média do período</span></label>
+            <label title="Linha horizontal de meta (%)" data-i18n-title="evoMetaTitle"><span data-i18n="evoMetaLabel">🎯 Meta:</span>
                 <input type="number" id="evo-target" min="0" max="100" step="5" value="80" style="width:54px; padding:2px 4px; border:1px solid #cbd5e1; border-radius:4px; margin:0 4px;">
-                <input type="checkbox" id="toggle-evo-target" title="Mostrar linha de meta"> mostrar
+                <input type="checkbox" id="toggle-evo-target" title="Mostrar linha de meta" data-i18n-title="evoMetaShowTitle"> <span data-i18n="evoMostrar">mostrar</span>
             </label>
-            <label title="Normalizar barras/áreas empilhadas para 100% — foca o mix em vez do volume"><input type="checkbox" id="toggle-evo-norm"> 🔄 Normalizar (100%)</label>
-            <button type="button" id="btn-evo-reset-zoom" class="mode-btn" style="border-radius:5px; padding:4px 10px; font-size:0.85em;" title="Repor zoom — arraste sobre o gráfico ou use a roda do rato para aumentar">🔍 Repor zoom</button>
+            <label title="Normalizar barras/áreas empilhadas para 100% — foca o mix em vez do volume" data-i18n-title="evoNormTitle"><input type="checkbox" id="toggle-evo-norm"> <span data-i18n="evoNorm">🔄 Normalizar (100%)</span></label>
+            <button type="button" id="btn-evo-reset-zoom" class="mode-btn" style="border-radius:5px; padding:4px 10px; font-size:0.85em;" title="Repor zoom — arraste sobre o gráfico ou use a roda do rato para aumentar" data-i18n="evoResetZoom" data-i18n-title="evoResetZoomTitle">🔍 Repor zoom</button>
         </div>
         <div id="evolution-container-wrapper">
-            <canvas id="evolution-container" tabindex="0" role="img" aria-label="Gráfico de evolução dos últimos 30 dias"></canvas>
+            <canvas id="evolution-container" tabindex="0" role="img" aria-label="Gráfico de evolução dos últimos 30 dias" data-i18n-aria="ariaEvoChart"></canvas>
         </div>
     </div>
 
     <div id="ranked-list-wrapper">
-        <h2 id="ranked-list-titulo">Produção por país</h2>
+        <h2 id="ranked-list-titulo" data-i18n="rankedTitle">Produção por país</h2>
         <div class="delta-toggle-wrap">
-            <label><input type="checkbox" id="toggle-delta-pt"> Mostrar ΔPT (diferença p.p. vs Portugal)</label>
-            <label style="margin-left:18px;"><input type="checkbox" id="toggle-autonomy"> Mostrar Auto-sufic. (Produção / Consumo)</label>
-            <label style="margin-left:18px;"><input type="checkbox" id="toggle-spark"> Mostrar Tendência 7d</label>
-            <label style="margin-left:18px;" title="Oculta países cujos dados para este dia ainda estão em previsão day-ahead (ex: Montenegro quando fica dias sem actualização real)"><input type="checkbox" id="toggle-hide-fc" checked> Ocultar países em previsão</label>
+            <label><input type="checkbox" id="toggle-delta-pt"> <span data-i18n="toggleDeltaPt">Mostrar Δ (diferença p.p. vs zona de referência)</span></label>
+            <label style="margin-left:18px;"><input type="checkbox" id="toggle-autonomy"> <span data-i18n="toggleAutonomy">Mostrar Auto-sufic. (Produção / Consumo)</span></label>
+            <label style="margin-left:18px;"><input type="checkbox" id="toggle-spark"> <span data-i18n="toggleSpark">Mostrar Tendência 7d</span></label>
+            <label style="margin-left:18px;" title="Oculta países cujos dados para este dia ainda estão em previsão day-ahead (ex: Montenegro quando fica dias sem actualização real)" data-i18n-title="toggleHideFcTitle"><input type="checkbox" id="toggle-hide-fc" checked> <span data-i18n="toggleHideFc">Ocultar países em previsão</span></label>
         </div>
         <div class="country-search-wrap">
-            <input type="search" id="country-search" class="country-search" placeholder="🔍 Procurar país (ex: Portugal, PT, Alemanha)…" autocomplete="off" aria-label="Procurar país">
-            <button type="button" id="country-search-clear" class="country-search-clear" title="Limpar pesquisa (Esc)" aria-label="Limpar pesquisa" hidden>×</button>
+            <input type="search" id="country-search" class="country-search" placeholder="🔍 Procurar país (ex: Portugal, PT, Alemanha)…" autocomplete="off" aria-label="Procurar país" data-i18n-ph="countrySearchPh" data-i18n-aria="countrySearchAria">
+            <button type="button" id="country-search-clear" class="country-search-clear" title="Limpar pesquisa (Esc)" aria-label="Limpar pesquisa" data-i18n-title="countrySearchClearTitle" data-i18n-aria="countrySearchClearAria" hidden>×</button>
             <span id="country-search-count" class="country-search-count" aria-live="polite"></span>
         </div>
-        <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de produção por país">
-            <p class="no-data-msg">A carregar dados...</p>
+        <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de produção por país" data-i18n-aria="ariaTabela">
+            <p class="no-data-msg" data-i18n="loading">A carregar dados...</p>
         </div>
         <div style="text-align:center; margin-top:15px;">
-            <button type="button" id="btn-share" class="mode-btn" style="border-radius:5px;" title="Copiar link partilhável para o estado atual">&#128279; Copiar link de partilha</button>
-            <button type="button" id="btn-csv" class="mode-btn" style="border-radius:5px; margin-left:8px;" title="Descarregar tabela em CSV (Excel / LibreOffice)">&#x2B07; Exportar CSV</button>
-            <span id="share-feedback" style="margin-left:10px; font-size:0.85em; color:#16a34a; display:none;">Copiado!</span>
-            <div style="margin-top:10px; font-size:0.82em; color:#6b7280;">
+            <button type="button" id="btn-share" class="mode-btn" style="border-radius:5px;" title="Copiar link partilhável para o estado atual" data-i18n="btnShare" data-i18n-title="btnShareTitle">&#128279; Copiar link de partilha</button>
+            <button type="button" id="btn-csv" class="mode-btn" style="border-radius:5px; margin-left:8px;" title="Descarregar tabela em CSV (Excel / LibreOffice)" data-i18n="btnCsv" data-i18n-title="btnCsvTitle">&#x2B07; Exportar CSV</button>
+            <span id="share-feedback" style="margin-left:10px; font-size:0.85em; color:#16a34a; display:none;" data-i18n="shareCopied">Copiado!</span>
+            <div style="margin-top:10px; font-size:0.82em; color:#6b7280;" data-i18n-html="atalhosHtml">
                 Atalhos: <span class="kbd-hint">←</span> <span class="kbd-hint">→</span> navegar · <span class="kbd-hint">D</span>/<span class="kbd-hint">W</span>/<span class="kbd-hint">M</span>/<span class="kbd-hint">P</span> modo · <span class="kbd-hint">/</span> pesquisar · <span class="kbd-hint">S</span> partilhar · <span class="kbd-hint">?</span> ajuda
             </div>
         </div>
     </div>
 
     <div id="heatmap-wrapper">
-        <h2 id="heatmap-titulo">Heatmap anual de % renovável</h2>
+        <h2 id="heatmap-titulo" data-i18n="hmTitle">Heatmap anual de % renovável</h2>
         <div class="heatmap-controls">
-            <label for="heatmap-country">País:</label>
+            <label for="heatmap-country" data-i18n="hmPais">País:</label>
             <select id="heatmap-country"></select>
-            <label for="heatmap-year">Ano:</label>
+            <label for="heatmap-year" data-i18n="hmAno">Ano:</label>
             <select id="heatmap-year"></select>
             <span class="heatmap-stats" id="heatmap-stats"></span>
         </div>
@@ -644,20 +672,28 @@
     </div>
 
     <article class="content-support">
-        <h2>Sobre este mapa</h2>
+        <h2 data-i18n="faqHeading">Sobre este mapa</h2>
 
         <details class="faq-item">
-            <summary><strong>O que mostra este mapa?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>O que mostra este mapa?</strong></span><span data-lang-block="en"><strong>What does this map show?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Este mapa apresenta a <strong>percentagem de energia renovável</strong> no mix de produção de eletricidade de cada país europeu.</p>
                 <p>As cores variam do <strong style="color:#15803d;">verde</strong> (alta percentagem renovável) ao <strong style="color:#78350f;">castanho</strong> (baixa percentagem renovável). A escala de luminosidade foi escolhida para melhor acessibilidade a utilizadores daltónicos.</p>
                 <p>Além do mapa, a página tem um <strong>gráfico de mix de produção</strong> (barras empilhadas) para o país seleccionado, um <strong>gráfico de Evolução</strong> (colunas ou áreas) para o período em análise, um <strong>heatmap anual</strong> de % renovável, e uma <strong>tabela ranked</strong> com todos os países — todas as vistas reagem ao dia/período e às opções de cálculo.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>This map shows the <strong>share of renewable energy</strong> in each European country's electricity generation mix.</p>
+                <p>Colours range from <strong style="color:#15803d;">green</strong> (high renewable share) to <strong style="color:#78350f;">brown</strong> (low renewable share). The lightness scale was chosen for better accessibility to colour-blind users.</p>
+                <p>Besides the map, the page has a <strong>generation mix chart</strong> (stacked bars) for the selected country, an <strong>Evolution chart</strong> (bars or areas) for the period under analysis, an <strong>annual heatmap</strong> of renewable %, and a <strong>ranked table</strong> with every country — all views react to the day/period and the calculation options.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Modos Diário, Semanal, Mensal e Personalizado</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Modos Diário, Semanal, Mensal e Personalizado</strong></span><span data-lang-block="en"><strong>Daily, Weekly, Monthly and Custom modes</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>No topo da página pode escolher como quer ver os dados:</p>
                 <ul>
                     <li><strong>Diário</strong> — mostra o dia exacto seleccionado.</li>
@@ -666,12 +702,24 @@
                     <li><strong>Personalizado</strong> — escolha início e fim (até 365 dias).</li>
                 </ul>
                 <p>Em modos agregados pode ainda escolher, em <em>Opções de cálculo</em>, entre <strong>Médias diárias</strong> (GWh por dia) ou <strong>Totais do período</strong> (GWh acumulados).</p>
+                </div>
+                <div data-lang-block="en">
+                <p>At the top of the page you can choose how to view the data:</p>
+                <ul>
+                    <li><strong>Daily</strong> — shows the exact selected day.</li>
+                    <li><strong>Weekly (7d)</strong> — aggregates the 7 days ending on the selected day.</li>
+                    <li><strong>Monthly (30d)</strong> — aggregates the 30 days ending on the selected day.</li>
+                    <li><strong>Custom</strong> — choose start and end (up to 365 days).</li>
+                </ul>
+                <p>In aggregated modes you can also choose, under <em>Calculation options</em>, between <strong>Daily averages</strong> (GWh per day) or <strong>Period totals</strong> (cumulative GWh).</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Onde estão as opções de cálculo? (badge no mapa)</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Onde estão as opções de cálculo? (badge no mapa)</strong></span><span data-lang-block="en"><strong>Where are the calculation options? (map badge)</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Logo a seguir ao mapa existe um painel recolhível <strong>"⚙️ Opções de cálculo"</strong> com três toggles:</p>
                 <ul>
                     <li><strong>Base da % renovável</strong>: % sobre Produção / % sobre Consumo</li>
@@ -679,21 +727,39 @@
                     <li><strong>Agregação</strong>: Médias diárias / Totais do período</li>
                 </ul>
                 <p>O badge sobreposto ao mapa (canto superior esquerdo) mostra sempre o estado actual; clicar nele abre/fecha o painel de opções.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>Just below the map there is a collapsible <strong>"⚙️ Calculation options"</strong> panel with three toggles:</p>
+                <ul>
+                    <li><strong>Renewable % base</strong>: % of Generation / % of Load</li>
+                    <li><strong>Pumped hydro</strong>: Exclude / Include in the denominator</li>
+                    <li><strong>Aggregation</strong>: Daily averages / Period totals</li>
+                </ul>
+                <p>The badge overlaid on the map (top-left corner) always shows the current state; clicking it opens/closes the options panel.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Como é calculada a percentagem renovável?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Como é calculada a percentagem renovável?</strong></span><span data-lang-block="en"><strong>How is the renewable percentage calculated?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>A percentagem renovável é calculada como: <strong>(Solar + Eólica + Hídrica + Biomassa + Outras Renováveis) / Denominador &times; 100</strong>.</p>
                 <p>A hídrica no numerador inclui <em>fio-de-água</em> e <em>albufeira</em>, mas <strong>não</strong> inclui a <strong>bombagem</strong> (ver entrada seguinte). O denominador depende dos toggles activos — em "% sobre Produção" é a produção total (com ou sem bombagem, consoante o toggle); em "% sobre Consumo" é o consumo (<em>load</em>).</p>
                 <p>Os valores de produção são totais diários em GWh, obtidos a partir dos dados de produção pública líquida da API Energy-Charts.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The renewable percentage is calculated as: <strong>(Solar + Wind + Hydro + Biomass + Other Renewables) / Denominator &times; 100</strong>.</p>
+                <p>Hydro in the numerator includes <em>run-of-river</em> and <em>reservoir</em>, but does <strong>not</strong> include <strong>pumped storage</strong> (see next entry). The denominator depends on the active toggles — under "% of Generation" it is the total generation (with or without pumped storage, depending on the toggle); under "% of Load" it is the consumption (<em>load</em>).</p>
+                <p>Generation values are daily totals in GWh, obtained from the public net generation data of the Energy-Charts API.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>O que faz o toggle "Excluir / Incluir bombagem"?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>O que faz o toggle "Excluir / Incluir bombagem"?</strong></span><span data-lang-block="en"><strong>What does the "Exclude / Include pumped storage" toggle do?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>A <strong>hidráulica de bombagem</strong> não é geração primária — é energia armazenada previamente (bombeada de uma albufeira inferior para uma superior durante horas de excedente) e re-turbinada mais tarde. A origem dessa energia pode ter sido fóssil ou renovável, não é intrinsecamente verde. Por isso, nesta página, <strong>a bombagem NUNCA é contabilizada como renovável</strong> — independentemente do toggle.</p>
                 <p>O toggle controla apenas o <strong>denominador</strong> da percentagem renovável e das percentagens por coluna:</p>
                 <ul>
@@ -701,12 +767,23 @@
                     <li><strong>Incluir bombagem</strong>: bombagem entra no denominador como "mais uma origem". A soma de todas as colunas (incluindo bombagem) é <strong>100%</strong>.</li>
                 </ul>
                 <p>Na tabela, a bombagem aparece sempre numa coluna <strong>autónoma</strong> (entre "Out. Renov." e "Fóssil"), para ser visível e ordenável independentemente do toggle.</p>
+                </div>
+                <div data-lang-block="en">
+                <p><strong>Pumped-storage hydro</strong> is not primary generation — it is previously stored energy (pumped from a lower to an upper reservoir during surplus hours) and re-turbined later. The origin of that energy may have been fossil or renewable, so it is not intrinsically green. Therefore, on this page, <strong>pumped storage is NEVER counted as renewable</strong> — regardless of the toggle.</p>
+                <p>The toggle only controls the <strong>denominator</strong> of the renewable percentage and of the per-column percentages:</p>
+                <ul>
+                    <li><strong>Exclude pumped</strong> (default, aligned with <a href="https://www.energy-charts.info" target="_blank" rel="noopener">energy-charts.info</a>): pumped storage stays outside the denominator. The sum of the columns (except pumped) reaches 100% of the non-pumped generation.</li>
+                    <li><strong>Include pumped</strong>: pumped storage enters the denominator as "one more source". The sum of all columns (including pumped) is <strong>100%</strong>.</li>
+                </ul>
+                <p>In the table, pumped storage always appears in a <strong>standalone</strong> column (between "Other Renew." and "Fossil"), so it is visible and sortable regardless of the toggle.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>% sobre Produção vs. % sobre Consumo — qual a diferença?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>% sobre Produção vs. % sobre Consumo — qual a diferença?</strong></span><span data-lang-block="en"><strong>% of Generation vs. % of Load — what's the difference?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>O seletor <strong>"% sobre Produção" / "% sobre Consumo"</strong> (junto aos seletores de data) permite escolher o denominador da percentagem renovável:</p>
                 <ul>
                     <li><strong>% sobre Produção</strong> (default): renováveis / produção total do país. Reflete o peso das renováveis <em>no mix nacional gerado</em>.</li>
@@ -714,20 +791,37 @@
                 </ul>
                 <p>Um país exportador com muita renovável pode ter <strong>% sobre Consumo &gt; 100%</strong> (produz mais renovável do que consome). Um país importador pode ter % sobre Consumo inferior à % sobre Produção.</p>
                 <p>A opção escolhida aplica-se ao <strong>mapa</strong>, <strong>gráfico de evolução</strong> e <strong>tabela de produção por país</strong>, e é incluída no link de partilha.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The <strong>"% of Generation" / "% of Load"</strong> selector (next to the date selectors) lets you choose the denominator of the renewable percentage:</p>
+                <ul>
+                    <li><strong>% of Generation</strong> (default): renewables / total country generation. Reflects the weight of renewables <em>in the national generated mix</em>.</li>
+                    <li><strong>% of Load</strong>: renewables / country consumption (<em>load</em>). Reflects the weight of renewables <em>relative to demand</em>. This is the metric used by <a href="https://www.energy-charts.info" target="_blank" rel="noopener">energy-charts.info</a>.</li>
+                </ul>
+                <p>An exporting country with lots of renewables can have <strong>% of Load &gt; 100%</strong> (it produces more renewable energy than it consumes). An importing country may have % of Load lower than % of Generation.</p>
+                <p>The chosen option applies to the <strong>map</strong>, <strong>evolution chart</strong> and <strong>generation table by country</strong>, and is included in the share link.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Porque é que todas as zonas de um país têm a mesma cor?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Porque é que todas as zonas de um país têm a mesma cor?</strong></span><span data-lang-block="en"><strong>Why do all zones of a country have the same colour?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>A API Energy-Charts devolve dados de produção ao nível do <strong>país</strong>, não por zona de licitação. Por isso, países como a <strong>Noruega</strong> (5 zonas), <strong>Suécia</strong> (4 zonas) ou <strong>Itália</strong> (6+ zonas) partilham a mesma cor em todas as suas zonas.</p>
                 <p>Os preços de eletricidade, por outro lado, variam entre zonas &mdash; consulte o <a href="europe-prices">Mapa de Preços</a> para essa informação.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The Energy-Charts API returns generation data at <strong>country</strong> level, not per bidding zone. So countries like <strong>Norway</strong> (5 zones), <strong>Sweden</strong> (4 zones) or <strong>Italy</strong> (6+ zones) share the same colour across all their zones.</p>
+                <p>Electricity prices, on the other hand, vary between zones &mdash; see the <a href="europe-prices?lang=en">Price Map</a> for that information.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Que fontes de energia são consideradas renováveis?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Que fontes de energia são consideradas renováveis?</strong></span><span data-lang-block="en"><strong>Which energy sources count as renewable?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>São consideradas renováveis as seguintes fontes:</p>
                 <ul>
                     <li><strong>Solar</strong> (fotovoltaica)</li>
@@ -742,12 +836,30 @@
                     <li><strong>Fósseis</strong> (gás natural, carvão, linhite, petróleo)</li>
                     <li><strong>Nuclear</strong></li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <p>The following sources are considered renewable:</p>
+                <ul>
+                    <li><strong>Solar</strong> (photovoltaic)</li>
+                    <li><strong>Wind</strong> (onshore and offshore)</li>
+                    <li><strong>Hydro</strong> — <em>only</em> run-of-river and reservoir</li>
+                    <li><strong>Biomass</strong> (forest biomass, biogas and the biodegradable fraction of municipal solid waste)</li>
+                    <li><strong>Other Renewables</strong> (geothermal, waste and other residual renewables)</li>
+                </ul>
+                <p>Not considered renewable:</p>
+                <ul>
+                    <li><strong>Pumped-storage hydro</strong> — previously stored energy, not primary generation. See the entry about the pumped-storage toggle.</li>
+                    <li><strong>Fossil</strong> (natural gas, coal, lignite, oil)</li>
+                    <li><strong>Nuclear</strong></li>
+                </ul>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Gráfico "Evolução" — o que posso fazer?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Gráfico "Evolução" — o que posso fazer?</strong></span><span data-lang-block="en"><strong>"Evolution" chart — what can I do?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>O gráfico de Evolução mostra a série temporal do período em análise para o país seleccionado. Opções disponíveis:</p>
                 <ul>
                     <li><strong>Colunas / Áreas</strong> — barras empilhadas (até 60 dias) ou áreas empilhadas (sem limite).</li>
@@ -760,49 +872,108 @@
                     <li><strong>Zoom</strong>: arraste com o rato sobre o gráfico, ou <kbd>Ctrl</kbd> + roda do rato. <kbd>Shift</kbd> + arrastar faz <em>pan</em>. Use <strong>🔍 Repor zoom</strong> para reset.</li>
                 </ul>
                 <p>O tooltip mostra GWh por fonte, % do total diário, e totais agregados de Renovável vs. Fóssil.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The Evolution chart shows the time series of the period under analysis for the selected country. Available options:</p>
+                <ul>
+                    <li><strong>Bars / Areas</strong> — stacked bars (up to 60 days) or stacked areas (no limit).</li>
+                    <li><strong>↔ Full width</strong> — expands the chart to the full window width.</li>
+                    <li><strong>Compare renewable % with…</strong> — overlays another country's renewable % line (red dashed line).</li>
+                    <li><strong>📈 7-day moving avg</strong> — blue dashed line with the 7-day centred average of the renewable %.</li>
+                    <li><strong>➖ Period average</strong> — green horizontal line with the average of the visible range.</li>
+                    <li><strong>🎯 Target</strong> — red horizontal line at the defined percentage (default 80%).</li>
+                    <li><strong>🔄 Normalize (100%)</strong> — rescales the stacked bars/areas as % of the daily total, focusing on the mix instead of volume.</li>
+                    <li><strong>Zoom</strong>: drag with the mouse over the chart, or <kbd>Ctrl</kbd> + mouse wheel. <kbd>Shift</kbd> + drag to <em>pan</em>. Use <strong>🔍 Reset zoom</strong> to reset.</li>
+                </ul>
+                <p>The tooltip shows GWh per source, % of the daily total, and aggregated Renewable vs. Fossil totals.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Heatmap anual de % renovável</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Heatmap anual de % renovável</strong></span><span data-lang-block="en"><strong>Annual renewable % heatmap</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>O heatmap mostra, para o país escolhido e um ano específico, uma célula por dia colorida pela % renovável desse dia (mesma escala do mapa). Permite identificar rapidamente padrões sazonais (ex. mais renovável no Inverno em países hidroeléctricos, ou em meses de muito vento/sol).</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The heatmap shows, for the chosen country and a specific year, one cell per day coloured by that day's renewable % (same scale as the map). It lets you quickly spot seasonal patterns (e.g. more renewable in winter in hydro-heavy countries, or in windy/sunny months).</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Tabela "Produção por país" — colunas opcionais e pesquisa</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Tabela "Produção por país" — colunas opcionais e pesquisa</strong></span><span data-lang-block="en"><strong>"Generation by country" table — optional columns and search</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>A tabela pode ser ordenada clicando nos cabeçalhos e tem várias colunas opcionais:</p>
                 <ul>
-                    <li><strong>ΔPT</strong> — diferença, em pontos percentuais, da % renovável desse país face a Portugal.</li>
+                    <li><strong>Δ</strong> (ex.: ΔPT, ΔES) — diferença, em pontos percentuais, da % renovável desse país face à zona de referência escolhida em <strong>🌍 A minha zona</strong> (por defeito Portugal).</li>
                     <li><strong>Auto-sufic.</strong> — Produção ÷ Consumo × 100. Acima de 100% indica exportador líquido; abaixo, importador líquido.</li>
                     <li><strong>Tendência 7d</strong> — mini-sparkline SVG com a evolução da % renovável nos últimos 7 dias.</li>
                 </ul>
-                <p>A linha de <strong>Portugal</strong> aparece destacada a amarelo para referência rápida.</p>
-                <p>Pode ainda usar a <strong>caixa de pesquisa</strong> (nome em PT, código ISO, ou parte do nome) e o botão <strong>⬇ Exportar CSV</strong> para descarregar a tabela actual em formato Excel / LibreOffice (separador <code>;</code>, codificação UTF-8 com BOM).</p>
+                <p>A linha da <strong>zona de referência</strong> (definida em 🌍 A minha zona, por defeito Portugal) aparece destacada a amarelo para referência rápida.</p>
+                <p>Pode ainda usar a <strong>caixa de pesquisa</strong> (nome em PT ou EN, código ISO, ou parte do nome) e o botão <strong>⬇ Exportar CSV</strong> para descarregar a tabela actual em formato Excel / LibreOffice (separador <code>;</code>, codificação UTF-8 com BOM).</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The table can be sorted by clicking the headers and has several optional columns:</p>
+                <ul>
+                    <li><strong>Δ</strong> (e.g. ΔPT, ΔES) — difference, in percentage points, of that country's renewable % versus the reference zone chosen in <strong>🌍 My zone</strong> (Portugal by default).</li>
+                    <li><strong>Self-suff.</strong> — Generation ÷ Load × 100. Above 100% indicates a net exporter; below, a net importer.</li>
+                    <li><strong>7d trend</strong> — a mini SVG sparkline with the renewable % evolution over the last 7 days.</li>
+                </ul>
+                <p>The <strong>reference-zone</strong> row (set in 🌍 My zone, Portugal by default) is highlighted in yellow for quick reference.</p>
+                <p>You can also use the <strong>search box</strong> (name in PT or EN, ISO code, or part of the name) and the <strong>⬇ Export CSV</strong> button to download the current table in Excel / LibreOffice format (<code>;</code> separator, UTF-8 encoding with BOM).</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Link de partilha</strong></summary>
+            <summary><span data-lang-block="pt"><strong>🌍 A minha zona (zona de referência)</strong></span><span data-lang-block="en"><strong>🌍 My zone (reference zone)</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
+                <p>O seletor <strong>🌍 A minha zona</strong>, no topo da página, define o país de referência da análise. Conduz a <strong>mensagem de comparação</strong> (% renovável face à média europeia e posição no ranking), a coluna <strong>Δ</strong> da tabela e o país inicial dos gráficos.</p>
+                <p>Por defeito é Portugal, mas pode escolher qualquer país. A escolha é guardada no navegador e incluída no link de partilha (<code>?ref=</code>), para que a página abra logo na sua perspetiva.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The <strong>🌍 My zone</strong> selector at the top of the page sets the reference country for the analysis. It drives the <strong>comparison message</strong> (renewable % versus the European average and ranking position), the table's <strong>Δ</strong> column and the initial country of the charts.</p>
+                <p>It defaults to Portugal, but you can pick any country. The choice is saved in your browser and included in the share link (<code>?ref=</code>), so the page opens straight from your perspective.</p>
+                </div>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><span data-lang-block="pt"><strong>Link de partilha</strong></span><span data-lang-block="en"><strong>Share link</strong></span></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>O botão <strong>🔗 Copiar link de partilha</strong> copia um URL que inclui todos os parâmetros da vista actual: data/intervalo, país, modo, opções de cálculo, toggles das colunas da tabela, opções do gráfico de Evolução, comparação, ano do heatmap, etc. Abrir esse link reconstrói a mesma vista.</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The <strong>🔗 Copy share link</strong> button copies a URL that includes all parameters of the current view: date/range, country, mode, calculation options, table column toggles, Evolution chart options, comparison, heatmap year, etc. Opening that link rebuilds the same view.</p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>De onde vêm os dados?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>De onde vêm os dados?</strong></span><span data-lang-block="en"><strong>Where does the data come from?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Os dados são obtidos através da <strong>API Energy-Charts</strong> do <strong>Fraunhofer ISE</strong>, que agrega dados de produção de eletricidade de 28 países europeus.</p>
                 <p>Os dados são atualizados diariamente de forma automática.</p>
                 <p><small>Fronteiras das zonas: <a href="https://github.com/electricitymaps/electricitymaps-contrib" target="_blank" rel="noopener">Electricity Maps</a> (MIT License)</small></p>
+                </div>
+                <div data-lang-block="en">
+                <p>The data is obtained through the <strong>Energy-Charts API</strong> from <strong>Fraunhofer ISE</strong>, which aggregates electricity generation data from 28 European countries.</p>
+                <p>The data is updated automatically every day.</p>
+                <p><small>Zone borders: <a href="https://github.com/electricitymaps/electricitymaps-contrib" target="_blank" rel="noopener">Electricity Maps</a> (MIT License)</small></p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Atalhos de teclado</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Atalhos de teclado</strong></span><span data-lang-block="en"><strong>Keyboard shortcuts</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Pode navegar a página sem usar o rato:</p>
                 <ul>
                     <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> &mdash; dia (ou período) anterior / seguinte</li>
@@ -814,18 +985,42 @@
                     <li><kbd>Esc</kbd> &mdash; sair do modo ecrã inteiro (ou limpar a pesquisa, se estiver activa)</li>
                 </ul>
                 <p><small>No gráfico de Evolução: arraste com o rato para fazer <em>zoom</em>, <kbd>Ctrl</kbd> + roda do rato para <em>zoom</em> fino, <kbd>Shift</kbd> + arrastar para <em>pan</em>.</small></p>
+                </div>
+                <div data-lang-block="en">
+                <p>You can navigate the page without using the mouse:</p>
+                <ul>
+                    <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> &mdash; previous / next day (or period)</li>
+                    <li><kbd>&#8593;</kbd> / <kbd>&#8595;</kbd> &mdash; previous / next country (in the list)</li>
+                    <li><kbd>D</kbd> / <kbd>W</kbd> / <kbd>M</kbd> / <kbd>P</kbd> &mdash; switch to Daily / Weekly / Monthly / Custom mode</li>
+                    <li><kbd>/</kbd> &mdash; focus the country search box</li>
+                    <li><kbd>S</kbd> &mdash; copy the share link</li>
+                    <li><kbd>?</kbd> &mdash; show the quick shortcut list</li>
+                    <li><kbd>Esc</kbd> &mdash; exit fullscreen (or clear the search, if active)</li>
+                </ul>
+                <p><small>On the Evolution chart: drag with the mouse to <em>zoom</em>, <kbd>Ctrl</kbd> + mouse wheel for fine <em>zoom</em>, <kbd>Shift</kbd> + drag to <em>pan</em>.</small></p>
+                </div>
             </div>
         </details>
 
         <details class="faq-item">
-            <summary><strong>Porque é que alguns países não têm dados?</strong></summary>
+            <summary><span data-lang-block="pt"><strong>Porque é que alguns países não têm dados?</strong></span><span data-lang-block="en"><strong>Why do some countries have no data?</strong></span></summary>
             <div class="faq-content">
+                <div data-lang-block="pt">
                 <p>Zonas a <strong>cinzento</strong> indicam ausência de dados para o dia selecionado. Isto pode acontecer porque:</p>
                 <ul>
                     <li>Os dados ainda não foram publicados</li>
                     <li>O país não está disponível na API Energy-Charts</li>
                     <li>Houve uma falha temporária na recolha de dados</li>
                 </ul>
+                </div>
+                <div data-lang-block="en">
+                <p>Countries in <strong>grey</strong> indicate no data for the selected day. This can happen because:</p>
+                <ul>
+                    <li>The data has not been published yet</li>
+                    <li>The country is not available in the Energy-Charts API</li>
+                    <li>There was a temporary failure in data collection</li>
+                </ul>
+                </div>
             </div>
         </details>
     </article>
@@ -875,6 +1070,229 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var t = 0; t < tabs.length; t++) mo.observe(tabs[t], { attributes: true, attributeFilter: ['aria-pressed'] });
     })();
 
+    // ===================== i18n (PT/EN) =====================
+    // Língua a partir de ?lang=en (default pt). Replica o padrão da europe-prices.
+    var LANG = (function () {
+        var l = new URLSearchParams(window.location.search).get('lang');
+        return (l === 'en') ? 'en' : 'pt';
+    })();
+    var DEC_SEP  = (LANG === 'en') ? '.' : ',';
+    var THOU_SEP = (LANG === 'en') ? ',' : ' ';
+
+    var I18N = {
+        pt: {
+            htmlLang: 'pt-PT',
+            title: 'Produção de Eletricidade na Europa — Mix Renovável | Tiago Felícia',
+            metaDesc: 'Mapa interativo da produção de eletricidade em 28 países europeus por fonte (solar, eólica, hídrica, nuclear, gás, carvão, biomassa) e percentagem renovável, com vistas diária/semanal/mensal, gráfico de evolução, tabela ordenável e heatmap anual. Dados Energy-Charts (Fraunhofer ISE).',
+            ogTitle: 'Produção de Eletricidade na Europa — Mix Renovável',
+            ogDesc: 'Produção de eletricidade por fonte e percentagem renovável em 28 países europeus, com vistas diária/semanal/mensal, gráfico de evolução e tabela ordenável.',
+            twTitle: 'Produção de Eletricidade na Europa', twDesc: 'Mix de produção e percentagem renovável em 28 países europeus.',
+            mapH1: 'Mapa de Produção de Eletricidade na Europa',
+            bcHome: 'Início', bcEuropa: 'Europa', bcThis: 'Produção Europa',
+            ariaModoAgg: 'Modo de agregação',
+            mDiario: 'Diário', mSemanal: 'Semanal (7d)', mMensal: 'Mensal (30d)', mCustom: 'Personalizado',
+            lblSelDia: 'Selecione o dia:', btnPrevTitle: 'Dia anterior', btnNextTitle: 'Dia seguinte',
+            ariaIntervalo: 'Intervalo personalizado', lblInicio: 'Início:', lblFim: 'Fim:',
+            dadosDesde: 'Dados disponíveis desde 01/01/2026 — Fonte: Energy-Charts API (Fraunhofer ISE)',
+            linkPrecos: '📊 Ver preços de eletricidade', linkPrecosTitle: 'Ver preços de eletricidade para o mesmo dia',
+            subtitle: 'Percentagem de energia renovável no mix de produção por país',
+            loading: 'A carregar dados...',
+            ariaMapa: 'Mapa interativo da produção de eletricidade por país europeu',
+            fsOpen: '⛶ Ecrã inteiro', fsOpenTitle: 'Abrir mapa em ecrã inteiro',
+            fsExit: '✖ Sair', fsExitTitle: 'Sair do ecrã inteiro',
+            calcBadgeTitle: 'Opções de cálculo actuais (clique para ajustar)', ariaCalcBadge: 'Opções de cálculo actuais',
+            calcOptionsLabel: 'Opções de cálculo:',
+            calcRowBase: 'Base da % renovável:', calcRowPumped: 'Bombagem hidráulica:',
+            calcRowAgg: 'Agregação (7d / 30d / personalizado):',
+            ariaRenbase: 'Base de cálculo da percentagem renovável', ariaPumped: 'Contar bombagem como renovável', ariaAgg: 'Forma de agregação',
+            renbaseProd: '% sobre Produção', renbaseLoad: '% sobre Consumo',
+            renbaseProdTitle: '% calculada sobre a produção total', renbaseLoadTitle: '% calculada sobre o consumo (load)',
+            pumpedExclude: 'Excluir bombagem', pumpedInclude: 'Incluir bombagem',
+            pumpedExcludeTitle: 'Bombagem fora do denominador da produção (alinhado com energy-charts.info)',
+            pumpedIncludeTitle: 'Bombagem no denominador da produção — soma de todas as colunas = 100%',
+            aggMean: 'Médias diárias', aggSum: 'Totais do período',
+            notaFonte: 'Fonte: Energy-Charts API (Fraunhofer ISE) — Produção pública líquida | tiagofelicia.pt',
+            lblPais: 'País:',
+            chartTitle: 'Mix de Produção',
+            evoTitle: 'Evolução', evoColunas: 'Colunas', evoAreas: 'Áreas',
+            lblCompararRen: 'Comparar % renovável com:',
+            btnEvoWide: '↔ Largura total', btnEvoWideTitle: 'Alternar largura total do gráfico',
+            evoMavg: '📈 Média móvel 7d', evoMavgTitle: 'Linha de média móvel de 7 dias sobre a % renovável',
+            evoAvg: '➖ Média do período', evoAvgTitle: 'Linha horizontal com a média do período',
+            evoMetaLabel: '🎯 Meta:', evoMetaTitle: 'Linha horizontal de meta (%)',
+            evoNorm: '🔄 Normalizar (100%)', evoNormTitle: 'Normalizar barras/áreas empilhadas para 100% — foca o mix em vez do volume',
+            evoResetZoom: '🔍 Repor zoom', evoResetZoomTitle: 'Repor zoom — arraste sobre o gráfico ou use a roda do rato para aumentar',
+            rankedTitle: 'Produção por país',
+            toggleDeltaPt: 'Mostrar Δ (diferença p.p. vs zona de referência)',
+            refZoneLabel: '🌍 A minha zona:',
+            toggleAutonomy: 'Mostrar Auto-sufic. (Produção / Consumo)',
+            toggleSpark: 'Mostrar Tendência 7d',
+            toggleHideFc: 'Ocultar países em previsão',
+            toggleHideFcTitle: 'Oculta países cujos dados para este dia ainda estão em previsão day-ahead (ex: Montenegro quando fica dias sem actualização real)',
+            countrySearchPh: '🔍 Procurar país (ex: Alemanha, Espanha)…', countrySearchAria: 'Procurar país',
+            countrySearchClearTitle: 'Limpar pesquisa (Esc)', countrySearchClearAria: 'Limpar pesquisa',
+            btnShare: '🔗 Copiar link de partilha', btnShareTitle: 'Copiar link partilhável para o estado atual',
+            btnCsv: '⬇ Exportar CSV', btnCsvTitle: 'Descarregar tabela em CSV (Excel / LibreOffice)',
+            hmTitle: 'Heatmap anual de % renovável', hmPais: 'País:', hmAno: 'Ano:',
+            faqHeading: 'Sobre este mapa',
+            ariaChartMix: 'Gráfico de mix de produção do país selecionado',
+            ariaEvoType: 'Tipo de gráfico', cmpNone: '— nenhum —',
+            ariaEvoChart: 'Gráfico de evolução dos últimos 30 dias',
+            evoMostrar: 'mostrar', evoMetaShowTitle: 'Mostrar linha de meta',
+            ariaTabela: 'Tabela de produção por país', shareCopied: 'Copiado!',
+            mapTitleBase: 'Produção de Eletricidade na Europa',
+            dsTotal: 'Produção Total', dsLoad: 'Consumo', dsRenovavel: '% Renovável',
+            dsRenovavelCmp: '% Renov. (comparar)', dsRenovavelPre: '% Renov. — ',
+            atalhosHtml: 'Atalhos: <span class="kbd-hint">←</span> <span class="kbd-hint">→</span> navegar · <span class="kbd-hint">D</span>/<span class="kbd-hint">W</span>/<span class="kbd-hint">M</span>/<span class="kbd-hint">P</span> modo · <span class="kbd-hint">/</span> pesquisar · <span class="kbd-hint">S</span> partilhar · <span class="kbd-hint">?</span> ajuda'
+        },
+        en: {
+            htmlLang: 'en',
+            title: 'Electricity Generation in Europe — Renewable Mix | Tiago Felícia',
+            metaDesc: 'Interactive map of electricity generation across 28 European countries by source (solar, wind, hydro, nuclear, gas, coal, biomass) and renewable share, with daily/weekly/monthly views, evolution chart, sortable table and annual heatmap. Energy-Charts (Fraunhofer ISE) data.',
+            ogTitle: 'Electricity Generation in Europe — Renewable Mix',
+            ogDesc: 'Electricity generation by source and renewable share across 28 European countries, with daily/weekly/monthly views, evolution chart and sortable table.',
+            twTitle: 'Electricity Generation in Europe', twDesc: 'Generation mix and renewable share across 28 European countries.',
+            mapH1: 'Map of Electricity Generation in Europe',
+            bcHome: 'Home', bcEuropa: 'Europe', bcThis: 'Europe Generation',
+            ariaModoAgg: 'Aggregation mode',
+            mDiario: 'Daily', mSemanal: 'Weekly (7d)', mMensal: 'Monthly (30d)', mCustom: 'Custom',
+            lblSelDia: 'Select the day:', btnPrevTitle: 'Previous day', btnNextTitle: 'Next day',
+            ariaIntervalo: 'Custom range', lblInicio: 'Start:', lblFim: 'End:',
+            dadosDesde: 'Data available since 01/01/2026 — Source: Energy-Charts API (Fraunhofer ISE)',
+            linkPrecos: '📊 View electricity prices', linkPrecosTitle: 'View electricity prices for the same day',
+            subtitle: 'Share of renewable energy in the generation mix by country',
+            loading: 'Loading data...',
+            ariaMapa: 'Interactive map of electricity generation by European country',
+            fsOpen: '⛶ Fullscreen', fsOpenTitle: 'Open map in fullscreen',
+            fsExit: '✖ Exit', fsExitTitle: 'Exit fullscreen',
+            calcBadgeTitle: 'Current calculation options (click to adjust)', ariaCalcBadge: 'Current calculation options',
+            calcOptionsLabel: 'Calculation options:',
+            calcRowBase: 'Renewable % base:', calcRowPumped: 'Pumped hydro:',
+            calcRowAgg: 'Aggregation (7d / 30d / custom):',
+            ariaRenbase: 'Base for the renewable percentage', ariaPumped: 'Count pumped storage as renewable', ariaAgg: 'Aggregation method',
+            renbaseProd: '% of Generation', renbaseLoad: '% of Load',
+            renbaseProdTitle: '% computed over total generation', renbaseLoadTitle: '% computed over consumption (load)',
+            pumpedExclude: 'Exclude pumped', pumpedInclude: 'Include pumped',
+            pumpedExcludeTitle: 'Pumped storage outside the generation denominator (aligned with energy-charts.info)',
+            pumpedIncludeTitle: 'Pumped storage in the generation denominator — all columns sum to 100%',
+            aggMean: 'Daily averages', aggSum: 'Period totals',
+            notaFonte: 'Source: Energy-Charts API (Fraunhofer ISE) — Public net generation | tiagofelicia.pt',
+            lblPais: 'Country:',
+            chartTitle: 'Generation Mix',
+            evoTitle: 'Evolution', evoColunas: 'Bars', evoAreas: 'Areas',
+            lblCompararRen: 'Compare renewable % with:',
+            btnEvoWide: '↔ Full width', btnEvoWideTitle: 'Toggle full chart width',
+            evoMavg: '📈 7-day moving avg', evoMavgTitle: '7-day moving-average line over the renewable %',
+            evoAvg: '➖ Period average', evoAvgTitle: 'Horizontal line with the period average',
+            evoMetaLabel: '🎯 Target:', evoMetaTitle: 'Horizontal target line (%)',
+            evoNorm: '🔄 Normalize (100%)', evoNormTitle: 'Normalize stacked bars/areas to 100% — focuses on the mix instead of volume',
+            evoResetZoom: '🔍 Reset zoom', evoResetZoomTitle: 'Reset zoom — drag over the chart or use the mouse wheel to zoom in',
+            rankedTitle: 'Generation by country',
+            toggleDeltaPt: 'Show Δ (p.p. difference vs reference zone)',
+            refZoneLabel: '🌍 My zone:',
+            toggleAutonomy: 'Show Self-sufficiency (Generation / Load)',
+            toggleSpark: 'Show 7-day trend',
+            toggleHideFc: 'Hide forecast-only countries',
+            toggleHideFcTitle: 'Hides countries whose data for this day is still a day-ahead forecast (e.g. Montenegro when it goes days without a real update)',
+            countrySearchPh: '🔍 Search country (e.g. Germany, Spain)…', countrySearchAria: 'Search country',
+            countrySearchClearTitle: 'Clear search (Esc)', countrySearchClearAria: 'Clear search',
+            btnShare: '🔗 Copy share link', btnShareTitle: 'Copy a shareable link to the current state',
+            btnCsv: '⬇ Export CSV', btnCsvTitle: 'Download the table as CSV (Excel / LibreOffice)',
+            hmTitle: 'Annual renewable % heatmap', hmPais: 'Country:', hmAno: 'Year:',
+            faqHeading: 'About this map',
+            ariaChartMix: 'Generation mix chart for the selected country',
+            ariaEvoType: 'Chart type', cmpNone: '— none —',
+            ariaEvoChart: 'Evolution chart for the last 30 days',
+            evoMostrar: 'show', evoMetaShowTitle: 'Show target line',
+            ariaTabela: 'Generation table by country', shareCopied: 'Copied!',
+            mapTitleBase: 'Electricity Generation in Europe',
+            dsTotal: 'Total Generation', dsLoad: 'Load', dsRenovavel: '% Renewable',
+            dsRenovavelCmp: '% Renew. (compare)', dsRenovavelPre: '% Renew. — ',
+            atalhosHtml: 'Shortcuts: <span class="kbd-hint">←</span> <span class="kbd-hint">→</span> navigate · <span class="kbd-hint">D</span>/<span class="kbd-hint">W</span>/<span class="kbd-hint">M</span>/<span class="kbd-hint">P</span> mode · <span class="kbd-hint">/</span> search · <span class="kbd-hint">S</span> share · <span class="kbd-hint">?</span> help'
+        }
+    };
+
+    function T(k) {
+        var d = I18N[LANG] || I18N.pt;
+        return (d[k] !== undefined) ? d[k] : (I18N.pt[k] !== undefined ? I18N.pt[k] : k);
+    }
+
+    // Nomes de país em inglês (o COUNTRY_NAMES sensível à língua é definido abaixo).
+    var COUNTRY_NAMES_EN = {
+        "at": "Austria", "be": "Belgium", "bg": "Bulgaria", "ch": "Switzerland",
+        "cz": "Czechia", "de": "Germany", "dk": "Denmark", "ee": "Estonia",
+        "es": "Spain", "fi": "Finland", "fr": "France", "gr": "Greece",
+        "hr": "Croatia", "hu": "Hungary", "ie": "Ireland", "it": "Italy",
+        "lt": "Lithuania", "lv": "Latvia", "me": "Montenegro", "nl": "Netherlands",
+        "no": "Norway", "pl": "Poland", "pt": "Portugal", "ro": "Romania",
+        "rs": "Serbia", "se": "Sweden", "si": "Slovenia", "sk": "Slovakia"
+    };
+    var CAT_LABELS_EN = {
+        "solar": "Solar", "wind_onshore": "Wind Onshore",
+        "wind_offshore": "Wind Offshore",
+        "hydro_run_of_river": "Hydro Run-of-River",
+        "hydro_water_reservoir": "Hydro Reservoir",
+        "hydro_pumped_storage": "Hydro Pumped Storage",
+        "nuclear": "Nuclear", "gas": "Natural Gas",
+        "gas_coal_derived": "Coal-Derived Gas",
+        "coal_hard": "Hard Coal", "coal_lignite": "Lignite",
+        "oil": "Oil",
+        "biomass": "Biomass", "geothermal": "Geothermal",
+        "waste": "Waste", "other_renewables": "Other Renewables",
+        "other": "Other"
+    };
+    var EXTRA_CHART_LABELS_EN = {
+        "cross_border": "Imports/Exports",
+        "pumped_storage_consumption": "Pumped Storage Consumption",
+        "load": "Load"
+    };
+
+    function applyStaticI18n() {
+        try { document.documentElement.lang = (I18N[LANG] || I18N.pt).htmlLang; } catch (_) {}
+        document.title = T('title');
+        try {
+            var selfUrl = 'https://www.tiagofelicia.pt/europe-generation' + (LANG === 'en' ? '?lang=en' : '');
+            var canon = document.querySelector('link[rel="canonical"]');
+            if (canon) canon.setAttribute('href', selfUrl);
+            var ogu = document.querySelector('meta[property="og:url"]');
+            if (ogu) ogu.setAttribute('content', selfUrl);
+            var _setMeta = function (sel, val) { var el = document.querySelector(sel); if (el && val) el.setAttribute('content', val); };
+            _setMeta('meta[name="description"]', T('metaDesc'));
+            _setMeta('meta[property="og:title"]', T('ogTitle'));
+            _setMeta('meta[property="og:description"]', T('ogDesc'));
+            _setMeta('meta[name="twitter:title"]', T('twTitle'));
+            _setMeta('meta[name="twitter:description"]', T('twDesc'));
+        } catch (_) {}
+        var i, els;
+        els = document.querySelectorAll('[data-i18n]');
+        for (i = 0; i < els.length; i++) { var v = T(els[i].getAttribute('data-i18n')); if (v !== undefined) els[i].textContent = v; }
+        els = document.querySelectorAll('[data-i18n-html]');
+        for (i = 0; i < els.length; i++) { els[i].innerHTML = T(els[i].getAttribute('data-i18n-html')); }
+        els = document.querySelectorAll('[data-i18n-title]');
+        for (i = 0; i < els.length; i++) { els[i].setAttribute('title', T(els[i].getAttribute('data-i18n-title'))); }
+        els = document.querySelectorAll('[data-i18n-ph]');
+        for (i = 0; i < els.length; i++) { els[i].setAttribute('placeholder', T(els[i].getAttribute('data-i18n-ph'))); }
+        els = document.querySelectorAll('[data-i18n-aria]');
+        for (i = 0; i < els.length; i++) { els[i].setAttribute('aria-label', T(els[i].getAttribute('data-i18n-aria'))); }
+        var ls = document.querySelectorAll('.lang-switch a');
+        for (i = 0; i < ls.length; i++) { ls[i].classList.toggle('active', ls[i].getAttribute('data-lang') === LANG); }
+    }
+    (function setupLangSwitch() {
+        var ls = document.querySelectorAll('.lang-switch a');
+        for (var i = 0; i < ls.length; i++) {
+            ls[i].addEventListener('click', function (ev) {
+                ev.preventDefault();
+                var to = ev.currentTarget.getAttribute('data-lang');
+                if (to === LANG) return;
+                var p = new URLSearchParams(window.location.search);
+                if (to === 'en') p.set('lang', 'en'); else p.delete('lang');
+                window.location.search = p.toString();
+            });
+        }
+    })();
+    applyStaticI18n();
+    // ===================== fim i18n =====================
+
     // --- CONFIGURAÇÕES ---
     // Os dados vivem em data/mapa_producao/ — a origem (same-origin vs
     // GitHub raw) e o fallback entre ambas são geridos por fetchDados() (dados.js).
@@ -897,8 +1315,8 @@ document.addEventListener('DOMContentLoaded', function() {
         "SI": "si", "SK": "sk"
     };
 
-    // Nomes de países (português com acentos)
-    var COUNTRY_NAMES = {
+    // Nomes de países — EN quando ?lang=en, senão português com acentos
+    var COUNTRY_NAMES = (LANG === 'en') ? COUNTRY_NAMES_EN : {
         "at": "Áustria", "be": "Bélgica", "bg": "Bulgária", "ch": "Suíça",
         "cz": "Chéquia", "de": "Alemanha", "dk": "Dinamarca", "ee": "Estónia",
         "es": "Espanha", "fi": "Finlândia", "fr": "França", "gr": "Grécia",
@@ -908,8 +1326,8 @@ document.addEventListener('DOMContentLoaded', function() {
         "rs": "Sérvia", "se": "Suécia", "si": "Eslovénia", "sk": "Eslováquia"
     };
 
-    // Nomes de categorias de produção (português com acentos)
-    var CAT_LABELS = {
+    // Nomes de categorias de produção — EN quando ?lang=en, senão português
+    var CAT_LABELS = (LANG === 'en') ? CAT_LABELS_EN : {
         "solar": "Solar", "wind_onshore": "Eólica Onshore",
         "wind_offshore": "Eólica Offshore",
         "hydro_run_of_river": "Hídrica Fio de Água",
@@ -946,7 +1364,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Categorias extra para o gráfico (toggle)
     var EXTRA_CHART_ORDER = ["cross_border", "pumped_storage_consumption", "load"];
-    var EXTRA_CHART_LABELS = {
+    var EXTRA_CHART_LABELS = (LANG === 'en') ? EXTRA_CHART_LABELS_EN : {
         "cross_border": "Importações/Exportações",
         "pumped_storage_consumption": "Consumo Bombagem",
         "load": "Consumo"
@@ -1085,7 +1503,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function fmtN(v, dec) {
         if (v == null || isNaN(v)) return '—';
         if (dec == null) dec = 2;
-        return Number(v).toFixed(dec).replace('.', ',');
+        var out = Number(v).toFixed(dec);
+        return (DEC_SEP === ',') ? out.replace('.', ',') : out;
     }
     function showToast(msg, variant, duration) {
         var ctn = document.getElementById('toast-container');
@@ -1109,13 +1528,41 @@ document.addEventListener('DOMContentLoaded', function() {
         if (s.charAt(0) === '-') { sign = '-'; s = s.slice(1); }
         var parts = s.split('.');
         var intPart = parts[0];
-        if (intPart.length > 4) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        return sign + intPart + (parts[1] ? ',' + parts[1] : '');
+        if (intPart.length > 4) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, THOU_SEP);
+        return sign + intPart + (parts[1] ? DEC_SEP + parts[1] : '');
     }
 
     var seletorData = document.getElementById('seletor-data');
     var seletorPais = document.getElementById('seletor-pais');
     var loadingIndicator = document.getElementById('loading-indicator');
+
+    // Reconstrói o dropdown de país com os nomes na língua ativa, ordenado por nome
+    // (mantém os mesmos códigos e a seleção atual).
+    (function rebuildCountrySelect() {
+        if (!seletorPais) return;
+        var sel = seletorPais.value, codes = [];
+        for (var i = 0; i < seletorPais.options.length; i++) {
+            if (seletorPais.options[i].value) codes.push(seletorPais.options[i].value);
+        }
+        codes.sort(function (a, b) { return (COUNTRY_NAMES[a] || a).localeCompare(COUNTRY_NAMES[b] || b); });
+        var html = '';
+        for (var j = 0; j < codes.length; j++) {
+            html += '<option value="' + codes[j] + '">' + (COUNTRY_NAMES[codes[j]] || codes[j]) + '</option>';
+        }
+        seletorPais.innerHTML = html;
+        if (sel) seletorPais.value = sel;
+    })();
+
+    // Zona de referência ("a minha zona"): conduz a mensagem de comparação (resumo),
+    // a coluna Δ e a zona inicial dos gráficos. Persistida; default PT; aceita ?ref=.
+    var refZone = (function () {
+        var r = 'pt';
+        try { var s = localStorage.getItem('mapa_prod_refZone'); if (s && COUNTRY_NAMES[s]) r = s; } catch (_) {}
+        var u = new URLSearchParams(window.location.search).get('ref');
+        if (u && COUNTRY_NAMES[u]) { r = u; try { localStorage.setItem('mapa_prod_refZone', r); } catch (_) {} }
+        return r;
+    })();
+    function refName() { return COUNTRY_NAMES[refZone] || refZone.toUpperCase(); }
 
     // --- FETCH COM FALLBACK ---
     async function fetchComFallback(relativePath) {
@@ -1202,48 +1649,48 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data) {
                 var html = '<b>' + countryFlag(country) + name + '</b>';
                 var rs = computeRenShare(data);
-                var baseLbl = renBase === 'load' ? ' (consumo)' : '';
+                var baseLbl = renBase === 'load' ? (LANG === 'en' ? ' (load)' : ' (consumo)') : '';
                 if (rs == null) {
-                    html += '<div class="ren-value" style="color:#999;">Sem dados de consumo</div>';
+                    html += '<div class="ren-value" style="color:#999;">' + (LANG === 'en' ? 'No load data' : 'Sem dados de consumo') + '</div>';
                 } else {
-                    html += '<div class="ren-value" style="color:' + getColor(rs) + ';">' + fmtN(rs, 1) + '% renovável' + baseLbl + '</div>';
+                    html += '<div class="ren-value" style="color:' + getColor(rs) + ';">' + fmtN(rs, 1) + (LANG === 'en' ? '% renewable' : '% renovável') + baseLbl + '</div>';
                 }
                 html += '<div class="prod-detail">';
                 var prod = data.production;
                 if (prod.solar > 0) html += 'Solar: ' + fmtN(prod.solar, 2) + ' GWh<br>';
                 var eolica = (prod.wind_onshore || 0) + (prod.wind_offshore || 0);
-                if (eolica > 0) html += 'Eólica: ' + fmtN(eolica, 2) + ' GWh<br>';
+                if (eolica > 0) html += (LANG === 'en' ? 'Wind: ' : 'Eólica: ') + fmtN(eolica, 2) + ' GWh<br>';
                 var hidrica = (prod.hydro_run_of_river || 0) + (prod.hydro_water_reservoir || 0);
-                if (hidrica > 0) html += 'Hídrica: ' + fmtN(hidrica, 2) + ' GWh<br>';
+                if (hidrica > 0) html += (LANG === 'en' ? 'Hydro: ' : 'Hídrica: ') + fmtN(hidrica, 2) + ' GWh<br>';
                 var bombagem = prod.hydro_pumped_storage || 0;
-                if (bombagem > 0) html += 'Bombagem: ' + fmtN(bombagem, 2) + ' GWh<br>';
+                if (bombagem > 0) html += (LANG === 'en' ? 'Pumped storage: ' : 'Bombagem: ') + fmtN(bombagem, 2) + ' GWh<br>';
                 if (prod.nuclear > 0) html += 'Nuclear: ' + fmtN(prod.nuclear, 2) + ' GWh<br>';
                 var bioTotal = (prod.biomass || 0) + (prod.geothermal || 0) + (prod.waste || 0) + (prod.other_renewables || 0);
-                if (bioTotal > 0) html += 'Biomassa: ' + fmtN(bioTotal, 2) + ' GWh<br>';
+                if (bioTotal > 0) html += (LANG === 'en' ? 'Biomass: ' : 'Biomassa: ') + fmtN(bioTotal, 2) + ' GWh<br>';
                 var fossil = (prod.gas || 0) + (prod.gas_coal_derived || 0) + (prod.coal_hard || 0) + (prod.coal_lignite || 0) + (prod.oil || 0) + (prod.other || 0);
-                if (fossil > 0) html += 'Fóssil: ' + fmtN(fossil, 2) + ' GWh<br>';
+                if (fossil > 0) html += (LANG === 'en' ? 'Fossil: ' : 'Fóssil: ') + fmtN(fossil, 2) + ' GWh<br>';
                 html += '</div>';
-                var uLbl = (currentMode !== 'day' && aggMode === 'mean') ? ' GWh/dia' : ' GWh';
+                var uLbl = (currentMode !== 'day' && aggMode === 'mean') ? (LANG === 'en' ? ' GWh/day' : ' GWh/dia') : ' GWh';
                 html += '<div class="prod-total">Total: ' + fmtN(data.total, 2) + uLbl + '</div>';
                 var spark = buildSparkline(country);
-                if (spark) html += '<div class="sparkline-label">% Renov. (7d)</div>' + spark;
+                if (spark) html += '<div class="sparkline-label">' + (LANG === 'en' ? '% Renew. (7d)' : '% Renov. (7d)') + '</div>' + spark;
                 this._div.innerHTML = html;
             } else {
-                var partialNote = (data && data._partial) ? ' <span title="Apenas Solar, Eólica e Consumo previstos">(previsão parcial)</span>' : '';
+                var partialNote = (data && data._partial) ? ' <span title="' + (LANG === 'en' ? 'Only Solar, Wind and Load forecast' : 'Apenas Solar, Eólica e Consumo previstos') + '">' + (LANG === 'en' ? '(partial forecast)' : '(previsão parcial)') + '</span>' : '';
                 var solarP = data && data.production && data.production.solar;
                 var windP = data && data.production && ((data.production.wind_onshore || 0) + (data.production.wind_offshore || 0));
                 var loadP = data && data.production && data.production.load;
                 var partialBody = '';
                 if (data && data._partial) {
                     if (solarP != null) partialBody += 'Solar: ' + fmtN(solarP, 2) + ' GWh<br>';
-                    if (windP != null) partialBody += 'Eólica: ' + fmtN(windP, 2) + ' GWh<br>';
-                    if (loadP != null) partialBody += 'Consumo: ' + fmtN(loadP, 2) + ' GWh<br>';
+                    if (windP != null) partialBody += (LANG === 'en' ? 'Wind: ' : 'Eólica: ') + fmtN(windP, 2) + ' GWh<br>';
+                    if (loadP != null) partialBody += (LANG === 'en' ? 'Load: ' : 'Consumo: ') + fmtN(loadP, 2) + ' GWh<br>';
                     partialBody = '<div class="prod-detail">' + partialBody + '</div>';
                 }
-                this._div.innerHTML = '<b>' + countryFlag(country) + name + '</b>' + partialNote + '<div class="ren-value" style="color:#999;">' + (data && data._partial ? 'Previsão day-ahead' : 'Sem dados') + '</div>' + partialBody;
+                this._div.innerHTML = '<b>' + countryFlag(country) + name + '</b>' + partialNote + '<div class="ren-value" style="color:#999;">' + (data && data._partial ? (LANG === 'en' ? 'Day-ahead forecast' : 'Previsão day-ahead') : (LANG === 'en' ? 'No data' : 'Sem dados')) + '</div>' + partialBody;
             }
         } else {
-            this._div.innerHTML = '<h4>Produção por país</h4>Passe o rato sobre uma zona';
+            this._div.innerHTML = '<h4>' + T('rankedTitle') + '</h4>' + (LANG === 'en' ? 'Hover over a zone' : 'Passe o rato sobre uma zona');
         }
     };
 
@@ -1255,7 +1702,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var grades = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
         var labels = ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', '50-60%', '60-70%', '70-80%', '80-90%', '90%+'];
 
-        div.innerHTML = '<div class="legend-title">% Renovável</div>';
+        div.innerHTML = '<div class="legend-title">' + (LANG === 'en' ? '% Renewable' : '% Renovável') + '</div>';
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
                 '<i style="background:' + getColor(grades[i] + 1) + '"></i>' +
@@ -1526,7 +1973,7 @@ document.addEventListener('DOMContentLoaded', function() {
         prodChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Produção', 'Consumo'],
+                labels: (LANG === 'en' ? ['Generation', 'Load'] : ['Produção', 'Consumo']),
                 datasets: prodDatasets
             },
             plugins: [zeroLinePlugin],
@@ -1537,7 +1984,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Mix de Produção',
+                        text: T('chartTitle'),
                         color: isDark ? '#e2e8f0' : '#2c3e50',
                         font: { size: 14 }
                     },
@@ -1631,7 +2078,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var loadVisible = prodChart.isDatasetVisible(nProd + 2);
 
         // Labels dinâmicos: só mostrar "Consumo" se o dataset estiver visível
-        prodChart.data.labels = loadVisible ? ['Produção', 'Consumo'] : ['Produção'];
+        prodChart.data.labels = loadVisible ? (LANG === 'en' ? ['Generation', 'Load'] : ['Produção', 'Consumo']) : (LANG === 'en' ? ['Generation'] : ['Produção']);
         resizeChart(loadVisible ? 2 : 1);
 
         if (data && data.production) {
@@ -1664,11 +2111,11 @@ document.addEventListener('DOMContentLoaded', function() {
             prodChart.data.datasets[nProd + 2].data = loadVisible ? [null, loadVal] : [null];
 
             var rsChart = computeRenShare(data);
-            var baseSfx = renBase === 'load' ? ' s/consumo' : '';
-            var renText = rsChart != null ? ' (' + fmtN(rsChart, 1) + '% renovável' + baseSfx + ')' : '';
-            var fcLabel = isFc ? ' \u2014 Previsão' : '';
-            var unitLabel = (currentMode !== 'day') ? (aggMode === 'sum' ? ' \u2014 GWh totais' : ' \u2014 GWh/dia') : '';
-            document.getElementById('chart-titulo').textContent = 'Mix de Produção — ' + name + renText + fcLabel + unitLabel;
+            var baseSfx = renBase === 'load' ? (LANG === 'en' ? ' of load' : ' s/consumo') : '';
+            var renText = rsChart != null ? ' (' + fmtN(rsChart, 1) + (LANG === 'en' ? '% renewable' : '% renovável') + baseSfx + ')' : '';
+            var fcLabel = isFc ? (LANG === 'en' ? ' \u2014 Forecast' : ' \u2014 Previsão') : '';
+            var unitLabel = (currentMode !== 'day') ? (aggMode === 'sum' ? (LANG === 'en' ? ' \u2014 GWh total' : ' \u2014 GWh totais') : (LANG === 'en' ? ' \u2014 GWh/day' : ' \u2014 GWh/dia')) : '';
+            document.getElementById('chart-titulo').textContent = T('chartTitle') + ' — ' + name + renText + fcLabel + unitLabel;
         } else {
             for (var j = 0; j < CAT_ORDER.length; j++) {
                 prodChart.data.datasets[j].data = loadVisible ? [0, null] : [0];
@@ -1677,10 +2124,10 @@ document.addEventListener('DOMContentLoaded', function() {
             prodChart.data.datasets[nProd].data = loadVisible ? [null, null] : [null];
             prodChart.data.datasets[nProd + 1].data = loadVisible ? [null, null] : [null];
             prodChart.data.datasets[nProd + 2].data = loadVisible ? [null, null] : [null];
-            document.getElementById('chart-titulo').textContent = 'Mix de Produção — ' + name + ' (sem dados)';
+            document.getElementById('chart-titulo').textContent = T('chartTitle') + ' — ' + name + (LANG === 'en' ? ' (no data)' : ' (sem dados)');
         }
         // Atualizar label do eixo X conforme agg
-        var xUnit = (currentMode !== 'day' && aggMode === 'sum') ? 'GWh (total)' : (currentMode !== 'day' ? 'GWh/dia' : 'GWh');
+        var xUnit = (currentMode !== 'day' && aggMode === 'sum') ? 'GWh (total)' : (currentMode !== 'day' ? (LANG === 'en' ? 'GWh/day' : 'GWh/dia') : 'GWh');
         if (prodChart.options.scales && prodChart.options.scales.x && prodChart.options.scales.x.title) {
             prodChart.options.scales.x.title.text = xUnit;
         }
@@ -1729,9 +2176,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 per = fmtP(seletorData.value);
             }
-            var aggL = (currentMode !== 'day') ? (aggMode === 'sum' ? ' \u2014 Totais' : ' \u2014 Médias diárias') : '';
-            var baseL = renBase === 'load' ? ' \u00b7 % Renov. sobre Consumo' : ' \u00b7 % Renov. sobre Produção';
-            titulo.textContent = 'Produção por país — ' + per + aggL + baseL;
+            var aggL = (currentMode !== 'day') ? (aggMode === 'sum' ? (LANG === 'en' ? ' \u2014 Totals' : ' \u2014 Totais') : (LANG === 'en' ? ' \u2014 Daily averages' : ' \u2014 Médias diárias')) : '';
+            var baseL = renBase === 'load' ? (LANG === 'en' ? ' \u00b7 % Renew. of Load' : ' \u00b7 % Renov. sobre Consumo') : (LANG === 'en' ? ' \u00b7 % Renew. of Generation' : ' \u00b7 % Renov. sobre Produção');
+            titulo.textContent = T('rankedTitle') + ' — ' + per + aggL + baseL;
         }
 
         var entries = [];
@@ -1781,7 +2228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (entries.length === 0) {
-            container.innerHTML = '<p class="no-data-msg">Sem dados para o dia selecionado.</p>';
+            container.innerHTML = '<p class="no-data-msg">' + (LANG === 'en' ? 'No data for the selected day.' : 'Sem dados para o dia selecionado.') + '</p>';
             return;
         }
 
@@ -1799,7 +2246,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // ΔPT: diferença de % renovável vs Portugal (pontos percentuais)
         var ptEntry = null;
-        for (var ip = 0; ip < entries.length; ip++) { if (entries[ip].country === 'pt') { ptEntry = entries[ip]; break; } }
+        for (var ip = 0; ip < entries.length; ip++) { if (entries[ip].country === refZone) { ptEntry = entries[ip]; break; } }
         var ptRen = ptEntry ? ptEntry.ren : null;
         for (var ie = 0; ie < entries.length; ie++) {
             entries[ie].deltaPt = (ptRen != null) ? (entries[ie].ren - ptRen) : null;
@@ -1816,8 +2263,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // empurrar para o fim e ordenar alfabeticamente (PT em 1º entre eles).
             if (a._partial !== b._partial) return a._partial ? 1 : -1;
             if (a._partial && b._partial) {
-                if (a.country === 'pt') return -1;
-                if (b.country === 'pt') return 1;
+                if (a.country === refZone) return -1;
+                if (b.country === refZone) return 1;
                 return a.name.localeCompare(b.name, 'pt');
             }
             if (col === 'name') return dir * a.name.localeCompare(b.name, 'pt');
@@ -1838,19 +2285,23 @@ document.addEventListener('DOMContentLoaded', function() {
             { key: 'total', label: 'Total' },
             { key: 'load', label: 'Consumo' }
         ];
+        if (LANG === 'en') {
+            var _colEN = { ren:'Renewable', solar:'Solar', eolica:'Wind', hydro:'Hydro', biomass:'Biomass', other_ren:'Other Renew.', pumped:'Pumped', fossil:'Fossil', nuclear:'Nuclear', total:'Total', load:'Load' };
+            for (var _ci = 0; _ci < columns.length; _ci++) { if (_colEN[columns[_ci].key]) columns[_ci].label = _colEN[columns[_ci].key]; }
+        }
 
         var html = '<div class="table-scroll"><table class="ranked-table">';
         html += '<thead><tr>';
         html += '<th scope="col" class="rank-cell">#</th>';
-        html += '<th scope="col" class="sortable" data-sort="name" tabindex="0" role="button" aria-label="Ordenar por país">País' + getSortIndicator('name') + '</th>';
-        if (showSpark) { html += '<th scope="col" class="spark-cell" title="Tendência de % renovável nos últimos 7 dias">Tendência 7d</th>'; }
+        html += '<th scope="col" class="sortable" data-sort="name" tabindex="0" role="button" aria-label="' + (LANG === 'en' ? 'Sort by country' : 'Ordenar por país') + '">' + (LANG === 'en' ? 'Country' : 'País') + getSortIndicator('name') + '</th>';
+        if (showSpark) { html += '<th scope="col" class="spark-cell" title="' + (LANG === 'en' ? 'Renewable % trend over the last 7 days' : 'Tendência de % renovável nos últimos 7 dias') + '">' + (LANG === 'en' ? '7d trend' : 'Tendência 7d') + '</th>'; }
         for (var c = 0; c < columns.length; c++) {
-            html += '<th scope="col" class="sortable" data-sort="' + columns[c].key + '" tabindex="0" role="button" aria-label="Ordenar por ' + columns[c].label + '">' + columns[c].label + getSortIndicator(columns[c].key) + '</th>';
+            html += '<th scope="col" class="sortable" data-sort="' + columns[c].key + '" tabindex="0" role="button" aria-label="' + (LANG === 'en' ? 'Sort by ' : 'Ordenar por ') + columns[c].label + '">' + columns[c].label + getSortIndicator(columns[c].key) + '</th>';
             if (columns[c].key === 'ren' && showDeltaPt) {
-                html += '<th scope="col" class="sortable" data-sort="deltaPt" tabindex="0" role="button" aria-label="Ordenar por diferença vs Portugal" title="Diferença em pontos percentuais vs Portugal">ΔPT' + getSortIndicator('deltaPt') + '</th>';
+                html += '<th scope="col" class="sortable" data-sort="deltaPt" tabindex="0" role="button" aria-label="' + (LANG === 'en' ? 'Sort by difference vs ' : 'Ordenar por diferença vs ') + refName() + '" title="' + (LANG === 'en' ? 'Difference in percentage points vs ' : 'Diferença em pontos percentuais vs ') + refName() + '">Δ' + refZone.toUpperCase() + getSortIndicator('deltaPt') + '</th>';
             }
             if (columns[c].key === 'total' && showAutonomy) {
-                html += '<th scope="col" class="sortable" data-sort="autonomy" tabindex="0" role="button" aria-label="Ordenar por auto-suficiência" title="Produção / Consumo × 100 — >100% = exportador líquido">Auto-sufic.' + getSortIndicator('autonomy') + '</th>';
+                html += '<th scope="col" class="sortable" data-sort="autonomy" tabindex="0" role="button" aria-label="' + (LANG === 'en' ? 'Sort by self-sufficiency' : 'Ordenar por auto-suficiência') + '" title="' + (LANG === 'en' ? 'Generation / Load × 100 — >100% = net exporter' : 'Produção / Consumo × 100 — >100% = exportador líquido') + '">' + (LANG === 'en' ? 'Self-suff.' : 'Auto-sufic.') + getSortIndicator('autonomy') + '</th>';
             }
         }
         html += '</tr></thead><tbody>';
@@ -1858,7 +2309,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var i = 0; i < entries.length; i++) {
             var e = entries[i];
             var color = getColor(e.ren);
-            html += '<tr data-country="' + e.country + '">';
+            html += '<tr data-country="' + e.country + '"' + (e.country === refZone ? ' class="ref-row"' : '') + '>';
             html += '<td class="rank-cell">' + (i + 1) + '</td>';
             var fcBadge = e.source === 'forecast' ? ' <span class="forecast-badge">prev.</span>' : '';
             html += '<td style="text-align:left;"><span class="color-indicator" style="background:' + color + (e.source === 'forecast' ? ';opacity:0.6' : '') + '"></span>' + countryFlag(e.country) + e.name + fcBadge + '</td>';
@@ -1867,7 +2318,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Em entradas parciais (previsão), só Solar, Eólica e Consumo são reais
             var PARTIAL_OK = { solar:1, eolica:1, load:1 };
             function fmtCell(key, val, dec) {
-                if (e._partial && !PARTIAL_OK[key]) return '<span title="Não disponível em previsão day-ahead">—</span>';
+                if (e._partial && !PARTIAL_OK[key]) return '<span title="' + (LANG === 'en' ? 'Not available in day-ahead forecast' : 'Não disponível em previsão day-ahead') + '">—</span>';
                 return fmtT(val, dec == null ? 1 : dec);
             }
             // Denominador para "% da produção total" (varia com toggle de bombagem)
@@ -1876,70 +2327,70 @@ document.addEventListener('DOMContentLoaded', function() {
             function pctOfRen(v) { return e.renSum > 0 ? fmtT(v / e.renSum * 100, 1) + ' %' : '—'; }
             // Subtotal de renováveis (sem bombagem)
             var subLine = (e.solar > 0 ? 'Solar: ' + fmtT(e.solar, 2) + ' GWh (' + pctOfRen(e.solar) + ')\n' : '')
-                + (e.wind_onshore > 0 ? 'Eól. Onshore: ' + fmtT(e.wind_onshore, 2) + ' GWh (' + pctOfRen(e.wind_onshore) + ')\n' : '')
-                + (e.wind_offshore > 0 ? 'Eól. Offshore: ' + fmtT(e.wind_offshore, 2) + ' GWh (' + pctOfRen(e.wind_offshore) + ')\n' : '')
-                + (e.hydro_run_of_river > 0 ? 'Hídrica (Fio de Água): ' + fmtT(e.hydro_run_of_river, 2) + ' GWh (' + pctOfRen(e.hydro_run_of_river) + ')\n' : '')
-                + (e.hydro_water_reservoir > 0 ? 'Hídrica (Albufeira): ' + fmtT(e.hydro_water_reservoir, 2) + ' GWh (' + pctOfRen(e.hydro_water_reservoir) + ')\n' : '')
-                + (e.biomass > 0 ? 'Biomassa: ' + fmtT(e.biomass, 2) + ' GWh (' + pctOfRen(e.biomass) + ')\n' : '')
-                + (e.geothermal > 0 ? 'Geotermia: ' + fmtT(e.geothermal, 2) + ' GWh (' + pctOfRen(e.geothermal) + ')\n' : '')
-                + (e.waste > 0 ? 'Resíduos: ' + fmtT(e.waste, 2) + ' GWh (' + pctOfRen(e.waste) + ')\n' : '')
-                + (e.other_renewables > 0 ? 'Outras Renov.: ' + fmtT(e.other_renewables, 2) + ' GWh (' + pctOfRen(e.other_renewables) + ')\n' : '');
-            var tipRen = subLine + '─────────\nTotal renovável: ' + fmtT(e.renSum, 2) + ' GWh\n' + fmtT(e.ren, 2) + ' % da produção ' + (includePumped ? 'total' : 'sem bombagem');
+                + (e.wind_onshore > 0 ? (LANG === 'en' ? 'Wind Onshore: ' : 'Eól. Onshore: ') + fmtT(e.wind_onshore, 2) + ' GWh (' + pctOfRen(e.wind_onshore) + ')\n' : '')
+                + (e.wind_offshore > 0 ? (LANG === 'en' ? 'Wind Offshore: ' : 'Eól. Offshore: ') + fmtT(e.wind_offshore, 2) + ' GWh (' + pctOfRen(e.wind_offshore) + ')\n' : '')
+                + (e.hydro_run_of_river > 0 ? (LANG === 'en' ? 'Hydro (Run-of-River): ' : 'Hídrica (Fio de Água): ') + fmtT(e.hydro_run_of_river, 2) + ' GWh (' + pctOfRen(e.hydro_run_of_river) + ')\n' : '')
+                + (e.hydro_water_reservoir > 0 ? (LANG === 'en' ? 'Hydro (Reservoir): ' : 'Hídrica (Albufeira): ') + fmtT(e.hydro_water_reservoir, 2) + ' GWh (' + pctOfRen(e.hydro_water_reservoir) + ')\n' : '')
+                + (e.biomass > 0 ? (LANG === 'en' ? 'Biomass: ' : 'Biomassa: ') + fmtT(e.biomass, 2) + ' GWh (' + pctOfRen(e.biomass) + ')\n' : '')
+                + (e.geothermal > 0 ? (LANG === 'en' ? 'Geothermal: ' : 'Geotermia: ') + fmtT(e.geothermal, 2) + ' GWh (' + pctOfRen(e.geothermal) + ')\n' : '')
+                + (e.waste > 0 ? (LANG === 'en' ? 'Waste: ' : 'Resíduos: ') + fmtT(e.waste, 2) + ' GWh (' + pctOfRen(e.waste) + ')\n' : '')
+                + (e.other_renewables > 0 ? (LANG === 'en' ? 'Other Renew.: ' : 'Outras Renov.: ') + fmtT(e.other_renewables, 2) + ' GWh (' + pctOfRen(e.other_renewables) + ')\n' : '');
+            var tipRen = subLine + '─────────\n' + (LANG === 'en' ? 'Total renewable: ' : 'Total renovável: ') + fmtT(e.renSum, 2) + ' GWh\n' + fmtT(e.ren, 2) + (LANG === 'en' ? ' % of generation ' : ' % da produção ') + (includePumped ? 'total' : (LANG === 'en' ? 'excl. pumped' : 'sem bombagem'));
             if (e._partial) {
-                html += '<td class="has-tooltip" title="Em previsão day-ahead, % renovável não é calculável (faltam hídrica, biomassa, fóssil, nuclear).">—</td>';
+                html += '<td class="has-tooltip" title="' + (LANG === 'en' ? 'In day-ahead forecast, renewable % cannot be computed (hydro, biomass, fossil, nuclear missing).' : 'Em previsão day-ahead, % renovável não é calculável (faltam hídrica, biomassa, fóssil, nuclear).') + '">—</td>';
             } else {
                 html += '<td class="has-tooltip" title="' + tipRen + '"><strong>' + fmtT(e.ren, 1) + '%</strong></td>';
             }
 
             // ΔPT
             if (showDeltaPt) {
-                if (e.country === 'pt' || e.deltaPt == null) {
+                if (e.country === refZone || e.deltaPt == null) {
                     html += '<td class="delta-zero">\u2014</td>';
                 } else {
                     var dCls = e.deltaPt > 0.05 ? 'delta-pos' : (e.deltaPt < -0.05 ? 'delta-neg' : 'delta-zero');
                     var dSign = e.deltaPt > 0 ? '+' : '';
-                    html += '<td class="' + dCls + '" title="Diferença vs Portugal (' + fmtT(ptRen, 1) + '%)">' + dSign + fmtT(e.deltaPt, 1) + ' p.p.</td>';
+                    html += '<td class="' + dCls + '" title="' + (LANG === 'en' ? 'Difference vs ' : 'Diferença vs ') + refName() + ' (' + fmtT(ptRen, 1) + '%)">' + dSign + fmtT(e.deltaPt, 1) + ' p.p.</td>';
                 }
             }
 
             // Solar (real mesmo em previsão)
-            html += '<td class="has-tooltip" title="Solar: ' + fmtT(e.solar, 2) + ' GWh' + (e._partial ? '\n(previsão day-ahead)' : '\n' + pctOf(e.solar) + ' da produção') + '">' + fmtT(e.solar, 1) + '</td>';
+            html += '<td class="has-tooltip" title="Solar: ' + fmtT(e.solar, 2) + ' GWh' + (e._partial ? (LANG === 'en' ? '\\n(day-ahead forecast)' : '\\n(previsão day-ahead)') : '\n' + pctOf(e.solar) + (LANG === 'en' ? ' of generation' : ' da produção')) + '">' + fmtT(e.solar, 1) + '</td>';
 
             // Eólica — tooltip com onshore + offshore + % total (real mesmo em previsão)
-            var tipEol = 'Onshore: ' + fmtT(e.wind_onshore, 2) + ' GWh\nOffshore: ' + fmtT(e.wind_offshore, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.eolica, 2) + ' GWh' + (e._partial ? '\n(previsão day-ahead)' : '\n' + pctOf(e.eolica) + ' da produção');
+            var tipEol = 'Onshore: ' + fmtT(e.wind_onshore, 2) + ' GWh\nOffshore: ' + fmtT(e.wind_offshore, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.eolica, 2) + ' GWh' + (e._partial ? (LANG === 'en' ? '\\n(day-ahead forecast)' : '\\n(previsão day-ahead)') : '\n' + pctOf(e.eolica) + (LANG === 'en' ? ' of generation' : ' da produção'));
             html += '<td class="has-tooltip" title="' + tipEol + '">' + fmtT(e.eolica, 1) + '</td>';
 
             // Hídrica
-            var tipHyd = 'Fio de Água: ' + fmtT(e.hydro_run_of_river, 2) + ' GWh\nAlbufeira: ' + fmtT(e.hydro_water_reservoir, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.hydro, 2) + ' GWh\n' + pctOf(e.hydro) + ' da produção';
-            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipHyd) + '">' + fmtCell('hydro', e.hydro) + '</td>';
+            var tipHyd = (LANG === 'en' ? 'Run-of-River: ' : 'Fio de Água: ') + fmtT(e.hydro_run_of_river, 2) + ' GWh\n' + (LANG === 'en' ? 'Reservoir: ' : 'Albufeira: ') + fmtT(e.hydro_water_reservoir, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.hydro, 2) + ' GWh\n' + pctOf(e.hydro) + (LANG === 'en' ? ' of generation' : ' da produção');
+            html += '<td class="has-tooltip" title="' + (e._partial ? (LANG === 'en' ? 'Not available in day-ahead forecast' : 'Não disponível em previsão day-ahead') : tipHyd) + '">' + fmtCell('hydro', e.hydro) + '</td>';
 
             // Biomassa
-            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : 'Biomassa: ' + fmtT(e.biomass, 2) + ' GWh\n' + pctOf(e.biomass) + ' da produção') + '">' + fmtCell('biomass', e.biomass) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? (LANG === 'en' ? 'Not available in day-ahead forecast' : 'Não disponível em previsão day-ahead') : (LANG === 'en' ? 'Biomass: ' : 'Biomassa: ') + fmtT(e.biomass, 2) + ' GWh\n' + pctOf(e.biomass) + (LANG === 'en' ? ' of generation' : ' da produção')) + '">' + fmtCell('biomass', e.biomass) + '</td>';
 
             // Out. Renov.
-            var tipOR = 'Geotermia: ' + fmtT(e.geothermal, 2) + ' GWh\nResíduos: ' + fmtT(e.waste, 2) + ' GWh\nOutras Renov.: ' + fmtT(e.other_renewables, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.other_ren, 2) + ' GWh\n' + pctOf(e.other_ren) + ' da produção';
-            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipOR) + '">' + fmtCell('other_ren', e.other_ren) + '</td>';
+            var tipOR = (LANG === 'en' ? 'Geothermal: ' : 'Geotermia: ') + fmtT(e.geothermal, 2) + ' GWh\n' + (LANG === 'en' ? 'Waste: ' : 'Resíduos: ') + fmtT(e.waste, 2) + ' GWh\n' + (LANG === 'en' ? 'Other Renew.: ' : 'Outras Renov.: ') + fmtT(e.other_renewables, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.other_ren, 2) + ' GWh\n' + pctOf(e.other_ren) + (LANG === 'en' ? ' of generation' : ' da produção');
+            html += '<td class="has-tooltip" title="' + (e._partial ? (LANG === 'en' ? 'Not available in day-ahead forecast' : 'Não disponível em previsão day-ahead') : tipOR) + '">' + fmtCell('other_ren', e.other_ren) + '</td>';
 
             // Bombagem
-            var bombStatus = includePumped ? 'No denominador (conta para o total)' : 'Fora do denominador (excluída)';
-            var tipBomb = 'Bombagem: ' + fmtT(e.pumped, 2) + ' GWh\n' + pctOf(e.pumped) + ' da produção\n─────────\n' + bombStatus;
-            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipBomb) + '">' + fmtCell('pumped', e.pumped) + '</td>';
+            var bombStatus = includePumped ? (LANG === 'en' ? 'In the denominator (counts towards the total)' : 'No denominador (conta para o total)') : (LANG === 'en' ? 'Outside the denominator (excluded)' : 'Fora do denominador (excluída)');
+            var tipBomb = (LANG === 'en' ? 'Pumped: ' : 'Bombagem: ') + fmtT(e.pumped, 2) + ' GWh\n' + pctOf(e.pumped) + (LANG === 'en' ? ' of generation' : ' da produção') + '\n─────────\n' + bombStatus;
+            html += '<td class="has-tooltip" title="' + (e._partial ? (LANG === 'en' ? 'Not available in day-ahead forecast' : 'Não disponível em previsão day-ahead') : tipBomb) + '">' + fmtCell('pumped', e.pumped) + '</td>';
 
             // Fóssil
-            var tipFos = 'Gás Natural: ' + fmtT(e.gas, 2) + ' GWh\nGás de Carvão: ' + fmtT(e.gas_coal_derived, 2) + ' GWh\nCarvão: ' + fmtT(e.coal_hard, 2) + ' GWh\nLinhite: ' + fmtT(e.coal_lignite, 2) + ' GWh\nPetróleo: ' + fmtT(e.oil, 2) + ' GWh\nOutro: ' + fmtT(e.other_src, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.fossil, 2) + ' GWh\n' + pctOf(e.fossil) + ' da produção';
-            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : tipFos) + '">' + fmtCell('fossil', e.fossil) + '</td>';
+            var tipFos = (LANG === 'en' ? 'Natural Gas: ' : 'Gás Natural: ') + fmtT(e.gas, 2) + ' GWh\n' + (LANG === 'en' ? 'Coal-Derived Gas: ' : 'Gás de Carvão: ') + fmtT(e.gas_coal_derived, 2) + ' GWh\n' + (LANG === 'en' ? 'Hard Coal: ' : 'Carvão: ') + fmtT(e.coal_hard, 2) + ' GWh\n' + (LANG === 'en' ? 'Lignite: ' : 'Linhite: ') + fmtT(e.coal_lignite, 2) + ' GWh\n' + (LANG === 'en' ? 'Oil: ' : 'Petróleo: ') + fmtT(e.oil, 2) + ' GWh\n' + (LANG === 'en' ? 'Other: ' : 'Outro: ') + fmtT(e.other_src, 2) + ' GWh\n─────────\nTotal: ' + fmtT(e.fossil, 2) + ' GWh\n' + pctOf(e.fossil) + (LANG === 'en' ? ' of generation' : ' da produção');
+            html += '<td class="has-tooltip" title="' + (e._partial ? (LANG === 'en' ? 'Not available in day-ahead forecast' : 'Não disponível em previsão day-ahead') : tipFos) + '">' + fmtCell('fossil', e.fossil) + '</td>';
 
             // Nuclear
-            html += '<td class="has-tooltip" title="' + (e._partial ? 'Não disponível em previsão day-ahead' : 'Nuclear: ' + fmtT(e.nuclear, 2) + ' GWh\n' + pctOf(e.nuclear) + ' da produção') + '">' + fmtCell('nuclear', e.nuclear) + '</td>';
+            html += '<td class="has-tooltip" title="' + (e._partial ? (LANG === 'en' ? 'Not available in day-ahead forecast' : 'Não disponível em previsão day-ahead') : 'Nuclear: ' + fmtT(e.nuclear, 2) + ' GWh\n' + pctOf(e.nuclear) + (LANG === 'en' ? ' of generation' : ' da produção')) + '">' + fmtCell('nuclear', e.nuclear) + '</td>';
 
             // Total
-            var pumpedLbl = includePumped ? '\nBombagem: ' + fmtT(e.pumped, 2) + ' GWh (no denominador)' : '\nBombagem: ' + fmtT(e.pumped, 2) + ' GWh (excluída do denominador)';
-            var denomLbl = includePumped ? 'Denominador: ' + fmtT(e.total, 2) + ' GWh (total)' : 'Denominador: ' + fmtT(denom, 2) + ' GWh (total − bombagem)';
-            var tipTotal = 'Renovável: ' + fmtT(e.renSum, 2) + ' GWh (' + fmtT(e.ren, 1) + ' %)\nNuclear: ' + fmtT(e.nuclear, 2) + ' GWh\nFóssil: ' + fmtT(e.fossil, 2) + ' GWh' + pumpedLbl + '\n─────────\nProdução total: ' + fmtT(e.total, 2) + ' GWh\n' + denomLbl;
-            html += '<td class="has-tooltip" title="' + (e._partial ? 'Em previsão day-ahead, o total não é calculável (faltam hídrica, biomassa, fóssil, nuclear).' : tipTotal) + '">' + fmtCell('total', e.total) + '</td>';
+            var pumpedLbl = '\n' + (LANG === 'en' ? 'Pumped: ' : 'Bombagem: ') + fmtT(e.pumped, 2) + ' GWh ' + (includePumped ? (LANG === 'en' ? '(in denominator)' : '(no denominador)') : (LANG === 'en' ? '(excluded from denominator)' : '(excluída do denominador)'));
+            var denomLbl = (LANG === 'en' ? 'Denominator: ' : 'Denominador: ') + (includePumped ? fmtT(e.total, 2) + ' GWh (total)' : fmtT(denom, 2) + (LANG === 'en' ? ' GWh (total − pumped)' : ' GWh (total − bombagem)'));
+            var tipTotal = (LANG === 'en' ? 'Renewable: ' : 'Renovável: ') + fmtT(e.renSum, 2) + ' GWh (' + fmtT(e.ren, 1) + ' %)\nNuclear: ' + fmtT(e.nuclear, 2) + ' GWh\n' + (LANG === 'en' ? 'Fossil: ' : 'Fóssil: ') + fmtT(e.fossil, 2) + ' GWh' + pumpedLbl + '\n─────────\n' + (LANG === 'en' ? 'Total generation: ' : 'Produção total: ') + fmtT(e.total, 2) + ' GWh\n' + denomLbl;
+            html += '<td class="has-tooltip" title="' + (e._partial ? (LANG === 'en' ? 'In day-ahead forecast, the total cannot be computed (hydro, biomass, fossil, nuclear missing).' : 'Em previsão day-ahead, o total não é calculável (faltam hídrica, biomassa, fóssil, nuclear).') : tipTotal) + '">' + fmtCell('total', e.total) + '</td>';
             // Consumo (load) — disponível mesmo em previsão day-ahead
-            var tipLoad = 'Consumo: ' + fmtT(e.load, 2) + ' GWh' + (e._partial ? '\n(previsão day-ahead)' : '');
-            html += '<td class="has-tooltip" title="' + tipLoad + '">' + (e.load > 0 ? fmtT(e.load, 1) : '<span title="Sem dados de consumo">—</span>') + '</td>';
+            var tipLoad = (LANG === 'en' ? 'Load: ' : 'Consumo: ') + fmtT(e.load, 2) + ' GWh' + (e._partial ? (LANG === 'en' ? '\n(day-ahead forecast)' : '\n(previsão day-ahead)') : '');
+            html += '<td class="has-tooltip" title="' + tipLoad + '">' + (e.load > 0 ? fmtT(e.load, 1) : '<span title="' + (LANG === 'en' ? 'No load data' : 'Sem dados de consumo') + '">—</span>') + '</td>';
 
             // Auto-suficiência
             if (showAutonomy) {
@@ -1947,8 +2398,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += '<td class="delta-zero">—</td>';
                 } else {
                     var aCls = e.autonomy > 100 ? 'delta-pos' : (e.autonomy < 100 ? 'delta-neg' : 'delta-zero');
-                    var netLbl = e.autonomy > 100 ? 'Exportador líquido' : (e.autonomy < 100 ? 'Importador líquido' : 'Equilíbrio');
-                    var tipAut = 'Produção: ' + fmtT(e.total, 2) + ' GWh\nConsumo: ' + fmtT(e.load, 2) + ' GWh\n─────────\nAuto-sufic.: ' + fmtT(e.autonomy, 1) + '%\n' + netLbl;
+                    var netLbl = e.autonomy > 100 ? (LANG === 'en' ? 'Net exporter' : 'Exportador líquido') : (e.autonomy < 100 ? (LANG === 'en' ? 'Net importer' : 'Importador líquido') : (LANG === 'en' ? 'Balanced' : 'Equilíbrio'));
+                    var tipAut = (LANG === 'en' ? 'Generation: ' : 'Produção: ') + fmtT(e.total, 2) + ' GWh\n' + (LANG === 'en' ? 'Load: ' : 'Consumo: ') + fmtT(e.load, 2) + ' GWh\n─────────\n' + (LANG === 'en' ? 'Self-suff.: ' : 'Auto-sufic.: ') + fmtT(e.autonomy, 1) + '%\n' + netLbl;
                     html += '<td class="' + aCls + ' has-tooltip" title="' + tipAut + '">' + fmtT(e.autonomy, 1) + '%</td>';
                 }
             }
@@ -1957,7 +2408,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         html += '</tbody></table></div>';
         if (hiddenFcCount > 0) {
-            html += '<p style="text-align:center; margin-top:8px; font-size:0.82em; color:#6b7280;" title="Estes países têm dados para este dia apenas em previsão day-ahead (não actualizados com valores reais). Desmarque &quot;Ocultar países em previsão&quot; para os ver.">⚠ ' + hiddenFcCount + (hiddenFcCount === 1 ? ' país ocultado' : ' países ocultados') + ' por estar' + (hiddenFcCount === 1 ? '' : 'em') + ' apenas com previsão day-ahead.</p>';
+            html += '<p style="text-align:center; margin-top:8px; font-size:0.82em; color:#6b7280;" title="' + (LANG === 'en' ? 'These countries only have day-ahead forecast data for this day (not updated with real values). Uncheck &quot;Hide forecast-only countries&quot; to see them.' : 'Estes países têm dados para este dia apenas em previsão day-ahead (não actualizados com valores reais). Desmarque &quot;Ocultar países em previsão&quot; para os ver.') + '">⚠ ' + hiddenFcCount + (LANG === 'en' ? (hiddenFcCount === 1 ? ' country hidden (day-ahead forecast only).' : ' countries hidden (day-ahead forecast only).') : (hiddenFcCount === 1 ? ' país ocultado' : ' países ocultados') + ' por estar' + (hiddenFcCount === 1 ? '' : 'em') + ' apenas com previsão day-ahead.') + '</p>';
         }
         container.innerHTML = html;
         applyCountrySearch();
@@ -2001,19 +2452,19 @@ document.addEventListener('DOMContentLoaded', function() {
         var isFuture = selectedDate > todayStr;
 
         if (isPast && hasForecast) {
-            badge.textContent = '\u23F3 ' + fcCount + (fcCount === 1 ? ' país sem dados reais finais' : ' países sem dados reais finais') + ' \u2014 nesses, apenas Solar, Eólica e Consumo são apresentados (% renovável e outras fontes ocultadas)';
+            badge.textContent = '\u23F3 ' + fcCount + (fcCount === 1 ? (LANG === 'en' ? ' country without final real data' : ' país sem dados reais finais') : (LANG === 'en' ? ' countries without final real data' : ' países sem dados reais finais')) + (LANG === 'en' ? ' \u2014 for those, only Solar, Wind and Load are shown (renewable % and other sources hidden)' : ' \u2014 nesses, apenas Solar, Eólica e Consumo são apresentados (% renovável e outras fontes ocultadas)');
             badge.className = 'source-badge provisional';
             badge.style.display = 'inline-block';
         } else if (hasForecast && hasProvisional) {
-            badge.textContent = '\u23F3 Dados provisórios \u2014 ' + provCount + ' país(es) com dados reais (não finais); ' + fcCount + ' apenas com previsão day-ahead (Solar, Eólica e Consumo). Outras fontes ocultadas para evitar valores imputados.';
+            badge.textContent = (LANG === 'en' ? '\u23F3 Provisional data \u2014 ' : '\u23F3 Dados provisórios \u2014 ') + provCount + (LANG === 'en' ? ' country(ies) with real (non-final) data; ' : ' país(es) com dados reais (não finais); ') + fcCount + (LANG === 'en' ? ' with day-ahead forecast only (Solar, Wind and Load). Other sources hidden to avoid imputed values.' : ' apenas com previsão day-ahead (Solar, Eólica e Consumo). Outras fontes ocultadas para evitar valores imputados.');
             badge.className = 'source-badge provisional';
             badge.style.display = 'inline-block';
         } else if (hasForecast && !hasProvisional) {
-            badge.textContent = '\u26A1 Previsão day-ahead \u2014 apenas Solar, Eólica e Consumo estão disponíveis. As restantes fontes não são previstas pela API e foram ocultadas (% renovável não é calculável de forma fiável).';
+            badge.textContent = (LANG === 'en' ? '\u26A1 Day-ahead forecast \u2014 only Solar, Wind and Load are available. The other sources are not forecast by the API and were hidden (renewable % cannot be reliably computed).' : '\u26A1 Previsão day-ahead \u2014 apenas Solar, Eólica e Consumo estão disponíveis. As restantes fontes não são previstas pela API e foram ocultadas (% renovável não é calculável de forma fiável).');
             badge.className = 'source-badge forecast';
             badge.style.display = 'inline-block';
         } else if (hasProvisional) {
-            badge.textContent = '\u23F3 Dados provisórios \u2014 Valores irão ser atualizados com dados finais';
+            badge.textContent = (LANG === 'en' ? '\u23F3 Provisional data \u2014 values will be updated with final data' : '\u23F3 Dados provisórios \u2014 Valores irão ser atualizados com dados finais');
             badge.className = 'source-badge provisional';
             badge.style.display = 'inline-block';
         } else {
@@ -2134,12 +2585,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        var baseL = renBase === 'load' ? '% renov. sobre consumo' : '% renov. sobre produção';
+        var baseL = renBase === 'load' ? (LANG === 'en' ? '% renew. of load' : '% renov. sobre consumo') : (LANG === 'en' ? '% renew. of generation' : '% renov. sobre produção');
         if (titulo) {
-            titulo.textContent = 'Heatmap anual de ' + baseL + ' — ' + (COUNTRY_NAMES[country] || country.toUpperCase()) + ' · ' + year;
+            titulo.textContent = (LANG === 'en' ? 'Annual heatmap of ' : 'Heatmap anual de ') + baseL + ' — ' + (COUNTRY_NAMES[country] || country.toUpperCase()) + ' · ' + year;
         }
         if (!values.length) {
-            container.innerHTML = '<p class="no-data-msg" style="text-align:center;padding:20px;">Sem dados para este ano.</p>';
+            container.innerHTML = '<p class="no-data-msg" style="text-align:center;padding:20px;">' + (LANG === 'en' ? 'No data for this year.' : 'Sem dados para este ano.') + '</p>';
             if (statsEl) statsEl.textContent = '';
             return;
         }
@@ -2147,7 +2598,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var maxV = Math.max.apply(null, values);
         var avgV = values.reduce(function(a, b) { return a + b; }, 0) / values.length;
         if (statsEl) {
-            statsEl.innerHTML = values.length + ' dias · Média: <strong>' + fmtT(avgV, 1) + '%</strong> · Mín: <strong>' + fmtT(minV, 1) + '%</strong> · Máx: <strong>' + fmtT(maxV, 1) + '%</strong>';
+            statsEl.innerHTML = values.length + (LANG === 'en' ? ' days · Avg: <strong>' : ' dias · Média: <strong>') + fmtT(avgV, 1) + (LANG === 'en' ? '%</strong> · Min: <strong>' : '%</strong> · Mín: <strong>') + fmtT(minV, 1) + (LANG === 'en' ? '%</strong> · Max: <strong>' : '%</strong> · Máx: <strong>') + fmtT(maxV, 1) + '%</strong>';
         }
 
         var fmtDate = function(s) { var p = s.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; };
@@ -2170,7 +2621,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += '<div class="heatmap-cell no-data" title="' + fmtDate(dateStr) + ': sem dados"></div>';
                 } else {
                     var bg = getColor(v2);
-                    var t = fmtDate(dateStr) + ': ' + fmtT(v2, 1) + '% renovável';
+                    var t = fmtDate(dateStr) + ': ' + fmtT(v2, 1) + (LANG === 'en' ? '% renewable' : '% renovável');
                     html += '<div class="heatmap-cell" style="background:' + bg + '" title="' + t + '" data-date="' + dateStr + '"></div>';
                 }
             }
@@ -2245,11 +2696,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var ptEntry = null, ptRank = null;
         for (var j = 0; j < pool.length; j++) {
-            if (pool[j].country === 'pt') { ptEntry = pool[j]; ptRank = j + 1; break; }
+            if (pool[j].country === refZone) { ptEntry = pool[j]; ptRank = j + 1; break; }
         }
 
         // Fonte dominante europeia
-        var srcLabels = { solar:'Solar', wind:'Eólica', hydro:'Hídrica', nuclear:'Nuclear', gas:'Gás Natural', coal:'Carvão', biomass:'Biomassa', other:'Outros' };
+        var srcLabels = (LANG === 'en')
+            ? { solar:'Solar', wind:'Wind', hydro:'Hydro', nuclear:'Nuclear', gas:'Natural Gas', coal:'Coal', biomass:'Biomass', other:'Other' }
+            : { solar:'Solar', wind:'Eólica', hydro:'Hídrica', nuclear:'Nuclear', gas:'Gás Natural', coal:'Carvão', biomass:'Biomassa', other:'Outros' };
         var sumAll = 0; for (var sk in totalEurope) sumAll += totalEurope[sk];
         var domSrc = null, domVal = 0;
         for (var sk2 in totalEurope) { if (totalEurope[sk2] > domVal) { domVal = totalEurope[sk2]; domSrc = sk2; } }
@@ -2259,40 +2712,40 @@ document.addEventListener('DOMContentLoaded', function() {
         var fmtBR = function(s) { var p = s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; };
         var prefix;
         if (currentMode === 'custom' && customStart && customEnd) {
-            prefix = 'Período (' + fmtBR(customStart) + ' → ' + fmtBR(customEnd) + ')';
+            prefix = (LANG === 'en' ? 'Period (' : 'Período (') + fmtBR(customStart) + ' → ' + fmtBR(customEnd) + ')';
         } else if (currentMode === 'week') {
             var w = parseDate(seletorData.value); w.setDate(w.getDate() - 6);
-            prefix = 'Semana (' + fmtBR(formatDate(w)) + ' → ' + fmtBR(seletorData.value) + ')';
+            prefix = (LANG === 'en' ? 'Week (' : 'Semana (') + fmtBR(formatDate(w)) + ' → ' + fmtBR(seletorData.value) + ')';
         } else if (currentMode === 'month') {
             var m = parseDate(seletorData.value); m.setDate(m.getDate() - 29);
-            prefix = 'Mês (' + fmtBR(formatDate(m)) + ' → ' + fmtBR(seletorData.value) + ')';
+            prefix = (LANG === 'en' ? 'Month (' : 'Mês (') + fmtBR(formatDate(m)) + ' → ' + fmtBR(seletorData.value) + ')';
         } else {
             var today = new Date(); var todayStr = formatDate(today);
             var yest = new Date(today); yest.setDate(today.getDate() - 1);
             var tmrw = new Date(today); tmrw.setDate(today.getDate() + 1);
-            if (seletorData.value === todayStr) prefix = 'Hoje';
-            else if (seletorData.value === formatDate(yest)) prefix = 'Ontem';
-            else if (seletorData.value === formatDate(tmrw)) prefix = 'Amanhã';
+            if (seletorData.value === todayStr) prefix = (LANG === 'en' ? 'Today' : 'Hoje');
+            else if (seletorData.value === formatDate(yest)) prefix = (LANG === 'en' ? 'Yesterday' : 'Ontem');
+            else if (seletorData.value === formatDate(tmrw)) prefix = (LANG === 'en' ? 'Tomorrow' : 'Amanhã');
             else prefix = fmtBR(seletorData.value);
         }
 
-        var baseLbl = renBase === 'load' ? ' sobre consumo' : '';
+        var baseLbl = renBase === 'load' ? (LANG === 'en' ? ' of load' : ' sobre consumo') : '';
         var html = '<span class="resumo-label">' + prefix + '</span> — ';
         if (ptEntry) {
             var diff = ptEntry.ren - media;
             var cls = diff >= 0 ? 'resumo-pt-good' : 'resumo-pt-bad';
             var arrow = diff >= 0 ? '▲' : '▼';
-            html += countryFlag('pt') + ' Portugal: <strong>' + fmtN(ptEntry.ren, 1) + '% renovável' + baseLbl + '</strong> '
-                + '<span class="' + cls + '">(' + arrow + ' ' + fmtN(Math.abs(diff), 1) + ' pp ' + (diff >= 0 ? 'acima' : 'abaixo') + ' da média europeia ' + fmtN(media, 1) + '%)</span>'
-                + ' — ' + ptRank + '.º de ' + pool.length + ' países. ';
+            html += countryFlag(refZone) + ' ' + refName() + ': <strong>' + fmtN(ptEntry.ren, 1) + (LANG === 'en' ? '% renewable' : '% renovável') + baseLbl + '</strong> '
+                + '<span class="' + cls + '">(' + arrow + ' ' + fmtN(Math.abs(diff), 1) + ' pp ' + (diff >= 0 ? (LANG === 'en' ? 'above' : 'acima') : (LANG === 'en' ? 'below' : 'abaixo')) + (LANG === 'en' ? ' the European average ' : ' da média europeia ') + fmtN(media, 1) + '%)</span>'
+                + ' — ' + (LANG === 'en' ? '#' : '') + ptRank + (LANG === 'en' ? ' of ' : '.º de ') + pool.length + (LANG === 'en' ? ' countries. ' : ' países. ');
         } else {
-            html += 'Média europeia: <strong>' + fmtN(media, 1) + '% renovável</strong>. ';
+            html += (LANG === 'en' ? 'European average: <strong>' : 'Média europeia: <strong>') + fmtN(media, 1) + (LANG === 'en' ? '% renewable</strong>. ' : '% renovável</strong>. ');
         }
         // Nota de exclusão (quando ignorámos países em previsão porque há dados reais suficientes)
-        var excludedNote = excludedFc > 0 ? ' <small style="color:#6b7280;" title="Países com dados ainda em previsão day-ahead foram excluídos desta comparação porque há dados reais/provisórios suficientes nos restantes">(' + excludedFc + (excludedFc === 1 ? ' país em previsão excluído' : ' países em previsão excluídos') + ')</small>' : '';
-        html += 'Mais renovável: <span class="resumo-top">' + countryFlag(top.country) + ' ' + (COUNTRY_NAMES[top.country] || top.country) + ' (' + fmtN(top.ren, 1) + '%)</span>. ';
-        html += 'Menos renovável: <span class="resumo-bottom">' + countryFlag(bottom.country) + ' ' + (COUNTRY_NAMES[bottom.country] || bottom.country) + ' (' + fmtN(bottom.ren, 1) + '%)</span>.' + excludedNote + ' ';
-        if (domSrc) html += 'Fonte dominante: <strong>' + srcLabels[domSrc] + ' (' + fmtN(domPct, 1) + '%)</strong>.';
+        var excludedNote = excludedFc > 0 ? ' <small style="color:#6b7280;" title="' + (LANG === 'en' ? 'Countries still on day-ahead forecast were excluded from this comparison because there is enough real/provisional data in the others' : 'Países com dados ainda em previsão day-ahead foram excluídos desta comparação porque há dados reais/provisórios suficientes nos restantes') + '">(' + excludedFc + (LANG === 'en' ? (excludedFc === 1 ? ' forecast country excluded' : ' forecast countries excluded') : (excludedFc === 1 ? ' país em previsão excluído' : ' países em previsão excluídos')) + ')</small>' : '';
+        html += (LANG === 'en' ? 'Most renewable: <span class="resumo-top">' : 'Mais renovável: <span class="resumo-top">') + countryFlag(top.country) + ' ' + (COUNTRY_NAMES[top.country] || top.country) + ' (' + fmtN(top.ren, 1) + '%)</span>. ';
+        html += (LANG === 'en' ? 'Least renewable: <span class="resumo-bottom">' : 'Menos renovável: <span class="resumo-bottom">') + countryFlag(bottom.country) + ' ' + (COUNTRY_NAMES[bottom.country] || bottom.country) + ' (' + fmtN(bottom.ren, 1) + '%)</span>.' + excludedNote + ' ';
+        if (domSrc) html += (LANG === 'en' ? 'Dominant source: <strong>' : 'Fonte dominante: <strong>') + srcLabels[domSrc] + ' (' + fmtN(domPct, 1) + '%)</strong>.';
         el.innerHTML = html;
         el.style.display = 'block';
     }
@@ -2430,6 +2883,10 @@ document.addEventListener('DOMContentLoaded', function() {
         { key: 'fossil',   label: 'Fóssil',      color: '#78716c' },
         { key: 'import',   label: 'Importação',  color: '#a78bfa' }
     ];
+    if (LANG === 'en') {
+        var _evoEN = { solar:'Solar', eolica:'Wind', hydro:'Hydro', pumped:'Pumped', nuclear:'Nuclear', biomass:'Biomass', other_ren:'Other Renew.', fossil:'Fossil', import:'Imports' };
+        for (var _ei = 0; _ei < EVO_CATS.length; _ei++) { if (_evoEN[EVO_CATS[_ei].key]) EVO_CATS[_ei].label = _evoEN[EVO_CATS[_ei].key]; }
+    }
 
     // Plugin: sombra vertical nos fins-de-semana
     var weekendBandsPlugin = {
@@ -2496,13 +2953,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Consumo Bombagem (PSC) — negativo
         if (isBar) {
             baseDatasets.push({
-                type: 'bar', label: 'Consumo Bombagem', data: [],
+                type: 'bar', label: (LANG === 'en' ? 'Pumped Storage Consumption' : 'Consumo Bombagem'), data: [],
                 backgroundColor: '#60a5fa', borderColor: '#60a5fa', borderWidth: 0,
                 yAxisID: 'yGwh', stack: 'cats', categoryPercentage: 0.92, barPercentage: 1.0,
                 order: 2, hidden: true, _evoKey: 'psc'
             });
             baseDatasets.push({
-                type: 'bar', label: 'Exportação', data: [],
+                type: 'bar', label: (LANG === 'en' ? 'Exports' : 'Exportação'), data: [],
                 backgroundColor: '#c084fc', borderColor: '#c084fc', borderWidth: 0,
                 yAxisID: 'yGwh', stack: 'cats', categoryPercentage: 0.92, barPercentage: 1.0,
                 order: 2, hidden: true, _evoKey: 'export'
@@ -2511,26 +2968,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Linhas sobrepostas — cada uma no seu próprio "stack" (= não empilha)
         baseDatasets.push({
-            type: 'line', label: 'Produção Total', data: [],
+            type: 'line', label: T('dsTotal'), data: [],
             borderColor: '#1d4ed8', backgroundColor: 'transparent',
             yAxisID: 'yGwh', stack: '_prod', fill: false,
             tension: 0.25, pointRadius: 2, borderWidth: 2.5, order: 1, _overlay: true
         });
         baseDatasets.push({
-            type: 'line', label: 'Consumo', data: [],
+            type: 'line', label: T('dsLoad'), data: [],
             borderColor: '#111', backgroundColor: 'transparent',
             yAxisID: 'yGwh', stack: '_load', fill: false,
             tension: 0.25, pointRadius: 2, borderWidth: 2.5, borderDash: [6,4], order: 1, _overlay: true
         });
         baseDatasets.push({
-            type: 'line', label: '% Renovável', data: [],
+            type: 'line', label: T('dsRenovavel'), data: [],
             borderColor: '#15803d', backgroundColor: 'transparent',
             yAxisID: 'yPct', fill: false,
             tension: 0.25, pointRadius: 2, borderWidth: 2, order: 0, _overlay: true
         });
         // Linha de comparação — % Renovável de outro país
         baseDatasets.push({
-            type: 'line', label: '% Renov. (comparar)', data: [],
+            type: 'line', label: T('dsRenovavelCmp'), data: [],
             borderColor: '#dc2626', backgroundColor: 'transparent',
             yAxisID: 'yPct', fill: false,
             tension: 0.25, pointRadius: 2, borderWidth: 2, borderDash: [4,3], order: 0,
@@ -2538,7 +2995,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         // Média móvel 7d sobre % Renovável (linha tracejada azul)
         baseDatasets.push({
-            type: 'line', label: 'Média móvel 7d (% Renov.)', data: [],
+            type: 'line', label: (LANG === 'en' ? '7-day moving avg (% Renew.)' : 'Média móvel 7d (% Renov.)'), data: [],
             borderColor: '#0ea5e9', backgroundColor: 'transparent',
             yAxisID: 'yPct', fill: false,
             tension: 0.3, pointRadius: 0, borderWidth: 2, borderDash: [2,3], order: 0,
@@ -2618,8 +3075,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     else if (ds._evoKey === 'fossil') fos += v;
                                 }
                                 var out = [];
-                                if (ren > 0) out.push('🌱 Renovável: ' + fmtN(ren, 2) + ' GWh');
-                                if (fos > 0) out.push('🏭 Fóssil: ' + fmtN(fos, 2) + ' GWh');
+                                if (ren > 0) out.push((LANG === 'en' ? '🌱 Renewable: ' : '🌱 Renovável: ') + fmtN(ren, 2) + ' GWh');
+                                if (fos > 0) out.push((LANG === 'en' ? '🏭 Fossil: ' : '🏭 Fóssil: ') + fmtN(fos, 2) + ' GWh');
                                 return out.join('\n');
                             }
                         }
@@ -2638,7 +3095,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 scales: {
                     x: { ticks: { color: isDark ? '#94a3b8' : '#666', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
-                    yPct: { position: 'right', min: 0, suggestedMax: 100, title: { display: true, text: '% Renovável', color: '#15803d' }, ticks: { color: isDark ? '#94a3b8' : '#666', callback: function(v) { return fmtN(v, 0) + '%'; } }, grid: { display: false } },
+                    yPct: { position: 'right', min: 0, suggestedMax: 100, title: { display: true, text: (LANG === 'en' ? '% Renewable' : '% Renovável'), color: '#15803d' }, ticks: { color: isDark ? '#94a3b8' : '#666', callback: function(v) { return fmtN(v, 0) + '%'; } }, grid: { display: false } },
                     yGwh: Object.assign(
                         { position: 'left', stacked: true, title: { display: true, text: 'GWh', color: '#1d4ed8' }, ticks: { color: isDark ? '#94a3b8' : '#666', callback: function(v) { return fmtN(v, 0); } }, grid: { color: isDark ? '#334155' : '#e5e7eb' } },
                         isBar ? {} : { min: 0 }
@@ -2666,7 +3123,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var t = evoBtns[eb].getAttribute('data-evotype');
             if (t === 'bar') {
                 evoBtns[eb].disabled = tooLong;
-                evoBtns[eb].title = tooLong ? 'Indisponível em intervalos superiores a 60 dias' : '';
+                evoBtns[eb].title = tooLong ? (LANG === 'en' ? 'Unavailable for ranges longer than 60 days' : 'Indisponível em intervalos superiores a 60 dias') : '';
             }
         }
         if (tooLong && evolutionType === 'bar') {
@@ -2749,16 +3206,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 dset.data = cmpArr;
                 dset.hidden = !cmpCountry || cmpCountry === country;
                 var cmpName = COUNTRY_NAMES[cmpCountry] || (cmpCountry || '').toUpperCase();
-                dset.label = cmpCountry ? ('% Renov. — ' + cmpName) : '% Renov. (comparar)';
+                dset.label = cmpCountry ? (T('dsRenovavelPre') + cmpName) : T('dsRenovavelCmp');
             } else if (dset._evoKey) {
                 dset.data = catArrs[dset._evoKey] || [];
-            } else if (dset.label === 'Produção Total') {
+            } else if (dset.label === T('dsTotal')) {
                 dset.data = totArr;
-            } else if (dset.label === 'Consumo') {
+            } else if (dset.label === T('dsLoad')) {
                 dset.data = loadArr;
-            } else if (dset.label === '% Renovável') {
+            } else if (dset.label === T('dsRenovavel')) {
                 var mainName = COUNTRY_NAMES[country] || country.toUpperCase();
-                dset.label = cmpCountry && cmpCountry !== country ? ('% Renov. — ' + mainName) : '% Renovável';
+                dset.label = cmpCountry && cmpCountry !== country ? (T('dsRenovavelPre') + mainName) : T('dsRenovavel');
                 dset.data = renArr;
             }
         }
@@ -2766,12 +3223,12 @@ document.addEventListener('DOMContentLoaded', function() {
         var fmt2 = function(s) { var p = s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; };
         var evoPeriod;
         if (currentMode === 'custom' && customStart && customEnd) {
-            evoPeriod = fmt2(dates[0]) + ' \u2192 ' + fmt2(dates[dates.length-1]) + ' (' + dates.length + ' dias)';
+            evoPeriod = fmt2(dates[0]) + ' \u2192 ' + fmt2(dates[dates.length-1]) + ' (' + dates.length + (LANG === 'en' ? ' days)' : ' dias)');
         } else {
-            evoPeriod = 'últimos ' + dates.length + ' dias';
+            evoPeriod = (LANG === 'en' ? 'last ' : 'últimos ') + dates.length + (LANG === 'en' ? ' days' : ' dias');
         }
-        var baseTxt = renBase === 'load' ? ' · % Renov. sobre Consumo' : ' · % Renov. sobre Produção';
-        document.getElementById('evolution-titulo').textContent = 'Evolução (' + evoPeriod + ') — ' + name + baseTxt;
+        var baseTxt = renBase === 'load' ? (LANG === 'en' ? ' · % Renew. of Load' : ' · % Renov. sobre Consumo') : (LANG === 'en' ? ' · % Renew. of Generation' : ' · % Renov. sobre Produção');
+        document.getElementById('evolution-titulo').textContent = T('evoTitle') + ' (' + evoPeriod + ') — ' + name + baseTxt;
 
         // --- Média móvel 7d sobre renArr ---
         var showMavg = !!(document.getElementById('toggle-evo-mavg') && document.getElementById('toggle-evo-mavg').checked);
@@ -2910,19 +3367,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var partes = dateStr.split('-');
         var dLabel = partes[2] + '/' + partes[1] + '/' + partes[0];
-        var aggText = aggMode === 'sum' ? 'total' : 'média';
+        var aggText = aggMode === 'sum' ? 'total' : (LANG === 'en' ? 'avg' : 'média');
         var modeLabel;
         if (currentMode === 'custom' && customStart && customEnd) {
             var sp = customStart.split('-'), ep = customEnd.split('-');
             modeLabel = ' (' + aggText + ' ' + sp[2]+'/'+sp[1]+'/'+sp[0] + ' \u2192 ' + ep[2]+'/'+ep[1]+'/'+ep[0] + ')';
         } else if (currentMode === 'week') {
-            modeLabel = ' (' + aggText + ' 7d até ' + dLabel + ')';
+            modeLabel = ' (' + aggText + ' 7d ' + (LANG === 'en' ? 'until ' : 'até ') + dLabel + ')';
         } else if (currentMode === 'month') {
-            modeLabel = ' (' + aggText + ' 30d até ' + dLabel + ')';
+            modeLabel = ' (' + aggText + ' 30d ' + (LANG === 'en' ? 'until ' : 'até ') + dLabel + ')';
         } else {
             modeLabel = ' — ' + dLabel;
         }
-        document.getElementById('titulo-mapa').textContent = 'Produção de Eletricidade na Europa' + modeLabel;
+        document.getElementById('titulo-mapa').textContent = T('mapTitleBase') + modeLabel;
 
         updateChart(seletorPais.value);
         updateRankedList();
@@ -2967,7 +3424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         svg += '<polyline fill="none" stroke="#2563eb" stroke-width="1.5" points="' + pts.join(' ') + '"/>';
         if (lastY != null) svg += '<circle cx="' + lastX.toFixed(1) + '" cy="' + lastY.toFixed(1) + '" r="2.5" fill="' + lastColor + '"/>';
         svg += '</svg>';
-        return '<div class="sparkline-wrap" title="% renovável nos últimos 7 dias">' + svg + '</div>';
+        return '<div class="sparkline-wrap" title="' + (LANG === 'en' ? '% renewable over the last 7 days' : '% renovável nos últimos 7 dias') + '">' + svg + '</div>';
     }
 
     // --- ECRÃ INTEIRO ---
@@ -2976,11 +3433,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var btn = document.getElementById('btn-fullscreen');
         wrapper.classList.toggle('fullscreen');
         if (wrapper.classList.contains('fullscreen')) {
-            btn.innerHTML = '&#x2716; Sair';
-            btn.title = 'Sair do ecrã inteiro';
+            btn.innerHTML = T('fsExit');
+            btn.title = T('fsExitTitle');
         } else {
-            btn.innerHTML = '&#x26F6; Ecrã inteiro';
-            btn.title = 'Abrir mapa em ecrã inteiro';
+            btn.innerHTML = T('fsOpen');
+            btn.title = T('fsOpenTitle');
         }
         setTimeout(function() { map.invalidateSize(); }, 100);
     };
@@ -3021,7 +3478,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!loadGeoJSON()) {
                 loadingIndicator.style.display = 'none';
                 document.getElementById('titulo-mapa').textContent =
-                    'Erro: europe_zones_compact.js não encontrado';
+                    (LANG === 'en' ? 'Error: europe_zones_compact.js not found' : 'Erro: europe_zones_compact.js não encontrado');
                 return;
             }
 
@@ -3059,6 +3516,9 @@ document.addEventListener('DOMContentLoaded', function() {
             seletorData.value = defaultDate;
             if (urlCountry && COUNTRY_NAMES[urlCountry]) {
                 seletorPais.value = urlCountry;
+            } else if (COUNTRY_NAMES[refZone]) {
+                // Sem ?country: abrir os gráficos na zona de referência ("a minha zona")
+                seletorPais.value = refZone;
             }
 
             // Ler mode / agg / start / end da URL
@@ -3120,6 +3580,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     p.set('date', seletorData.value);
                 }
                 p.set('country', seletorPais.value);
+                if (refZone && refZone !== 'pt') p.set('ref', refZone);
                 if (renBase !== 'production') p.set('renbase', renBase);
                 if (includePumped) p.set('pumped', 'include');
                 var tDelta = document.getElementById('toggle-delta-pt');
@@ -3189,7 +3650,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Comparar país no gráfico de evolução
             var cmpSelEl = document.getElementById('country-chart-compare');
             if (cmpSelEl && seletorPais) {
-                var optsHtml = '<option value="">— nenhum —</option>';
+                var optsHtml = '<option value="">' + T('cmpNone') + '</option>';
                 for (var po = 0; po < seletorPais.options.length; po++) {
                     var opt = seletorPais.options[po];
                     optsHtml += '<option value="' + opt.value + '">' + opt.textContent + '</option>';
@@ -3351,10 +3812,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
                 var per;
                 if (currentMode === 'custom' && customStart && customEnd) per = customStart + '_' + customEnd;
-                else if (currentMode === 'week') per = 'semana_' + seletorData.value;
-                else if (currentMode === 'month') per = 'mes_' + seletorData.value;
+                else if (currentMode === 'week') per = (LANG === 'en' ? 'week_' : 'semana_') + seletorData.value;
+                else if (currentMode === 'month') per = (LANG === 'en' ? 'month_' : 'mes_') + seletorData.value;
                 else per = seletorData.value;
-                var filename = 'mapa_producao_' + per + '.csv';
+                var filename = 'europe-generation_' + per + '.csv';
                 var a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
                 a.download = filename;
@@ -3408,7 +3869,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // ? → mostrar ajuda
                 if (ev.key === '?') {
                     ev.preventDefault();
-                    showToast('Atalhos: ←/→ navegar · D/W/M/P modo · / pesquisar · S partilhar · ? ajuda', 'info', 4500);
+                    showToast((LANG === 'en' ? 'Shortcuts: ←/→ navigate · D/W/M/P mode · / search · S share · ? help' : 'Atalhos: ←/→ navegar · D/W/M/P modo · / pesquisar · S partilhar · ? ajuda'), 'info', 4500);
                     return;
                 }
             });
@@ -3509,17 +3970,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (dateSelectorEl) dateSelectorEl.style.display = (currentMode === 'custom') ? 'none' : '';
                 var lbl = document.getElementById('label-seletor-data');
                 if (lbl) {
-                    lbl.textContent = (currentMode === 'day') ? 'Selecione o dia:'
-                        : (currentMode === 'week' ? 'Dia final dos 7 dias:'
-                        : (currentMode === 'month' ? 'Dia final dos 30 dias:' : 'Selecione o dia:'));
+                    lbl.textContent = (currentMode === 'day') ? (LANG === 'en' ? 'Select the day:' : 'Selecione o dia:')
+                        : (currentMode === 'week' ? (LANG === 'en' ? 'End day of the 7 days:' : 'Dia final dos 7 dias:')
+                        : (currentMode === 'month' ? (LANG === 'en' ? 'End day of the 30 days:' : 'Dia final dos 30 dias:') : (LANG === 'en' ? 'Select the day:' : 'Selecione o dia:')));
                 }
             }
 
             function updateRangeInfo() {
                 if (!customStart || !customEnd) { rangeInfo.textContent = ''; return; }
-                if (customStart > customEnd) { rangeInfo.textContent = 'Início deve ser \u2264 Fim'; rangeInfo.style.color = '#b91c1c'; return; }
+                if (customStart > customEnd) { rangeInfo.textContent = (LANG === 'en' ? 'Start must be \u2264 End' : 'Início deve ser \u2264 Fim'); rangeInfo.style.color = '#b91c1c'; return; }
                 var ds = datesBetween(customStart, customEnd);
-                var extra = ds.length > MAX_CUSTOM_DAYS ? ' (limitado a ' + MAX_CUSTOM_DAYS + ')' : '';
+                var extra = ds.length > MAX_CUSTOM_DAYS ? (LANG === 'en' ? ' (limited to ' : ' (limitado a ') + MAX_CUSTOM_DAYS + ')' : '';
                 rangeInfo.textContent = ds.length + ' dias' + extra;
                 rangeInfo.style.color = '';
             }
@@ -3563,9 +4024,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // --- Resumo das opções de cálculo (summary + badge) ---
             function updateCalcSummary() {
-                var base = renBase === 'load' ? 'Consumo' : 'Produção';
-                var pump = includePumped ? 'Bombagem incluída' : 'Bombagem excluída';
-                var agg = aggMode === 'sum' ? 'Totais do período' : 'Médias diárias';
+                var base = renBase === 'load' ? (LANG === 'en' ? 'Load' : 'Consumo') : (LANG === 'en' ? 'Generation' : 'Produção');
+                var pump = includePumped ? (LANG === 'en' ? 'Pumped included' : 'Bombagem incluída') : (LANG === 'en' ? 'Pumped excluded' : 'Bombagem excluída');
+                var agg = aggMode === 'sum' ? (LANG === 'en' ? 'Period totals' : 'Totais do período') : (LANG === 'en' ? 'Daily averages' : 'Médias diárias');
                 var txt = 'Base: ' + base + ' · ' + pump + ' · ' + agg;
                 var s = document.getElementById('calc-options-summary');
                 var b = document.getElementById('calc-badge-text');
@@ -3675,6 +4136,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateChart(this.value);
                 updateEvolutionChart();
             });
+
+            // Seletor da zona de referência (topo) — conduz a mensagem de comparação,
+            // a coluna Δ da tabela e a zona inicial dos gráficos.
+            var refSel = document.getElementById('ref-zone-select');
+            if (refSel) {
+                var refCodes = Object.keys(COUNTRY_NAMES).sort(function(a, b) {
+                    return (COUNTRY_NAMES[a] || a).localeCompare(COUNTRY_NAMES[b] || b, LANG === 'en' ? 'en' : 'pt');
+                });
+                var refOpts = '';
+                for (var rc = 0; rc < refCodes.length; rc++) {
+                    refOpts += '<option value="' + refCodes[rc] + '">' + COUNTRY_NAMES[refCodes[rc]] + '</option>';
+                }
+                refSel.innerHTML = refOpts;
+                refSel.value = refZone;
+                refSel.addEventListener('change', function() {
+                    if (!COUNTRY_NAMES[refSel.value]) return;
+                    refZone = refSel.value;
+                    try { localStorage.setItem('mapa_prod_refZone', refZone); } catch (_) {}
+                    // Aponta os gráficos à nova zona de referência (reaproveita o handler do seletor-pais)
+                    seletorPais.value = refZone;
+                    updateChart(refZone);
+                    updateEvolutionChart();
+                    // Re-renderiza a tabela (coluna Δ) e a mensagem de comparação
+                    updateRankedList();
+                    updateResumoRapido();
+                });
+            }
 
         } catch(e) {
             console.error('Erro na inicialização:', e);
