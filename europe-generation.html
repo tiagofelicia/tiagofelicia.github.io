@@ -668,7 +668,7 @@
             <select id="heatmap-year"></select>
             <span class="heatmap-stats" id="heatmap-stats"></span>
         </div>
-        <div id="heatmap-container" role="img" aria-label="Calendário anual de percentagem renovável por dia"></div>
+        <div id="heatmap-container" role="img" aria-label="Calendário anual de percentagem renovável por dia" data-i18n-aria="ariaHeatmapImg"></div>
     </div>
 
     <article class="content-support">
@@ -1101,6 +1101,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fsOpen: '⛶ Ecrã inteiro', fsOpenTitle: 'Abrir mapa em ecrã inteiro',
             fsExit: '✖ Sair', fsExitTitle: 'Sair do ecrã inteiro',
             calcBadgeTitle: 'Opções de cálculo actuais (clique para ajustar)', ariaCalcBadge: 'Opções de cálculo actuais',
+            ariaHeatmapImg: 'Calendário anual de percentagem renovável por dia',
             calcOptionsLabel: 'Opções de cálculo:',
             calcRowBase: 'Base da % renovável:', calcRowPumped: 'Bombagem hidráulica:',
             calcRowAgg: 'Agregação (7d / 30d / personalizado):',
@@ -1166,6 +1167,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fsOpen: '⛶ Fullscreen', fsOpenTitle: 'Open map in fullscreen',
             fsExit: '✖ Exit', fsExitTitle: 'Exit fullscreen',
             calcBadgeTitle: 'Current calculation options (click to adjust)', ariaCalcBadge: 'Current calculation options',
+            ariaHeatmapImg: 'Annual calendar of renewable percentage per day',
             calcOptionsLabel: 'Calculation options:',
             calcRowBase: 'Renewable % base:', calcRowPumped: 'Pumped hydro:',
             calcRowAgg: 'Aggregation (7d / 30d / custom):',
@@ -2068,7 +2070,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        prodChart.options.plugins.title.text = 'Mix de Produção — ' + name + ' — ' + dateLabel;
+        prodChart.options.plugins.title.text = T('chartTitle') + ' — ' + name + ' — ' + dateLabel;
         prodChart.options.plugins.title.color = isDark ? '#e2e8f0' : '#2c3e50';
 
         var nProd = CAT_ORDER.length;
@@ -3279,7 +3281,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 dn.data = norm;
             }
-            evolutionChart.options.scales.yGwh.title.text = '% do total diário';
+            evolutionChart.options.scales.yGwh.title.text = (LANG === 'en' ? '% of daily total' : '% do total diário');
             evolutionChart.options.scales.yGwh.ticks.callback = function(v) { return fmtN(v, 0) + '%'; };
             evolutionChart.options.scales.yGwh.max = 100;
         } else {
@@ -3299,7 +3301,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ann.avgLine = {
                     type: 'line', yMin: avg, yMax: avg, yScaleID: 'yPct',
                     borderColor: '#15803d', borderWidth: 1.5, borderDash: [6, 4],
-                    label: { display: true, content: 'Média: ' + fmtN(avg, 1) + '%', position: 'start', backgroundColor: 'rgba(21,128,61,0.85)', color: '#fff', font: { size: 10 }, padding: 3 }
+                    label: { display: true, content: (LANG === 'en' ? 'Average: ' : 'Média: ') + fmtN(avg, 1) + '%', position: 'start', backgroundColor: 'rgba(21,128,61,0.85)', color: '#fff', font: { size: 10 }, padding: 3 }
                 };
             }
         }
@@ -3714,7 +3716,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 btnResetZoom.addEventListener('click', function() {
                     if (evolutionChart && typeof evolutionChart.resetZoom === 'function') {
                         evolutionChart.resetZoom();
-                        showToast('🔍 Zoom reposto', 'info', 1000);
+                        showToast(LANG === 'en' ? '🔍 Zoom reset' : '🔍 Zoom reposto', 'info', 1000);
                     }
                 });
             }
@@ -3853,8 +3855,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (btn) {
                         ev.preventDefault();
                         btn.click();
-                        var labels = { day: 'Diário', week: 'Semanal (7d)', month: 'Mensal (30d)', custom: 'Personalizado' };
-                        showToast('Modo: ' + labels[modeMap[k]], 'info', 1200);
+                        var labels = { day: T('mDiario'), week: T('mSemanal'), month: T('mMensal'), custom: T('mCustom') };
+                        showToast((LANG === 'en' ? 'Mode: ' : 'Modo: ') + labels[modeMap[k]], 'info', 1200);
                     }
                     return;
                 }
@@ -3880,7 +3882,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var url = buildShareUrl();
                 var done = function() {
                     if (shareFb) { shareFb.style.display = 'inline'; setTimeout(function(){ shareFb.style.display = 'none'; }, 1800); }
-                    showToast('🔗 Link copiado para a área de transferência');
+                    showToast(LANG === 'en' ? '🔗 Link copied to clipboard' : '🔗 Link copiado para a área de transferência');
                 };
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(url).then(done).catch(function(){
