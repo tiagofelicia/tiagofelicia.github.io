@@ -447,7 +447,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // Caminho relativo a data/ — origem e fallback geridos por fetchDados() (dados.js).
-    const csvUrl = "omie/omie_dados_atuais.csv";
+    const csvUrl = "omie/futuros_omip.csv";
     const tabelaOmipPtBody = document.querySelector("#tabela-omip-pt tbody");
     const tabelaOmipEsBody = document.querySelector("#tabela-omip-es tbody");
 
@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
 
     function parseCSV(text) {
-        const tabelas = text.split('\nTABELA_');
+        const tabelas = text.split(/(?:^|\r?\n)TABELA_/);
 
         function parseTabelaSimples(raw, tipo) {
              if (!raw) return tipo === 'obj' ? {} : [];
