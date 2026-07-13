@@ -3249,6 +3249,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return vals.map(function(v) { return v == null ? 'rgba(0,0,0,0)' : getColor(v); });
         };
 
+        // Eixo Y: mínimo fixo em 0 quando todos os valores são >= 0; escala livre se houver negativos.
+        var hasNegative = intra.values.some(function(v) { return v != null && v < 0; });
+
         var cfg = {
             type: 'bar',
             data: {
@@ -3284,7 +3287,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 scales: {
                     x: { ticks: { maxTicksLimit: 12, autoSkip: true } },
-                    y: { title: { display: true, text: '€/MWh' }, beginAtZero: false }
+                    y: { title: { display: true, text: '€/MWh' }, beginAtZero: !hasNegative }
                 }
             }
         };
@@ -4228,6 +4231,19 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // Eixo Y: se TODOS os valores (zona principal + comparações) forem >= 0,
+        // fixar o mínimo em 0; havendo negativos, deixar a escala livre.
+        var hasNegative = false;
+        var checkNeg = function(intra) {
+            if (intra && intra.values) {
+                for (var vi = 0; vi < intra.values.length; vi++) {
+                    if (intra.values[vi] != null && intra.values[vi] < 0) { hasNegative = true; return; }
+                }
+            }
+        };
+        checkNeg(intra1);
+        intrasC.forEach(checkNeg);
+
         var cfg = {
             type: 'bar',
             data: { labels: labels, datasets: datasets },
@@ -4252,7 +4268,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 scales: {
                     x: { ticks: { maxTicksLimit: 12, autoSkip: true } },
-                    y: { title: { display: true, text: '€/MWh' }, beginAtZero: false }
+                    y: { title: { display: true, text: '€/MWh' }, beginAtZero: !hasNegative }
                 }
             }
         };
