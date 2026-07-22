@@ -195,6 +195,16 @@
                 <p>Utilize o link de partilha para aderir:</p>
                 <a href="https://partilha.repsol.pt/sePMLy" target="_blank" rel="noopener noreferrer" class="button-link" style="margin-top: 15px;">Link</a>
             </div>
+
+            <div class="support-card">
+                <h3>Goldenergy</h3>
+                <p>Ao aderir, insira o meu código amigo para me apoiar:</p>
+                <div class="referral-code">
+                    <code id="goldenergy-code">AINDA PENDENTE</code>
+                    <button type="button" class="copy-code-btn" data-copy-target="goldenergy-code">Copiar</button>
+                </div>
+                <a href="https://www.goldenergy.pt/" target="_blank" rel="noopener noreferrer" class="button-link" style="margin-top: 15px;">Aderir</a>
+            </div>
         </div>
 
     </section>
@@ -204,5 +214,20 @@
 
 <script src="script.js"></script>
 <script src="cookie-consent.js"></script>
+<script>
+  // Copiar códigos de referenciação (ex.: código amigo Goldenergy)
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.copy-code-btn');
+    if (!btn) return;
+    const target = document.getElementById(btn.dataset.copyTarget);
+    if (!target) return;
+    const code = target.textContent.trim();
+    navigator.clipboard.writeText(code).then(function () {
+      const original = btn.textContent;
+      btn.textContent = 'Copiado!';
+      setTimeout(function () { btn.textContent = original; }, 2000);
+    }).catch(function () {});
+  });
+</script>
 </body>
 </html>
