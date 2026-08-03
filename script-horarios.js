@@ -357,14 +357,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
-            "G9 Smart Dynamic": {
-                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × F<sub>adeq</sub> × (1 + Perdas<sub>(15m)</sub>) + GGS + AC + TAR`,
+            "G9 Smart Dynamic SPOT 8!": {
+                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR`,
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
-                    ["F<sub>adeq</sub>", () => `Fator de adequação: ${c('G9_FA', '(adimensional)', 2)}`],
+                    ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
                     ["Perdas", "Perdas nas redes de transporte e distribuição (variável)"],
-                    ["GGS", () => `Garantia de Gestão e Serviço: ${c('G9_CGS')}`],
-                    ["AC", () => `Ajuste Comercial: ${c('G9_AC')}`],
+                    ["K2", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('G9_K2', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
-            "MeoEnergia Tarifa Variável": {
+            "MeoEnergia Tarifa Dinâmica": {
                 expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + K) × (1 + FP) + TAR`,
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
