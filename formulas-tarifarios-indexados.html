@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // ═══════════════════════════════════════
             {
                 tipo: 'qh',
-                nome: "Alfa Power Index BTN",
+                nome: "Alfa Power | Index BTN",
                 comercializador: "Alfa Energia",
                 url: "https://www.alfaenergia.pt",
                 notaLimitacao: null,
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "Coopérnico Base",
+                nome: "Coopérnico | Base",
                 comercializador: "Coopérnico",
                 url: "https://www.coopernico.org",
                 notaLimitacao: null,
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "Coopérnico GO",
+                nome: "Coopérnico | GO",
                 comercializador: "Coopérnico",
                 url: "https://www.coopernico.org",
                 notaLimitacao: null,
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "EDP Indexada Horária",
+                nome: "EDP | Indexada Horária",
                 comercializador: "EDP Comercial",
                 url: "https://www.edp.pt/particulares/energia/gas-eletricidade-oferta-indexada/",
                 notaLimitacao: null,
@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "EZU Tarifa Indexada",
+                nome: "EZU | Tarifa Indexada",
                 comercializador: "EZU Energia",
                 url: "https://ezu.pt/tarifas",
                 notaLimitacao: null,
@@ -429,23 +429,22 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "G9 Smart Dynamic",
+                nome: "G9 | Smart Dynamic SPOT 8!",
                 comercializador: "G9 Energia",
                 url: "https://g9.pt/energia/",
                 notaLimitacao: null,
-                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × F<sub>adeq</sub> × (1 + Perdas<sub>(15m)</sub>) + GGS + AC + TAR`,
+                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR`,
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
-                    ["F<sub>adeq</sub>", () => `Fator de adequação: ${c('G9_FA', '(adimensional)', 2)}`],
-                    ["Perdas", PERDAS_QH],
-                    ["GGS", () => `Garantia de Gestão e Serviço: ${c('G9_CGS')}`],
-                    ["AC", () => `Ajuste Comercial: ${c('G9_AC')}`],
+                    ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
+                    ["K2", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('G9_K2', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["TAR", TAR],
                 ]
             },
             {
                 tipo: 'qh',
-                nome: "Galp Plano Dinâmico",
+                nome: "Galp | Plano Dinâmico",
                 comercializador: "Galp",
                 url: "https://www.galp.com/pt/casa/planos-eletricidade-e-gas/eletricidade-indexada",
                 notaLimitacao: null,
@@ -459,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "Iberdrola - Simples Indexado Dinâmico",
+                nome: "Iberdrola | Simples Indexado Dinâmico",
                 comercializador: "Iberdrola",
                 url: "https://www.iberdrola.pt/casa/energia/plano-indexado-simples-dinamico",
                 notaLimitacao: "Disponível apenas na opção tarifária Simples.",
@@ -475,21 +474,22 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "MeoEnergia Tarifa Dinâmica",
+                nome: "MeoEnergia | Tarifa Dinâmica",
                 comercializador: "MeoEnergia",
                 url: "https://www.meoenergia.pt/eletricidade/tarifa-dinamica",
                 notaLimitacao: null,
-                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + K) × (1 + FP) + TAR`,
+                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + CG) × (1 + FP) + K + TAR`,
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
-                    ["K", () => `Inclui Gestão do sistema, desvios e margem: ${c('Meo_K')}`],
+                    ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Meo_CG', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["K", () => `Margem comercial da MeoEnergia: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
                     ["TAR", TAR],
                 ]
             },
             {
                 tipo: 'qh',
-                nome: "Plenitude - Tendência",
+                nome: "Plenitude | Tendência",
                 comercializador: "Plenitude",
                 url: "https://eniplenitude.pt/eletricidade/tendencia/",
                 notaLimitacao: "Disponível apenas na opção tarifária Simples.",
@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
-                nome: "Repsol Leve Sem Mais",
+                nome: "Repsol | Leve Sem Mais",
                 comercializador: "Repsol",
                 url: "https://www.repsol.pt/particulares/casa/eletricidade-gas/planos-eletricidade-e-gas/plano-leve-sem-mais/",
                 notaLimitacao: null,
@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // ═══════════════════════════════════
             {
                 tipo: 'media',
-                nome: "EDP - Eletricidade Indexada Média",
+                nome: "EDP | Eletricidade Indexada Média",
                 comercializador: "EDP Comercial",
                 url: "https://www.edp.pt/particulares/energia/gas-eletricidade-oferta-indexada/",
                 notaLimitacao: null,
@@ -540,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "Endesa - Tarifa Indexada",
+                nome: "Endesa | Tarifa Indexada",
                 comercializador: "Endesa",
                 url: "https://www.endesa.pt/particulares/planos/luz/tarifa-indexada",
                 notaLimitacao: null,
@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "G9 - Smart Index",
+                nome: "G9 | Smart Index | Não contratável",
                 comercializador: "G9 Energia",
                 url: "https://g9.pt/energia/",
                 notaLimitacao: null,
@@ -568,7 +568,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "Goldenergy - Tarifário Indexado 100%",
+                nome: "Goldenergy | Tarifário Indexado 100%",
                 comercializador: "Goldenergy",
                 url: "https://www.goldenergy.pt",
                 notaLimitacao: null,
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "Ibelectra - Solução Amigo",
+                nome: "Ibelectra | Solução Amigo",
                 comercializador: "Ibelectra",
                 url: "https://www.ibelectra.pt",
                 notaLimitacao: null,
@@ -600,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "Ibelectra - Solução Família",
+                nome: "Ibelectra |Solução Família",
                 comercializador: "Ibelectra",
                 url: "https://www.ibelectra.pt",
                 notaLimitacao: null,
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "Iberdrola - Simples Indexado",
+                nome: "Iberdrola | Simples Indexado",
                 comercializador: "Iberdrola",
                 url: "https://www.iberdrola.pt/casa/energia/plano-indexado-simples",
                 notaLimitacao: "Disponível apenas na opção tarifária Simples.",
@@ -632,7 +632,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "LUZiGÁS - Super Lig Index",
+                nome: "LUZiGÁS | Super Lig Index",
                 comercializador: "LUZiGÁS",
                 url: "https://www.luzigas.pt/luzifix-campanhas-novos-clientes/",
                 notaLimitacao: null,
@@ -646,7 +646,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'media',
-                nome: "Luzboa - BTN SPOTDEF",
+                nome: "Luzboa | BTN SPOTDEF",
                 comercializador: "Luzboa",
                 url: "https://www.luzboa.pt/tarifas/domestico/1",
                 notaLimitacao: null,
