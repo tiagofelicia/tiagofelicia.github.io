@@ -152,7 +152,7 @@
         "name": "Como leio o gráfico de Evolução histórica?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ao contrário da Curva Forward, aqui o eixo horizontal é a data da sessão e não o período de entrega: cada linha mostra como o preço de um contrato foi mudando ao longo do tempo. Escolhe-se o tipo de contrato, a zona (Portugal, Espanha ou ambas, em que Espanha aparece tracejada) e o período, e clicam-se os contratos a comparar, até seis."
+          "text": "Ao contrário da Curva Forward, aqui o eixo horizontal é a data da sessão e não o período de entrega: cada linha mostra como o preço de um contrato foi mudando ao longo do tempo. Escolhe-se o tipo de contrato (Anuais, Trimestrais, Mensais, Semanais ou Diários), se se quer ver os contratos em negociação, os que já não são cotados por terem entrado em entrega ou já a terem concluído, ou todos, a zona (Portugal, Espanha ou ambas, em que Espanha aparece tracejada) e o período. Há ainda um intervalo Entrega de … até, limitado às datas existentes no histórico, que filtra a lista de contratos: a lista mostra no máximo 36 etiquetas, pelo que é este intervalo que dá acesso a todos os outros. Depois clicam-se as etiquetas dos contratos a comparar, até seis. Ao escolher contratos terminados, o período passa automaticamente a Tudo, já que essas cotações estão no passado."
         }
       },{
         "@type": "Question",
@@ -285,9 +285,17 @@
         .ev-chip { border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 999px; padding: 4px 11px; font-size: 0.8em; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
         .ev-chip:hover { background: #f1f5f9; }
         .ev-chip[aria-pressed="true"] { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .ev-chip.ev-chip-fora { border-style: dashed; }
         [data-theme="dark"] .ev-chip { background: #1e293b; border-color: #475569; color: #cbd5e1; }
         [data-theme="dark"] .ev-chip:hover { background: #334155; }
         [data-theme="dark"] .ev-chip[aria-pressed="true"] { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+        /* Campos de data e nota de contagem da lista de contratos */
+        .hist-data { font-size: 0.82em; padding: 4px 7px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #475569; }
+        [data-theme="dark"] .hist-data { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .hist-data::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        .ev-nota { flex-basis: 100%; text-align: center; font-size: 0.78em; color: #888; margin: 4px 0 0; }
+        [data-theme="dark"] .ev-nota { color: #94a3b8; }
 
         /* Estado de carregamento / indisponibilidade do histórico */
         .hist-estado { text-align: center; font-size: 0.85em; color: #888; padding: 26px 10px; }
@@ -591,9 +599,11 @@
                 <div class="faq-content">
                     <p>Ao contrário da Curva Forward, aqui o eixo horizontal é a <strong>data da sessão</strong> e não o período de entrega: cada linha mostra como o preço de um contrato foi mudando ao longo do tempo.</p>
                     <ul>
-                        <li><strong>Tipo:</strong> Anuais, Trimestrais, Mensais ou Semanais. Os contratos diários não aparecem aqui porque cada um é cotado em muito poucas sessões.</li>
+                        <li><strong>Tipo:</strong> Anuais, Trimestrais, Mensais, Semanais ou Diários. Os diários são cotados em muito poucas sessões, pelo que as suas linhas são curtas.</li>
+                        <li><strong>Contratos:</strong> <em>Em negociação</em> mostra os que ainda são cotados; <em>Terminados</em> os que já não são, por terem entrado em entrega ou já a terem concluído — é aqui que se vê como a expectativa evoluiu até ao fim, incluindo os anuais de anos já em curso; <em>Todos</em> junta ambos. Ao escolher terminados, o período passa automaticamente a "Tudo", já que essas cotações estão no passado.</li>
                         <li><strong>Zona:</strong> Portugal, Espanha, ou ambas — nesse caso a Espanha aparece <strong>tracejada</strong>, na mesma cor do contrato.</li>
-                        <li><strong>Contratos:</strong> clique nas etiquetas para acrescentar ou retirar linhas, até seis ao mesmo tempo.</li>
+                        <li><strong>Entrega de … até:</strong> limita a lista aos contratos cuja entrega começa dentro desse intervalo. Os campos estão limitados às datas que existem no histórico para o tipo escolhido, e por omissão abrem no intervalo completo. Como a lista mostra no máximo 36 etiquetas (os de entrega mais recente), é este intervalo que dá acesso a todos os outros — a nota sob as etiquetas indica sempre quantos contratos correspondem.</li>
+                        <li><strong>Etiquetas:</strong> clique nelas para acrescentar ou retirar linhas, até seis ao mesmo tempo. Os contratos escolhidos continuam visíveis mesmo que saiam do intervalo, para poderem ser retirados.</li>
                     </ul>
                     <p>Na Curva Forward existe também o seletor <strong>Comparar</strong>, que sobrepõe em tracejado a curva de uma sessão passada — útil para ver se a curva <em>inteira</em> subiu ou desceu, e não apenas um contrato.</p>
                 </div>
@@ -1253,6 +1263,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Substituir o innerHTML de um contentor deixaria o objeto do gráfico
+    // pendurado no Highcharts.charts, com o container já fora do DOM.
+    function limparGrafico(id, mensagemHtml) {
+        const grafico = Highcharts.charts.filter(Boolean).find(c => c.renderTo && c.renderTo.id === id);
+        if (grafico) grafico.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = mensagemHtml || '';
+    }
+
     // Sparkline SVG inline — sem módulos extra do Highcharts.
     function sparklineSVG(pontos, largura, altura) {
         largura = largura || 70; altura = altura || 20;
@@ -1446,16 +1465,95 @@ document.addEventListener('DOMContentLoaded', function () {
     // ===== Secção "Evolução histórica" =====
     const EV_PERIODOS = { '1M': 30, '3M': 91, '6M': 182, '12M': 365, 'Tudo': null };
     const EV_MAX_CHAVES = 6;
-    let _evTipo = 'Anuais', _evZona = 'PT', _evPeriodo = '6M', _evChaves = [];
+    // Com centenas de contratos terminados no histórico (só de diários são
+    // quase 300), a lista de etiquetas tem de ser cortada: ficam os mais
+    // próximos de hoje, que são os que interessam comparar.
+    const EV_MAX_CHIPS = 36;
+    let _evTipo = 'Anuais', _evZona = 'PT', _evPeriodo = '6M', _evEstado = 'negociacao', _evChaves = [];
+    let _evDe = null, _evAte = null;   // intervalo de datas de entrega escolhido
 
-    // Contratos de um tipo ainda cotados na última sessão, por ordem de entrega.
-    function chavesDoTipo(tipo) {
-        const ultima = _porSessao.get(_sessoes[_sessoes.length - 1]);
+    /**
+     * Candidatos de um tipo, por ordem cronológica de entrega e sem filtro de
+     * datas — a base para os limites do intervalo e para a lista de etiquetas.
+     *
+     * estado (partição estrita: negociacao + terminados = todos):
+     *   'negociacao' — ainda cotados na última sessão;
+     *   'terminados' — já não cotados, por terem entrado em entrega ou já a
+     *                  terem concluído. É aqui que estão, por exemplo, os
+     *                  anuais de anos já em curso;
+     *   'todos'      — tudo o que o histórico tem desse tipo.
+     */
+    function candidatosDoTipo(tipo, estado) {
+        estado = estado || _evEstado;
+        const ultimaTs = _sessoes[_sessoes.length - 1];
+        const ultima = _porSessao.get(ultimaTs);
         if (!ultima) return [];
-        return [...ultima.PT.keys()]
+
+        let candidatas;
+        if (estado === 'negociacao') {
+            candidatas = [...ultima.PT.keys()];
+        } else {
+            candidatas = [..._serie.PT.keys()];
+            if (estado === 'terminados') {
+                candidatas = candidatas.filter(k => !ultima.PT.has(k));
+            }
+        }
+
+        return candidatas
             .filter(k => tipoDaChave(k) === tipo)
             .map(k => ({ k: k, p: periodoEntrega(k) }))
             .filter(x => x.p)
+            .sort((a, b) => a.p.ini - b.p.ini);
+    }
+
+    // Primeira e última datas de entrega disponíveis — limites dos campos de
+    // data, para não se poder pedir um intervalo sem dados.
+    function intervaloEntrega(tipo, estado) {
+        const c = candidatosDoTipo(tipo, estado);
+        return c.length ? { min: c[0].p.ini, max: c[c.length - 1].p.ini } : null;
+    }
+
+    // Etiquetas a mostrar: contratos cuja entrega começa dentro do intervalo
+    // escolhido. Acima de EV_MAX_CHIPS ficam os de entrega mais recente —
+    // mover o intervalo dá acesso a todos os outros.
+    function listaChaves(tipo, estado) {
+        const dentro = candidatosDoTipo(tipo, estado).filter(x =>
+            (_evDe === null || x.p.ini >= _evDe) && (_evAte === null || x.p.ini <= _evAte));
+        const mostrados = dentro.length > EV_MAX_CHIPS ? dentro.slice(-EV_MAX_CHIPS) : dentro;
+        return { chaves: mostrados.map(x => x.k), total: dentro.length };
+    }
+
+    function chavesDoTipo(tipo, estado) {
+        return listaChaves(tipo, estado).chaves;
+    }
+
+    // Ao mudar de tipo ou de estado o catálogo muda: o intervalo volta a abrir
+    // por completo, senão ficaria a apontar para datas que já não existem.
+    function reporIntervalo(tipo, estado) {
+        const lim = intervaloEntrega(tipo, estado);
+        _evDe = lim ? lim.min : null;
+        _evAte = lim ? lim.max : null;
+    }
+
+    function isoUTC(ts) {
+        if (ts === null || ts === undefined) return '';
+        const d = new Date(ts);
+        return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+    }
+    function tsDeISO(iso) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+        return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null;
+    }
+
+    // Seleção inicial: os contratos cujo período de entrega está mais perto da
+    // última sessão — os mais relevantes, tanto a olhar para a frente como
+    // para trás.
+    function chavesIniciais(tipo) {
+        const ultimaTs = _sessoes[_sessoes.length - 1];
+        return chavesDoTipo(tipo)
+            .map(k => ({ k: k, p: periodoEntrega(k) }))
+            .sort((a, b) => Math.abs(a.p.ini - ultimaTs) - Math.abs(b.p.ini - ultimaTs))
+            .slice(0, 4)
             .sort((a, b) => a.p.ini - b.p.ini)
             .map(x => x.k);
     }
@@ -1467,10 +1565,65 @@ document.addEventListener('DOMContentLoaded', function () {
         controls.appendChild(grupoBotoes(
             [{ id: 'Indice', label: 'Índice 12 meses' }, { id: 'Anuais', label: 'Anuais' },
              { id: 'Trimestrais', label: 'Trimestrais' }, { id: 'Mensais', label: 'Mensais' },
-             { id: 'Semanais', label: 'Semanais' }],
+             { id: 'Semanais', label: 'Semanais' }, { id: 'Diários', label: 'Diários' }],
             _evTipo,
-            id => { _evTipo = id; _evChaves = chavesDoTipo(id).slice(0, 4); renderChipsEvolucao(); renderEvolucao(); },
+            // Rebuild completo: o filtro de estado e as datas só fazem sentido
+            // fora do índice, e os seus limites mudam com o tipo.
+            id => { _evTipo = id; reporIntervalo(id, _evEstado); _evChaves = chavesIniciais(id); setupEvolucao(); },
             'Tipo'));
+        if (_evTipo !== 'Indice') {
+            controls.appendChild(grupoBotoes(
+                [{ id: 'negociacao', label: 'Em negociação' }, { id: 'terminados', label: 'Terminados' },
+                 { id: 'todos', label: 'Todos' }],
+                _evEstado,
+                id => {
+                    _evEstado = id;
+                    reporIntervalo(_evTipo, id);
+                    _evChaves = chavesIniciais(_evTipo);
+                    // Contratos terminados vivem no passado: com a janela curta
+                    // por omissão o gráfico sairia vazio.
+                    if (id !== 'negociacao') _evPeriodo = 'Tudo';
+                    setupEvolucao();
+                },
+                'Contratos'));
+
+            const limites = intervaloEntrega(_evTipo, _evEstado);
+            if (limites) {
+                if (_evDe === null || _evAte === null) reporIntervalo(_evTipo, _evEstado);
+                const wrap = document.createElement('div');
+                wrap.style.display = 'flex';
+                wrap.style.gap = '6px';
+                wrap.style.alignItems = 'center';
+                const etiqueta = texto => {
+                    const el = document.createElement('span');
+                    el.className = 'hist-label';
+                    el.textContent = texto;
+                    return el;
+                };
+                const campoData = (id, valor, rotuloAria, aoMudar) => {
+                    const inp = document.createElement('input');
+                    inp.type = 'date';
+                    inp.id = id;
+                    inp.className = 'hist-data';
+                    // Limitado ao que existe no histórico deste tipo.
+                    inp.min = isoUTC(limites.min);
+                    inp.max = isoUTC(limites.max);
+                    inp.value = isoUTC(valor);
+                    inp.setAttribute('aria-label', rotuloAria);
+                    inp.addEventListener('change', () => {
+                        aoMudar(tsDeISO(inp.value));
+                        renderChipsEvolucao();
+                        renderEvolucao();
+                    });
+                    return inp;
+                };
+                wrap.appendChild(etiqueta('Entrega de'));
+                wrap.appendChild(campoData('ev-de', _evDe, 'Entrega a partir de', v => { _evDe = v; }));
+                wrap.appendChild(etiqueta('até'));
+                wrap.appendChild(campoData('ev-ate', _evAte, 'Entrega até', v => { _evAte = v; }));
+                controls.appendChild(wrap);
+            }
+        }
         controls.appendChild(grupoBotoes(
             [{ id: 'PT', label: 'Portugal' }, { id: 'ES', label: 'Espanha' }, { id: 'Ambas', label: 'Ambas' }],
             _evZona,
@@ -1483,7 +1636,7 @@ document.addEventListener('DOMContentLoaded', function () {
             id => { _evPeriodo = id; renderEvolucao(); },
             'Período'));
 
-        if (!_evChaves.length) _evChaves = chavesDoTipo(_evTipo).slice(0, 4);
+        if (!_evChaves.length) _evChaves = chavesIniciais(_evTipo);
         renderChipsEvolucao();
         renderEvolucao();
     }
@@ -1493,12 +1646,26 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!cont) return;
         cont.innerHTML = '';
         if (_evTipo === 'Indice') return;   // o índice é uma linha só, não há nada a escolher
-        chavesDoTipo(_evTipo).forEach(k => {
+
+        const lista = listaChaves(_evTipo, _evEstado);
+        // Os contratos já escolhidos aparecem sempre, mesmo fora do intervalo,
+        // para poderem ser retirados sem ter de voltar atrás nas datas.
+        const visiveis = [...new Set(lista.chaves.concat(_evChaves))]
+            .map(k => ({ k: k, p: periodoEntrega(k) }))
+            .filter(x => x.p)
+            .sort((a, b) => a.p.ini - b.p.ini)
+            .map(x => x.k);
+
+        const dentroDoIntervalo = new Set(lista.chaves);
+        visiveis.forEach(k => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'ev-chip';
+            // Tracejado quando está visível apenas por estar selecionado — assim
+            // a contagem da nota, que só conta os do intervalo, não confunde.
+            const fora = !dentroDoIntervalo.has(k);
+            btn.className = 'ev-chip' + (fora ? ' ev-chip-fora' : '');
             btn.textContent = k;
-            btn.title = etiquetaChave(k);
+            btn.title = etiquetaChave(k) + (fora ? ' — fora do intervalo escolhido' : '');
             btn.setAttribute('aria-pressed', _evChaves.indexOf(k) !== -1 ? 'true' : 'false');
             btn.addEventListener('click', () => {
                 const i = _evChaves.indexOf(k);
@@ -1514,6 +1681,19 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             cont.appendChild(btn);
         });
+
+        // Contagem: diz sempre quantos correspondem ao intervalo, e avisa
+        // quando há mais do que os que cabem na lista.
+        const nota = document.createElement('p');
+        nota.className = 'ev-nota';
+        if (!lista.total) {
+            nota.textContent = 'Nenhum contrato com entrega neste intervalo.';
+        } else if (lista.total > lista.chaves.length) {
+            nota.textContent = `${lista.total} contratos no intervalo — mostram-se os ${lista.chaves.length} de entrega mais recente. Estreite o intervalo para chegar aos restantes.`;
+        } else {
+            nota.textContent = `${lista.total} ${lista.total === 1 ? 'contrato' : 'contratos'} no intervalo.`;
+        }
+        cont.appendChild(nota);
     }
 
     function renderEvolucao() {
@@ -1554,11 +1734,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!series.length) {
-            alvo.innerHTML = ehIndice
+            limparGrafico('grafico-evolucao', ehIndice
                 ? '<p class="hist-estado">Índice indisponível para o período escolhido.</p>'
-                : '<p class="hist-estado">Escolha pelo menos um contrato para ver a evolução.</p>';
+                : (_evChaves.length
+                    ? '<p class="hist-estado">Os contratos escolhidos não têm cotações no período selecionado — experimente um período mais largo ou "Tudo".</p>'
+                    : '<p class="hist-estado">Escolha um contrato na lista para ver a evolução.</p>'));
             return;
         }
+
+        // Contratos com muito poucas sessões (os diários, sobretudo) ficariam
+        // invisíveis sem marcadores: um ponto isolado não desenha linha.
+        series.forEach(s => {
+            if (s.data.length < 8) s.marker = { enabled: true, radius: 3 };
+        });
 
         const _d = _hcDark();
         const rotuloZona = _evZona === 'Ambas' ? 'Portugal (contínuo) e Espanha (tracejado)'
@@ -1729,7 +1917,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const serie = chave ? _serie.PT.get(chave) : null;
         const realizado = chave ? mediaOmieRealizada(chave) : null;
         if (!serie || realizado === null) {
-            alvo.innerHTML = '<p class="hist-estado">Sem períodos de entrega já terminados para comparar.</p>';
+            limparGrafico('grafico-comparacao', '<p class="hist-estado">Sem períodos de entrega já terminados para comparar.</p>');
             if (resumo) resumo.textContent = '';
             renderQuadroFechados();
             return;
