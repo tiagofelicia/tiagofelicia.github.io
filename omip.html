@@ -89,7 +89,7 @@
         "name": "O que são os Contratos Futuros apresentados?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Contratos futuros são acordos para comprar ou vender eletricidade a um preço definido hoje, mas para entrega numa data ou período futuro específico. O Valor (€/MWh) apresentado para cada contrato (ex: FPB M Apr-26) reflete a expectativa do mercado, no momento da atualização dos dados, sobre qual será o preço médio da eletricidade durante esse período futuro (abril de 2026, neste exemplo)."
+          "text": "Contratos futuros são acordos para comprar ou vender eletricidade a um preço definido hoje, mas para entrega numa data ou período futuro específico. O Valor (€/MWh) apresentado para cada contrato (ex: FPB M Jan-27) reflete a expectativa do mercado, no momento da atualização dos dados, sobre qual será o preço médio da eletricidade durante esse período futuro (janeiro de 2027, neste exemplo)."
         }
       },{
         "@type": "Question",
@@ -131,7 +131,42 @@
         "name": "O que significam os indicadores de resumo no topo?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Próximo Semanal, Mensal, Trimestral e Anual (PT) mostram o preço do primeiro contrato de cada tipo ainda por liquidar (o mais próximo no tempo)."
+          "text": "Próximo Semanal, Mensal, Trimestral e Anual (PT) mostram o preço do primeiro contrato de cada tipo ainda por liquidar (o mais próximo no tempo). Sob cada valor, um pequeno gráfico e a variação mostram como esse contrato se moveu nas últimas 30 sessões."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que é o Índice OMIP 12 meses?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É o preço médio que o mercado atribui aos próximos 12 meses civis completos, ponderado pelos dias de cada período. Serve para resumir a curva inteira num único número: quanto custa, hoje, o próximo ano. Para o calcular usa-se o contrato mais longo que caiba inteiro na janela — o trimestre antes do mês — porque um contrato trimestral já é a média que o mercado atribui ao seu trimestre. Usar as cotações mensais de dois meses e o preço do trimestre para o terceiro contaria duas vezes os meses caros e daria um índice acima do que o mercado negoceia. Nos meses em que não há cotação mensal nem trimestre inteiro dentro da janela, aplica-se o preço do trimestre ou do ano que os engloba. A janela avança de mês a mês, pelo que a composição do índice muda uma vez por mês."
+        }
+      },{
+        "@type": "Question",
+        "name": "Que período cobre o histórico das sessões?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As cotações de fecho de cada sessão são guardadas diariamente, o que permite reconstruir a evolução de cada contrato ao longo do tempo. O histórico disponível nesta página começa na sessão de 20 de outubro de 2025 e é atualizado a cada nova sessão."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como leio o gráfico de Evolução histórica?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ao contrário da Curva Forward, aqui o eixo horizontal é a data da sessão e não o período de entrega: cada linha mostra como o preço de um contrato foi mudando ao longo do tempo. Escolhe-se o tipo de contrato, a zona (Portugal, Espanha ou ambas, em que Espanha aparece tracejada) e o período, e clicam-se os contratos a comparar, até seis."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que é a coluna Tendência nas tabelas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É um gráfico em miniatura das últimas 30 sessões de cada contrato: verde se o preço acabou acima do início do período, vermelho se acabou abaixo. Passando o rato por cima, mostra a variação a 1 semana e a 1 mês e os valores mínimo e máximo do período."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que mostra a comparação Expectativa vs realizado?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Para períodos de entrega que já terminaram, compara a trajetória do contrato ao longo das sessões (o que o mercado esperava) com a média que o OMIE veio efetivamente a registar nesse período. Sob o gráfico, um quadro reúne todos os períodos já fechados, com a cotação final antes da entrega, o valor realizado e o desvio de cada um, mais o balanço global. Só aparecem períodos já terminados: para meses futuros, a média OMIE que este site publica é ela própria estimada a partir destes futuros OMIP, e a comparação seria circular. A comparação é apresentada apenas para Portugal."
         }
       }]
     }
@@ -206,7 +241,8 @@
         [data-theme="dark"] .futures-table tbody tr.tipo-header td { background-color: #334155; color: #e2e8f0; border-top-color: #475569; }
 
         /* ===== KPIs de resumo ===== */
-        #omip-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 25px auto; }
+        #omip-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 25px auto; }
+        @media (max-width: 1000px) { #omip-kpis { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 700px) { #omip-kpis { grid-template-columns: repeat(2, 1fr); } }
         .omip-kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
         .omip-kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
@@ -234,11 +270,81 @@
         #grafico-curva-forward { background: transparent; }
         .col-contrato[title] { cursor: help; }
 
+        /* ===== Secções históricas (evolução + OMIP vs OMIE) ===== */
+        .hist-section { width: 95%; max-width: 1200px; margin: 30px auto; }
+        .hist-section h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 6px; }
+        .hist-section .hist-intro { text-align: center; font-size: 0.85em; color: #666; max-width: 780px; margin: 0 auto 14px; }
+        .hist-controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+        .hist-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
+        [data-theme="dark"] .hist-section h2 { color: #e2e8f0; }
+        [data-theme="dark"] .hist-section .hist-intro { color: #94a3b8; }
+        [data-theme="dark"] .hist-label { color: #94a3b8; }
+
+        /* Chips de seleção de contratos */
+        #ev-chips { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+        .ev-chip { border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 999px; padding: 4px 11px; font-size: 0.8em; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .ev-chip:hover { background: #f1f5f9; }
+        .ev-chip[aria-pressed="true"] { background: #2563eb; border-color: #2563eb; color: #fff; }
+        [data-theme="dark"] .ev-chip { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .ev-chip:hover { background: #334155; }
+        [data-theme="dark"] .ev-chip[aria-pressed="true"] { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+        /* Estado de carregamento / indisponibilidade do histórico */
+        .hist-estado { text-align: center; font-size: 0.85em; color: #888; padding: 26px 10px; }
+        [data-theme="dark"] .hist-estado { color: #94a3b8; }
+
+        /* Coluna de tendência nas tabelas */
+        .col-tendencia { width: 12%; text-align: center; }
+        .col-tendencia svg { vertical-align: middle; }
+        .spark-vazio { color: #bbb; font-size: 0.9em; }
+        [data-theme="dark"] .spark-vazio { color: #64748b; }
+
+        /* Sparkline nos KPIs */
+        .omip-kpi-spark { margin-top: 6px; line-height: 1; }
+        .omip-kpi-delta { font-size: 0.72em; font-weight: 600; margin-top: 3px; }
+
+        /* Seletor de período fechado (OMIP vs OMIE) */
+        #cmp-periodo { font-size: 0.85em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #475569; max-width: 220px; }
+        [data-theme="dark"] #cmp-periodo { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        #cmp-resumo { max-width: 900px; margin: 12px auto 0; font-size: 0.9em; text-align: center; color: #444; }
+        #cmp-resumo strong { font-size: 1.05em; }
+        [data-theme="dark"] #cmp-resumo { color: #cbd5e1; }
+
+        /* Quadro-resumo dos períodos fechados (OMIP vs OMIE) */
+        #cmp-quadro { margin-top: 22px; }
+        #cmp-quadro h3 { text-align: center; font-size: 1em; color: #2c3e50; margin: 0 0 10px; }
+        #cmp-quadro .table-container { max-width: 900px; margin: 0 auto; }
+        #cmp-quadro table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+        #cmp-quadro th, #cmp-quadro td { padding: 7px 10px; border-bottom: 1px solid #eee; text-align: right; white-space: nowrap; }
+        #cmp-quadro th:first-child, #cmp-quadro td:first-child { text-align: left; }
+        #cmp-quadro thead th { background-color: #343a40; color: #fff; font-size: 0.92em; }
+        #cmp-quadro tbody tr { cursor: pointer; }
+        #cmp-quadro tbody tr:nth-child(even) { background-color: #f9f9f9; }
+        #cmp-quadro tbody tr:hover { background-color: #eef4ff; }
+        #cmp-quadro tbody tr.cmp-ativa { background-color: #dbeafe; font-weight: 600; }
+        #cmp-quadro tfoot td { background-color: #f1f3f5; font-size: 0.86em; text-align: center; color: #444; white-space: normal; padding: 10px; }
+        #cmp-quadro .cmp-pct { color: #888; font-size: 0.85em; }
+        [data-theme="dark"] #cmp-quadro h3 { color: #e2e8f0; }
+        [data-theme="dark"] #cmp-quadro thead th { background-color: #0f172a; color: #e2e8f0; }
+        [data-theme="dark"] #cmp-quadro th, [data-theme="dark"] #cmp-quadro td { border-bottom-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] #cmp-quadro tbody tr:nth-child(even) { background-color: #0f172a; }
+        [data-theme="dark"] #cmp-quadro tbody tr:nth-child(odd) { background-color: #1e293b; }
+        [data-theme="dark"] #cmp-quadro tbody tr:hover { background-color: #334155; }
+        [data-theme="dark"] #cmp-quadro tbody tr.cmp-ativa { background-color: #1e40af; }
+        [data-theme="dark"] #cmp-quadro tfoot td { background-color: #334155; color: #cbd5e1; }
+        [data-theme="dark"] #cmp-quadro .cmp-pct { color: #94a3b8; }
+
+        @media (max-width: 600px) {
+            .col-tendencia { display: none; }
+            #cmp-quadro th, #cmp-quadro td { padding: 5px 6px; font-size: 0.9em; }
+            #cmp-quadro .cmp-oculta-mobile { display: none; }
+        }
+
         /* ===== Modo Impressão ===== */
         @page { size: A4 landscape; margin: 10mm; }
         @media print {
             #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link,
-            .link-section, #curva-forward-toggles,
+            .link-section, #curva-forward-toggles, .hist-controls, #ev-chips,
             .highcharts-exporting-group, .highcharts-button {
                 display: none !important;
             }
@@ -247,6 +353,9 @@
             .painel-header h1 { font-size: 1.3em !important; }
             .table-container { break-inside: avoid; page-break-inside: avoid; }
             .omip-kpi-card { break-inside: avoid; }
+            .hist-section { break-inside: avoid; page-break-inside: avoid; }
+            /* Sem histórico carregado não se imprime uma secção vazia */
+            .hist-section.hist-indisponivel { display: none !important; }
             details.faq-item { display: block !important; }
             details.faq-item > div { display: block !important; }
             details.faq-item summary { cursor: default; }
@@ -304,6 +413,23 @@
             <div id="grafico-curva-forward"></div>
         </div>
 
+        <section id="evolucao-historica-section" class="hist-section hist-indisponivel">
+            <h2>Evolução histórica — como as cotações mudaram ao longo do tempo</h2>
+            <p class="hist-intro">Aqui o eixo horizontal é a <strong>data da sessão</strong> e não o período de entrega: mostra como o preço de cada contrato foi mudando sessão após sessão.</p>
+            <div class="hist-controls" id="ev-controls"></div>
+            <div id="ev-chips"></div>
+            <div id="grafico-evolucao"><p class="hist-estado">A carregar o histórico...</p></div>
+        </section>
+
+        <section id="comparacao-section" class="hist-section hist-indisponivel">
+            <h2>Expectativa vs realizado — o OMIP acertou?</h2>
+            <p class="hist-intro">Para períodos de entrega <strong>já terminados</strong>, compara a trajetória do contrato (o que o mercado esperava, sessão a sessão) com a média que o OMIE veio efetivamente a registar. Apenas Portugal.</p>
+            <div class="hist-controls" id="cmp-controls"></div>
+            <div id="grafico-comparacao"><p class="hist-estado">A carregar o histórico...</p></div>
+            <p id="cmp-resumo"></p>
+            <div id="cmp-quadro"></div>
+        </section>
+
         <div class="futures-grid">
             <div class="table-group">
                  <div class="link-section">
@@ -320,10 +446,11 @@
                             <th scope="col" class="col-descricao">Descrição</th>
                             <th scope="col" class="col-valor">Valor<br><span style="font-size:0.75em; font-weight:normal;">(€/MWh)</span></th>
                             <th scope="col" class="col-variacao">Var.</th>
+                            <th scope="col" class="col-tendencia">Tendência<br><span style="font-size:0.75em; font-weight:normal;">(30 sessões)</span></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="4" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
+                        <tr><td colspan="5" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -342,10 +469,11 @@
                             <th scope="col" class="col-descricao">Descrição</th>
                             <th scope="col" class="col-valor">Valor<br><span style="font-size:0.75em; font-weight:normal;">(€/MWh)</span></th>
                             <th scope="col" class="col-variacao">Var.</th>
+                            <th scope="col" class="col-tendencia">Tendência<br><span style="font-size:0.75em; font-weight:normal;">(30 sessões)</span></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="4" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
+                        <tr><td colspan="5" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -435,6 +563,57 @@
                     <ul>
                         <li><strong>Próximo Semanal / Mensal / Trimestral / Anual (PT):</strong> o preço do primeiro contrato de cada tipo ainda por liquidar (o mais próximo no tempo).</li>
                     </ul>
+                    <p>Sob cada valor, um pequeno gráfico e a variação mostram como esse contrato se moveu nas <strong>últimas 30 sessões</strong>.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que é o "Índice OMIP 12 meses"?</strong></summary>
+                <div class="faq-content">
+                    <p>É o preço médio que o mercado atribui aos <strong>próximos 12 meses civis completos</strong>, ponderado pelos dias de cada período. Resume a curva inteira num único número: quanto custa, hoje, o próximo ano. O cartão no topo indica a janela a que se refere, e o gráfico de evolução tem uma vista própria para ele.</p>
+                    <p>Para o calcular usa-se o <strong>contrato mais longo que caiba inteiro na janela</strong> — o trimestre antes do mês. A razão é aritmética: um contrato trimestral <em>já é</em> a média que o mercado atribui ao seu trimestre. Se usássemos as cotações mensais de dois meses e o preço do trimestre para o terceiro, os meses caros entrariam duas vezes e o índice sairia acima do que o mercado realmente negoceia.</p>
+                    <p>Nos meses em que não existe cotação mensal nem um trimestre inteiro dentro da janela, aplica-se o preço do trimestre (ou do ano) que os engloba. Não há aqui contradição com nenhuma cotação: os restantes meses desses períodos estão fora da janela.</p>
+                    <p>Note que este índice <strong>não</strong> é a média do gráfico da Curva Contínua. Esse gráfico mostra, para cada dia, o preço do contrato mais específico que existe cotado — uma leitura útil da forma da curva, mas cuja média sobrepõe períodos e não reconcilia com os preços dos contratos longos.</p>
+                    <p>A janela avança de mês a mês, pelo que a composição do índice muda uma vez por mês.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>Que período cobre o histórico das sessões?</strong></summary>
+                <div class="faq-content">
+                    <p>As cotações de fecho de cada sessão são guardadas diariamente, o que permite reconstruir a evolução de cada contrato ao longo do tempo.</p>
+                    <p>O histórico disponível nesta página começa na sessão de <strong>20 de outubro de 2025</strong> e é atualizado a cada nova sessão.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>Como leio o gráfico de "Evolução histórica"?</strong></summary>
+                <div class="faq-content">
+                    <p>Ao contrário da Curva Forward, aqui o eixo horizontal é a <strong>data da sessão</strong> e não o período de entrega: cada linha mostra como o preço de um contrato foi mudando ao longo do tempo.</p>
+                    <ul>
+                        <li><strong>Tipo:</strong> Anuais, Trimestrais, Mensais ou Semanais. Os contratos diários não aparecem aqui porque cada um é cotado em muito poucas sessões.</li>
+                        <li><strong>Zona:</strong> Portugal, Espanha, ou ambas — nesse caso a Espanha aparece <strong>tracejada</strong>, na mesma cor do contrato.</li>
+                        <li><strong>Contratos:</strong> clique nas etiquetas para acrescentar ou retirar linhas, até seis ao mesmo tempo.</li>
+                    </ul>
+                    <p>Na Curva Forward existe também o seletor <strong>Comparar</strong>, que sobrepõe em tracejado a curva de uma sessão passada — útil para ver se a curva <em>inteira</em> subiu ou desceu, e não apenas um contrato.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que é a coluna "Tendência" nas tabelas?</strong></summary>
+                <div class="faq-content">
+                    <p>É um gráfico em miniatura das <strong>últimas 30 sessões</strong> de cada contrato: verde se o preço acabou acima do início do período, vermelho se acabou abaixo. Passando o rato por cima, mostra a variação a <strong>1 semana</strong> e a <strong>1 mês</strong> e os valores mínimo e máximo do período.</p>
+                    <p>A coluna <strong>Var.</strong> continua a comparar apenas com a sessão anterior.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que mostra a comparação "Expectativa vs realizado"?</strong></summary>
+                <div class="faq-content">
+                    <p>Para períodos de entrega <strong>que já terminaram</strong>, compara a trajetória do contrato ao longo das sessões — o que o mercado esperava — com a média que o OMIE veio efetivamente a registar nesse período.</p>
+                    <p>Só aparecem períodos já terminados, e a razão é importante: para meses futuros, a média OMIE que este site publica é ela própria <strong>estimada a partir destes mesmos futuros OMIP</strong>, pelo que a comparação seria circular e não diria nada.</p>
+                    <p>Sob o gráfico, o quadro <strong>"Todos os períodos de entrega já fechados"</strong> reúne cada período com a cotação final antes da entrega, o valor realizado e o desvio — mais o balanço global, incluindo o <strong>erro absoluto médio</strong>, que mede quanto o mercado erra sem deixar que desvios de sinais opostos se anulem. Clique numa linha para ver a trajetória dessa entrega.</p>
+                    <p>A comparação é apresentada apenas para <strong>Portugal</strong>, porque é para Portugal que existem as médias OMIE históricas neste conjunto de dados.</p>
                 </div>
             </details>
         </article>
@@ -460,6 +639,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Guardar dados para re-render do gráfico (toggle / dark mode)
     let _futurosPT = [], _futurosES = [];
     let _cfTipoAtivo = 'continua';
+    let _cfComparar = 'off';   // comparação da curva com uma sessão passada
 
     function _hcDark() {
         const dk = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -596,13 +776,50 @@ document.addEventListener('DOMContentLoaded', function () {
         function cardKpi(label, futuro) {
             const val = futuro ? formatarValor(futuro.Valor) + ' €' : '--';
             const sub = futuro ? futuro.Descricao : 'indisponível';
-            return `<div class="omip-kpi-card"><div class="omip-kpi-label">${label}</div><div class="omip-kpi-value">${val}</div><div class="omip-kpi-sub">${sub}</div></div>`;
+            // A tendência só aparece depois de o histórico chegar (ver aplicarHistorico).
+            let tendencia = '';
+            if (futuro && _histOk) {
+                const t = tendenciaContrato('PT', chaveContrato(futuro.Contrato), 30);
+                if (t && t.pontos.length > 1) {
+                    const variacao = t.ultimo - t.pontos[0].y;
+                    const cor = variacao > 0 ? '#28a745' : (variacao < 0 ? '#dc3545' : '#b8860b');
+                    tendencia = `<div class="omip-kpi-spark">${sparklineSVG(t.pontos, 88, 22)}</div>`
+                              + `<div class="omip-kpi-delta" style="color:${cor}">${sinalFormatado(variacao)} €/MWh em ${t.pontos.length} sessões</div>`;
+                }
+            }
+            return `<div class="omip-kpi-card"><div class="omip-kpi-label">${label}</div><div class="omip-kpi-value">${val}</div><div class="omip-kpi-sub">${sub}</div>${tendencia}</div>`;
         }
+        // Índice 12 meses: calculado a partir do próprio snapshot, para ficar
+        // coerente com os outros cartões (que mostram valores do snapshot).
+        function cardIndice() {
+            const mapa = new Map();
+            futurosPT.forEach(f => {
+                const chave = chaveContrato(f.Contrato);
+                if (chave && isFinite(f.Valor)) mapa.set(chave, f.Valor);
+            });
+            const ind = indice12Meses(mapa, _tsSessaoSnapshot);
+            if (!ind) return '';
+            let tendencia = '';
+            if (_histOk && _indice.PT.length > 1) {
+                const pontos = _indice.PT.slice(-30);
+                const variacao = pontos[pontos.length - 1].y - pontos[0].y;
+                const cor = variacao > 0 ? '#28a745' : (variacao < 0 ? '#dc3545' : '#b8860b');
+                tendencia = `<div class="omip-kpi-spark">${sparklineSVG(pontos, 88, 22)}</div>`
+                          + `<div class="omip-kpi-delta" style="color:${cor}">${sinalFormatado(variacao)} €/MWh em ${pontos.length} sessões</div>`;
+            }
+            const detalhe = ind.partes.map(p => `${p.etiqueta}: ${formatarValor(p.preco)} (${p.dias} dias, ${p.fonte})`).join(' · ');
+            return `<div class="omip-kpi-card" title="Composição — ${detalhe}">`
+                 + `<div class="omip-kpi-label">Índice 12 meses (PT)</div>`
+                 + `<div class="omip-kpi-value">${formatarValor(ind.valor)} €</div>`
+                 + `<div class="omip-kpi-sub">${ind.janela}</div>${tendencia}</div>`;
+        }
+
         container.innerHTML =
             cardKpi('Próximo Semanal (PT)', semanal) +
             cardKpi('Próximo Mensal (PT)', mensal) +
             cardKpi('Próximo Trimestral (PT)', trimestral) +
-            cardKpi('Próximo Anual (PT)', anual);
+            cardKpi('Próximo Anual (PT)', anual) +
+            cardIndice();
     }
 
     // === Curva Forward (gráfico com toggle) ===
@@ -638,6 +855,18 @@ document.addEventListener('DOMContentLoaded', function () {
             grp.appendChild(btn);
         });
         togglesEl.appendChild(grp);
+
+        // Comparação com uma sessão passada — só existe depois de o histórico
+        // chegar, por isso este setup é corrido outra vez em aplicarHistorico().
+        if (_histOk) {
+            togglesEl.appendChild(grupoBotoes(
+                [{ id: 'off', label: 'Sem comparação' }, { id: '1S', label: 'vs 1 semana' },
+                 { id: '1M', label: 'vs 1 mês' }, { id: '3M', label: 'vs 3 meses' }],
+                _cfComparar,
+                id => { _cfComparar = id; renderCurvaForward(); },
+                'Comparar'));
+        }
+
         renderCurvaForward();
     }
 
@@ -664,7 +893,7 @@ document.addEventListener('DOMContentLoaded', function () {
         Highcharts.chart('grafico-curva-forward', {
             chart: { type: 'line', height: 460, backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
             title: { text: `Curva Forward OMIP — Contratos ${tipo}`, style: { color: _d.txt, fontSize: '1em' } },
-            subtitle: { text: 'Preço de fecho por período de entrega · azul = Portugal · verde = Espanha', style: { color: _d.txt, fontSize: '0.78em' } },
+            subtitle: { text: `Preço de fecho por período de entrega · azul = Portugal · verde = Espanha${notaFantasma()}`, style: { color: _d.txt, fontSize: '0.78em' } },
             xAxis: {
                 categories: categories,
                 title: { text: 'Período de entrega', style: { color: _d.txt } },
@@ -686,7 +915,7 @@ document.addEventListener('DOMContentLoaded', function () {
             series: [
                 { name: 'Portugal', color: '#007bff', data: dataPT },
                 { name: 'Espanha', color: '#28a745', data: dataES }
-            ]
+            ].concat(seriesFantasmaPorTipo(linhas))
         });
     }
     // Curva contínua diária por cascata, próximos 12 meses
@@ -737,7 +966,7 @@ document.addEventListener('DOMContentLoaded', function () {
         Highcharts.chart('grafico-curva-forward', {
             chart: { type: 'line', height: 480, backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
             title: { text: 'Curva Forward Contínua OMIP — próximos 12 meses', style: { color: _d.txt, fontSize: '1em' } },
-            subtitle: { text: 'Cada dia usa o contrato mais específico disponível (Diário → Semanal → Mensal → Trimestral). Bandas de fundo indicam o tipo.', style: { color: _d.txt, fontSize: '0.78em' } },
+            subtitle: { text: `Cada dia usa o contrato mais específico disponível (Diário → Semanal → Mensal → Trimestral). Bandas de fundo indicam o tipo.${notaFantasma()}`, style: { color: _d.txt, fontSize: '0.78em' } },
             xAxis: {
                 type: 'datetime',
                 title: { text: 'Data de entrega', style: { color: _d.txt } },
@@ -773,8 +1002,87 @@ document.addEventListener('DOMContentLoaded', function () {
             series: [
                 { name: 'Portugal', color: '#007bff', data: dataPT },
                 { name: 'Espanha', color: '#28a745', data: dataES }
-            ]
+            ].concat(seriesFantasmaContinua(inicioTs, fimTs))
         });
+    }
+
+    // ===== Comparação da curva com uma sessão passada ("curvas fantasma") =====
+    const CF_RECUO = { '1S': 7, '1M': 30, '3M': 91 };
+
+    // Sessão a usar como comparação, ou null se a comparação estiver desligada
+    // ou o histórico ainda não tiver profundidade suficiente.
+    function sessaoFantasma() {
+        if (!_histOk || _cfComparar === 'off') return null;
+        const ts = sessaoRecuada(CF_RECUO[_cfComparar]);
+        const dados = ts === null ? null : _porSessao.get(ts);
+        return dados ? { ts: ts, dados: dados } : null;
+    }
+
+    function notaFantasma() {
+        const f = sessaoFantasma();
+        return f ? ` · tracejado = sessão de ${Highcharts.dateFormat('%d/%m/%Y', f.ts)}` : '';
+    }
+
+    // Índice de uma sessão histórica no formato que o precoCascata() espera,
+    // derivando o período de entrega do código do contrato (o histórico não
+    // guarda a Descricao).
+    function indexarHistorico(mapaChaves) {
+        const idx = { dia: new Map(), sem: new Map(), mes: new Map(), tri: new Map(), ano: new Map() };
+        mapaChaves.forEach((valor, chave) => {
+            const tipo = tipoDaChave(chave), p = periodoEntrega(chave);
+            if (!p) return;
+            const d = new Date(p.ini);
+            const ano = d.getUTCFullYear();
+            if (tipo === 'Diários') {
+                idx.dia.set(`${ano}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`, valor);
+            } else if (tipo === 'Semanais') {
+                const m = chave.match(/^Wk(\d+)-(\d+)$/);
+                if (m) idx.sem.set(`${2000 + (+m[2])}-W${+m[1]}`, valor);
+            } else if (tipo === 'Mensais') {
+                idx.mes.set(`${ano}-${d.getUTCMonth() + 1}`, valor);
+            } else if (tipo === 'Trimestrais') {
+                idx.tri.set(`${ano}-Q${Math.floor(d.getUTCMonth() / 3) + 1}`, valor);
+            } else if (tipo === 'Anuais') {
+                idx.ano.set(`${ano}`, valor);
+            }
+        });
+        return idx;
+    }
+
+    // Séries fantasma para as vistas por tipo: alinham-se pela chave, como as
+    // séries de hoje (mesmas categorias, na mesma ordem).
+    function seriesFantasmaPorTipo(linhas) {
+        const f = sessaoFantasma();
+        if (!f) return [];
+        const etiqueta = Highcharts.dateFormat('%d/%m/%Y', f.ts);
+        return [
+            { name: `Portugal · ${etiqueta}`, color: '#007bff', dashStyle: 'ShortDot', lineWidth: 1.2,
+              opacity: 0.6, marker: { enabled: false },
+              data: linhas.map(l => f.dados.PT.has(l.chave) ? f.dados.PT.get(l.chave) : null) },
+            { name: `Espanha · ${etiqueta}`, color: '#28a745', dashStyle: 'ShortDot', lineWidth: 1.2,
+              opacity: 0.6, marker: { enabled: false },
+              data: linhas.map(l => f.dados.ES.has(l.chave) ? f.dados.ES.get(l.chave) : null) }
+        ];
+    }
+
+    // Série fantasma para a vista contínua: refaz a cascata dessa sessão sobre
+    // o MESMO intervalo de datas, para as duas curvas serem comparáveis. Só
+    // Portugal — com quatro linhas o gráfico deixava de se ler.
+    function seriesFantasmaContinua(inicioTs, fimTs) {
+        const f = sessaoFantasma();
+        if (!f) return [];
+        const idx = indexarHistorico(f.dados.PT);
+        const dados = [];
+        for (let ts = inicioTs; ts <= fimTs; ts += DIA_MS) {
+            const p = precoCascata(idx, ts);
+            if (p) dados.push({ x: ts, y: p.valor, tipoContrato: p.tipo });
+        }
+        if (!dados.length) return [];
+        return [{
+            name: `Portugal · ${Highcharts.dateFormat('%d/%m/%Y', f.ts)}`,
+            color: '#007bff', dashStyle: 'ShortDot', lineWidth: 1.2, opacity: 0.6,
+            marker: { enabled: false }, data: dados
+        }];
     }
 
     // Preenche um mapa chave→{valor,dataInicio,descricao} para um tipo
@@ -784,6 +1092,827 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!p || p.dataInicio === null) return;
             mapa.set(p.chave, { valor: f.Valor, dataInicio: p.dataInicio, descricao: f.Descricao });
         });
+    }
+
+    // ==================================================================
+    // HISTÓRICO DE SESSÕES OMIP
+    // ------------------------------------------------------------------
+    // As cotações de fecho de cada sessão são lidas do repositório de dados, em
+    // data/omie/historico/omip_historico_AAAA.csv (Data,Zona,Contrato,Valor),
+    // uma linha por sessão × zona × contrato.
+    //
+    // Carrega-se DEPOIS do primeiro render, sem bloquear nada: são ~48 KB
+    // comprimidos por ano, e a página tem de continuar a funcionar por
+    // inteiro se isto falhar (as secções históricas escondem-se e o resto
+    // fica como está).
+    // ==================================================================
+    const HIST_ANO_INICIO = 2025;   // primeiro ano com histórico recolhido
+    const histUrl = ano => `omie/historico/omip_historico_${ano}.csv`;
+    const RECORDS_URL = 'omie/records_omie.json';
+    const DIA_MS = 86400000;
+
+    let _histOk = false;
+    let _sessoes = [];                                // ts das sessões, ordenado
+    let _serie = { PT: new Map(), ES: new Map() };      // chave → [{x: ts, y: valor}]
+    let _porSessao = new Map();                        // ts → { PT: Map, ES: Map }
+    let _mediasOmie = null;                            // médias OMIE realizadas
+    let _tsOmieReal = null;                            // último dia com OMIE real
+
+    const _MESES_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                       'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+    // Chave = código sem o prefixo de zona (ex: "FPB M Sep-26" → "M Sep-26"),
+    // igual à que o parseContrato() já usa para alinhar PT com ES.
+    function chaveContrato(contrato) {
+        return (contrato || '').replace(/^F[PT]B\s+/, '').trim();
+    }
+
+    function tipoDaChave(chave) {
+        if (chave.startsWith('D ')) return 'Diários';
+        if (chave.startsWith('Wk')) return 'Semanais';
+        if (chave.startsWith('M ')) return 'Mensais';
+        if (/^Q\d/.test(chave)) return 'Trimestrais';
+        if (chave.startsWith('YR')) return 'Anuais';
+        return 'Outros';
+    }
+
+    // Início e fim do período de entrega a partir da chave. Ao contrário do
+    // parseContrato(), não depende da Descricao — que o histórico não guarda
+    // por ser derivável do próprio código.
+    function periodoEntrega(chave) {
+        let m;
+        if ((m = chave.match(/^D\s+[A-Za-z]{2}(\d{2})([A-Za-z]{3})-(\d{2})$/))) {
+            const ini = Date.UTC(2000 + (+m[3]), _MESES_EN[m[2]], +m[1]);
+            return { ini: ini, fim: ini };
+        }
+        if ((m = chave.match(/^Wk(\d+)-(\d+)$/))) {
+            const ini = isoWeekToDate(2000 + (+m[2]), +m[1]).getTime();
+            return { ini: ini, fim: ini + 6 * DIA_MS };
+        }
+        if ((m = chave.match(/^M\s+([A-Za-z]{3})-(\d+)$/))) {
+            const ano = 2000 + (+m[2]), mes = _MESES_EN[m[1]];
+            return { ini: Date.UTC(ano, mes, 1), fim: Date.UTC(ano, mes + 1, 0) };
+        }
+        if ((m = chave.match(/^Q(\d)-(\d+)$/))) {
+            const ano = 2000 + (+m[2]), mes = (+m[1] - 1) * 3;
+            return { ini: Date.UTC(ano, mes, 1), fim: Date.UTC(ano, mes + 3, 0) };
+        }
+        if ((m = chave.match(/^YR-(\d+)$/))) {
+            const ano = 2000 + (+m[1]);
+            return { ini: Date.UTC(ano, 0, 1), fim: Date.UTC(ano, 11, 31) };
+        }
+        return null;
+    }
+
+    function etiquetaChave(chave) {
+        const tipo = tipoDaChave(chave), p = periodoEntrega(chave);
+        if (!p) return chave;
+        const d = new Date(p.ini);
+        if (tipo === 'Diários') return Highcharts.dateFormat('%d/%m/%Y', p.ini);
+        if (tipo === 'Semanais') {
+            const m = chave.match(/^Wk(\d+)-(\d+)$/);
+            return `Semana ${+m[1]}, ${2000 + (+m[2])}`;
+        }
+        if (tipo === 'Mensais') return `${_MESES_PT[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+        if (tipo === 'Trimestrais') return `${Math.floor(d.getUTCMonth() / 3) + 1}º Trimestre ${d.getUTCFullYear()}`;
+        if (tipo === 'Anuais') return `Ano ${d.getUTCFullYear()}`;
+        return chave;
+    }
+
+    function tsDeDataPT(str) {
+        if (!str || str.indexOf('/') === -1) return null;
+        const partes = str.split('/');
+        const ts = Date.UTC(+partes[2], +partes[1] - 1, +partes[0]);
+        return isFinite(ts) ? ts : null;
+    }
+
+    function sinalFormatado(valor) {
+        if (valor === null || !isFinite(valor)) return '--';
+        const sinal = valor > 0 ? '+' : (valor < 0 ? '-' : '');
+        return sinal + formatarValor(Math.abs(valor));
+    }
+
+    // O histórico não tem campos com vírgulas (a Descricao não é guardada),
+    // por isso um split simples basta — sem o regex de CSV citado.
+    function parseHistorico(texto) {
+        const linhas = texto.replace(/^﻿/, '').split(/\r?\n/);
+        const cab = (linhas.shift() || '').split(',').map(h => h.trim());
+        const iData = cab.indexOf('Data'), iZona = cab.indexOf('Zona'),
+              iContrato = cab.indexOf('Contrato'), iValor = cab.indexOf('Valor');
+        if (iData < 0 || iZona < 0 || iContrato < 0 || iValor < 0) return 0;
+        let n = 0;
+        linhas.forEach(linha => {
+            if (!linha.trim()) return;
+            const campos = linha.split(',');
+            const partes = (campos[iData] || '').split('/');
+            if (partes.length !== 3) return;
+            const ts = Date.UTC(+partes[2], +partes[1] - 1, +partes[0]);
+            const zona = (campos[iZona] || '').trim();
+            if (zona !== 'PT' && zona !== 'ES') return;
+            const chave = chaveContrato(campos[iContrato]);
+            const valor = parseFloat(campos[iValor]);
+            if (!chave || !isFinite(valor)) return;
+            if (!_serie[zona].has(chave)) _serie[zona].set(chave, []);
+            _serie[zona].get(chave).push({ x: ts, y: valor });
+            let sessao = _porSessao.get(ts);
+            if (!sessao) { sessao = { PT: new Map(), ES: new Map() }; _porSessao.set(ts, sessao); }
+            sessao[zona].set(chave, valor);
+            n++;
+        });
+        return n;
+    }
+
+    function carregarHistorico() {
+        const anoAtual = new Date().getUTCFullYear();
+        const anos = [];
+        for (let a = HIST_ANO_INICIO; a <= anoAtual; a++) anos.push(a);
+
+        // Um ano em falta (ex: início de janeiro) não é erro — ignora-se.
+        const pedidos = anos.map(a => fetchDados(histUrl(a))
+            .then(r => r.ok ? r.text() : null)
+            .catch(() => null));
+        const pedidoRecords = fetchDados(RECORDS_URL)
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null);
+
+        return Promise.all([Promise.all(pedidos), pedidoRecords]).then(([textos, records]) => {
+            let total = 0;
+            textos.forEach(t => { if (t) total += parseHistorico(t); });
+            if (!total) throw new Error('Histórico OMIP vazio ou indisponível.');
+            ['PT', 'ES'].forEach(z => _serie[z].forEach(arr => arr.sort((a, b) => a.x - b.x)));
+            _sessoes = [..._porSessao.keys()].sort((a, b) => a - b);
+            calcularIndiceHistorico();
+            if (records && records.aggregates) {
+                _mediasOmie = {
+                    mensais: records.aggregates.mediasMensaisPT || {},
+                    anuais: records.aggregates.mediasAnuaisPT || {}
+                };
+            }
+            _histOk = true;
+            return total;
+        });
+    }
+
+    // Sparkline SVG inline — sem módulos extra do Highcharts.
+    function sparklineSVG(pontos, largura, altura) {
+        largura = largura || 70; altura = altura || 20;
+        if (!pontos || pontos.length < 2) return '<span class="spark-vazio">—</span>';
+        const ys = pontos.map(p => p.y);
+        const min = Math.min.apply(null, ys), max = Math.max.apply(null, ys);
+        const amp = (max - min) || 1;
+        const px = i => (i / (pontos.length - 1)) * (largura - 2) + 1;
+        const py = v => altura - 1 - ((v - min) / amp) * (altura - 2);
+        const caminho = pontos.map((p, i) => `${i ? 'L' : 'M'}${px(i).toFixed(1)},${py(p.y).toFixed(1)}`).join(' ');
+        const cor = ys[ys.length - 1] >= ys[0] ? '#28a745' : '#dc3545';
+        return `<svg width="${largura}" height="${altura}" viewBox="0 0 ${largura} ${altura}" aria-hidden="true" focusable="false">`
+             + `<path d="${caminho}" fill="none" stroke="${cor}" stroke-width="1.4" stroke-linejoin="round"/>`
+             + `<circle cx="${px(pontos.length - 1).toFixed(1)}" cy="${py(ys[ys.length - 1]).toFixed(1)}" r="1.9" fill="${cor}"/>`
+             + `</svg>`;
+    }
+
+    // Últimas N sessões de um contrato, com variações a 1 semana (5 sessões)
+    // e 1 mês (21 sessões) — contadas em sessões, não em dias de calendário.
+    function tendenciaContrato(zona, chave, n) {
+        const serie = _serie[zona] && _serie[zona].get(chave);
+        if (!serie || serie.length < 2) return null;
+        const pontos = serie.slice(-(n || 30));
+        const ultimo = serie[serie.length - 1].y;
+        const delta = sessoes => {
+            const i = serie.length - 1 - sessoes;
+            return i < 0 ? null : ultimo - serie[i].y;
+        };
+        const ys = pontos.map(p => p.y);
+        return {
+            pontos: pontos, ultimo: ultimo, d5: delta(5), d21: delta(21),
+            min: Math.min.apply(null, ys), max: Math.max.apply(null, ys)
+        };
+    }
+
+    // Sessão mais recente que esteja a pelo menos `dias` de distância da última.
+    function sessaoRecuada(dias) {
+        if (!_sessoes.length) return null;
+        const alvo = _sessoes[_sessoes.length - 1] - dias * DIA_MS;
+        let escolhida = null;
+        _sessoes.forEach(ts => { if (ts <= alvo) escolhida = ts; });
+        return escolhida;
+    }
+
+    // Grupo de botões no mesmo estilo dos da curva forward.
+    function grupoBotoes(opcoes, ativoId, aoEscolher, rotulo) {
+        const wrap = document.createElement('div');
+        wrap.style.display = 'flex';
+        wrap.style.gap = '6px';
+        if (rotulo) {
+            const lbl = document.createElement('span');
+            lbl.className = 'hist-label';
+            lbl.textContent = rotulo;
+            wrap.appendChild(lbl);
+        }
+        const grp = document.createElement('div');
+        grp.className = 'cf-toggle';
+        grp.setAttribute('role', 'radiogroup');
+        if (rotulo) grp.setAttribute('aria-label', rotulo);
+        opcoes.forEach(op => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'cf-toggle-btn' + (op.id === ativoId ? ' active' : '');
+            btn.textContent = op.label;
+            btn.addEventListener('click', () => {
+                grp.querySelectorAll('.cf-toggle-btn').forEach(b => b.classList.toggle('active', b === btn));
+                aoEscolher(op.id);
+            });
+            grp.appendChild(btn);
+        });
+        wrap.appendChild(grp);
+        return wrap;
+    }
+
+    // ==================================================================
+    // ÍNDICE OMIP 12 MESES
+    // ------------------------------------------------------------------
+    // Média das cotações dos próximos 12 meses civis completos, ponderada
+    // pelos dias de cada período.
+    //
+    // A regra é usar o contrato MAIS LONGO que caiba inteiro na janela
+    // (trimestre antes de mês), e não o mais específico como faz a cascata da
+    // curva contínua. A razão é aritmética: um contrato trimestral já É a
+    // média que o mercado atribui ao seu trimestre. Usar as cotações mensais
+    // de dois meses do trimestre e o preço do trimestre para o terceiro conta
+    // duas vezes os meses caros — daria um índice sistematicamente acima do
+    // que o mercado negoceia. Exemplo real: com Jan-27 a 97,16, Fev-27 a
+    // 85,50 e Q1-27 a 84,10, atribuir 84,10 a março faria o trimestre sair a
+    // 89,03 quando negoceia a 84,10 (o março implícito é 69,78).
+    //
+    // Onde não existe cotação mensal nem trimestre inteiro dentro da janela,
+    // usa-se o preço do trimestre (ou do ano) que engloba esses meses: é uma
+    // hipótese de preço plano nesse período, não uma contradição com nenhuma
+    // cotação — os restantes meses desse trimestre estão fora da janela.
+    //
+    // A janela avança de mês a mês, pelo que a composição do índice muda uma
+    // vez por mês (é um "strip" móvel, como se usa no mercado).
+    // ==================================================================
+    let _indice = { PT: [], ES: [] };      // [{x: ts, y: valor, janela: '...'}]
+    let _tsSessaoSnapshot = null;          // sessão OMIP do snapshot em memória
+
+    function _diasNoMes(ano, mes0) {
+        return new Date(Date.UTC(ano, mes0 + 1, 0)).getUTCDate();
+    }
+
+    function indice12Meses(mapaChaves, refTs) {
+        if (!mapaChaves || !mapaChaves.size || refTs === null) return null;
+        const idx = indexarHistorico(mapaChaves);
+        const ref = new Date(refTs);
+
+        // Janela: os 12 meses civis completos a seguir ao mês da sessão.
+        const meses = [];
+        for (let i = 0; i < 12; i++) {
+            const d = new Date(Date.UTC(ref.getUTCFullYear(), ref.getUTCMonth() + 1 + i, 1));
+            meses.push({ ano: d.getUTCFullYear(), mes0: d.getUTCMonth() });
+        }
+
+        const precos = new Array(12).fill(null);
+        const partes = [];
+
+        // 1.º passo — trimestres cotados que caibam inteiros na janela.
+        for (let i = 0; i < 12; i++) {
+            if (precos[i] !== null) continue;
+            const m = meses[i];
+            const q = Math.floor(m.mes0 / 3) + 1;
+            const chaveTri = `${m.ano}-Q${q}`;
+            if (!idx.tri.has(chaveTri)) continue;
+            const indices = [];
+            meses.forEach((mj, j) => {
+                if (mj.ano === m.ano && Math.floor(mj.mes0 / 3) + 1 === q) indices.push(j);
+            });
+            if (indices.length !== 3) continue;   // trimestre a cavalo da janela
+            const preco = idx.tri.get(chaveTri);
+            let dias = 0;
+            indices.forEach(j => { precos[j] = preco; dias += _diasNoMes(meses[j].ano, meses[j].mes0); });
+            partes.push({ etiqueta: `${q}º Trimestre ${m.ano}`, preco: preco, dias: dias,
+                          fonte: 'trimestral', ini: Date.UTC(m.ano, (q - 1) * 3, 1) });
+        }
+
+        // 2.º passo — meses restantes: cotação mensal, senão o trimestre que os
+        // engloba, senão o ano.
+        for (let i = 0; i < 12; i++) {
+            if (precos[i] !== null) continue;
+            const m = meses[i];
+            const q = Math.floor(m.mes0 / 3) + 1;
+            let preco = null, fonte = null;
+            if (idx.mes.has(`${m.ano}-${m.mes0 + 1}`)) {
+                preco = idx.mes.get(`${m.ano}-${m.mes0 + 1}`); fonte = 'mensal';
+            } else if (idx.tri.has(`${m.ano}-Q${q}`)) {
+                preco = idx.tri.get(`${m.ano}-Q${q}`); fonte = 'trimestral (parte)';
+            } else if (idx.ano.has(`${m.ano}`)) {
+                preco = idx.ano.get(`${m.ano}`); fonte = 'anual (parte)';
+            }
+            // Sem preço para um pedaço da janela, o índice não é comparável com
+            // os das outras sessões — não se publica número nenhum.
+            if (preco === null) return null;
+            precos[i] = preco;
+            partes.push({ etiqueta: `${_MESES_PT[m.mes0]} ${m.ano}`, preco: preco,
+                          dias: _diasNoMes(m.ano, m.mes0), fonte: fonte,
+                          ini: Date.UTC(m.ano, m.mes0, 1) });
+        }
+
+        let soma = 0, dias = 0;
+        for (let i = 0; i < 12; i++) {
+            const d = _diasNoMes(meses[i].ano, meses[i].mes0);
+            soma += precos[i] * d;
+            dias += d;
+        }
+        if (!dias) return null;
+
+        const pIni = meses[0], pFim = meses[11];
+        return {
+            valor: soma / dias,
+            dias: dias,
+            janela: `${_MESES_PT[pIni.mes0].slice(0, 3)} ${pIni.ano} – ${_MESES_PT[pFim.mes0].slice(0, 3)} ${pFim.ano}`,
+            partes: partes.sort((a, b) => a.ini - b.ini)
+        };
+    }
+
+    function calcularIndiceHistorico() {
+        _indice = { PT: [], ES: [] };
+        _sessoes.forEach(ts => {
+            const sessao = _porSessao.get(ts);
+            ['PT', 'ES'].forEach(zona => {
+                const r = indice12Meses(sessao[zona], ts);
+                if (r) _indice[zona].push({ x: ts, y: r.valor, janela: r.janela });
+            });
+        });
+    }
+
+    // ===== Secção "Evolução histórica" =====
+    const EV_PERIODOS = { '1M': 30, '3M': 91, '6M': 182, '12M': 365, 'Tudo': null };
+    const EV_MAX_CHAVES = 6;
+    let _evTipo = 'Anuais', _evZona = 'PT', _evPeriodo = '6M', _evChaves = [];
+
+    // Contratos de um tipo ainda cotados na última sessão, por ordem de entrega.
+    function chavesDoTipo(tipo) {
+        const ultima = _porSessao.get(_sessoes[_sessoes.length - 1]);
+        if (!ultima) return [];
+        return [...ultima.PT.keys()]
+            .filter(k => tipoDaChave(k) === tipo)
+            .map(k => ({ k: k, p: periodoEntrega(k) }))
+            .filter(x => x.p)
+            .sort((a, b) => a.p.ini - b.p.ini)
+            .map(x => x.k);
+    }
+
+    function setupEvolucao() {
+        const controls = document.getElementById('ev-controls');
+        if (!controls || !_histOk) return;
+        controls.innerHTML = '';
+        controls.appendChild(grupoBotoes(
+            [{ id: 'Indice', label: 'Índice 12 meses' }, { id: 'Anuais', label: 'Anuais' },
+             { id: 'Trimestrais', label: 'Trimestrais' }, { id: 'Mensais', label: 'Mensais' },
+             { id: 'Semanais', label: 'Semanais' }],
+            _evTipo,
+            id => { _evTipo = id; _evChaves = chavesDoTipo(id).slice(0, 4); renderChipsEvolucao(); renderEvolucao(); },
+            'Tipo'));
+        controls.appendChild(grupoBotoes(
+            [{ id: 'PT', label: 'Portugal' }, { id: 'ES', label: 'Espanha' }, { id: 'Ambas', label: 'Ambas' }],
+            _evZona,
+            id => { _evZona = id; renderEvolucao(); },
+            'Zona'));
+        controls.appendChild(grupoBotoes(
+            [{ id: '1M', label: '1 mês' }, { id: '3M', label: '3 meses' }, { id: '6M', label: '6 meses' },
+             { id: '12M', label: '12 meses' }, { id: 'Tudo', label: 'Tudo' }],
+            _evPeriodo,
+            id => { _evPeriodo = id; renderEvolucao(); },
+            'Período'));
+
+        if (!_evChaves.length) _evChaves = chavesDoTipo(_evTipo).slice(0, 4);
+        renderChipsEvolucao();
+        renderEvolucao();
+    }
+
+    function renderChipsEvolucao() {
+        const cont = document.getElementById('ev-chips');
+        if (!cont) return;
+        cont.innerHTML = '';
+        if (_evTipo === 'Indice') return;   // o índice é uma linha só, não há nada a escolher
+        chavesDoTipo(_evTipo).forEach(k => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'ev-chip';
+            btn.textContent = k;
+            btn.title = etiquetaChave(k);
+            btn.setAttribute('aria-pressed', _evChaves.indexOf(k) !== -1 ? 'true' : 'false');
+            btn.addEventListener('click', () => {
+                const i = _evChaves.indexOf(k);
+                if (i !== -1) _evChaves.splice(i, 1);
+                else {
+                    // Acima de EV_MAX_CHAVES o gráfico deixa de ser legível:
+                    // entra o novo, sai o mais antigo da seleção.
+                    if (_evChaves.length >= EV_MAX_CHAVES) _evChaves.shift();
+                    _evChaves.push(k);
+                }
+                renderChipsEvolucao();
+                renderEvolucao();
+            });
+            cont.appendChild(btn);
+        });
+    }
+
+    function renderEvolucao() {
+        const alvo = document.getElementById('grafico-evolucao');
+        if (!alvo || !_histOk) return;
+        const fim = _sessoes[_sessoes.length - 1];
+        const dias = EV_PERIODOS[_evPeriodo];
+        const inicio = dias === null ? _sessoes[0] : fim - dias * DIA_MS;
+        const zonas = _evZona === 'Ambas' ? ['PT', 'ES'] : [_evZona];
+        const cores = Highcharts.getOptions().colors;
+
+        const ehIndice = _evTipo === 'Indice';
+        const series = [];
+        if (ehIndice) {
+            zonas.forEach(zona => {
+                const pontos = _indice[zona].filter(p => p.x >= inicio && p.x <= fim);
+                if (!pontos.length) return;
+                series.push({
+                    name: `Índice 12 meses · ${zona}`,
+                    data: pontos.map(p => ({ x: p.x, y: p.y, janela: p.janela })),
+                    color: zona === 'PT' ? '#007bff' : '#28a745'
+                });
+            });
+        } else {
+            _evChaves.forEach((chave, i) => {
+                zonas.forEach(zona => {
+                    const pontos = (_serie[zona].get(chave) || []).filter(p => p.x >= inicio && p.x <= fim);
+                    if (!pontos.length) return;
+                    series.push({
+                        name: `${chave}${zonas.length > 1 ? ' · ' + (zona === 'PT' ? 'PT' : 'ES') : ''}`,
+                        data: pontos.map(p => [p.x, p.y]),
+                        color: cores[i % cores.length],
+                        dashStyle: zona === 'ES' ? 'ShortDash' : 'Solid',
+                        custom: { etiqueta: etiquetaChave(chave) }
+                    });
+                });
+            });
+        }
+
+        if (!series.length) {
+            alvo.innerHTML = ehIndice
+                ? '<p class="hist-estado">Índice indisponível para o período escolhido.</p>'
+                : '<p class="hist-estado">Escolha pelo menos um contrato para ver a evolução.</p>';
+            return;
+        }
+
+        const _d = _hcDark();
+        const rotuloZona = _evZona === 'Ambas' ? 'Portugal (contínuo) e Espanha (tracejado)'
+                                               : (_evZona === 'PT' ? 'Portugal' : 'Espanha');
+        Highcharts.chart('grafico-evolucao', {
+            chart: { type: 'line', height: 460, backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: {
+                text: ehIndice ? 'Índice OMIP 12 meses — quanto custa o próximo ano'
+                               : `Evolução das cotações — contratos ${_evTipo}`,
+                style: { color: _d.txt, fontSize: '1em' }
+            },
+            subtitle: {
+                text: ehIndice
+                    ? `Média ponderada pelos dias dos 12 meses civis seguintes a cada sessão · ${rotuloZona}`
+                    : `Preço de fecho por sessão · ${rotuloZona}`,
+                style: { color: _d.txt, fontSize: '0.78em' }
+            },
+            xAxis: {
+                type: 'datetime',
+                title: { text: 'Data da sessão', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } },
+                crosshair: true,
+                dateTimeLabelFormats: { day: '%e %b', week: '%e %b', month: '%b %Y', year: '%Y' }
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }
+            },
+            tooltip: ehIndice ? {
+                shared: true, useHTML: true,
+                formatter: function () {
+                    let s = `<b>Sessão de ${Highcharts.dateFormat('%A, %e de %B de %Y', this.x)}</b>`;
+                    (this.points || []).forEach(p => {
+                        s += `<br><span style="color:${p.color}">●</span> ${p.series.name}: <b>${formatarValor(p.y)} €/MWh</b>`;
+                    });
+                    const janela = this.points && this.points[0] && this.points[0].point.janela;
+                    if (janela) s += `<br><i style="font-size:0.85em;color:#888">janela: ${janela}</i>`;
+                    return s;
+                }
+            } : {
+                shared: true, valueSuffix: ' €/MWh', valueDecimals: 2,
+                xDateFormat: 'Sessão de %A, %e de %B de %Y'
+            },
+            legend: { itemStyle: { color: _d.txt } },
+            plotOptions: { series: { marker: { enabled: false }, lineWidth: 1.8, connectNulls: false } },
+            exporting: {
+                filename: `evolucao-omip-${_evTipo.toLowerCase()}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: series
+        });
+    }
+
+    // ===== Secção "Expectativa vs realizado" (OMIP vs OMIE) =====
+    let _cmpTipo = 'Mensais', _cmpChave = null;
+    // Quantos períodos mostrar no quadro (0 = todos). A lista cresce um período
+    // por mês, pelo que sem isto a tabela ficaria interminável ao fim de uns anos.
+    const CMP_QUANTOS = [{ id: 6, label: '6' }, { id: 12, label: '12' },
+                         { id: 24, label: '24' }, { id: 0, label: 'Todos' }];
+    let _cmpQuantos = 12;
+
+    // Média OMIE realizada de um período de entrega.
+    // Devolve null se o período não terminou antes do último dia com dados
+    // OMIE reais: os meses futuros do records_omie.json são estimados a partir
+    // destes mesmos futuros OMIP, e compará-los seria circular.
+    function mediaOmieRealizada(chave) {
+        if (!_mediasOmie || _tsOmieReal === null) return null;
+        const tipo = tipoDaChave(chave), p = periodoEntrega(chave);
+        if (!p || p.fim > _tsOmieReal) return null;
+        const d = new Date(p.ini), ano = d.getUTCFullYear();
+        const mensal = (ano, mes0) => {
+            const v = _mediasOmie.mensais[`${String(mes0 + 1).padStart(2, '0')}/${ano}`];
+            return typeof v === 'number' ? v : null;
+        };
+        if (tipo === 'Mensais') return mensal(ano, d.getUTCMonth());
+        if (tipo === 'Anuais') {
+            const v = _mediasOmie.anuais[`${ano}`];
+            return typeof v === 'number' ? v : null;
+        }
+        if (tipo === 'Trimestrais') {
+            // Média dos 3 meses ponderada pelos dias de cada um. Não é
+            // exatamente a média horária do trimestre (as horas de mudança
+            // para a hora de verão/inverno), mas o desvio é irrelevante.
+            let soma = 0, dias = 0;
+            for (let i = 0; i < 3; i++) {
+                const mes0 = d.getUTCMonth() + i;
+                const v = mensal(ano, mes0);
+                if (v === null) return null;
+                const nDias = new Date(Date.UTC(ano, mes0 + 1, 0)).getUTCDate();
+                soma += v * nDias; dias += nDias;
+            }
+            return dias ? soma / dias : null;
+        }
+        return null;
+    }
+
+    // Contratos de um tipo com entrega terminada, média OMIE conhecida e
+    // trajetória com sessões suficientes para valer a pena mostrar.
+    function chavesFechadas(tipo) {
+        const chaves = [];
+        _serie.PT.forEach((serie, k) => {
+            if (tipoDaChave(k) !== tipo || serie.length < 5) return;
+            const p = periodoEntrega(k);
+            if (p && mediaOmieRealizada(k) !== null) chaves.push({ k: k, ini: p.ini });
+        });
+        return chaves.sort((a, b) => b.ini - a.ini).map(x => x.k);
+    }
+
+    function setupComparacao() {
+        const secao = document.getElementById('comparacao-section');
+        const controls = document.getElementById('cmp-controls');
+        if (!secao || !controls || !_histOk) return;
+
+        const tiposComDados = ['Mensais', 'Trimestrais', 'Anuais'].filter(t => chavesFechadas(t).length);
+        if (!tiposComDados.length) {
+            // Acontece enquanto nenhum período de entrega tiver fechado dentro
+            // da janela do histórico — a secção não teria nada para mostrar.
+            secao.style.display = 'none';
+            return;
+        }
+        if (tiposComDados.indexOf(_cmpTipo) === -1) _cmpTipo = tiposComDados[0];
+
+        controls.innerHTML = '';
+        controls.appendChild(grupoBotoes(
+            tiposComDados.map(t => ({ id: t, label: t })),
+            _cmpTipo,
+            id => { _cmpTipo = id; _cmpChave = null; preencherPeriodos(); renderComparacao(); },
+            'Tipo'));
+
+        const wrap = document.createElement('div');
+        wrap.style.display = 'flex';
+        wrap.style.gap = '6px';
+        const lbl = document.createElement('span');
+        lbl.className = 'hist-label';
+        lbl.textContent = 'Período';
+        const sel = document.createElement('select');
+        sel.id = 'cmp-periodo';
+        sel.setAttribute('aria-label', 'Período de entrega já terminado');
+        sel.addEventListener('change', () => { _cmpChave = sel.value; renderComparacao(); });
+        wrap.appendChild(lbl);
+        wrap.appendChild(sel);
+        controls.appendChild(wrap);
+
+        controls.appendChild(grupoBotoes(
+            CMP_QUANTOS, _cmpQuantos,
+            id => { _cmpQuantos = id; renderQuadroFechados(); },
+            'Mostrar'));
+
+        preencherPeriodos();
+        renderComparacao();
+    }
+
+    function preencherPeriodos() {
+        const sel = document.getElementById('cmp-periodo');
+        if (!sel) return;
+        const chaves = chavesFechadas(_cmpTipo);
+        sel.innerHTML = chaves.map(k => `<option value="${k}">${etiquetaChave(k)}</option>`).join('');
+        if (!_cmpChave || chaves.indexOf(_cmpChave) === -1) _cmpChave = chaves[0] || null;
+        if (_cmpChave) sel.value = _cmpChave;
+    }
+
+    function renderComparacao() {
+        const alvo = document.getElementById('grafico-comparacao');
+        const resumo = document.getElementById('cmp-resumo');
+        if (!alvo || !_histOk) return;
+        const chave = _cmpChave;
+        const serie = chave ? _serie.PT.get(chave) : null;
+        const realizado = chave ? mediaOmieRealizada(chave) : null;
+        if (!serie || realizado === null) {
+            alvo.innerHTML = '<p class="hist-estado">Sem períodos de entrega já terminados para comparar.</p>';
+            if (resumo) resumo.textContent = '';
+            renderQuadroFechados();
+            return;
+        }
+
+        const p = periodoEntrega(chave);
+        const _d = _hcDark();
+
+        // O eixo Y é escalado apenas pelos dados da série, e as plotLines não o
+        // esticam: sem isto, a linha do realizado desaparece exatamente nos
+        // casos mais interessantes — aqueles em que o OMIE saiu do intervalo em
+        // que o contrato chegou a ser cotado.
+        const ysCmp = serie.map(pt => pt.y);
+        const limInf = Math.min(Math.min.apply(null, ysCmp), realizado);
+        const limSup = Math.max(Math.max.apply(null, ysCmp), realizado);
+        const folga = ((limSup - limInf) * 0.08) || 1;
+
+        Highcharts.chart('grafico-comparacao', {
+            chart: { type: 'line', height: 420, backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: { text: `${etiquetaChave(chave)} — o que o mercado esperava vs o que aconteceu`, style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: 'Linha azul: cotação do contrato em cada sessão · Linha vermelha: média OMIE efetivamente registada', style: { color: _d.txt, fontSize: '0.78em' } },
+            xAxis: {
+                type: 'datetime',
+                title: { text: 'Data da sessão', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } },
+                crosshair: true,
+                plotLines: [{
+                    value: p.ini, color: '#888', width: 1, dashStyle: 'Dash',
+                    label: { text: 'início da entrega', style: { color: '#888', fontSize: '0.7em' }, rotation: 90, y: 14 }
+                }]
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } },
+                softMin: limInf - folga,
+                softMax: limSup + folga,
+                plotLines: [{
+                    value: realizado, color: '#dc3545', width: 2, dashStyle: 'Dash', zIndex: 3,
+                    label: {
+                        text: `OMIE realizado: ${formatarValor(realizado)} €/MWh`,
+                        style: { color: '#dc3545', fontSize: '0.75em', fontWeight: 'bold' }, align: 'right', x: -6, y: -6
+                    }
+                }]
+            },
+            tooltip: {
+                valueSuffix: ' €/MWh', valueDecimals: 2,
+                xDateFormat: 'Sessão de %A, %e de %B de %Y',
+                pointFormatter: function () {
+                    const desvio = this.y - realizado;
+                    return `<span style="color:${this.color}">●</span> Cotação: <b>${formatarValor(this.y)} €/MWh</b>`
+                         + `<br><i style="font-size:0.85em;color:#888">${sinalFormatado(desvio)} €/MWh face ao realizado</i>`;
+                }
+            },
+            legend: { enabled: false },
+            plotOptions: { series: { marker: { enabled: false }, lineWidth: 2 } },
+            exporting: {
+                filename: `omip-vs-omie-${chave.replace(/\s+/g, '-').toLowerCase()}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [{ name: chave, color: '#007bff', data: serie.map(pt => [pt.x, pt.y]) }]
+        });
+
+        if (resumo) {
+            // As mesmas métricas do quadro-resumo, para os dois nunca divergirem.
+            const m = metricasFechado(chave);
+            const ys = serie.map(pt => pt.y);
+            const acima = m.desvioMedio > 0;
+            resumo.innerHTML =
+                `Em <strong>${m.sessoes}</strong> sessões, o contrato foi cotado entre `
+              + `<strong>${formatarValor(Math.min.apply(null, ys))}</strong> e <strong>${formatarValor(Math.max.apply(null, ys))}</strong> €/MWh. `
+              + `O OMIE veio a registar <strong>${formatarValor(m.realizado)} €/MWh</strong>: em média, o mercado esteve `
+              + `<strong style="color:${acima ? '#dc3545' : '#28a745'}">${formatarValor(Math.abs(m.desvioMedio))} €/MWh ${acima ? 'acima' : 'abaixo'}</strong> `
+              + `do que se veio a verificar, e na última sessão antes do início da entrega estava em `
+              + `<strong>${formatarValor(m.final)} €/MWh</strong> (${sinalFormatado(m.desvioFinal)} €/MWh).`;
+        }
+        renderQuadroFechados();
+    }
+
+    // Métricas de um período fechado: cotação final antes da entrega (a
+    // "aposta final" do mercado), desvio dessa cotação face ao realizado e
+    // desvio médio ao longo de toda a trajetória.
+    function metricasFechado(chave) {
+        const serie = _serie.PT.get(chave) || [];
+        const realizado = mediaOmieRealizada(chave);
+        const p = periodoEntrega(chave);
+        if (!serie.length || realizado === null || !p) return null;
+        const antes = serie.filter(pt => pt.x < p.ini);
+        const final = antes.length ? antes[antes.length - 1] : serie[serie.length - 1];
+        const desvios = serie.map(pt => pt.y - realizado);
+        return {
+            chave: chave,
+            realizado: realizado,
+            final: final.y,
+            desvioFinal: final.y - realizado,
+            desvioMedio: desvios.reduce((a, b) => a + b, 0) / desvios.length,
+            sessoes: serie.length
+        };
+    }
+
+    // Quadro com todos os períodos fechados do tipo escolhido — evita ter de
+    // percorrer o seletor um a um para ver o retrato completo.
+    function renderQuadroFechados() {
+        const alvo = document.getElementById('cmp-quadro');
+        if (!alvo || !_histOk) return;
+        // chavesFechadas() devolve do mais recente para o mais antigo, por isso
+        // cortar no início mostra sempre os períodos mais recentes.
+        const todas = chavesFechadas(_cmpTipo).map(metricasFechado).filter(Boolean);
+        if (!todas.length) { alvo.innerHTML = ''; return; }
+        const metricas = _cmpQuantos ? todas.slice(0, _cmpQuantos) : todas;
+
+        const corDesvio = v => v > 0 ? '#dc3545' : (v < 0 ? '#28a745' : '#b8860b');
+        const pct = (v, base) => base ? ` <span class="cmp-pct">(${sinalFormatado(v / base * 100)}%)</span>` : '';
+
+        const linhas = metricas.map(m => `
+            <tr data-chave="${m.chave}" class="${m.chave === _cmpChave ? 'cmp-ativa' : ''}">
+                <td>${etiquetaChave(m.chave)}</td>
+                <td>${formatarValor(m.final)}</td>
+                <td>${formatarValor(m.realizado)}</td>
+                <td style="color:${corDesvio(m.desvioFinal)}">${sinalFormatado(m.desvioFinal)}${pct(m.desvioFinal, m.realizado)}</td>
+                <td class="cmp-oculta-mobile" style="color:${corDesvio(m.desvioMedio)}">${sinalFormatado(m.desvioMedio)}</td>
+                <td class="cmp-oculta-mobile">${m.sessoes}</td>
+            </tr>`).join('');
+
+        // Balanço: o desvio médio com sinal diz se o mercado tende a ficar
+        // abaixo ou acima; o erro absoluto médio diz quanto erra, sem os
+        // desvios de sinais opostos se anularem.
+        const n = metricas.length;
+        const medioFinal = metricas.reduce((s, m) => s + m.desvioFinal, 0) / n;
+        const erroAbsoluto = metricas.reduce((s, m) => s + Math.abs(m.desvioFinal), 0) / n;
+        const abaixo = metricas.filter(m => m.desvioFinal < 0).length;
+        const acima = n - abaixo;
+
+        alvo.innerHTML = `
+            <h3>Períodos de entrega já fechados (${_cmpTipo.toLowerCase()})</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Período</th>
+                            <th scope="col">Cotação final</th>
+                            <th scope="col">OMIE realizado</th>
+                            <th scope="col">Desvio final</th>
+                            <th scope="col" class="cmp-oculta-mobile">Desvio médio</th>
+                            <th scope="col" class="cmp-oculta-mobile">Sessões</th>
+                        </tr>
+                    </thead>
+                    <tbody>${linhas}</tbody>
+                    <tfoot>
+                        <tr><td colspan="6">
+                            Em ${n} ${n === 1 ? 'período' : 'períodos'}${n < todas.length ? ` (dos ${todas.length} já fechados)` : ''}, a última cotação antes da entrega ficou em média
+                            <strong style="color:${corDesvio(medioFinal)}">${formatarValor(Math.abs(medioFinal))} €/MWh ${medioFinal < 0 ? 'abaixo' : 'acima'}</strong>
+                            do que o OMIE veio a registar, com um erro absoluto médio de
+                            <strong>${formatarValor(erroAbsoluto)} €/MWh</strong>
+                            (${abaixo} ${abaixo === 1 ? 'período' : 'períodos'} abaixo, ${acima} acima).
+                            Todos os valores em €/MWh, para Portugal. Clique numa linha para ver a trajetória.
+                        </td></tr>
+                    </tfoot>
+                </table>
+            </div>`;
+
+        alvo.querySelectorAll('tbody tr').forEach(tr => {
+            tr.addEventListener('click', () => {
+                _cmpChave = tr.dataset.chave;
+                const sel = document.getElementById('cmp-periodo');
+                if (sel) sel.value = _cmpChave;
+                renderComparacao();
+                document.getElementById('grafico-comparacao').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        });
+    }
+
+    // Aplica o histórico à página: revela as secções novas e refaz o que
+    // passa a ter mais informação (KPIs, tabelas e curva forward).
+    function aplicarHistorico() {
+        document.querySelectorAll('.hist-section.hist-indisponivel')
+            .forEach(el => el.classList.remove('hist-indisponivel'));
+        renderKpis(_futurosPT);
+        tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(_futurosPT, 'PT');
+        tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(_futurosES, 'ES');
+        setupCurvaForward(_futurosPT, _futurosES);
+        setupEvolucao();
+        setupComparacao();
     }
 
     // ===== Ler dia da semana pelo código do contrato =====
@@ -853,7 +1982,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return { atualizacoes, futurosPT, futurosES };
     }
 
-    function buildFuturesTableHTML(futuros) {
+    function buildFuturesTableHTML(futuros, zona) {
         let tableHTML = '';
         const tipos = ['Diários', 'Semanais', 'Mensais', 'Trimestrais', 'Anuais'];
         const futurosAgrupados = tipos.reduce((acc, tipo) => {
@@ -861,7 +1990,18 @@ document.addEventListener('DOMContentLoaded', function () {
             return acc;
         }, {});
 
-        const omipLink = 'https://www.omip.pt/pt';
+        // Célula de tendência: sparkline das últimas sessões, com as variações
+        // a 1 semana e 1 mês no title. Fica vazia enquanto o histórico não
+        // chegar (a tabela é refeita quando chegar).
+        function renderTendencia(zona, contrato) {
+            const t = (zona && _histOk) ? tendenciaContrato(zona, chaveContrato(contrato), 30) : null;
+            if (!t) return '<td class="col-tendencia"><span class="spark-vazio">—</span></td>';
+            const detalhes = [];
+            if (t.d5 !== null) detalhes.push(`1 semana: ${sinalFormatado(t.d5)} €/MWh`);
+            if (t.d21 !== null) detalhes.push(`1 mês: ${sinalFormatado(t.d21)} €/MWh`);
+            detalhes.push(`mín ${formatarValor(t.min)} / máx ${formatarValor(t.max)} em ${t.pontos.length} sessões`);
+            return `<td class="col-tendencia" title="${detalhes.join(' · ')}">${sparklineSVG(t.pontos)}</td>`;
+        }
 
         function renderVariacao(raw) {
             const [dir, diff] = (raw || 'new:0').split(':');
@@ -875,13 +2015,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 'new':   { icon: '—', color: '#888',    label: 'Novo contrato' },
             };
             const c = configs[dir] || configs['new'];
-            return `<a href="${omipLink}" target="_blank" rel="noopener" title="${c.label} — ver OMIP" style="color:${c.color}; font-size:1.1em; text-decoration:none; font-weight:bold;">${c.icon}</a>`;
+            return `<span title="${c.label}" style="color:${c.color}; font-size:1.1em; font-weight:bold;">${c.icon}</span>`;
         }
 
         tipos.forEach(tipo => {
             const fData = futurosAgrupados[tipo];
             if (fData.length > 0) {
-                tableHTML += `<tr class="tipo-header"><td colspan="4">${tipo}</td></tr>`;
+                tableHTML += `<tr class="tipo-header"><td colspan="5">${tipo}</td></tr>`;
                 fData.forEach(futuro => {
                     let descricao = futuro['Descricao'] || '';
                     const descricaoOriginal = descricao; // sem HTML, para o tooltip
@@ -901,11 +2041,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     tableHTML += `<td class="col-descricao">${descricao}</td>`;
                     tableHTML += `<td class="col-valor">${futuro['Valor'] !== undefined ? formatarValor(futuro['Valor']) : ''}</td>`;
                     tableHTML += `<td class="col-variacao">${icone}</td>`;
+                    tableHTML += renderTendencia(zona, contrato);
                     tableHTML += `</tr>`;
                 });
             }
         });
-        return tableHTML || '<tr><td colspan="4" style="text-align: center;">Não foram encontrados dados.</td></tr>';
+        return tableHTML || '<tr><td colspan="5" style="text-align: center;">Não foram encontrados dados.</td></tr>';
     }
 
     // Calcula a data do dia seguinte a uma string DD/MM/YYYY
@@ -929,29 +2070,48 @@ document.addEventListener('DOMContentLoaded', function () {
             const dataAtualizacao = atualizacoes.Data_Valores_OMIP || "Erro";
             document.querySelectorAll('.badge-data-omip').forEach(el => { el.textContent = dataAtualizacao; });
 
+            _tsSessaoSnapshot = tsDeDataPT(dataAtualizacao);
             const dataSeg = diaSeguinte(dataAtualizacao);
             const ptFiltrado = filtrarFuturos(futurosPT, dataSeg);
             const esFiltrado = filtrarFuturos(futurosES, dataSeg);
-            tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(ptFiltrado);
-            tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(esFiltrado);
+            tabelaOmipPtBody.innerHTML = buildFuturesTableHTML(ptFiltrado, 'PT');
+            tabelaOmipEsBody.innerHTML = buildFuturesTableHTML(esFiltrado, 'ES');
 
             // Guardar para gráfico / KPIs (usa os dados filtrados, sem o "dia seguinte" já no OMIE)
             _futurosPT = ptFiltrado;
             _futurosES = esFiltrado;
             renderKpis(_futurosPT);
             setupCurvaForward(_futurosPT, _futurosES);
+
+            // Último dia com preços OMIE reais — é a fronteira que separa o
+            // que já se realizou do que ainda é estimativa (ver
+            // mediaOmieRealizada).
+            _tsOmieReal = tsDeDataPT(atualizacoes.Data_Valores_OMIE);
+
+            // O histórico entra depois, sem bloquear o render acima. Se falhar,
+            // a página fica exatamente como estava antes de existir histórico.
+            carregarHistorico()
+                .then(() => aplicarHistorico())
+                .catch(erro => {
+                    console.warn('Histórico OMIP indisponível — secções históricas ocultadas:', erro);
+                    ['evolucao-historica-section', 'comparacao-section'].forEach(id => {
+                        const secao = document.getElementById(id);
+                        if (secao) secao.style.display = 'none';
+                    });
+                });
         })
         .catch(error => {
             console.error('Falha ao carregar ou processar os dados OMIP:', error);
-            const errorMsg = '<tr><td colspan="4" style="text-align: center; color: red;">Erro ao carregar os dados.</td></tr>';
+            const errorMsg = '<tr><td colspan="5" style="text-align: center; color: red;">Erro ao carregar os dados.</td></tr>';
             tabelaOmipPtBody.innerHTML = errorMsg;
             tabelaOmipEsBody.innerHTML = errorMsg;
             document.querySelectorAll('.badge-data-omip').forEach(el => { el.textContent = 'Erro'; });
         });
 
-    // Re-renderizar o gráfico ao mudar o tema (dark mode)
+    // Re-renderizar os gráficos ao mudar o tema (dark mode)
     document.addEventListener('themeChanged', function() {
         if (_futurosPT.length > 0) renderCurvaForward();
+        if (_histOk) { renderEvolucao(); renderComparacao(); }
     });
 
     // Modo impressão: abrir FAQ
