@@ -22,6 +22,31 @@ document.addEventListener('DOMContentLoaded', function () {
     function getAmanhaStr() {
         return new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(Date.now() + 24 * 60 * 60 * 1000));
     }
+    // Data + hora atuais em Lisboa. hourCycle h23 evita "24" à meia-noite em alguns browsers.
+    function getAgoraLisboa() {
+        const partes = new Intl.DateTimeFormat('pt-PT', {
+            timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+        }).formatToParts(new Date());
+        const val = t => partes.find(p => p.type === t)?.value || '00';
+        return {
+            dia: `${val('day')}/${val('month')}/${val('year')}`,
+            hora: parseInt(val('hour'), 10),
+            minuto: parseInt(val('minute'), 10)
+        };
+    }
+    // Índice do intervalo em curso. Procura pela etiqueta ("[HH:MM-") para ser
+    // robusto em dias de mudança de hora (92/100 pontos); só usa aritmética como recurso.
+    function encontrarIndiceAgora(dados, vista, agora) {
+        if (!dados || !Array.isArray(dados.categorias)) return -1;
+        const hh = String(agora.hora).padStart(2, '0');
+        const mm = vista === "horaria" ? '00' : String(Math.floor(agora.minuto / 15) * 15).padStart(2, '0');
+        const alvo = `${hh}:${mm}`;
+        const idx = dados.categorias.findIndex(c => (c || '').replace('[', '').split('-')[0] === alvo);
+        if (idx !== -1) return idx;
+        const fallback = vista === "horaria" ? agora.hora : (agora.hora * 4) + Math.floor(agora.minuto / 15);
+        return (fallback >= 0 && fallback < dados.categorias.length) ? fallback : -1;
+    }
 
     // --- HELPERS: vista atual ---
     function getVistaAtual() {
@@ -35,6 +60,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function fmtPt(v, casas) {
         if (v === null || v === undefined || isNaN(v)) return "—";
         return Number(v).toFixed(casas).replace('.', ',');
+    }
+
+    // --- HELPER: escapar texto para dentro de um atributo HTML ---
+    function escAttr(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     // --- HELPERS: localStorage para consumos ---
@@ -500,6 +530,69 @@ document.addEventListener('DOMContentLoaded', function () {
         container.innerHTML = html;
     }
 
+    // --- PREÇOS ATUAIS (OMIE + comercializador do intervalo em curso) ---
+    // Só aparece quando o dia selecionado é hoje. Atualiza-se sozinho ao virar
+    // o quarto de hora (ver setInterval no fim do ficheiro), sem redesenhar o gráfico.
+    let chaveAgoraRenderizada = null;
+
+    function atualizarPrecosAgora() {
+        const container = document.getElementById('precosAgora');
+        if (!container) return;
+
+        const limpar = () => {
+            if (container.innerHTML !== '') container.innerHTML = '';
+            chaveAgoraRenderizada = null;
+        };
+
+        const diaSel = document.getElementById('dropdownDia');
+        const tarifarioSel = document.getElementById('dropdownTarifario');
+        const opcaoSel = document.getElementById('dropdownOpcao');
+        if (!diaSel || !tarifarioSel || !opcaoSel) return limpar();
+
+        const dia = diaSel.value;
+        const tarifario = tarifarioSel.value;
+        const opcao = opcaoSel.value;
+        const vista = getVistaAtual();
+        const agora = getAgoraLisboa();
+
+        // "Agora" só faz sentido no dia de hoje
+        if (dia !== agora.dia) return limpar();
+
+        const dados = getFonteDadosAtual()[dia]?.[tarifario]?.[opcao];
+        const i = encontrarIndiceAgora(dados, vista, agora);
+        if (i < 0) return limpar();
+
+        const precoKwh = dados.colunas[i];
+        const omieKwh = dados.omie[i];
+        const temPreco = (precoKwh !== null && precoKwh !== undefined && !isNaN(precoKwh));
+        const temOmie = (omieKwh !== null && omieKwh !== undefined && !isNaN(omieKwh));
+        if (!temPreco && !temOmie) return limpar();
+
+        const chave = `${dia}|${tarifario}|${opcao}|${vista}|${i}|${precoKwh}|${omieKwh}`;
+        if (chave === chaveAgoraRenderizada) return; // evita re-anúncios do aria-live
+        chaveAgoraRenderizada = chave;
+
+        const intervalo = (dados.categorias[i] || '').replace(/[\[\]]/g, '').replace('-', '–');
+        const isHoraria = (vista === "horaria");
+        const sufixoMedia = isHoraria ? ' (média da hora)' : '';
+        const decimais = isHoraria ? 4 : 5;
+
+        const omieMwh = temOmie ? fmtPt(omieKwh * 1000, 2) : '—';
+        const omieTip = temOmie
+            ? `Preço do mercado grossista OMIE (Portugal) em ${intervalo}${sufixoMedia} — equivale a ${fmtPt(omieKwh, 5)} €/kWh`
+            : 'Sem valor OMIE para este intervalo';
+        const precoTip = temPreco
+            ? `Preço de energia de ${tarifario} | ${opcao} em ${intervalo}${sufixoMedia} — inclui TAR de energia, sem IVA`
+            : 'Sem preço para este intervalo';
+
+        let html = '';
+        html += `<div class="agora-chip periodo" title="Intervalo em curso, hora de Portugal continental">Agora · ${intervalo}</div>`;
+        html += `<div class="agora-chip" title="${escAttr(omieTip)}">OMIE: <strong>${omieMwh} €/MWh</strong></div>`;
+        html += `<div class="agora-chip" title="${escAttr(precoTip)}">Comercializador: <strong>${temPreco ? fmtPt(precoKwh, decimais) + ' €/kWh' : '—'}</strong></div>`;
+
+        container.innerHTML = html;
+    }
+
     // --- VISIBILIDADE DO TOGGLE "SOBREPOR AMANHÃ" ---
     // Mostrar apenas quando: dia selecionado = hoje, AND amanhã existe no dataset para (tarifário, opção).
     function atualizarVisibilidadeSobreporAmanha() {
@@ -580,8 +673,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         mostrarFormula(tarifario);
 
-        // Mini-resumo do dia (chips acima do gráfico)
+        // Mini-resumo do dia (chips acima do gráfico) + preços do intervalo em curso
         atualizarMiniResumo(dados, fonte, dia, tarifario, opcao);
+        chaveAgoraRenderizada = null; // força o redesenho da linha "Agora" após mudar dia/tarifário/opção/vista
+        atualizarPrecosAgora();
 
         // Destruir gráfico existente se houver
         if (chartInstance) {
@@ -615,13 +710,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const stack4 = dados.colunas.map(v => v !== null && v > Q3 ? v : null);
 
         // Lógica "Agora"
-        const partesLisboa = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
-        const hojeEmLisboaDDMMYYYY = `${partesLisboa.find(p => p.type === 'day').value}/${partesLisboa.find(p => p.type === 'month').value}/${partesLisboa.find(p => p.type === 'year').value}`;
-        const horaAtualLisboa = parseInt(partesLisboa.find(p => p.type === 'hour').value);
-        const minutoAtualLisboa = parseInt(partesLisboa.find(p => p.type === 'minute').value);
-        const isHoje = (dia === hojeEmLisboaDDMMYYYY);
+        const agoraLisboa = getAgoraLisboa();
+        const isHoje = (dia === agoraLisboa.dia);
         // Índice "Agora" depende da vista: 0..23 (horária) ou 0..95 (QH)
-        const idxAgora = vista === "horaria" ? horaAtualLisboa : (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
+        const idxAgora = encontrarIndiceAgora(dados, vista, agoraLisboa);
 
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const chartTextColor = isDark ? '#e2e8f0' : '#333';
@@ -1217,6 +1309,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('themeChanged', function() {
         desenhaGrafico();
     });
+
+    // Manter os preços "Agora" em dia: ao virar o quarto de hora a linha muda
+    // sozinha (o gráfico só é redesenhado por ação do utilizador).
+    setInterval(atualizarPrecosAgora, 30000);
 
     init();
 });
