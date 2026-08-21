@@ -79,6 +79,78 @@
     <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Como usar este simulador?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Selecione o dia, o seu tarifário e a opção horária. O gráfico mostrará a curva de preços para esse dia. Ative a opção \"Simular consumos horários\" e introduza um valor de consumo (em kWh) na tabela para cada hora. O simulador calculará automaticamente o custo para esse período e o custo total, permitindo-lhe perceber o impacto de concentrar os seus maiores consumos (como carregar um veículo elétrico ou usar a máquina de lavar) nas horas mais baratas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A que horas é mais barata a eletricidade?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia. Para não ter de o interpretar, use o indicador \"Melhor janela\" no topo da página: mostra o bloco de 1, 2 ou 3 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Os preços mostrados incluem IVA?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não. Os valores em €/kWh são o preço da energia, já com a TAR de energia incluída, mas sem IVA, sem o termo fixo de potência e sem taxas (DGEG e contribuição audiovisual). Servem para comparar horas dentro do mesmo dia e para comparar tarifários indexados entre si, não para reproduzir o total da fatura."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que é o OMIE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O OMIE (Operador do Mercado Ibérico de Energia) gere o mercado grossista diário de eletricidade de Portugal e Espanha (MIBEL). O preço de cada período resulta de um leilão para o dia seguinte, onde a oferta mais barata entra primeiro. É esse preço que serve de base aos tarifários indexados — a que cada comercializador soma perdas, tarifas de acesso às redes e a sua margem."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Porque é que o preço muda a cada 15 minutos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Desde 1 de outubro de 2025, o mercado diário europeu passou a ser leiloado em períodos de 15 minutos em vez de horas. Por isso cada dia tem 96 preços em vez de 24, e o gráfico tem a vista \"Quarto-horária\". A vista \"Horária\" mostra a média dos quatro quartos de hora de cada hora — mais legível, mas menos rigorosa para quem tem um tarifário que factura ao quarto de hora."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Porque é que o preço do OMIE às vezes é negativo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Acontece quando há muito mais produção disponível do que consumo — tipicamente em horas de sol forte ou muito vento, com procura baixa. Nesses períodos há produtores para quem sai mais barato pagar para continuar a produzir do que parar e voltar a arrancar, e o preço de mercado desce abaixo de zero. Ainda assim, o preço final do seu tarifário pode continuar positivo, porque as tarifas de acesso às redes e a margem do comercializador somam-se sempre."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A que horas ficam disponíveis os preços de amanhã?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O leilão do mercado diário fecha por volta das 13h em hora de Espanha (CET) — cerca das 12h em Portugal — e os resultados são publicados pouco depois, pelo que os preços de amanhã costumam ficar disponíveis aqui durante a tarde. Quando já existem, aparecem no seletor \"Dia\" e fica disponível a opção \"Sobrepor amanhã\", que desenha a curva de amanhã por cima da de hoje para as poder comparar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Estes preços aplicam-se ao meu tarifário?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Só se tiver um tarifário indexado ao OMIE — são os que constam do seletor \"Tarifário\". Se tiver um tarifário de preço fixo, o que paga pela energia não muda ao longo do dia (muda apenas entre períodos horários, se tiver opção bi ou tri-horária), e este gráfico serve-lhe só para perceber o comportamento do mercado. Se tem um tarifário indexado que não está na lista, o cálculo mais aproximado é o do tarifário com fórmula semelhante — as fórmulas usadas estão em \"Fórmula de cálculo do tarifário selecionado\", logo abaixo do gráfico."
+      }
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
     {
@@ -149,6 +221,16 @@
             <div id="miniResumo" class="mini-resumo" aria-live="polite"></div>
             <div id="precosAgora" class="precos-agora" aria-live="polite"></div>
 
+            <div class="janela-container">
+                <div class="janela-controlo" role="radiogroup" aria-label="Duração da janela de consumo">
+                    <span class="janela-label">Melhor janela de:</span>
+                    <label><input type="radio" name="janela" value="1" onchange="desenhaGrafico()"> <span>1h</span></label>
+                    <label><input type="radio" name="janela" value="2" checked onchange="desenhaGrafico()"> <span>2h</span></label>
+                    <label><input type="radio" name="janela" value="3" onchange="desenhaGrafico()"> <span>3h</span></label>
+                </div>
+                <div id="janelaResultado" class="janela-resultado" aria-live="polite"></div>
+            </div>
+
             <div id="container-chart" style="width: 100%;"></div>
 
             <div class="link-section">
@@ -172,7 +254,7 @@
                 <div class="tabela-acoes">
                     <button type="button" id="btnLimparConsumos" class="btn-limpar-consumos" title="Limpa todos os consumos gravados desta vista (Horária ou Quarto-horária)">Limpar consumos gravados</button>
                 </div>
-                <table id="tabelaHoraria" border="1">
+                <table id="tabelaHoraria">
         <caption class="sr-only">Preços quarto-horários OMIE e custo do consumo por hora</caption>
                     <thead>
                         <tr>
@@ -196,7 +278,10 @@
                         </tr>
                     </tfoot>
                 </table>
-                <div id="comparacaoOpcoes" class="comparacao-opcoes" aria-live="polite"></div>
+                <!-- Sem aria-live: é uma tabela de dados que se recalcula a cada tecla escrita
+                     nos consumos. Anunciá-la inteira a cada carácter era pior do que o silêncio;
+                     quem usa leitor de ecrã navega até ela quando quiser. -->
+                <div id="comparacaoOpcoes" class="comparacao-opcoes"></div>
             </div>
             <article class="content-support" style="margin-top: 30px;">
                 <h2>Como Otimizar o Consumo com Preços Horários</h2>
@@ -206,6 +291,56 @@
                     <summary><strong>Como usar este simulador?</strong></summary>
                     <div class="faq-content">
                         <p>Selecione o dia, o seu tarifário e a opção horária. O gráfico mostrará a curva de preços para esse dia. Ative a opção "Simular consumos horários" e introduza um valor de consumo (em kWh) na tabela para cada hora. O simulador calculará automaticamente o custo para esse período e o custo total, permitindo-lhe perceber o impacto de concentrar os seus maiores consumos (como carregar um veículo elétrico ou usar a máquina de lavar) nas horas mais baratas.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary><strong>A que horas é mais barata a eletricidade?</strong></summary>
+                    <div class="faq-content">
+                        <p>Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia.</p>
+                        <p>Para não ter de o interpretar, use o indicador <strong>"Melhor janela"</strong> no topo da página: mostra o bloco de 1, 2 ou 3 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary><strong>Os preços mostrados incluem IVA?</strong></summary>
+                    <div class="faq-content">
+                        <p>Não. Os valores em €/kWh são o preço da energia, já com a TAR de energia incluída, mas <strong>sem IVA</strong>, sem o termo fixo de potência e sem taxas (DGEG e contribuição audiovisual). Servem para comparar horas dentro do mesmo dia e para comparar tarifários indexados entre si, não para reproduzir o total da fatura. Para o valor final da fatura, use o <a href="/eletricidade-tiagofelicia">simulador de eletricidade</a>.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary><strong>O que é o OMIE?</strong></summary>
+                    <div class="faq-content">
+                        <p>O <strong>OMIE (Operador do Mercado Ibérico de Energia)</strong> gere o mercado grossista diário de eletricidade de Portugal e Espanha (MIBEL). O preço de cada período resulta de um leilão para o dia seguinte, onde a oferta mais barata entra primeiro. É esse preço que serve de base aos tarifários indexados — a que cada comercializador soma perdas, tarifas de acesso às redes e a sua margem. Pode consultar o <a href="/omie">histórico de preços OMIE</a> desde 2010 e as <a href="/formulas-tarifarios-indexados">fórmulas de cada tarifário indexado</a>.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary><strong>Porque é que o preço muda a cada 15 minutos?</strong></summary>
+                    <div class="faq-content">
+                        <p>Desde <strong>1 de outubro de 2025</strong>, o mercado diário europeu passou a ser leiloado em períodos de 15 minutos em vez de horas. Por isso cada dia tem 96 preços em vez de 24, e o gráfico tem a vista "Quarto-horária". A vista "Horária" mostra a média dos quatro quartos de hora de cada hora — mais legível, mas menos rigorosa para quem tem um tarifário que factura ao quarto de hora.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary><strong>Porque é que o preço do OMIE às vezes é negativo?</strong></summary>
+                    <div class="faq-content">
+                        <p>Acontece quando há muito mais produção disponível do que consumo — tipicamente em horas de sol forte ou muito vento, com procura baixa. Nesses períodos há produtores para quem sai mais barato pagar para continuar a produzir do que parar e voltar a arrancar, e o preço de mercado desce abaixo de zero. Ainda assim, o preço final do seu tarifário pode continuar positivo, porque as tarifas de acesso às redes e a margem do comercializador somam-se sempre.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary><strong>A que horas ficam disponíveis os preços de amanhã?</strong></summary>
+                    <div class="faq-content">
+                        <p>O leilão do mercado diário fecha por volta das 13h em hora de Espanha (CET) — cerca das 12h em Portugal — e os resultados são publicados pouco depois, pelo que os preços de amanhã costumam ficar disponíveis aqui durante a tarde. Quando já existem, aparecem no seletor "Dia" e fica disponível a opção <strong>"Sobrepor amanhã"</strong>, que desenha a curva de amanhã por cima da de hoje para as poder comparar.</p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary><strong>Estes preços aplicam-se ao meu tarifário?</strong></summary>
+                    <div class="faq-content">
+                        <p>Só se tiver um tarifário <strong>indexado ao OMIE</strong> — são os que constam do seletor "Tarifário". Se tiver um tarifário de preço fixo, o que paga pela energia não muda ao longo do dia (muda apenas entre períodos horários, se tiver opção bi ou tri-horária), e este gráfico serve-lhe só para perceber o comportamento do mercado. Se tem um tarifário indexado que não está na lista, o cálculo mais aproximado é o do tarifário com fórmula semelhante — as fórmulas usadas estão em "Fórmula de cálculo do tarifário selecionado", logo abaixo do gráfico.</p>
                     </div>
                 </details>
             </article>
@@ -239,6 +374,16 @@
         [data-theme="dark"] .agora-chip { background: #2b2410; border-color: #6b5a1e; color: #e8cd8a; }
         [data-theme="dark"] .agora-chip strong { color: #ffd98a; }
         [data-theme="dark"] .agora-chip.periodo { background: #3a2f06; border-color: #8a7420; color: #ffe9b8; }
+        [data-theme="dark"] .janela-controlo { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .janela-controlo .janela-label,
+        [data-theme="dark"] .janela-controlo label { color: #cbd5e1; }
+        [data-theme="dark"] .janela-chip { background: #1c2b18; border-color: #3f6128; color: #b6e39a; }
+        [data-theme="dark"] .janela-chip strong { color: #d4f0c2; }
+        [data-theme="dark"] .janela-chip.periodo { background: #2d5016; border-color: #548235; color: #e2f5d5; }
+        [data-theme="dark"] .janela-chip.subiu { background: #2b2410; border-color: #6b5a1e; color: #e8cd8a; }
+        [data-theme="dark"] .janela-chip.amanha { background: #16273a; border-color: #2f5d8a; color: #9ec9f0; }
+        [data-theme="dark"] .janela-chip.amanha:hover { background: #1e3350; }
+        [data-theme="dark"] .janela-chip.amanha strong { color: #cfe6ff; }
         [data-theme="dark"] .btn-limpar-consumos { background: #1e293b; border-color: #475569; color: #cbd5e1; }
         [data-theme="dark"] .btn-limpar-consumos:hover { background: #334155; }
 
@@ -263,6 +408,40 @@
         .agora-chip { background: #fffaf0; border: 1px solid #f0d48a; border-radius: 16px; padding: 5px 12px; font-size: 0.88em; color: #7a5c00; }
         .agora-chip strong { color: #5c4500; margin-left: 4px; }
         .agora-chip.periodo { background: #ffeec2; border-color: #e0b64d; color: #6b4e00; font-weight: 600; }
+
+        /* Melhor janela de consumo (N horas seguidas mais baratas) */
+        .janela-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin: 0 auto 14px auto; max-width: 95%; }
+        .janela-controlo { display: flex; gap: 12px; align-items: center; padding: 7px 14px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; font-size: 0.9em; }
+        .janela-controlo .janela-label { font-weight: bold; color: #495057; }
+        .janela-controlo label { cursor: pointer; display: flex; align-items: center; gap: 4px; margin: 0; }
+        .janela-controlo input[type="radio"] { accent-color: #548235; }
+        .janela-resultado { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+        .janela-chip { background: #f2f8ee; border: 1px solid #c5e0b4; border-radius: 16px; padding: 5px 12px; font-size: 0.88em; color: #3f6128; }
+        .janela-chip strong { color: #2f4a1e; }
+        .janela-chip.periodo { background: #dcecd2; border-color: #a9d08e; font-weight: 600; }
+        .janela-chip.poupa { font-weight: 600; }
+        /* Nem sempre há poupança: no fim do dia, a melhor janela que resta pode ser acima da média */
+        .janela-chip.subiu { background: #fffaf0; border-color: #f0d48a; color: #7a5c00; }
+        .janela-escopo { font-weight: 400; opacity: 0.85; }
+        /* Aviso de amanhã: azul, para não se confundir com os chips de hoje. É um botão — muda o dia. */
+        .janela-chip.amanha { cursor: pointer; font-family: inherit; line-height: inherit; background: #eef4fb; border-color: #b6d4f0; color: #1c4e80; }
+        .janela-chip.amanha:hover { background: #dceaf7; }
+        .janela-chip.amanha strong { color: #123a61; }
+
+        /* Telemóvel: chips mais compactos, para o bloco de resumo não empurrar o gráfico para fora do ecrã */
+        @media (max-width: 600px) {
+            .mini-resumo, .precos-agora, .janela-resultado { gap: 6px; }
+            .mini-resumo-chip, .agora-chip, .janela-chip { font-size: 0.8em; padding: 4px 9px; }
+            .janela-container { gap: 8px; }
+            .janela-controlo { padding: 6px 10px; gap: 10px; font-size: 0.85em; }
+            .so-largo { display: none; }
+        }
+
+        /* O atributo border="1" foi removido (obsoleto): as bordas, o padding e as cores
+           do tema escuro já vêm de style.css (table / th, td). Só falta marcar o foco
+           de teclado, agora que os cabeçalhos são ordenáveis com Enter. */
+        #tabelaHoraria thead th:focus-visible { outline: 2px solid #495057; outline-offset: -2px; }
+        [data-theme="dark"] #tabelaHoraria thead th:focus-visible { outline-color: #cbd5e1; }
 
         .tabela-acoes { text-align: center; margin: 4px auto 10px auto; }
         .btn-limpar-consumos { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 12px; font-size: 0.85em; color: #495057; cursor: pointer; }
