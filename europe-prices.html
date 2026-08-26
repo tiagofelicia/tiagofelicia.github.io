@@ -298,7 +298,8 @@
          *   max-width: largura maxima do mapa (px)
          */
         #mapa-wrapper { width: 100%; max-width: 1300px; margin: 0 auto 20px auto; }
-        #mapa-container { width: 100%; height: 780px; border-radius: 8px; border: 1px solid #ddd; background: #f8f9fa; }
+        /* O fundo do contentor e' o "mar" do mapa (os paises vem de europe_background.js) */
+        #mapa-container { width: 100%; height: 780px; border-radius: 8px; border: 1px solid #ddd; background: #e3e9ec; }
 
         /* Botao ecra inteiro */
         .btn-fullscreen { position: absolute; top: 10px; right: 10px; z-index: 999; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 0.85em; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
@@ -1182,6 +1183,8 @@
 
 <!-- GeoJSON das zonas inline (carregado como ficheiro JS externo) -->
 <script src="europe_zones_compact.js"></script>
+<!-- Fundo do mapa (paises, sem etiquetas) — substitui os tiles externos -->
+<script src="europe_background.js"></script>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -1829,7 +1832,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- ESTADO ---
-    var map, geojsonLayer;
+    var map, geojsonLayer, bgLayer;
     var currentData = {};
     var dataCache = {};
     var priceLabelsLayer = null;
@@ -2318,6 +2321,21 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    // --- ESTILO DO FUNDO (paises sem dados / contexto geografico) ---
+    // As features com c=1 sao as de menor detalhe (Russia, Norte de Africa, resto
+    // do mundo); o traco mais grosso fecha as juntas com os vizinhos detalhados.
+    function bgStyle(feature) {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var coarse = feature && feature.properties && feature.properties.c;
+        return {
+            fillColor: isDark ? '#1e293b' : '#f4f4f1',
+            fillOpacity: 1,
+            color: isDark ? '#334155' : '#cfd4d8',
+            weight: coarse ? 1.3 : 0.7,
+            opacity: 1
+        };
+    }
+
     // --- INICIALIZAR MAPA ---
     function initMap() {
         map = L.map('mapa-container', {
@@ -2331,11 +2349,23 @@ document.addEventListener('DOMContentLoaded', function() {
             attributionControl: true
         });
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(map);
+        // Fundo proprio (europe_background.js) em vez de tiles externos: a CARTO
+        // passou a exigir API key e devolvia tiles com a marca "API KEY REQUIRED".
+        // Painel dedicado por baixo do overlayPane (zonas, etiquetas, controlos).
+        map.createPane('bgPane');
+        map.getPane('bgPane').style.zIndex = 250;
+        map.getPane('bgPane').style.pointerEvents = 'none';
+
+        if (typeof EUROPE_BG_GEOJSON !== 'undefined') {
+            bgLayer = L.geoJson(EUROPE_BG_GEOJSON, {
+                pane: 'bgPane',
+                renderer: L.canvas({ pane: 'bgPane', padding: 0.5 }),
+                interactive: false,
+                smoothFactor: 1.5,
+                style: bgStyle,
+                attribution: '&copy; <a href="https://www.naturalearthdata.com/" rel="noopener">Natural Earth</a>'
+            }).addTo(map);
+        }
     }
 
     // --- INFO CONTROL (hover) ---
@@ -5126,6 +5156,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.attributeName === 'data-theme') {
+                if (bgLayer) bgLayer.setStyle(bgStyle);
                 if (geojsonLayer) {
                     geojsonLayer.setStyle(style);
                     updatePriceLabels();
