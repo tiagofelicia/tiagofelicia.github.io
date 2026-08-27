@@ -48,6 +48,48 @@
     </style>
     <!-- ===== fim dos atalhos de secção ===== -->
 
+    <!-- ===== SECÇÕES RECOLHÍVEIS (tabelas de comparação) ===== -->
+    <style>
+      .secao-recolhivel {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background-color: #fcfcfd;
+        margin: 0 0 16px;
+      }
+      .secao-recolhivel > summary {
+        cursor: pointer;
+        padding: 12px 46px 12px 16px;
+        position: relative;
+        list-style: none;
+        outline: none;
+      }
+      .secao-recolhivel > summary::-webkit-details-marker { display: none; }
+      .secao-recolhivel > summary:hover { background-color: #f4f6f9; border-radius: 6px; }
+      .secao-recolhivel > summary h2 {
+        display: inline;
+        font-size: 1.15em;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      .secao-recolhivel > summary::after {
+        content: '▼';
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.75em;
+        transition: transform 0.2s;
+      }
+      .secao-recolhivel[open] > summary::after { transform: translateY(-50%) rotate(180deg); }
+      .secao-recolhivel[open] > summary { border-bottom: 1px solid #e5e7eb; border-radius: 6px 6px 0 0; }
+      .secao-recolhivel .conteudo-recolhivel { padding: 16px 16px 4px; }
+      [data-theme="dark"] .secao-recolhivel { border-color: #334155; background-color: #172033; }
+      [data-theme="dark"] .secao-recolhivel > summary:hover { background-color: #1e293b; }
+      [data-theme="dark"] .secao-recolhivel[open] > summary { border-bottom-color: #334155; }
+    </style>
+    <!-- ===== fim das secções recolhíveis ===== -->
+
     <script src="/theme.js"></script>
 
   <!-- Google Analytics (GA4) + Consent Mode v2 -->
@@ -190,7 +232,11 @@
             </ul>
         </div>
 
-        <p><strong>Quanto vale o código amigo de cada comercializador</strong> de eletricidade e gás natural, quanto tempo dura o desconto e quais entram nos cálculos dos simuladores. Abaixo da tabela encontra os <strong>códigos amigo da comunidade</strong> e os meus.</p>
+        <p><strong>Quanto vale o código amigo de cada comercializador</strong> de eletricidade e gás natural, quanto tempo dura o desconto e quais entram nos cálculos dos simuladores. Abra as comparações abaixo; os <strong>códigos amigo da comunidade e os meus</strong> estão logo a seguir.</p>
+
+        <details class="secao-recolhivel" id="comparacao">
+        <summary><h2>Quanto vale cada código amigo</h2></summary>
+        <div class="conteudo-recolhivel">
 
         <div class="table-container">
             <table>
@@ -244,6 +290,68 @@
             </table>
         </div>
         <p class="support-card-note">Ordenado pelo valor total do desconto ao fim de um ano. Os comercializadores podem alterar estes valores a qualquer momento — nos simuladores, o valor considerado é sempre o que está indicado no nome do tarifário.</p>
+
+        </div>
+        </details>
+
+        <details class="secao-recolhivel" id="melhor">
+        <summary><h2>Qual é o código amigo que compensa mais?</h2></summary>
+        <div class="conteudo-recolhivel">
+
+        <p>Depende de <strong>quanto tempo tenciona ficar com o comercializador</strong>. Os valores pontuais rendem mais no primeiro ano; o desconto mensal da Endesa não tem fim, por isso acaba por os ultrapassar.</p>
+
+        <div class="table-container">
+            <table>
+                <caption class="sr-only">Desconto acumulado do código amigo ao fim de 1, 2, 3 e 5 anos</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Comercializador</th>
+                        <th scope="col">1 ano</th>
+                        <th scope="col">2 anos</th>
+                        <th scope="col">3 anos</th>
+                        <th scope="col">5 anos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Endesa<br>(1,23&nbsp;€/mês)</th>
+                        <td>14,76&nbsp;€</td>
+                        <td>29,52&nbsp;€</td>
+                        <td>44,28&nbsp;€</td>
+                        <td>73,80&nbsp;€</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Goldenergy ACP<br>(duas energias)</th>
+                        <td>40&nbsp;€</td>
+                        <td>40&nbsp;€</td>
+                        <td>40&nbsp;€</td>
+                        <td>40&nbsp;€</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Goldenergy ACP<br>(uma energia)</th>
+                        <td>30&nbsp;€</td>
+                        <td>30&nbsp;€</td>
+                        <td>30&nbsp;€</td>
+                        <td>30&nbsp;€</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Iberdrola</th>
+                        <td>30&nbsp;€</td>
+                        <td>30&nbsp;€</td>
+                        <td>30&nbsp;€</td>
+                        <td>30&nbsp;€</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>Feitas as contas, o <em>Plano Amigo</em> da Endesa ultrapassa os 30&nbsp;€ da Goldenergy com código ACP (e os 30&nbsp;€ da Iberdrola) ao fim de cerca de <strong>24 meses</strong>, e os 40&nbsp;€ da Goldenergy nas duas energias ao fim de cerca de <strong>33 meses</strong>. Abaixo desses prazos compensam os valores pontuais; acima deles, compensa o desconto mensal.</p>
+        <p>Os restantes — Goldenergy fora da parceria ACP, Repsol e Plenitude — são créditos únicos e de valor mais baixo, por isso não mudam esta ordem seja qual for o horizonte.</p>
+
+        <p class="support-card-note"><strong>Atenção ao que isto compara.</strong> Estes números são apenas o desconto do código amigo. <strong>A diferença de preço entre tarifários é quase sempre muito maior</strong>: um tarifário 5&nbsp;€ por mês mais caro anula o melhor destes códigos em menos de um ano. Compare primeiro o custo total no <a href="eletricidade-tiagofelicia">simulador de eletricidade</a> ou no <a href="gas-natural-tiagofelicia">simulador de gás natural</a> — o código amigo deve ser o critério de desempate, nunca o critério principal.</p>
+
+        </div>
+        </details>
 
         <p>Um <strong>código amigo</strong> (também chamado código de referência ou <em>referral</em>) é um código que um cliente partilha com outra pessoa: quem adere recebe um <strong>desconto extra na fatura</strong> e quem partilhou recebe habitualmente também um benefício. É um desconto real, sem qualquer custo adicional para quem adere, e que em alguns casos se mantém durante todo o contrato.</p>
 
@@ -398,6 +506,19 @@
 <script src="script.js"></script>
 <script src="cookie-consent.js"></script>
 <script>
+  // Abre uma secção recolhível quando se chega a ela por ligação direta (ex.: #melhor)
+  function abrirSecaoAlvo() {
+    var id = location.hash.slice(1);
+    if (!id) return;
+    var alvo = document.getElementById(id);
+    if (alvo && alvo.tagName === 'DETAILS' && !alvo.open) {
+      alvo.open = true;
+      alvo.scrollIntoView();
+    }
+  }
+  abrirSecaoAlvo();
+  window.addEventListener('hashchange', abrirSecaoAlvo);
+
   // Copiar códigos amigo
   document.addEventListener('click', function (e) {
     const btn = e.target.closest('.copy-code-btn');
