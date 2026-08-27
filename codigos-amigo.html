@@ -33,6 +33,21 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- ===== ATALHOS DE SECÇÃO (em teste) — para remover, apagar este <style> e o <nav class="section-jumps"> no corpo ===== -->
+    <style>
+      .section-jumps { margin: -4px 0 24px; padding: 0; font-size: 0.92em; }
+      .section-jumps ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; row-gap: 2px; }
+      .section-jumps li { display: flex; align-items: center; }
+      .section-jumps li + li::before { content: "·"; color: #9aa5b1; margin: 0 2px; }
+      .section-jumps a { display: inline-block; padding: 5px 10px; color: #3498db; text-decoration: none; border-radius: 4px; white-space: nowrap; }
+      .section-jumps a:hover, .section-jumps a:focus-visible { background-color: #eef5fb; text-decoration: underline; }
+      [data-theme="dark"] .section-jumps li + li::before { color: #64748b; }
+      [data-theme="dark"] .section-jumps a { color: #60a5fa; }
+      [data-theme="dark"] .section-jumps a:hover, [data-theme="dark"] .section-jumps a:focus-visible { background-color: #1e293b; }
+    </style>
+    <!-- ===== fim dos atalhos de secção ===== -->
+
     <script src="/theme.js"></script>
 
   <!-- Google Analytics (GA4) + Consent Mode v2 -->
@@ -161,12 +176,79 @@
     <section class="content-section">
         <h1>Código Amigo de Eletricidade e Gás</h1>
 
+        <!-- ATALHOS DE SECÇÃO (em teste) — remover este bloco e o <style> no <head> para reverter.
+             NOTA: é um <div role="navigation"> e não um <nav>, porque o CSS do menu móvel
+             tem "nav { display: flex !important }" e "nav > ul { display: none !important }",
+             que se aplicam a qualquer <nav> da página e escondiam estes atalhos em telemóvel. -->
+        <div class="section-jumps" role="navigation" aria-label="Secções desta página">
+            <ul>
+                <li><a href="#meu">Os meus</a></li>
+                <li><a href="#comunidade">Comunidade</a></li>
+                <li><a href="#outros">Outros</a></li>
+                <li><a href="#simuladores">Simuladores</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+
+        <p><strong>Quanto vale o código amigo de cada comercializador</strong> de eletricidade e gás natural, quanto tempo dura o desconto e quais entram nos cálculos dos simuladores. Abaixo da tabela encontra os <strong>códigos amigo da comunidade</strong> e os meus.</p>
+
+        <div class="table-container">
+            <table>
+                <caption class="sr-only">Comparação do valor do código amigo por comercializador</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Comercializador</th>
+                        <th scope="col">Quanto recebe quem adere</th>
+                        <th scope="col">Duração</th>
+                        <th scope="col">Entra nos simuladores</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Endesa</th>
+                        <td>1,23&nbsp;€/mês<br>(14,76&nbsp;€ por ano)</td>
+                        <td>Enquanto durar o contrato</td>
+                        <td>Sim</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Goldenergy<br>(código de sócio ACP)</th>
+                        <td>30&nbsp;€ numa energia<br>40&nbsp;€ nas duas</td>
+                        <td>4 primeiras faturas</td>
+                        <td>Sim</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Iberdrola</th>
+                        <td>30&nbsp;€ (3&nbsp;€/mês)</td>
+                        <td>10 meses</td>
+                        <td>Sim</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Goldenergy<br>(restantes tarifários)</th>
+                        <td>10&nbsp;€ por energia</td>
+                        <td>Só na 1.ª fatura</td>
+                        <td>Não — crédito pontual</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Repsol</th>
+                        <td>15&nbsp;€ só eletricidade<br>30&nbsp;€ nas duas</td>
+                        <td>Pontual</td>
+                        <td>Não — crédito pontual</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Plenitude</th>
+                        <td>Até 60&nbsp;€ em cheque oferta Amazon</td>
+                        <td>Pontual</td>
+                        <td>Não — não é desconto na fatura</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="support-card-note">Ordenado pelo valor total do desconto ao fim de um ano. Os comercializadores podem alterar estes valores a qualquer momento — nos simuladores, o valor considerado é sempre o que está indicado no nome do tarifário.</p>
+
         <p>Um <strong>código amigo</strong> (também chamado código de referência ou <em>referral</em>) é um código que um cliente partilha com outra pessoa: quem adere recebe um <strong>desconto extra na fatura</strong> e quem partilhou recebe habitualmente também um benefício. É um desconto real, sem qualquer custo adicional para quem adere, e que em alguns casos se mantém durante todo o contrato.</p>
 
-        <p>Nesta página encontra <strong>quanto vale o código amigo de cada comercializador</strong> — Goldenergy, Endesa, Iberdrola, Repsol e Plenitude —, primeiro os <strong>códigos amigo partilhados pela comunidade</strong> no grupo de Facebook <em>Tarifas Energia Portugal</em> e, a seguir, <strong>os meus códigos</strong>. Use o que preferir — o importante é não perder o desconto.</p>
-
         <div class="affiliate-disclosure">
-            <strong>Divulgação:</strong> quando alguém adere com um dos meus códigos, <strong>também eu recebo um benefício</strong> atribuído pelo comercializador (tipicamente um crédito em fatura). Isso <strong>não tem qualquer custo para si</strong> e <strong>não influencia o ordenamento dos tarifários</strong> nos simuladores, que é determinado exclusivamente por critérios objetivos de preço. Se preferir não usar os meus, tem em cima os códigos da comunidade. Esta divulgação cumpre o Decreto-Lei n.º 24/2014 e a Diretiva 2005/29/CE.
+            <strong>Divulgação:</strong> quando alguém adere com um dos meus códigos, <strong>também eu recebo um benefício</strong> atribuído pelo comercializador (tipicamente um crédito em fatura). Isso <strong>não tem qualquer custo para si</strong> e <strong>não influencia o ordenamento dos tarifários</strong> nos simuladores, que é determinado exclusivamente por critérios objetivos de preço. Se preferir não usar <a href="#meu">os meus</a>, tem abaixo os <a href="#comunidade">códigos da comunidade</a>. Esta divulgação cumpre o Decreto-Lei n.º 24/2014 e a Diretiva 2005/29/CE.
         </div>
 
         <h2 id="comunidade" style="margin-top: 40px;">Códigos amigo da comunidade</h2>
@@ -175,8 +257,8 @@
             <a href="https://www.facebook.com/groups/647955793752578/permalink/1491811559366993" target="_blank" rel="noopener noreferrer" class="button-link">Ver publicação de códigos amigo no grupo</a>
         </p>
 
-        <h2 style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px;">O meu código amigo em cada comercializador</h2>
-        <p>Valores à data de hoje. Os comercializadores podem alterá-los a qualquer momento — nos simuladores, o valor considerado é sempre o que está indicado no nome do tarifário.</p>
+        <h2 id="meu" style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px;">O meu código amigo em cada comercializador</h2>
+        <p>Detalhe de cada um dos valores da tabela, e como aderir.</p>
 
         <div class="support-options-container">
 
@@ -231,7 +313,7 @@
 
         </div>
 
-        <h2 style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px;">Outros comercializadores com código amigo</h2>
+        <h2 id="outros" style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px;">Outros comercializadores com código amigo</h2>
         <p>Estes comercializadores também têm código amigo, mas <strong>eu não tenho código destes</strong> — a informação abaixo serve apenas de referência. Para obter um código, veja a <a href="#comunidade">publicação da comunidade</a>.</p>
 
         <div class="support-options-container">
@@ -254,7 +336,7 @@
 
         </div>
 
-        <h2 style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px;">Como são usados nos simuladores</h2>
+        <h2 id="simuladores" style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px;">Como são usados nos simuladores</h2>
         <p>Nos simuladores de <a href="eletricidade-tiagofelicia">eletricidade</a> e <a href="gas-natural-tiagofelicia">gás natural</a> existe a opção <strong>"Incluir desconto amigo"</strong> em <strong>"Opções Adicionais"</strong>, <strong>ligada por omissão</strong>.</p>
         <ul>
             <li>Com a opção <strong>ativa</strong>, o desconto do código amigo é subtraído ao custo dos tarifários que o oferecem, e o nome do tarifário passa a indicar <em>"INCLUI desc. amigo"</em> com o respetivo valor.</li>
@@ -263,7 +345,7 @@
         </ul>
         <p class="support-card-note">Nota: alguns créditos pontuais (por exemplo, 10&nbsp;€ numa única fatura) <strong>não</strong> são incluídos no cálculo, por distorcerem a comparação entre tarifários — são apenas mencionados nas notas do tarifário.</p>
 
-        <h2 class="faq-section-title" style="margin-top: 50px;">Perguntas frequentes sobre o código amigo</h2>
+        <h2 id="faq" class="faq-section-title" style="margin-top: 50px;">Perguntas frequentes sobre o código amigo</h2>
 
         <details class="faq-item">
             <summary><strong>O que é um código amigo?</strong></summary>
