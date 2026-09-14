@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Preço do Gás Natural MIBGAS: Histórico desde 2015 | Tiago Felícia</title>
+    <meta name="description" content="Índices diários do mercado ibérico de gás natural (MIBGAS): preço em €/MWh e €/kWh, histórico desde 2015, distribuição, volatilidade e comparação ano a ano para qualquer período." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/mibgas" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mibgas" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mibgas" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Preço do Gás Natural no Mercado Ibérico (MIBGAS)" />
+    <meta property="og:description" content="Quanto custou o gás no mercado grossista, em qualquer período desde 2015. Distribuição, volatilidade, recordes e comparação histórica." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/mibgas" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-gas.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Preços do gás natural no mercado ibérico — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Índices diários do mercado ibérico de gás natural (MIBGAS)",
+      "description": "Preços de fecho diários dos índices de referência do MIBGAS para Portugal e Espanha, dos hubs VTP (Portugal) e PVB (Espanha) e do índice de GNL em Espanha, desde 17 de dezembro de 2015. Valores em EUR/MWh.",
+      "url": "https://www.tiagofelicia.pt/mibgas",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "inLanguage": "pt-PT",
+      "temporalCoverage": "2015-12-17/..",
+      "spatialCoverage": { "@type": "Place", "name": "Portugal e Espanha" },
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Índice MIBGAS Portugal", "unitText": "EUR/MWh", "description": "Índice de referência diário para Portugal, publicado desde 17 de março de 2021." },
+        { "@type": "PropertyValue", "name": "Índice MIBGAS Espanha", "unitText": "EUR/MWh", "description": "Índice de referência diário para Espanha, a única série contínua desde dezembro de 2015." },
+        { "@type": "PropertyValue", "name": "VTP Portugal", "unitText": "EUR/MWh", "description": "Preço do hub virtual português, publicado desde janeiro de 2023." },
+        { "@type": "PropertyValue", "name": "PVB Espanha", "unitText": "EUR/MWh", "description": "Preço do hub virtual espanhol, publicado desde janeiro de 2023." },
+        { "@type": "PropertyValue", "name": "MIBGAS LNG Espanha", "unitText": "EUR/MWh", "description": "Índice de gás natural liquefeito em Espanha, publicado desde junho de 2019." }
+      ],
+      "creator": {
+        "@type": "Person",
+        "@id": "https://www.tiagofelicia.pt/#person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": {
+        "@type": "DataDownload",
+        "encodingFormat": "text/csv",
+        "contentUrl": "https://dados.tiagofelicia.pt/data/gas/mibgas_spot.csv"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Preço do Gás Natural (MIBGAS)", "item": "https://www.tiagofelicia.pt/mibgas" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "O que é o MIBGAS?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O MIBGAS é o mercado organizado de gás natural da Península Ibérica, criado em 2015. É onde se negoceia gás para entrega no dia seguinte e nos dias próximos. O preço que resulta dessas transações — o índice MIBGAS — funciona como referência grossista do gás em Portugal e Espanha, tal como o OMIE faz para a eletricidade."
+        }
+      },{
+        "@type": "Question",
+        "name": "Qual é a diferença entre o índice de referência e o preço do hub?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "São duas famílias de valores. Os hubs são os pontos virtuais onde o gás muda de mãos: VTP em Portugal e PVB em Espanha. Os índices de referência (MIBGAS PT e MIBGAS ES) são calculados a partir dessas transações e são o valor que os contratos indexados usam. Não são intermutáveis: em Portugal, o índice de referência afasta-se do hub em mais de 1 EUR/MWh em cerca de 30% dos dias. Em Espanha esse desvio só acontece em 16% dos dias. Comparar um índice de referência com o hub do outro país mistura as duas famílias e engana mais do que comparar países."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que há dias sem cotação?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Um campo vazio significa que não houve publicação nesse dia para esse índice — nunca significa preço zero. Isso acontece quando não houve transações suficientes para formar índice, ou quando o produto ainda não existia. O índice português só passou a ser publicado em março de 2021; antes disso só existe série para Espanha."
+        }
+      },{
+        "@type": "Question",
+        "name": "O gás é mais barato ao fim de semana?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Já foi, e deixou de ser. Sobre toda a série desde 2015, o fim de semana negoceia cerca de 2,8% abaixo dos dias úteis. Mas esse desconto era de quase 8% em 2020 e praticamente desapareceu a partir de 2023: em 2024 a diferença foi nula. O padrão existe no histórico, não no mercado atual."
+        }
+      },{
+        "@type": "Question",
+        "name": "Este é o preço que pago na fatura de gás?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não. O índice MIBGAS é o preço grossista da energia, sem tarifas de acesso às redes, sem taxas (TOS, ISP), sem IVA e sem a margem do comercializador. Numa fatura doméstica, a componente de energia é apenas uma parte do total. Quem tem um tarifário indexado ao MIBGAS vê este índice refletido na componente de energia, com a fórmula do respetivo comercializador aplicada por cima."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como se converte de EUR/MWh para EUR/kWh?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Divide-se por 1000. Um índice de 50 EUR/MWh corresponde a 0,0500 EUR/kWh. A fatura de gás está normalmente em EUR/kWh, por isso é essa a unidade que permite comparar com o preço do tarifário."
+        }
+      },{
+        "@type": "Question",
+        "name": "De onde vêm estes dados e com que frequência são atualizados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Os dados têm origem no MIBGAS e são recolhidos automaticamente duas vezes por dia para o repositório de dados abertos dados.tiagofelicia.pt, sob licença CC BY 4.0. A série contém apenas preços reais publicados: não há futuros nem preenchimento de lacunas. Os índices de referência saem com um a dois dias de atraso face aos hubs."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #666; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 0 0 14px 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos de período (mesma mecânica da omie.html) --- */
+        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; overflow-x: auto; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
+        .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+        .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
+        .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 14px; flex-wrap: wrap; }
+        .date-selector-periodo label { font-weight: bold; font-size: 0.9em; }
+        .date-selector-periodo input { padding: 7px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95em; }
+        .date-selector-periodo.no-dates .date-input-wrapper { display: none; }
+        #btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 7px 14px; font-size: 0.95em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+
+        /* Toast de feedback */
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; animation: toast-in 0.2s ease-out; }
+        @keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) { .toast-feedback { animation: none; } }
+
+        @media (max-width: 700px) {
+            .periodo-presets .hh-mode-btn { padding: 5px 10px; font-size: 0.82em; }
+            #btn-partilhar { padding: 6px 10px; font-size: 0.85em; }
+        }
+
+        #nota-series { width: 95%; max-width: 900px; margin: 0 auto 14px auto; background: #eef6ff; border-left: 3px solid #0d6efd; padding: 8px 12px; font-size: 0.85em; color: #334155; border-radius: 0 5px 5px 0; text-align: left; }
+        #erro-periodo { display: none; width: 95%; max-width: 900px; margin: 0 auto 14px auto; background: #fdecea; border-left: 3px solid #c0392b; padding: 10px 14px; font-size: 0.9em; color: #7b241c; border-radius: 0 5px 5px 0; }
+
+        /* --- Mini-nav ---
+           O style.css tem uma regra genérica `nav { background:#34495e; padding:1em }`
+           para a barra de navegação do site, e `nav a { color:#fff; font-weight:bold }`.
+           Um <nav> dentro do <main> apanha-as — por isso ambas são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        /* --- Recordes --- */
+        #recordes-section { width: 95%; max-width: 1200px; margin: 18px auto; text-align: left; }
+        #recordes-section summary { cursor: pointer; padding: 12px 16px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; font-size: 1em; color: #78350f; list-style: none; display: flex; align-items: center; gap: 8px; border: 1px solid #fcd34d; }
+        #recordes-section summary::-webkit-details-marker { display: none; }
+        #recordes-section summary::after { content: '▾'; margin-left: auto; transition: transform 0.2s; }
+        #recordes-section[open] summary::after { transform: rotate(180deg); }
+        .recordes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 12px; margin-top: 14px; }
+        .recorde-card { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+        .recorde-label { font-size: 0.76em; color: #6c757d; font-weight: 600; letter-spacing: 0.3px; }
+        .recorde-valor { font-size: 1.15em; font-weight: 700; color: #212529; }
+        .recorde-valor.positivo { color: #c0392b; }
+        .recorde-valor.negativo { color: #1e8449; }
+        .recorde-detalhe { font-size: 0.78em; color: #6c757d; }
+        .recordes-footer { font-size: 0.8em; color: #6c757d; margin: 12px 0 0 0; }
+
+        /* --- KPIs do período --- */
+        #mibgas-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 22px auto; }
+        @media (max-width: 900px) { #mibgas-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { #mibgas-kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .kpi-sub { font-size: 0.76em; color: #6c757d; margin-top: 5px; }
+        .kpi-value.subiu { color: #c0392b; }
+        .kpi-value.desceu { color: #1e8449; }
+        .kpi-cobertura { font-size: 0.72em; color: #b45309; margin-top: 4px; }
+
+        /* Alternador PT/ES dos cartoes: mesmo aspeto dos presets de periodo */
+        .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0; }
+        .kpi-seletores { display: flex; gap: 10px; flex-wrap: wrap; }
+        .kpi-nota-indice { width: 95%; max-width: 1200px; margin: 0 auto 10px auto; font-size: 0.82em; color: #6c757d; line-height: 1.5; }
+        .kpi-pais, .kpi-indice { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; }
+        :is(.kpi-pais, .kpi-indice) .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 14px; font-size: 0.86em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
+        :is(.kpi-pais, .kpi-indice) .hh-mode-btn:last-child { border-right: none; }
+        :is(.kpi-pais, .kpi-indice) .hh-mode-btn:hover:not(:disabled) { background: #f1f5f9; }
+        :is(.kpi-pais, .kpi-indice) .hh-mode-btn.active { background: #2563eb; color: #fff; font-weight: 600; }
+        :is(.kpi-pais, .kpi-indice) .hh-mode-btn:disabled { color: #cbd5e1; cursor: not-allowed; }
+
+        /* --- Insight --- */
+        #insight-periodo { width: 95%; max-width: 1200px; margin: 0 auto 24px auto; background: #f8f9fa; border-left: 4px solid #2563eb; padding: 14px 18px; font-size: 0.95em; line-height: 1.6; color: #334155; border-radius: 0 6px 6px 0; }
+        #insight-periodo strong { color: #1e293b; }
+
+        /* --- Blocos de gráfico --- */
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #666; margin: 0 0 12px 0; }
+        .grafico { width: 100%; height: 420px; }
+        #grafico-ytd, #grafico-dia-semana, #grafico-gnl { height: 360px; }
+        #grafico-histograma, #grafico-volatilidade { height: 340px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #6c757d; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+
+        /* --- Estatísticas do histograma --- */
+        #histograma-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 14px; }
+        .stat-chip { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 11px; font-size: 0.82em; color: #475569; }
+        .stat-chip b { color: #1e293b; font-size: 1.05em; }
+
+        /* --- Tabelas --- */
+        .tabela-box { width: 95%; max-width: 1200px; margin: 0 auto 20px auto; overflow-x: auto; }
+        .tabela-mibgas { border-collapse: collapse; width: 100%; font-size: 0.88em; background: #fff; }
+        .tabela-mibgas caption { text-align: left; padding: 10px 12px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; font-size: 0.95em; }
+        .tabela-mibgas th, .tabela-mibgas td { border: 1px solid #dee2e6; padding: 7px 12px; text-align: right; }
+        .tabela-mibgas th[scope="col"] { background: #f1f3f5; text-align: right; font-weight: 600; }
+        .tabela-mibgas th[scope="row"] { text-align: left; font-weight: 600; }
+        .tabela-mibgas tbody tr:nth-child(even) { background: #fbfcfd; }
+        .tabela-mibgas tr.destaque { background: #fff8e1 !important; font-weight: 600; }
+        .tabela-mibgas td.sobe { color: #c0392b; }
+        .tabela-mibgas td.desce { color: #1e8449; }
+
+        /* --- Top dias --- */
+        #top-dias-section { width: 95%; max-width: 1200px; margin: 34px auto 20px auto; }
+        #top-dias-section h2 { font-size: 1.15em; color: #2c3e50; margin-bottom: 14px; }
+        .top-dias-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 700px) { .top-dias-grid { grid-template-columns: 1fr; } }
+        .top-lista { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; }
+        .top-lista h3 { margin: 0 0 10px 0; font-size: 0.95em; color: #2c3e50; }
+        .top-linha { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid #f1f3f5; font-size: 0.9em; }
+        .top-linha:first-of-type { border-top: none; }
+        .top-data { color: #6c757d; }
+        .top-valor { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        /* --- Dia da semana: história + período --- */
+        .fds-historia { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+        .fds-historia h3 { margin: 0 0 8px 0; font-size: 0.98em; color: #2c3e50; }
+        .fds-historia p { font-size: 0.89em; color: #555; margin: 0 0 12px 0; }
+        #fds-estado { font-size: 0.88em; padding: 10px 14px; border-radius: 6px; background: #f1f5f9; color: #475569; margin: 0 0 12px 0; }
+
+        /* --- CTA e avisos --- */
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-futuros { font-size: 0.86em; color: #6c757d; margin-top: 12px; }
+        .aviso-box { width: 95%; max-width: 1200px; margin: 22px auto; background: #fff8e1; border-left: 4px solid #f0ad4e; padding: 12px 16px; font-size: 0.9em; border-radius: 0 6px 6px 0; }
+        .aviso-box p { margin: 0 0 8px 0; }
+        .aviso-box p:last-child { margin-bottom: 0; }
+        .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        /* --- Voltar ao topo --- */
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        /* --- Dark mode --- */
+        [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p,
+        [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro,
+        [data-theme="dark"] .estado-carregamento { color: #94a3b8; }
+        [data-theme="dark"] .badge-global strong { color: #e2e8f0; }
+        [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .date-selector-periodo input { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .date-selector-periodo label { color: #e2e8f0; }
+        [data-theme="dark"] #btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] #nota-series { background: #16202e; color: #cbd5e1; border-left-color: #3b82f6; }
+        [data-theme="dark"] #erro-periodo { background: #2b1c1a; color: #fca5a5; }
+        /* O style.css também tem `[data-theme="dark"] nav { background:#1e293b }`,
+           que é mais específico do que `.mini-nav` — daí esta anulação. */
+        [data-theme="dark"] .mini-nav { background: transparent; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] #recordes-section summary { background: linear-gradient(135deg, #422006 0%, #78350f 100%); color: #fef3c7; border-color: #92400e; }
+        [data-theme="dark"] .recorde-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .recorde-label, [data-theme="dark"] .recorde-detalhe, [data-theme="dark"] .recordes-footer { color: #94a3b8; }
+        [data-theme="dark"] .recorde-valor { color: #e2e8f0; }
+        [data-theme="dark"] .recorde-valor.positivo { color: #f87171; }
+        [data-theme="dark"] .recorde-valor.negativo { color: #4ade80; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .kpi-cobertura { color: #fbbf24; }
+        [data-theme="dark"] .kpi-cabecalho h2 { color: #e2e8f0; }
+        [data-theme="dark"] .kpi-pais, [data-theme="dark"] .kpi-indice { border-color: #475569; }
+        [data-theme="dark"] .kpi-nota-indice { color: #94a3b8; }
+        [data-theme="dark"] :is(.kpi-pais, .kpi-indice) .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] :is(.kpi-pais, .kpi-indice) .hh-mode-btn:hover:not(:disabled) { background: #334155; }
+        [data-theme="dark"] :is(.kpi-pais, .kpi-indice) .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] :is(.kpi-pais, .kpi-indice) .hh-mode-btn:disabled { color: #475569; }
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub { color: #94a3b8; }
+        [data-theme="dark"] .kpi-value { color: #e2e8f0; }
+        [data-theme="dark"] .kpi-value.subiu { color: #f87171; }
+        [data-theme="dark"] .kpi-value.desceu { color: #4ade80; }
+        [data-theme="dark"] #insight-periodo { background: #1e293b; color: #cbd5e1; border-left-color: #3b82f6; }
+        [data-theme="dark"] #insight-periodo strong { color: #e2e8f0; }
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] #top-dias-section h2 { color: #e2e8f0; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .stat-chip { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .stat-chip b { color: #e2e8f0; }
+        [data-theme="dark"] .tabela-mibgas { background: #1e293b; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-mibgas caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-mibgas th, [data-theme="dark"] .tabela-mibgas td { border-color: #475569; }
+        [data-theme="dark"] .tabela-mibgas th[scope="col"] { background: #0f172a; }
+        [data-theme="dark"] .tabela-mibgas tbody tr:nth-child(even) { background: #253145; }
+        [data-theme="dark"] .tabela-mibgas tr.destaque { background: #3f3520 !important; }
+        [data-theme="dark"] .tabela-mibgas td.sobe { color: #f87171; }
+        [data-theme="dark"] .tabela-mibgas td.desce { color: #4ade80; }
+        [data-theme="dark"] .top-lista, [data-theme="dark"] .fds-historia { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .top-lista h3, [data-theme="dark"] .fds-historia h3 { color: #e2e8f0; }
+        [data-theme="dark"] .top-linha { border-top-color: #334155; }
+        [data-theme="dark"] .top-data, [data-theme="dark"] .fds-historia p { color: #94a3b8; }
+        [data-theme="dark"] #fds-estado { background: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] .aviso-box { background: #2a2317; border-left-color: #d7a941; color: #e2e8f0; }
+        [data-theme="dark"] .cta-simulador { background: #16202e; border-color: #334155; }
+        [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .cta-simulador p, [data-theme="dark"] .cta-futuros { color: #94a3b8; }
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+
+        /* --- Impressão --- */
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link,
+            .periodo-presets, .date-selector-periodo, .mini-nav,
+            #btn-voltar-topo, #btn-partilhar, .toast-feedback, .cta-simulador { display: none !important; }
+            .link-section { display: block !important; text-align: center; font-size: 0.85em; margin: 10px 0; }
+            #recordes-section > div, #recordes-section > p { display: block !important; }
+            #recordes-section summary { list-style: none; cursor: default; }
+            .kpi-card, .grafico-box, .tabela-box, .top-lista,
+            .fds-historia, #insight-periodo, #top-dias-section { break-inside: avoid; page-break-inside: avoid; }
+            .grafico-box h2 { margin-top: 14px; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li>Gás Natural</li>
+        <li aria-current="page">Preço MIBGAS</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <div class="periodo-presets">
+            <div class="hh-mode-toggle" role="group" aria-label="Período pré-definido">
+                <button type="button" class="hh-mode-btn" data-preset="ontem" title="Só o dia de ontem (dia de entrega)">Ontem</button>
+                <button type="button" class="hh-mode-btn" data-preset="hoje" title="Só o dia de hoje. O índice de referência deste dia costuma sair um a dois dias depois">Hoje</button>
+                <button type="button" class="hh-mode-btn" data-preset="amanha" title="Só o dia de amanhã. O índice de referência ainda não existe; só os hubs têm cotação">Amanhã</button>
+                <button type="button" class="hh-mode-btn" data-preset="7d" title="Últimos 7 dias até à última data com índice publicado">Últimos 7 dias</button>
+                <button type="button" class="hh-mode-btn active" data-preset="mes" title="Do dia 1 do mês corrente até à última data com índice publicado">Este mês</button>
+                <button type="button" class="hh-mode-btn" data-preset="mesPassado" title="Mês de calendário anterior, completo">Mês passado</button>
+                <button type="button" class="hh-mode-btn" data-preset="ultimos12m" title="Últimos 12 meses até à última data com índice publicado">Últimos 12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="ano" title="De 1 de janeiro do ano corrente até à última data com índice publicado">Ano Corrente</button>
+                <button type="button" class="hh-mode-btn" data-preset="custom" title="Selecionar manualmente um período — abre com a série completa, desde 17 de dezembro de 2015">Personalizado</button>
+            </div>
+        </div>
+
+        <div class="date-selector-periodo no-dates">
+            <div class="date-input-wrapper"><label for="seletor-data-inicio">Data Início:</label> <input type="date" id="seletor-data-inicio"></div>
+            <div class="date-input-wrapper"><label for="seletor-data-fim">Data Fim:</label> <input type="date" id="seletor-data-fim"></div>
+            <button type="button" id="btn-partilhar" title="Copiar ou partilhar link com a vista atual" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
+        </div>
+
+        <div id="erro-periodo" role="alert"></div>
+        <div id="nota-series" role="note" hidden></div>
+
+        <p class="badge-global">Último índice de referência publicado: <strong id="badge-data">--/--/----</strong> · série desde <strong id="badge-inicio">--/--/----</strong></p>
+
+        <details id="recordes-section">
+            <summary><strong>🏆 Recordes históricos</strong> <span style="font-weight:normal;font-size:0.85em;opacity:0.85;">(sempre sobre a série completa, não sobre o período escolhido)</span></summary>
+            <div class="recordes-grid" id="recordes-grid"></div>
+            <p class="recordes-footer" id="recordes-footer"></p>
+        </details>
+
+        <nav class="mini-nav" aria-label="Navegação rápida da página">
+            <a href="#mibgas-kpis" class="mini-nav-chip">💶 Resumo</a>
+            <a href="#box-serie" class="mini-nav-chip">📈 Evolução</a>
+            <a href="#box-histograma" class="mini-nav-chip">📊 Distribuição</a>
+            <a href="#box-volatilidade" class="mini-nav-chip">⚡ Volatilidade</a>
+            <a href="#box-ytd" class="mini-nav-chip">📅 Ano a ano</a>
+            <a href="#top-dias-section" class="mini-nav-chip">🔥 Top dias</a>
+        </nav>
+
+        <h1>Preço do Gás Natural (MIBGAS) — <span id="data-inicio-titulo">…</span> a <span id="data-fim-titulo">…</span></h1>
+        <p>Índices diários do mercado grossista ibérico, em €/MWh</p>
+    </div>
+
+    <div id="estado" class="estado-carregamento">A carregar os índices MIBGAS…</div>
+
+    <div class="kpi-cabecalho">
+        <h2>Resumo do período — <span class="kpi-indice-nome">índice do dia de entrega</span> de <span class="kpi-pais-nome">Portugal</span></h2>
+        <div class="kpi-seletores">
+            <div class="kpi-pais" role="group" aria-label="País dos indicadores">
+                <button type="button" class="hh-mode-btn active" data-pais="pt" aria-pressed="true" title="Portugal — ponto virtual VTP">Portugal</button>
+                <button type="button" class="hh-mode-btn" data-pais="es" aria-pressed="false" title="Espanha — ponto virtual PVB">Espanha</button>
+            </div>
+            <div class="kpi-indice" role="group" aria-label="Índice">
+                <button type="button" class="hh-mode-btn active" data-indice="gasday" aria-pressed="true" title="MIBGAS-PT / MIBGAS-ES: média de tudo o que foi transacionado para esse dia de gás">Dia de entrega</button>
+                <button type="button" class="hh-mode-btn" data-indice="da" aria-pressed="false" title="Last Price Index Day-Ahead: é o valor que o MIBGAS mostra na sua página">Day-ahead</button>
+            </div>
+        </div>
+    </div>
+    <p class="kpi-nota-indice" id="kpi-nota-indice"></p>
+
+    <div id="mibgas-kpis">
+        <div class="kpi-card"><div class="kpi-label">MÉDIA DO PERÍODO · <span class="kpi-pais-nome">Portugal</span></div><div class="kpi-value" id="kpi-media">--</div><div class="kpi-sub" id="kpi-media-kwh">-- €/kWh</div><div class="kpi-cobertura" id="kpi-media-cobertura" hidden></div></div>
+        <div class="kpi-card"><div class="kpi-label">FACE AO PERÍODO ANTERIOR</div><div class="kpi-value" id="kpi-homologo">--</div><div class="kpi-sub" id="kpi-homologo-sub">&nbsp;</div></div>
+        <div class="kpi-card"><div class="kpi-label">MÍNIMO DO PERÍODO · <span class="kpi-pais-nome">Portugal</span></div><div class="kpi-value" id="kpi-min">--</div><div class="kpi-sub" id="kpi-min-sub">&nbsp;</div></div>
+        <div class="kpi-card"><div class="kpi-label">MÁXIMO DO PERÍODO · <span class="kpi-pais-nome">Portugal</span></div><div class="kpi-value" id="kpi-max">--</div><div class="kpi-sub" id="kpi-max-sub">&nbsp;</div></div>
+    </div>
+
+    <div id="insight-periodo" aria-live="polite"></div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/mibgas</p></div>
+
+    <div class="grafico-box" id="box-serie">
+        <h2>Evolução do preço no período</h2>
+        <p class="grafico-intro">A série de Espanha é a única contínua desde 2015. O índice português só passou a ser publicado a 17 de março de 2021 — antes disso não há lacuna, simplesmente não existia.</p>
+        <div id="grafico-serie" class="grafico"></div>
+    </div>
+
+    <div class="grafico-box" id="box-histograma">
+        <h2>Distribuição dos preços no período</h2>
+        <p class="grafico-intro">Quantos dias caíram em cada faixa de preço, e onde estão os quartis. Índice de referência de Espanha.</p>
+        <div id="histograma-stats"></div>
+        <div id="grafico-histograma" class="grafico"></div>
+    </div>
+
+    <div class="grafico-box" id="box-volatilidade">
+        <h2>Volatilidade</h2>
+        <p class="grafico-intro" id="volatilidade-intro">Desvio-padrão móvel: mede a agitação do mercado, não o nível do preço.</p>
+        <div id="grafico-volatilidade" class="grafico"></div>
+    </div>
+
+    <div class="grafico-box" id="box-ytd">
+        <h2 id="ytd-titulo">O mesmo período, em todos os anos</h2>
+        <p class="grafico-intro" id="ytd-intro"></p>
+        <div id="grafico-ytd" class="grafico"></div>
+    </div>
+
+    <div class="tabela-box" id="box-tabela">
+        <table class="tabela-mibgas">
+            <caption id="tabela-caption">O mesmo período, ano a ano</caption>
+            <thead>
+                <tr>
+                    <th scope="col" style="text-align:left;">Período</th>
+                    <th scope="col">Média<br><small>Espanha</small></th>
+                    <th scope="col">Média<br><small>Portugal</small></th>
+                    <th scope="col">Mínimo<br><small>Espanha</small></th>
+                    <th scope="col">Máximo<br><small>Espanha</small></th>
+                    <th scope="col">Dias com índice</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-anos"></tbody>
+        </table>
+    </div>
+
+    <div class="grafico-box" id="box-ptes">
+        <h2>Portugal e Espanha: quanto difere?</h2>
+        <p class="grafico-intro">Diferença diária entre o índice de referência português e o espanhol. Valores positivos significam gás mais caro em Portugal. Só existe a partir de março de 2021.</p>
+        <div id="grafico-ptes" class="grafico"></div>
+    </div>
+
+    <div class="grafico-box" id="box-gnl">
+        <h2>GNL face ao índice de referência</h2>
+        <p class="grafico-intro">Diferença entre o índice de gás natural liquefeito em Espanha e o índice de referência espanhol. Espanha tem a maior capacidade de regaseificação da Europa, e isso costuma pôr o GNL abaixo da referência. Série publicada desde 13 de junho de 2019, com dias sem cotação — as falhas não são interpoladas.</p>
+        <div id="grafico-gnl" class="grafico"></div>
+    </div>
+
+    <div class="grafico-box" id="box-dia-semana">
+        <h2>Fim de semana: um desconto que desapareceu</h2>
+        <div class="fds-historia">
+            <h3>Como o efeito se extinguiu</h3>
+            <p id="fds-resumo"></p>
+            <div class="tabela-box" style="width:100%; margin:0;">
+                <table class="tabela-mibgas">
+                    <caption>Fim de semana face aos dias úteis, por ano (índice de Espanha, série completa)</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" style="text-align:left;">Ano</th>
+                            <th scope="col">Dias úteis</th>
+                            <th scope="col">Fim de semana</th>
+                            <th scope="col">Diferença</th>
+                            <th scope="col">Efeito</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fds-tabela"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="fds-estado" role="status"></div>
+        <div id="grafico-dia-semana" class="grafico"></div>
+    </div>
+
+    <section id="top-dias-section">
+        <h2>Top dias do período</h2>
+        <div class="top-dias-grid">
+            <div class="top-lista"><h3>🔥 Mais caros</h3><div id="top-dias-caros"></div></div>
+            <div class="top-lista"><h3>❄️ Mais baratos</h3><div id="top-dias-baratos"></div></div>
+        </div>
+    </section>
+
+    <div class="cta-simulador">
+        <h2>E na sua fatura, quanto é que isto pesa?</h2>
+        <p>Os tarifários indexados ao MIBGAS seguem estes índices. O simulador aplica a fórmula de cada comercializador aos seus consumos e mostra o custo final, com todas as taxas e impostos.</p>
+        <a href="gas-natural-tiagofelicia" class="button-link">🔥 Simular tarifários de gás</a>
+        <p class="cta-futuros">Esta página mostra apenas <strong>preços reais já publicados</strong>. Para o que o mercado pede por gás entregue no futuro — a curva a prazo, do dia seguinte ao ano Y+2 — veja <a href="mibgas-futuros">Futuros do Gás Natural (MIBGAS)</a>.</p>
+    </div>
+
+    <div class="aviso-box">
+        <p><strong>Duas famílias de valores, que não se misturam.</strong> Os <strong>hubs</strong> são os pontos onde o gás muda de mãos: VTP em Portugal, PVB em Espanha. Os <strong>índices de referência</strong> (MIBGAS PT e MIBGAS ES) são calculados a partir dessas transações e são o que os contratos indexados usam. Em Portugal o índice afasta-se do hub em mais de 1 €/MWh em cerca de 30% dos dias; em Espanha só em 16%. Todos os gráficos e médias desta página usam os <strong>índices de referência</strong>. Os hubs só aparecem, identificados como tal, quando se escolhe um dia cujo índice ainda não saiu.</p>
+        <p><strong>Campo vazio significa não publicado</strong> nesse dia — nunca preço zero. Os índices de referência saem com um a dois dias de atraso face aos hubs, por isso os últimos dias do ficheiro ainda não têm índice.</p>
+        <p>São preços <strong>grossistas de energia</strong>: não incluem tarifas de acesso às redes, TOS, ISP, IVA nem margem do comercializador. Não são o preço da sua fatura.</p>
+    </div>
+
+    <h2 style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que é o MIBGAS?</strong></summary>
+            <div class="faq-content">
+                <p>O <strong>MIBGAS</strong> é o mercado organizado de gás natural da Península Ibérica, criado em 2015. É onde se negoceia gás para entrega no dia seguinte e nos dias próximos. O preço que resulta dessas transações — o índice MIBGAS — funciona como referência grossista do gás em Portugal e Espanha, tal como o <a href="omie-diario">OMIE</a> faz para a eletricidade.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Qual é a diferença entre o índice de referência e o preço do hub?</strong></summary>
+            <div class="faq-content">
+                <p>São duas famílias de valores e confundem-se com facilidade.</p>
+                <ul>
+                    <li><strong>Hubs</strong> — os pontos virtuais onde o gás muda de mãos: <strong>VTP</strong> (<em>Virtual Trading Point</em>) em Portugal e <strong>PVB</strong> (<em>Punto Virtual de Balance</em>) em Espanha.</li>
+                    <li><strong>Índices de referência</strong> — <strong>MIBGAS PT</strong> e <strong>MIBGAS ES</strong>, calculados a partir dessas transações. São o valor que os contratos indexados usam, e é o que esta página mostra.</li>
+                </ul>
+                <p>Não são intermutáveis. Em Portugal, o índice de referência afasta-se do hub do mesmo país em mais de 1 €/MWh em cerca de <strong>30% dos dias</strong>; em Espanha isso só acontece em <strong>16%</strong>. Já os dois hubs andam colados um ao outro: divergem mais de 1 €/MWh em apenas 5% dos dias. Misturar famílias engana mais do que comparar países.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que há dias sem cotação?</strong></summary>
+            <div class="faq-content">
+                <p>Um campo vazio significa que <strong>não houve publicação</strong> nesse dia para esse índice — nunca significa preço zero. Acontece quando não houve transações suficientes para formar índice, ou quando o produto ainda não existia.</p>
+                <p>O índice português só passou a ser publicado a <strong>17 de março de 2021</strong>; antes disso só existe série para Espanha. O índice de GNL arranca em junho de 2019 e tem dias sem cotação ao longo de toda a série.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O gás é mais barato ao fim de semana?</strong></summary>
+            <div class="faq-content">
+                <p>Já foi, e deixou de ser. Sobre toda a série, o fim de semana negoceia abaixo dos dias úteis — mas esse desconto era de quase <strong>8% em 2020</strong> e praticamente <strong>desapareceu a partir de 2023</strong>. Em 2024 a diferença foi nula.</p>
+                <p>A tabela na secção «Fim de semana» mostra o efeito ano a ano, calculado a partir dos dados. É um padrão do histórico, não do mercado atual.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Este é o preço que pago na fatura de gás?</strong></summary>
+            <div class="faq-content">
+                <p>Não. O índice MIBGAS é o <strong>preço grossista da energia</strong>, sem tarifas de acesso às redes, sem taxas (TOS, ISP), sem IVA e sem a margem do comercializador. Numa fatura doméstica, a componente de energia é apenas uma parte do total.</p>
+                <p>Quem tem um <strong>tarifário indexado ao MIBGAS</strong> vê este índice refletido na componente de energia, com a fórmula do respetivo comercializador aplicada por cima. O <a href="gas-natural-tiagofelicia">simulador de gás</a> faz essa conta.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como se converte de €/MWh para €/kWh?</strong></summary>
+            <div class="faq-content">
+                <p>Divide-se por <strong>1000</strong>. Um índice de 50 €/MWh corresponde a 0,0500 €/kWh. A fatura de gás está normalmente em €/kWh, por isso é essa a unidade que permite comparar com o preço do tarifário.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm estes dados?</strong></summary>
+            <div class="faq-content">
+                <p>Do <strong>MIBGAS</strong>, recolhidos automaticamente duas vezes por dia para o repositório de dados abertos <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener noreferrer">dados.tiagofelicia.pt</a>, sob licença CC BY 4.0. A série contém apenas <strong>preços reais publicados</strong>: não há futuros nem preenchimento de lacunas.</p>
+                <p>O ficheiro está disponível em <a href="https://dados.tiagofelicia.pt/data/gas/mibgas_spot.csv" target="_blank" rel="noopener noreferrer">mibgas_spot.csv</a>. Todos os números desta página são calculados no seu browser a partir dele.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // --- CONFIGURAÇÃO ---
+    const URL_MIBGAS = 'gas/mibgas_spot.csv';
+    const COBERTURA_MINIMA = 0.9;   // aplica-se à JANELA, não ao ano
+
+    // --- ESTADO ---
+    let LINHAS = [];        // toda a série
+    let ANCORA = null;      // última data com índice de referência
+    let MAX_FICHEIRO = null;// última linha do ficheiro (pode ser só hub)
+    let MIN_SERIE = null;
+    let periodo = { inicio: null, fim: null };
+    let paisKPI = 'pt';          // 'pt' ou 'es'
+    let indiceKPI = 'gasday';    // 'gasday' = MIBGAS-PT/ES · 'da' = Last Price Index Day-Ahead
+    // Distingue "o utilizador escolheu isto" de "o recuo automático pôs isto".
+    let escolhaPais = false, escolhaIndice = false;
+
+
+    const seletorDataInicio = document.getElementById('seletor-data-inicio');
+    const seletorDataFim = document.getElementById('seletor-data-fim');
+
+    // ====================== AUXILIARES ======================
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grid: dk ? '#334155' : '#e6e6e6' };
+    }
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const _nf4 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+    const vazio = v => v === null || v === undefined || isNaN(v);
+    function fmt1(v) { return vazio(v) ? '--' : _nf1.format(v); }
+    function fmt2(v) { return vazio(v) ? '--' : _nf2.format(v); }
+    function fmtPreco(v) { return fmt2(v) + ' €/MWh'; }
+    function fmtkWh(v) { return vazio(v) ? '--' : _nf4.format(v / 1000) + ' €/kWh'; }
+    function fmtData(iso) { if (!iso) return '--/--/----'; const p = iso.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+    function fmtDataCurta(iso) { if (!iso) return '--/--'; const p = iso.split('-'); return `${p[2]}/${p[1]}`; }
+    function fmtPct(v, casas) { return (v >= 0 ? '+' : '') + (casas === 1 ? _nf1.format(v) : _nf2.format(v)) + ' %'; }
+
+    // Campo vazio = não publicado. Devolve null, nunca 0.
+    function num(campo) {
+        if (campo === undefined || campo === null) return null;
+        const t = String(campo).trim();
+        if (t === '') return null;
+        const v = parseFloat(t);
+        return isNaN(v) ? null : v;
+    }
+    function media(arr) {
+        const n = arr.filter(v => !vazio(v));
+        return n.length ? n.reduce((a, b) => a + b, 0) / n.length : null;
+    }
+    function desvioPadrao(arr) {
+        const n = arr.filter(v => !vazio(v));
+        if (n.length < 2) return null;
+        const m = n.reduce((a, b) => a + b, 0) / n.length;
+        return Math.sqrt(n.reduce((a, b) => a + (b - m) * (b - m), 0) / n.length);
+    }
+    function percentil(ordenados, p) {
+        if (!ordenados.length) return null;
+        return ordenados[Math.min(ordenados.length - 1, Math.floor(p * ordenados.length))];
+    }
+    function diasEntre(a, b) {
+        return Math.round((new Date(b + 'T12:00:00Z') - new Date(a + 'T12:00:00Z')) / 86400000);
+    }
+    function deslocarDias(iso, n) {
+        const d = new Date(iso + 'T12:00:00Z');
+        d.setUTCDate(d.getUTCDate() + n);
+        return d.toISOString().split('T')[0];
+    }
+
+    // Última linha COM índice de referência espanhol — é a série contínua e a base de
+    // todas as comparações. A última linha do ficheiro pode já ter VTP/PVB e ainda não
+    // ter índice, e nesse caso a âncora ficaria à frente do que a página consegue mostrar.
+    function ultimoComES() {
+        for (let i = LINHAS.length - 1; i >= 0; i--) { if (LINHAS[i].es !== null) return LINHAS[i]; }
+        return LINHAS[LINHAS.length - 1];
+    }
+
+    // O índice português só arranca a 17/03/2021. Numa janela em que Portugal cobre
+    // muito menos dias do que Espanha, a média não é comparável — e é suprimida.
+    // Aplica-se à JANELA recebida, seja ela um ano inteiro ou 30 dias.
+    function mediaPTComparavel(linhasDaJanela) {
+        const nES = linhasDaJanela.filter(l => l.es !== null).length;
+        const valoresPT = linhasDaJanela.filter(l => l.pt !== null).map(l => l.pt);
+        if (!nES || valoresPT.length / nES < COBERTURA_MINIMA) return null;
+        return media(valoresPT);
+    }
+
+    // ====================== PARSER ======================
+    // O ficheiro não tem campos entre aspas nem vírgulas dentro de campos:
+    // split(',') é seguro e evita carregar uma biblioteca só para isto.
+    function parseCSV(texto) {
+        const linhas = texto.trim().split('\n');
+        if (!linhas.length) return [];
+        let cab = linhas.shift();
+        if (cab.charCodeAt(0) === 0xFEFF) cab = cab.substring(1);
+        const cols = cab.split(',').map(h => h.trim());
+        const idx = {};
+        cols.forEach((c, i) => { idx[c] = i; });
+
+        const out = [];
+        for (const linha of linhas) {
+            if (!linha.trim()) continue;
+            const v = linha.split(',');
+            const iso = (v[idx['data_iso']] || '').trim();
+            if (!iso || iso.length < 10) continue;
+            const p = iso.split('-');
+            out.push({
+                iso: iso,
+                ts: Date.UTC(+p[0], +p[1] - 1, +p[2]),
+                ano: p[0],
+                mmdd: iso.substring(5),
+                dow: new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay(), // 0=domingo
+                pt: num(v[idx['mibgas_pt']]),
+                es: num(v[idx['mibgas_es']]),
+                vtp: num(v[idx['vtp_last']]),
+                pvb: num(v[idx['pvb_last']]),
+                lng: num(v[idx['lng_es']])
+            });
+        }
+        out.sort((a, b) => a.ts - b.ts);
+        return out;
+    }
+
+    // ====================== PERÍODO ======================
+    function filtrar(inicio, fim) {
+        return LINHAS.filter(l => l.iso >= inicio && l.iso <= fim);
+    }
+
+    // Dia de calendário em Portugal — os presets Ontem/Hoje/Amanhã referem-se ao
+    // calendário, não à âncora dos dados. O ficheiro é indexado pelo dia de ENTREGA,
+    // por isso "amanhã" existe lá; o que pode não existir é o índice de referência.
+    function hojeLisboa() {
+        const ag = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Lisbon' }));
+        return `${ag.getFullYear()}-${String(ag.getMonth() + 1).padStart(2, '0')}-${String(ag.getDate()).padStart(2, '0')}`;
+    }
+
+    function getPresetDates(preset) {
+        if (!ANCORA) return null;
+        const fim = ANCORA;
+        const clamp = s => (s < MIN_SERIE ? MIN_SERIE : s);
+        const [ay, am] = [ANCORA.substring(0, 4), ANCORA.substring(5, 7)];
+
+        if (preset === 'ontem') { const d = deslocarDias(hojeLisboa(), -1); return { inicio: d, fim: d }; }
+        if (preset === 'hoje') { const d = hojeLisboa(); return { inicio: d, fim: d }; }
+        if (preset === 'amanha') { const d = deslocarDias(hojeLisboa(), 1); return { inicio: d, fim: d }; }
+        if (preset === '7d') return { inicio: clamp(deslocarDias(fim, -6)), fim };
+        if (preset === 'mes') return { inicio: clamp(`${ay}-${am}-01`), fim };
+        if (preset === 'mesPassado') {
+            const d = new Date(Date.UTC(+ay, +am - 1, 1));
+            const ini = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 1, 1));
+            const f = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 0));
+            return { inicio: clamp(ini.toISOString().split('T')[0]), fim: f.toISOString().split('T')[0] };
+        }
+        if (preset === 'ultimos12m') {
+            const d = new Date(fim + 'T12:00:00Z');
+            d.setUTCFullYear(d.getUTCFullYear() - 1);
+            d.setUTCDate(d.getUTCDate() + 1);
+            return { inicio: clamp(d.toISOString().split('T')[0]), fim };
+        }
+        if (preset === 'ano') return { inicio: clamp(`${ay}-01-01`), fim };
+        if (preset === 'tudo') return { inicio: MIN_SERIE, fim };
+        return null; // custom
+    }
+
+    // 'tudo' não está na lista: deixou de ser botão e passou a ser o estado inicial do
+    // Personalizado. Selecionar a série completa passa a acender "Personalizado".
+    function detectarPreset(inicio, fim) {
+        for (const p of ['ontem', 'hoje', 'amanha', '7d', 'mes', 'mesPassado', 'ultimos12m', 'ano']) {
+            const d = getPresetDates(p);
+            if (d && d.inicio === inicio && d.fim === fim) return p;
+        }
+        return 'custom';
+    }
+
+    function atualizarBotoesPreset(preset) {
+        document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.preset === preset);
+        });
+    }
+    function setDateInputsVisibilidade(preset) {
+        document.querySelector('.date-selector-periodo').classList.toggle('no-dates', preset !== 'custom');
+    }
+
+    function lerURLState() {
+        const params = new URLSearchParams(window.location.search);
+        const inicio = params.get('inicio'), fim = params.get('fim');
+        if (!inicio || !fim) return null;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(inicio) || !/^\d{4}-\d{2}-\d{2}$/.test(fim)) return null;
+        if (inicio > fim) return null;
+        return { inicio, fim };
+    }
+
+    // Por omissão: Portugal, índice do dia de entrega. Só o que difere vai à URL.
+    function lerPaisURL() {
+        return new URLSearchParams(window.location.search).get('pais') === 'es' ? 'es' : 'pt';
+    }
+    function lerIndiceURL() {
+        return new URLSearchParams(window.location.search).get('indice') === 'da' ? 'da' : 'gasday';
+    }
+
+    function atualizarURL() {
+        const d = getPresetDates('mes');   // preset por omissão → URL limpo
+        const isDefault = d && periodo.inicio === d.inicio && periodo.fim === d.fim &&
+                          paisKPI === 'pt' && indiceKPI === 'gasday';
+        let newURL;
+        if (isDefault) {
+            newURL = `${window.location.pathname}${window.location.hash}`;
+        } else {
+            const params = new URLSearchParams();
+            params.set('inicio', periodo.inicio);
+            params.set('fim', periodo.fim);
+            if (paisKPI !== 'pt') params.set('pais', paisKPI);
+            if (indiceKPI !== 'gasday') params.set('indice', indiceKPI);
+            newURL = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+        }
+        window.history.replaceState(null, '', newURL);
+    }
+
+    function mostrarFeedback(msg) {
+        const existente = document.getElementById('toast-feedback');
+        if (existente) existente.remove();
+        const toast = document.createElement('div');
+        toast.id = 'toast-feedback';
+        toast.className = 'toast-feedback';
+        toast.setAttribute('role', 'status');
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => { if (toast.parentNode) toast.remove(); }, 2500);
+    }
+
+    async function partilharVista() {
+        // Link sempre com os parâmetros explícitos, mesmo quando o browser mostra o
+        // URL limpo por estarmos no preset por omissão — quem recebe vê o mesmo período.
+        const params = new URLSearchParams();
+        params.set('inicio', periodo.inicio);
+        params.set('fim', periodo.fim);
+        if (paisKPI !== 'pt') params.set('pais', paisKPI);
+        if (indiceKPI !== 'gasday') params.set('indice', indiceKPI);
+        const shareURL = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+
+        // O resumo segue o país escolhido nos cartões — é o que quem partilha está a ver.
+        const dados = filtrar(periodo.inicio, periodo.fim).filter(l => valorPais(l) !== null);
+        const m = media(dados.map(valorPais));
+        const titulo = 'Preço do Gás Natural (MIBGAS) — Tiago Felícia';
+        const resumo = dados.length
+            ? `🔥 MIBGAS ${paisKPI === 'pt' ? 'Portugal' : 'Espanha'} — ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}\nMédia: ${fmtPreco(m)} (${fmtkWh(m)})`
+            : `🔥 MIBGAS ${paisKPI === 'pt' ? 'Portugal' : 'Espanha'} — ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}\nSem índice de referência publicado neste período`;
+        const textoCompleto = `${resumo}\n${shareURL}`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: titulo, text: resumo, url: shareURL });
+                return;
+            } catch (e) {
+                if (e && e.name === 'AbortError') return;
+            }
+        }
+        try {
+            await navigator.clipboard.writeText(textoCompleto);
+            mostrarFeedback('✓ Link e resumo copiados');
+            return;
+        } catch (e) { /* sem permissão de clipboard — cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = textoCompleto;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            mostrarFeedback('✓ Link e resumo copiados');
+        } catch (e) {
+            prompt('Copie este link:', textoCompleto);
+        }
+    }
+
+    function aplicarPreset(preset) {
+        const d = getPresetDates(preset);
+        if (!d) { setDateInputsVisibilidade('custom'); atualizarBotoesPreset('custom'); return; }
+        periodo = { inicio: d.inicio, fim: d.fim };
+        seletorDataInicio.value = d.inicio;
+        seletorDataFim.value = d.fim;
+        atualizarBotoesPreset(preset);
+        setDateInputsVisibilidade(preset);
+        atualizarURL();
+        renderTudo();
+    }
+
+    function aplicarDatasManuais() {
+        const inicio = seletorDataInicio.value, fim = seletorDataFim.value;
+        const erro = document.getElementById('erro-periodo');
+        if (!inicio || !fim) return;
+        if (inicio > fim) {
+            erro.textContent = 'A data de início é posterior à data de fim.';
+            erro.style.display = 'block';
+            return;
+        }
+        // Um intervalo sem índice de referência já não é rejeitado: é um estado
+        // legítimo (os últimos dias do ficheiro só têm hubs) e quem o explica é o
+        // bloco de análise, não uma mensagem de erro.
+        erro.style.display = 'none';
+        periodo = { inicio, fim };
+        atualizarBotoesPreset(detectarPreset(inicio, fim));
+        atualizarURL();
+        renderTudo();
+    }
+
+    // Aplica a janela mês-dia do período a todos os anos da série.
+    // Regras de bordo:
+    //  · janela >= 365 dias → degenera no ano civil (é a tabela anual de sempre);
+    //  · janela que cruza 31/12 → ancora no ano de início (dez de Y + jan de Y+1);
+    //  · a cobertura mínima do PT é avaliada sobre a janela, não sobre o ano.
+    function janelasPorAno() {
+        const nDias = diasEntre(periodo.inicio, periodo.fim) + 1;
+        const anoMin = +MIN_SERIE.substring(0, 4);
+        const anoMax = +ANCORA.substring(0, 4);
+        const out = [];
+
+        if (nDias >= 365) {
+            for (let a = anoMin; a <= anoMax; a++) out.push({ rotulo: String(a), de: `${a}-01-01`, ate: `${a}-12-31` });
+            return { janelas: out, modo: 'anual' };
+        }
+        const mmddIni = periodo.inicio.substring(5), mmddFim = periodo.fim.substring(5);
+        const cruza = mmddIni > mmddFim;
+        for (let a = anoMin; a <= anoMax; a++) {
+            if (cruza) {
+                // Ancora no ano de INÍCIO: dezembro de Y com o janeiro de Y+1, que é o
+                // mesmo inverno. Janelas que caiam fora dos dados ficam sem dias e são
+                // descartadas a jusante.
+                out.push({ rotulo: `${a}/${String(a + 1).substring(2)}`, de: `${a}-${mmddIni}`, ate: `${a + 1}-${mmddFim}` });
+            } else {
+                out.push({ rotulo: String(a), de: `${a}-${mmddIni}`, ate: `${a}-${mmddFim}` });
+            }
+        }
+        return { janelas: out, modo: cruza ? 'cruza' : 'mesmo-ano' };
+    }
+
+    // ====================== RENDER: GLOBAIS (não dependem do período) ======================
+    function renderBadgeGlobal() {
+        document.getElementById('badge-data').textContent = fmtData(ANCORA);
+        document.getElementById('badge-inicio').textContent = fmtData(MIN_SERIE);
+    }
+
+    function renderNotaSeries() {
+        const nota = document.getElementById('nota-series');
+        const semIndice = LINHAS.filter(l => l.iso > ANCORA && (l.vtp !== null || l.pvb !== null));
+        if (!semIndice.length) { nota.hidden = true; return; }
+        const dias = semIndice.length;
+        nota.innerHTML = `ℹ️ O ficheiro já tem <strong>${dias} dia${dias > 1 ? 's' : ''}</strong> para lá de ${fmtData(ANCORA)} ` +
+            `(até ${fmtData(semIndice[semIndice.length - 1].iso)}), mas só com os preços dos <strong>hubs</strong> VTP e PVB. ` +
+            `Os <strong>índices de referência</strong> MIBGAS PT e ES, que são os que esta página mostra, saem com um a dois dias de atraso — ` +
+            `por isso ainda estão vazios nesses dias.` +
+            // O índice day-ahead de um dia de entrega só fica fixado depois da sessão
+            // imediatamente anterior. Até lá o MIBGAS publica um valor herdado da última
+            // sessão que cotou esse dia — muitas vezes o produto de fim de semana — e
+            // depois revê-o. Sem este aviso, quem compare com o site do MIBGAS encontra
+            // números diferentes e conclui que um dos dois está errado.
+            ` E atenção: mesmo o valor do hub nesses dias é <strong>provisório</strong>. ` +
+            `O índice de um dia de entrega só fecha depois da sessão anterior a esse dia; ` +
+            `até lá vale a última cotação conhecida, que pode ser de vários dias antes.`;
+        nota.hidden = false;
+    }
+
+    function renderRecordes() {
+        const comES = LINHAS.filter(l => l.es !== null);
+        if (!comES.length) return;
+        const cards = [];
+        const card = (label, valor, detalhe, cls) =>
+            `<div class="recorde-card"><span class="recorde-label">${label}</span>` +
+            `<span class="recorde-valor ${cls || ''}">${valor}</span>` +
+            `<span class="recorde-detalhe">${detalhe}</span></div>`;
+
+        let mx = comES[0], mn = comES[0];
+        for (const l of comES) { if (l.es > mx.es) mx = l; if (l.es < mn.es) mn = l; }
+        cards.push(card('🔺 Máximo da série', fmtPreco(mx.es), fmtData(mx.iso), 'positivo'));
+        cards.push(card('🔻 Mínimo da série', fmtPreco(mn.es), fmtData(mn.iso), 'negativo'));
+
+        // Maiores variações entre dias CONSECUTIVOS (só quando há mesmo dois dias seguidos)
+        let sobe = null, desce = null;
+        for (let i = 1; i < comES.length; i++) {
+            if (diasEntre(comES[i - 1].iso, comES[i].iso) !== 1) continue;
+            const d = comES[i].es - comES[i - 1].es;
+            const pct = comES[i - 1].es > 0 ? 100 * d / comES[i - 1].es : 0;
+            if (!sobe || d > sobe.d) sobe = { iso: comES[i].iso, d, pct };
+            if (!desce || d < desce.d) desce = { iso: comES[i].iso, d, pct };
+        }
+        if (sobe) cards.push(card('📈 Maior subida num dia', (sobe.d >= 0 ? '+' : '') + fmtPreco(sobe.d), `${fmtData(sobe.iso)} · ${fmtPct(sobe.pct, 1)}`, 'positivo'));
+        if (desce) cards.push(card('📉 Maior descida num dia', fmtPreco(desce.d), `${fmtData(desce.iso)} · ${fmtPct(desce.pct, 1)}`, 'negativo'));
+
+        // Extremos mensais (só meses com >= 20 dias de índice)
+        const porMes = {};
+        for (const l of comES) { (porMes[l.iso.substring(0, 7)] ||= []).push(l.es); }
+        const meses = Object.entries(porMes).filter(([, v]) => v.length >= 20).map(([k, v]) => [k, media(v)]);
+        if (meses.length) {
+            const mesCaro = meses.reduce((a, b) => (b[1] > a[1] ? b : a));
+            const mesBarato = meses.reduce((a, b) => (b[1] < a[1] ? b : a));
+            const nomeMes = k => { const [y, m] = k.split('-'); return `${['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][+m - 1]}/${y}`; };
+            cards.push(card('🗓️ Mês mais caro', fmtPreco(mesCaro[1]), nomeMes(mesCaro[0]), 'positivo'));
+            cards.push(card('🗓️ Mês mais barato', fmtPreco(mesBarato[1]), nomeMes(mesBarato[0]), 'negativo'));
+        }
+
+        // Extremos anuais (só anos com >= 200 dias)
+        const porAno = {};
+        for (const l of comES) { (porAno[l.ano] ||= []).push(l.es); }
+        const anos = Object.entries(porAno).filter(([, v]) => v.length >= 200).map(([k, v]) => [k, media(v)]);
+        if (anos.length) {
+            const anoCaro = anos.reduce((a, b) => (b[1] > a[1] ? b : a));
+            const anoBarato = anos.reduce((a, b) => (b[1] < a[1] ? b : a));
+            cards.push(card('📆 Ano mais caro', fmtPreco(anoCaro[1]), anoCaro[0], 'positivo'));
+            cards.push(card('📆 Ano mais barato', fmtPreco(anoBarato[1]), anoBarato[0], 'negativo'));
+        }
+
+        document.getElementById('recordes-grid').innerHTML = cards.join('');
+        document.getElementById('recordes-footer').textContent =
+            `Índice de referência de Espanha — a única série contínua. ${_nf0.format(comES.length)} dias com índice, de ${fmtData(comES[0].iso)} a ${fmtData(comES[comES.length - 1].iso)}. Os recordes não mudam com o período escolhido.`;
+    }
+
+    // Efeito fim de semana: (média fim de semana − média dias úteis) / média dias úteis
+    function efeitoFDS(linhas) {
+        const ut = linhas.filter(l => l.es !== null && l.dow !== 0 && l.dow !== 6).map(l => l.es);
+        const fs = linhas.filter(l => l.es !== null && (l.dow === 0 || l.dow === 6)).map(l => l.es);
+        if (ut.length < 5 || fs.length < 2) return null;
+        const mu = media(ut), mf = media(fs);
+        return { mu, mf, dif: mf - mu, pct: 100 * (mf - mu) / mu, nUt: ut.length, nFs: fs.length };
+    }
+
+    function renderFDSHistoria() {
+        const anos = [...new Set(LINHAS.filter(l => l.es !== null).map(l => l.ano))].sort();
+        const tbody = document.getElementById('fds-tabela');
+        const linhas = [];
+        for (const a of anos) {
+            const e = efeitoFDS(LINHAS.filter(l => l.ano === a));
+            if (!e || e.nUt < 200) continue;   // só anos completos
+            linhas.push({ rotulo: a, e });
+        }
+        const total = efeitoFDS(LINHAS);
+        const html = linhas.map(({ rotulo, e }) =>
+            `<tr><th scope="row">${rotulo}</th><td>${fmt2(e.mu)}</td><td>${fmt2(e.mf)}</td>` +
+            `<td class="${e.dif >= 0 ? 'sobe' : 'desce'}">${(e.dif >= 0 ? '+' : '') + fmt2(e.dif)}</td>` +
+            `<td class="${e.pct >= 0 ? 'sobe' : 'desce'}">${fmtPct(e.pct, 1)}</td></tr>`).join('');
+        const htmlTotal = total
+            ? `<tr class="destaque"><th scope="row">Série completa</th><td>${fmt2(total.mu)}</td><td>${fmt2(total.mf)}</td>` +
+              `<td class="${total.dif >= 0 ? 'sobe' : 'desce'}">${(total.dif >= 0 ? '+' : '') + fmt2(total.dif)}</td>` +
+              `<td class="${total.pct >= 0 ? 'sobe' : 'desce'}">${fmtPct(total.pct, 1)}</td></tr>`
+            : '';
+        tbody.innerHTML = html + htmlTotal;
+
+        // Resumo textual, construído dos números e não fixado à mão
+        if (linhas.length >= 3 && total) {
+            const pior = linhas.reduce((a, b) => (b.e.pct < a.e.pct ? b : a));
+            const recentes = linhas.slice(-3);
+            const mediaRecente = media(recentes.map(r => r.e.pct));
+            document.getElementById('fds-resumo').innerHTML =
+                `Sobre toda a série, o fim de semana negoceia <strong>${fmtPct(total.pct, 1)}</strong> face aos dias úteis. ` +
+                `Mas a média esconde um efeito que se extinguiu: o desconto chegou a <strong>${fmtPct(pior.e.pct, 1)}</strong> em ${pior.rotulo} ` +
+                `e nos últimos três anos completos ficou em <strong>${fmtPct(mediaRecente, 1)}</strong> em média. ` +
+                `É um padrão do histórico, não do mercado atual — e é por isso que o gráfico abaixo, sobre um período recente, aparece plano.`;
+        }
+    }
+
+    // ====================== RENDER: PERÍODO ======================
+    function renderTitulo() {
+        document.getElementById('data-inicio-titulo').textContent = fmtData(periodo.inicio);
+        document.getElementById('data-fim-titulo').textContent = fmtData(periodo.fim);
+    }
+
+    // O MIBGAS publica, para o mesmo dia de gás, dois valores por zona — e são coisas
+    // diferentes, não versões do mesmo número (aba "Definitions" do xlsx da fonte):
+    //
+    //   'da'     Last Price Index Day-Ahead — preço de FECHO da sessão para o produto
+    //            D+1, D+3 ou fim de semana. É o que o MIBGAS mostra no cartão
+    //            "Day Ahead PT/ES" da página dele. Começa em 2023.
+    //   'gasday' MIBGAS-PT / MIBGAS-ES — média ponderada de TODAS as transações de
+    //            TODOS os produtos com entrega nesse dia, somando TODAS as sessões já
+    //            concluídas. É o valor definitivo do dia, e por isso só fecha um a
+    //            dois dias depois. Espanha desde 2015, Portugal desde 2021.
+    //
+    // Só os cartões alternam: o resto da página continua sobre o índice do dia de
+    // entrega de Espanha, que é a única série contínua desde 2015.
+    const CAMPO_KPI = {
+        'pt|gasday': 'pt',  'es|gasday': 'es',
+        'pt|da':     'vtp', 'es|da':     'pvb'
+    };
+    function campoKPI(pais, indice) { return CAMPO_KPI[pais + '|' + (indice || indiceKPI)]; }
+    function valorPais(l) { return l[campoKPI(paisKPI)]; }
+
+    const NOTA_INDICE = {
+        gasday: 'Média ponderada de todas as transações com entrega nesse dia de gás, somando todas as sessões já concluídas — é o valor definitivo do dia, e o que os tarifários indexados referenciam. Por isso só fecha um a dois dias depois da entrega.',
+        da: 'Preço de fecho da sessão <em>day-ahead</em>, para o produto D+1, D+3 ou de fim de semana. <strong>É este o número que o MIBGAS mostra no cartão «Day Ahead» da página dele.</strong> Publicado desde 2023.'
+    };
+
+    // Desliga as combinações sem dados na janela e, se a escolhida ficar sem dados,
+    // recua para uma que tenha — senão os cartões ficavam a "--" sem explicação.
+    function atualizarBotoesPais(dados) {
+        const tem = (pais, ind) => dados.some(l => l[campoKPI(pais, ind)] !== null);
+
+        // Enquanto ninguém escolher explicitamente, volta-se ao par por omissão
+        // (Portugal · dia de entrega) assim que a janela o permita. Sem isto o recuo
+        // era pegajoso: bastava passar por "Hoje" — que só tem day-ahead — para todos
+        // os períodos seguintes ficarem em day-ahead sem ninguém o ter pedido.
+        if (!escolhaPais && tem('pt', indiceKPI)) paisKPI = 'pt';
+        if (!escolhaIndice && tem(paisKPI, 'gasday')) indiceKPI = 'gasday';
+
+        if (!tem(paisKPI, indiceKPI)) {
+            const alternativas = [[paisKPI, indiceKPI === 'da' ? 'gasday' : 'da'],
+                                  ['es', indiceKPI], ['es', 'gasday']];
+            const ok = alternativas.find(([pa, ix]) => tem(pa, ix));
+            if (ok) { paisKPI = ok[0]; indiceKPI = ok[1]; }
+        }
+
+        document.querySelectorAll('.kpi-pais .hh-mode-btn').forEach(b => {
+            const pa = b.dataset.pais, on = pa === paisKPI;
+            b.disabled = !tem(pa, indiceKPI);
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', String(on));
+            if (b.disabled) b.title = 'Sem valores ' + (pa === 'pt' ? 'portugueses' : 'espanhóis') + ' neste período';
+        });
+        document.querySelectorAll('.kpi-indice .hh-mode-btn').forEach(b => {
+            const ix = b.dataset.indice, on = ix === indiceKPI;
+            b.disabled = !tem(paisKPI, ix);
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', String(on));
+            if (b.disabled) b.title = ix === 'da'
+                ? 'O índice day-ahead só é publicado a partir de 2023'
+                : 'Sem índice do dia de entrega neste período';
+        });
+
+        document.querySelectorAll('.kpi-pais-nome').forEach(e => {
+            e.textContent = paisKPI === 'pt' ? 'Portugal' : 'Espanha';
+        });
+        document.querySelectorAll('.kpi-indice-nome').forEach(e => {
+            e.textContent = indiceKPI === 'da' ? 'índice day-ahead' : 'índice do dia de entrega';
+        });
+        document.getElementById('kpi-nota-indice').innerHTML = NOTA_INDICE[indiceKPI];
+    }
+
+    function renderKPIs(dados) {
+        atualizarBotoesPais(dados);
+
+        const comValor = dados.filter(l => valorPais(l) !== null);
+        const m = media(comValor.map(valorPais));
+        document.getElementById('kpi-media').textContent = fmtPreco(m);
+        document.getElementById('kpi-media-kwh').textContent = fmtkWh(m);
+
+        // Janelas que apanham o arranque do índice português têm menos dias do que
+        // o período sugere. Dizer de quantos dias é a média, em vez de a esconder.
+        const nRef = dados.filter(l => l.es !== null).length;
+        const elCob = document.getElementById('kpi-media-cobertura');
+        const parcial = comValor.length && nRef && comValor.length / nRef < COBERTURA_MINIMA;
+        elCob.textContent = parcial ? `média de ${comValor.length} dias — só esses têm este índice` : '';
+        elCob.hidden = !parcial;
+
+        // Período homólogo anterior: mesma duração, imediatamente antes
+        const nDias = diasEntre(periodo.inicio, periodo.fim) + 1;
+        const antFim = deslocarDias(periodo.inicio, -1);
+        const antIni = deslocarDias(antFim, -(nDias - 1));
+        const mAnt = media(filtrar(antIni, antFim).filter(l => valorPais(l) !== null).map(valorPais));
+        const elH = document.getElementById('kpi-homologo');
+        if (m !== null && mAnt !== null && mAnt > 0) {
+            const pct = 100 * (m - mAnt) / mAnt;
+            elH.textContent = fmtPct(pct, 1);
+            elH.className = 'kpi-value ' + (pct >= 0 ? 'subiu' : 'desceu');
+            document.getElementById('kpi-homologo-sub').textContent =
+                `${fmtDataCurta(antIni)}–${fmtDataCurta(antFim)}: ${fmt2(mAnt)}`;
+        } else {
+            elH.textContent = '--';
+            elH.className = 'kpi-value';
+            document.getElementById('kpi-homologo-sub').textContent = 'sem período anterior comparável';
+        }
+
+        // O ramo "else" é essencial. Sem ele, mudar para um período sem índice
+        // (Hoje, Amanhã) deixava aqui o mínimo e o máximo do período anterior, com
+        // datas fora do intervalo, debaixo de um rótulo que diz "DO PERÍODO".
+        const elMin = document.getElementById('kpi-min'), elMax = document.getElementById('kpi-max');
+        const subMin = document.getElementById('kpi-min-sub'), subMax = document.getElementById('kpi-max-sub');
+        if (comValor.length) {
+            let mn = comValor[0], mx = comValor[0];
+            for (const l of comValor) {
+                if (valorPais(l) < valorPais(mn)) mn = l;
+                if (valorPais(l) > valorPais(mx)) mx = l;
+            }
+            elMin.textContent = fmtPreco(valorPais(mn)); subMin.textContent = fmtData(mn.iso);
+            elMax.textContent = fmtPreco(valorPais(mx)); subMax.textContent = fmtData(mx.iso);
+        } else {
+            elMin.textContent = '--'; subMin.textContent = 'sem índice no período';
+            elMax.textContent = '--'; subMax.textContent = 'sem índice no período';
+        }
+    }
+
+    function renderInsight(dados) {
+        const es = dados.filter(l => l.es !== null);
+        const el = document.getElementById('insight-periodo');
+
+        // Sem índice de referência no intervalo — tipicamente "Hoje" ou "Amanhã", cujos
+        // índices só saem um a dois dias depois. Não é um erro: é o que os dados têm.
+        if (!es.length) {
+            const partes = [];
+            const umDia = periodo.inicio === periodo.fim;
+            partes.push(umDia
+                ? `O <strong>índice de referência de ${fmtData(periodo.inicio)}</strong> ainda não foi publicado.`
+                : `Não há <strong>índice de referência</strong> publicado entre ${fmtData(periodo.inicio)} e ${fmtData(periodo.fim)}.`);
+            partes.push(`Os índices MIBGAS PT e ES saem com um a dois dias de atraso — o último disponível é de <strong>${fmtData(ANCORA)}</strong>.`);
+
+            // Se os hubs já cotaram esses dias, vale a pena dizê-lo — mas identificando
+            // que é outra família de valores, não o índice.
+            const comHub = dados.filter(l => l.vtp !== null || l.pvb !== null);
+            if (comHub.length) {
+                const u = comHub[comHub.length - 1];
+                const bits = [];
+                if (u.vtp !== null) bits.push(`<strong>VTP (Portugal) ${fmt2(u.vtp)} €/MWh</strong>`);
+                if (u.pvb !== null) bits.push(`<strong>PVB (Espanha) ${fmt2(u.pvb)} €/MWh</strong>`);
+                partes.push(`Nesse dia os <em>hubs</em> já fecharam: ${bits.join(' e ')} (${fmtData(u.iso)}). ` +
+                    `São outra família de valores — o preço a que o gás mudou de mãos, não o índice que os contratos indexados usam.`);
+            }
+            partes.push(`Para ver o último dia com índice, use <strong>Últimos 7 dias</strong> ou <strong>Este mês</strong>.`);
+            el.innerHTML = partes.join(' ');
+            return;
+        }
+
+        // Um único dia: a redação de "média do período" não serve.
+        if (es.length === 1) {
+            const l = es[0];
+            const todosES = LINHAS.filter(x => x.es !== null).map(x => x.es).sort((a, b) => a - b);
+            const pct = Math.round(100 * todosES.filter(v => v < l.es).length / todosES.length);
+            const partes = [`A <strong>${fmtData(l.iso)}</strong> o índice de referência fechou em <strong>${fmtPreco(l.es)}</strong> (${fmtkWh(l.es)}).`];
+            partes.push(`Esse valor está acima de <strong>${pct}%</strong> de todos os dias da série desde ${MIN_SERIE.substring(0, 4)}.`);
+            if (l.pt !== null) {
+                const dif = l.pt - l.es;
+                partes.push(`Portugal fechou em <strong>${fmtPreco(l.pt)}</strong>, ${Math.abs(dif) < 0.005 ? 'praticamente ao nível de Espanha' : (dif > 0 ? `<strong>${fmt2(dif)} €/MWh acima</strong>` : `<strong>${fmt2(-dif)} €/MWh abaixo</strong>`)}.`);
+            }
+            const ant = LINHAS.filter(x => x.es !== null && x.iso < l.iso).pop();
+            if (ant && ant.es > 0) {
+                const v = 100 * (l.es - ant.es) / ant.es;
+                partes.push(`Face ao dia com índice anterior (${fmtData(ant.iso)}, ${fmt2(ant.es)}), ${v >= 0 ? 'subiu' : 'desceu'} <strong>${fmt1(Math.abs(v))}%</strong>.`);
+            }
+            el.innerHTML = partes.join(' ');
+            return;
+        }
+
+        const vals = es.map(l => l.es);
+        const m = media(vals);
+        const ordenados = [...vals].sort((a, b) => a - b);
+        const sd = desvioPadrao(vals);
+
+        // Onde é que a média do período se situa na série completa?
+        const todosES = LINHAS.filter(l => l.es !== null).map(l => l.es).sort((a, b) => a - b);
+        const abaixo = todosES.filter(v => v < m).length;
+        const pct = Math.round(100 * abaixo / todosES.length);
+
+        const partes = [];
+        partes.push(`Entre <strong>${fmtData(periodo.inicio)}</strong> e <strong>${fmtData(periodo.fim)}</strong> houve índice em <strong>${_nf0.format(es.length)} dia${es.length > 1 ? 's' : ''}</strong>, com média de <strong>${fmtPreco(m)}</strong> (${fmtkWh(m)}) <em>em Espanha</em>.`);
+        partes.push(`Esse nível está acima de <strong>${pct}%</strong> de todos os dias da série desde ${MIN_SERIE.substring(0, 4)}.`);
+        if (sd !== null && m > 0) {
+            const cv = 100 * sd / m;
+            const adj = cv < 10 ? 'muito estável' : cv < 20 ? 'estável' : cv < 35 ? 'agitado' : 'muito volátil';
+            partes.push(`O desvio-padrão foi de <strong>${fmt2(sd)} €/MWh</strong> (${fmt1(cv)}% da média) — um período <strong>${adj}</strong>.`);
+        }
+        const amplitude = ordenados[ordenados.length - 1] - ordenados[0];
+        if (ordenados[0] > 0) {
+            partes.push(`Entre o dia mais barato e o mais caro vão <strong>${fmt2(amplitude)} €/MWh</strong>, ou <strong>${fmt1(100 * amplitude / ordenados[0])}%</strong>.`);
+        }
+        const comPT = es.filter(l => l.pt !== null);
+        if (comPT.length >= es.length * COBERTURA_MINIMA) {
+            const difs = comPT.map(l => l.pt - l.es);
+            const mDif = media(difs);
+            const acima1 = difs.filter(d => Math.abs(d) > 1).length;
+            partes.push(`Portugal esteve em média <strong>${(mDif >= 0 ? '+' : '') + fmt2(mDif)} €/MWh</strong> face a Espanha, com desvios acima de 1 €/MWh em <strong>${Math.round(100 * acima1 / difs.length)}%</strong> dos dias.`);
+        }
+        el.innerHTML = partes.join(' ');
+    }
+
+    // --- Gráfico: série ---
+    function renderSerie(dados) {
+        const _d = _hcDark();
+        Highcharts.chart('grafico-serie', {
+            chart: { type: 'line', backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: { text: null }, credits: { enabled: false },
+            xAxis: { type: 'datetime', labels: { style: { color: _d.txt } }, lineColor: _d.grid, tickColor: _d.grid },
+            yAxis: { title: { text: '€/MWh', style: { color: _d.txt } }, labels: { style: { color: _d.txt } }, gridLineColor: _d.grid },
+            legend: { itemStyle: { color: _d.txt } },
+            tooltip: {
+                shared: true, xDateFormat: '%A, %d de %B de %Y',
+                pointFormatter: function () {
+                    return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmt2(this.y)} €/MWh</b> (${_nf4.format(this.y / 1000)} €/kWh)<br/>`;
+                }
+            },
+            plotOptions: { series: { marker: { enabled: dados.length <= 60 }, connectNulls: false, lineWidth: 1.6 } },
+            series: [
+                { name: 'MIBGAS Portugal', color: '#0d6efd', data: dados.map(l => [l.ts, l.pt]) },
+                { name: 'MIBGAS Espanha', color: '#e8590c', data: dados.map(l => [l.ts, l.es]) }
+            ],
+            accessibility: { description: 'Evolução do preço diário do gás natural no mercado ibérico durante o período selecionado, em euros por megawatt-hora.' },
+            exporting: { buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadCSV'] } } }
+        });
+    }
+
+    // --- Gráfico: histograma + estatísticas ---
+    function renderHistograma(dados) {
+        const vals = dados.filter(l => l.es !== null).map(l => l.es).sort((a, b) => a - b);
+        const stats = document.getElementById('histograma-stats');
+        const cont = document.getElementById('grafico-histograma');
+        if (vals.length < 5) {
+            stats.innerHTML = '';
+            cont.innerHTML = '<div class="bloco-vazio">Período demasiado curto para uma distribuição — são precisos pelo menos 5 dias com índice.</div>';
+            return;
+        }
+        const chips = [
+            ['Mínimo', percentil(vals, 0)], ['P10', percentil(vals, 0.10)], ['P25', percentil(vals, 0.25)],
+            ['Mediana', percentil(vals, 0.50)], ['Média', media(vals)],
+            ['P75', percentil(vals, 0.75)], ['P90', percentil(vals, 0.90)], ['Máximo', vals[vals.length - 1]]
+        ];
+        stats.innerHTML = chips.map(([k, v]) => `<span class="stat-chip">${k} <b>${fmt2(v)}</b></span>`).join('');
+
+        const min = vals[0], max = vals[vals.length - 1];
+        const nBins = Math.max(6, Math.min(24, Math.round(Math.sqrt(vals.length))));
+        const largura = (max - min) / nBins || 1;
+        const bins = new Array(nBins).fill(0);
+        for (const v of vals) bins[Math.min(nBins - 1, Math.floor((v - min) / largura))]++;
+        const cats = bins.map((_, i) => `${fmt1(min + i * largura)}–${fmt1(min + (i + 1) * largura)}`);
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-histograma', {
+            chart: { type: 'column', backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: null }, credits: { enabled: false },
+            xAxis: { categories: cats, title: { text: '€/MWh', style: { color: _d.txt } }, labels: { style: { color: _d.txt, fontSize: '0.72em' }, rotation: -45 }, lineColor: _d.grid, tickColor: _d.grid },
+            yAxis: { title: { text: 'dias', style: { color: _d.txt } }, labels: { style: { color: _d.txt } }, gridLineColor: _d.grid },
+            legend: { enabled: false },
+            tooltip: { pointFormatter: function () { return `<b>${this.y} dia${this.y === 1 ? '' : 's'}</b> nesta faixa`; } },
+            plotOptions: { column: { borderWidth: 0, pointPadding: 0.02, groupPadding: 0.06, color: '#e8590c' } },
+            series: [{ name: 'dias', data: bins }],
+            accessibility: { description: 'Histograma da distribuição dos preços diários do gás no período selecionado.' },
+            exporting: { buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadCSV'] } } }
+        });
+    }
+
+    // --- Gráfico: volatilidade ---
+    function renderVolatilidade(dados) {
+        const es = dados.filter(l => l.es !== null);
+        const cont = document.getElementById('grafico-volatilidade');
+        const intro = document.getElementById('volatilidade-intro');
+        // A janela encolhe com o período para que a primeira semana de cada mês não
+        // fique sem bloco. Abaixo de 14 dias com índice não há série suficiente para
+        // um desvio móvel dizer alguma coisa.
+        let janela = 0;
+        if (es.length >= 60) janela = 30;
+        else if (es.length >= 21) janela = 7;
+        else if (es.length >= 14) janela = 5;
+        if (!janela) {
+            intro.textContent = 'Desvio-padrão móvel: mede a agitação do mercado, não o nível do preço.';
+            cont.innerHTML = '<div class="bloco-vazio">Período demasiado curto para desvio-padrão móvel — são precisos pelo menos 14 dias com índice.</div>';
+            return;
+        }
+        intro.textContent = `Desvio-padrão móvel de ${janela} dias: mede a agitação do mercado, não o nível do preço. Sobe quando os preços saltam de dia para dia, mesmo que o nível médio não mude.`;
+        const pontos = [];
+        for (let i = janela - 1; i < es.length; i++) {
+            const sd = desvioPadrao(es.slice(i - janela + 1, i + 1).map(l => l.es));
+            if (sd !== null) pontos.push([es[i].ts, +sd.toFixed(3)]);
+        }
+        const _d = _hcDark();
+        Highcharts.chart('grafico-volatilidade', {
+            chart: { type: 'area', backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: { text: null }, credits: { enabled: false },
+            xAxis: { type: 'datetime', labels: { style: { color: _d.txt } }, lineColor: _d.grid, tickColor: _d.grid },
+            yAxis: { title: { text: `desvio-padrão ${janela}d (€/MWh)`, style: { color: _d.txt } }, labels: { style: { color: _d.txt } }, gridLineColor: _d.grid, min: 0 },
+            legend: { enabled: false },
+            tooltip: { xDateFormat: '%d/%m/%Y', pointFormatter: function () { return `Desvio-padrão: <b>${fmt2(this.y)} €/MWh</b>`; } },
+            plotOptions: { area: { marker: { enabled: false }, lineWidth: 1.4, color: '#7c3aed', fillOpacity: 0.22 } },
+            series: [{ name: `Desvio-padrão ${janela}d`, data: pontos }],
+            accessibility: { description: `Volatilidade do preço do gás no período, medida pelo desvio-padrão móvel de ${janela} dias.` },
+            exporting: { buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadCSV'] } } }
+        });
+    }
+
+    // --- Gráfico + tabela: o mesmo período em todos os anos ---
+    function renderYTD() {
+        const { janelas, modo } = janelasPorAno();
+        const cats = [], valES = [], valPT = [];
+        const linhasTabela = [];
+        for (const j of janelas) {
+            const dados = filtrar(j.de, j.ate);
+            const es = dados.filter(l => l.es !== null).map(l => l.es);
+            if (!es.length) continue;
+            const mES = media(es);
+            const mPT = mediaPTComparavel(dados);
+            cats.push(j.rotulo); valES.push(mES); valPT.push(mPT);
+            linhasTabela.push({ rotulo: j.rotulo, mES, mPT, min: Math.min(...es), max: Math.max(...es), n: es.length });
+        }
+
+        const intro = document.getElementById('ytd-intro');
+        const caption = document.getElementById('tabela-caption');
+        const titulo = document.getElementById('ytd-titulo');
+        if (modo === 'anual') {
+            titulo.textContent = 'Ano a ano, a série completa';
+            intro.textContent = 'O período escolhido cobre um ano ou mais, por isso cada barra é a média do ano civil inteiro.';
+            caption.textContent = 'Média por ano civil (€/MWh)';
+        } else if (modo === 'cruza') {
+            const rot = `${fmtDataCurta(periodo.inicio)} a ${fmtDataCurta(periodo.fim)}`;
+            titulo.textContent = 'O mesmo período, em todos os invernos';
+            intro.textContent = `O período escolhido cruza o fim do ano, por isso cada barra vai de ${rot} do ano seguinte — dezembro com o janeiro que se lhe segue, e não o janeiro do mesmo ano civil.`;
+            caption.textContent = `Janela de ${rot}, ano a ano (€/MWh)`;
+        } else {
+            const rot = `${fmtDataCurta(periodo.inicio)} a ${fmtDataCurta(periodo.fim)}`;
+            titulo.textContent = 'O mesmo período, em todos os anos';
+            intro.textContent = `A mesma janela do calendário — de ${rot} — aplicada a todos os anos da série. Responde a "este período costuma ser caro ou barato?".`;
+            caption.textContent = `Janela de ${rot}, ano a ano (€/MWh)`;
+        }
+
+        // Tabela
+        const anoAtual = periodo.fim.substring(0, 4);
+        let maxVal = -Infinity, maxRot = null;
+        linhasTabela.forEach(r => { if (r.mES > maxVal) { maxVal = r.mES; maxRot = r.rotulo; } });
+        document.getElementById('tabela-anos').innerHTML = linhasTabela.map(r => {
+            const destaque = r.rotulo === maxRot ? ' class="destaque"' : '';
+            const marca = r.rotulo.startsWith(anoAtual) ? ' *' : '';
+            return `<tr${destaque}><th scope="row">${r.rotulo}${marca}</th><td>${fmt2(r.mES)}</td>` +
+                `<td>${r.mPT === null ? '--' : fmt2(r.mPT)}</td><td>${fmt2(r.min)}</td><td>${fmt2(r.max)}</td><td>${_nf0.format(r.n)}</td></tr>`;
+        }).join('');
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-ytd', {
+            chart: { type: 'column', backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: null }, credits: { enabled: false },
+            xAxis: { categories: cats, labels: { style: { color: _d.txt } }, lineColor: _d.grid, tickColor: _d.grid },
+            yAxis: { title: { text: '€/MWh', style: { color: _d.txt } }, labels: { style: { color: _d.txt } }, gridLineColor: _d.grid },
+            legend: { itemStyle: { color: _d.txt } },
+            tooltip: { shared: true, pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmt2(this.y)} €/MWh</b><br/>`; } },
+            plotOptions: { column: { borderWidth: 0, groupPadding: 0.12 } },
+            series: [
+                { name: 'Espanha', color: '#e8590c', data: valES },
+                { name: 'Portugal', color: '#0d6efd', data: valPT }
+            ],
+            accessibility: { description: 'Preço médio do gás na mesma janela do calendário, para cada ano da série.' },
+            exporting: { buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadCSV'] } } }
+        });
+    }
+
+    // --- Gráfico: diferencial PT − ES ---
+    function renderPTES(dados) {
+        const pontos = dados.filter(l => l.pt !== null && l.es !== null).map(l => [l.ts, +(l.pt - l.es).toFixed(3)]);
+        const cont = document.getElementById('grafico-ptes');
+        if (pontos.length < 3) {
+            cont.innerHTML = '<div class="bloco-vazio">Sem dias com os dois índices neste período. O índice português só existe a partir de 17/03/2021.</div>';
+            return;
+        }
+        const _d = _hcDark();
+        Highcharts.chart('grafico-ptes', {
+            chart: { type: 'area', backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: { text: null }, credits: { enabled: false },
+            xAxis: { type: 'datetime', labels: { style: { color: _d.txt } }, lineColor: _d.grid, tickColor: _d.grid },
+            yAxis: { title: { text: 'PT − ES (€/MWh)', style: { color: _d.txt } }, labels: { style: { color: _d.txt } }, gridLineColor: _d.grid, plotLines: [{ value: 0, width: 1, color: _d.txt, zIndex: 3 }] },
+            legend: { enabled: false },
+            tooltip: {
+                xDateFormat: '%d/%m/%Y',
+                pointFormatter: function () {
+                    const s = this.y > 0 ? 'mais caro em Portugal' : (this.y < 0 ? 'mais barato em Portugal' : 'igual');
+                    return `<b>${fmt2(this.y)} €/MWh</b><br/>${s}`;
+                }
+            },
+            plotOptions: { area: { marker: { enabled: false }, lineWidth: 1, negativeColor: '#1e8449', color: '#c0392b', fillOpacity: 0.25, threshold: 0, connectNulls: false } },
+            series: [{ name: 'PT − ES', data: pontos }],
+            accessibility: { description: 'Diferença diária entre o índice de referência português e o espanhol, no período selecionado.' },
+            exporting: { buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadCSV'] } } }
+        });
+    }
+
+    // --- Gráfico: GNL face à referência ---
+    function renderGNL(dados) {
+        const cont = document.getElementById('grafico-gnl');
+        const pares = dados.filter(l => l.lng !== null && l.es !== null);
+        if (pares.length < 3) {
+            cont.innerHTML = '<div class="bloco-vazio">Sem dias com índice de GNL e índice de referência neste período. A série de GNL começa a 13/06/2019 e tem dias sem cotação.</div>';
+            return;
+        }
+        // connectNulls: false e sem interpolação — os buracos da série de GNL são reais.
+        const pontos = dados.map(l => [l.ts, (l.lng !== null && l.es !== null) ? +(l.lng - l.es).toFixed(3) : null]);
+        const difs = pares.map(l => l.lng - l.es).sort((a, b) => a - b);
+        const mediana = percentil(difs, 0.5);
+        const abaixo = difs.filter(d => d < 0).length;
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-gnl', {
+            chart: { type: 'area', backgroundColor: _d.bg, style: { color: _d.txt }, zoomType: 'x' },
+            title: {
+                text: `Mediana no período: ${fmt2(mediana)} €/MWh · GNL abaixo da referência em ${Math.round(100 * abaixo / difs.length)}% dos ${difs.length} dias com ambos`,
+                style: { color: _d.txt, fontSize: '0.82em' }
+            },
+            credits: { enabled: false },
+            xAxis: { type: 'datetime', labels: { style: { color: _d.txt } }, lineColor: _d.grid, tickColor: _d.grid },
+            yAxis: { title: { text: 'GNL − referência (€/MWh)', style: { color: _d.txt } }, labels: { style: { color: _d.txt } }, gridLineColor: _d.grid, plotLines: [{ value: 0, width: 1, color: _d.txt, zIndex: 3 }] },
+            legend: { enabled: false },
+            tooltip: {
+                xDateFormat: '%d/%m/%Y',
+                pointFormatter: function () {
+                    const s = this.y < 0 ? 'GNL mais barato que a referência' : (this.y > 0 ? 'GNL mais caro' : 'igual');
+                    return `<b>${fmt2(this.y)} €/MWh</b><br/>${s}`;
+                }
+            },
+            plotOptions: { area: { marker: { enabled: false }, lineWidth: 1, negativeColor: '#1e8449', color: '#c0392b', fillOpacity: 0.22, threshold: 0, connectNulls: false } },
+            series: [{ name: 'GNL − referência', data: pontos }],
+            accessibility: { description: 'Diferença entre o índice de gás natural liquefeito em Espanha e o índice de referência espanhol, no período selecionado.' },
+            exporting: { buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadCSV'] } } }
+        });
+    }
+
+    // --- Gráfico: padrão por dia da semana (do período) ---
+    function renderDiaSemana(dados) {
+        const nomes = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+        const ordem = [1, 2, 3, 4, 5, 6, 0];   // segunda → domingo
+        const estado = document.getElementById('fds-estado');
+        const cont = document.getElementById('grafico-dia-semana');
+
+        const e = efeitoFDS(dados);
+        const medias = ordem.map(d => media(dados.filter(l => l.es !== null && l.dow === d).map(l => l.es)));
+        const contagens = ordem.map(d => dados.filter(l => l.es !== null && l.dow === d).length);
+
+        if (!e || Math.min(...contagens) < 2) {
+            estado.textContent = 'Período demasiado curto para um padrão semanal fiável.';
+            cont.innerHTML = '';
+            return;
+        }
+        if (Math.abs(e.pct) < 1) {
+            estado.innerHTML = `<strong>Sem padrão significativo neste período.</strong> O fim de semana ficou a ${fmtPct(e.pct, 1)} dos dias úteis — dentro do ruído. É o que se espera do mercado desde 2023.`;
+        } else {
+            estado.innerHTML = `Neste período o fim de semana negociou a <strong>${fmtPct(e.pct, 1)}</strong> dos dias úteis (${fmt2(e.mf)} contra ${fmt2(e.mu)} €/MWh).`;
+        }
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-dia-semana', {
+            chart: { type: 'column', backgroundColor: _d.bg, style: { color: _d.txt } },
+            title: { text: null }, credits: { enabled: false },
+            xAxis: { categories: ordem.map(d => nomes[d]), labels: { style: { color: _d.txt } }, lineColor: _d.grid, tickColor: _d.grid },
+            yAxis: { title: { text: '€/MWh', style: { color: _d.txt } }, labels: { style: { color: _d.txt } }, gridLineColor: _d.grid },
+            legend: { enabled: false },
+            tooltip: {
+                formatter: function () {
+                    return `<b>${this.x}</b><br/>Média: <b>${fmt2(this.y)} €/MWh</b><br/>${contagens[this.point.index]} dias`;
+                }
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0,
+                    colorByPoint: true,
+                    colors: ordem.map(d => (d === 0 || d === 6) ? '#0d6efd' : '#94a3b8')
+                }
+            },
+            series: [{ name: 'Média', data: medias }],
+            accessibility: { description: 'Preço médio do gás por dia da semana no período selecionado. Fim de semana destacado.' },
+            exporting: { buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadCSV'] } } }
+        });
+    }
+
+    // --- Top dias ---
+    function renderTopDias(dados) {
+        const es = dados.filter(l => l.es !== null);
+        const caros = [...es].sort((a, b) => b.es - a.es).slice(0, 5);
+        const baratos = [...es].sort((a, b) => a.es - b.es).slice(0, 5);
+        const linha = l => `<div class="top-linha"><span class="top-data">${fmtData(l.iso)}</span><span class="top-valor">${fmtPreco(l.es)}</span></div>`;
+        document.getElementById('top-dias-caros').innerHTML = caros.length ? caros.map(linha).join('') : '<div class="top-linha">Sem dados no período.</div>';
+        document.getElementById('top-dias-baratos').innerHTML = baratos.length ? baratos.map(linha).join('') : '<div class="top-linha">Sem dados no período.</div>';
+    }
+
+    // ====================== ORQUESTRAÇÃO ======================
+    function renderTudo() {
+        const dados = filtrar(periodo.inicio, periodo.fim);
+        renderTitulo();
+        renderKPIs(dados);
+        renderInsight(dados);
+        renderSerie(dados);
+        renderHistograma(dados);
+        renderVolatilidade(dados);
+        renderYTD();
+        renderPTES(dados);
+        renderGNL(dados);
+        renderDiaSemana(dados);
+        renderTopDias(dados);
+    }
+
+    // ====================== EVENTOS ======================
+    // Só os cartões mudam de país: re-renderizar a página inteira seria enganador,
+    // porque os outros blocos continuam a ser sobre Espanha e dizem-no nos subtítulos.
+    document.querySelectorAll('.kpi-pais .hh-mode-btn, .kpi-indice .hh-mode-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (this.disabled) return;
+            if (this.dataset.pais) {
+                if (this.dataset.pais === paisKPI) return;
+                paisKPI = this.dataset.pais; escolhaPais = true;
+            } else {
+                if (this.dataset.indice === indiceKPI) return;
+                indiceKPI = this.dataset.indice; escolhaIndice = true;
+            }
+            renderKPIs(filtrar(periodo.inicio, periodo.fim));
+            atualizarURL();
+        });
+    });
+
+    document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const p = this.dataset.preset;
+            if (p === 'custom') {
+                // Abre já com a série completa — é o antigo preset "Tudo", que deixou
+                // de ter botão próprio e passou a ser o ponto de partida da edição manual.
+                const d = getPresetDates('tudo');
+                periodo = { inicio: d.inicio, fim: d.fim };
+                seletorDataInicio.value = d.inicio;
+                seletorDataFim.value = d.fim;
+                document.getElementById('erro-periodo').style.display = 'none';
+                atualizarBotoesPreset('custom');
+                setDateInputsVisibilidade('custom');
+                atualizarURL();
+                renderTudo();
+                return;
+            }
+            aplicarPreset(p);
+        });
+    });
+    seletorDataInicio.addEventListener('change', aplicarDatasManuais);
+    seletorDataFim.addEventListener('change', aplicarDatasManuais);
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+
+    document.addEventListener('themeChanged', function () {
+        if (LINHAS.length) renderTudo();
+    });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', function () {
+        btnTopo.classList.toggle('visible', window.scrollY > 500);
+    }, { passive: true });
+    btnTopo.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    window.addEventListener('beforeprint', function () {
+        document.querySelectorAll('details.faq-item, #recordes-section').forEach(d => {
+            if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+        });
+    });
+    window.addEventListener('afterprint', function () {
+        document.querySelectorAll('[data-opened-for-print="1"]').forEach(d => {
+            d.removeAttribute('open'); delete d.dataset.openedForPrint;
+        });
+    });
+
+    // ====================== ARRANQUE ======================
+    fetchDados(URL_MIBGAS)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(texto => {
+            LINHAS = parseCSV(texto);
+            if (!LINHAS.length) throw new Error('Ficheiro MIBGAS vazio ou ilegível.');
+
+            ANCORA = ultimoComES().iso;
+            MAX_FICHEIRO = LINHAS[LINHAS.length - 1].iso;
+            MIN_SERIE = LINHAS[0].iso;
+
+            // Os inputs vão até à última linha do ficheiro (não à âncora): os dias só com
+            // hub continuam alcançáveis, e a nota explica o que lá falta.
+            seletorDataInicio.min = MIN_SERIE; seletorDataInicio.max = MAX_FICHEIRO;
+            seletorDataFim.min = MIN_SERIE; seletorDataFim.max = MAX_FICHEIRO;
+
+            document.getElementById('estado').hidden = true;
+
+            renderBadgeGlobal();
+            renderNotaSeries();
+            renderRecordes();
+            renderFDSHistoria();
+
+            // Um par vindo da URL é uma escolha explícita de quem partilhou o link.
+            paisKPI = lerPaisURL();   escolhaPais = paisKPI !== 'pt';
+            indiceKPI = lerIndiceURL(); escolhaIndice = indiceKPI !== 'gasday';
+
+            const doURL = lerURLState();
+            if (doURL && doURL.inicio >= MIN_SERIE && doURL.fim <= MAX_FICHEIRO) {
+                periodo = doURL;
+                seletorDataInicio.value = doURL.inicio;
+                seletorDataFim.value = doURL.fim;
+                const p = detectarPreset(doURL.inicio, doURL.fim);
+                atualizarBotoesPreset(p);
+                setDateInputsVisibilidade(p);
+                renderTudo();
+            } else {
+                aplicarPreset('mes');
+            }
+        })
+        .catch(err => {
+            console.error('MIBGAS:', err);
+            const el = document.getElementById('estado');
+            el.className = 'estado-erro';
+            el.hidden = false;
+            el.textContent = 'Não foi possível carregar os índices MIBGAS. Tente novamente dentro de alguns minutos.';
+        });
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>

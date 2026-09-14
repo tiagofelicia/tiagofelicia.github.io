@@ -326,10 +326,17 @@
         }
 
         /* ===== Mini-navegação (B3) ===== */
-        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; }
-        .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s; }
-        .mini-nav-chip:hover { background: #e2e8f0; }
+        /* O style.css tem `nav { background:#34495e; padding:1em }` e
+           `nav a { color:#fff; font-weight:bold }` para a barra de navegação do site.
+           Um <nav> dentro do <main> apanha-as: daí o background, o font-weight e o
+           text-decoration explícitos abaixo. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; }
+        .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; cursor: pointer; text-decoration: none; transition: background 0.15s, color 0.15s; }
+        .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
         .mini-nav-chip.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        /* O style.css também tem `[data-theme="dark"] nav { background:#1e293b }`,
+           que é mais específico do que `.mini-nav` — daí esta anulação. */
+        [data-theme="dark"] .mini-nav { background: transparent; }
         [data-theme="dark"] .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .mini-nav-chip:hover { background: #334155; }
         [data-theme="dark"] .mini-nav-chip.active { background: #2563eb; color: #fff; border-color: #2563eb; }

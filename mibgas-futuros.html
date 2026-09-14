@@ -1,0 +1,2730 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Futuros do Gás Natural (MIBGAS): Curva a Prazo | Tiago Felícia</title>
+    <meta name="description" content="Curva forward do gás natural ibérico: preços a prazo do MIBGAS por período de entrega, do intradiário ao ano Y+2, desde 2015. Evolução histórica, acerto do mercado face ao realizado e clean spark spread a prazo." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/mibgas-futuros" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mibgas-futuros" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mibgas-futuros" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Futuros do Gás Natural Ibérico (MIBGAS)" />
+    <meta property="og:description" content="Quanto custa o gás para entrega futura: curva a prazo, histórico desde 2015, o acerto do mercado e o custo de produzir eletricidade com gás." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/mibgas-futuros" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-gas.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Futuros do gás natural ibérico (MIBGAS) — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Curva a prazo do gás natural ibérico (MIBGAS)",
+      "description": "Cotações de fecho dos produtos a prazo do MIBGAS, do intradiário ao ano Y+2, desde 16 de dezembro de 2015. Uma linha por sessão, produto e período de entrega, com preço de fecho, preço de referência e volume transacionado. Os produtos de médio e longo prazo existem apenas para a zona espanhola (PVB); Portugal tem apenas curto prazo. Valores em EUR/MWh (PCS).",
+      "url": "https://www.tiagofelicia.pt/mibgas-futuros",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "inLanguage": "pt-PT",
+      "temporalCoverage": "2015-12-16/..",
+      "spatialCoverage": { "@type": "Place", "name": "Portugal e Espanha" },
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Preço de fecho (Last Price)", "unitText": "EUR/MWh", "description": "Sinal de preço de fecho da sessão para cada produto a prazo. Publicado a partir de 1 de janeiro de 2023." },
+        { "@type": "PropertyValue", "name": "Preço de referência (Reference Price)", "unitText": "EUR/MWh", "description": "Média ponderada das transações da sessão. É a única série disponível entre 2015 e 2022." },
+        { "@type": "PropertyValue", "name": "Período de entrega", "description": "Início e fim do período de entrega de cada produto, e o rótulo por extenso (Outubro 2026, 4.º Trimestre 2026, Inverno 2026/27, 2028)." },
+        { "@type": "PropertyValue", "name": "Volume transacionado", "unitText": "MWh", "description": "Volume negociado na sessão para esse produto e período de entrega." }
+      ],
+      "creator": {
+        "@type": "Person",
+        "@id": "https://www.tiagofelicia.pt/#person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/gas/mibgas_futuros.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/gas/mibgas_spot.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/gas/mibgas_ttf_spread.csv" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Preço do Gás Natural (MIBGAS)", "item": "https://www.tiagofelicia.pt/mibgas" },
+        { "@type": "ListItem", "position": 3, "name": "Futuros do Gás Natural (MIBGAS)", "item": "https://www.tiagofelicia.pt/mibgas-futuros" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "O que são os futuros do MIBGAS?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "São contratos para comprar ou vender gás natural a um preço fixado hoje, com entrega num período futuro: um dia, um fim de semana, o resto do mês, um mês, um trimestre, uma estação (o semestre de inverno ou de verão) ou um ano civil. O preço de cada contrato é a expectativa do mercado, naquela sessão, sobre quanto vai custar o gás durante esse período de entrega. O horizonte mais distante cotado é o ano Y+2."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque não há curva a prazo para Portugal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Porque não existe. A liquidez a prazo do mercado ibérico está toda no hub espanhol (PVB): os produtos de mês, trimestre, estação, ano e resto-do-mês são cotados apenas para Espanha. Portugal tem apenas curto prazo — intradiário, day-ahead de D+1 a D+3 e fim de semana. Esta página não inventa uma curva portuguesa que o mercado não produz."
+        }
+      },{
+        "@type": "Question",
+        "name": "Qual é a diferença entre o preço de fecho e o preço de referência?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O preço de fecho (Last Price) é um sinal do fecho da sessão, que estima um valor mesmo quando não houve liquidez. O preço de referência (Reference Price) é a média ponderada das transações que realmente ocorreram. Não são alternativas em concorrência: são complementares no tempo. O preço de fecho só é publicado a partir de 1 de janeiro de 2023; entre 2015 e 2022 a única série existente é a do preço de referência. Esta página usa o preço de fecho quando existe e recua ao preço de referência quando não existe, e diz sempre qual está a mostrar."
+        }
+      },{
+        "@type": "Question",
+        "name": "O mercado a prazo do gás acerta?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nos contratos mensais, sim, e com uma precisão notável: sobre 123 entregas mensais já terminadas, o desvio médio é praticamente nulo e o erro absoluto médio ronda os 4,4 EUR/MWh. Quanto mais longo o contrato, pior: nos trimestrais o erro absoluto médio sobe para cerca de 10 EUR/MWh e nos anuais ultrapassa os 25, muito por causa de 2022. O bloco de comparação desta página mostra cada entrega individualmente."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que é o clean spark spread, e porque está sempre negativo?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É a margem de uma central de ciclo combinado a gás: o preço a que vende a eletricidade menos o que lhe custa produzi-la, contando o gás e as licenças de CO2. O custo calcula-se como gás a dividir pelo rendimento, mais o preço do CO2 multiplicado por 0,2016 e dividido pelo rendimento. Quando o spread é negativo, a central perde dinheiro a produzir em banda. Nas sessões cobertas por esta página o spread a prazo esteve sempre negativo — o que não significa que as centrais parem: elas vivem das horas de ponta, que pagam muito acima do preço em banda."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que o preço do CO₂ usado é spot e não a prazo?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Porque é o que está publicado neste conjunto de dados. O ficheiro de CO2 traz os resultados dos leilões primários de licenças da União Europeia, que são o mercado à vista. Um clean spark spread rigorosamente a prazo usaria futuros de licenças EUA, que não são publicados aqui. É uma simplificação assumida: o custo de CO2 aplicado a uma entrega de 2028 é o preço do leilão mais recente, não a expectativa do mercado para 2028."
+        }
+      },{
+        "@type": "Question",
+        "name": "O fator 0,2016 é o mesmo dos dados de intensidade carbónica?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não, e trocá-los dá um resultado errado. O valor 0,2016 toneladas de CO2 por MWh térmico é o fator de combustão do gás natural, o valor por omissão do regulamento de monitorização da União Europeia — é o que o comércio de licenças cobra. Os fatores do ficheiro de intensidade carbónica são de ciclo de vida (IPCC AR5) e incluem construção, fabrico e desmantelamento. Servem para medir a pegada da eletricidade, não para calcular o custo de licenças de emissão."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que o gás ibérico a prazo está mais barato que o TTF europeu?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É uma característica estrutural, não uma oportunidade. Espanha tem a maior capacidade de regaseificação de gás natural liquefeito da Europa e uma interligação muito limitada com França, o que faz com que o excedente ibérico não consiga sair para o resto do continente. O resultado é um desconto persistente de cerca de 0,75 EUR/MWh em todos os produtos além do mês corrente, presente em 99% das sessões desde 2024. No curto prazo o desconto desaparece: os produtos de dia negoceiam praticamente à paridade com o TTF."
+        }
+      },{
+        "@type": "Question",
+        "name": "Estes preços são o que vou pagar na minha fatura de gás?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não. São preços grossistas de energia, sem tarifas de acesso às redes, sem taxa de ocupação do subsolo, sem imposto sobre produtos petrolíferos e sem IVA nem margem do comercializador. Influenciam a forma como os comercializadores compram gás e definem as tarifas fixas, mas não são o preço final. Para saber o que paga, use o simulador de tarifários de gás natural."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        /* Os blocos de largura 95% com padding próprio: sem border-box, a soma
+           largura+padding+borda ultrapassa o contentor em ecrãs estreitos, as
+           margens automáticas resolvem para negativo e o <body> ganha scroll
+           horizontal de uns poucos pixels. */
+        .cta-simulador, .aviso-box, .metodo-box, #nota-periodo, #erro-periodo,
+        .grafico-box, .tabela-box, .kpi-card, .bloco-vazio { box-sizing: border-box; }
+        .cta-simulador, .aviso-box, .metodo-box, #nota-periodo, #erro-periodo { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #666; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 0 0 14px 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos de período (mesma mecânica da mibgas.html) --- */
+        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; overflow-x: auto; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
+        .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+        .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
+        .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 14px; flex-wrap: wrap; }
+        .date-selector-periodo label { font-weight: bold; font-size: 0.9em; }
+        .date-selector-periodo input { padding: 7px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95em; }
+        .date-selector-periodo.no-dates .date-input-wrapper { display: none; }
+        #btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 7px 14px; font-size: 0.95em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+
+        /* Toast de feedback */
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; animation: toast-in 0.2s ease-out; }
+        @keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) { .toast-feedback { animation: none; } }
+
+        @media (max-width: 700px) {
+            .periodo-presets .hh-mode-btn { padding: 5px 10px; font-size: 0.82em; }
+            #btn-partilhar { padding: 6px 10px; font-size: 0.85em; }
+        }
+
+        #nota-periodo { width: 95%; max-width: 900px; margin: 0 auto 14px auto; background: #eef6ff; border-left: 3px solid #0d6efd; padding: 8px 12px; font-size: 0.85em; color: #334155; border-radius: 0 5px 5px 0; text-align: left; }
+        #erro-periodo { display: none; width: 95%; max-width: 900px; margin: 0 auto 14px auto; background: #fdecea; border-left: 3px solid #c0392b; padding: 10px 14px; font-size: 0.9em; color: #7b241c; border-radius: 0 5px 5px 0; }
+
+        /* --- Mini-nav ---
+           O style.css tem uma regra genérica `nav { background:#34495e; padding:1em }`
+           para a barra de navegação do site, e `nav a { color:#fff; font-weight:bold }`.
+           Um <nav> dentro do <main> apanha-as — por isso ambas são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        /* --- KPIs do período --- */
+        #fut-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 22px auto; }
+        @media (max-width: 1000px) { #fut-kpis { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 700px) { #fut-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 420px) { #fut-kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .kpi-sub { font-size: 0.76em; color: #6c757d; margin-top: 5px; }
+        .kpi-spark { margin-top: 6px; line-height: 1; }
+        .kpi-delta { font-size: 0.74em; font-weight: 600; margin-top: 3px; }
+        .kpi-vazio { color: #6c757d; font-weight: 400; font-size: 0.82em; }
+
+        .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; }
+        .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0 0 4px 0; }
+        .kpi-cabecalho p { font-size: 0.85em; color: #6c757d; margin: 0; }
+
+        /* --- Blocos de gráfico --- */
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #666; margin: 0 0 12px 0; }
+        .grafico { width: 100%; height: 440px; }
+        #grafico-ttf { height: 380px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #6c757d; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+
+        /* --- Controlos dos blocos (grupos de botões, à maneira da omip.html) --- */
+        .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
+        .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
+        .ctrl-grupo { display: flex; gap: 6px; align-items: center; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(:disabled) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .btn-toggle button:disabled { color: #cbd5e1; cursor: not-allowed; background: #fafafa; }
+        .ctrl-select { font-size: 0.85em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #475569; max-width: 250px; }
+
+        /* Chips de seleção de entregas */
+        .ent-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .ent-chip { border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 999px; padding: 4px 11px; font-size: 0.8em; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+        .ent-chip:hover { background: #f1f5f9; }
+        .ent-chip[aria-pressed="true"] { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .ent-nota { flex-basis: 100%; font-size: 0.78em; color: #888; margin: 4px 0 0; }
+
+        /* Cursor de rendimento */
+        .rend-wrap { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .rend-wrap input[type="range"] { width: 190px; accent-color: #2563eb; }
+        .rend-valor { font-weight: 700; color: #2563eb; font-variant-numeric: tabular-nums; min-width: 3.2em; }
+
+        /* --- Tabelas --- */
+        .tabela-box { width: 95%; max-width: 1200px; margin: 0 auto 20px auto; overflow-x: auto; }
+        .tabela-fut { border-collapse: collapse; width: 100%; font-size: 0.88em; background: #fff; }
+        .tabela-fut caption { text-align: left; padding: 10px 12px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; font-size: 0.95em; }
+        .tabela-fut th, .tabela-fut td { border: 1px solid #dee2e6; padding: 7px 12px; text-align: right; font-variant-numeric: tabular-nums; }
+        .tabela-fut th[scope="col"] { background: #f1f3f5; text-align: right; font-weight: 600; }
+        .tabela-fut th[scope="row"] { text-align: left; font-weight: 600; font-variant-numeric: normal; }
+        .tabela-fut tbody tr:nth-child(even) { background: #fbfcfd; }
+        .tabela-fut tbody tr.clicavel { cursor: pointer; }
+        .tabela-fut tbody tr.clicavel:hover { background: #eef4ff; }
+        .tabela-fut tbody tr.ativa { background: #dbeafe !important; font-weight: 600; }
+        .tabela-fut td.sobe { color: #c0392b; }
+        .tabela-fut td.desce { color: #1e8449; }
+        .tabela-fut tfoot td { background: #f1f3f5; font-size: 0.9em; }
+        .tabela-fut .col-secundaria { color: #6c757d; font-size: 0.92em; }
+
+        /* --- Caixas de aviso e de método --- */
+        .aviso-box { width: 95%; max-width: 1200px; margin: 22px auto; background: #fff8e1; border-left: 4px solid #f0ad4e; padding: 12px 16px; font-size: 0.9em; border-radius: 0 6px 6px 0; }
+        .aviso-box p { margin: 0 0 8px 0; }
+        .aviso-box p:last-child { margin-bottom: 0; }
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box code { background: #e9ecef; padding: 1px 5px; border-radius: 3px; font-size: 0.95em; }
+        .resumo-bloco { width: 100%; margin: 12px 0 0; font-size: 0.9em; color: #444; line-height: 1.6; }
+        .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+        .bloco-estado { text-align: center; font-size: 0.88em; color: #888; padding: 26px 10px; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-irma { font-size: 0.88em; color: #6c757d; margin-top: 12px; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+
+        /* --- Voltar ao topo --- */
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        /* --- Dark mode --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p,
+        [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro,
+        [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .bloco-estado { color: #94a3b8; }
+        [data-theme="dark"] .badge-global strong { color: #e2e8f0; }
+        [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .date-selector-periodo input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .date-selector-periodo input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] #btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] #nota-periodo { background: #1e3a5f; color: #cbd5e1; border-left-color: #3b82f6; }
+        [data-theme="dark"] #erro-periodo { background: #4a1c1c; color: #fca5a5; border-left-color: #dc2626; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub, [data-theme="dark"] .kpi-vazio { color: #94a3b8; }
+        [data-theme="dark"] .kpi-value { color: #e2e8f0; }
+        [data-theme="dark"] .kpi-cabecalho h2 { color: #e2e8f0; }
+        [data-theme="dark"] .kpi-cabecalho p { color: #94a3b8; }
+        [data-theme="dark"] .grafico-box h2 { color: #e2e8f0; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .ctrl-label { color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(:disabled) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .btn-toggle button:disabled { color: #475569; background: #16202e; }
+        [data-theme="dark"] .ctrl-select { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .ent-chip { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .ent-chip:hover { background: #334155; }
+        [data-theme="dark"] .ent-chip[aria-pressed="true"] { background: #2563eb; border-color: #2563eb; color: #fff; }
+        [data-theme="dark"] .ent-nota { color: #94a3b8; }
+        [data-theme="dark"] .tabela-fut { background: #1e293b; }
+        [data-theme="dark"] .tabela-fut caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-fut th, [data-theme="dark"] .tabela-fut td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-fut th[scope="col"] { background: #0f172a; }
+        [data-theme="dark"] .tabela-fut tbody tr:nth-child(even) { background: #16202e; }
+        [data-theme="dark"] .tabela-fut tbody tr.clicavel:hover { background: #334155; }
+        [data-theme="dark"] .tabela-fut tbody tr.ativa { background: #1e40af !important; }
+        [data-theme="dark"] .tabela-fut tfoot td { background: #334155; color: #cbd5e1; }
+        [data-theme="dark"] .tabela-fut .col-secundaria { color: #94a3b8; }
+        [data-theme="dark"] .aviso-box { background: #422006; border-left-color: #f59e0b; color: #fde68a; }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .metodo-box code { background: #0f172a; color: #e2e8f0; }
+        [data-theme="dark"] .resumo-bloco { color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .cta-irma { color: #94a3b8; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] .spark-vazio { color: #64748b; }
+
+        /* --- Modo Impressão --- */
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link,
+            .mini-nav, .periodo-presets, .date-selector-periodo, .bloco-controls,
+            .ent-chips, .link-section, #btn-voltar-topo, .toast-feedback, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button {
+                display: none !important;
+            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .painel-header h1 { font-size: 1.3em !important; }
+            .grafico-box, .tabela-box, .kpi-card, .metodo-box, .aviso-box { break-inside: avoid; page-break-inside: avoid; }
+            /* Um bloco cujos dados ainda não chegaram não se imprime vazio */
+            .bloco-indisponivel { display: none !important; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+            details.faq-item summary { cursor: default; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li><a href="mibgas">Gás Natural</a></li>
+        <li aria-current="page">Futuros MIBGAS</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <div class="periodo-presets">
+            <div class="hh-mode-toggle" role="group" aria-label="Período pré-definido">
+                <button type="button" class="hh-mode-btn" data-preset="7d" title="Últimas sessões da última semana de negociação">7 dias</button>
+                <button type="button" class="hh-mode-btn" data-preset="1m" title="Sessões do último mês">1 mês</button>
+                <button type="button" class="hh-mode-btn" data-preset="3m" title="Sessões dos últimos 3 meses">3 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="6m" title="Sessões dos últimos 6 meses">6 meses</button>
+                <button type="button" class="hh-mode-btn active" data-preset="12m" title="Sessões dos últimos 12 meses">12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="ano" title="De 1 de janeiro do ano corrente até à última sessão">Ano Corrente</button>
+                <button type="button" class="hh-mode-btn" data-preset="custom" title="Selecionar manualmente um período — abre com a série completa, desde 16 de dezembro de 2015">Personalizado</button>
+            </div>
+        </div>
+
+        <div class="date-selector-periodo no-dates">
+            <div class="date-input-wrapper"><label for="seletor-data-inicio">Sessões de:</label> <input type="date" id="seletor-data-inicio"></div>
+            <div class="date-input-wrapper"><label for="seletor-data-fim">até:</label> <input type="date" id="seletor-data-fim"></div>
+            <button type="button" id="btn-partilhar" title="Copiar ou partilhar link com a vista atual" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
+        </div>
+
+        <div id="erro-periodo" role="alert"></div>
+        <div id="nota-periodo" role="note">O período escolhido aplica-se ao <strong>eixo das sessões</strong>: move a curva a prazo (que passa a mostrar a última sessão dentro do período), a evolução histórica, a comparação com o realizado, o spark spread e o prémio face ao TTF.</div>
+
+        <p class="badge-global">Última sessão: <strong id="badge-sessao">--/--/----</strong> · série desde <strong id="badge-inicio">--/--/----</strong> · <strong id="badge-sessoes">--</strong></p>
+
+        <nav class="mini-nav" aria-label="Navegação rápida da página">
+            <a href="#bloco-kpis" class="mini-nav-chip">💶 Resumo</a>
+            <a href="#bloco-curva" class="mini-nav-chip">📈 Curva forward</a>
+            <a href="#bloco-evolucao" class="mini-nav-chip">🕒 Evolução</a>
+            <a href="#bloco-comparacao" class="mini-nav-chip">🎯 Expectativa vs realizado</a>
+            <a href="#bloco-spark" class="mini-nav-chip">🔥 Vale a pena queimar gás?</a>
+            <a href="#bloco-ttf" class="mini-nav-chip">🇪🇺 Face ao TTF</a>
+        </nav>
+
+        <h1>Futuros do Gás Natural (MIBGAS) — <span id="data-inicio-titulo">…</span> a <span id="data-fim-titulo">…</span></h1>
+        <p>Preços a prazo do mercado ibérico de gás, em €/MWh (PCS)</p>
+    </div>
+
+    <div id="estado" class="estado-carregamento">A carregar a curva a prazo do MIBGAS…</div>
+
+    <!-- ====================== BLOCO 1 — KPIs ====================== -->
+    <div class="kpi-cabecalho" id="bloco-kpis">
+        <h2>Resumo — cotações na última sessão do período</h2>
+        <p id="kpi-nota">O valor é o da última sessão do período; a variação é medida desde a primeira sessão do período em que essa mesma entrega foi cotada.</p>
+    </div>
+    <div id="fut-kpis"></div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/mibgas-futuros</p></div>
+
+    <!-- ====================== BLOCO 2 — CURVA FORWARD ====================== -->
+    <div class="grafico-box" id="bloco-curva">
+        <h2>Curva Forward — preços por período de entrega</h2>
+        <p class="grafico-intro">Retrato de uma única sessão: o que o mercado, nesse dia, pedia por gás entregue em cada período futuro. O eixo horizontal é o <strong>período de entrega</strong>, não a data da sessão. A curva a prazo de mês, trimestre, estação e ano só existe para <strong>Espanha</strong> — a liquidez a prazo do mercado ibérico está toda no hub espanhol. Portugal só tem curto prazo.</p>
+        <div class="bloco-controls" id="curva-controls"></div>
+        <div id="grafico-curva" class="grafico"></div>
+        <p class="resumo-bloco" id="curva-resumo"></p>
+    </div>
+
+    <!-- ====================== BLOCO 3 — EVOLUÇÃO HISTÓRICA ====================== -->
+    <div class="grafico-box" id="bloco-evolucao">
+        <h2>Evolução histórica — como cada entrega foi sendo reavaliada</h2>
+        <p class="grafico-intro">Aqui o eixo horizontal é a <strong>data da sessão</strong>. Cada linha segue um <strong>período de entrega fixo</strong> — «Outubro 2026», «Inverno 2026/27» — e não um código de produto: o <code>GMES_M+2</code> do MIBGAS quer dizer «o segundo mês a contar de agora» e muda de significado todos os meses.</p>
+        <div class="bloco-controls" id="ev-controls"></div>
+        <div class="ent-chips" id="ev-chips"></div>
+        <div id="grafico-evolucao" class="grafico"></div>
+    </div>
+
+    <!-- ====================== BLOCO 4 — EXPECTATIVA VS REALIZADO ====================== -->
+    <div class="grafico-box bloco-indisponivel" id="bloco-comparacao">
+        <h2>Expectativa vs realizado — o mercado acertou?</h2>
+        <p class="grafico-intro">Para períodos de entrega <strong>já terminados</strong>, compara a trajetória do contrato sessão a sessão com o preço que o gás veio efetivamente a ter durante a entrega.</p>
+        <div class="metodo-box">
+            <p><strong>Referencial: o índice <code>mibgas_es</code>, o índice do dia de gás.</strong> O ficheiro de preços à vista tem dois índices por zona e não são duas versões do mesmo número. O índice <em>day-ahead</em> (<code>pvb_last</code>) cobre <strong>um só produto</strong>, numa <strong>só sessão</strong>, e só existe desde 2023. O índice do dia de gás cobre <strong>todos os produtos</strong> com entrega nesse dia, em <strong>todas as sessões já concluídas</strong> — é a média de tudo o que se transacionou para aquele dia, fecha um a dois dias depois da entrega, e existe desde 2015. Para responder a «o que é que o mercado veio a pagar por aquela entrega», é este o número certo.</p>
+            <p>Os futuros são do <strong>PVB, a zona espanhola</strong>, e é por isso que o realizado usado é o <code>mibgas_es</code> e não o português.</p>
+        </div>
+        <div class="bloco-controls" id="cmp-controls"></div>
+        <div id="grafico-comparacao" class="grafico"><p class="bloco-estado">A carregar os preços à vista…</p></div>
+        <p class="resumo-bloco" id="cmp-resumo"></p>
+        <div class="tabela-box" id="cmp-quadro"></div>
+    </div>
+
+    <!-- ====================== BLOCO 5 — SPARK SPREAD ====================== -->
+    <div class="grafico-box bloco-indisponivel" id="bloco-spark">
+        <h2>Vale a pena queimar gás? — <em>clean spark spread</em> a prazo</h2>
+        <p class="grafico-intro">Para o mesmo período de entrega, cruza três mercados: o gás a prazo do MIBGAS, o preço das licenças de CO₂ e a eletricidade a prazo do OMIP. A diferença entre o que a eletricidade paga e o que custa produzi-la é a margem de uma central de ciclo combinado.</p>
+        <div class="metodo-box">
+            <p><strong>A série começa a 20 de outubro de 2025</strong>, e não por opção: é aí que arranca o histórico de sessões do OMIP que este site recolhe. Antes dessa data não há preço de eletricidade a prazo para cruzar com o gás, por mais largo que seja o período escolhido. São <strong id="spark-n-sessoes">…</strong> sessões ao todo.</p>
+            <p>O custo por MWh elétrico é <code>gás ÷ rendimento + CO₂ × 0,2016 ÷ rendimento</code>. A eletricidade é o contrato <strong>FPB</strong> do OMIP — futuro <strong>de banda</strong>, zona Portugal.</p>
+            <p><strong>Duas simplificações, ditas antes de as ver no gráfico.</strong> Primeira: o preço do CO₂ é <strong>spot</strong> — o fecho do leilão primário de licenças mais recente à data de cada sessão, publicado pela EEX. Um <em>clean spark spread</em> rigorosamente a prazo usaria futuros de licenças EUA, que não publico. Segunda: <strong>0,2016 tCO₂/MWh térmico é o fator de combustão</strong>, o valor por omissão do regulamento de monitorização da UE — é o que o comércio de licenças cobra. <strong>Não é</strong> o mesmo que os fatores de ciclo de vida do meu ficheiro <code>fatores_emissao.csv</code>, que incluem construção e desmantelamento e servem para medir pegada, não para calcular custos de licenças.</p>
+        </div>
+        <div class="bloco-controls" id="spk-controls"></div>
+        <div id="grafico-spark" class="grafico"><p class="bloco-estado">A carregar o CO₂ e os futuros do OMIP…</p></div>
+        <p class="resumo-bloco" id="spk-resumo"></p>
+        <div class="tabela-box" id="spk-quadro"></div>
+    </div>
+
+    <!-- ====================== BLOCO 6 — PRÉMIO FACE AO TTF ====================== -->
+    <div class="grafico-box bloco-indisponivel" id="bloco-ttf">
+        <h2>Estamos caros ou baratos face à Europa?</h2>
+        <p class="grafico-intro">O MIBGAS cota também o <strong>prémio</strong> do gás ibérico face ao TTF holandês, o referencial europeu. O gráfico mostra a mediana desse prémio por horizonte de entrega — a <strong>estrutura a prazo</strong> do desconto ibérico, não a sua oscilação diária.</p>
+        <div class="metodo-box">
+            <p><strong>Isto é uma característica estrutural do mercado, não um sinal negociável.</strong> Espanha tem a maior capacidade de regaseificação de GNL da Europa e uma interligação muito limitada com França: o excedente ibérico não consegue sair para o continente, e o preço a prazo ajusta-se para baixo de forma persistente. Não é uma ineficiência que se possa arbitrar — é o preço do isolamento da península.</p>
+            <p>Mostra-se a <strong>mediana</strong> e não a média, e por horizonte e não ao longo do tempo, porque é aí que está o sinal: no dia a dia o prémio é pequeno e ruidoso, e um gráfico da sua oscilação diária mostraria ruído com aparência de tendência.</p>
+            <p>Os produtos de estação <strong>W</strong> e <strong>S</strong> são cotados para <strong>duas estações na mesma sessão</strong> — o inverno que vem e o seguinte. Aparecem aqui separados por ordem de entrega (<code>W (próximo)</code> e <code>W (seguinte)</code>): juntá-los num só metia dois invernos no mesmo saco e punha a contagem de observações a destoar das dos outros produtos.</p>
+        </div>
+        <div class="bloco-controls" id="ttf-controls"></div>
+        <div id="grafico-ttf" class="grafico"><p class="bloco-estado">A carregar o prémio face ao TTF…</p></div>
+        <p class="resumo-bloco" id="ttf-resumo"></p>
+    </div>
+
+    <div class="aviso-box">
+        <p><strong>Dois preços por sessão, complementares no tempo.</strong> O MIBGAS publica um <em>Last Price</em> (sinal de fecho, que estima um valor mesmo sem liquidez) e um <em>Reference Price</em> (média ponderada das transações). Não são alternativas: o preço de fecho só existe a partir de <strong>1 de janeiro de 2023</strong>, e entre 2015 e 2022 a única série publicada é a do preço de referência. Esta página usa o preço de fecho quando existe e recua ao de referência quando não existe — caso contrário 35% das linhas desapareciam e a crise de 2021-22 ficava de fora. Os gráficos de evolução marcam essa mudança metodológica com uma linha vertical.</p>
+        <p><strong>Campo vazio significa não cotado</strong> nesse dia para esse produto — nunca preço zero.</p>
+        <p><strong>Ao fim de semana há sessão, mas reduzida:</strong> só produtos de curto prazo, o intradiário e o <em>day-ahead</em> de D+1 a D+3, nas duas zonas. Nenhum produto de mês, trimestre, estação ou ano é cotado a sábado ou domingo.</p>
+        <p>São preços <strong>grossistas de energia</strong>: não incluem tarifas de acesso às redes, TOS, ISP, IVA nem margem do comercializador. Não são o preço da sua fatura.</p>
+        <p><strong>Fontes:</strong> gás e prémio face ao TTF, <a href="https://www.mibgas.es" target="_blank" rel="noopener">MIBGAS</a>; licenças de CO₂, <a href="https://www.eex.com" target="_blank" rel="noopener">EEX</a> (leilões primários do EU ETS); eletricidade a prazo, <a href="https://www.omip.pt" target="_blank" rel="noopener">OMIP</a>. Dados tratados e publicados sob <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>E na sua fatura, quanto é que isto pesa?</h2>
+        <p>Os tarifários indexados seguem os índices à vista, não estes futuros. O simulador aplica a fórmula de cada comercializador aos seus consumos e mostra o custo final, com todas as taxas e impostos.</p>
+        <a href="gas-natural-tiagofelicia" class="button-link">🔥 Simular tarifários de gás</a>
+        <p class="cta-irma">Esta página mostra o mercado <strong>a prazo</strong>. Para os preços <strong>já realizados</strong> — o que o gás custou de facto, dia a dia, desde 2015 — veja <a href="mibgas">Preço do Gás Natural (MIBGAS)</a>. Para o equivalente na eletricidade, <a href="omip">Futuros OMIP</a>.</p>
+    </div>
+
+    <h2 style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que são os futuros do MIBGAS?</strong></summary>
+            <div class="faq-content">
+                <p>São contratos para comprar ou vender gás natural a um preço fixado hoje, com entrega num período futuro. O MIBGAS cota oito horizontes, do mais curto ao mais longo:</p>
+                <ul>
+                    <li><strong>Intradiário</strong> — entrega no <em>próprio dia</em> da sessão.</li>
+                    <li><strong>Dia (<em>day-ahead</em>)</strong> — entrega de D+1 a D+3 (e até D+6 em alguns dias).</li>
+                    <li><strong>Fim de semana</strong> — sábado e domingo, por vezes com feriado.</li>
+                    <li><strong>Resto do mês</strong> — do dia seguinte até ao fim do mês corrente.</li>
+                    <li><strong>Mês, trimestre, estação e ano</strong> — os períodos civis, mais o semestre de inverno e o de verão.</li>
+                </ul>
+                <p>O intradiário e o dia <strong>têm ambos «1 dia» de entrega</strong>, o que os confunde facilmente: o primeiro entrega no dia em que é negociado, o segundo no dia seguinte ou depois. O horizonte mais distante cotado é o ano <strong>Y+2</strong>.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque não há curva a prazo para Portugal?</strong></summary>
+            <div class="faq-content">
+                <p>Porque não existe, e esta página não inventa uma. A liquidez a prazo do mercado ibérico está toda no <strong>hub espanhol (PVB)</strong>: os produtos de mês, trimestre, estação, ano e resto-do-mês são cotados <strong>apenas para Espanha</strong>.</p>
+                <p>Portugal tem apenas curto prazo: o intradiário (<code>GWDPT</code>), o <em>day-ahead</em> de D+1 a D+3 (<code>GDAPT</code>) e o fim de semana (<code>GWEPT</code>). É por isso que só o separador «Curto prazo» da curva mostra duas linhas.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Qual é a diferença entre o preço de fecho e o preço de referência?</strong></summary>
+            <div class="faq-content">
+                <p>São as duas colunas de preço que o MIBGAS publica para cada produto:</p>
+                <ul>
+                    <li><strong>Preço de fecho</strong> (<em>Last Price</em>) — um sinal do preço de fecho da sessão, que filtra os dados significativos e <strong>estima</strong> um valor quando não houve liquidez. É o que dá uma curva completa, com todos os produtos preenchidos.</li>
+                    <li><strong>Preço de referência</strong> (<em>Reference Price</em>) — a média ponderada das transações que realmente ocorreram. Mais robusto e menos manipulável, mas só existe onde houve negócio.</li>
+                </ul>
+                <p>Não são alternativas em concorrência — são <strong>complementares no tempo</strong>. O preço de fecho só passou a ser publicado a <strong>1 de janeiro de 2023</strong>; entre 2015 e 2022 a única série que existe é a do preço de referência, e é ela que cobre toda a crise energética. Esta página usa o preço de fecho quando existe e recua ao de referência quando não existe, e o tooltip de cada ponto diz qual está a ser usado.</p>
+                <p>Onde as duas existem, só diferem se houve transações nessa sessão: sem volume, o preço de referência coincide com o de fecho.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que é aquela linha vertical de 1 de janeiro de 2023 nos gráficos?</strong></summary>
+            <div class="faq-content">
+                <p>Marca a <strong>mudança metodológica</strong>: é a sessão a partir da qual o MIBGAS passou a publicar o preço de fecho. À esquerda dessa linha os valores vêm do preço de referência, à direita do preço de fecho.</p>
+                <p>Serve para não confundir mercado com metodologia. O erro do mercado a prazo melhora visivelmente depois de 2023 — nos contratos mensais o erro absoluto médio cai de cerca de 5,0 para 3,6 €/MWh —, mas a data coincide também com o fim da crise energética e com a queda da volatilidade. <strong>A melhoria não é atribuível só à mudança de série</strong>, e o quadro de períodos fechados mostra as duas eras separadas para que possa ver por si.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o produto sazonal aparece duas vezes na mesma sessão?</strong></summary>
+            <div class="faq-content">
+                <p>Porque o MIBGAS cota <strong>dois invernos ao mesmo tempo</strong>: o que vem a seguir e o seguinte. O código do produto é o mesmo (<code>GSES_W</code>), e o que os distingue é o período de entrega. O mesmo acontece com o verão (<code>GSES_S</code>).</p>
+                <p>É uma armadilha real para quem usa os dados: filtrar por código de produto devolve duas linhas por sessão. A chave correta é <strong>sessão + produto + início da entrega</strong>. Nesta página cada estação é uma série própria, identificada pelo rótulo.</p>
+                <p>Uma nota de vocabulário: o MIBGAS chama «Winter 2026» ao semestre de outubro de 2026 a março de 2027. Aqui está rotulado <strong>«Inverno 2026/27»</strong>, que diz o mesmo sem dar a entender que termina em dezembro.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>As séries seguem o período de entrega ou o código do produto?</strong></summary>
+            <div class="faq-content">
+                <p><strong>O período de entrega</strong>, em tudo o que é a prazo — e essa é a razão de ser destes dados. O MIBGAS identifica os produtos por posição relativa: <code>GMES_M+2</code> quer dizer «o segundo mês a contar de agora», e o que isso significa muda todos os meses. Uma série histórica de <code>GMES_M+2</code> misturaria entregas de meses diferentes e não seria série nenhuma. Por isso cada linha desta página segue «Outubro 2026», que é sempre Outubro 2026.</p>
+                <p><strong>Há duas exceções, e são do produto, não da página.</strong> No <strong>intradiário</strong> e no <strong>day-ahead</strong> a regra inverte-se:</p>
+                <ul>
+                    <li>O intradiário de um dia só é cotado <em>nesse</em> dia: há exatamente <strong>uma sessão por entrega</strong>. Uma série por entrega teria um único ponto.</li>
+                    <li>O day-ahead tem em média <strong>2,6 sessões por entrega</strong>, porque o mesmo dia vai sendo cotado como D+3, D+2 e D+1 e depois desaparece.</li>
+                </ul>
+                <p>Nestes dois casos a série que existe — e a que toda a gente usa — é a do produto: <strong>«o preço para o próprio dia»</strong> e <strong>«o preço para amanhã»</strong>, sessão após sessão. Aqui o código não muda de significado: é a definição do produto. O gráfico de evolução e o cartão <em>day-ahead</em> dizem-no no subtítulo sempre que estão nesse modo.</p>
+                <p>O <strong>resto do mês</strong> é um caso intermédio: o rótulo é fixo («Resto de Setembro 2026») mas a janela de entrega encolhe a cada sessão, porque começa sempre no dia seguinte. A série segue o rótulo, e o tooltip mostra a janela de cada ponto.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O mercado a prazo do gás acerta?</strong></summary>
+            <div class="faq-content">
+                <p>Nos contratos <strong>mensais</strong>, com uma precisão que surpreende: sobre mais de 120 entregas mensais já terminadas, o desvio médio é praticamente nulo — o mercado não é sistematicamente otimista nem pessimista — e o <strong>erro absoluto médio</strong> ronda os <strong>4,4 €/MWh</strong>.</p>
+                <p>O erro absoluto médio é a métrica que interessa, porque não deixa que desvios de sinais opostos se anulem: um mês em que o mercado errou 10 € para cima e outro em que errou 10 € para baixo dão desvio médio zero, mas erro absoluto médio de 10.</p>
+                <p>Quanto mais longo o contrato, pior: nos <strong>trimestrais</strong> o erro absoluto médio sobe para cerca de 10 €/MWh e nos <strong>anuais</strong> ultrapassa os 25. Nos anuais a amostra é pequena — sete entregas — e duas delas são 2022 e 2023, os anos em que nenhuma previsão sobreviveu.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que é o <em>clean spark spread</em>, e porque está sempre negativo?</strong></summary>
+            <div class="faq-content">
+                <p>É a margem bruta de uma central de ciclo combinado a gás: o preço a que vende a eletricidade menos o que lhe custa produzi-la, contando o combustível <em>e</em> as licenças de CO₂ (é o «<em>clean</em>» do nome — o <em>spark spread</em> simples ignora o carbono).</p>
+                <p>Está negativo em <strong>todas</strong> as sessões que esta página cobre, e isso não significa que as centrais estejam paradas. O contrato de eletricidade usado é o <strong>FPB, um futuro de banda</strong>: representa o preço médio de <em>todas</em> as horas do período. Uma central a gás não vende em banda — vende nas horas em que é necessária, que são as mais caras. O spread negativo em banda diz que <strong>o gás não é competitivo na média das horas</strong>, e que a central depende do prémio das horas de ponta para cobrir custos.</p>
+                <p>É também por isso que o resultado é coerente com o que se vê no mercado diário: as centrais de ciclo combinado entram sobretudo ao fim da tarde e à noite, quando o solar sai e o preço sobe.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o preço do CO₂ usado é spot e não a prazo?</strong></summary>
+            <div class="faq-content">
+                <p>Porque é o que publico. O ficheiro de CO₂ traz os resultados dos <strong>leilões primários</strong> de licenças da União Europeia, que são mercado à vista: cerca de 220 leilões por ano, com o preço de fecho de cada um.</p>
+                <p>Um <em>clean spark spread</em> rigorosamente a prazo usaria <strong>futuros de licenças EUA</strong>, que não estão neste conjunto de dados. A simplificação é esta: ao calcular o custo de uma entrega de 2028, aplica-se-lhe o preço do leilão mais recente à data da sessão, e não a expectativa do mercado para 2028. Em períodos de subida do carbono, isso <strong>subestima</strong> o custo das entregas distantes.</p>
+                <p>Também vale a pena saber que é o mercado <strong>primário</strong> (fecho do leilão) e não o <em>spot</em> do secundário; diferem tipicamente algumas dezenas de cêntimos.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O fator 0,2016 é o mesmo dos dados de intensidade carbónica?</strong></summary>
+            <div class="faq-content">
+                <p><strong>Não, e trocá-los dá um resultado errado.</strong></p>
+                <ul>
+                    <li><strong>0,2016 tCO₂ por MWh térmico</strong> é o fator de <strong>combustão</strong> do gás natural, o valor por omissão do regulamento de monitorização da União Europeia. Conta só o carbono que sai da chaminé — que é exatamente o que o comércio de licenças cobra.</li>
+                    <li>Os fatores do meu ficheiro <code>fatores_emissao.csv</code> são de <strong>ciclo de vida</strong> (IPCC AR5): incluem construção da central, fabrico dos materiais, extração e transporte do combustível e desmantelamento. Servem para medir a pegada da eletricidade.</li>
+                </ul>
+                <p>São grandezas diferentes com unidades parecidas. Usar o de ciclo de vida para calcular o custo de licenças sobrestima a fatura de carbono de uma central; usar o de combustão para medir pegada ambiental subestima-a.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o gás ibérico a prazo está mais barato que o TTF europeu?</strong></summary>
+            <div class="faq-content">
+                <p>É uma <strong>característica estrutural</strong>, não uma oportunidade de negócio. Espanha tem a maior capacidade de regaseificação de GNL da Europa e uma interligação com França muito limitada. O gás que sobra na península <strong>não consegue sair</strong> para o resto do continente, e o preço a prazo ajusta-se para baixo.</p>
+                <p>O padrão é notavelmente estável: além do mês corrente, o desconto ronda os <strong>0,75 €/MWh</strong> e está presente em cerca de <strong>99% das sessões</strong> desde 2024, com medianas quase idênticas em 2024, 2025 e 2026. No curto prazo desaparece: os produtos de dia negoceiam praticamente à paridade, com o sinal a mudar quase sessão sim, sessão não.</p>
+                <p>Não é arbitrável: para capturar o desconto seria preciso transportar o gás para fora da península, que é precisamente o que a rede não permite.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Estes preços são o que vou pagar na minha fatura de gás?</strong></summary>
+            <div class="faq-content">
+                <p>Não. São <strong>preços grossistas de energia</strong>: sem tarifas de acesso às redes, sem taxa de ocupação do subsolo (TOS), sem imposto sobre produtos petrolíferos (ISP), sem IVA e sem margem do comercializador.</p>
+                <p>Também não são a referência dos tarifários indexados — esses seguem os índices <strong>à vista</strong>, que estão na página <a href="mibgas">Preço do Gás Natural (MIBGAS)</a>. Os futuros influenciam a forma como os comercializadores compram gás e definem as <strong>tarifas fixas</strong>, e servem de referência a contratos de médio e longo prazo.</p>
+                <p>Para saber o que paga de facto, use o <a href="gas-natural-tiagofelicia">simulador de tarifários de gás natural</a>.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm estes dados e com que frequência são atualizados?</strong></summary>
+            <div class="faq-content">
+                <p>Os preços do gás e o prémio face ao TTF vêm do <strong>MIBGAS</strong>, atualizados duas vezes por dia. O preço das licenças de CO₂ vem dos leilões da <strong>EEX</strong>, a plataforma comum de leilões da UE. A eletricidade a prazo vem do <strong>OMIP</strong>.</p>
+                <p>Os ficheiros estão publicados em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>, e esta página lê-os diretamente e faz todos os cálculos no seu navegador — não há valores pré-calculados por trás.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    const URL_FUT  = 'gas/mibgas_futuros.csv';
+    const URL_SPOT = 'gas/mibgas_spot.csv';
+    const URL_CO2  = 'emissoes/eua_co2.csv';
+    const URL_TTF  = 'gas/mibgas_ttf_spread.csv';
+    const histOmipUrl = ano => `omie/historico/omip_historico_${ano}.csv`;
+    const OMIP_ANO_INICIO = 2025;          // primeiro ano com histórico de sessões OMIP recolhido
+
+    // Sessão a partir da qual o MIBGAS passou a publicar o Last Price. Antes
+    // desta data a única série existente é o Reference Price — a mudança é
+    // metodológica, não de mercado, e por isso é marcada nos gráficos.
+    const MUDANCA_METODO = '2023-01-01';
+
+    const FATOR_CO2 = 0.2016;              // tCO2/MWh térmico — fator de COMBUSTÃO (regulamento UE)
+    const REND_MIN = 40, REND_MAX = 60, REND_DEFAULT = 55;
+
+    const DIA_MS = 86400000;
+    const MIN_SESSOES_TRAJETORIA = 5;      // abaixo disto uma trajetória não diz nada
+    const MIN_SESSOES_GRAFICO = 2;
+    const COBERTURA_SPOT_MINIMA = 0.9;     // dias com índice / dias do período de entrega
+    const MAX_CHIPS = 36;
+    const MAX_SERIES = 8;
+
+    const HORIZ_NOME = {
+        'intradiario': 'Intradiário', 'dia': 'Dia (day-ahead)', 'fim-de-semana': 'Fim de semana',
+        'resto-do-mes': 'Resto do mês', 'mes': 'Mês', 'trimestre': 'Trimestre',
+        'estacao': 'Estação', 'ano': 'Ano'
+    };
+    // Ordem de especificidade, do mais curto ao mais longo — é esta a ordem da cascata.
+    const HORIZ_ORDEM = ['intradiario', 'dia', 'fim-de-semana', 'resto-do-mes', 'mes', 'trimestre', 'estacao', 'ano'];
+    const AREA_NOME = { ES: 'Espanha', PT: 'Portugal' };
+
+    const CORES = ['#2563eb', '#dc3545', '#28a745', '#f59e0b', '#7c3aed', '#0891b2', '#db2777', '#65a30d'];
+
+    // ==================================================================
+    // ESTADO
+    // ==================================================================
+    let FUT = [];                  // linhas do ficheiro de futuros
+    let SESSOES = [];              // iso das sessões, ordenado
+    let POR_SESSAO = new Map();    // iso → [linhas]
+    let ENTREGAS = new Map();      // chave → { area, horizonte, rotulo, ini, fim, dias, pts: [] }
+    let MIN_SESSAO = null, MAX_SESSAO = null;
+
+    let SPOT = null;               // Map iso → mibgas_es
+    let SPOT_MAX = null;           // último dia de entrega com índice publicado
+    let CO2 = [];                  // [{iso, preco}] ordenado
+    let OMIP = new Map();          // chavePeriodo → Map(isoSessao → valor)
+    let TTF = [];                  // linhas do ficheiro de spread
+
+    let _spotOk = false, _sparkOk = false, _ttfOk = false;
+
+    let periodo = { inicio: null, fim: null };
+
+    // --- Seletores: guarda-se o DESEJO do utilizador (null = nunca escolheu) e
+    // calcula-se o valor EFETIVO a cada render. Sem esta separação, passar por
+    // um período sem dados deixava o seletor noutra opção e lá ficava — o recuo
+    // automático colava-se e nunca mais largava.
+    let _curvaTipoDesejo = null,  _curvaTipo = 'continua';
+    let _curvaVsDesejo = null,    _curvaVs = 'off';
+    let _evHorizDesejo = null,    _evHoriz = 'mes';
+    let _evAreaDesejo = null,     _evArea = 'ES';
+    let _evChavesDesejo = null,   _evChaves = [];
+    let _cmpHorizDesejo = null,   _cmpHoriz = 'mes';
+    let _cmpChaveDesejo = null,   _cmpChave = null;
+    let _spkChaveDesejo = null,   _spkChave = null;
+    let _rendimento = REND_DEFAULT;
+
+    const seletorDataInicio = document.getElementById('seletor-data-inicio');
+    const seletorDataFim = document.getElementById('seletor-data-fim');
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const _nf3 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    function fmt1(v) { return vazio(v) ? '--' : _nf1.format(v); }
+    function fmt2(v) { return vazio(v) ? '--' : _nf2.format(v); }
+    function fmt3(v) { return vazio(v) ? '--' : _nf3.format(v); }
+    function fmt0(v) { return vazio(v) ? '--' : _nf0.format(v); }
+    function fmtPreco(v) { return fmt2(v) + ' €/MWh'; }
+    function fmtData(iso) { if (!iso) return '--/--/----'; const p = iso.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+    function sinal(v, casas) {
+        if (vazio(v)) return '--';
+        const f = casas === 3 ? fmt3 : fmt2;
+        return (v > 0 ? '+' : v < 0 ? '−' : '') + f(Math.abs(v));
+    }
+    function corDelta(v) { return v > 0 ? '#c0392b' : (v < 0 ? '#1e8449' : '#b8860b'); }
+    function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+    function tsDeISO(iso) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+        return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null;
+    }
+    function isoDeTs(ts) {
+        const d = new Date(ts);
+        return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+    }
+    function deslocarMeses(iso, n) {
+        const d = new Date(tsDeISO(iso));
+        d.setUTCMonth(d.getUTCMonth() + n);
+        return isoDeTs(d.getTime());
+    }
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+            bg: dk ? '#1e293b' : '#fff',
+            txt: dk ? '#e2e8f0' : '#333',
+            grelha: dk ? '#334155' : '#e6e6e6',
+            suave: dk ? '#94a3b8' : '#888'
+        };
+    }
+
+    // Opções de exportação comuns a todos os gráficos.
+    function exportacao(nome) {
+        return {
+            enabled: true,
+            filename: nome,
+            buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+        };
+    }
+
+    // Substituir o innerHTML de um contentor deixaria o objeto do gráfico
+    // pendurado em Highcharts.charts, com o container já fora do DOM.
+    function limparGrafico(id, mensagemHtml) {
+        const g = Highcharts.charts.filter(Boolean).find(c => c.renderTo && c.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = mensagemHtml || '';
+    }
+
+    function sparklineSVG(valores, largura, altura) {
+        largura = largura || 88; altura = altura || 22;
+        if (!valores || valores.length < 2) return '<span class="spark-vazio">—</span>';
+        const min = Math.min.apply(null, valores), max = Math.max.apply(null, valores);
+        const amp = (max - min) || 1;
+        const px = i => (i / (valores.length - 1)) * (largura - 2) + 1;
+        const py = v => altura - 1 - ((v - min) / amp) * (altura - 2);
+        const caminho = valores.map((v, i) => `${i ? 'L' : 'M'}${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(' ');
+        const cor = valores[valores.length - 1] >= valores[0] ? '#c0392b' : '#1e8449';
+        return `<svg width="${largura}" height="${altura}" viewBox="0 0 ${largura} ${altura}" aria-hidden="true" focusable="false">`
+             + `<path d="${caminho}" fill="none" stroke="${cor}" stroke-width="1.4" stroke-linejoin="round"/>`
+             + `<circle cx="${px(valores.length - 1).toFixed(1)}" cy="${py(valores[valores.length - 1]).toFixed(1)}" r="1.9" fill="${cor}"/></svg>`;
+    }
+
+    // A linha vertical que marca a passagem do Reference Price para o Last Price.
+    // Só se desenha quando cai dentro da janela visível, senão a etiqueta
+    // encosta ao bordo do gráfico e confunde.
+    function plotLineMetodo(isoDe, isoAte) {
+        if (!isoDe || !isoAte || MUDANCA_METODO < isoDe || MUDANCA_METODO > isoAte) return [];
+        return [{
+            value: tsDeISO(MUDANCA_METODO), color: '#f59e0b', width: 1.5, dashStyle: 'Dash', zIndex: 2,
+            label: { text: 'preço de fecho passa a existir', style: { color: '#b45309', fontSize: '0.68em' }, rotation: 90, y: 12, x: 4 }
+        }];
+    }
+
+    // ==================================================================
+    // LEITURA DOS CSV
+    // ==================================================================
+    // Os ficheiros não têm campos com vírgulas dentro de aspas, mas um deles
+    // pode vir a tê-los: o split simples é o caminho rápido e o regex é a rede.
+    function partirLinha(linha) {
+        if (linha.indexOf('"') === -1) return linha.split(',');
+        const out = []; let atual = '', aspas = false;
+        for (let i = 0; i < linha.length; i++) {
+            const c = linha[i];
+            if (c === '"') { if (aspas && linha[i + 1] === '"') { atual += '"'; i++; } else aspas = !aspas; }
+            else if (c === ',' && !aspas) { out.push(atual); atual = ''; }
+            else atual += c;
+        }
+        out.push(atual);
+        return out;
+    }
+
+    function lerCSV(texto, aoLinha) {
+        const linhas = texto.replace(/^﻿/, '').split(/\r?\n/);
+        const cab = partirLinha(linhas.shift() || '').map(h => h.trim());
+        const idx = {};
+        cab.forEach((h, i) => { idx[h] = i; });
+        for (let i = 0; i < linhas.length; i++) {
+            if (!linhas[i]) continue;
+            aoLinha(partirLinha(linhas[i]), idx);
+        }
+        return idx;
+    }
+
+    const numOuNulo = s => { const v = parseFloat(s); return isFinite(v) ? v : null; };
+
+    // Identidade de uma ENTREGA. Inclui a área porque GDAES_D+1 e GDAPT_D+1
+    // entregam no mesmo dia, e inclui o início da entrega porque o produto
+    // sazonal GSES_W é cotado para DOIS invernos na mesma sessão: filtrar por
+    // produto devolve duas linhas. O resto-do-mês é a exceção — o seu início de
+    // entrega avança a cada sessão, por isso é o rótulo que o identifica.
+    function chaveEntrega(area, horizonte, ini, rotulo) {
+        return horizonte === 'resto-do-mes'
+            ? `${area}|resto-do-mes|${rotulo}`
+            : `${area}|${horizonte}|${ini}`;
+    }
+
+    function parseFuturos(texto) {
+        const linhas = [];
+        lerCSV(texto, (c, i) => {
+            const iso = (c[i['data_iso']] || '').trim();
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
+            // O preço de fecho é o principal; onde não existe (toda a série até
+            // 2022) recua-se ao preço de referência. Nenhuma linha tem os dois
+            // vazios, por isso este par não perde uma única observação.
+            const fecho = numOuNulo(c[i['preco_ultimo']]);
+            const ref = numOuNulo(c[i['preco_referencia']]);
+            const preco = fecho !== null ? fecho : ref;
+            if (preco === null) return;
+            linhas.push({
+                iso: iso,
+                ts: tsDeISO(iso),
+                produto: (c[i['produto']] || '').trim(),
+                area: (c[i['area']] || '').trim(),
+                horizonte: (c[i['horizonte']] || '').trim(),
+                rotulo: (c[i['rotulo']] || '').trim(),
+                ini: (c[i['entrega_inicio']] || '').trim(),
+                fim: (c[i['entrega_fim']] || '').trim(),
+                dias: parseInt(c[i['dias_entrega']], 10) || 1,
+                preco: preco,
+                fonte: fecho !== null ? 'fecho' : 'referencia',
+                vol: numOuNulo(c[i['volume_mwh']])
+            });
+        });
+        return linhas;
+    }
+
+    function indexarFuturos() {
+        POR_SESSAO = new Map();
+        ENTREGAS = new Map();
+        FUT.forEach(l => {
+            if (!POR_SESSAO.has(l.iso)) POR_SESSAO.set(l.iso, []);
+            POR_SESSAO.get(l.iso).push(l);
+
+            const k = chaveEntrega(l.area, l.horizonte, l.ini, l.rotulo);
+            let e = ENTREGAS.get(k);
+            if (!e) {
+                e = { chave: k, area: l.area, horizonte: l.horizonte, rotulo: l.rotulo,
+                      ini: l.ini, fim: l.fim, dias: l.dias, pts: [] };
+                ENTREGAS.set(k, e);
+            }
+            // No resto-do-mês o início avança a cada sessão: guarda-se o primeiro.
+            if (l.ini < e.ini) e.ini = l.ini;
+            if (l.fim > e.fim) e.fim = l.fim;
+            // A janela de entrega vai no ponto, não só na entrega: no
+            // resto-do-mês ela encolhe a cada sessão, e é a única forma de o
+            // tooltip dizer a verdade sobre aquele ponto em concreto.
+            e.pts.push({ iso: l.iso, x: l.ts, y: l.preco, fonte: l.fonte, vol: l.vol, ini: l.ini, fim: l.fim });
+            l.chave = k;
+        });
+        ENTREGAS.forEach(e => e.pts.sort((a, b) => a.x - b.x));
+        SESSOES = [...POR_SESSAO.keys()].sort();
+        MIN_SESSAO = SESSOES[0];
+        MAX_SESSAO = SESSOES[SESSOES.length - 1];
+    }
+
+    // ==================================================================
+    // PERÍODO
+    // ==================================================================
+    function sessoesNoPeriodo() {
+        return SESSOES.filter(s => s >= periodo.inicio && s <= periodo.fim);
+    }
+    function ultimaSessaoDoPeriodo() {
+        const s = sessoesNoPeriodo();
+        return s.length ? s[s.length - 1] : null;
+    }
+    // 40% das sessões não têm um único produto a prazo: os 1114 fins de semana,
+    // em que o MIBGAS só negoceia curto prazo, mais 438 dias úteis dos primeiros
+    // anos, antes de os produtos longos existirem. Ancorar o resumo e a curva na
+    // última sessão do período fazia a página abrir vazia ao sábado e ao domingo
+    // — quatro cartões a "--" e uma curva contínua de três dias em vez de até
+    // 2028. O day-ahead continua na última sessão; o que é a prazo recua para a
+    // última sessão que o cotou, e a página diz qual é.
+    const HORIZ_PRAZO = ['resto-do-mes', 'mes', 'trimestre', 'estacao', 'ano'];
+    function ultimaSessaoComPrazo() {
+        const s = sessoesNoPeriodo();
+        for (let i = s.length - 1; i >= 0; i--) {
+            const linhas = POR_SESSAO.get(s[i]) || [];
+            if (linhas.some(l => HORIZ_PRAZO.indexOf(l.horizonte) !== -1)) return s[i];
+        }
+        return null;
+    }
+    // Pontos de uma entrega dentro do período — a base de quase tudo nesta página.
+    function pontosNoPeriodo(entrega) {
+        if (!entrega) return [];
+        return entrega.pts.filter(p => p.iso >= periodo.inicio && p.iso <= periodo.fim);
+    }
+
+    function getPresetDates(preset) {
+        if (!MAX_SESSAO) return null;
+        const fim = MAX_SESSAO;
+        const clamp = s => (s < MIN_SESSAO ? MIN_SESSAO : s);
+        if (preset === '7d')  return { inicio: clamp(isoDeTs(tsDeISO(fim) - 6 * DIA_MS)), fim };
+        if (preset === '1m')  return { inicio: clamp(deslocarMeses(fim, -1)), fim };
+        if (preset === '3m')  return { inicio: clamp(deslocarMeses(fim, -3)), fim };
+        if (preset === '6m')  return { inicio: clamp(deslocarMeses(fim, -6)), fim };
+        if (preset === '12m') return { inicio: clamp(deslocarMeses(fim, -12)), fim };
+        if (preset === 'ano') return { inicio: clamp(fim.substring(0, 4) + '-01-01'), fim };
+        if (preset === 'tudo') return { inicio: MIN_SESSAO, fim };
+        return null; // custom
+    }
+
+    // 'tudo' não tem botão: é o estado inicial do Personalizado.
+    function detectarPreset(inicio, fim) {
+        for (const p of ['7d', '1m', '3m', '6m', '12m', 'ano']) {
+            const d = getPresetDates(p);
+            if (d && d.inicio === inicio && d.fim === fim) return p;
+        }
+        return 'custom';
+    }
+    function atualizarBotoesPreset(preset) {
+        document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.preset === preset);
+        });
+    }
+    function setDateInputsVisibilidade(preset) {
+        document.querySelector('.date-selector-periodo').classList.toggle('no-dates', preset !== 'custom');
+    }
+
+    // ==================================================================
+    // ESTADO NA URL
+    // ==================================================================
+    const PARAMS_DEFEITO = { curva: 'continua', vs: 'off', h: 'mes', area: 'ES', rend: String(REND_DEFAULT) };
+
+    function lerURL() {
+        const p = new URLSearchParams(window.location.search);
+        const ler = k => (p.get(k) || '').trim() || null;
+        const datas = (() => {
+            const i = ler('inicio'), f = ler('fim');
+            if (!i || !f) return null;
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(i) || !/^\d{4}-\d{2}-\d{2}$/.test(f) || i > f) return null;
+            return { inicio: i, fim: f };
+        })();
+        const rend = parseInt(ler('rend'), 10);
+        return {
+            datas: datas,
+            curva: ler('curva'), vs: ler('vs'), h: ler('h'), area: ler('area'),
+            ent4: ler('ent4'), ent5: ler('ent5'),
+            rend: (isFinite(rend) && rend >= REND_MIN && rend <= REND_MAX) ? rend : null
+        };
+    }
+
+    function paramsAtuais() {
+        const p = new URLSearchParams();
+        p.set('inicio', periodo.inicio);
+        p.set('fim', periodo.fim);
+        if (_curvaTipoDesejo) p.set('curva', _curvaTipoDesejo);
+        if (_curvaVsDesejo) p.set('vs', _curvaVsDesejo);
+        if (_evHorizDesejo) p.set('h', _evHorizDesejo);
+        if (_evAreaDesejo) p.set('area', _evAreaDesejo);
+        if (_cmpChaveDesejo) p.set('ent4', _cmpChaveDesejo);
+        if (_spkChaveDesejo) p.set('ent5', _spkChaveDesejo);
+        if (_rendimento !== REND_DEFAULT) p.set('rend', String(_rendimento));
+        return p;
+    }
+
+    function atualizarURL() {
+        const d = getPresetDates('12m');   // preset por omissão → URL limpo
+        const soDatasDefeito = d && periodo.inicio === d.inicio && periodo.fim === d.fim;
+        const semEscolhas = !_curvaTipoDesejo && !_curvaVsDesejo && !_evHorizDesejo && !_evAreaDesejo
+                         && !_cmpChaveDesejo && !_spkChaveDesejo && _rendimento === REND_DEFAULT;
+        const url = (soDatasDefeito && semEscolhas)
+            ? `${window.location.pathname}${window.location.hash}`
+            : `${window.location.pathname}?${paramsAtuais().toString()}${window.location.hash}`;
+        window.history.replaceState(null, '', url);
+    }
+
+    function mostrarFeedback(msg) {
+        const antigo = document.getElementById('toast-feedback');
+        if (antigo) antigo.remove();
+        const t = document.createElement('div');
+        t.id = 'toast-feedback';
+        t.className = 'toast-feedback';
+        t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { if (t.parentNode) t.remove(); }, 2500);
+    }
+
+    async function partilharVista() {
+        // O link leva sempre os parâmetros explícitos, mesmo quando a barra de
+        // endereço está limpa por estarmos no preset por omissão: quem recebe
+        // vê exatamente a mesma vista.
+        const shareURL = `${window.location.origin}${window.location.pathname}?${paramsAtuais().toString()}`;
+        const ult = ultimaSessaoDoPeriodo();
+        const titulo = 'Futuros do Gás Natural (MIBGAS) — Tiago Felícia';
+        let resumo = `🔥 Futuros MIBGAS — sessões de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}`;
+        if (ult) {
+            const mes = proximaEntrega(ult, 'mes'), ano = proximaEntrega(ult, 'ano');
+            const partes = [];
+            if (mes) partes.push(`${mes.rotulo}: ${fmt2(mes.preco)} €/MWh`);
+            if (ano) partes.push(`${ano.rotulo}: ${fmt2(ano.preco)} €/MWh`);
+            if (partes.length) resumo += `\nSessão de ${fmtData(ult)} — ${partes.join(' · ')}`;
+        } else {
+            resumo += '\nSem sessões neste período';
+        }
+        const texto = `${resumo}\n${shareURL}`;
+
+        if (navigator.share) {
+            try { await navigator.share({ title: titulo, text: resumo, url: shareURL }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try { await navigator.clipboard.writeText(texto); mostrarFeedback('✓ Link e resumo copiados'); return; }
+        catch (e) { /* sem permissão de clipboard — cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = texto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+            document.body.removeChild(ta);
+            mostrarFeedback('✓ Link e resumo copiados');
+        } catch (e) { prompt('Copie este link:', texto); }
+    }
+
+    // ==================================================================
+    // CONSTRUÇÃO DE CONTROLOS
+    // ==================================================================
+    // Grupo de botões com estado desativado: quando uma opção não tem dados na
+    // janela, o botão fica inerte e o title diz porquê, em vez de desenhar um
+    // gráfico vazio sem explicação.
+    function grupoBotoes(rotulo, opcoes, ativoId, aoEscolher) {
+        const wrap = document.createElement('div');
+        wrap.className = 'ctrl-grupo';
+        if (rotulo) {
+            const l = document.createElement('span');
+            l.className = 'ctrl-label';
+            l.textContent = rotulo;
+            wrap.appendChild(l);
+        }
+        const grp = document.createElement('div');
+        grp.className = 'btn-toggle';
+        grp.setAttribute('role', 'radiogroup');
+        if (rotulo) grp.setAttribute('aria-label', rotulo);
+        opcoes.forEach(op => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = op.label;
+            b.className = (op.id === ativoId ? 'active' : '');
+            b.setAttribute('aria-pressed', String(op.id === ativoId));
+            if (op.desativado) {
+                b.disabled = true;
+                b.title = op.motivo || 'Sem dados no período escolhido';
+            } else if (op.title) {
+                b.title = op.title;
+            }
+            b.addEventListener('click', () => { if (!b.disabled) aoEscolher(op.id); });
+            grp.appendChild(b);
+        });
+        wrap.appendChild(grp);
+        return wrap;
+    }
+
+    function grupoSelect(rotulo, id, opcoes, valor, aoEscolher) {
+        const wrap = document.createElement('div');
+        wrap.className = 'ctrl-grupo';
+        const l = document.createElement('label');
+        l.className = 'ctrl-label';
+        l.setAttribute('for', id);
+        l.textContent = rotulo;
+        const sel = document.createElement('select');
+        sel.id = id;
+        sel.className = 'ctrl-select';
+        sel.innerHTML = opcoes.map(o => `<option value="${esc(o.id)}"${o.id === valor ? ' selected' : ''}>${esc(o.label)}</option>`).join('');
+        sel.addEventListener('change', () => aoEscolher(sel.value));
+        wrap.appendChild(l);
+        wrap.appendChild(sel);
+        return wrap;
+    }
+
+    // ==================================================================
+    // SELEÇÃO DE ENTREGAS
+    // ==================================================================
+    function entregasDe(horizonte, area) {
+        const out = [];
+        ENTREGAS.forEach(e => {
+            if (e.horizonte !== horizonte) return;
+            if (area && e.area !== area) return;
+            out.push(e);
+        });
+        return out.sort((a, b) => (a.ini < b.ini ? -1 : a.ini > b.ini ? 1 : 0));
+    }
+    function entregasComDados(horizonte, area) {
+        return entregasDe(horizonte, area).filter(e => pontosNoPeriodo(e).length > 0);
+    }
+    // Áreas que cotam este horizonte (a curva a prazo só existe para ES).
+    function areasDoHorizonte(horizonte) {
+        const s = new Set();
+        ENTREGAS.forEach(e => { if (e.horizonte === horizonte) s.add(e.area); });
+        return s;
+    }
+
+    // Série de um CÓDIGO DE PRODUTO ao longo das sessões do período. Só se usa
+    // onde o código tem significado estável — o GDAES_D+1 é sempre «o preço
+    // para o dia seguinte». Para os produtos a prazo é a entrega que manda.
+    function serieProdutoNoPeriodo(produto) {
+        const pts = [];
+        sessoesNoPeriodo().forEach(iso => {
+            const l = (POR_SESSAO.get(iso) || []).find(x => x.produto === produto);
+            if (l) pts.push({ iso: iso, x: l.ts, y: l.preco, fonte: l.fonte, vol: l.vol });
+        });
+        return pts;
+    }
+
+    // A entrega mais próxima de um horizonte, vista de uma dada sessão.
+    function proximaEntrega(iso, horizonte) {
+        const linhas = (POR_SESSAO.get(iso) || []).filter(l => l.horizonte === horizonte && l.area === 'ES');
+        if (!linhas.length) return null;
+        return linhas.slice().sort((a, b) => (a.ini < b.ini ? -1 : a.ini > b.ini ? 1 : 0))[0];
+    }
+
+    // ==================================================================
+    // BLOCO 1 — CARTÕES DE RESUMO
+    // ==================================================================
+    // Regra desta página: cada cartão escreve-se por inteiro em qualquer dos
+    // ramos. Nunca há um return antecipado que deixe no ecrã o valor, a data ou
+    // a variação do período anterior debaixo de um rótulo que diz "DO PERÍODO".
+    function renderKPIs() {
+        const cont = document.getElementById('fut-kpis');
+        const nota = document.getElementById('kpi-nota');
+        if (!cont) return;
+
+        const ult = ultimaSessaoDoPeriodo();
+        const ultPrazo = ultimaSessaoComPrazo();
+        const cartoes = [
+            { horizonte: 'dia', label: 'Day-ahead Espanha', rolante: 'GDAES_D+1' },
+            { horizonte: 'mes', label: 'Próximo mês' },
+            { horizonte: 'trimestre', label: 'Próximo trimestre' },
+            { horizonte: 'estacao', label: 'Próxima estação' },
+            { horizonte: 'ano', label: 'Próximo ano' }
+        ];
+
+        if (!ult) {
+            nota.textContent = 'Não há nenhuma sessão de negociação dentro do período escolhido.';
+            cont.innerHTML = cartoes.map(c =>
+                `<div class="kpi-card"><div class="kpi-label">${esc(c.label.toUpperCase())}</div>`
+              + `<div class="kpi-value">--</div>`
+              + `<div class="kpi-sub kpi-vazio">sem sessões no período</div></div>`).join('');
+            return;
+        }
+
+        nota.innerHTML = (ultPrazo && ultPrazo !== ult
+                ? `O cartão <em>day-ahead</em> é da sessão de <strong>${fmtData(ult)}</strong>, a última do período. `
+                  + `Os quatro cartões a prazo são da sessão de <strong>${fmtData(ultPrazo)}</strong>, a última que cotou produtos a prazo — `
+                  + `ao fim de semana o MIBGAS só negoceia curto prazo. `
+                : `Cotações da sessão de <strong>${fmtData(ult)}</strong>, a última dentro do período. `)
+                       + `Nos quatro cartões a prazo a variação segue <strong>o mesmo período de entrega</strong> ao longo das sessões — «Outubro 2026» é sempre Outubro 2026 — `
+                       + `e mede-se desde a primeira sessão do período em que essa entrega foi cotada. `
+                       + `O cartão <em>day-ahead</em> é a exceção: aí a série é o preço para o dia seguinte em cada sessão. `
+                       + `O rótulo diz sempre sobre quantas sessões é a variação.`;
+
+        cont.innerHTML = cartoes.map(c => {
+            // O day-ahead existe em todas as sessões; o que é a prazo recua.
+            const sessao = c.rolante ? ult : (ultPrazo || ult);
+            const linha = proximaEntrega(sessao, c.horizonte);
+            if (!linha) {
+                return `<div class="kpi-card"><div class="kpi-label">${esc(c.label.toUpperCase())}</div>`
+                     + `<div class="kpi-value">--</div>`
+                     + `<div class="kpi-sub kpi-vazio">não cotado em ${fmtData(sessao)}</div></div>`;
+            }
+            const entrega = ENTREGAS.get(linha.chave);
+            // O day-ahead é a exceção declarada à regra de seguir a ENTREGA: a
+            // sua série é o PRODUTO, o preço para o dia seguinte em cada sessão.
+            // Não é um deslize da armadilha do GMES_M+2 — «o preço de amanhã» é
+            // a definição do produto, e seguir a entrega dava três pontos, um por
+            // cada sessão em que aquele dia foi cotado como D+1, D+2 e D+3.
+            const pts = c.rolante ? serieProdutoNoPeriodo(c.rolante) : pontosNoPeriodo(entrega);
+            const valores = pts.map(p => p.y);
+
+            let extra;
+            if (pts.length > 1) {
+                const variacao = valores[valores.length - 1] - valores[0];
+                extra = `<div class="kpi-spark">${sparklineSVG(valores)}</div>`
+                      + `<div class="kpi-delta" style="color:${corDelta(variacao)}">${sinal(variacao)} €/MWh em ${pts.length} sessões</div>`;
+            } else {
+                extra = `<div class="kpi-delta kpi-vazio">1 sessão no período — sem variação a medir</div>`;
+            }
+            const fonteTxt = linha.fonte === 'fecho' ? 'preço de fecho' : 'preço de referência';
+            const sub = c.rolante ? `entrega ${fmtData(entrega.ini)}` : entrega.rotulo;
+            const tit = c.rolante
+                ? `${linha.produto} · preço para o dia seguinte em cada sessão · ${fonteTxt}`
+                : `${linha.produto} · entrega ${fmtData(entrega.ini)} a ${fmtData(entrega.fim)} · ${fonteTxt}`;
+            return `<div class="kpi-card" title="${esc(tit)}">`
+                 + `<div class="kpi-label">${esc(c.label.toUpperCase())}</div>`
+                 + `<div class="kpi-value">${fmt2(linha.preco)} €</div>`
+                 + `<div class="kpi-sub">${esc(sub)}</div>${extra}</div>`;
+        }).join('');
+    }
+
+    // ==================================================================
+    // BLOCO 2 — CURVA FORWARD
+    // ==================================================================
+    const CURVA_OPCOES = [
+        { id: 'continua', label: 'Contínua', horizontes: null },
+        { id: 'curto', label: 'Curto prazo', horizontes: ['intradiario', 'dia', 'fim-de-semana', 'resto-do-mes'] },
+        { id: 'mes', label: 'Mensais', horizontes: ['mes'] },
+        { id: 'trimestre', label: 'Trimestrais', horizontes: ['trimestre'] },
+        { id: 'estacao', label: 'Estações', horizontes: ['estacao'] },
+        { id: 'ano', label: 'Anuais', horizontes: ['ano'] }
+    ];
+    const VS_OPCOES = [
+        { id: 'off', label: 'Sem comparação', dias: 0 },
+        { id: '1S', label: 'vs 1 semana', dias: 7 },
+        { id: '1M', label: 'vs 1 mês', dias: 30 },
+        { id: '3M', label: 'vs 3 meses', dias: 91 }
+    ];
+
+    // Sessão mais recente que esteja a pelo menos `dias` antes da de referência,
+    // e ainda assim dentro do período — a comparação nunca sai da janela.
+    function sessaoFantasma(isoRef, dias) {
+        const alvo = isoDeTs(tsDeISO(isoRef) - dias * DIA_MS);
+        let escolhida = null;
+        SESSOES.forEach(s => { if (s <= alvo && s >= periodo.inicio) escolhida = s; });
+        return escolhida;
+    }
+
+    function linhasDaSessao(iso, horizontes, area) {
+        let l = POR_SESSAO.get(iso) || [];
+        if (horizontes) l = l.filter(x => horizontes.indexOf(x.horizonte) !== -1);
+        if (area) l = l.filter(x => x.area === area);
+        return l;
+    }
+
+    // Cascata: para cada dia, o produto mais específico que o cobre. A ordem é
+    // a da duração da entrega — dia antes de fim-de-semana antes de resto-do-mês
+    // antes de mês, e assim por diante até ao ano.
+    function curvaContinua(iso, area) {
+        const linhas = linhasDaSessao(iso, null, area)
+            .filter(l => l.horizonte !== 'intradiario')
+            .slice().sort((a, b) => a.dias - b.dias || HORIZ_ORDEM.indexOf(a.horizonte) - HORIZ_ORDEM.indexOf(b.horizonte));
+        if (!linhas.length) return { pontos: [], bandas: [] };
+
+        let ini = null, fim = null;
+        linhas.forEach(l => {
+            if (ini === null || l.ini < ini) ini = l.ini;
+            if (fim === null || l.fim > fim) fim = l.fim;
+        });
+
+        const pontos = [], bandas = [];
+        let tipoAnterior = null, inicioBanda = null;
+        for (let ts = tsDeISO(ini); ts <= tsDeISO(fim); ts += DIA_MS) {
+            const dia = isoDeTs(ts);
+            const l = linhas.find(x => x.ini <= dia && dia <= x.fim);
+            if (!l) { pontos.push([ts, null]); continue; }
+            pontos.push([ts, l.preco]);
+            if (l.horizonte !== tipoAnterior) {
+                if (tipoAnterior !== null) bandas.push({ de: inicioBanda, ate: ts, tipo: tipoAnterior });
+                tipoAnterior = l.horizonte;
+                inicioBanda = ts;
+            }
+        }
+        if (tipoAnterior !== null) bandas.push({ de: inicioBanda, ate: tsDeISO(fim) + DIA_MS, tipo: tipoAnterior });
+        return { pontos: pontos, bandas: bandas };
+    }
+
+    function setupCurva() {
+        const cont = document.getElementById('curva-controls');
+        if (!cont) return;
+        // A curva é o retrato de UMA sessão. Se a última do período não tiver
+        // produtos a prazo, o bloco recua inteiro para a última que teve, em vez
+        // de encolher ao curto prazo desse fim de semana.
+        const ult = ultimaSessaoComPrazo() || ultimaSessaoDoPeriodo();
+
+        // Uma opção só está disponível se a última sessão do período tiver
+        // produtos desse tipo — ao fim de semana, por exemplo, só há curto prazo.
+        const disponivel = op => {
+            if (!ult) return false;
+            if (!op.horizontes) return (POR_SESSAO.get(ult) || []).some(l => l.horizonte !== 'intradiario');
+            return linhasDaSessao(ult, op.horizontes).length > 0;
+        };
+        const opcoes = CURVA_OPCOES.map(op => ({
+            id: op.id, label: op.label,
+            desativado: !disponivel(op),
+            motivo: !ult ? 'Sem sessões no período escolhido'
+                  : (op.id === 'continua' ? 'A sessão de ' + fmtData(ult) + ' não tem produtos a prazo'
+                     : 'Nenhum produto deste tipo foi cotado em ' + fmtData(ult) + (op.id !== 'curto' ? ' — ao fim de semana só há curto prazo' : ''))
+        }));
+
+        // O desejo do utilizador manda; se não for possível, recua-se para a
+        // primeira opção com dados — mas o desejo fica guardado e volta assim
+        // que a janela o permitir.
+        const validos = opcoes.filter(o => !o.desativado).map(o => o.id);
+        _curvaTipo = (_curvaTipoDesejo && validos.indexOf(_curvaTipoDesejo) !== -1) ? _curvaTipoDesejo
+                   : (validos.indexOf('continua') !== -1 ? 'continua' : (validos[0] || 'continua'));
+
+        cont.innerHTML = '';
+        cont.appendChild(grupoBotoes('Vista', opcoes.map(o => Object.assign({}, o, { id: o.id })), _curvaTipo, id => {
+            _curvaTipoDesejo = id; atualizarURL(); setupCurva();
+        }));
+
+        const vsOpcoes = VS_OPCOES.map(op => {
+            const fantasma = (ult && op.dias) ? sessaoFantasma(ult, op.dias) : null;
+            return {
+                id: op.id, label: op.label,
+                desativado: op.dias > 0 && !fantasma,
+                motivo: 'O período escolhido não recua o suficiente para comparar com ' + op.label.replace('vs ', '')
+            };
+        });
+        const vsValidos = vsOpcoes.filter(o => !o.desativado).map(o => o.id);
+        _curvaVs = (_curvaVsDesejo && vsValidos.indexOf(_curvaVsDesejo) !== -1) ? _curvaVsDesejo : 'off';
+        cont.appendChild(grupoBotoes('Comparar', vsOpcoes, _curvaVs, id => {
+            _curvaVsDesejo = id === 'off' ? null : id; atualizarURL(); setupCurva();
+        }));
+
+        renderCurva();
+    }
+
+    function renderCurva() {
+        const alvo = document.getElementById('grafico-curva');
+        const resumo = document.getElementById('curva-resumo');
+        if (!alvo) return;
+        const ult = ultimaSessaoComPrazo() || ultimaSessaoDoPeriodo();
+
+        if (!ult) {
+            limparGrafico('grafico-curva', '<div class="bloco-vazio">Não há nenhuma sessão de negociação dentro do período escolhido. Alargue o período para ver uma curva a prazo.</div>');
+            resumo.innerHTML = '';
+            return;
+        }
+
+        const _d = _hcDark();
+        const op = CURVA_OPCOES.find(o => o.id === _curvaTipo) || CURVA_OPCOES[0];
+        const vsOp = VS_OPCOES.find(o => o.id === _curvaVs) || VS_OPCOES[0];
+        const isoFantasma = vsOp.dias ? sessaoFantasma(ult, vsOp.dias) : null;
+
+        if (_curvaTipo === 'continua') { renderCurvaContinua(ult, isoFantasma, _d); }
+        else { renderCurvaCategorias(ult, isoFantasma, op, _d); }
+
+        // Resumo textual — também ele só fala do que está no ecrã.
+        const linhas = op.horizontes ? linhasDaSessao(ult, op.horizontes) : linhasDaSessao(ult).filter(l => l.horizonte !== 'intradiario');
+        const comVolume = linhas.filter(l => l.vol > 0).length;
+        const refs = linhas.filter(l => l.fonte === 'referencia').length;
+        const partes = [`Sessão de <strong>${fmtData(ult)}</strong>, com <strong>${linhas.length}</strong> ${linhas.length === 1 ? 'produto cotado' : 'produtos cotados'}.`];
+        partes.push(comVolume
+            ? `<strong>${comVolume}</strong> com transações nessa sessão; nos restantes o preço é o sinal de fecho, sem negócio.`
+            : `Nenhum teve transações nessa sessão — os preços são o sinal de fecho.`);
+        if (refs) partes.push(`<strong>${refs}</strong> ${refs === 1 ? 'vem' : 'vêm'} do preço de referência, porque o preço de fecho ainda não era publicado nessa data.`);
+        if (isoFantasma) partes.push(`A linha tracejada é a sessão de <strong>${fmtData(isoFantasma)}</strong>; onde não aparece, é porque essa entrega ainda não era cotada nessa data.`);
+        resumo.innerHTML = partes.join(' ');
+    }
+
+    function renderCurvaContinua(iso, isoFantasma, _d) {
+        const es = curvaContinua(iso, 'ES');
+        if (!es.pontos.length) {
+            limparGrafico('grafico-curva', '<div class="bloco-vazio">A sessão de ' + fmtData(iso) + ' não tem produtos a prazo — ao fim de semana o MIBGAS cota apenas curto prazo.</div>');
+            return;
+        }
+        const CORES_BANDA = {
+            'dia': 'rgba(37,99,235,0.07)', 'fim-de-semana': 'rgba(219,39,119,0.07)',
+            'resto-do-mes': 'rgba(8,145,178,0.07)', 'mes': 'rgba(40,167,69,0.07)',
+            'trimestre': 'rgba(245,158,11,0.09)', 'estacao': 'rgba(124,58,237,0.07)',
+            'ano': 'rgba(220,53,69,0.07)'
+        };
+        const bandas = es.bandas.map(b => ({
+            from: b.de, to: b.ate, color: CORES_BANDA[b.tipo] || 'rgba(0,0,0,0.03)',
+            label: { text: HORIZ_NOME[b.tipo], style: { color: _d.suave, fontSize: '0.65em' }, rotation: 90, align: 'left', x: 3, y: 12 }
+        }));
+
+        const series = [{
+            name: 'Espanha (PVB) — ' + fmtData(iso), color: '#2563eb', data: es.pontos,
+            zIndex: 3, connectNulls: false
+        }];
+        if (isoFantasma) {
+            const f = curvaContinua(isoFantasma, 'ES');
+            if (f.pontos.length) {
+                series.push({
+                    name: 'Espanha — ' + fmtData(isoFantasma), color: '#94a3b8',
+                    dashStyle: 'ShortDash', lineWidth: 1.5, data: f.pontos, zIndex: 2, connectNulls: false
+                });
+            }
+        }
+
+        Highcharts.chart('grafico-curva', {
+            chart: { type: 'line', height: 440, backgroundColor: _d.bg, style: { color: _d.txt }, zooming: { type: 'x' } },
+            accessibility: { description: 'Curva a prazo contínua do gás natural em Espanha na sessão de ' + fmtData(iso) + '. Para cada dia futuro mostra o preço do contrato mais específico que cobre esse dia, do day-ahead ao anual. As bandas de fundo identificam que tipo de contrato cobre cada secção.' },
+            title: { text: 'Curva contínua — sessão de ' + fmtData(iso), style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: 'Para cada dia, o contrato mais específico que o cobre: dia → fim de semana → resto do mês → mês → trimestre → estação → ano', style: { color: _d.suave, fontSize: '0.75em' } },
+            xAxis: {
+                type: 'datetime', crosshair: true, plotBands: bandas,
+                title: { text: 'Dia de entrega', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } }, gridLineColor: _d.grelha
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }, gridLineColor: _d.grelha
+            },
+            tooltip: {
+                shared: true, valueSuffix: ' €/MWh', valueDecimals: 2,
+                xDateFormat: 'Entrega em %A, %e de %B de %Y'
+            },
+            legend: { enabled: true, itemStyle: { color: _d.txt } },
+            plotOptions: { series: { marker: { enabled: false }, lineWidth: 2 } },
+            exporting: exportacao('mibgas-curva-continua-' + iso),
+            credits: { enabled: false },
+            series: series
+        });
+    }
+
+    function renderCurvaCategorias(iso, isoFantasma, op, _d) {
+        const areas = new Set();
+        op.horizontes.forEach(h => areasDoHorizonte(h).forEach(a => areas.add(a)));
+        const temPT = areas.has('PT');
+
+        // Uma categoria por entrega, ordenada pelo início da entrega. A chave de
+        // alinhamento entre áreas e entre sessões é o período de entrega, nunca
+        // o código do produto.
+        const mapa = new Map();
+        const registar = (linhas, campo) => linhas.forEach(l => {
+            const k = l.horizonte + '|' + (l.horizonte === 'resto-do-mes' ? l.rotulo : l.ini);
+            let e = mapa.get(k);
+            if (!e) { e = { ini: l.ini, rotulo: l.rotulo, horizonte: l.horizonte }; mapa.set(k, e); }
+            e[campo + '_' + l.area] = l;
+        });
+        registar(linhasDaSessao(iso, op.horizontes), 'atual');
+        if (isoFantasma) registar(linhasDaSessao(isoFantasma, op.horizontes), 'antes');
+
+        const linhas = [...mapa.values()].sort((a, b) => (a.ini < b.ini ? -1 : a.ini > b.ini ? 1 : 0));
+        if (!linhas.length) {
+            limparGrafico('grafico-curva', '<div class="bloco-vazio">Nenhum produto deste tipo foi cotado na sessão de ' + fmtData(iso) + '.</div>');
+            return;
+        }
+        const categorias = linhas.map(l => l.rotulo);
+        const serie = (campo, area, nome, cor, tracejado) => ({
+            name: nome, color: cor,
+            dashStyle: tracejado ? 'ShortDash' : 'Solid',
+            lineWidth: tracejado ? 1.5 : 2.5,
+            data: linhas.map(l => {
+                const x = l[campo + '_' + area];
+                return x ? { y: x.preco, custom: { produto: x.produto, vol: x.vol, fonte: x.fonte } } : null;
+            })
+        });
+
+        const series = [serie('atual', 'ES', 'Espanha — ' + fmtData(iso), '#2563eb', false)];
+        if (temPT) series.push(serie('atual', 'PT', 'Portugal — ' + fmtData(iso), '#28a745', false));
+        if (isoFantasma) {
+            series.push(serie('antes', 'ES', 'Espanha — ' + fmtData(isoFantasma), '#94a3b8', true));
+            if (temPT) series.push(serie('antes', 'PT', 'Portugal — ' + fmtData(isoFantasma), '#9ec5a4', true));
+        }
+
+        const soES = !temPT;
+        Highcharts.chart('grafico-curva', {
+            chart: { type: 'line', height: 440, backgroundColor: _d.bg, style: { color: _d.txt }, zooming: { type: 'x' } },
+            accessibility: { description: 'Curva a prazo do gás natural por período de entrega, contratos do tipo ' + op.label.toLowerCase() + ', na sessão de ' + fmtData(iso) + '.' },
+            title: { text: 'Curva forward — ' + op.label.toLowerCase() + ', sessão de ' + fmtData(iso), style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: {
+                text: soES ? 'Estes contratos existem apenas para Espanha (PVB) — Portugal não tem curva a prazo além do curto prazo'
+                           : 'Azul: Espanha (PVB) · Verde: Portugal (VTP)',
+                style: { color: _d.suave, fontSize: '0.75em' }
+            },
+            xAxis: {
+                categories: categorias, crosshair: true,
+                title: { text: 'Período de entrega', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt, fontSize: '0.78em' }, rotation: categorias.length > 8 ? -40 : 0 },
+                gridLineColor: _d.grelha
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }, gridLineColor: _d.grelha
+            },
+            tooltip: {
+                shared: true,
+                pointFormatter: function () {
+                    const c = this.options.custom || {};
+                    const vol = c.vol > 0 ? ` · ${fmt0(c.vol)} MWh transacionados` : ' · sem transações';
+                    const f = c.fonte === 'referencia' ? ' · preço de referência' : '';
+                    return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmt2(this.y)} €/MWh</b>`
+                         + `<br><span style="font-size:0.82em;opacity:0.75">${esc(c.produto || '')}${vol}${f}</span><br>`;
+                }
+            },
+            legend: { enabled: true, itemStyle: { color: _d.txt } },
+            plotOptions: { series: { marker: { enabled: true, radius: 3 }, connectNulls: false } },
+            exporting: exportacao('mibgas-curva-' + op.id + '-' + iso),
+            credits: { enabled: false },
+            series: series
+        });
+    }
+
+    // ==================================================================
+    // BLOCO 3 — EVOLUÇÃO HISTÓRICA
+    // ==================================================================
+    const EV_HORIZONTES = ['mes', 'trimestre', 'estacao', 'ano', 'resto-do-mes', 'fim-de-semana', 'dia', 'intradiario'];
+
+    // Dois horizontes não podem ser lidos por entrega, e não é uma limitação
+    // desta página: é o produto. O intradiário de um dia só é cotado NESSE dia —
+    // uma sessão por entrega, um ponto por linha, nunca uma série. O day-ahead
+    // tem 2,6 sessões por entrega, porque o mesmo dia passa por D+3, D+2 e D+1.
+    // Nestes dois a série que existe é a do PRODUTO: «o preço para o próprio
+    // dia» e «o preço para amanhã», em cada sessão. É a exceção declarada à
+    // regra de seguir o rótulo — que continua a valer para tudo o resto, onde
+    // o código do produto mudaria de significado a cada mês.
+    const EV_ROLANTE = ['intradiario', 'dia'];
+    const evModoRolante = () => EV_ROLANTE.indexOf(_evHoriz) !== -1;
+
+    function etiquetaProduto(produto) {
+        if (/^GWD/.test(produto)) return 'Intradiário';
+        const m = /_D\+(\d)$/.exec(produto);
+        if (m) return 'D+' + m[1];
+        if (/^GWE/.test(produto)) return 'Fim de semana';
+        return produto;
+    }
+    function descricaoProduto(produto) {
+        if (/^GWD/.test(produto)) return 'entrega no próprio dia da sessão';
+        const m = /_D\+(\d)$/.exec(produto);
+        if (m) return `entrega ${m[1]} ${+m[1] === 1 ? 'dia' : 'dias'} depois da sessão`;
+        if (/^GWE/.test(produto)) return 'entrega no sábado e domingo seguintes';
+        return '';
+    }
+
+    // Lista uniforme das séries que o bloco pode desenhar, seja qual for o modo.
+    function seriesDisponiveisEv() {
+        if (!evModoRolante()) {
+            return entregasComDados(_evHoriz, _evArea).map(e => ({
+                chave: e.chave,
+                etiqueta: e.rotulo,
+                titulo: `Entrega de ${fmtData(e.ini)} a ${fmtData(e.fim)}`,
+                pts: pontosNoPeriodo(e)
+            }));
+        }
+        const porProduto = new Map();
+        sessoesNoPeriodo().forEach(iso => {
+            (POR_SESSAO.get(iso) || []).forEach(l => {
+                if (l.horizonte !== _evHoriz || l.area !== _evArea) return;
+                if (!porProduto.has(l.produto)) porProduto.set(l.produto, []);
+                porProduto.get(l.produto).push({ iso: l.iso, x: l.ts, y: l.preco, fonte: l.fonte, vol: l.vol });
+            });
+        });
+        return [...porProduto.entries()]
+            .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+            .map(([p, pts]) => ({
+                chave: 'produto|' + p,
+                etiqueta: etiquetaProduto(p),
+                titulo: `${p} — ${descricaoProduto(p)} · ${pts.length} ${pts.length === 1 ? 'sessão' : 'sessões'} no período`,
+                pts: pts
+            }));
+    }
+
+    function setupEvolucao() {
+        const cont = document.getElementById('ev-controls');
+        if (!cont) return;
+
+        const opcoesH = EV_HORIZONTES.map(h => {
+            const n = entregasComDados(h, null).length;
+            return {
+                id: h, label: HORIZ_NOME[h], desativado: n === 0,
+                motivo: `Nenhuma entrega do tipo «${HORIZ_NOME[h].toLowerCase()}» foi cotada entre ${fmtData(periodo.inicio)} e ${fmtData(periodo.fim)}`
+            };
+        });
+        const validos = opcoesH.filter(o => !o.desativado).map(o => o.id);
+        _evHoriz = (_evHorizDesejo && validos.indexOf(_evHorizDesejo) !== -1) ? _evHorizDesejo
+                 : (validos.indexOf('mes') !== -1 ? 'mes' : (validos[0] || 'mes'));
+
+        // Área: só o curto prazo tem Portugal. Nos restantes o botão desliga-se
+        // e o title diz porquê — não é uma falha de dados, é o mercado.
+        const areas = areasDoHorizonte(_evHoriz);
+        const opcoesA = ['ES', 'PT'].map(a => {
+            const temMercado = areas.has(a);
+            const temDados = entregasComDados(_evHoriz, a).length > 0;
+            return {
+                id: a, label: AREA_NOME[a], desativado: !temDados,
+                motivo: !temMercado
+                    ? `Portugal não tem curva a prazo de ${HORIZ_NOME[_evHoriz].toLowerCase()} — a liquidez a prazo do mercado ibérico está toda no hub espanhol`
+                    : `Sem cotações portuguesas deste tipo no período escolhido`
+            };
+        });
+        const areasValidas = opcoesA.filter(o => !o.desativado).map(o => o.id);
+        _evArea = (_evAreaDesejo && areasValidas.indexOf(_evAreaDesejo) !== -1) ? _evAreaDesejo
+                : (areasValidas.indexOf('ES') !== -1 ? 'ES' : (areasValidas[0] || 'ES'));
+
+        cont.innerHTML = '';
+        cont.appendChild(grupoBotoes('Horizonte', opcoesH, _evHoriz, id => {
+            _evHorizDesejo = id;
+            _evChavesDesejo = null;    // o catálogo de entregas muda por completo
+            atualizarURL(); setupEvolucao();
+        }));
+        cont.appendChild(grupoBotoes('Zona', opcoesA, _evArea, id => {
+            _evAreaDesejo = id; _evChavesDesejo = null; atualizarURL(); setupEvolucao();
+        }));
+
+        renderChipsEvolucao();
+        renderEvolucao();
+    }
+
+    // Seleção inicial. No modo por entrega, as que começam mais perto da última
+    // sessão — as mais relevantes, olhando para a frente ou para trás. No modo
+    // rolante são poucos produtos, e entram os de série mais longa.
+    function chavesIniciais() {
+        const disp = seriesDisponiveisEv();
+        if (evModoRolante()) {
+            return disp.slice().sort((a, b) => b.pts.length - a.pts.length).slice(0, 3)
+                       .sort((a, b) => (a.chave < b.chave ? -1 : 1)).map(x => x.chave);
+        }
+        const tsUlt = tsDeISO(ultimaSessaoDoPeriodo() || periodo.fim);
+        const inicioDe = x => tsDeISO(ENTREGAS.get(x.chave).ini);
+        return disp.slice()
+            .sort((a, b) => Math.abs(inicioDe(a) - tsUlt) - Math.abs(inicioDe(b) - tsUlt))
+            .slice(0, 4)
+            .sort((a, b) => inicioDe(a) - inicioDe(b))
+            .map(x => x.chave);
+    }
+
+    function chavesEfetivas() {
+        const disponiveis = seriesDisponiveisEv().map(x => x.chave);
+        if (_evChavesDesejo === null) return chavesIniciais();
+        // Uma escolha do utilizador que deixou de existir nesta janela é filtrada
+        // para o desenho, mas não é esquecida: volta quando a janela a repuser.
+        return _evChavesDesejo.filter(k => disponiveis.indexOf(k) !== -1);
+    }
+
+    function renderChipsEvolucao() {
+        const cont = document.getElementById('ev-chips');
+        if (!cont) return;
+        cont.innerHTML = '';
+
+        const todas = seriesDisponiveisEv();
+        const mostradas = todas.length > MAX_CHIPS ? todas.slice(-MAX_CHIPS) : todas;
+        const ativas = chavesEfetivas();
+
+        mostradas.forEach(serie => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'ent-chip';
+            b.textContent = serie.etiqueta;
+            b.title = serie.titulo;
+            b.setAttribute('aria-pressed', ativas.indexOf(serie.chave) !== -1 ? 'true' : 'false');
+            b.addEventListener('click', () => {
+                const atuais = chavesEfetivas().slice();
+                const i = atuais.indexOf(serie.chave);
+                if (i !== -1) atuais.splice(i, 1);
+                else {
+                    if (atuais.length >= MAX_SERIES) atuais.shift();   // acima disto deixa de ser legível
+                    atuais.push(serie.chave);
+                }
+                _evChavesDesejo = atuais;
+                renderChipsEvolucao();
+                renderEvolucao();
+            });
+            cont.appendChild(b);
+        });
+
+        const nomeItem = evModoRolante() ? 'produto' : 'entrega';
+        const nota = document.createElement('p');
+        nota.className = 'ent-nota';
+        if (!todas.length) {
+            nota.textContent = `Nenhum ${nomeItem} deste tipo foi cotado no período escolhido.`;
+        } else if (todas.length > mostradas.length) {
+            nota.textContent = `${todas.length} entregas no período — mostram-se as ${mostradas.length} mais recentes. Estreite o período para chegar às restantes.`;
+        } else if (evModoRolante()) {
+            nota.textContent = `${todas.length} ${todas.length === 1 ? 'produto' : 'produtos'} de curto prazo neste período. `
+                             + `Aqui cada linha segue o produto ao longo das sessões — «o preço para amanhã», sessão após sessão — e não uma entrega fixa: `
+                             + `o intradiário de um dia só é cotado nesse dia, e uma série por entrega teria um único ponto.`;
+        } else {
+            nota.textContent = `${todas.length} ${todas.length === 1 ? 'entrega' : 'entregas'} no período. Pode escolher até ${MAX_SERIES}.`;
+        }
+        cont.appendChild(nota);
+    }
+
+    function renderEvolucao() {
+        const disponiveis = seriesDisponiveisEv();
+        const chaves = chavesEfetivas();
+        const _d = _hcDark();
+        const nomeItem = evModoRolante() ? 'produto' : 'entrega';
+
+        if (!disponiveis.length) {
+            limparGrafico('grafico-evolucao', `<div class="bloco-vazio">Nenhum ${nomeItem} do tipo «${HORIZ_NOME[_evHoriz].toLowerCase()}» foi cotado entre ${fmtData(periodo.inicio)} e ${fmtData(periodo.fim)}.</div>`);
+            return;
+        }
+        if (!chaves.length) {
+            limparGrafico('grafico-evolucao', `<div class="bloco-vazio">Nenhum ${nomeItem} selecionado. Escolha pelo menos uma das etiquetas acima.</div>`);
+            return;
+        }
+
+        const escolhidas = chaves.map(k => disponiveis.find(x => x.chave === k)).filter(Boolean);
+        // Só o resto-do-mês tem janela de entrega variável de sessão para sessão;
+        // nos outros ela é constante e repeti-la em cada ponto seria ruído.
+        const mostrarJanela = _evHoriz === 'resto-do-mes';
+        const series = escolhidas.map((serie, i) => ({
+            name: serie.etiqueta, color: CORES[i % CORES.length],
+            data: serie.pts.map(p => ({
+                x: p.x, y: p.y,
+                custom: { fonte: p.fonte, vol: p.vol, janela: mostrarJanela ? `${fmtData(p.ini)} a ${fmtData(p.fim)}` : null }
+            })),
+            marker: { enabled: serie.pts.length <= 40, radius: 3 }
+        }));
+
+        if (!escolhidas.some(x => x.pts.length >= MIN_SESSOES_GRAFICO)) {
+            const maior = Math.max.apply(null, escolhidas.map(x => x.pts.length));
+            limparGrafico('grafico-evolucao',
+                `<div class="bloco-vazio">Uma linha precisa de pelo menos <strong>${MIN_SESSOES_GRAFICO}</strong> sessões com cotação, e a mais longa das selecionadas tem ${maior}. `
+              + `Alargue o período ou escolha outra ${nomeItem}.</div>`);
+            return;
+        }
+
+        const legenda = evModoRolante()
+            ? `Sessões de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} · cada linha é um produto ao longo das sessões, não uma entrega fixa`
+            : `Sessões de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} · cada linha segue um período de entrega fixo`;
+
+        Highcharts.chart('grafico-evolucao', {
+            chart: { type: 'line', height: 440, backgroundColor: _d.bg, style: { color: _d.txt }, zooming: { type: 'x' } },
+            accessibility: { description: evModoRolante()
+                ? 'Evolução do preço de curto prazo do gás natural ao longo das sessões de negociação. Cada linha segue um produto, como o preço para o dia seguinte em cada sessão.'
+                : 'Evolução do preço a prazo do gás natural ao longo das sessões de negociação, para os períodos de entrega selecionados. Cada linha segue um período de entrega fixo.' },
+            title: { text: `Evolução das cotações — ${HORIZ_NOME[_evHoriz].toLowerCase()}, ${AREA_NOME[_evArea]}`, style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: legenda, style: { color: _d.suave, fontSize: '0.75em' } },
+            xAxis: {
+                type: 'datetime', crosshair: true,
+                title: { text: 'Data da sessão', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } }, gridLineColor: _d.grelha,
+                plotLines: plotLineMetodo(periodo.inicio, periodo.fim)
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }, gridLineColor: _d.grelha
+            },
+            tooltip: {
+                shared: false, xDateFormat: 'Sessão de %A, %e de %B de %Y',
+                pointFormatter: function () {
+                    const c = this.options.custom || {};
+                    const vol = c.vol > 0 ? ` · ${fmt0(c.vol)} MWh` : ' · sem transações';
+                    const f = c.fonte === 'referencia' ? ' · preço de referência' : ' · preço de fecho';
+                    const janela = c.janela ? `<br><span style="font-size:0.82em;opacity:0.75">entrega de ${c.janela}</span>` : '';
+                    return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmt2(this.y)} €/MWh</b>`
+                         + `${janela}<br><span style="font-size:0.82em;opacity:0.75">${f}${vol}</span>`;
+                }
+            },
+            legend: { enabled: true, itemStyle: { color: _d.txt } },
+            plotOptions: { series: { lineWidth: 2 } },
+            exporting: exportacao('mibgas-evolucao-' + _evHoriz),
+            credits: { enabled: false },
+            series: series
+        });
+    }
+
+    // ==================================================================
+    // BLOCO 4 — EXPECTATIVA VS REALIZADO
+    // ==================================================================
+    const CMP_HORIZONTES = ['mes', 'trimestre', 'estacao', 'ano'];
+
+    // O que o gás veio a custar durante o período de entrega: média do índice do
+    // dia de gás de Espanha sobre os dias da entrega. Exige cobertura quase
+    // completa — uma média sobre metade dos dias não é o realizado do período.
+    function mediaRealizada(e) {
+        if (!SPOT || !SPOT_MAX || e.fim > SPOT_MAX) return null;
+        const diasTotais = Math.round((tsDeISO(e.fim) - tsDeISO(e.ini)) / DIA_MS) + 1;
+        let soma = 0, n = 0;
+        for (let ts = tsDeISO(e.ini); ts <= tsDeISO(e.fim); ts += DIA_MS) {
+            const v = SPOT.get(isoDeTs(ts));
+            if (v !== undefined) { soma += v; n++; }
+        }
+        if (!n || n / diasTotais < COBERTURA_SPOT_MINIMA) return null;
+        return soma / n;
+    }
+
+    // Métricas de uma entrega fechada, calculadas SOBRE AS SESSÕES DO PERÍODO e
+    // apenas sobre as anteriores ao início da entrega — é isso que torna a
+    // "cotação final" a aposta final do mercado, e não um ponto qualquer.
+    function metricasFechado(e) {
+        const realizado = mediaRealizada(e);
+        if (realizado === null) return null;
+        const pts = pontosNoPeriodo(e).filter(p => p.iso < e.ini);
+        if (pts.length < MIN_SESSOES_TRAJETORIA) return null;
+        const ys = pts.map(p => p.y);
+        const final = ys[ys.length - 1];
+        const media = ys.reduce((a, b) => a + b, 0) / ys.length;
+        return {
+            entrega: e, realizado: realizado, sessoes: pts.length,
+            primeira: pts[0].iso, ultima: pts[pts.length - 1].iso,
+            final: final, desvioFinal: final - realizado,
+            desvioMedio: media - realizado,
+            erroAbsMedio: ys.reduce((a, y) => a + Math.abs(y - realizado), 0) / ys.length,
+            min: Math.min.apply(null, ys), max: Math.max.apply(null, ys),
+            // A era é a da entrega, não a da sessão: é o que permite ver se o
+            // erro muda de degrau com a mudança de série do MIBGAS.
+            era: e.fim >= MUDANCA_METODO ? 'pos' : 'pre'
+        };
+    }
+
+    function fechadasDo(horizonte) {
+        const out = [];
+        entregasDe(horizonte, 'ES').forEach(e => {
+            const m = metricasFechado(e);
+            if (m) out.push(m);
+        });
+        return out.sort((a, b) => (a.entrega.ini < b.entrega.ini ? 1 : -1));   // mais recente primeiro
+    }
+
+    function setupComparacao() {
+        const secao = document.getElementById('bloco-comparacao');
+        const cont = document.getElementById('cmp-controls');
+        if (!cont || !_spotOk) return;
+        secao.classList.remove('bloco-indisponivel');
+
+        const porTipo = {};
+        CMP_HORIZONTES.forEach(h => { porTipo[h] = fechadasDo(h); });
+
+        const opcoes = CMP_HORIZONTES.map(h => ({
+            id: h, label: HORIZ_NOME[h], desativado: porTipo[h].length === 0,
+            motivo: `Nenhuma entrega do tipo «${HORIZ_NOME[h].toLowerCase()}» terminou com pelo menos ${MIN_SESSOES_TRAJETORIA} sessões de cotação dentro do período escolhido`
+        }));
+        const validos = opcoes.filter(o => !o.desativado).map(o => o.id);
+
+        cont.innerHTML = '';
+        if (!validos.length) {
+            _cmpChave = null;
+            cont.appendChild(grupoBotoes('Tipo', opcoes, _cmpHoriz, () => {}));
+            limparGrafico('grafico-comparacao',
+                `<div class="bloco-vazio">Nenhum período de entrega terminou com trajetória suficiente dentro de ${fmtData(periodo.inicio)} – ${fmtData(periodo.fim)}.<br>`
+              + `São precisas pelo menos ${MIN_SESSOES_TRAJETORIA} sessões de cotação antes do início da entrega, e a entrega tem de estar concluída (o último índice à vista é de ${fmtData(SPOT_MAX)}). Alargue o período.</div>`);
+            document.getElementById('cmp-resumo').innerHTML = '';
+            document.getElementById('cmp-quadro').innerHTML = '';
+            return;
+        }
+
+        _cmpHoriz = (_cmpHorizDesejo && validos.indexOf(_cmpHorizDesejo) !== -1) ? _cmpHorizDesejo
+                  : (validos.indexOf('mes') !== -1 ? 'mes' : validos[0]);
+
+        cont.appendChild(grupoBotoes('Tipo', opcoes, _cmpHoriz, id => {
+            _cmpHorizDesejo = id; _cmpChaveDesejo = null; atualizarURL(); setupComparacao();
+        }));
+
+        const lista = porTipo[_cmpHoriz];
+        const chaves = lista.map(m => m.entrega.chave);
+        _cmpChave = (_cmpChaveDesejo && chaves.indexOf(_cmpChaveDesejo) !== -1) ? _cmpChaveDesejo : chaves[0];
+
+        cont.appendChild(grupoSelect('Entrega', 'cmp-periodo',
+            lista.map(m => ({ id: m.entrega.chave, label: m.entrega.rotulo })), _cmpChave,
+            id => { _cmpChaveDesejo = id; atualizarURL(); renderComparacao(); renderQuadroFechados(); }));
+
+        renderComparacao();
+        renderQuadroFechados();
+    }
+
+    function renderComparacao() {
+        const resumo = document.getElementById('cmp-resumo');
+        const e = _cmpChave ? ENTREGAS.get(_cmpChave) : null;
+        const m = e ? metricasFechado(e) : null;
+        if (!m) {
+            limparGrafico('grafico-comparacao', '<div class="bloco-vazio">Sem trajetória suficiente para esta entrega no período escolhido.</div>');
+            resumo.innerHTML = '';
+            return;
+        }
+
+        const _d = _hcDark();
+        const pts = pontosNoPeriodo(e);
+        const ys = pts.map(p => p.y);
+        const limInf = Math.min(Math.min.apply(null, ys), m.realizado);
+        const limSup = Math.max(Math.max.apply(null, ys), m.realizado);
+        const folga = ((limSup - limInf) * 0.08) || 1;
+
+        const plotLinesX = plotLineMetodo(pts[0].iso, pts[pts.length - 1].iso).concat([{
+            value: tsDeISO(e.ini), color: '#888', width: 1, dashStyle: 'Dash',
+            label: { text: 'início da entrega', style: { color: '#888', fontSize: '0.68em' }, rotation: 90, y: 14, x: 4 }
+        }]);
+
+        Highcharts.chart('grafico-comparacao', {
+            chart: { type: 'line', height: 440, backgroundColor: _d.bg, style: { color: _d.txt }, zooming: { type: 'x' } },
+            accessibility: { description: `Trajetória da cotação do contrato de gás para entrega em ${e.rotulo} ao longo das sessões, comparada com o preço que o gás veio efetivamente a ter durante esse período.` },
+            title: { text: `${e.rotulo} — o que o mercado esperava vs o que aconteceu`, style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: 'Linha azul: cotação do contrato em cada sessão · Linha vermelha: índice MIBGAS-ES efetivamente registado durante a entrega', style: { color: _d.suave, fontSize: '0.75em' } },
+            xAxis: {
+                type: 'datetime', crosshair: true,
+                title: { text: 'Data da sessão', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } }, gridLineColor: _d.grelha,
+                plotLines: plotLinesX
+            },
+            yAxis: {
+                title: { text: 'Preço (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }, gridLineColor: _d.grelha,
+                softMin: limInf - folga, softMax: limSup + folga,
+                plotLines: [{
+                    value: m.realizado, color: '#dc3545', width: 2, dashStyle: 'Dash', zIndex: 3,
+                    label: { text: `realizado: ${fmt2(m.realizado)} €/MWh`, style: { color: '#dc3545', fontSize: '0.72em', fontWeight: 'bold' }, align: 'right', x: -6, y: -6 }
+                }]
+            },
+            tooltip: {
+                xDateFormat: 'Sessão de %A, %e de %B de %Y',
+                pointFormatter: function () {
+                    const desvio = this.y - m.realizado;
+                    const c = this.options.custom || {};
+                    const f = c.fonte === 'referencia' ? 'preço de referência' : 'preço de fecho';
+                    return `<span style="color:${this.color}">●</span> Cotação: <b>${fmt2(this.y)} €/MWh</b>`
+                         + `<br><span style="font-size:0.85em;opacity:0.75">${sinal(desvio)} €/MWh face ao realizado · ${f}</span>`;
+                }
+            },
+            legend: { enabled: false },
+            plotOptions: { series: { marker: { enabled: pts.length <= 60, radius: 3 }, lineWidth: 2 } },
+            exporting: exportacao('mibgas-expectativa-' + e.rotulo.replace(/\s+/g, '-').toLowerCase()),
+            credits: { enabled: false },
+            series: [{ name: e.rotulo, color: '#2563eb', data: pts.map(p => ({ x: p.x, y: p.y, custom: { fonte: p.fonte } })) }]
+        });
+
+        const acima = m.desvioMedio > 0;
+        resumo.innerHTML =
+            `Entrega de <strong>${fmtData(e.ini)}</strong> a <strong>${fmtData(e.fim)}</strong>. `
+          + `Em <strong>${m.sessoes}</strong> sessões antes do início da entrega, dentro do período escolhido, o contrato foi cotado entre `
+          + `<strong>${fmt2(m.min)}</strong> e <strong>${fmt2(m.max)}</strong> €/MWh. `
+          + `O gás veio a custar <strong>${fmt2(m.realizado)} €/MWh</strong> — média do índice MIBGAS-ES sobre os dias da entrega. `
+          + `Em média o mercado esteve <strong style="color:${acima ? '#c0392b' : '#1e8449'}">${fmt2(Math.abs(m.desvioMedio))} €/MWh ${acima ? 'acima' : 'abaixo'}</strong> `
+          + `do que se veio a verificar, e na última sessão antes da entrega estava em <strong>${fmt2(m.final)} €/MWh</strong> (${sinal(m.desvioFinal)} €/MWh).`;
+    }
+
+    function renderQuadroFechados() {
+        const alvo = document.getElementById('cmp-quadro');
+        if (!alvo) return;
+        const lista = fechadasDo(_cmpHoriz);
+        if (!lista.length) { alvo.innerHTML = ''; return; }
+
+        const agg = arr => {
+            if (!arr.length) return null;
+            return {
+                n: arr.length,
+                desvio: arr.reduce((a, m) => a + m.desvioFinal, 0) / arr.length,
+                mae: arr.reduce((a, m) => a + Math.abs(m.desvioFinal), 0) / arr.length
+            };
+        };
+        const todos = agg(lista);
+        const pre = agg(lista.filter(m => m.era === 'pre'));
+        const pos = agg(lista.filter(m => m.era === 'pos'));
+
+        const linhas = lista.map(m => {
+            const cls = m.desvioFinal > 0 ? 'sobe' : (m.desvioFinal < 0 ? 'desce' : '');
+            const ativa = m.entrega.chave === _cmpChave ? ' ativa' : '';
+            const era = m.era === 'pos' ? 'fecho' : 'referência';
+            return `<tr class="clicavel${ativa}" data-chave="${esc(m.entrega.chave)}" tabindex="0">`
+                 + `<th scope="row">${esc(m.entrega.rotulo)}</th>`
+                 + `<td class="col-secundaria">${m.sessoes}</td>`
+                 + `<td>${fmt2(m.final)}</td>`
+                 + `<td>${fmt2(m.realizado)}</td>`
+                 + `<td class="${cls}">${sinal(m.desvioFinal)}</td>`
+                 + `<td class="col-secundaria">${era}</td></tr>`;
+        }).join('');
+
+        const rodape = [];
+        rodape.push(`<strong>${todos.n}</strong> ${todos.n === 1 ? 'entrega fechada' : 'entregas fechadas'} no período · desvio médio <strong>${sinal(todos.desvio)}</strong> €/MWh · erro absoluto médio <strong>${fmt2(todos.mae)}</strong> €/MWh`);
+        if (pre && pos) {
+            rodape.push(`Antes de 2023 (preço de referência): ${pre.n} entregas, erro absoluto médio <strong>${fmt2(pre.mae)}</strong> €/MWh. Depois (preço de fecho): ${pos.n} entregas, <strong>${fmt2(pos.mae)}</strong> €/MWh. <em>A data separa duas séries do MIBGAS, mas coincide também com o fim da crise energética — a diferença não é atribuível só à mudança de metodologia.</em>`);
+        }
+
+        alvo.innerHTML =
+            `<table class="tabela-fut">`
+          + `<caption>Períodos de entrega já fechados — ${HORIZ_NOME[_cmpHoriz].toLowerCase()}. Clique numa linha para ver a trajetória.</caption>`
+          + `<thead><tr>`
+          + `<th scope="col" style="text-align:left;">Entrega</th>`
+          + `<th scope="col">Sessões</th>`
+          + `<th scope="col">Última cotação<br><small>antes da entrega</small></th>`
+          + `<th scope="col">Realizado<br><small>MIBGAS-ES</small></th>`
+          + `<th scope="col">Desvio</th>`
+          + `<th scope="col">Série</th>`
+          + `</tr></thead><tbody>${linhas}</tbody>`
+          + `<tfoot><tr><td colspan="6" style="text-align:left; white-space:normal; line-height:1.6;">${rodape.join('<br>')}</td></tr></tfoot>`
+          + `</table>`;
+
+        alvo.querySelectorAll('tr.clicavel').forEach(tr => {
+            const escolher = () => {
+                _cmpChaveDesejo = tr.dataset.chave;
+                const sel = document.getElementById('cmp-periodo');
+                if (sel) sel.value = tr.dataset.chave;
+                _cmpChave = tr.dataset.chave;
+                atualizarURL(); renderComparacao(); renderQuadroFechados();
+            };
+            tr.addEventListener('click', escolher);
+            tr.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); escolher(); } });
+        });
+    }
+
+    // ==================================================================
+    // BLOCO 5 — CLEAN SPARK SPREAD A PRAZO
+    // ==================================================================
+    const _MESES_EN = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
+
+    // Tradução do código de contrato do OMIP para o período de entrega, na mesma
+    // convenção que a omip.html já usa: "FPB M Oct-26" → Outubro 2026,
+    // "FPB Q4-26" → 4.º trimestre de 2026, "FPB YR-27" → 2027.
+    function periodoDoContratoOMIP(contrato) {
+        let m;
+        if ((m = /^FPB\s+M\s+([A-Za-z]{3})-(\d{2})$/.exec(contrato))) {
+            const mes = _MESES_EN[m[1]];
+            if (!mes) return null;
+            return { horizonte: 'mes', chave: `${2000 + (+m[2])}-${String(mes).padStart(2, '0')}` };
+        }
+        if ((m = /^FPB\s+Q(\d)-(\d{2})$/.exec(contrato))) {
+            return { horizonte: 'trimestre', chave: `${2000 + (+m[2])}-Q${m[1]}` };
+        }
+        if ((m = /^FPB\s+YR-(\d{2})$/.exec(contrato))) {
+            return { horizonte: 'ano', chave: `${2000 + (+m[1])}` };
+        }
+        return null;   // diários e semanais não têm equivalente na curva do gás
+    }
+
+    // A mesma chave, vista do lado do gás.
+    function chavePeriodoGas(e) {
+        if (e.horizonte === 'mes') return e.ini.substring(0, 7);
+        if (e.horizonte === 'trimestre') return `${e.ini.substring(0, 4)}-Q${Math.floor((+e.ini.substring(5, 7) - 1) / 3) + 1}`;
+        if (e.horizonte === 'ano') return e.ini.substring(0, 4);
+        return null;
+    }
+
+    function parseOMIP(texto) {
+        let n = 0;
+        lerCSV(texto, (c, i) => {
+            if ((c[i['Zona']] || '').trim() !== 'PT') return;
+            const p = periodoDoContratoOMIP((c[i['Contrato']] || '').trim());
+            if (!p) return;
+            const d = (c[i['Data']] || '').split('/');
+            if (d.length !== 3) return;
+            const iso = `${d[2]}-${d[1].padStart(2, '0')}-${d[0].padStart(2, '0')}`;
+            const v = numOuNulo(c[i['Valor']]);
+            if (v === null) return;
+            const k = p.horizonte + '|' + p.chave;
+            if (!OMIP.has(k)) OMIP.set(k, new Map());
+            OMIP.get(k).set(iso, v);
+            n++;
+        });
+        return n;
+    }
+
+    function parseCO2(texto) {
+        const out = [];
+        lerCSV(texto, (c, i) => {
+            if ((c[i['tipo']] || '').trim() !== 'EUA') return;          // EUAA são de aviação
+            const v = numOuNulo(c[i['preco_eur_t']]);
+            if (v === null) return;                                      // leilões cancelados
+            const iso = (c[i['data_iso']] || '').trim();
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
+            out.push({ iso: iso, preco: v });
+        });
+        out.sort((a, b) => (a.iso < b.iso ? -1 : 1));
+        return out;
+    }
+
+    // Preço do CO2 aplicável a uma sessão: o fecho do leilão mais recente até
+    // essa data. É spot, e é essa a simplificação que o bloco declara.
+    function co2Em(iso) {
+        let lo = 0, hi = CO2.length - 1, r = null;
+        while (lo <= hi) {
+            const mid = (lo + hi) >> 1;
+            if (CO2[mid].iso <= iso) { r = CO2[mid]; lo = mid + 1; } else hi = mid - 1;
+        }
+        return r ? r.preco : null;
+    }
+
+    // Entregas do gás com contrapartida no OMIP — as únicas em que há spark
+    // spread para calcular.
+    function entregasSpark() {
+        const out = [];
+        ['mes', 'trimestre', 'ano'].forEach(h => {
+            entregasDe(h, 'ES').forEach(e => {
+                const cp = chavePeriodoGas(e);
+                const omip = cp ? OMIP.get(h + '|' + cp) : null;
+                if (!omip) return;
+                const pts = pontosNoPeriodo(e).filter(p => omip.has(p.iso));
+                if (pts.length < MIN_SESSOES_TRAJETORIA) return;
+                out.push({ entrega: e, omip: omip, pts: pts });
+            });
+        });
+        return out.sort((a, b) => (a.entrega.ini < b.entrega.ini ? -1 : 1));
+    }
+
+    // Primeira sessão alguma vez recolhida do OMIP — o limite absoluto do bloco,
+    // lido dos dados e não fixado no código.
+    function primeiraSessaoOMIP() {
+        let min = null;
+        OMIP.forEach(m => m.forEach((_, iso) => { if (min === null || iso < min) min = iso; }));
+        return min;
+    }
+
+    // Sessões do período em que existe gás a prazo E eletricidade a prazo para o
+    // mesmo período de entrega — independentemente do limiar de trajetória.
+    function sessoesComunsSpark() {
+        const iso = new Set();
+        ['mes', 'trimestre', 'ano'].forEach(h => {
+            entregasDe(h, 'ES').forEach(e => {
+                const cp = chavePeriodoGas(e);
+                const omip = cp ? OMIP.get(h + '|' + cp) : null;
+                if (!omip) return;
+                pontosNoPeriodo(e).forEach(p => { if (omip.has(p.iso)) iso.add(p.iso); });
+            });
+        });
+        return iso.size;
+    }
+
+    // A entrega por que a página abre: a primeira que ainda não começou à data da
+    // última sessão do período — a mesma ideia de «próximo mês» dos cartões. Num
+    // período todo no passado, a última da lista é a mais recente que existiu.
+    function spkChaveInicial(itens) {
+        const ult = ultimaSessaoDoPeriodo() || periodo.fim;
+        const futura = itens.find(i => i.entrega.ini > ult);
+        return (futura || itens[itens.length - 1]).entrega.chave;
+    }
+
+    function calcularSpark(item) {
+        const r = _rendimento / 100;
+        return item.pts.map(p => {
+            const co2 = co2Em(p.iso);
+            const custo = co2 === null ? null : (p.y / r + co2 * FATOR_CO2 / r);
+            const elet = item.omip.get(p.iso);
+            return {
+                iso: p.iso, x: p.x, gas: p.y, co2: co2, custo: custo, elet: elet,
+                spread: (custo === null || elet === undefined) ? null : elet - custo
+            };
+        }).filter(d => d.spread !== null);
+    }
+
+    function setupSpark() {
+        const secao = document.getElementById('bloco-spark');
+        const cont = document.getElementById('spk-controls');
+        if (!cont || !_sparkOk) return;
+        secao.classList.remove('bloco-indisponivel');
+
+        const itens = entregasSpark();
+
+        cont.innerHTML = '';
+        // O cursor de rendimento existe sempre — é do leitor, não dos dados.
+        const wrapR = document.createElement('div');
+        wrapR.className = 'ctrl-grupo rend-wrap';
+        wrapR.innerHTML = `<label class="ctrl-label" for="spk-rendimento">Rendimento do ciclo combinado</label>`
+                        + `<input type="range" id="spk-rendimento" min="${REND_MIN}" max="${REND_MAX}" step="1" value="${_rendimento}" aria-describedby="spk-rendimento-valor">`
+                        + `<span class="rend-valor" id="spk-rendimento-valor">${_rendimento} %</span>`;
+        cont.appendChild(wrapR);
+        const slider = wrapR.querySelector('#spk-rendimento');
+        slider.addEventListener('input', () => {
+            _rendimento = parseInt(slider.value, 10);
+            wrapR.querySelector('#spk-rendimento-valor').textContent = _rendimento + ' %';
+            renderSpark(); renderQuadroSpark();
+        });
+        slider.addEventListener('change', atualizarURL);
+
+        if (!itens.length) {
+            _spkChave = null;
+            // Duas causas diferentes, e dizer a errada seria enganador: ou o
+            // período não toca o histórico do OMIP, ou toca-o mas com sessões a
+            // menos para uma trajetória.
+            const comuns = sessoesComunsSpark();
+            const inicioOmip = primeiraSessaoOMIP();
+            limparGrafico('grafico-spark', '<div class="bloco-vazio">' + (comuns
+                ? `Apenas <strong>${comuns}</strong> ${comuns === 1 ? 'sessão tem' : 'sessões têm'} gás <em>e</em> eletricidade a prazo dentro de ${fmtData(periodo.inicio)} – ${fmtData(periodo.fim)}, e nenhuma entrega chega às <strong>${MIN_SESSOES_TRAJETORIA}</strong> necessárias para uma trajetória. Alargue o período.`
+                : `Não há sessões com gás <em>e</em> eletricidade a prazo dentro de ${fmtData(periodo.inicio)} – ${fmtData(periodo.fim)}.<br>`
+                  + `O histórico de sessões do OMIP começa a <strong>${fmtData(inicioOmip)}</strong>. Alargue o período ou desloque-o para depois dessa data.`)
+              + '</div>');
+            document.getElementById('spk-resumo').innerHTML = '';
+            document.getElementById('spk-quadro').innerHTML = '';
+            return;
+        }
+
+        const chaves = itens.map(i => i.entrega.chave);
+        _spkChave = (_spkChaveDesejo && chaves.indexOf(_spkChaveDesejo) !== -1) ? _spkChaveDesejo : spkChaveInicial(itens);
+
+        cont.appendChild(grupoSelect('Entrega', 'spk-entrega',
+            itens.map(i => ({ id: i.entrega.chave, label: `${i.entrega.rotulo} (${HORIZ_NOME[i.entrega.horizonte].toLowerCase()})` })),
+            _spkChave,
+            id => { _spkChaveDesejo = id; atualizarURL(); renderSpark(); renderQuadroSpark(); }));
+
+        renderSpark();
+        renderQuadroSpark();
+    }
+
+    function renderSpark() {
+        const resumo = document.getElementById('spk-resumo');
+        const item = entregasSpark().find(i => i.entrega.chave === _spkChave);
+        if (!item) {
+            limparGrafico('grafico-spark', '<div class="bloco-vazio">Sem sessões em comum entre o gás e o OMIP para esta entrega, no período escolhido.</div>');
+            resumo.innerHTML = '';
+            return;
+        }
+        const dados = calcularSpark(item);
+        if (dados.length < MIN_SESSOES_GRAFICO) {
+            limparGrafico('grafico-spark', `<div class="bloco-vazio">Período demasiado curto — são precisas pelo menos ${MIN_SESSOES_TRAJETORIA} sessões com gás, CO₂ e eletricidade a prazo em simultâneo.</div>`);
+            resumo.innerHTML = '';
+            return;
+        }
+
+        const _d = _hcDark();
+        const e = item.entrega;
+        Highcharts.chart('grafico-spark', {
+            chart: { height: 460, backgroundColor: _d.bg, style: { color: _d.txt }, zooming: { type: 'x' } },
+            accessibility: { description: `Clean spark spread a prazo para entrega em ${e.rotulo}: preço da eletricidade no OMIP, custo de produção de uma central de ciclo combinado a ${_rendimento} por cento de rendimento, e a diferença entre os dois, ao longo das sessões de negociação.` },
+            title: { text: `${e.rotulo} — vale a pena queimar gás?`, style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: `Rendimento ${_rendimento} % · eletricidade FPB (banda, Portugal) · CO₂ spot do leilão mais recente de cada sessão`, style: { color: _d.suave, fontSize: '0.75em' } },
+            xAxis: {
+                type: 'datetime', crosshair: true,
+                title: { text: 'Data da sessão', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt } }, gridLineColor: _d.grelha
+            },
+            yAxis: {
+                title: { text: '€/MWh elétrico', style: { color: _d.txt } },
+                labels: { format: '{value:,.0f} €', style: { color: _d.txt } }, gridLineColor: _d.grelha,
+                plotLines: [{ value: 0, color: _d.suave, width: 1.5, zIndex: 4,
+                    label: { text: 'equilíbrio', style: { color: _d.suave, fontSize: '0.7em' }, align: 'left', x: 4, y: -4 } }]
+            },
+            tooltip: {
+                shared: true, xDateFormat: 'Sessão de %A, %e de %B de %Y',
+                valueSuffix: ' €/MWh', valueDecimals: 2
+            },
+            legend: { enabled: true, itemStyle: { color: _d.txt } },
+            plotOptions: { series: { marker: { enabled: false }, lineWidth: 2 } },
+            exporting: exportacao('mibgas-spark-spread-' + e.rotulo.replace(/\s+/g, '-').toLowerCase()),
+            credits: { enabled: false },
+            series: [
+                { type: 'area', name: 'Margem (spark spread)', color: '#dc3545', fillOpacity: 0.18, lineWidth: 1.5, zIndex: 1,
+                  data: dados.map(d => [d.x, d.spread]) },
+                { type: 'line', name: 'Eletricidade — OMIP FPB', color: '#2563eb', zIndex: 3,
+                  data: dados.map(d => [d.x, d.elet]) },
+                { type: 'line', name: `Custo do ciclo combinado (${_rendimento} %)`, color: '#f59e0b', zIndex: 3,
+                  data: dados.map(d => [d.x, d.custo]) }
+            ]
+        });
+
+        const spreads = dados.map(d => d.spread);
+        const ultimo = dados[dados.length - 1];
+        const negativos = spreads.filter(s => s < 0).length;
+        const medio = spreads.reduce((a, b) => a + b, 0) / spreads.length;
+        const sempreNeg = negativos === spreads.length;
+        resumo.innerHTML =
+            `Em <strong>${dados.length}</strong> sessões com os três mercados cotados em simultâneo, a margem foi `
+          + (sempreNeg ? `<strong style="color:#c0392b">negativa em todas</strong>` : `negativa em <strong>${negativos}</strong> delas`)
+          + `, com média de <strong style="color:${corDelta(-medio)}">${sinal(medio)} €/MWh</strong>. `
+          + `Na sessão de <strong>${fmtData(ultimo.iso)}</strong>, gás a <strong>${fmt2(ultimo.gas)}</strong> e CO₂ a <strong>${fmt2(ultimo.co2)} €/t</strong> davam um custo de `
+          + `<strong>${fmt2(ultimo.custo)} €/MWh</strong> a ${_rendimento} % de rendimento, contra <strong>${fmt2(ultimo.elet)} €/MWh</strong> de eletricidade a prazo — margem de `
+          + `<strong style="color:${corDelta(-ultimo.spread)}">${sinal(ultimo.spread)} €/MWh</strong>. `
+          + `Uma margem negativa <em>em banda</em> não quer dizer que a central pare: o FPB é o preço médio de todas as horas, e uma central a gás vive das horas de ponta, que pagam bem acima da média.`;
+    }
+
+    function renderQuadroSpark() {
+        const alvo = document.getElementById('spk-quadro');
+        if (!alvo) return;
+        const itens = entregasSpark();
+        if (!itens.length) { alvo.innerHTML = ''; return; }
+
+        // Uma linha por entrega, sempre na última sessão em que essa entrega teve
+        // os três mercados cotados dentro do período.
+        const linhas = itens.map(item => {
+            const dados = calcularSpark(item);
+            if (!dados.length) return null;
+            const u = dados[dados.length - 1];
+            const cls = u.spread > 0 ? 'desce' : 'sobe';
+            const ativa = item.entrega.chave === _spkChave ? ' ativa' : '';
+            return `<tr class="clicavel${ativa}" data-chave="${esc(item.entrega.chave)}" tabindex="0">`
+                 + `<th scope="row">${esc(item.entrega.rotulo)}</th>`
+                 + `<td class="col-secundaria">${fmtData(u.iso)}</td>`
+                 + `<td>${fmt2(u.gas)}</td>`
+                 + `<td>${fmt2(u.co2)}</td>`
+                 + `<td>${fmt2(u.custo)}</td>`
+                 + `<td>${fmt2(u.elet)}</td>`
+                 + `<td class="${cls}">${sinal(u.spread)}</td></tr>`;
+        }).filter(Boolean).join('');
+
+        if (!linhas) { alvo.innerHTML = ''; return; }
+
+        alvo.innerHTML =
+            `<table class="tabela-fut">`
+          + `<caption>Cada entrega na sua última sessão dentro do período, a ${_rendimento} % de rendimento. Clique numa linha para ver a trajetória.</caption>`
+          + `<thead><tr>`
+          + `<th scope="col" style="text-align:left;">Entrega</th>`
+          + `<th scope="col">Sessão</th>`
+          + `<th scope="col">Gás<br><small>€/MWh</small></th>`
+          + `<th scope="col">CO₂<br><small>€/t</small></th>`
+          + `<th scope="col">Custo<br><small>€/MWh elétrico</small></th>`
+          + `<th scope="col">Eletricidade<br><small>OMIP FPB</small></th>`
+          + `<th scope="col">Margem</th>`
+          + `</tr></thead><tbody>${linhas}</tbody>`
+          + `<tfoot><tr><td colspan="7" style="text-align:left; white-space:normal; line-height:1.6;">`
+          + `O custo é <code>gás ÷ ${(_rendimento / 100).toFixed(2).replace('.', ',')} + CO₂ × 0,2016 ÷ ${(_rendimento / 100).toFixed(2).replace('.', ',')}</code>. `
+          + `O CO₂ é o fecho do leilão primário mais recente à data da sessão — é <strong>spot</strong>, não a prazo. `
+          + `O fator 0,2016 tCO₂/MWh térmico é o de <strong>combustão</strong> (regulamento de monitorização da UE), não o de ciclo de vida.`
+          + `</td></tr></tfoot></table>`;
+
+        alvo.querySelectorAll('tr.clicavel').forEach(tr => {
+            const escolher = () => {
+                _spkChaveDesejo = tr.dataset.chave;
+                _spkChave = tr.dataset.chave;
+                const sel = document.getElementById('spk-entrega');
+                if (sel) sel.value = tr.dataset.chave;
+                atualizarURL(); renderSpark(); renderQuadroSpark();
+            };
+            tr.addEventListener('click', escolher);
+            tr.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); escolher(); } });
+        });
+    }
+
+    // ==================================================================
+    // BLOCO 6 — PRÉMIO FACE AO TTF
+    // ==================================================================
+    // Ordem dos produtos, do mais curto ao mais longo. W e S aparecem
+    // desdobrados porque o MIBGAS cota duas estações na mesma sessão.
+    const TTF_ORDEM = ['D+1', 'D+2', 'D+3', 'BoM', 'M+1', 'M+2', 'M+3',
+                       'Q+1', 'Q+2', 'Q+3', 'Q+4', 'S#1', 'S#2', 'W#1', 'W#2', 'Y+1', 'Y+2'];
+    const TTF_NOME = { 'S#1': 'S (próximo)', 'S#2': 'S (seguinte)', 'W#1': 'W (próximo)', 'W#2': 'W (seguinte)' };
+    const ttfNome = p => TTF_NOME[p] || p;
+    // Além do mês corrente o desconto é estrutural; até lá é ruído de curto prazo.
+    const TTF_CURTO = ['D+1', 'D+2', 'D+3', 'BoM'];
+
+    function parseTTF(texto) {
+        const linhas = [];
+        lerCSV(texto, (c, i) => {
+            const iso = (c[i['data_iso']] || '').trim();
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
+            const spread = numOuNulo(c[i['spread']]);
+            if (spread === null) return;
+            linhas.push({
+                iso: iso, produto: (c[i['produto']] || '').trim(),
+                ini: (c[i['entrega_inicio']] || '').trim(), spread: spread
+            });
+        });
+        // Desdobrar as estações: dentro da mesma sessão e do mesmo produto,
+        // ordena-se por início de entrega e numera-se. Sem isto, o W juntava o
+        // inverno que vem com o seguinte e a contagem ficava ao dobro da dos
+        // outros produtos — foi esta exata armadilha que já custou 684 linhas.
+        const porSessaoProduto = new Map();
+        linhas.forEach(l => {
+            const k = l.iso + '|' + l.produto;
+            if (!porSessaoProduto.has(k)) porSessaoProduto.set(k, []);
+            porSessaoProduto.get(k).push(l);
+        });
+        porSessaoProduto.forEach(grupo => {
+            if (grupo.length === 1) { grupo[0].etiqueta = grupo[0].produto; return; }
+            grupo.sort((a, b) => (a.ini < b.ini ? -1 : 1));
+            grupo.forEach((l, i) => { l.etiqueta = `${l.produto}#${i + 1}`; });
+        });
+        return linhas;
+    }
+
+    function mediana(arr) {
+        if (!arr.length) return null;
+        const s = arr.slice().sort((a, b) => a - b);
+        const m = s.length >> 1;
+        return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    }
+
+    function setupTTF() {
+        const secao = document.getElementById('bloco-ttf');
+        if (!secao || !_ttfOk) return;
+        secao.classList.remove('bloco-indisponivel');
+        document.getElementById('ttf-controls').innerHTML = '';
+        renderTTF();
+    }
+
+    function renderTTF() {
+        const resumo = document.getElementById('ttf-resumo');
+        const dentro = TTF.filter(l => l.iso >= periodo.inicio && l.iso <= periodo.fim);
+        const sessoes = new Set(dentro.map(l => l.iso)).size;
+
+        if (sessoes < 20) {
+            const inicioTTF = TTF.length ? TTF[0].iso : null;
+            limparGrafico('grafico-ttf',
+                `<div class="bloco-vazio">Período demasiado curto para uma mediana com significado — são precisas pelo menos <strong>20 sessões</strong>, e neste período há ${sessoes}.`
+              + (inicioTTF ? `<br>A série do prémio face ao TTF começa a <strong>${fmtData(inicioTTF)}</strong>.` : '')
+              + `</div>`);
+            resumo.innerHTML = '';
+            return;
+        }
+
+        const porProduto = new Map();
+        dentro.forEach(l => {
+            if (!porProduto.has(l.etiqueta)) porProduto.set(l.etiqueta, []);
+            porProduto.get(l.etiqueta).push(l.spread);
+        });
+
+        const categorias = [], valores = [], detalhes = [];
+        TTF_ORDEM.forEach(p => {
+            const arr = porProduto.get(p);
+            if (!arr || !arr.length) return;
+            const med = mediana(arr);
+            categorias.push(ttfNome(p));
+            valores.push({
+                y: med,
+                color: TTF_CURTO.indexOf(p) !== -1 ? '#94a3b8' : (med < 0 ? '#28a745' : '#dc3545'),
+                custom: { n: arr.length, pct: 100 * arr.filter(v => v > 0).length / arr.length }
+            });
+            detalhes.push({ p: p, med: med, n: arr.length, pct: 100 * arr.filter(v => v > 0).length / arr.length });
+        });
+
+        if (!categorias.length) {
+            limparGrafico('grafico-ttf', '<div class="bloco-vazio">Sem observações do prémio face ao TTF no período escolhido.</div>');
+            resumo.innerHTML = '';
+            return;
+        }
+
+        const _d = _hcDark();
+        Highcharts.chart('grafico-ttf', {
+            chart: { type: 'column', height: 380, backgroundColor: _d.bg, style: { color: _d.txt } },
+            accessibility: { description: 'Mediana do prémio do gás ibérico face ao TTF europeu, por horizonte de entrega. Valores negativos significam gás ibérico mais barato que o TTF. Os produtos de curto prazo aparecem a cinzento porque negoceiam praticamente à paridade.' },
+            title: { text: 'Prémio do gás ibérico face ao TTF, por horizonte', style: { color: _d.txt, fontSize: '1em' } },
+            subtitle: { text: `Mediana sobre ${sessoes} sessões entre ${fmtData(periodo.inicio)} e ${fmtData(periodo.fim)} · negativo = gás ibérico mais barato que o TTF`, style: { color: _d.suave, fontSize: '0.75em' } },
+            xAxis: {
+                categories: categorias,
+                title: { text: 'Produto (horizonte de entrega)', style: { color: _d.txt } },
+                labels: { style: { color: _d.txt, fontSize: '0.78em' } }, gridLineColor: _d.grelha
+            },
+            yAxis: {
+                title: { text: 'Prémio mediano (€/MWh)', style: { color: _d.txt } },
+                labels: { format: '{value:,.2f} €', style: { color: _d.txt } }, gridLineColor: _d.grelha,
+                plotLines: [{ value: 0, color: _d.suave, width: 1.5, zIndex: 4 }]
+            },
+            tooltip: {
+                pointFormatter: function () {
+                    const c = this.options.custom || {};
+                    return `Prémio mediano: <b>${sinal(this.y, 3)} €/MWh</b>`
+                         + `<br><span style="font-size:0.85em;opacity:0.8">${c.n} observações · positivo em ${fmt0(c.pct)} % das sessões</span>`;
+                }
+            },
+            legend: { enabled: false },
+            plotOptions: { column: { borderWidth: 0, groupPadding: 0.08 } },
+            exporting: exportacao('mibgas-premio-ttf'),
+            credits: { enabled: false },
+            series: [{ name: 'Prémio mediano', data: valores }]
+        });
+
+        const longos = detalhes.filter(d => TTF_CURTO.indexOf(d.p) === -1);
+        const curtos = detalhes.filter(d => TTF_CURTO.indexOf(d.p) !== -1);
+        const medLongos = mediana(longos.map(d => d.med));
+        const pctLongos = longos.length ? longos.reduce((a, d) => a + d.pct, 0) / longos.length : null;
+        const pctCurtos = curtos.length ? curtos.reduce((a, d) => a + d.pct, 0) / curtos.length : null;
+
+        const partes = [];
+        if (longos.length) {
+            partes.push(`Além do mês corrente, o gás ibérico negoceia a um desconto mediano de <strong>${fmt3(Math.abs(medLongos))} €/MWh</strong> face ao TTF, `
+                      + `e o sinal quase não varia: nesses produtos o prémio é positivo em apenas <strong>${fmt0(pctLongos)} %</strong> das sessões.`);
+        }
+        if (curtos.length) {
+            partes.push(`No curto prazo o desconto desaparece — nos produtos de dia e resto-do-mês o prémio é positivo em <strong>${fmt0(pctCurtos)} %</strong> das sessões, praticamente uma moeda ao ar.`);
+        }
+        partes.push(`É a assinatura de um mercado com excedente de regaseificação e sem forma de o escoar: <strong>não é arbitrável</strong>, porque capturar o desconto exigiria transportar o gás para fora da península — que é exatamente o que a interligação com França não permite.`);
+        resumo.innerHTML = partes.join(' ');
+    }
+
+    // ==================================================================
+    // ORQUESTRAÇÃO
+    // ==================================================================
+    function renderTitulo() {
+        const ses = sessoesNoPeriodo();
+        document.getElementById('data-inicio-titulo').textContent = fmtData(periodo.inicio);
+        document.getElementById('data-fim-titulo').textContent = fmtData(periodo.fim);
+        document.getElementById('badge-sessao').textContent = fmtData(MAX_SESSAO);
+        document.getElementById('badge-inicio').textContent = fmtData(MIN_SESSAO);
+        document.getElementById('badge-sessoes').textContent =
+            ses.length === 0 ? 'nenhuma sessão no período'
+          : ses.length === 1 ? '1 sessão no período'
+          : `${ses.length} sessões no período`;
+    }
+
+    function renderTudo() {
+        renderTitulo();
+        renderKPIs();
+        setupCurva();
+        setupEvolucao();
+        if (_spotOk) setupComparacao();
+        if (_sparkOk) setupSpark();
+        if (_ttfOk) setupTTF();
+    }
+
+    function aplicarPreset(preset) {
+        const d = getPresetDates(preset);
+        if (!d) { setDateInputsVisibilidade('custom'); atualizarBotoesPreset('custom'); return; }
+        periodo = { inicio: d.inicio, fim: d.fim };
+        seletorDataInicio.value = d.inicio;
+        seletorDataFim.value = d.fim;
+        document.getElementById('erro-periodo').style.display = 'none';
+        atualizarBotoesPreset(preset);
+        setDateInputsVisibilidade(preset);
+        atualizarURL();
+        renderTudo();
+    }
+
+    function aplicarDatasManuais() {
+        const inicio = seletorDataInicio.value, fim = seletorDataFim.value;
+        const erro = document.getElementById('erro-periodo');
+        if (!inicio || !fim) return;
+        if (inicio > fim) {
+            erro.textContent = 'A data de início é posterior à data de fim.';
+            erro.style.display = 'block';
+            return;
+        }
+        // Um intervalo sem sessões não é rejeitado: é um estado legítimo (um
+        // feriado, um fim de semana) e quem o explica é cada bloco, com a sua
+        // própria mensagem, não um erro genérico no topo.
+        erro.style.display = 'none';
+        periodo = { inicio: inicio, fim: fim };
+        atualizarBotoesPreset(detectarPreset(inicio, fim));
+        atualizarURL();
+        renderTudo();
+    }
+
+    // ==================================================================
+    // EVENTOS
+    // ==================================================================
+    document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const p = this.dataset.preset;
+            if (p === 'custom') {
+                // Abre com a série completa — é o antigo preset "Tudo", que aqui
+                // é o ponto de partida da edição manual.
+                const d = getPresetDates('tudo');
+                periodo = { inicio: d.inicio, fim: d.fim };
+                seletorDataInicio.value = d.inicio;
+                seletorDataFim.value = d.fim;
+                document.getElementById('erro-periodo').style.display = 'none';
+                atualizarBotoesPreset('custom');
+                setDateInputsVisibilidade('custom');
+                atualizarURL();
+                renderTudo();
+                return;
+            }
+            aplicarPreset(p);
+        });
+    });
+    seletorDataInicio.addEventListener('change', aplicarDatasManuais);
+    seletorDataFim.addEventListener('change', aplicarDatasManuais);
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+
+    // Todo o gráfico desta página passa por aqui: o tema muda as cores de fundo,
+    // de texto e de grelha, que são lidas no momento do render.
+    document.addEventListener('themeChanged', function () {
+        if (FUT.length) renderTudo();
+    });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', function () {
+        btnTopo.classList.toggle('visible', window.scrollY > 500);
+    }, { passive: true });
+    btnTopo.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    window.addEventListener('beforeprint', function () {
+        document.querySelectorAll('details.faq-item').forEach(d => {
+            if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+        });
+    });
+    window.addEventListener('afterprint', function () {
+        document.querySelectorAll('[data-opened-for-print="1"]').forEach(d => {
+            d.removeAttribute('open'); delete d.dataset.openedForPrint;
+        });
+    });
+
+    // ==================================================================
+    // ARRANQUE
+    // ==================================================================
+    // O ficheiro de futuros chega primeiro e destrava os blocos 1 a 3. Os
+    // restantes ficheiros vêm em paralelo e cada um destrava o seu bloco quando
+    // chegar — a página é utilizável enquanto isso.
+    function carregarComplementos() {
+        // --- preços à vista → bloco 4
+        fetchDados(URL_SPOT)
+            .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+            .then(texto => {
+                SPOT = new Map();
+                lerCSV(texto, (c, i) => {
+                    const iso = (c[i['data_iso']] || '').trim();
+                    const v = numOuNulo(c[i['mibgas_es']]);
+                    if (v !== null && /^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+                        SPOT.set(iso, v);
+                        if (SPOT_MAX === null || iso > SPOT_MAX) SPOT_MAX = iso;
+                    }
+                });
+                if (!SPOT.size) throw new Error('Índice à vista vazio.');
+                _spotOk = true;
+                setupComparacao();
+            })
+            .catch(err => {
+                console.error('MIBGAS spot:', err);
+                limparGrafico('grafico-comparacao', '<div class="bloco-vazio">Não foi possível carregar os preços à vista, necessários para comparar a expectativa com o realizado.</div>');
+            });
+
+        // --- CO2 + OMIP → bloco 5
+        const anoAtual = new Date().getUTCFullYear();
+        const anosOmip = [];
+        for (let a = OMIP_ANO_INICIO; a <= anoAtual; a++) anosOmip.push(a);
+        Promise.all([
+            fetchDados(URL_CO2).then(r => r.ok ? r.text() : null).catch(() => null),
+            // Um ano em falta (por exemplo no início de janeiro) não é erro.
+            Promise.all(anosOmip.map(a => fetchDados(histOmipUrl(a)).then(r => r.ok ? r.text() : null).catch(() => null)))
+        ]).then(([textoCO2, textosOmip]) => {
+            if (!textoCO2) throw new Error('Preços de CO2 indisponíveis.');
+            CO2 = parseCO2(textoCO2);
+            if (!CO2.length) throw new Error('Sem leilões de CO2 utilizáveis.');
+
+            let n = 0;
+            textosOmip.forEach(t => { if (t) n += parseOMIP(t); });
+            if (!n) throw new Error('Histórico OMIP vazio.');
+
+            const sessoesOmip = new Set();
+            OMIP.forEach(m => m.forEach((_, iso) => sessoesOmip.add(iso)));
+            const el = document.getElementById('spark-n-sessoes');
+            if (el) el.textContent = String(sessoesOmip.size);
+
+            _sparkOk = true;
+            setupSpark();
+        }).catch(err => {
+            console.error('Spark spread:', err);
+            limparGrafico('grafico-spark', '<div class="bloco-vazio">Não foi possível carregar os preços de CO₂ ou o histórico do OMIP, necessários para calcular o spark spread.</div>');
+        });
+
+        // --- prémio face ao TTF → bloco 6
+        fetchDados(URL_TTF)
+            .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+            .then(texto => {
+                TTF = parseTTF(texto);
+                if (!TTF.length) throw new Error('Ficheiro de spread vazio.');
+                TTF.sort((a, b) => (a.iso < b.iso ? -1 : 1));
+                _ttfOk = true;
+                setupTTF();
+            })
+            .catch(err => {
+                console.error('TTF spread:', err);
+                limparGrafico('grafico-ttf', '<div class="bloco-vazio">Não foi possível carregar o prémio face ao TTF.</div>');
+            });
+    }
+
+    fetchDados(URL_FUT)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(texto => {
+            FUT = parseFuturos(texto);
+            if (!FUT.length) throw new Error('Ficheiro de futuros vazio ou ilegível.');
+            indexarFuturos();
+
+            seletorDataInicio.min = MIN_SESSAO; seletorDataInicio.max = MAX_SESSAO;
+            seletorDataFim.min = MIN_SESSAO; seletorDataFim.max = MAX_SESSAO;
+
+            document.getElementById('estado').hidden = true;
+
+            // Tudo o que vem no URL é uma escolha explícita de quem partilhou o
+            // link: fica marcado como desejo do utilizador e não é desfeito pelo
+            // recuo automático.
+            const u = lerURL();
+            if (u.curva) _curvaTipoDesejo = u.curva;
+            if (u.vs && u.vs !== 'off') _curvaVsDesejo = u.vs;
+            if (u.h) _evHorizDesejo = u.h;
+            if (u.area) _evAreaDesejo = u.area;
+            if (u.ent4) { _cmpChaveDesejo = u.ent4; const p = u.ent4.split('|'); if (p[1]) _cmpHorizDesejo = p[1]; }
+            if (u.ent5) _spkChaveDesejo = u.ent5;
+            if (u.rend !== null) _rendimento = u.rend;
+
+            if (u.datas && u.datas.fim >= MIN_SESSAO && u.datas.inicio <= MAX_SESSAO) {
+                periodo = u.datas;
+                seletorDataInicio.value = periodo.inicio;
+                seletorDataFim.value = periodo.fim;
+                const p = detectarPreset(periodo.inicio, periodo.fim);
+                atualizarBotoesPreset(p);
+                setDateInputsVisibilidade(p);
+                renderTudo();
+            } else {
+                aplicarPreset('12m');
+            }
+
+            carregarComplementos();
+        })
+        .catch(err => {
+            console.error('MIBGAS futuros:', err);
+            const el = document.getElementById('estado');
+            el.className = 'estado-erro';
+            el.hidden = false;
+            el.textContent = 'Não foi possível carregar a curva a prazo do MIBGAS. Tente novamente dentro de alguns minutos.';
+        });
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
