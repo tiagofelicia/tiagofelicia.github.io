@@ -213,6 +213,16 @@
         [data-theme="dark"] .fuso-btn:hover:not(.active) { background: #334155; }
         [data-theme="dark"] .fuso-btn.active { background: #0284c7; border-color: #0284c7; color: #fff; }
         @media print { .fuso-toggle { display: none !important; } }
+
+        /* ===== Seletor de intervalo de 15 min (métrica "slot" do mapa) ===== */
+        .slot-toggle { gap: 8px; }
+        .slot-range { width: 240px; max-width: 55vw; accent-color: #0ea5e9; cursor: pointer; vertical-align: middle; }
+        .slot-range:focus-visible { outline: 2px solid #0ea5e9; outline-offset: 3px; }
+        .slot-step { padding: 5px 10px; line-height: 1; font-weight: 700; }
+        .slot-value { font-size: 0.85em; font-weight: 700; color: #0369a1; font-variant-numeric: tabular-nums; min-width: 96px; text-align: center; }
+        [data-theme="dark"] .slot-value { color: #38bdf8; }
+        @media (max-width: 480px) { .slot-range { width: 160px; } .slot-value { min-width: 84px; } }
+
         .modo-tab:hover { background: #e2e8f0; }
         .modo-tab.active { background: #2563eb; color: #fff; border-color: #2563eb; }
         .modo-tab:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
@@ -757,6 +767,17 @@
             <button type="button" class="fuso-btn metric-btn active" data-metric="avg" data-i18n="metricAvg" data-i18n-title="metricAvgTitle" title="Preço médio de cada zona (default)">📊 Média</button>
             <button type="button" class="fuso-btn metric-btn" data-metric="min" data-i18n="metricMin" data-i18n-title="metricMinTitle" title="Preço mínimo de cada zona no período">🔻 Mínimo</button>
             <button type="button" class="fuso-btn metric-btn" data-metric="max" data-i18n="metricMax" data-i18n-title="metricMaxTitle" title="Preço máximo de cada zona no período">🔺 Máximo</button>
+            <button type="button" class="fuso-btn metric-btn" data-metric="slot" data-i18n="metricSlot" data-i18n-title="metricSlotTitle" title="Preço de cada zona num intervalo de 15 minutos à escolha">🕐 15 min</button>
+        </div>
+
+        <div class="fuso-toggle slot-toggle" id="slot-picker" role="group" aria-label="Intervalo de 15 minutos" data-i18n-aria="ariaSlot" style="display:none;">
+            <span class="fuso-label" data-i18n="slotLabel">Intervalo:</span>
+            <button type="button" class="fuso-btn slot-step" id="slot-prev" title="Intervalo anterior" aria-label="Intervalo anterior" data-i18n-title="slotPrevTitle" data-i18n-aria="slotPrevTitle">&#10094;</button>
+            <input type="range" id="slot-range" class="slot-range" min="0" max="95" step="1" value="48" aria-label="Intervalo de 15 minutos" data-i18n-aria="ariaSlot" aria-describedby="slot-value">
+            <button type="button" class="fuso-btn slot-step" id="slot-next" title="Intervalo seguinte" aria-label="Intervalo seguinte" data-i18n-title="slotNextTitle" data-i18n-aria="slotNextTitle">&#10095;</button>
+            <output class="slot-value" id="slot-value" for="slot-range" aria-live="polite">12:00–12:15</output>
+            <button type="button" class="fuso-btn" id="slot-play" title="Percorrer automaticamente os intervalos do dia" aria-pressed="false" data-i18n="slotPlay" data-i18n-title="slotPlayTitle">▶ Animar</button>
+            <button type="button" class="fuso-btn" id="slot-now" title="Saltar para o intervalo de 15 minutos a decorrer agora" data-i18n="slotNow" data-i18n-title="slotNowTitle">⏱ Agora</button>
         </div>
         <div class="range-wrapper" id="range-wrapper" style="display:none;">
             <label for="data-inicio" data-i18n="lblInicio">Início:</label>
@@ -931,6 +952,7 @@
                         </ul>
                     </li>
                 </ul>
+                <p>Ou seja, a escolha só muda os números em <strong>9 zonas</strong> — Portugal e Irlanda (CET−1) e Bulgária, Estónia, Finlândia, Grécia, Letónia, Lituânia e Roménia (CET+1). Nas outras 39 (já em CET) as duas opções mostram exatamente os mesmos valores. Passando o rato sobre cada botão do toggle aparece essa lista.</p>
                 <p>A escolha é guardada localmente (localStorage) e mantém-se entre visitas.</p>
                 <p>A base temporal ativa (Hora local ou Hora de mercado) é sempre indicada nos títulos e na legenda <code>🔗</code> de cada visualização.</p>
                 </div>
@@ -946,8 +968,37 @@
                         </ul>
                     </li>
                 </ul>
+                <p>In other words, the choice only changes the numbers for <strong>9 zones</strong> — Portugal and Ireland (CET−1) and Bulgaria, Estonia, Finland, Greece, Latvia, Lithuania and Romania (CET+1). For the other 39 (already on CET) both options show exactly the same values. Hovering each toggle button shows that list.</p>
                 <p>The choice is stored locally (localStorage) and persists across visits.</p>
                 <p>The active time basis (Local time or Market time) is always shown in the titles and in the <code>🔗</code> caption of each visualization.</p>
+                </div>
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary><span data-lang-block="pt"><strong>O que mostra o toggle "Métrica" do mapa (incluindo os 15 minutos)?</strong></span><span data-lang-block="en"><strong>What does the map's "Metric" toggle show (including the 15 minutes)?</strong></span></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt">
+                <p>O toggle <strong>Métrica</strong> controla o número que cada zona mostra no mapa (cor + etiqueta). A tabela, os gráficos e os heatmaps mantêm-se sempre na média.</p>
+                <ul>
+                    <li><strong>📊 Média (default):</strong> preço médio da zona no dia ou no período selecionado.</li>
+                    <li><strong>🔻 Mínimo / 🔺 Máximo:</strong> preço mínimo/máximo da zona no dia ou no período.</li>
+                    <li><strong>🕐 15 min:</strong> em vez de um agregado, mostra o preço de um <strong>intervalo de 15 minutos à escolha</strong> (o dataset é quarto-horário — 96 intervalos por dia). Aparece um seletor com slider, setas <kbd>❮</kbd> <kbd>❯</kbd> e botões <strong>▶ Animar</strong> e <strong>⏱ Agora</strong>. O <strong>▶ Animar</strong> percorre sozinho os 96 intervalos em ciclo (~4 por segundo), para ver a onda de preços a atravessar a Europa; clicar de novo (ou mexer no slider/setas) pára. Com o slider focado, as setas <kbd>←</kbd> <kbd>→</kbd> do teclado avançam intervalo a intervalo.</li>
+                </ul>
+                <p>Em modo <strong>Diário</strong>, o valor é o preço efetivo desse intervalo. Nos modos <strong>Semanal / Mensal / Personalizado</strong>, é a <strong>média desse mesmo intervalo ao longo de todos os dias</strong> do período (por exemplo, quanto custa em média a eletricidade às 19:45).</p>
+                <p>O intervalo é lido no fuso ativo: em <strong>🌍 Hora local</strong>, "19:45" é a hora local de cada zona; em <strong>🇪🇺 Hora de mercado (CET)</strong>, é o mesmo instante em toda a Europa. O botão <strong>⏱ Agora</strong> usa o relógio da zona de referência ("🌍 A minha zona") ou o relógio CET, conforme o fuso escolhido.</p>
+                <p>Se uma zona ainda não tiver valor publicado nesse intervalo (ex: as últimas horas locais de Portugal antes do leilão seguinte), fica a cinzento e sem etiqueta. A métrica e o intervalo ficam guardados no browser e entram no link de partilha (<code>?metric=slot&amp;slot=79</code>).</p>
+                </div>
+                <div data-lang-block="en">
+                <p>The <strong>Metric</strong> toggle controls the number each zone shows on the map (colour + label). The table, charts and heatmaps always stay on the average.</p>
+                <ul>
+                    <li><strong>📊 Average (default):</strong> the zone's average price for the selected day or period.</li>
+                    <li><strong>🔻 Minimum / 🔺 Maximum:</strong> the zone's minimum/maximum price for the day or period.</li>
+                    <li><strong>🕐 15 min:</strong> instead of an aggregate, it shows the price of a <strong>15-minute interval of your choice</strong> (the dataset is quarter-hourly — 96 intervals per day). A picker appears with a slider, <kbd>❮</kbd> <kbd>❯</kbd> arrows and the <strong>▶ Play</strong> and <strong>⏱ Now</strong> buttons. <strong>▶ Play</strong> steps through all 96 intervals on a loop (~4 per second), so you can watch the price wave cross Europe; clicking again (or touching the slider/arrows) stops it. With the slider focused, the keyboard <kbd>←</kbd> <kbd>→</kbd> arrows step one interval at a time.</li>
+                </ul>
+                <p>In <strong>Daily</strong> mode the value is the actual price for that interval. In <strong>Weekly / Monthly / Custom</strong> modes it is the <strong>average of that same interval across every day</strong> in the period (for example, how much electricity costs on average at 19:45).</p>
+                <p>The interval is read in the active time basis: under <strong>🌍 Local time</strong>, "19:45" is each zone's local clock; under <strong>🇪🇺 Market time (CET)</strong>, it is the same instant across Europe. The <strong>⏱ Now</strong> button uses the reference zone's clock ("🌍 My zone") or the CET clock, depending on the chosen time basis.</p>
+                <p>If a zone has no published value for that interval yet (e.g. Portugal's last local hours before the next auction), it stays grey and unlabelled. The metric and the interval are stored in the browser and included in the share link (<code>?metric=slot&amp;slot=79</code>).</p>
                 </div>
             </div>
         </details>
@@ -1211,11 +1262,24 @@ document.addEventListener('DOMContentLoaded', function() {
             mDiario: 'Diário', mSemanal: 'Semanal (7d)', mMensal: 'Mensal', mCustom: 'Personalizado',
             mMensalTitle: 'Mês deslizante terminado no dia selecionado (28-31 dias consoante o mês)',
             fusoLabel: 'Fuso:', fusoLocal: '🌍 Hora local', fusoMercado: '🇪🇺 Hora de mercado (CET)',
-            metricLabel: 'Métrica:', metricAvg: '📊 Média', metricMin: '🔻 Mínimo', metricMax: '🔺 Máximo',
+            metricLabel: 'Métrica:', metricAvg: '📊 Média', metricMin: '🔻 Mínimo', metricMax: '🔺 Máximo', metricSlot: '🕐 15 min',
             metricAvgTitle: 'Preço médio de cada zona (default)', metricMinTitle: 'Preço mínimo de cada zona no período', metricMaxTitle: 'Preço máximo de cada zona no período',
-            ariaMetric: 'Métrica do mapa',
+            metricSlotTitle: 'Preço de cada zona num intervalo de 15 minutos à escolha (em vez de média/mín/máx)',
+            ariaMetric: 'Métrica do mapa', ariaSlot: 'Intervalo de 15 minutos',
+            slotLabel: 'Intervalo:', slotPrevTitle: 'Intervalo anterior (←)', slotNextTitle: 'Intervalo seguinte (→)',
+            slotNow: '⏱ Agora', slotNowTitle: 'Saltar para o intervalo de 15 minutos a decorrer agora',
+            slotPlay: '▶ Animar', slotPlayTitle: 'Percorrer automaticamente os intervalos do dia',
+            slotPause: '⏸ Pausa', slotPauseTitle: 'Parar a animação',
+            mapTitleAggSlot: 'Preços de Eletricidade Day-Ahead às ', mapTitleAggSlotAvg: 'Preços Médios de Eletricidade Day-Ahead às ',
+            slotInfoPre: 'Preço às ', slotInfoAvgPre: 'Preço médio às ', slotNoData: 'Sem valor neste intervalo',
+            slotDiaPre: 'Dia: ', slotPeriodoPre: 'Período: ',
             fusoLocalTitle: 'Cada zona mostrada no seu fuso local (default)',
             fusoMercadoTitle: 'Todas as zonas alinhadas em CET (hora de mercado europeu day-ahead)',
+            tipFusoLocalBase: '🌍 Hora local — cada zona no seu próprio fuso horário (00:00 → 24:00 locais).',
+            tipFusoMercadoBase: '🇪🇺 Hora de mercado (CET) — todas as zonas alinhadas ao dia de mercado day-ahead europeu (CET 00:00 → 24:00).',
+            tipFusoDif: 'A escolha só faz diferença nestas zonas:',
+            tipFusoMenos: 'CET−1 (1h atrás): ', tipFusoMais: 'CET+1 (1h à frente): ',
+            tipFusoIguaisPre: 'Nas outras ', tipFusoIguaisSuf: ' zonas (já em CET) as duas opções mostram exatamente os mesmos valores.',
             ariaFuso: 'Fuso horário de visualização',
             lblInicio: 'Início:', lblFim: 'Fim:', btnAplicar: 'Aplicar',
             lblSelDia: 'Selecione o dia:', btnPrevTitle: 'Dia anterior', btnNextTitle: 'Dia seguinte',
@@ -1283,6 +1347,8 @@ document.addEventListener('DOMContentLoaded', function() {
             notaMarketFull: 'Valores em hora de mercado (CET) — todas as zonas alinhadas',
             avisoProvisorioPT: 'A média para Portugal não é final — falta o valor da última hora do dia (23h às 24h de PT), que ainda não foi negociado.',
             avisoProvisorioGen: '⚠️ As zonas assinaladas com <strong>*</strong> (em CET−1, como Portugal e Irlanda) têm média ainda <strong>provisória</strong> neste dia: falta-lhes a última hora local, que o mercado day-ahead só publica no dia seguinte.',
+            avisoSlotPT: 'Portugal ainda não tem preço para este intervalo — a última hora local do dia (23h às 24h de PT) só é publicada no leilão seguinte.',
+            avisoSlotGen: '⚠️ As zonas assinaladas com <strong>*</strong> (em CET−1, como Portugal e Irlanda) ainda <strong>não têm preço para este intervalo</strong>: falta-lhes a última hora local, que o mercado day-ahead só publica no dia seguinte.',
             hmWeekShort: 'Perfil semanal',
             resAbove: 'acima', resBelow: 'abaixo',
             resEuAvg: 'da média europeia', resEuAvgOnly: 'Média europeia',
@@ -1339,11 +1405,24 @@ document.addEventListener('DOMContentLoaded', function() {
             mDiario: 'Daily', mSemanal: 'Weekly (7d)', mMensal: 'Monthly', mCustom: 'Custom',
             mMensalTitle: 'Rolling month ending on the selected day (28-31 days depending on the month)',
             fusoLabel: 'Time zone:', fusoLocal: '🌍 Local time', fusoMercado: '🇪🇺 Market time (CET)',
-            metricLabel: 'Metric:', metricAvg: '📊 Average', metricMin: '🔻 Minimum', metricMax: '🔺 Maximum',
+            metricLabel: 'Metric:', metricAvg: '📊 Average', metricMin: '🔻 Minimum', metricMax: '🔺 Maximum', metricSlot: '🕐 15 min',
             metricAvgTitle: 'Average price of each zone (default)', metricMinTitle: 'Minimum price of each zone in the period', metricMaxTitle: 'Maximum price of each zone in the period',
-            ariaMetric: 'Map metric',
+            metricSlotTitle: 'Price of each zone in a 15-minute interval of your choice (instead of average/min/max)',
+            ariaMetric: 'Map metric', ariaSlot: '15-minute interval',
+            slotLabel: 'Interval:', slotPrevTitle: 'Previous interval (←)', slotNextTitle: 'Next interval (→)',
+            slotNow: '⏱ Now', slotNowTitle: 'Jump to the 15-minute interval running right now',
+            slotPlay: '▶ Play', slotPlayTitle: 'Step automatically through the intervals of the day',
+            slotPause: '⏸ Pause', slotPauseTitle: 'Stop the animation',
+            mapTitleAggSlot: 'Day-Ahead Electricity Prices at ', mapTitleAggSlotAvg: 'Average Day-Ahead Electricity Prices at ',
+            slotInfoPre: 'Price at ', slotInfoAvgPre: 'Average price at ', slotNoData: 'No value for this interval',
+            slotDiaPre: 'Day: ', slotPeriodoPre: 'Period: ',
             fusoLocalTitle: 'Each zone shown in its local time zone (default)',
             fusoMercadoTitle: 'All zones aligned to CET (European day-ahead market time)',
+            tipFusoLocalBase: '🌍 Local time — each zone in its own time zone (local 00:00 → 24:00).',
+            tipFusoMercadoBase: '🇪🇺 Market time (CET) — all zones aligned to the European day-ahead market day (CET 00:00 → 24:00).',
+            tipFusoDif: 'The choice only makes a difference for these zones:',
+            tipFusoMenos: 'CET−1 (1h behind): ', tipFusoMais: 'CET+1 (1h ahead): ',
+            tipFusoIguaisPre: 'For the other ', tipFusoIguaisSuf: ' zones (already on CET) both options show exactly the same values.',
             ariaFuso: 'Display time zone',
             lblInicio: 'Start:', lblFim: 'End:', btnAplicar: 'Apply',
             lblSelDia: 'Select the day:', btnPrevTitle: 'Previous day', btnNextTitle: 'Next day',
@@ -1411,6 +1490,8 @@ document.addEventListener('DOMContentLoaded', function() {
             notaMarketFull: 'Values in market time (CET) — all zones aligned',
             avisoProvisorioPT: 'The average for Portugal is not final — the last hour of the day (23:00–24:00 PT) has not been traded yet.',
             avisoProvisorioGen: '⚠️ Zones marked with <strong>*</strong> (in CET−1, such as Portugal and Ireland) still have a <strong>provisional</strong> average for this day: their last local hour is missing, which the day-ahead market only publishes the next day.',
+            avisoSlotPT: 'Portugal has no price yet for this interval — the last local hour of the day (23:00 to 24:00 PT) is only published in the next auction.',
+            avisoSlotGen: '⚠️ Zones marked with <strong>*</strong> (in CET−1, such as Portugal and Ireland) <strong>have no price yet for this interval</strong>: their last local hour is missing, which the day-ahead market only publishes the next day.',
             hmWeekShort: 'Weekly profile',
             resAbove: 'above', resBelow: 'below',
             resEuAvg: 'the European average', resEuAvgOnly: 'European average',
@@ -1709,12 +1790,64 @@ document.addEventListener('DOMContentLoaded', function() {
         "MK": [41.6, 21.7]      // Macedónia do Norte
     };
 
+    // --- MÉTRICA "SLOT": um intervalo de 15 minutos do dia ---
+    // O dataset é sempre PT15M (96 slots/dia), mas a grelha do seletor é
+    // independente da resolução: valorNoSlot() mapeia o índice 0-95 para o
+    // índice nativo do array, para aguentar séries horárias/30 min antigas.
+    var SLOT_MIN = 15;
+    var SLOTS_DIA = 24 * 60 / SLOT_MIN;   // 96
+
+    function slotLabelFor(idx) {
+        var ini = idx * SLOT_MIN;
+        var fim = ini + SLOT_MIN;
+        var hhmm = function(m) {
+            return String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+        };
+        return hhmm(ini) + '–' + (fim === 24 * 60 ? '24:00' : hhmm(fim));
+    }
+
+    // Intervalo de 15 min a decorrer agora. Em hora local usa o relógio da zona
+    // de referência ("🌍 A minha zona"); em hora de mercado, o relógio CET.
+    function slotAgora() {
+        var tz = 'Europe/Lisbon';
+        try {
+            tz = _isMarketTime()
+                ? 'Europe/Berlin'
+                : (ZONE_TZ[refZone] || ZONE_TZ[ZONE_DATA_MAP[refZone]] || 'Europe/Lisbon');
+            var partes = new Intl.DateTimeFormat('en-GB', {
+                timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+            }).formatToParts(new Date());
+            var h = 0, m = 0;
+            partes.forEach(function(p) {
+                if (p.type === 'hour') h = parseInt(p.value, 10) % 24;
+                if (p.type === 'minute') m = parseInt(p.value, 10);
+            });
+            return Math.max(0, Math.min(SLOTS_DIA - 1, Math.floor((h * 60 + m) / SLOT_MIN)));
+        } catch (e) {
+            var d = new Date();
+            return Math.floor((d.getHours() * 60 + d.getMinutes()) / SLOT_MIN);
+        }
+    }
+
+    // Valor de uma zona no slot selecionado. Usa 'values' (modo Diário) ou
+    // 'slotValues' (média por slot ao longo do período, modos agregados).
+    function valorNoSlot(stats, idx) {
+        if (!stats || typeof stats === 'number') return null;
+        var vals = stats.slotValues || stats.values;
+        if (!vals || !vals.length) return null;
+        var j = Math.floor(idx * vals.length / SLOTS_DIA);
+        if (j >= vals.length) j = vals.length - 1;
+        var v = vals[j];
+        return (v == null || isNaN(v)) ? null : v;
+    }
+
     function getZonePrice(zone) {
         var dataZone = ZONE_DATA_MAP[zone] || zone;
         var val = currentData[dataZone];
         if (val === null || val === undefined) return null;
         if (typeof val === 'number') return val;  // formato antigo
-        // Métrica do mapa: min/max com fallback para a média se não existirem.
+        // Métrica do mapa: min/max/slot com fallback para a média se não existirem.
+        if (mapMetric === 'slot') return valorNoSlot(val, mapSlot);
         if (mapMetric === 'min' && val.min != null) return val.min;
         if (mapMetric === 'max' && val.max != null) return val.max;
         return val.avg;
@@ -1860,6 +1993,46 @@ document.addEventListener('DOMContentLoaded', function() {
         var shift = (zoneOff - cetOff) / 60; // PT/IE: -1; CET: 0; EET: +1
         _zoneShiftCache[zone] = shift;
         return shift;
+    }
+
+    /**
+     * Agrupa as zonas conhecidas pelo desfasamento face a CET.
+     * Devolve { menos: [nomes], mais: [nomes], iguais: n } com os nomes já na
+     * língua ativa, sem duplicados (IE/GB-NIR partilham o SEM, NO1..NO5 a Noruega).
+     * Serve os tooltips do toggle Fuso: só estas zonas é que mudam entre
+     * "Hora local" e "Hora de mercado (CET)".
+     */
+    function zonasPorShiftCET() {
+        var menos = [], mais = [], iguais = 0;
+        var vistos = {};
+        Object.keys(ZONE_TZ).forEach(function(z) {
+            var sh = zoneShiftVsCET(z);
+            if (sh === 0) { iguais++; return; }
+            var nome = zoneName(ZONE_DATA_MAP[z] || z);
+            if (vistos[nome]) return;
+            vistos[nome] = true;
+            (sh < 0 ? menos : mais).push(nome);
+        });
+        var porNome = function(a, b) { return a.localeCompare(b, LANG === 'en' ? 'en' : 'pt'); };
+        return { menos: menos.sort(porNome), mais: mais.sort(porNome), iguais: iguais };
+    }
+
+    /**
+     * Escreve nos botões do toggle Fuso um tooltip que enumera os países onde a
+     * escolha faz diferença (CET−1 e CET+1). Gerado a partir dos fusos reais
+     * (Intl), para não desalinhar se forem acrescentadas zonas ao dataset.
+     */
+    function atualizarTooltipsFuso() {
+        var g = zonasPorShiftCET();
+        if (!g.menos.length && !g.mais.length) return;
+        var corpo = '\n\n' + T('tipFusoDif')
+            + (g.menos.length ? '\n• ' + T('tipFusoMenos') + g.menos.join(', ') : '')
+            + (g.mais.length ? '\n• ' + T('tipFusoMais') + g.mais.join(', ') : '')
+            + '\n\n' + T('tipFusoIguaisPre') + g.iguais + T('tipFusoIguaisSuf');
+        var bLocal = document.querySelector('[data-fuso="local"]');
+        var bMercado = document.querySelector('[data-fuso="mercado"]');
+        if (bLocal) bLocal.setAttribute('title', T('tipFusoLocalBase') + corpo);
+        if (bMercado) bMercado.setAttribute('title', T('tipFusoMercadoBase') + corpo);
     }
 
     function _isoNextDate(dateStr, n) {
@@ -2021,10 +2194,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // da tabela e a zona inicial dos gráficos. Persistida; default PT; pode vir de ?ref=.
     var refZone = (prefs && prefs.refZone && ZONE_NAMES[prefs.refZone]) ? prefs.refZone : 'PT';
 
-    // Métrica mostrada no mapa: 'avg' (default), 'min' ou 'max'. Persistida.
-    // Afeta apenas a cor das zonas, os números das etiquetas e o título do mapa;
-    // tabela, gráficos e heatmaps mantêm-se sempre na média.
-    var mapMetric = (prefs && (prefs.mapMetric === 'min' || prefs.mapMetric === 'max')) ? prefs.mapMetric : 'avg';
+    // Métrica mostrada no mapa: 'avg' (default), 'min', 'max' ou 'slot' (um
+    // intervalo de 15 min à escolha). Persistida e partilhável via ?metric=/?slot=.
+    // Afeta apenas a cor das zonas, os números das etiquetas, o info-control e o
+    // título do mapa; tabela, gráficos e heatmaps mantêm-se sempre na média.
+    var METRICS_VALIDAS = ['avg', 'min', 'max', 'slot'];
+    var _urlMetric = null, _urlSlot = null;
+    try {
+        var _qp0 = new URLSearchParams(window.location.search);
+        _urlMetric = _qp0.get('metric');
+        _urlSlot = _qp0.get('slot');
+    } catch (e) {}
+    var mapMetric = 'avg';
+    if (_urlMetric && METRICS_VALIDAS.indexOf(_urlMetric) !== -1) mapMetric = _urlMetric;
+    else if (prefs && METRICS_VALIDAS.indexOf(prefs.mapMetric) !== -1) mapMetric = prefs.mapMetric;
+
+    // Índice (0-95) do intervalo de 15 min mostrado quando mapMetric === 'slot'.
+    // Sem preferência guardada, arranca no intervalo a decorrer agora.
+    var mapSlot = 48;   // 12:00–12:15 (fallback)
+    var _slotInicial = (_urlSlot != null && _urlSlot !== '') ? _urlSlot : (prefs ? prefs.mapSlot : null);
+    if (_slotInicial != null && _slotInicial !== '' && !isNaN(parseInt(_slotInicial, 10))) {
+        mapSlot = Math.max(0, Math.min(SLOTS_DIA - 1, parseInt(_slotInicial, 10)));
+    } else {
+        var _agora = new Date();
+        mapSlot = Math.max(0, Math.min(SLOTS_DIA - 1, Math.floor((_agora.getHours() * 60 + _agora.getMinutes()) / SLOT_MIN)));
+    }
 
     // --- HELPERS DE DATA ---
     function parseDateStr(s) {
@@ -2131,8 +2325,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (stats == null) continue;
                 if (typeof stats === 'number') stats = { avg: stats };
                 if (stats.avg == null) continue;
-                if (!perZone[zone]) perZone[zone] = { avgs: [], min: null, min_date: null, min_hour: null, max: null, max_date: null, max_hour: null };
+                if (!perZone[zone]) perZone[zone] = {
+                    avgs: [], min: null, min_date: null, min_hour: null, max: null, max_date: null, max_hour: null,
+                    slotSum: new Array(SLOTS_DIA).fill(0), slotCnt: new Array(SLOTS_DIA).fill(0)
+                };
                 perZone[zone].avgs.push(stats.avg);
+                // Acumular por intervalo de 15 min (grelha fixa de 96 slots) para
+                // suportar a métrica "slot" também nos modos agregados.
+                if (stats.values && stats.values.length) {
+                    var vlen = stats.values.length;
+                    for (var sIdx = 0; sIdx < SLOTS_DIA; sIdx++) {
+                        var nativeIdx = Math.floor(sIdx * vlen / SLOTS_DIA);
+                        if (nativeIdx >= vlen) nativeIdx = vlen - 1;
+                        var sv = stats.values[nativeIdx];
+                        if (sv == null || isNaN(sv)) continue;
+                        perZone[zone].slotSum[sIdx] += sv;
+                        perZone[zone].slotCnt[sIdx] += 1;
+                    }
+                }
                 if (stats.min != null) {
                     if (perZone[zone].min == null || stats.min < perZone[zone].min) {
                         perZone[zone].min = stats.min;
@@ -2155,10 +2365,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!p.avgs.length) continue;
             var sum = 0;
             for (var k = 0; k < p.avgs.length; k++) sum += p.avgs[k];
+            var slotVals = new Array(SLOTS_DIA);
+            var temSlots = false;
+            for (var si = 0; si < SLOTS_DIA; si++) {
+                if (p.slotCnt[si] > 0) { slotVals[si] = p.slotSum[si] / p.slotCnt[si]; temSlots = true; }
+                else slotVals[si] = null;
+            }
             result[z] = {
                 avg: sum / p.avgs.length,
                 min: p.min, min_date: p.min_date, min_hour: p.min_hour,
                 max: p.max, max_date: p.max_date, max_hour: p.max_hour,
+                // slotValues (e não values) para não afetar isPartial/partialInfo,
+                // que só fazem sentido no dia individual.
+                slotValues: temSlots ? slotVals : null,
                 _ndays: p.avgs.length
             };
         }
@@ -2497,6 +2716,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     info.update = function(props) {
+        // Guardado para poder re-renderizar o mesmo painel quando muda a métrica
+        // ou o intervalo de 15 min sem o rato sair da zona.
+        this._lastProps = props || null;
         if (props) {
             var zone = props.ecZone;
             var stats = getZoneStats(zone);
@@ -2513,7 +2735,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     var pi = partialInfo(stats);
                     if (pi) partialBadge = ' <span class="partial-badge" title="' + T('partialDataPre') + pi.known + '/' + pi.total + T('slotsPub') + '">' + T('partialBadge') + '</span>';
                 }
-                html += '<div class="price-value">' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
+                if (mapMetric === 'slot') {
+                    // Métrica por intervalo de 15 min: o valor grande é o do slot
+                    // escolhido; a média do dia/período desce para o detalhe.
+                    var vSlot = valorNoSlot(stats, mapSlot);
+                    html += '<div class="period-label">' + (isPeriodoMap ? T('slotInfoAvgPre') : T('slotInfoPre')) + slotLabelFor(mapSlot) + '</div>';
+                    html += '<div class="price-value">' + (vSlot == null ? T('slotNoData') : (fmtN(vSlot, 2) + ' €/MWh')) + '</div>';
+                    html += '<div class="stats-detail">' + T('stAvg') + ': ' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
+                } else {
+                    html += '<div class="price-value">' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
+                }
                 if (stats.min !== undefined && stats.min !== null) {
                     var minStamp = isPeriodoMap && stats.min_date ? (fmtDateBR(stats.min_date) + ' ' + (stats.min_hour || '')) : (stats.min_hour || '');
                     var maxStamp = isPeriodoMap && stats.max_date ? (fmtDateBR(stats.max_date) + ' ' + (stats.max_hour || '')) : (stats.max_hour || '');
@@ -4918,8 +5149,14 @@ document.addEventListener('DOMContentLoaded', function() {
         return { start: dateStr, end: dateStr };
     }
 
-    // Prefixo do título do mapa consoante a métrica ativa (média/mín/máx).
+    // Prefixo do título do mapa consoante a métrica ativa (média/mín/máx/slot).
+    // Em 'slot' o texto distingue o dia único (valor do intervalo) do período
+    // agregado (média desse intervalo ao longo dos dias).
     function metricTitlePrefix() {
+        if (mapMetric === 'slot') {
+            var base = (currentMode === 'diario') ? T('mapTitleAggSlot') : T('mapTitleAggSlotAvg');
+            return base + slotLabelFor(mapSlot) + ' - ';
+        }
         if (mapMetric === 'min') return T('mapTitleAggMin');
         if (mapMetric === 'max') return T('mapTitleAggMax');
         return T('mapTitleAgg');
@@ -4929,7 +5166,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // métrica). Usado tanto no loadPriceData como ao trocar de métrica.
     function buildMapTitle() {
         var dateStr = seletorData.value;
-        var isUltimoDia = (currentMode === 'diario' && dateStr === ultimaDataDisponivel);
+        // O aviso "até às 23h de PT" qualifica a média do dia — em métrica por
+        // intervalo o número mostrado é de um slot concreto, não de uma média.
+        var isUltimoDia = (currentMode === 'diario' && dateStr === ultimaDataDisponivel && mapMetric !== 'slot');
         var sufFuso = _isMarketTime()
             ? T('sufMarket')
             : ((isUltimoDia && refZone === 'PT')
@@ -4947,19 +5186,121 @@ document.addEventListener('DOMContentLoaded', function() {
     // Troca a métrica do mapa e re-renderiza apenas as visualizações do mapa
     // (cor das zonas, etiquetas e título). Não toca em tabela/gráficos.
     function applyMapMetric(m) {
-        if (m !== 'avg' && m !== 'min' && m !== 'max') return;
+        if (METRICS_VALIDAS.indexOf(m) === -1) return;
         mapMetric = m;
         savePref('mapMetric', m);
         var btns = document.querySelectorAll('.metric-btn');
         for (var i = 0; i < btns.length; i++) {
             btns[i].classList.toggle('active', btns[i].dataset.metric === m);
         }
+        var picker = document.getElementById('slot-picker');
+        if (picker) picker.style.display = (m === 'slot') ? 'flex' : 'none';
+        if (m !== 'slot') pararAnimacaoSlot();
+        renderMapaMetrica();
+    }
+
+    // Re-renderiza só o que depende da métrica: cor das zonas, etiquetas,
+    // título e crédito do mapa. Não toca em tabela/gráficos/heatmaps.
+    function renderMapaMetrica() {
         if (geojsonLayer) {
             geojsonLayer.setStyle(style);
             updatePriceLabels();
         }
         var tEl = document.getElementById('titulo-mapa');
         if (tEl) tEl.textContent = buildMapTitle();
+        atualizarCreditoMapa();
+        // O aviso de dados por publicar depende da métrica/intervalo ativos.
+        updateAvisoProvisorio();
+        if (typeof info !== 'undefined' && info && info.update) info.update(info._lastProps || undefined);
+    }
+
+    // Arrastar o slider dispara muitos eventos 'input' — coalescer o re-render
+    // do mapa num frame evita repintar 50 polígonos por cada pixel de arrasto.
+    // Nota: requestAnimationFrame não dispara com a página escondida/minimizada,
+    // por isso nesse caso cai-se para setTimeout (senão o título e o crédito
+    // ficavam desatualizados até a página voltar a ficar visível).
+    var _slotRenderPend = false;
+    function agendarRenderSlot() {
+        if (_slotRenderPend) return;
+        _slotRenderPend = true;
+        var correr = function() { _slotRenderPend = false; renderMapaMetrica(); };
+        if (typeof requestAnimationFrame === 'function' && !document.hidden) requestAnimationFrame(correr);
+        else setTimeout(correr, 0);
+    }
+
+    // Aplica um novo intervalo de 15 min (0-95) e re-renderiza o mapa.
+    // opts.semGuardar evita escrever a preferência a cada passo da animação
+    // (só se guarda a posição final, ao parar).
+    function applyMapSlot(idx, opts) {
+        opts = opts || {};
+        idx = Math.max(0, Math.min(SLOTS_DIA - 1, parseInt(idx, 10) || 0));
+        mapSlot = idx;
+        if (!opts.semGuardar) savePref('mapSlot', idx);
+        var rng = document.getElementById('slot-range');
+        if (rng && !opts.fromRange) rng.value = String(idx);
+        var out = document.getElementById('slot-value');
+        if (out) out.textContent = slotLabelFor(idx);
+        if (mapMetric !== 'slot') return;
+        if (opts.fromRange) agendarRenderSlot();
+        else renderMapaMetrica();
+    }
+
+    // --- ANIMAÇÃO DO DIA (botão ▶) ---
+    // Percorre os 96 intervalos em ciclo, para se ver a onda de preços a
+    // atravessar a Europa. setTimeout encadeado (e não setInterval) para que um
+    // frame lento nunca acumule passos em atraso.
+    var ANIM_SLOT_MS = 220;
+    var _animTimer = null;
+    function animacaoSlotAtiva() { return _animTimer !== null; }
+
+    function _sincronizarBotaoPlay() {
+        var btn = document.getElementById('slot-play');
+        if (!btn) return;
+        var aCorrer = animacaoSlotAtiva();
+        btn.textContent = aCorrer ? T('slotPause') : T('slotPlay');
+        btn.setAttribute('title', aCorrer ? T('slotPauseTitle') : T('slotPlayTitle'));
+        btn.setAttribute('aria-pressed', aCorrer ? 'true' : 'false');
+        btn.classList.toggle('active', aCorrer);
+    }
+
+    function pararAnimacaoSlot() {
+        if (_animTimer === null) return;
+        clearTimeout(_animTimer);
+        _animTimer = null;
+        savePref('mapSlot', mapSlot);   // guardar só a posição final
+        _sincronizarBotaoPlay();
+    }
+
+    function iniciarAnimacaoSlot() {
+        if (animacaoSlotAtiva() || mapMetric !== 'slot') return;
+        var passo = function() {
+            // Com a página escondida o setTimeout é estrangulado e não há nada
+            // para ver — parar em vez de correr às cegas.
+            if (document.hidden) { pararAnimacaoSlot(); return; }
+            applyMapSlot((mapSlot + 1) % SLOTS_DIA, { semGuardar: true });
+            _animTimer = setTimeout(passo, ANIM_SLOT_MS);
+        };
+        _animTimer = setTimeout(passo, ANIM_SLOT_MS);
+        _sincronizarBotaoPlay();
+    }
+
+    function alternarAnimacaoSlot() {
+        if (animacaoSlotAtiva()) pararAnimacaoSlot();
+        else iniciarAnimacaoSlot();
+    }
+
+    // Crédito de exportação do mapa (período + intervalo, quando aplicável).
+    function atualizarCreditoMapa() {
+        var ctxMapa;
+        if (currentMode === 'diario') {
+            ctxMapa = [T('lblDiario') + ' ' + fmtDateBR(seletorData.value)];
+        } else {
+            var p = computePeriod();
+            var lModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
+            ctxMapa = [lModo + ' ' + fmtDateBR(p.start) + ' → ' + fmtDateBR(p.end)];
+        }
+        if (mapMetric === 'slot') ctxMapa.push(slotLabelFor(mapSlot));
+        setExportCredit('credit-mapa', ctxMapa);
     }
 
     // --- CARREGAR DADOS DE PRECOS ---
@@ -5017,14 +5358,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Atualizar titulo (prefixo depende da métrica média/mín/máx ativa)
         document.getElementById('titulo-mapa').textContent = buildMapTitle();
         // Crédito de exportação do mapa
-        var ctxMapa;
-        if (currentMode === 'diario') {
-            ctxMapa = [T('lblDiario') + ' ' + fmtDateBR(dateStr)];
-        } else {
-            var lModo = currentMode === 'semanal' ? T('lblSemanal') : (currentMode === 'mensal' ? T('lblMensal') : T('lblPersonalizado'));
-            ctxMapa = [lModo + ' ' + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end)];
-        }
-        setExportCredit('credit-mapa', ctxMapa);
+        atualizarCreditoMapa();
 
         // Aviso de média provisória (último dia, hora local) — depende da zona de referência
         updateAvisoProvisorio();
@@ -5056,10 +5390,23 @@ document.addEventListener('DOMContentLoaded', function() {
         var showProv = (currentMode === 'diario'
             && seletorData.value === ultimaDataDisponivel
             && !_isMarketTime());
+        // Na métrica por intervalo não há média no mapa: o aviso só se aplica
+        // se for mesmo o intervalo escolhido que ainda não está publicado.
+        var slotMode = (mapMetric === 'slot');
+        var faltaRef = showProv, faltaAlguma = showProv;
+        if (showProv && slotMode) {
+            var stRef = getZoneStats(refZone);
+            faltaRef = !!(isPartial(stRef) && valorNoSlot(stRef, mapSlot) == null);
+            faltaAlguma = false;
+            for (var z in currentData) {
+                if (!currentData.hasOwnProperty(z)) continue;
+                if (isPartial(currentData[z]) && valorNoSlot(currentData[z], mapSlot) == null) { faltaAlguma = true; break; }
+            }
+        }
         var avisoEl = document.getElementById('aviso-provisorio');
         if (avisoEl) {
-            if (showProv && refZone === 'PT') {
-                avisoEl.textContent = T('avisoProvisorioPT');
+            if (showProv && refZone === 'PT' && faltaRef) {
+                avisoEl.textContent = slotMode ? T('avisoSlotPT') : T('avisoProvisorioPT');
                 avisoEl.style.display = 'block';
             } else {
                 avisoEl.style.display = 'none';
@@ -5067,8 +5414,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         var avisoLocalEl = document.getElementById('aviso-parcial-local');
         if (avisoLocalEl) {
-            if (showProv && refZone !== 'PT') {
-                avisoLocalEl.innerHTML = T('avisoProvisorioGen');
+            if (showProv && refZone !== 'PT' && faltaAlguma) {
+                avisoLocalEl.innerHTML = slotMode ? T('avisoSlotGen') : T('avisoProvisorioGen');
                 avisoLocalEl.style.display = 'block';
             } else {
                 avisoLocalEl.style.display = 'none';
@@ -5358,6 +5705,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (typeof _fusoAtivo !== 'undefined' && _fusoAtivo === 'mercado') {
                     params.set('fuso', 'mercado');
                 }
+                // Métrica do mapa se diferente do default (e o intervalo, em 'slot')
+                if (mapMetric !== 'avg') {
+                    params.set('metric', mapMetric);
+                    if (mapMetric === 'slot') params.set('slot', String(mapSlot));
+                }
                 var finalUrl = url + '?' + params.toString();
                 // Q3: salvaguarda — URL > 2000 chars é problemático em alguns servers
                 if (finalUrl.length > 1800) {
@@ -5508,7 +5860,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // --- Toggle Métrica do mapa (Média / Mínimo / Máximo) ---
+            // --- Toggle Métrica do mapa (Média / Mínimo / Máximo / 15 min) ---
             var metricBtns = document.querySelectorAll('.metric-btn');
             metricBtns.forEach(function(b) {
                 b.classList.toggle('active', b.dataset.metric === mapMetric);
@@ -5516,6 +5868,51 @@ document.addEventListener('DOMContentLoaded', function() {
                     applyMapMetric(this.dataset.metric);
                 });
             });
+
+            // --- Seletor do intervalo de 15 min (métrica "slot") ---
+            var slotPicker = document.getElementById('slot-picker');
+            var slotRange = document.getElementById('slot-range');
+            var slotOut = document.getElementById('slot-value');
+            if (slotPicker && slotRange) {
+                slotPicker.style.display = (mapMetric === 'slot') ? 'flex' : 'none';
+                slotRange.max = String(SLOTS_DIA - 1);
+                slotRange.value = String(mapSlot);
+                if (slotOut) slotOut.textContent = slotLabelFor(mapSlot);
+                // Mexer no slider ou nas setas é comando manual → pára a animação.
+                slotRange.addEventListener('input', function() {
+                    pararAnimacaoSlot();
+                    applyMapSlot(this.value, { fromRange: true });
+                });
+                var slotPrev = document.getElementById('slot-prev');
+                var slotNext = document.getElementById('slot-next');
+                var slotNow = document.getElementById('slot-now');
+                var slotPlay = document.getElementById('slot-play');
+                // Prev/next dão a volta ao dia (95 → 0), como o slider não faz.
+                if (slotPrev) slotPrev.addEventListener('click', function() {
+                    pararAnimacaoSlot();
+                    applyMapSlot((mapSlot + SLOTS_DIA - 1) % SLOTS_DIA);
+                });
+                if (slotNext) slotNext.addEventListener('click', function() {
+                    pararAnimacaoSlot();
+                    applyMapSlot((mapSlot + 1) % SLOTS_DIA);
+                });
+                if (slotNow) slotNow.addEventListener('click', function() {
+                    pararAnimacaoSlot();
+                    applyMapSlot(slotAgora());
+                });
+                if (slotPlay) {
+                    _sincronizarBotaoPlay();
+                    slotPlay.addEventListener('click', alternarAnimacaoSlot);
+                }
+                // Sair do separador pára a animação (não há nada para ver e o
+                // setTimeout fica estrangulado pelo browser).
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) pararAnimacaoSlot();
+                });
+            }
+
+            // Tooltips do toggle Fuso com a lista de países onde a escolha conta
+            atualizarTooltipsFuso();
 
             // Validacao live do intervalo personalizado
             var rangeError = document.getElementById('range-error');
