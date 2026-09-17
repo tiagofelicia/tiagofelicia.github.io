@@ -40,6 +40,50 @@ jobs:
           python scripts/validar_sri.py | tee sri_report.txt
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
 
+      - name: Criar/atualizar issue de alerta se houver mismatches
+        if: steps.sri_check.outputs.exit_code != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('sri_report.txt', 'utf8');
+            const title = '⚠️ SRI: hash mismatch detetado num CDN';
+            const body = [
+              'O workflow **Validar SRI Hashes (CDN)** detetou hashes `integrity=` que já não correspondem ao conteúdo servido pelo CDN.',
+              'Os browsers estão a **bloquear** estes scripts nas páginas afetadas — corrigir com prioridade.',
+              '',
+              '```',
+              report.trim(),
+              '```',
+              '',
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            ].join('\n');
+
+            // Procurar issue aberta já existente (evitar duplicados diários)
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'sri-alert',
+            });
+
+            if (issues.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues[0].number,
+                body: body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['sri-alert'],
+              });
+            }
+
       - name: Falhar workflow se houver mismatches
         if: steps.sri_check.outputs.exit_code != '0'
         run: |
