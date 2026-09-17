@@ -32,6 +32,8 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <!-- dados.js: fetchDados() com fallback dados.tiagofelicia.pt (CDN) → GitHub raw — painel "Hoje no mercado" -->
+    <script src="/dados.js"></script>
    
     <script type="application/ld+json">
     {
@@ -61,7 +63,7 @@
         "Comparação de propostas comerciais e cálculo de Payback",
         "Histórico de preços OMIE desde 2010",
         "Contratos futuros OMIP (Diários, Semanais, Mensais, Trimestrais, Anuais)",
-        "Mapa interativo de preços day-ahead em 45 zonas europeias (ENTSO-E)",
+        "Mapa interativo de preços day-ahead em 47 zonas europeias (ENTSO-E)",
         "Mapa de mix de produção elétrica por país europeu (Energy-Charts)",
         "Análise de produção vs preço OMIE",
         "Tarifas reguladas e Tarifa Social de eletricidade e gás",
@@ -155,12 +157,105 @@
         </div>
     </section>
 
-    <section class="content-section secondary-tools">
-        <h2>Outros Recursos e Ferramentas</h2>
-        <div class="resource-links">
-            <a href="omie-diario">Dashboard OMIE Diário</a>
-            <a href="omip">OMIP - Futuros</a>
-            <a href="sobre">Sobre o Projeto</a>
+    <!-- "Hoje no mercado": painel do dia alimentado por omie/hoje.json e producao/hoje.json
+         (dados.tiagofelicia.pt). Fica escondido (hidden) até haver dados; se falharem, não aparece. -->
+    <section class="content-section painel-dia" id="painel-dia" aria-labelledby="painel-dia-titulo" hidden>
+        <h2 id="painel-dia-titulo">Hoje no mercado</h2>
+        <p class="painel-dia-atualizado" id="painel-dia-atualizado"></p>
+        <div class="painel-dia-grelha">
+            <a class="painel-tile" id="tile-omie-hoje" href="omie-diario">
+                <span class="painel-tile-rotulo">OMIE hoje <span class="painel-tile-data"></span></span>
+                <span class="painel-tile-valor"><b>—</b> <small>€/MWh</small></span>
+                <svg class="painel-spark" viewBox="0 0 96 30" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg>
+                <span class="painel-tile-sub"></span>
+            </a>
+            <a class="painel-tile" id="tile-omie-amanha" href="omie-diario">
+                <span class="painel-tile-rotulo">OMIE amanhã <span class="painel-tile-data"></span></span>
+                <span class="painel-tile-valor"><b>—</b> <small>€/MWh</small></span>
+                <svg class="painel-spark" viewBox="0 0 96 30" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg>
+                <span class="painel-tile-sub"></span>
+            </a>
+            <a class="painel-tile" id="tile-janela" href="precos-horarios">
+                <span class="painel-tile-rotulo">Horas mais baratas <span class="painel-tile-data"></span></span>
+                <span class="painel-tile-valor"><b>—</b></span>
+                <span class="painel-tile-sub"></span>
+            </a>
+            <a class="painel-tile" id="tile-gas" href="mibgas">
+                <span class="painel-tile-rotulo">Gás natural (MIBGAS) <span class="painel-tile-data"></span></span>
+                <span class="painel-tile-valor"><b>—</b> <small>€/MWh</small></span>
+                <svg class="painel-spark" viewBox="0 0 96 30" preserveAspectRatio="none" aria-hidden="true"><polyline points=""/></svg>
+                <span class="painel-tile-sub"></span>
+            </a>
+            <a class="painel-tile" id="tile-ren" href="balanco-omie">
+                <span class="painel-tile-rotulo">Renovável em Portugal <span class="painel-tile-data"></span></span>
+                <span class="painel-tile-valor"><b>—</b> <small>%</small></span>
+                <span class="painel-tile-sub"></span>
+            </a>
+        </div>
+    </section>
+
+    <section class="content-section secondary-tools site-explorer-section" aria-labelledby="explorar-titulo">
+        <h2 id="explorar-titulo">Explorar o site</h2>
+        <p class="site-explorer-intro">Dados de mercado atualizados todos os dias, guias práticos e toda a regulação em vigor.</p>
+        <div class="site-explorer">
+            <div class="site-explorer-group">
+                <h3>📈 Mercados</h3>
+                <div class="resource-links">
+                    <a href="omie-diario">OMIE Diário</a>
+                    <a href="omie">OMIE Histórico</a>
+                    <a href="omip">OMIP Futuros</a>
+                    <a href="precos-horarios">Preços Horários</a>
+                    <a href="mibgas">Preço do Gás (MIBGAS)</a>
+                    <a href="mibgas-futuros">Futuros do Gás</a>
+                </div>
+            </div>
+            <div class="site-explorer-group">
+                <h3>🏭 Produção</h3>
+                <div class="resource-links">
+                    <a href="balanco-omie">Balanço Energético Diário</a>
+                    <a href="balanco-historico">Balanço Histórico (desde 2010)</a>
+                </div>
+            </div>
+            <div class="site-explorer-group">
+                <h3>🗺️ Europa</h3>
+                <div class="resource-links">
+                    <a href="europe-prices">Preços na Europa</a>
+                    <a href="europe-generation">Produção na Europa</a>
+                    <a href="europe-balance">Balanço Energético Europa</a>
+                </div>
+            </div>
+            <div class="site-explorer-group">
+                <h3>📚 Guias e recursos</h3>
+                <div class="resource-links">
+                    <a href="como-ler-fatura">Como ler a fatura</a>
+                    <a href="glossario">Glossário</a>
+                    <a href="calendario-energetico">Calendário Energético</a>
+                    <a href="formulas-tarifarios-indexados">Fórmulas dos indexados</a>
+                    <a href="periodos-horarios">Períodos Horários (BTN)</a>
+                    <a href="simulador-autoconsumo-excel">Autoconsumo em Excel</a>
+                </div>
+            </div>
+            <div class="site-explorer-group">
+                <h3>⚖️ Regulação</h3>
+                <div class="resource-links">
+                    <a href="tarifas-acesso-redes">TAR Eletricidade</a>
+                    <a href="tarifas-acesso-redes-gas">TAR Gás Natural</a>
+                    <a href="tarifa-social">Tarifa Social Eletricidade</a>
+                    <a href="tarifa-social-gas">Tarifa Social Gás</a>
+                    <a href="tarifa-regulada-eletricidade">Tarifa Regulada Eletricidade</a>
+                    <a href="tarifa-regulada-gas-natural">Tarifa Regulada Gás</a>
+                    <a href="perfil-perdas">Perfil de Perdas</a>
+                    <a href="lista-cur-gas">CUR e ORD de Gás</a>
+                    <a href="regulamentos">Regulamentos ERSE</a>
+                </div>
+            </div>
+            <div class="site-explorer-group">
+                <h3>ℹ️ Projeto</h3>
+                <div class="resource-links">
+                    <a href="sobre">Sobre o Projeto</a>
+                    <a href="contacto">Contacto</a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -175,6 +270,152 @@
 
 <script src="script.js"></script>
 <script src="cookie-consent.js"></script>
+<script>
+// "Hoje no mercado" — painel do dia. Lê dois JSON leves (~7 KB cada) do repo dados-energia via
+// fetchDados() (dados.tiagofelicia.pt → GitHub raw). Sem bibliotecas; sparkline em SVG inline.
+// Se qualquer coisa falhar, a secção fica escondida e a homepage é exatamente a de antes.
+(function () {
+    if (typeof fetchDados !== 'function') return;
+    var sec = document.getElementById('painel-dia');
+    if (!sec) return;
+
+    function fmt(v, casas) {
+        return Number(v).toLocaleString('pt-PT', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+    }
+    function dataPT(iso) { // "2026-09-17" -> "17/09"
+        if (!iso || iso.length < 10) return '';
+        return iso.slice(8, 10) + '/' + iso.slice(5, 7);
+    }
+    function horaLisboa(ts) {
+        try {
+            return new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit' }).format(new Date(ts));
+        } catch (e) { return ''; }
+    }
+    function setTexto(el, sel, txt) { var n = el.querySelector(sel); if (n) n.textContent = txt; }
+
+    // Sparkline: 96 valores de 15 min -> polyline num viewBox 96x30 (o CSS estica à largura do cartão)
+    function sparkline(svg, valores) {
+        if (!svg) return;
+        var v = (valores || []).map(function (x) { return (typeof x === 'number' && isFinite(x)) ? x : null; });
+        var nums = v.filter(function (x) { return x !== null; });
+        if (nums.length < 2) { svg.style.display = 'none'; return; }
+        var min = Math.min.apply(null, nums), max = Math.max.apply(null, nums), amp = (max - min) || 1;
+        var pts = [];
+        v.forEach(function (x, i) {
+            if (x === null) return;
+            pts.push((i * 96 / (v.length - 1)).toFixed(1) + ',' + (28 - ((x - min) / amp) * 26).toFixed(1));
+        });
+        svg.querySelector('polyline').setAttribute('points', pts.join(' '));
+    }
+
+    // Índice do slot de 15 min atual em Portugal (0-95), para não sugerir horas que já passaram
+    function slotAtualLisboa() {
+        try {
+            var partes = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+            var h = 0, m = 0;
+            partes.forEach(function (p) { if (p.type === 'hour') h = parseInt(p.value, 10); if (p.type === 'minute') m = parseInt(p.value, 10); });
+            return h * 4 + Math.floor(m / 15);
+        } catch (e) { return 0; }
+    }
+
+    // Janela de N slots consecutivos (8 = 2 h) com a soma mais baixa, a partir do slot 'inicio';
+    // ignora janelas com valores em falta
+    function melhorJanela(valores, slots, inicio) {
+        var v = valores || [], melhor = null;
+        for (var i = inicio || 0; i + slots <= v.length; i++) {
+            var soma = 0, ok = true;
+            for (var j = i; j < i + slots; j++) {
+                if (typeof v[j] !== 'number' || !isFinite(v[j])) { ok = false; break; }
+                soma += v[j];
+            }
+            if (ok && (melhor === null || soma < melhor.soma)) melhor = { i: i, soma: soma };
+        }
+        return melhor;
+    }
+
+    function preencherOMIE(tile, dia) {
+        if (!tile) return false;
+        var pt = dia && dia.pt;
+        setTexto(tile, '.painel-tile-data', dia && dia.data ? '· ' + dataPT(dia.data) : '');
+        if (!pt || typeof pt.medio !== 'number' || dia.real === false) {
+            setTexto(tile, '.painel-tile-valor b', '—');
+            setTexto(tile, '.painel-tile-sub', 'Ainda não publicado pelo OMIE (habitualmente a partir das 13h30)');
+            var s = tile.querySelector('.painel-spark'); if (s) s.style.display = 'none';
+            return false;
+        }
+        setTexto(tile, '.painel-tile-valor b', fmt(pt.medio, 2));
+        setTexto(tile, '.painel-tile-sub', 'Mín. ' + fmt(pt.min, 2) + ' às ' + pt.min_hora + ' · Máx. ' + fmt(pt.max, 2) + ' às ' + pt.max_hora);
+        sparkline(tile.querySelector('.painel-spark'), pt.valores);
+        return true;
+    }
+
+    function lerJson(caminho) {
+        return fetchDados(caminho).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    }
+
+    Promise.all([lerJson('omie/hoje.json'), lerJson('producao/hoje.json'), lerJson('gas/hoje.json')]).then(function (res) {
+        var omie = res[0], ren = res[1], gas = res[2], temAlgo = false;
+
+        if (omie && omie.hoje && omie.hoje.pt) {
+            preencherOMIE(document.getElementById('tile-omie-hoje'), omie.hoje);
+            var amanhaOk = preencherOMIE(document.getElementById('tile-omie-amanha'), omie.amanha);
+            // Horas mais baratas: amanhã (dia inteiro) se já publicado; senão o que resta de hoje.
+            // Se hoje já não sobram 2 horas, o cartão esconde-se em vez de sugerir horas passadas.
+            var base = amanhaOk ? omie.amanha : omie.hoje;
+            var inicio = (amanhaOk || !omie.e_hoje) ? 0 : slotAtualLisboa();
+            var jan = melhorJanela(base.pt.valores, 8, inicio);
+            var tj = document.getElementById('tile-janela');
+            if (tj && jan && base.horas) {
+                var fim = base.horas[jan.i + 8] || '24:00';
+                setTexto(tj, '.painel-tile-data', '· ' + (amanhaOk ? 'amanhã' : 'hoje') + ' ' + dataPT(base.data));
+                setTexto(tj, '.painel-tile-valor b', base.horas[jan.i] + '–' + fim);
+                setTexto(tj, '.painel-tile-sub', 'Média de ' + fmt(jan.soma / 8, 2) + ' €/MWh nas 2 horas mais baratas' + (amanhaOk || inicio === 0 ? '' : ' que ainda faltam'));
+            } else if (tj) { tj.hidden = true; }
+            temAlgo = true;
+        } else {
+            ['tile-omie-hoje', 'tile-omie-amanha', 'tile-janela'].forEach(function (id) {
+                var el = document.getElementById(id); if (el) el.hidden = true;
+            });
+        }
+
+        // Gás: o índice MIBGAS de um dia só sai depois de o dia fechar, por isso
+        // o normal é estar em D-1 — daí o rótulo dizer "ontem" em vez de só a data.
+        var tg = document.getElementById('tile-gas');
+        if (tg && gas && gas.pt && typeof gas.pt.preco === 'number') {
+            var quando = gas.dias_atraso === 0 ? '' : (gas.dias_atraso === 1 ? 'ontem ' : '');
+            setTexto(tg, '.painel-tile-data', '· ' + quando + dataPT(gas.data));
+            setTexto(tg, '.painel-tile-valor b', fmt(gas.pt.preco, 2));
+            var partes = [];
+            if (typeof gas.pt.var_dia === 'number') {
+                var seta = gas.pt.var_dia > 0 ? '▲' : (gas.pt.var_dia < 0 ? '▼' : '=');
+                partes.push(seta + ' ' + fmt(Math.abs(gas.pt.var_dia), 2) + ' € face ao dia anterior');
+            }
+            if (typeof gas.pt.media_30d === 'number') partes.push('média 30 dias ' + fmt(gas.pt.media_30d, 2));
+            setTexto(tg, '.painel-tile-sub', partes.join(' · '));
+            sparkline(tg.querySelector('.painel-spark'), gas.serie_30d && gas.serie_30d.pt);
+            temAlgo = true;
+        } else if (tg) { tg.hidden = true; }
+
+        var tr = document.getElementById('tile-ren');
+        if (tr && ren && ren.agora && typeof ren.agora.perc_renovavel === 'number') {
+            setTexto(tr, '.painel-tile-data', '· ' + dataPT(ren.data) + (ren.agora.hora ? ' às ' + ren.agora.hora : ''));
+            setTexto(tr, '.painel-tile-valor b', fmt(ren.agora.perc_renovavel, 0));
+            var sub = 'Consumo ' + fmt(ren.agora.consumo_mw / 1000, 2) + ' GW';
+            if (ren.resumo && typeof ren.resumo.perc_renovavel === 'number') sub += ' · ' + fmt(ren.resumo.perc_renovavel, 0) + ' % renovável no dia';
+            setTexto(tr, '.painel-tile-sub', sub);
+            temAlgo = true;
+        } else if (tr) { tr.hidden = true; }
+
+        if (!temAlgo) return;
+        // Mostra a atualização mais recente das duas fontes
+        var tsList = [omie && omie.gerado_em, ren && ren.gerado_em, gas && gas.gerado_em].filter(Boolean).map(function (s) { return new Date(s); }).filter(function (d) { return !isNaN(d); });
+        var ts = tsList.length ? new Date(Math.max.apply(null, tsList)) : null;
+        var at = document.getElementById('painel-dia-atualizado');
+        if (at) at.textContent = (ts ? 'Atualizado às ' + horaLisboa(ts) + ' · ' : '') + 'Fontes: OMIE, MIBGAS e REN · preços em €/MWh sem impostos';
+        sec.hidden = false;
+    });
+})();
+</script>
 
 </body>
 </html>

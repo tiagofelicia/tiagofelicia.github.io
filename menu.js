@@ -104,15 +104,21 @@
         /* ── INDICADOR DE PÁGINA ATIVA ── */
         (function markActivePage() {
             var currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            // Também inclui hash para páginas como regulamentos.html#eletricidade
+            // Também inclui hash para páginas como regulamentos#eletricidade
             var currentHash = window.location.hash;
             var currentFull = currentPage + currentHash;
+
+            // Os hrefs do menu.html são absolutos ("/eletricidade-tiagofelicia") para
+            // funcionarem em qualquer caminho (ex.: 404 servida em /foo/bar). Para a
+            // comparação com o pathname retira-se a barra inicial.
+            function normalizarHref(h) { return h.replace(/^\//, ''); }
 
             // Desktop: marcar link principal e item de dropdown/megamenu
             var allDesktopLinks = document.querySelectorAll('nav ul a[href], .mega-dropdown a[href]');
             allDesktopLinks.forEach(function(link) {
                 var href = link.getAttribute('href');
                 if (!href || href === 'javascript:void(0)') return;
+                href = normalizarHref(href);
 
                 if (href === currentFull || href === currentPage) {
                     // Marca o item dentro do dropdown/megamenu
@@ -130,7 +136,7 @@
             // Mobile: marcar itens no drawer
             var allMobileLinks = drawerBody.querySelectorAll('a.mobile-nav-item[href]');
             allMobileLinks.forEach(function(link) {
-                var href = link.getAttribute('href');
+                var href = normalizarHref(link.getAttribute('href') || '');
                 if (href === currentFull || href === currentPage) {
                     link.classList.add('nav-active-mobile');
                 }

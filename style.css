@@ -933,6 +933,103 @@ nav > ul > li:hover > .dropdown-content {
     color: #fff;
 }
 
+/* "Explorar o site" (homepage) — grupos de ligações por baixo dos cartões dos simuladores.
+   Reutiliza as pílulas .resource-links; só acrescenta a grelha e os títulos de grupo. */
+.site-explorer-section {
+    text-align: left;
+}
+.site-explorer-section h2 {
+    text-align: center;
+}
+.site-explorer-intro {
+    text-align: center;
+    color: #555;
+    font-size: 0.95em;
+    margin: -6px 0 22px;
+}
+.site-explorer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px 26px;
+}
+.site-explorer-group h3 {
+    font-size: 0.95em;
+    color: #2c3e50;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.site-explorer .resource-links a {
+    margin: 4px 6px 4px 0;
+    padding: 6px 12px;
+    font-size: 0.88em;
+}
+[data-theme="dark"] .site-explorer-intro { color: #94a3b8; }
+[data-theme="dark"] .site-explorer-group h3 { color: #e2e8f0; border-bottom-color: #334155; }
+
+/* "Hoje no mercado" (homepage) — painel do dia, por baixo dos cartões dos simuladores.
+   Alimentado por dados.tiagofelicia.pt (omie/hoje.json, producao/hoje.json); escondido sem dados. */
+.painel-dia[hidden] { display: none; }
+.painel-dia {
+    background-color: #ffffff;
+    padding: 24px 20px 18px;
+    text-align: center;
+}
+.painel-dia h2 { margin-bottom: 8px; }
+.painel-dia-atualizado {
+    font-size: 0.8em;
+    color: #64748b;
+    margin: 0 0 16px;
+}
+.painel-dia-grelha {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    text-align: left;
+}
+.painel-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.painel-tile:hover { border-color: #3498db; box-shadow: 0 2px 10px rgba(52, 152, 219, 0.15); }
+.painel-tile[hidden] { display: none; }
+.painel-tile-rotulo {
+    font-size: 0.78em;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.painel-tile-data { font-weight: 400; text-transform: none; color: #64748b; }
+.painel-tile-valor { font-size: 1.6em; line-height: 1.15; color: #2c3e50; }
+.painel-tile-valor small { font-size: 0.5em; color: #64748b; }
+.painel-spark { width: 100%; height: 30px; color: #3498db; }
+.painel-spark polyline { fill: none; stroke: currentColor; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.painel-tile-sub { font-size: 0.8em; color: #64748b; }
+[data-theme="dark"] .painel-dia { background-color: #1e293b; }
+[data-theme="dark"] .painel-tile { background: #0f172a; border-color: #334155; }
+[data-theme="dark"] .painel-tile:hover { border-color: #60a5fa; box-shadow: 0 2px 10px rgba(96, 165, 250, 0.2); }
+[data-theme="dark"] .painel-tile-rotulo,
+[data-theme="dark"] .painel-tile-sub,
+[data-theme="dark"] .painel-tile-data,
+[data-theme="dark"] .painel-dia-atualizado,
+[data-theme="dark"] .painel-tile-valor small { color: #94a3b8; }
+[data-theme="dark"] .painel-tile-valor { color: #e2e8f0; }
+[data-theme="dark"] .painel-spark { color: #60a5fa; }
+@media (max-width: 600px) {
+    .home-main .painel-dia { padding: 14px 12px 10px; }
+    .home-main .painel-dia h2 { font-size: 1.1em; }
+    .home-main .painel-tile { padding: 12px 14px; }
+}
+
 /* ================================================================= */
 /* Homepage em smartphone — versão compacta                           */
 /* Objetivo: os 3 primeiros simuladores visíveis sem fazer scroll.    */

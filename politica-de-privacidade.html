@@ -158,10 +158,10 @@
     <a href="/" class="back-link">← Voltar à página principal</a>
 
     <h1>🔒 Política de Privacidade</h1>
-    <p class="subtitle">Última atualização: Maio 2026 · Em conformidade com o RGPD (Regulamento UE 2016/679) e Lei n.º 58/2019</p>
+    <p class="subtitle">Última atualização: Setembro 2026 · Em conformidade com o RGPD (Regulamento UE 2016/679) e Lei n.º 58/2019</p>
 
     <div class="callout success">
-        <strong>Em resumo:</strong> O site <em>tiagofelicia.pt</em> foi desenhado para tratar o <strong>mínimo possível de dados pessoais</strong>. Todas as simulações são processadas <strong>no seu próprio dispositivo</strong> (browser) — os seus consumos da E-Redes, valores de faturas ou ficheiros carregados <strong>nunca são enviados</strong> para qualquer servidor. Os únicos dados pessoais que podem ser tratados são (1) estatísticas de utilização anónimas via Google Analytics, <strong>apenas com o seu consentimento</strong>, e (2) os dados que voluntariamente inserir no formulário de contacto.
+        <strong>Em resumo:</strong> O site <em>tiagofelicia.pt</em> foi desenhado para tratar o <strong>mínimo possível de dados pessoais</strong>. Todas as simulações são processadas <strong>no seu próprio dispositivo</strong> (browser) — os seus consumos da E-Redes, valores de faturas ou ficheiros carregados <strong>nunca são enviados</strong> para qualquer servidor. Os únicos dados pessoais que podem ser tratados são (1) estatísticas de utilização anónimas via Google Analytics, <strong>apenas com o seu consentimento</strong>, (2) os dados que voluntariamente inserir no formulário de contacto e (3) as coordenadas geográficas do local que escolher no simulador de autoconsumo, enviadas ao serviço PVGIS da Comissão Europeia para calcular a produção solar.
     </div>
 
     <h2>1. Responsável pelo Tratamento</h2>
@@ -174,17 +174,17 @@
     <p>O projeto não constitui pessoa coletiva, não exerce atividade comercial e não tem Encarregado de Proteção de Dados (DPO) por não preencher os critérios legais para tal designação (art.º 37.º do RGPD).</p>
 
     <h2>2. Princípio Geral: Processamento Local</h2>
-    <p>Os simuladores deste Site (Eletricidade, Gás Natural e Autoconsumo Solar) foram desenhados segundo o princípio da <strong>privacidade desde a conceção</strong> (<em>privacy by design</em>, art.º 25.º do RGPD):</p>
+    <p>Os simuladores deste Site (Eletricidade, Gás Natural, Dual e Autoconsumo Solar) foram desenhados segundo o princípio da <strong>privacidade desde a conceção</strong> (<em>privacy by design</em>, art.º 25.º do RGPD):</p>
     <ul>
         <li>Toda a lógica de cálculo corre em <strong>JavaScript executado no seu browser</strong>;</li>
         <li>Os ficheiros que carrega (diagrama de carga da E-Redes em <code>.xlsx</code>, dados de propostas comerciais, etc.) <strong>permanecem no seu dispositivo</strong>;</li>
-        <li>Os valores que insere (consumos, potência contratada, valor da fatura, dados solares) <strong>nunca saem do seu browser</strong>;</li>
-        <li>As preferências guardadas (modo escuro, consentimento de cookies, consumos memorizados) ficam exclusivamente no <strong>localStorage</strong> do seu próprio browser.</li>
+        <li>Os valores que insere (consumos, potência contratada, valor da fatura, potência e orientação dos painéis) <strong>nunca saem do seu browser</strong>. A única exceção são as <strong>coordenadas geográficas</strong> do local escolhido no simulador de autoconsumo, que têm de ser enviadas ao serviço PVGIS para obter o perfil de produção solar (ver secção 3);</li>
+        <li>As preferências guardadas (modo escuro, consentimento de cookies, preferências de interface das páginas de mercado, consumos introduzidos na página de Preços Horários) ficam exclusivamente no <strong>localStorage</strong> do seu próprio browser; os simuladores guardam ainda uma cópia local dos ficheiros de tarifários (<strong>IndexedDB</strong>) para acelerar carregamentos seguintes. Nenhum destes dados é enviado ao Site.</li>
     </ul>
     <p>Em consequência, o Site <strong>não recolhe</strong> dados de consumo de energia, ficheiros pessoais, NIPC, código de ponto de entrega (CPE) ou qualquer informação técnica relacionada com o seu contrato.</p>
 
     <h2>3. Que dados pessoais podem ser tratados?</h2>
-    <p>Apesar do desenho minimalista, três fluxos podem implicar tratamento de dados pessoais. A tabela seguinte resume cada um:</p>
+    <p>Apesar do desenho minimalista, quatro fluxos podem implicar tratamento de dados pessoais. A tabela seguinte resume cada um:</p>
 
     <table class="data-table">
         <caption class="sr-only">Dados pessoais tratados, finalidade, base legal e prazo de conservação</caption>
@@ -213,6 +213,13 @@
                 <td>Até 12 meses após a última troca de mensagens, ou até pedido de eliminação</td>
             </tr>
             <tr>
+                <td><strong>Simulador de autoconsumo</strong> (PVGIS)</td>
+                <td>Coordenadas geográficas (latitude e longitude) do local escolhido no mapa ou introduzidas manualmente, e parâmetros técnicos da instalação (potência, inclinação, orientação). Não é pedido nome, morada ou qualquer identificador</td>
+                <td>Obter do serviço PVGIS do Centro Comum de Investigação (JRC) da Comissão Europeia o perfil horário de produção solar para esse local. O pedido é feito diretamente ao JRC ou através de um serviço intermediário (<em>proxy</em>) do autor alojado na Hugging Face, quando o pedido direto não é possível</td>
+                <td>Execução do serviço solicitado pelo utilizador (art.º 6.º, n.º 1, alínea b) do RGPD)</td>
+                <td>Não são conservadas pelo Site; o proxy do autor limita-se a reencaminhar o pedido e a resposta. O JRC trata-as segundo a sua própria política (ver secção 5)</td>
+            </tr>
+            <tr>
                 <td><strong>Logs do servidor</strong> (GitHub Pages)</td>
                 <td>Endereço IP, agente de utilizador, recurso pedido, código HTTP — recolhidos automaticamente pelo serviço de alojamento</td>
                 <td>Operação técnica do alojamento e proteção contra abusos (DDoS, scraping massivo)</td>
@@ -234,12 +241,15 @@
         <li><strong>GitHub, Inc.</strong> — alojamento do Site (GitHub Pages). Para mais informação: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">Política de Privacidade do GitHub</a>.</li>
         <li><strong>Google Ireland Limited / Google LLC</strong> — Google Analytics 4 (apenas com consentimento) e Google Tag Manager. Para mais informação: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidade da Google</a>.</li>
         <li><strong>Formspree, Inc.</strong> — gestão do formulário de contacto. Para mais informação: <a href="https://formspree.io/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Política de Privacidade da Formspree</a>.</li>
+        <li><strong>Hugging Face, Inc.</strong> — alojamento dos ficheiros de tarifários que os simuladores de eletricidade, gás natural, dual e autoconsumo descarregam ao iniciar, e do serviço intermediário (<em>proxy</em>) do autor usado pelo simulador de autoconsumo para consultar o PVGIS. Pode registar o endereço IP no carregamento destes recursos. Para mais informação: <a href="https://huggingface.co/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidade da Hugging Face</a>.</li>
+        <li><strong>Centro Comum de Investigação (JRC) da Comissão Europeia</strong> — serviço <em>PVGIS</em>, ao qual o simulador de autoconsumo envia as coordenadas geográficas do local escolhido para obter o perfil de produção solar (ver secção 3). Para mais informação: <a href="https://commission.europa.eu/privacy-policy-websites-managed-european-commission_en" target="_blank" rel="noopener noreferrer">Política de Privacidade da Comissão Europeia</a>.</li>
+        <li><strong>Google Fonts</strong> (Google LLC) — os simuladores carregam os tipos de letra <em>Roboto</em> e <em>Roboto Mono</em> a partir de <code>fonts.googleapis.com</code> / <code>fonts.gstatic.com</code>; o browser transmite o endereço IP à Google nesse pedido. As restantes páginas do Site não usam este serviço.</li>
         <li><strong>Cloudflare, Inc., jsDelivr, cdnjs (Cloudflare), unpkg</strong> — redes de distribuição de conteúdos (CDN) que servem bibliotecas JavaScript (Highcharts, Leaflet, Chart.js, etc.). Estes serviços podem registar o endereço IP no carregamento dos recursos. Estes pedidos são protegidos por <em>Subresource Integrity</em> (SRI) para garantir a integridade do código.</li>
         <li><strong>PayPal (Europe) S.à r.l. et Cie, S.C.A.</strong> — processamento de eventuais donativos voluntários (apenas quando o utilizador escolhe esta opção na página de Apoio).</li>
     </ul>
 
     <h2>6. Transferências Internacionais de Dados</h2>
-    <p>Alguns subcontratantes referidos têm sede ou operações fora do Espaço Económico Europeu (EEE), nomeadamente nos Estados Unidos (Google, GitHub, Formspree, Cloudflare). Estas transferências fazem-se ao abrigo de:</p>
+    <p>Alguns subcontratantes referidos têm sede ou operações fora do Espaço Económico Europeu (EEE), nomeadamente nos Estados Unidos (Google, GitHub, Formspree, Cloudflare, Hugging Face). Estas transferências fazem-se ao abrigo de:</p>
     <ul>
         <li>O <strong>EU-US Data Privacy Framework</strong> (DPF), Decisão de Adequação 2023/1795 da Comissão Europeia, ao qual a Google, o GitHub, a Formspree e a Cloudflare aderiram;</li>
         <li>e/ou <strong>Cláusulas Contratuais Tipo</strong> (CCT) aprovadas pela Comissão Europeia (art.º 46.º do RGPD).</li>
@@ -261,7 +271,7 @@
     <p>Para a generalidade dos pedidos, basta contactar-nos pelo <a href="/contacto">formulário de contacto</a>. Pedidos relativos a dados em poder dos subcontratantes podem ter de ser dirigidos diretamente a esses prestadores (links acima na secção 5).</p>
 
     <h3>Cookies analíticos: como revogar o consentimento</h3>
-    <p>Pode revogar a qualquer momento o consentimento dado aos cookies analíticos através do botão dedicado na <a href="/politica-de-cookies.html#revogar">Política de Cookies</a>, que apaga as preferências guardadas e os cookies do Google Analytics.</p>
+    <p>Pode revogar a qualquer momento o consentimento dado aos cookies analíticos através do botão dedicado na <a href="/politica-de-cookies#revogar">Política de Cookies</a>, que apaga as preferências guardadas e os cookies do Google Analytics.</p>
 
     <h2>8. Direito a Apresentar Reclamação</h2>
     <p>Sem prejuízo do direito de recorrer aos tribunais comuns, pode apresentar reclamação junto da autoridade de controlo competente em Portugal:</p>
