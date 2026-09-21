@@ -52,6 +52,13 @@
         .cookie-table th { background: #f1f5f9; padding: 10px 12px; text-align: left; font-weight: 600; border: 1px solid #e2e8f0; }
         .cookie-table td { padding: 10px 12px; border: 1px solid #e2e8f0; vertical-align: top; }
         .cookie-table tr:hover { background: #f8fafc; }
+        /* Nomes de chaves como omie_grafico_diario_series_visiveis são intransponíveis:
+           sem isto forçavam a tabela a 839px e era a página inteira a deslizar. */
+        .cookie-table code { overflow-wrap: anywhere; }
+        @media (max-width: 600px) {
+            .cookie-table { font-size: 0.8rem; }
+            .cookie-table th, .cookie-table td { padding: 8px; }
+        }
         .btn-manage { display: inline-block; margin-top: 16px; padding: 10px 24px; background: none; color: #dc2626; border: 1px solid #dc2626; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.88rem; transition: all 0.2s; text-decoration: none; }
         .btn-manage:hover { background: #dc2626; color: white; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #0066cc; font-size: 0.9rem; text-decoration: none; }
@@ -106,7 +113,7 @@
 
 <div class="policy-container" id="main-content">
 
-    <a href="index" class="back-link">← Voltar à página principal</a>
+    <a href="/" class="back-link">← Voltar à página principal</a>
 
     <h1>🍪 Política de Cookies</h1>
     <p class="subtitle">Última atualização: Setembro 2026</p>
@@ -117,8 +124,14 @@
     <h2>2. Que cookies utilizamos?</h2>
     <p>O site <strong>tiagofelicia.pt</strong> utiliza duas categorias de cookies:</p>
 
+    <div class="table-container">
     <table class="cookie-table">
         <caption class="sr-only">Cookies e armazenamento local utilizados neste site</caption>
+        <!-- A coluna das chaves leva a maior fatia: os nomes são longos e, sem isto,
+             partiam-se a meio (bal_hist_legend_stat/e) por falta de espaço. -->
+        <colgroup>
+            <col style="width:11%"><col style="width:32%"><col style="width:29%"><col style="width:16%"><col style="width:12%">
+        </colgroup>
         <thead>
             <tr>
                 <th scope="col">Categoria</th>
@@ -139,20 +152,41 @@
             <tr>
                 <td><strong>Essenciais</strong></td>
                 <td><code>theme_site</code></td>
-                <td>Guardar a sua preferência de modo escuro (dark mode). O simulador de Autoconsumo pode também usar <code>tf_autoconsumo_theme</code> como chave de transição, sincronizada automaticamente.</td>
+                <td>Guardar a sua preferência de modo escuro (dark mode). As chaves antigas <code>tf_autoconsumo_theme</code> e <code>tf_theme</code> continuam a ser lidas e mantidas sincronizadas, para quem já as tinha guardadas.</td>
                 <td>Permanente</td>
                 <td>Não necessário (preferência funcional)</td>
             </tr>
             <tr>
                 <td><strong>Essenciais</strong></td>
-                <td><code>omie_*</code>, <code>mapa_precos_*</code>, <code>mapa_prod_*</code>, <code>bal_hist_*</code>, <code>tf_glossario_decoracao</code>, <code>precosHorariosConsumos:*</code></td>
-                <td>Guardar preferências de interface das páginas de mercado, produção e mapas (fuso horário, modo de visualização, legendas, zona de referência, decoração do glossário) e os consumos que introduzir na página de Preços Horários. Ficam apenas no seu browser.</td>
+                <td><code>tf_glossario_decoracao</code></td>
+                <td>Guardar se optou por desativar os termos sublinhados do glossário nas páginas do site</td>
+                <td>Permanente</td>
+                <td>Não necessário (preferência funcional)</td>
+            </tr>
+            <tr>
+                <td><strong>Essenciais</strong></td>
+                <td>Páginas de mercado (OMIE e balanço): <code>omie_diario_fuso</code>, <code>omie_diario_mostrar_ontem</code>, <code>omie_horario_modo</code>, <code>omie_ciclos_donut_ativo</code>, <code>omie_extremos_custom</code>, <code>omie_grafico_diario_series_visiveis</code>, <code>bal_hist_legend_state</code></td>
+                <td>Guardar as suas opções de visualização destas páginas: fuso horário, mostrar ou não o dia anterior, modo de gráfico, séries e legendas visíveis e o filtro que escolher para os extremos de preço.</td>
                 <td>Permanente (até limpar os dados do browser)</td>
                 <td>Não necessário (preferência funcional)</td>
             </tr>
             <tr>
                 <td><strong>Essenciais</strong></td>
-                <td>IndexedDB (<code>SimuladorAutoconsumoCache</code> e caches equivalentes dos simuladores de eletricidade e dual) e Cache Storage do <em>service worker</em> do Mapa de Preços da Europa</td>
+                <td>Páginas da Europa: <code>mapa_precos_fuso</code>, <code>mapaPrecos.prefs.v1</code>, <code>mapa_prod_det_legend_state</code> e as catorze chaves <code>mapa_prod_*</code> (<code>refZone</code>, <code>compare</code>, <code>autonomy</code>, <code>deltaPt</code>, <code>spark</code>, <code>hideFc</code>, <code>heatCountry</code>, <code>heatYear</code>, <code>evoAvg</code>, <code>evoMavg</code>, <code>evoNorm</code>, <code>evoTgt</code>, <code>evoTgtVal</code>, <code>evoWide</code>)</td>
+                <td>Guardar as suas opções de visualização dos mapas de preços, de produção e de balanço da Europa: fuso horário, zona de referência, comparações, legendas, heatmaps e opções dos gráficos de evolução.</td>
+                <td>Permanente (até limpar os dados do browser)</td>
+                <td>Não necessário (preferência funcional)</td>
+            </tr>
+            <tr>
+                <td><strong>Essenciais</strong></td>
+                <td>O que escreve nos simuladores: <code>precosHorariosConsumos:*</code>, <code>precosHorariosJanela</code>, <code>tf_cenarios_v1</code>, <code>tf_cenarios_gas_v1</code>, <code>tf_cenarios_dual_v1</code></td>
+                <td>Evitar que tenha de repetir o que já introduziu: os consumos e a duração da melhor janela na página de Preços Horários, e os cenários que gravar nos simuladores de eletricidade, gás e dual (potência contratada, ciclo, consumos e opções escolhidas). <strong>Ficam apenas no seu browser</strong> — não são enviados para o site nem para terceiros.</td>
+                <td>Permanente (até os apagar no próprio simulador ou limpar os dados do browser)</td>
+                <td>Não necessário (preferência funcional)</td>
+            </tr>
+            <tr>
+                <td><strong>Essenciais</strong></td>
+                <td>Cópias locais de dados: <code>tf_gas_data_v2</code>, as bases IndexedDB <code>SimuladorTarifarios</code>, <code>SimuladorDual</code> e <code>SimuladorAutoconsumoCache</code>, e a Cache Storage do <em>service worker</em> do Mapa de Preços da Europa (<code>europe-prices-v…-static</code>, <code>-data</code> e <code>-cdn</code>)</td>
                 <td>Guardar localmente cópias dos ficheiros de tarifários e de dados de mercado para acelerar carregamentos seguintes e permitir consulta com ligação fraca. Não contêm dados pessoais.</td>
                 <td>Renovadas automaticamente quando há dados novos; podem ser apagadas nas definições do browser</td>
                 <td>Não necessário (estritamente necessário / desempenho)</td>
@@ -166,9 +200,10 @@
             </tr>
         </tbody>
     </table>
+    </div>
 
     <h2>3. Cookies essenciais (localStorage)</h2>
-    <p>Os cookies essenciais utilizam o <strong>localStorage</strong> do browser (não são cookies HTTP tradicionais). São estritamente necessários para o funcionamento do site e das suas funcionalidades, como guardar a preferência de tema, a decisão de consentimento ou as opções de visualização das páginas de mercado e mapas. Os simuladores e o Mapa de Preços da Europa usam ainda a <strong>IndexedDB</strong> e a <strong>Cache Storage</strong> do browser para guardar cópias locais de ficheiros de dados (tarifários, preços de mercado), evitando descarregá-los a cada visita. Nenhum destes mecanismos recolhe dados pessoais nem partilha informação com terceiros; tudo fica no seu dispositivo e pode ser apagado nas definições do browser.</p>
+    <p>Os cookies essenciais utilizam o <strong>localStorage</strong> do browser (não são cookies HTTP tradicionais). São estritamente necessários para o funcionamento do site e das suas funcionalidades, como guardar a preferência de tema, a decisão de consentimento ou as opções de visualização das páginas de mercado e mapas. Os simuladores e o Mapa de Preços da Europa usam ainda a <strong>IndexedDB</strong> e a <strong>Cache Storage</strong> do browser para guardar cópias locais de ficheiros de dados (tarifários, preços de mercado), evitando descarregá-los a cada visita. Parte destes registos guarda aquilo que o próprio utilizador escreve — os consumos que introduz na página de Preços Horários e os cenários que grava nos simuladores — e é por isso que aparecem discriminados na tabela acima. Nada disto é recolhido pelo site nem partilhado com terceiros: fica tudo no seu dispositivo e pode ser apagado nas definições do browser ou nos botões de limpar dos próprios simuladores.</p>
 
     <h2>4. Cookies analíticos (Google Analytics)</h2>
     <p>Utilizamos o <strong>Google Analytics 4 (GA4)</strong> para compreender como os utilizadores interagem com o site. Estes cookies <strong>só são ativados após o seu consentimento explícito</strong>. Os dados recolhidos são anónimos e agregados, incluindo:</p>
@@ -198,7 +233,7 @@
     <p>Os cookies essenciais são tratados ao abrigo do <strong>interesse legítimo</strong> (necessários para o funcionamento do site). Os cookies analíticos são tratados com base no <strong>consentimento</strong> do utilizador, nos termos do Regulamento Geral sobre a Proteção de Dados (RGPD — Regulamento UE 2016/679) e da Lei n.º 41/2004 (Lei dos Cookies), alterada pela Lei n.º 46/2012.</p>
 
     <h2>7. Mais informação</h2>
-    <p>Para uma visão completa sobre como o site trata dados pessoais, consulte a <a href="/politica-de-privacidade">Política de Privacidade</a>. Para questões específicas, utilize o <a href="/contacto">formulário de contacto</a>.</p>
+    <p>Para uma visão completa sobre como o site trata dados pessoais, consulte a <a href="/politica-de-privacidade">Política de Privacidade</a>; as condições de utilização do Site estão nos <a href="/termos-e-condicoes">Termos e Condições</a>. Para questões específicas, utilize o <a href="/contacto">formulário de contacto</a>.</p>
 
 </div>
 

@@ -117,6 +117,30 @@ document.addEventListener('DOMContentLoaded', function () {
         try { localStorage.removeItem(chaveConsumos(vista)); } catch (e) {}
     }
 
+    // --- DURAÇÃO DA MELHOR JANELA (radios estáticos no HTML) ---
+    // Com 7 durações vale a pena não obrigar a reescolher a cada visita: guarda-se a
+    // última e aceita-se ?janela= no link (o link manda sobre o que está guardado).
+    const JANELAS_VALIDAS = [1, 2, 3, 4, 6, 8];
+    const JANELA_PADRAO = 2;
+    const CHAVE_JANELA = 'precosHorariosJanela';
+
+    function janelaValida(v) {
+        return JANELAS_VALIDAS.includes(parseInt(v, 10));
+    }
+    function guardarJanela(horas) {
+        try { localStorage.setItem(CHAVE_JANELA, String(horas)); } catch (e) {}
+    }
+    // Corre antes do primeiro desenho, para não redesenhar o gráfico duas vezes
+    function reporJanelaGuardada(paramJanela) {
+        let v = paramJanela;
+        if (!janelaValida(v)) {
+            try { v = localStorage.getItem(CHAVE_JANELA); } catch (e) { v = null; }
+        }
+        if (!janelaValida(v)) return;
+        const radio = document.querySelector(`input[name="janela"][value="${parseInt(v, 10)}"]`);
+        if (radio) radio.checked = true;
+    }
+
     // --- PARSE DAS CONSTANTES ---
     function parseConstantes(csv) {
         constantes = {};
@@ -224,7 +248,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const paramDia = urlParams.get('dia');
         const paramTarifario = urlParams.get('tarifario');
         const paramOpcao = urlParams.get('opcao');
-        
+        // Antes de qualquer desenho: os radios da janela são estáticos, basta marcá-los
+        reporJanelaGuardada(urlParams.get('janela'));
+
         const diaSelect = document.getElementById("dropdownDia");
         const tarifarioSelect = document.getElementById("dropdownTarifario");
         const opcaoSelect = document.getElementById("dropdownOpcao");
@@ -672,15 +698,21 @@ document.addEventListener('DOMContentLoaded', function () {
     let htmlJanelaRenderizado = null;
 
     function getHorasJanela() {
-        const v = parseInt(document.querySelector('input[name="janela"]:checked')?.value || '2', 10);
-        return isNaN(v) ? 2 : v;
+        const v = document.querySelector('input[name="janela"]:checked')?.value;
+        return janelaValida(v) ? parseInt(v, 10) : JANELA_PADRAO;
     }
 
-    function calcularMelhorJanela(dados, pontos, inicioMin) {
+    // inicioMax limita o ARRANQUE da janela, não o seu fim: é o que permite procurar
+    // numa série de dois dias e mesmo assim obrigar a janela a começar hoje.
+    function calcularMelhorJanela(dados, pontos, inicioMin, inicioMax) {
         if (!dados || !Array.isArray(dados.colunas) || pontos <= 0) return null;
         const v = dados.colunas;
+        const limiteNatural = v.length - pontos;
+        const iMax = (inicioMax === undefined || inicioMax === null)
+            ? limiteNatural
+            : Math.min(inicioMax, limiteNatural);
         let melhor = null;
-        for (let i = Math.max(0, inicioMin); i + pontos <= v.length; i++) {
+        for (let i = Math.max(0, inicioMin); i <= iMax; i++) {
             let soma = 0, valido = true;
             for (let k = 0; k < pontos; k++) {
                 const x = v[i + k];
@@ -718,17 +750,37 @@ document.addEventListener('DOMContentLoaded', function () {
         const estadoAgora = obterEstadoAgora();
         const isHoje = !!estadoAgora;
 
-        let dadosJanela = dados;
-        let melhor = calcularMelhorJanela(dados, pontos, isHoje ? estadoAgora.i : 0);
+        // Série de pesquisa: no dia de hoje anexa-se amanhã (quando já há dados) para a
+        // janela poder ATRAVESSAR A MEIA-NOITE — 23:00→07:00 é o caso típico do carro
+        // elétrico, e sem isto a melhor janela da noite ficava invisível. O arranque
+        // continua obrigatoriamente em hoje (inicioMax): é a decisão de 2026-08-20 —
+        // a resposta principal é sempre "ligue hoje", amanhã só acrescenta.
+        const dadosAmanha = isHoje ? fonte[getAmanhaStr()]?.[sel.tarifario]?.[sel.opcao] : null;
+        const nHoje = dados.colunas.length;
+        let serie = dados;
+        let inicioMax;
+        if (dadosAmanha && Array.isArray(dadosAmanha.colunas)) {
+            serie = {
+                colunas: dados.colunas.concat(dadosAmanha.colunas),
+                categorias: dados.categorias.concat(dadosAmanha.categorias)
+            };
+            inicioMax = nHoje - 1; // pode arrancar no último intervalo de hoje
+        }
+
+        let melhor = calcularMelhorJanela(serie, pontos, isHoje ? estadoAgora.i : 0, inicioMax);
+        let cats = serie.categorias;
+        let dadosJanela = dados;  // dia de referência da média (o que está no gráfico)
         let escopo = isHoje ? ' · a partir de agora' : '';
         let noGrafico = true;
+        const cruzaMeiaNoite = !!melhor && melhor.fim >= nHoje;
 
-        // Já não cabe no que resta de hoje → mostrar a melhor janela de amanhã
-        if (!melhor && isHoje) {
-            const dadosAmanha = fonte[getAmanhaStr()]?.[sel.tarifario]?.[sel.opcao];
+        // Rede de segurança: nada serve a começar hoje (ex.: buracos nos dados do que
+        // resta do dia) → mostrar a melhor janela de amanhã, como antes.
+        if (!melhor && isHoje && dadosAmanha) {
             const melhorAmanha = calcularMelhorJanela(dadosAmanha, pontos, 0);
             if (melhorAmanha) {
                 melhor = melhorAmanha;
+                cats = dadosAmanha.categorias;
                 dadosJanela = dadosAmanha;
                 escopo = ' · amanhã';
                 noGrafico = false; // pertence a outro dia que não o do gráfico
@@ -736,32 +788,45 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (!melhor) return limpar();
 
-        const inicio = inicioIntervalo(dadosJanela.categorias[melhor.i]);
-        const fim = fimIntervalo(dadosJanela.categorias[melhor.fim]);
+        const inicio = inicioIntervalo(cats[melhor.i]);
+        const fim = fimIntervalo(cats[melhor.fim]);
         const decimais = sel.vista === "horaria" ? 4 : 5;
 
-        // Poupança face à média do dia a que a janela pertence
-        const validos = dadosJanela.colunas.filter(v => v !== null && v !== undefined && !isNaN(v));
+        // Poupança face à média do dia a que a janela pertence. Quando a janela
+        // atravessa a meia-noite a referência passa a ser os dois dias: quase todas
+        // as horas dessa janela são de amanhã, e compará-las com a média do dia que
+        // está a acabar não diz nada a quem quer decidir agora.
+        const refMedia = cruzaMeiaNoite ? serie : dadosJanela;
+        const validos = refMedia.colunas.filter(v => v !== null && v !== undefined && !isNaN(v));
         const mediaDia = validos.length > 0 ? validos.reduce((s, v) => s + v, 0) / validos.length : null;
         let chipPoupanca = '';
         if (mediaDia) {
             const diff = (melhor.media - mediaDia) / mediaDia * 100;
             const sinal = diff > 0 ? '+' : '';
-            // A média de referência é a do dia a que a janela pertence (que pode ser amanhã)
-            const tipPoupanca = `Preço médio da janela comparado com a média ${noGrafico ? 'do dia selecionado' : 'do dia de amanhã'}`;
-            chipPoupanca = `<span class="janela-chip ${diff < 0 ? 'poupa' : 'subiu'}" title="${escAttr(tipPoupanca)}">${sinal}${fmtPt(diff, 1)}% vs. média do dia</span>`;
+            const tipPoupanca = cruzaMeiaNoite
+                ? 'Preço médio da janela comparado com a média de hoje e de amanhã (a janela atravessa a meia-noite)'
+                : `Preço médio da janela comparado com a média ${noGrafico ? 'do dia selecionado' : 'do dia de amanhã'}`;
+            const rotuloRef = cruzaMeiaNoite ? 'média dos 2 dias' : 'média do dia';
+            chipPoupanca = `<span class="janela-chip ${diff < 0 ? 'poupa' : 'subiu'}" title="${escAttr(tipPoupanca)}">${sinal}${fmtPt(diff, 1)}% vs. ${rotuloRef}</span>`;
         }
 
         // Aviso "amanhã ainda melhor": só quando estamos a ver hoje, a janela de hoje
         // cabe (não é já o recurso a amanhã) e a diferença é material. A resposta
         // principal é sempre a de hoje — este chip acrescenta, não substitui.
-        const chipAmanha = (isHoje && noGrafico) ? construirChipAmanha(fonte, sel, pontos, melhor, decimais) : '';
+        // Se a janela já entra pela noite dentro, o chip seria redundante (e confuso:
+        // proporia horas de amanhã que a própria janela já inclui).
+        const chipAmanha = (isHoje && noGrafico && !cruzaMeiaNoite)
+            ? construirChipAmanha(fonte, sel, pontos, melhor, decimais) : '';
 
-        const tipPeriodo = `As ${horas}h seguidas mais baratas${isHoje && noGrafico ? ', a contar do intervalo em curso' : ''}`;
-        const tipPreco = `Preço médio de energia entre as ${inicio} e as ${fim}, para ${sel.tarifario} | ${sel.opcao} — inclui TAR de energia, sem IVA`;
+        const marcaAmanha = cruzaMeiaNoite ? '<span class="janela-escopo"> (acaba amanhã)</span>' : '';
+        const fimTexto = cruzaMeiaNoite ? `${fim} de amanhã` : fim;
+        const tipPeriodo = cruzaMeiaNoite
+            ? `As ${horas}h seguidas mais baratas a contar do intervalo em curso. Começa hoje às ${inicio} e termina às ${fim} de amanhã.`
+            : `As ${horas}h seguidas mais baratas${isHoje && noGrafico ? ', a contar do intervalo em curso' : ''}`;
+        const tipPreco = `Preço médio de energia entre as ${inicio} e as ${fimTexto}, para ${sel.tarifario} | ${sel.opcao} — inclui TAR de energia, sem IVA`;
 
         const html =
-            `<span class="janela-chip periodo" title="${escAttr(tipPeriodo)}">${inicio}–${fim}<span class="janela-escopo">${escopo}</span></span>` +
+            `<span class="janela-chip periodo" title="${escAttr(tipPeriodo)}">${inicio}–${fim}${marcaAmanha}<span class="janela-escopo">${escopo}</span></span>` +
             `<span class="janela-chip" title="${escAttr(tipPreco)}"><strong>${fmtPt(melhor.media, decimais)} €/kWh</strong> médios</span>` +
             chipPoupanca +
             chipAmanha;
@@ -771,7 +836,11 @@ document.addEventListener('DOMContentLoaded', function () {
             htmlJanelaRenderizado = html;
         }
 
-        return noGrafico ? { i: melhor.i, fim: melhor.fim } : null;
+        // A banda só pode ir até ao fim do dia desenhado: quando a janela atravessa a
+        // meia-noite, corta-se aqui e assinala-se com a seta na etiqueta.
+        return noGrafico
+            ? { i: melhor.i, fim: Math.min(melhor.fim, nHoje - 1), cortada: cruzaMeiaNoite }
+            : null;
     }
 
     // Limiares do aviso de amanhã: exige ganho relativo E absoluto. Só a percentagem
@@ -846,8 +915,18 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    function opcoesBandaJanela(i, fim) {
+    function opcoesBandaJanela(i, fim, cortada, nCats) {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        // A etiqueta é centrada na banda e tem ~75px de largura: se o centro da banda
+        // cair perto de um extremo do eixo, o texto sai do gráfico e é cortado (foi o
+        // que aconteceu com a janela das 23:30, encostada à meia-noite). Nesses casos
+        // encosta-se ao lado de dentro. A margem é meia etiqueta convertida em pontos
+        // do eixo (~5% do total, tanto na vista horária como na quarto-horária).
+        const centro = (i + fim) / 2;
+        const margem = (nCats || 0) * 0.05;
+        let align = 'center';
+        if (nCats && centro > nCats - 1 - margem) align = 'right';
+        else if (nCats && centro < margem) align = 'left';
         return {
             id: ID_BANDA_JANELA,
             from: i - 0.5,
@@ -856,9 +935,10 @@ document.addEventListener('DOMContentLoaded', function () {
             borderColor: 'rgba(84, 130, 53, 0.55)',
             borderWidth: 1,
             label: {
-                text: 'Melhor janela',
+                // A seta assinala que a janela continua para lá da meia-noite
+                text: cortada ? 'Melhor janela →' : 'Melhor janela',
                 style: { color: isDark ? '#A9D08E' : '#3F6128', fontWeight: 'bold', fontSize: '10px', textOverflow: 'none', whiteSpace: 'nowrap' },
-                align: 'center',
+                align: align,
                 verticalAlign: 'top',
                 y: 32 // abaixo da etiqueta "Agora" (y: 15), para as duas não se sobreporem
             },
@@ -881,10 +961,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const eixo = chartInstance && chartInstance.xAxis && chartInstance.xAxis[0];
         if (!eixo) return;
         const igual = (!janela && !janelaNoGrafico) ||
-                      (janela && janelaNoGrafico && janela.i === janelaNoGrafico.i && janela.fim === janelaNoGrafico.fim);
+                      (janela && janelaNoGrafico && janela.i === janelaNoGrafico.i &&
+                       janela.fim === janelaNoGrafico.fim && janela.cortada === janelaNoGrafico.cortada);
         if (igual) return;
         if (janelaNoGrafico) eixo.removePlotBand(ID_BANDA_JANELA);
-        if (janela) eixo.addPlotBand(opcoesBandaJanela(janela.i, janela.fim));
+        if (janela) eixo.addPlotBand(opcoesBandaJanela(janela.i, janela.fim, janela.cortada, (eixo.categories || []).length));
         janelaNoGrafico = janela;
     }
 
@@ -950,8 +1031,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const tarifarioParam = tarifarioSelect.selectedIndex.toString();
             const opcaoParam = opcaoSelect.selectedIndex.toString();
 
+            // A duração da janela acompanha o link e fica guardada para a visita seguinte
+            const horasJanela = getHorasJanela();
+            guardarJanela(horasJanela);
+
             // Verifica se as opções atuais são os valores por defeito
-            const isDefault = (diaParam === 'hoje' && tarifarioParam === '1' && opcaoParam === '0');
+            const isDefault = (diaParam === 'hoje' && tarifarioParam === '1' && opcaoParam === '0'
+                               && horasJanela === JANELA_PADRAO);
 
             if (isDefault) {
                 // Se for o estado padrão, limpa a querystring mantendo o link limpo
@@ -962,6 +1048,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 qp.set('dia', diaParam);
                 qp.set('tarifario', tarifarioParam);
                 qp.set('opcao', opcaoParam);
+                if (horasJanela !== JANELA_PADRAO) qp.set('janela', horasJanela.toString());
                 window.history.replaceState(null, '', '?' + qp.toString());
             }
         })();
@@ -1029,7 +1116,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // guardados para que o setInterval as possa mover sem redesenhar o gráfico.
         janelaNoGrafico = null;
         if (janela) {
-            xAxisConfig.plotBands.push(opcoesBandaJanela(janela.i, janela.fim));
+            xAxisConfig.plotBands.push(opcoesBandaJanela(janela.i, janela.fim, janela.cortada, dados.categorias.length));
             janelaNoGrafico = janela;
         }
 

@@ -94,7 +94,7 @@
       "name": "A que horas é mais barata a eletricidade?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia. Para não ter de o interpretar, use o indicador \"Melhor janela\" no topo da página: mostra o bloco de 1, 2 ou 3 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia."
+        "text": "Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia. Para não ter de o interpretar, use o indicador \"Melhor janela\" no topo da página: mostra o bloco de 1 a 8 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia — e, nas durações mais longas, a janela pode atravessar a meia-noite e entrar por amanhã."
       }
     },
     {
@@ -223,10 +223,13 @@
 
             <div class="janela-container">
                 <div class="janela-controlo" role="radiogroup" aria-label="Duração da janela de consumo">
-                    <span class="janela-label">Melhor janela de:</span>
-                    <label><input type="radio" name="janela" value="1" onchange="desenhaGrafico()"> <span>1h</span></label>
-                    <label><input type="radio" name="janela" value="2" checked onchange="desenhaGrafico()"> <span>2h</span></label>
-                    <label><input type="radio" name="janela" value="3" onchange="desenhaGrafico()"> <span>3h</span></label>
+                    <span class="janela-label"><span class="so-largo">Melhor janela de:</span><span class="so-estreito">Janela:</span></span>
+                    <label title="1h — forno, secador de cabelo, ciclo rápido"><input type="radio" name="janela" value="1" onchange="desenhaGrafico()"> <span>1h</span></label>
+                    <label title="2h — máquina de lavar roupa"><input type="radio" name="janela" value="2" checked onchange="desenhaGrafico()"> <span>2h</span></label>
+                    <label title="3h — máquina de lavar loiça, ciclo longo de roupa"><input type="radio" name="janela" value="3" onchange="desenhaGrafico()"> <span>3h</span></label>
+                    <label title="4h — termoacumulador, bomba de calor"><input type="radio" name="janela" value="4" onchange="desenhaGrafico()"> <span>4h</span></label>
+                    <label title="6h — carro elétrico, acumulação de água quente"><input type="radio" name="janela" value="6" onchange="desenhaGrafico()"> <span>6h</span></label>
+                    <label title="8h — carregamento noturno de carro elétrico"><input type="radio" name="janela" value="8" onchange="desenhaGrafico()"> <span>8h</span></label>
                 </div>
                 <div id="janelaResultado" class="janela-resultado" aria-live="polite"></div>
             </div>
@@ -298,7 +301,7 @@
                     <summary><strong>A que horas é mais barata a eletricidade?</strong></summary>
                     <div class="faq-content">
                         <p>Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia.</p>
-                        <p>Para não ter de o interpretar, use o indicador <strong>"Melhor janela"</strong> no topo da página: mostra o bloco de 1, 2 ou 3 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia.</p>
+                        <p>Para não ter de o interpretar, use o indicador <strong>"Melhor janela"</strong> no topo da página: mostra o bloco de 1 a 8 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia — e, nas durações mais longas, a janela pode atravessar a meia-noite e entrar por amanhã.</p>
                     </div>
                 </details>
 
@@ -377,6 +380,10 @@
         [data-theme="dark"] .janela-controlo { background: #1e293b; border-color: #475569; color: #cbd5e1; }
         [data-theme="dark"] .janela-controlo .janela-label,
         [data-theme="dark"] .janela-controlo label { color: #cbd5e1; }
+        [data-theme="dark"] .janela-controlo label > span { background: #0f172a; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .janela-controlo label:hover > span { border-color: #6ea04a; color: #b6e39a; }
+        [data-theme="dark"] .janela-controlo input[type="radio"]:checked + span { background: #548235; border-color: #6ea04a; color: #fff; }
+        [data-theme="dark"] .janela-controlo input[type="radio"]:focus-visible + span { outline-color: #cbd5e1; }
         [data-theme="dark"] .janela-chip { background: #1c2b18; border-color: #3f6128; color: #b6e39a; }
         [data-theme="dark"] .janela-chip strong { color: #d4f0c2; }
         [data-theme="dark"] .janela-chip.periodo { background: #2d5016; border-color: #548235; color: #e2f5d5; }
@@ -411,10 +418,17 @@
 
         /* Melhor janela de consumo (N horas seguidas mais baratas) */
         .janela-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin: 0 auto 14px auto; max-width: 95%; }
-        .janela-controlo { display: flex; gap: 12px; align-items: center; padding: 7px 14px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; font-size: 0.9em; }
+        .janela-controlo { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; padding: 7px 14px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; font-size: 0.9em; }
         .janela-controlo .janela-label { font-weight: bold; color: #495057; }
-        .janela-controlo label { cursor: pointer; display: flex; align-items: center; gap: 4px; margin: 0; }
-        .janela-controlo input[type="radio"] { accent-color: #548235; }
+        /* Pílulas em vez de radios visíveis: com 6 durações o círculo de cada radio
+           deixava de caber a 375px. O input continua lá (o radiogroup e as setas do
+           teclado funcionam na mesma), apenas escondido por trás da pílula. */
+        .janela-controlo label { position: relative; cursor: pointer; display: flex; align-items: center; margin: 0; }
+        .janela-controlo input[type="radio"] { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+        .janela-controlo label > span { display: inline-block; padding: 3px 10px; border: 1px solid #ced4da; border-radius: 14px; background: #fff; color: #495057; line-height: 1.25; }
+        .janela-controlo label:hover > span { border-color: #548235; color: #3f6128; }
+        .janela-controlo input[type="radio"]:checked + span { background: #548235; border-color: #548235; color: #fff; font-weight: 600; }
+        .janela-controlo input[type="radio"]:focus-visible + span { outline: 2px solid #495057; outline-offset: 2px; }
         .janela-resultado { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
         .janela-chip { background: #f2f8ee; border: 1px solid #c5e0b4; border-radius: 16px; padding: 5px 12px; font-size: 0.88em; color: #3f6128; }
         .janela-chip strong { color: #2f4a1e; }
@@ -423,6 +437,8 @@
         /* Nem sempre há poupança: no fim do dia, a melhor janela que resta pode ser acima da média */
         .janela-chip.subiu { background: #fffaf0; border-color: #f0d48a; color: #7a5c00; }
         .janela-escopo { font-weight: 400; opacity: 0.85; }
+        /* Par de .so-largo: texto que só aparece em ecrãs estreitos (etiqueta curta) */
+        .so-estreito { display: none; }
         /* Aviso de amanhã: azul, para não se confundir com os chips de hoje. É um botão — muda o dia. */
         .janela-chip.amanha { cursor: pointer; font-family: inherit; line-height: inherit; background: #eef4fb; border-color: #b6d4f0; color: #1c4e80; }
         .janela-chip.amanha:hover { background: #dceaf7; }
@@ -433,8 +449,10 @@
             .mini-resumo, .precos-agora, .janela-resultado { gap: 6px; }
             .mini-resumo-chip, .agora-chip, .janela-chip { font-size: 0.8em; padding: 4px 9px; }
             .janela-container { gap: 8px; }
-            .janela-controlo { padding: 6px 10px; gap: 10px; font-size: 0.85em; }
+            .janela-controlo { padding: 6px 8px; gap: 6px; font-size: 0.85em; }
+            .janela-controlo label > span { padding: 2px 8px; }
             .so-largo { display: none; }
+            .so-estreito { display: inline; }
         }
 
         /* O atributo border="1" foi removido (obsoleto): as bordas, o padding e as cores
