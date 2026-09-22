@@ -1106,7 +1106,7 @@
                     <li><strong>Δ vs a zona de referência:</strong> coluna opcional na tabela (€/MWh e %) com a diferença de cada zona face à zona escolhida em "🌍 A minha zona". Útil para avaliar o custo de importar/exportar.</li>
                     <li><strong>Variação vs ontem:</strong> opcional na tabela em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
                     <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots não foram ainda publicados (ex: PT antes do leilão CET de amanhã) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip. Média/mín/máx usam só os slots conhecidos.</li>
-                    <li><strong>Resumo dinâmico:</strong> texto contextual com a data (Hoje/Ontem/Amanhã/data), com a zona mais barata e mais cara em destaque, e a variação da zona de referência face à média europeia.</li>
+                    <li><strong>Resumo dinâmico:</strong> texto contextual com a data (Hoje/Ontem/Amanhã/data), com a zona mais barata e mais cara em destaque, e a variação da zona de referência face à média europeia. As zonas virtuais de interligação (Itália SACOAC/SACODC e NO2NSL, sem consumidores) ficam de fora destas comparações, mas continuam na tabela.</li>
                 </ul>
                 </div>
                 <div data-lang-block="en">
@@ -1121,7 +1121,7 @@
                     <li><strong>Δ vs the reference zone:</strong> optional table column (€/MWh and %) with each zone's difference against the zone chosen in "🌍 My zone". Useful to assess the cost of importing/exporting.</li>
                     <li><strong>Change vs yesterday:</strong> optional in the table in Daily mode, shows how each zone moved compared with the previous day.</li>
                     <li><strong>Partial-data indicator:</strong> zones whose last slots have not been published yet (e.g. PT before tomorrow's CET auction) get an asterisk on the map and a "partial" badge in the table/tooltip. Average/min/max use only the known slots.</li>
-                    <li><strong>Dynamic summary:</strong> contextual text with the date (Today/Yesterday/Tomorrow/date), highlighting the cheapest and most expensive zone, and the reference zone's variation against the European average.</li>
+                    <li><strong>Dynamic summary:</strong> contextual text with the date (Today/Yesterday/Tomorrow/date), highlighting the cheapest and most expensive zone, and the reference zone's variation against the European average. Virtual interconnector zones (Italy SACOAC/SACODC and NO2NSL, with no consumers) are left out of these comparisons but remain in the table.</li>
                 </ul>
                 </div>
             </div>
@@ -1736,6 +1736,14 @@ document.addEventListener('DOMContentLoaded', function() {
         "FR-COR": true,     // Corsega usa label de FR
         "IT-SACOAC": true,  // SACOAC/SACODC sao zonas virtuais de interligacao
         "IT-SACODC": true   // (sem poligono no mapa; apenas dados na tabela)
+    };
+
+    // Zonas virtuais de interligacao (sem consumidores): continuam na tabela como
+    // dados, mas nao entram na media europeia nem no mais barato/mais caro do resumo.
+    var ZONAS_VIRTUAIS = {
+        "IT-SACOAC": true,  // SARCO (AC Sardenha-Corsega): copia da Sardenha em ~100% dos dias
+        "IT-SACODC": true,  // SACOI (DC): 1250-1750 EUR/MWh fixos quando o cabo esta parado
+        "NO2NSL": true      // North Sea Link, lado NO2
     };
 
     // Mapeamento zona -> código ISO de país (lowercase, para flagcdn.com)
@@ -5429,6 +5437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var entries = [];
         for (var z in currentData) {
             if (!currentData.hasOwnProperty(z)) continue;
+            if (ZONAS_VIRTUAIS[z]) continue;
             var v = currentData[z];
             if (v == null) continue;
             var avg = (typeof v === 'number') ? v : v.avg;
