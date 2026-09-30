@@ -276,9 +276,21 @@ document.addEventListener('DOMContentLoaded', function () {
             const dia = diaSelect.value;
             const tarifarios = Object.keys(dadosEstruturados[dia] || {});
             const tarifarioSelecionadoIndex = tarifarioSelect.selectedIndex;
+            const tarifarioSelecionadoNome = tarifarioSelect.value;
             tarifarioSelect.innerHTML = tarifarios.map(t => `<option value="${t}">${t}</option>`).join("");
 
-            if (tarifarios.length > 1) {
+            // Os dias podem ter listas diferentes (um tarifário que termina ou começa, ex.:
+            // Coopérnico Base/GO → Único a 01/10/2026), por isso ao mudar de dia mantém-se o
+            // tarifário pelo NOME; se não existir nesse dia, o do mesmo comercializador; só
+            // em último caso a posição (antes era sempre a posição, e trocava de tarifário).
+            const porNome = tarifarios.indexOf(tarifarioSelecionadoNome);
+            const marca = (tarifarioSelecionadoNome || '').split(' ')[0];
+            const porMarca = marca ? tarifarios.findIndex(t => t.split(' ')[0] === marca) : -1;
+            if (porNome >= 0) {
+                tarifarioSelect.selectedIndex = porNome;
+            } else if (porMarca >= 0) {
+                tarifarioSelect.selectedIndex = porMarca;
+            } else if (tarifarios.length > 1) {
                 if (tarifarioSelecionadoIndex >= 0 && tarifarioSelecionadoIndex < tarifarios.length) {
                     tarifarioSelect.selectedIndex = tarifarioSelecionadoIndex;
                 } else {
@@ -420,6 +432,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["GO", () => `Garantias de Origem: ${c('Coop_GO', '€/kWh', 3)}`],
                     ["FP", "Perfil de Perda (variável)"],
                     ["CS + CR", () => `Custos de Sistema + Regulação - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS_CR', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CS+CR real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
+                    ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                ]
+            },
+            "Coopérnico Único": {
+                expr: `P<sub>Energia</sub> = OMIE × (1 + FP) + k + CS × (1 + FP) + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["FP", "Perfil de Perda (variável)"],
+                    ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
+                    ["CS", () => `Custos de Sistema (valor mensal variável, com Fator de Perda aplicado) - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS', '€/kWh', 5)}. Nota: este valor é uma aproximação. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]

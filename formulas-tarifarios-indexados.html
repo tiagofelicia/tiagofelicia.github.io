@@ -398,6 +398,22 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             {
                 tipo: 'qh',
+                nome: "Coopérnico | Único",
+                comercializador: "Coopérnico",
+                url: "https://www.coopernico.org",
+                notaLimitacao: null,
+                expr: `P<sub>Energia</sub> = OMIE × (1 + FP) + k + CS × (1 + FP) + TAR + TSE`,
+                legenda: [
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["FP", "Perfil de Perda (variável)"],
+                    ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
+                    ["CS", () => `Custos de Sistema (valor mensal variável, com Fator de Perda aplicado) — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["TAR", TAR],
+                    ["TSE", TSE],
+                ]
+            },
+            {
+                tipo: 'qh',
                 nome: "EDP | Indexada Horária",
                 comercializador: "EDP Comercial",
                 url: "https://www.edp.pt/particulares/energia/gas-eletricidade-oferta-indexada/",
@@ -548,22 +564,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 legenda: [
                     ["A", () => `Outros custos: Preço de tarifas de acesso, custos de serviço de sistemas estimados, perdas estimadas e margem do comercializador. Simples: ${c('Endesa_A_S', '€/kWh', 5)}, Fora Vazio: ${c('Endesa_A_FV', '€/kWh', 5)},Vazio: ${c('Endesa_A_V', '€/kWh', 5)}`],
                     ["B", "Custos de Energia Indexada: Preço médio diário do OMIE em Portugal para o período de faturação (€/kWh)"],
-                ]
-            },
-            {
-                tipo: 'media',
-                nome: "G9 | Smart Index | Não contratável",
-                comercializador: "G9 Energia",
-                url: "https://g9.pt/energia/",
-                notaLimitacao: null,
-                expr: `PE = OMIE × F<sub>adeq</sub> × (1 + Perdas) + GGS + AC + TAR`,
-                legenda: [
-                    ["OMIE", "Preço médio do mercado grossista para o período de faturação (€/kWh)"],
-                    ["F<sub>adeq</sub>", () => `Fator de adequação: ${c('G9_FA', '(adimensional)', 2)}`],
-                    ["Perdas", PERDAS_MED],
-                    ["GGS", () => `Garantia de Gestão e Serviço: ${c('G9_CGS')}`],
-                    ["AC", () => `Ajuste Comercial: ${c('G9_AC')}`],
-                    ["TAR", TAR],
                 ]
             },
             {
