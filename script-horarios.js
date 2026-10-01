@@ -143,12 +143,17 @@ document.addEventListener('DOMContentLoaded', function () {
     function guardarJanela(horas) {
         try { localStorage.setItem(CHAVE_JANELA, String(horas)); } catch (e) {}
     }
+    // Janela que o visitante já tinha guardada ao abrir: é uma preferência pessoal, por isso
+    // não obriga a pôr parâmetros no link (senão quem entrasse no URL limpo com outra janela
+    // guardada via logo o link passar a ?dia=hoje&tarifario=…&opcao=0&janela=N).
+    let janelaGuardadaAoAbrir = null;
+
     // Corre antes do primeiro desenho, para não redesenhar o gráfico duas vezes
     function reporJanelaGuardada(paramJanela) {
-        let v = paramJanela;
-        if (!janelaValida(v)) {
-            try { v = localStorage.getItem(CHAVE_JANELA); } catch (e) { v = null; }
-        }
+        let guardada = null;
+        try { guardada = localStorage.getItem(CHAVE_JANELA); } catch (e) {}
+        if (janelaValida(guardada)) janelaGuardadaAoAbrir = parseInt(guardada, 10);
+        const v = janelaValida(paramJanela) ? paramJanela : guardada;
         if (!janelaValida(v)) return;
         const radio = document.querySelector(`input[name="janela"][value="${parseInt(v, 10)}"]`);
         if (radio) radio.checked = true;
@@ -1053,7 +1058,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const isDefault = (diaParam === 'hoje'
                                && tarifarioSelect.selectedIndex === indiceTarifarioPadrao(nomesTarifarios)
                                && opcaoParam === '0'
-                               && horasJanela === JANELA_PADRAO);
+                               && (horasJanela === JANELA_PADRAO || horasJanela === janelaGuardadaAoAbrir));
 
             if (isDefault) {
                 // Se for o estado padrão, limpa a querystring mantendo o link limpo
