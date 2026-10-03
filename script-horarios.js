@@ -206,6 +206,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const omie = parseNum(colunas[5]);
             const tar = parseNum(colunas[6]);
             const omieTar = parseNum(colunas[7]);
+            // ERC previsto (€/MWh). Só vem nos tarifários que o aplicam ao quarto de
+            // hora; vazio nos outros, nos CSV antigos e quando entrou a constante da BD.
+            const erc = parseNum(colunas[8]);
 
             if (!dia) return;
 
@@ -213,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!dadosEstruturados[dia][tarifario]) dadosEstruturados[dia][tarifario] = {};
             if (!dadosEstruturados[dia][tarifario][opcao]) {
                 dadosEstruturados[dia][tarifario][opcao] = {
-                    categorias: [], colunas: [], omie: [], tar: [], omieTar: []
+                    categorias: [], colunas: [], omie: [], tar: [], omieTar: [], erc: []
                 };
             }
             const grupo = dadosEstruturados[dia][tarifario][opcao];
@@ -222,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
             grupo.omie.push(omie);
             grupo.tar.push(tar);
             grupo.omieTar.push(omieTar);
+            grupo.erc.push(erc);
         });
     }
 
@@ -244,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 dadosEstruturadosHora[dia][tarifario] = {};
                 for (const opcao in dadosEstruturados[dia][tarifario]) {
                     const qh = dadosEstruturados[dia][tarifario][opcao];
-                    const hora = { categorias: [], colunas: [], omie: [], tar: [], omieTar: [] };
+                    const hora = { categorias: [], colunas: [], omie: [], tar: [], omieTar: [], erc: [] };
                     for (let h = 0; h < 24; h++) {
                         const start = h.toString().padStart(2, '0') + ':00';
                         const endLabel = h === 23 ? '00:00' : (h + 1).toString().padStart(2, '0') + ':00';
@@ -253,6 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         hora.omie.push(acumular(qh.omie, h));
                         hora.tar.push(acumular(qh.tar, h));
                         hora.omieTar.push(acumular(qh.omieTar, h));
+                        hora.erc.push(acumular(qh.erc || [], h));
                     }
                     dadosEstruturadosHora[dia][tarifario][opcao] = hora;
                 }
@@ -407,7 +412,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- FÓRMULAS POR TARIFÁRIO ---
-    function mostrarFormula(tarifario) {
+    // dadosQH: dados quarto-horários do dia/tarifário/opção (a coluna erc vem daí,
+    // seja qual for a vista), para o texto do ERC poder dar os números do dia.
+    function mostrarFormula(tarifario, dadosQH) {
         const container = document.getElementById('formula-container');
         const details = document.getElementById('formula-details');
         if (!container || !details) return;
@@ -419,12 +426,33 @@ document.addEventListener('DOMContentLoaded', function () {
             return `<strong>${val.toFixed(decimais).replace('.', ',')} ${unit}</strong>`;
         };
 
+        // ERC previsto do dia (€/MWh, coluna erc do CSV). Sem valores, o CSV usou a
+        // constante da BD: dados da REN em falta ou com mais de 10 dias de atraso.
+        const ercDia = (dadosQH?.erc || []).filter(v => v !== null && !isNaN(v));
+        const ercTexto = (chave, comPerdas = false) => {
+            if (!ercDia.length) {
+                return `Sem previsão para este dia: utiliza-se o valor médio de ERC do mês atual, ${c(chave, '€/kWh', 5)}.`;
+            }
+            const kwh = v => `${fmtPt(v / 1000, 5)} €/kWh`;
+            const media = ercDia.reduce((s, v) => s + v, 0) / ercDia.length;
+            // AAAAMMDD, porque a TABELA_CONSTANTES só leva números
+            const ate = constantes['ERC_REN_Ultimo_Dia'];
+            const s = ate ? String(Math.round(ate)) : '';
+            const ateTxt = s.length === 8 ? ` (dados até ${s.slice(6, 8)}/${s.slice(4, 6)}/${s.slice(0, 4)})` : '';
+            return `Varia a cada quarto de hora. Previsto a partir dos Encargos de Regulação imputados ao Consumo (ERC) publicados pela REN${ateTxt}: `
+                + `a média desse quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo)`
+                + `${comPerdas ? ' e multiplicada por (1 + Perdas)' : ''}. `
+                + `Neste dia: média <strong>${kwh(media)}</strong>, de ${kwh(Math.min(...ercDia))} a ${kwh(Math.max(...ercDia))}`
+                + `${comPerdas ? ', antes das perdas' : ''}. O valor real só se conhece quando a REN o publica, 2 a 3 dias depois. `
+                + `Pode ver-se no gráfico, na linha "ERC previsto".`;
+        };
+
         const formulas = {
             "Alfa Power Index BTN": {
                 expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k + TAR + TSE`,
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
-                    ["CGS", () => `Custos de gestão geral do sistema - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Alfa_CGS', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["CGS", () => `Custos de gestão geral do sistema. ${ercTexto('Alfa_CGS')}`],
                     ["Perdas", "Perdas da rede fixadas pela ERSE (variável)"],
                     ["k", () => `Gastos operacionais Alfa Energia: ${c('Alfa_K', '€/kWh', 3)}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
@@ -437,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
                     ["FP", "Perfil de Perda (variável)"],
                     ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
-                    ["CS", () => `Custos de Sistema (valor mensal variável, com Fator de Perda aplicado) - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS', '€/kWh', 5)}. Nota: este valor é uma aproximação. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["CS", () => `Custos de Sistema, com Fator de Perda aplicado. ${ercTexto('Coop_CS')}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
@@ -456,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>) + TAR + TSE`,
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
-                    ["CGS", () => `Custos de gestão geral do sistema - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('EZU_CGS', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["CGS", () => `Custos de gestão geral do sistema. ${ercTexto('EZU_CGS')}`],
                     ["Perda<sub>ERSE</sub>", "Perdas da rede fixadas pela ERSE (variável)"],
                     ["k", () => { const mwh = constantes['EZU_K'] !== undefined ? ` (${(constantes['EZU_K']*1000).toFixed(2).replace('.',',')} €/MWh)` : ''; return `Gastos operacionais EZU Energia: ${c('EZU_K')}${mwh}`; }],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
@@ -469,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
                     ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
                     ["Perdas", "Perdas nas redes de transporte e distribuição (variável)"],
-                    ["K2", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('G9_K2', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["K2", () => `Custos de gestão geral do sistema (ERS), já com as perdas. ${ercTexto('G9_K2', true)}`],
                     ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
@@ -498,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + CG) × (1 + FP) + K + TAR`,
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
-                    ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Meo_CG', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. ${ercTexto('Meo_CG')}`],
                     ["K", () => `Margem comercial da MeoEnergia: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
@@ -508,8 +536,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 expr: `(OMIE + CGS + GDOs) × Perdas + Fee + TAR`,
                 legenda: [
                     ["OMIE", "Preço do mercado diário (OMIE)"],
-                    ["CGS", () => `Corresponde à soma dos custos de gestão do sistema da REN com os custos de desvio a pagar por todos os comercializadores de eletricidade - Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Plenitude_CGS', '€/kWh', 5)}`],
-                    ["GDOs", () => `Custo das garantias de origem: ${c('Plenitude_GDOs', '€/kWh', 5)}. Nota: este valor é uma aproximação, pois o CGS real varia todos os 15 minutos. Valor atualizado semanalmente com base nos dados mais recentes disponíveis.`],
+                    ["CGS", () => `Corresponde à soma dos custos de gestão do sistema da REN com os custos de desvio a pagar por todos os comercializadores de eletricidade. ${ercTexto('Plenitude_CGS')}`],
+                    ["GDOs", () => `Custo das garantias de origem: ${c('Plenitude_GDOs', '€/kWh', 5)}`],
                     ["Perdas", "Perfil de perdas da rede de distribuição, com base no perfil de perdas regulado pela ERSE."],
                     ["Fee", () => `Margem comercial da Plenitude, estabelecida para o preço indexado: ${c('Plenitude_Fee', '€/kWh', 3)}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): tarifa única, aplicável apenas à opção Simples."],
@@ -1074,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })();
 
-        mostrarFormula(tarifario);
+        mostrarFormula(tarifario, dadosEstruturados[dia]?.[tarifario]?.[opcao]);
 
         // Mini-resumo do dia (chips acima do gráfico) + preços do intervalo em curso
         atualizarMiniResumo(dados, fonte, dia, tarifario, opcao);
@@ -1183,6 +1211,15 @@ document.addEventListener('DOMContentLoaded', function () {
             { name: "TAR", type: "line", data: dados.tar, color: "#B4C7E7", marker: { enabled: false }, visible: false },
             { name: "OMIE*Perdas+TAR", type: "line", data: dados.omieTar, color: "#D3B5E9", marker: { enabled: false }, visible: false }
         ];
+
+        // ERC previsto (linha opcional, como a TAR): só nos tarifários que o aplicam
+        // ao quarto de hora. Vem em €/MWh no CSV; passa a €/kWh para partilhar o eixo.
+        if (Array.isArray(dados.erc) && dados.erc.some(v => v !== null && !isNaN(v))) {
+            seriesArr.push({
+                name: "ERC previsto", type: "line", color: "#F4B183", marker: { enabled: false }, visible: false,
+                data: dados.erc.map(v => (v === null || isNaN(v)) ? null : v / 1000)
+            });
+        }
 
         // Linha tracejada com os preços de amanhã, quando aplicável
         if (dadosAmanha && Array.isArray(dadosAmanha.colunas)) {
