@@ -443,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 + `a média desse quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo)`
                 + `${comPerdas ? ' e multiplicada por (1 + Perdas)' : ''}. `
                 + `Neste dia: média <strong>${kwh(media)}</strong>, de ${kwh(Math.min(...ercDia))} a ${kwh(Math.max(...ercDia))}`
-                + `${comPerdas ? ', antes das perdas' : ''}. O valor real só se conhece quando a REN o publica, 2 a 3 dias depois. `
+                + `${comPerdas ? ', antes das perdas' : ''}. O valor real só se conhece quando a REN o publica, alguns dias depois. `
                 + `Pode ver-se no gráfico, na linha "ERC previsto".`;
         };
 
