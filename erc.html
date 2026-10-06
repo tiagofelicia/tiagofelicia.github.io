@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Custos de Regulação (ERC) da Eletricidade | Tiago Felícia</title>
+    <meta name="description" content="Encargos de Regulação imputados ao Consumo (ERC) da REN: quanto custam por mês e componente, a que horas pesam mais, como se somam ao OMIE PT em cada dia, a previsão para 14 dias, o mapa de calor do último ano e os recordes." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/erc" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/erc" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/erc" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Custos de Regulação (ERC) da Eletricidade" />
+    <meta property="og:description" content="O que são os encargos de regulação que pagamos em cada kWh, quanto custam e porque sobem nas horas de sol." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/erc" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Custos de Regulação (ERC) da eletricidade — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/heatmap.js" integrity="sha384-94RV9ftoFgFfiWlmX6qrQCyytOkqVfqCXFfZ/Vgeol/pshdBeYEKLG63jJeOI+kD" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Encargos de Regulação imputados ao Consumo (ERC) — resumo",
+      "description": "Encargos de Regulação imputados ao Consumo publicados pela REN, desde 14 de março de 2024, para qualquer período: valor diário e mensal em EUR/MWh por componente (restrições técnicas, bandas de reserva aFRR e mFRR, outros), perfil por hora do dia por tipo de dia, valor por período horário BTN pesado pelo perfil ERSE BTN C, mapa de calor e recordes; OMIE PT mais ERC de qualquer dia, com e sem perdas; e uma previsão própria a 14 dias.",
+      "url": "https://www.tiagofelicia.pt/erc",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "isAccessibleForFree": true,
+      "inLanguage": "pt-PT",
+      "temporalCoverage": "2024-03-14/..",
+      "spatialCoverage": { "@type": "Place", "name": "Portugal" },
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "ERC total", "unitText": "EUR/MWh", "description": "Encargos de regulação a dividir pelo consumo do mercado, por quarto de hora, mês ou período horário." },
+        { "@type": "PropertyValue", "name": "Componentes do ERC", "unitText": "EUR/MWh", "description": "Restrições técnicas (PDBF, PDVD, PHF), banda de reserva aFRR, banda de reserva mFRR e outros." }
+      ],
+      "creator": {
+        "@type": "Person",
+        "@id": "https://www.tiagofelicia.pt/#person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_resumo.json" },
+        { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_diario/" },
+        { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_omie/" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/erc/isp/" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Custos de Regulação (ERC)", "item": "https://www.tiagofelicia.pt/erc" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "O que é o ERC (Encargos de Regulação imputados ao Consumo)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É o custo que a REN, como gestora do sistema elétrico, tem para manter a rede equilibrada e segura, repartido por toda a energia consumida em cada quarto de hora. Inclui as restrições técnicas (ajustar a produção que saiu do mercado para que a rede a consiga transportar com segurança), as bandas de reserva aFRR e mFRR (pagar a centrais para estarem disponíveis para subir ou descer a produção) e outros custos e acertos. A REN publica-o em euros e em euros por MWh, por quarto de hora."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como aparece o ERC na minha fatura?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Depende do tarifário. Nos tarifários de preço fixo está diluído no preço da energia. Nos indexados aparece como uma parcela da fórmula, com nomes como custos de gestão do sistema, custos de regulação ou custos de sistema, e é multiplicado pelo fator de perdas (cerca de 1,15). Alguns comercializadores usam o valor de cada quarto de hora, outros a média do mês e outros um valor fixo ou próprio, revisto de tempos a tempos."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que o ERC é mais alto nas horas de sol?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nos últimos 12 meses, as parcelas que mais sobem entre as 10h e as 17h são a banda de reserva aFRR e as restrições técnicas. Ambas têm a ver com manter a rede segura quando a produção é dominada pela solar: é preciso pagar a outras centrais para estarem ligadas ou disponíveis. São também as horas em que o OMIE PT é mais baixo, por isso o ERC come parte da vantagem de consumir nessas horas. Ao fim de semana o efeito é maior, porque o custo é repartido por menos consumo."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que o valor desta página é diferente do da minha fatura?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Por várias razões. Esta página mostra o ERC sem perdas, em EUR/MWh; na fatura aparece com o fator de perdas e em EUR/kWh. A média mensal desta página é pesada pelo consumo nacional, como a da REN, enquanto o que paga depende das horas em que consome. E nem todos os comercializadores faturam o valor da REN: alguns usam médias de meses anteriores ou valores próprios."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como são calculadas as médias?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As médias mensais e por hora são o total de encargos a dividir pelo consumo do mercado, tal como a REN calcula: os quartos de hora com mais consumo pesam mais. Os valores por período horário (vazio, fora de vazio, cheias, ponta) são pesados pelo perfil de consumo doméstico da ERSE (perfil C), porque é esse o perfil de quem escolhe entre simples e bi-horário."
+        }
+      },{
+        "@type": "Question",
+        "name": "Os valores da REN são definitivos?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não totalmente. A REN publica cada dia com alguns dias de atraso e volta a corrigir dias já publicados, por vezes com meses de atraso, embora quase sempre com diferenças pequenas. Os dados deste site voltam a pedir os últimos 40 dias em cada atualização e o último ano inteiro todas as semanas, por isso as correções acabam por entrar."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que é o ERC previsto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É a previsão própria usada nos dias que ainda não têm valor publicado: a média de cada quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo). É a mesma dos Preços Horários e dos simuladores, e esta página mostra-a para os 14 dias seguintes ao último publicado. Testada no último ano, erra em média cerca de 5 EUR/MWh por quarto de hora a 1 a 3 dias e cerca de 6 a 14 dias; na média do dia, entre 3 e 5 EUR/MWh."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque há quartos de hora com ERC acima de 1000 EUR/MWh ou muito negativo?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "São valores publicados pela REN para um único quarto de hora, sobretudo em 2024 e à volta da meia-noite. Como são isolados, quase não mexem nas médias do dia ou do mês, mas aparecem nos recordes. O mapa de calor usa médias por hora e ignora os 2 % de valores mais extremos na escala de cores."
+        }
+      },{
+        "@type": "Question",
+        "name": "De onde vêm estes dados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Do SIME da REN (Encargos de Regulação imputados ao Consumo), recolhidos duas vezes por dia desde 14 de março de 2024. Os dados completos, por quarto de hora, por agente e por tipo de custo, estão publicados em dados.tiagofelicia.pt sob licença CC BY 4.0."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        .aviso-box, .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .aviso-box, .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #666; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 0 0 14px 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e,
+           abaixo de 768px, position: sticky !important); um <nav> dentro do <main> apanha-as —
+           por isso são anuladas aqui. Sem o position: static, no telemóvel a
+           barra de atalhos ficava colada ao topo por cima dos gráficos. */
+        /* --- Controlos de período (como na mibgas-futuros) --- */
+        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+        .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
+        .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+        .date-selector-periodo label { font-weight: bold; font-size: 0.9em; }
+        .date-selector-periodo input { padding: 7px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95em; }
+        .date-selector-periodo.no-dates .date-input-wrapper { display: none; }
+        #btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 7px 14px; font-size: 0.95em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        #erro-periodo { display: none; max-width: 600px; margin: 0 auto 12px auto; background: #fdecea; border-left: 3px solid #c0392b; padding: 8px 12px; font-size: 0.88em; color: #7b241c; border-radius: 0 5px 5px 0; }
+        .periodo-titulo { font-weight: 600; color: #2c3e50 !important; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+        /* No telemóvel: sem o "Últimos" e os botões em grelha de 4 */
+        @media (max-width: 760px) {
+            .periodo-presets .ult { display: none; }
+            .periodo-presets .hh-mode-toggle { display: grid; grid-template-columns: repeat(4, auto); }
+            .periodo-presets .hh-mode-btn { padding: 6px 9px; font-size: 0.82em; border-bottom: 1px solid #cbd5e1; }
+            .periodo-presets .hh-mode-btn:nth-child(4n) { border-right: none; }
+            .periodo-presets .hh-mode-btn:nth-last-child(-n+4) { border-bottom: none; }
+        }
+
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        #erc-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 22px auto; }
+        @media (max-width: 1000px) { #erc-kpis { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 700px) { #erc-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 420px) { #erc-kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .kpi-sub { font-size: 0.76em; color: #6c757d; margin-top: 5px; }
+        .kpi-delta { font-size: 0.74em; font-weight: 600; margin-top: 3px; }
+        .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; }
+        .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0 0 4px 0; }
+        .kpi-cabecalho p { font-size: 0.85em; color: #6c757d; margin: 0; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #666; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 440px; }
+        #grafico-hoje { height: 420px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #6c757d; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .resumo-bloco { width: 100%; margin: 12px 0 0; font-size: 0.9em; color: #444; line-height: 1.6; }
+        .nota-bloco { font-size: 0.8em; color: #888; margin: 6px 0 0; }
+
+        .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
+        .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(:disabled) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .btn-toggle button:disabled { color: #cbd5e1; cursor: not-allowed; background: #fafafa; }
+        .btn-toggle[hidden] { display: none; }
+        .ctrl-data { display: inline-flex; align-items: center; gap: 6px; }
+        .ctrl-data input { font-size: 0.85em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #475569; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box ul { margin: 4px 0 8px 0; padding-left: 20px; }
+        .metodo-box li { margin: 2px 0; }
+
+        #grafico-mapa { height: 520px; }
+        .tabela-box { width: 100%; margin: 14px 0 0; overflow-x: auto; }
+        .tabela-erc { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-erc caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-erc th, .tabela-erc td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-erc th[scope="col"] { background: #f1f3f5; font-weight: 600; }
+        .tabela-erc td.esq, .tabela-erc th.esq { text-align: left; }
+        .tabela-erc tbody tr:nth-child(even) { background: #fbfcfd; }
+        .tabela-erc tr.hoje td { font-weight: 700; background: #eef6ff; }
+        .tabela-erc tr.passado td { color: #6c757d; }
+        .recordes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
+        @media (max-width: 800px) { .recordes-grid { grid-template-columns: 1fr; } }
+        .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .cta-irma { font-size: 0.88em; color: #6c757d; margin-top: 12px; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 380px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.8em; }
+        }
+
+        /* --- Dark mode --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-cabecalho h2,
+        [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub,
+        [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
+        [data-theme="dark"] .nota-bloco, [data-theme="dark"] .cta-irma { color: #94a3b8; }
+        [data-theme="dark"] .resumo-bloco, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(:disabled) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .btn-toggle button:disabled { color: #475569; background: #16202e; }
+        [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; border-bottom-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .date-selector-periodo input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .date-selector-periodo input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] #btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] #erro-periodo { background: #4a1c1c; color: #fca5a5; border-left-color: #dc2626; }
+        [data-theme="dark"] .periodo-titulo { color: #e2e8f0 !important; }
+        [data-theme="dark"] .ctrl-data input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .ctrl-data input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] .tabela-erc { background: #1e293b; }
+        [data-theme="dark"] .tabela-erc caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-erc th, [data-theme="dark"] .tabela-erc td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-erc th[scope="col"] { background: #0f172a; }
+        [data-theme="dark"] .tabela-erc tbody tr:nth-child(even) { background: #16202e; }
+        [data-theme="dark"] .tabela-erc tr.hoje td { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-erc tr.passado td { color: #94a3b8; }
+
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav,
+            .periodo-presets, .date-selector-periodo, .toast-feedback,
+            .bloco-controls, .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li aria-current="page">Custos de Regulação (ERC)</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <div class="periodo-presets">
+            <div class="hh-mode-toggle" role="group" aria-label="Período">
+                <button type="button" class="hh-mode-btn" data-preset="7d"><span class="ult">Últimos </span>7 dias</button>
+                <button type="button" class="hh-mode-btn" data-preset="mes">Este mês</button>
+                <button type="button" class="hh-mode-btn" data-preset="mespassado">Mês passado</button>
+                <button type="button" class="hh-mode-btn" data-preset="3m"><span class="ult">Últimos </span>3 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="6m"><span class="ult">Últimos </span>6 meses</button>
+                <button type="button" class="hh-mode-btn active" data-preset="12m"><span class="ult">Últimos </span>12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="ano">Ano corrente</button>
+                <button type="button" class="hh-mode-btn" data-preset="custom" title="Escolher as datas — abre com a série completa, desde 14/03/2024">Personalizado</button>
+            </div>
+        </div>
+        <div class="date-selector-periodo no-dates">
+            <div class="date-input-wrapper"><label for="seletor-data-inicio">De:</label> <input type="date" id="seletor-data-inicio"></div>
+            <div class="date-input-wrapper"><label for="seletor-data-fim">até:</label> <input type="date" id="seletor-data-fim"></div>
+            <button type="button" id="btn-partilhar" title="Copiar ou partilhar o link desta vista" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
+        </div>
+        <div id="erro-periodo" role="alert"></div>
+        <p class="badge-global">Dados disponíveis desde <strong id="badge-inicio">--/--/----</strong> · Última atualização: <strong id="badge-ultima">--/--/----</strong></p>
+
+        <h1>Custos de Regulação (ERC) da Eletricidade</h1>
+        <p>Encargos de Regulação imputados ao Consumo, publicados pela REN — em €/MWh, sem perdas</p>
+        <p class="periodo-titulo" id="periodo-titulo"></p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-kpis" class="mini-nav-chip">💶 Resumo</a>
+        <a href="#bloco-mensal" class="mini-nav-chip">📊 Evolução</a>
+        <a href="#bloco-horas" class="mini-nav-chip">🕒 Quando custa mais</a>
+        <a href="#bloco-hoje" class="mini-nav-chip">⚡ OMIE PT + ERC</a>
+        <a href="#bloco-previsao" class="mini-nav-chip">🔮 Previsão 14 dias</a>
+        <a href="#bloco-periodos" class="mini-nav-chip">🌙 Vazio e fora de vazio</a>
+        <a href="#bloco-mapa" class="mini-nav-chip">🗓️ Mapa e recordes</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados do ERC…</div>
+
+    <!-- ====================== BLOCO 1 — RESUMO ====================== -->
+    <div class="kpi-cabecalho" id="bloco-kpis">
+        <h2>Resumo do período</h2>
+        <p>Em €/MWh, como a REN publica. Na fatura o ERC aparece com o fator de perdas e em €/kWh; o valor «com perdas» usa o fator médio do período para um consumo doméstico (perfil ERSE C, só desde 2025). Os dias são dias de mercado, como na REN; as horas são em hora de Portugal.</p>
+    </div>
+    <div id="erc-kpis"></div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/erc</p></div>
+
+    <!-- ====================== BLOCO 2 — EVOLUÇÃO POR COMPONENTE ====================== -->
+    <div class="grafico-box" id="bloco-mensal">
+        <h2>Evolução no período, por componente</h2>
+        <p class="grafico-intro">Quanto custou cada MWh consumido em cada dia ou mês do período, e de onde veio esse custo. As barras são as componentes e a linha é o total. Os dias são <strong>dias de mercado</strong>, como na REN: as médias mensais coincidem com o resumo mensal que ela publica.</p>
+        <div class="metodo-box">
+            <p><strong>As componentes:</strong></p>
+            <ul>
+                <li><strong>Restrições técnicas</strong> — o custo de alterar o programa que saiu do mercado para que a rede o consiga transportar com segurança (por exemplo, ligar uma central que o mercado deixou de fora). São resolvidas em três momentos da programação: PDBF, PDVD e PHF.</li>
+                <li><strong>Banda de reserva aFRR e mFRR</strong> — o que se paga a centrais para estarem disponíveis para subir ou descer a produção, automaticamente em segundos (aFRR) ou por ordem do operador em minutos (mFRR).</li>
+                <li><strong>Outros</strong> — restantes custos e acertos; pode ser negativo.</li>
+            </ul>
+        </div>
+        <div id="grafico-mensal" class="grafico"></div>
+        <p class="resumo-bloco" id="mensal-resumo"></p>
+        <p class="nota-bloco" id="evolucao-nota"></p>
+    </div>
+
+    <!-- ====================== BLOCO 3 — PERFIL HORÁRIO ====================== -->
+    <div class="grafico-box" id="bloco-horas">
+        <h2>Quando custa mais — o ERC ao longo do dia</h2>
+        <p class="grafico-intro">ERC médio de cada hora do dia no período, em hora de Portugal, para dias úteis, sábados e domingos. A linha tracejada é o <strong>OMIE PT</strong> médio das mesmas horas (eixo da direita): quando o OMIE PT desce, nas horas de sol, o ERC sobe. Nos períodos longos, escolha uma estação para não misturar o verão com o inverno.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Dias</span>
+            <div class="btn-toggle" id="ctrl-estacao" role="group" aria-label="Dias do perfil horário">
+                <button type="button" data-v="todo" class="active">Todo o período</button>
+                <button type="button" data-v="inverno">Inverno</button>
+                <button type="button" data-v="primavera">Primavera</button>
+                <button type="button" data-v="verao">Verão</button>
+                <button type="button" data-v="outono">Outono</button>
+            </div>
+        </div>
+        <div id="grafico-horas" class="grafico"></div>
+        <p class="resumo-bloco" id="horas-resumo"></p>
+        <p class="nota-bloco" id="horas-nota"></p>
+    </div>
+
+    <!-- ====================== BLOCO 4 — OMIE PT + ERC, DIA A DIA ====================== -->
+    <div class="grafico-box" id="bloco-hoje">
+        <h2>OMIE PT + ERC — o preço que conta, dia a dia</h2>
+        <p class="grafico-intro">Num tarifário indexado ao quarto de hora paga-se o OMIE PT <em>e</em> o ERC desse quarto de hora, os dois multiplicados pelo fator de perdas, mais o acesso às redes e a margem. Por isso, a hora mais barata do OMIE PT nem sempre é a mais barata depois de somar o ERC e as perdas, que também variam ao longo do dia (cerca de 1,13 a 1,20). Escolha hoje, amanhã ou qualquer dia desde 14/03/2024; nos dias ainda sem valor publicado, o ERC é <strong>previsão própria</strong>.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Dia</span>
+            <div class="btn-toggle" id="ctrl-dia" role="group" aria-label="Hoje ou amanhã"></div>
+            <label class="ctrl-data"><span class="ctrl-label">Outro dia</span> <input type="date" id="dia-outro" aria-label="Escolher outro dia"></label>
+            <span class="ctrl-label">Perdas</span>
+            <div class="btn-toggle" id="ctrl-perdas" role="group" aria-label="Perdas">
+                <button type="button" data-v="sem" class="active">Sem perdas</button>
+                <button type="button" data-v="com">Com perdas</button>
+            </div>
+        </div>
+        <div id="grafico-hoje" class="grafico"><div class="estado-carregamento">A carregar os preços…</div></div>
+        <p class="resumo-bloco" id="hoje-resumo"></p>
+        <p class="nota-bloco" id="hoje-nota"></p>
+        <p class="nota-bloco">Valores em €/MWh, sem acesso às redes e sem margem do comercializador. O preço final de cada tarifário, já com tudo, está nos <a href="precos-horarios">Preços Horários</a> (hoje e amanhã).</p>
+    </div>
+
+    <!-- ====================== BLOCO 6 — PREVISÃO 14 DIAS ====================== -->
+    <div class="grafico-box" id="bloco-previsao">
+        <h2>Previsão para os próximos 14 dias</h2>
+        <p class="grafico-intro">Previsão própria, a mesma dos simuladores e dos Preços Horários: para cada quarto de hora, a média dos últimos 7 dias publicados, ajustada ao tipo de dia (útil, sábado ou domingo). A faixa sombreada é o <strong>erro médio</strong> que este cálculo teve no último ano, para cada antecedência.</p>
+        <div id="grafico-previsao" class="grafico"></div>
+        <p class="resumo-bloco" id="previsao-resumo"></p>
+        <div class="tabela-box"><table class="tabela-erc" id="tabela-previsao"></table></div>
+        <p class="nota-bloco">Pelo método, todos os dias úteis têm a mesma previsão, tal como todos os sábados e todos os domingos — o que muda de linha para linha é a margem de erro, que cresce com a antecedência. Os dias já passados ainda sem valor publicado aparecem a cinzento.</p>
+    </div>
+
+    <!-- ====================== BLOCO 5 — PERÍODOS HORÁRIOS ====================== -->
+    <div class="grafico-box" id="bloco-periodos">
+        <h2>ERC no vazio, fora de vazio, cheias e ponta</h2>
+        <p class="grafico-intro">ERC médio de cada período horário, por dia ou por mês do período, pesado pelo perfil de consumo doméstico da ERSE (perfil C; disponível desde 2025). Num tarifário indexado que fature o ERC ao quarto de hora, é esta a diferença que o ERC faz entre períodos — e pode pesar na escolha entre simples, bi-horário e tri-horário.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Ciclo</span>
+            <div class="btn-toggle" id="ctrl-ciclo" role="group" aria-label="Ciclo horário">
+                <button type="button" data-v="BD" class="active">Bi-horário diário</button>
+                <button type="button" data-v="BS">Bi-horário semanal</button>
+                <button type="button" data-v="TD">Tri-horário diário</button>
+                <button type="button" data-v="TS">Tri-horário semanal</button>
+            </div>
+        </div>
+        <div id="grafico-periodos" class="grafico"></div>
+        <p class="resumo-bloco" id="periodos-resumo"></p>
+    </div>
+
+    <!-- ====================== BLOCO 7 — MAPA DE CALOR E RECORDES ====================== -->
+    <div class="grafico-box" id="bloco-mapa">
+        <h2>Mapa de calor e recordes do período</h2>
+        <p class="grafico-intro">Cada célula é o ERC médio de uma hora de um dia do período, em hora de Portugal. A escala de cores ignora os 2 % de valores mais extremos, para que os picos isolados não apaguem o resto.</p>
+        <div id="grafico-mapa" class="grafico"></div>
+        <p class="nota-bloco" id="mapa-nota"></p>
+        <div class="recordes-grid">
+            <div class="tabela-box"><table class="tabela-erc" id="rec-qh"></table></div>
+            <div class="tabela-box"><table class="tabela-erc" id="rec-dias"></table></div>
+        </div>
+        <p class="nota-bloco">Recordes dentro do período escolhido (para ver todos, use Personalizado). Os quartos de hora extremos são valores publicados pela REN para um único período, sobretudo em 2024 e à volta da meia-noite; quase não mexem nas médias. Os dias são dias de mercado, como na REN (das 23:00 da véspera às 23:00, em hora de Portugal).</p>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>E quanto pesa o ERC no seu tarifário?</h2>
+        <p>O simulador aplica a fórmula de cada comercializador aos seus consumos, com o ERC de cada quarto de hora — o real, quando já foi publicado, e a previsão própria no resto.</p>
+        <div class="botoes">
+            <a href="eletricidade-tiagofelicia" class="button-link">⚡ Simular tarifários de eletricidade</a>
+            <a href="precos-horarios" class="button-link">🕒 Preços Horários</a>
+        </div>
+        <p class="cta-irma">Para ver como cada tarifário indexado inclui o ERC na fórmula, veja as <a href="formulas-tarifarios-indexados">Fórmulas dos Tarifários Indexados</a>.</p>
+    </div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que é o ERC (Encargos de Regulação imputados ao Consumo)?</strong></summary>
+            <div class="faq-content">
+                <p>É o custo que a <strong>REN</strong>, como gestora do sistema elétrico, tem para manter a rede equilibrada e segura, repartido por toda a energia consumida em cada quarto de hora. Inclui:</p>
+                <ul>
+                    <li>as <strong>restrições técnicas</strong> — ajustar a produção que saiu do mercado para que a rede a consiga transportar com segurança;</li>
+                    <li>as <strong>bandas de reserva aFRR e mFRR</strong> — pagar a centrais para estarem disponíveis para subir ou descer a produção;</li>
+                    <li><strong>outros</strong> custos e acertos.</li>
+                </ul>
+                <p>A REN publica-o em euros e em €/MWh, por quarto de hora. Quem o paga somos todos, no preço da eletricidade.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como aparece o ERC na minha fatura?</strong></summary>
+            <div class="faq-content">
+                <p>Depende do tarifário:</p>
+                <ul>
+                    <li>nos tarifários de <strong>preço fixo</strong> está diluído no preço da energia;</li>
+                    <li>nos <strong>indexados</strong> aparece como uma parcela da fórmula, com nomes como <em>custos de gestão do sistema</em>, <em>custos de regulação</em> ou <em>custos de sistema</em>, multiplicada pelo fator de perdas (cerca de 1,15).</li>
+                </ul>
+                <p>Mesmo entre os indexados há diferenças: uns usam o valor de cada quarto de hora, outros a média do mês, e outros um valor fixo ou próprio, revisto de tempos a tempos. As <a href="formulas-tarifarios-indexados">fórmulas dos tarifários indexados</a> dizem como cada um o calcula.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o ERC é mais alto nas horas de sol?</strong></summary>
+            <div class="faq-content">
+                <p>Nos últimos 12 meses, as parcelas que mais sobem entre as 10h e as 17h são a <strong>banda de reserva aFRR</strong> e as <strong>restrições técnicas</strong>. Ambas têm a ver com manter a rede segura quando a produção é dominada pela solar: é preciso pagar a outras centrais para estarem ligadas ou disponíveis.</p>
+                <p>São também as horas em que o OMIE PT é mais baixo, por isso o ERC <strong>come parte da vantagem</strong> de consumir nessas horas — é o que mostra o gráfico «OMIE PT + ERC».</p>
+                <p>Ao fim de semana o efeito é maior, porque grande parte destes custos não depende do consumo e, num domingo, é repartida por menos MWh.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o valor desta página é diferente do da minha fatura?</strong></summary>
+            <div class="faq-content">
+                <ul>
+                    <li><strong>Perdas:</strong> esta página mostra o ERC sem perdas, em €/MWh; na fatura aparece com o fator de perdas e em €/kWh (17,5 €/MWh × 1,15 ≈ 0,020 €/kWh).</li>
+                    <li><strong>Horas de consumo:</strong> a média mensal é pesada pelo consumo nacional, como a da REN; num tarifário que fature o quarto de hora, o que paga depende das horas em que consome.</li>
+                    <li><strong>Valores próprios:</strong> nem todos os comercializadores faturam o valor da REN — alguns usam médias de meses anteriores ou valores próprios.</li>
+                </ul>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como são calculadas as médias?</strong></summary>
+            <div class="faq-content">
+                <p>As médias <strong>mensais e por hora</strong> são o total de encargos a dividir pelo consumo do mercado (Σ€ ÷ ΣMWh), tal como a REN calcula: os quartos de hora com mais consumo pesam mais. As médias mensais coincidem com o resumo mensal publicado pela REN.</p>
+                <p>Os valores <strong>por período horário</strong> são pesados pelo perfil de consumo doméstico da ERSE (perfil C), porque é esse o perfil de quem escolhe entre simples e bi-horário — e é também o que o simulador usa quando não carrega o seu diagrama de carga.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Os valores da REN são definitivos?</strong></summary>
+            <div class="faq-content">
+                <p>Não totalmente. A REN publica cada dia com alguns dias de atraso e <strong>volta a corrigir dias já publicados</strong>, por vezes com meses de atraso, embora quase sempre com diferenças pequenas.</p>
+                <p>Os dados deste site voltam a pedir os últimos 40 dias em cada atualização e o último ano inteiro todas as semanas, por isso as correções acabam por entrar.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que é o «ERC previsto»?</strong></summary>
+            <div class="faq-content">
+                <p>É a previsão própria usada nos dias que ainda não têm valor publicado: a média de cada quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo). Por isso, dois dias úteis seguidos têm a mesma previsão.</p>
+                <p>É a mesma dos <a href="precos-horarios">Preços Horários</a> e dos simuladores, e esta página mostra-a para os 14 dias seguintes ao último publicado. Testada no último ano, erra em média cerca de <strong>5 €/MWh por quarto de hora</strong> a 1 a 3 dias e cerca de 6 a 14 dias — menos do que usar um valor fixo, que erra cerca de 9. Na média do dia, o erro fica entre 3 e 5 €/MWh. O gráfico da previsão mostra o erro medido para cada antecedência.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque há quartos de hora com ERC acima de 1000 €/MWh ou muito negativo?</strong></summary>
+            <div class="faq-content">
+                <p>São valores publicados pela REN para um <strong>único quarto de hora</strong>, sobretudo em 2024 e à volta da meia-noite.</p>
+                <p>Como são isolados, quase não mexem nas médias do dia ou do mês, mas aparecem nos recordes. O mapa de calor usa médias por hora e ignora os 2 % de valores mais extremos na escala de cores.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm estes dados?</strong></summary>
+            <div class="faq-content">
+                <p>Do <strong>SIME da REN</strong> (Encargos de Regulação imputados ao Consumo), recolhidos duas vezes por dia desde 14 de março de 2024. Os resumos desta página são recalculados uma vez por dia.</p>
+                <p>Os dados completos — por quarto de hora, por agente de mercado e por tipo de custo — estão publicados em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    const URL_RESUMO = 'agregados/erc_resumo.json';
+    // Cache-bust por quarto de hora, como nos Preços Horários: o ficheiro só
+    // muda quando saem preços novos.
+    const URL_PRECOS = 'omie/precos-horarios.csv?cache_bust=' + Math.floor(Date.now() / 900000);
+
+    const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const MESES_LONGOS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho',
+                          'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const COR_COMP = {
+        rt_pdbf: '#1d4ed8', rt_pdvd: '#60a5fa', rt_phf: '#bfdbfe',
+        banda_afrr: '#f59e0b', banda_mfrr: '#fcd34d', outros: '#94a3b8'
+    };
+    // Para frases ("a maior parcela foi …")
+    const FRASE_COMP = {
+        rt_pdbf: 'as restrições técnicas no PDBF', rt_pdvd: 'as restrições técnicas no PDVD',
+        rt_phf: 'as restrições técnicas no PHF', banda_afrr: 'a banda de reserva aFRR',
+        banda_mfrr: 'a banda de reserva mFRR', outros: 'outros custos'
+    };
+    const NOME_ESTACAO = { inverno: 'inverno', primavera: 'primavera', verao: 'verão', outono: 'outono' };
+    const NOME_PERIODO = { V: 'Vazio', F: 'Fora de vazio', C: 'Cheias', P: 'Ponta', S: 'Simples' };
+    const COR_PERIODO = { V: '#16a34a', F: '#2563eb', C: '#f59e0b', P: '#dc2626' };
+    const DIAS_SEMANA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+    // ==================================================================
+    // ESTADO
+    // ==================================================================
+    let R = null;                 // erc_resumo.json
+    let PRECOS = null;            // { dias: [...], porDia: Map(dia → [{h, omie, erc}]) }
+    let _estacao = 'todo';
+    let _dia = null;              // dia do bloco 4, AAAA-MM-DD
+    let _perdas = 'sem';
+    let _ciclo = 'BD';
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const _nf3 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const fmt1 = v => vazio(v) ? '--' : _nf1.format(v);
+    const fmt2 = v => vazio(v) ? '--' : _nf2.format(v);
+    const fmt3 = v => vazio(v) ? '--' : _nf3.format(v);
+    const fmtMWh = v => fmt2(v) + ' €/MWh';
+    // €/MWh com perdas → c€/kWh
+    const fmtCkWh = (v, perdas) => (vazio(v) || vazio(perdas)) ? null : fmt2(v * perdas / 10) + ' c€/kWh';
+    function fmtData(iso) { if (!iso) return '--/--/----'; const p = iso.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+    function rotMes(mes) { return `${MESES[+mes.slice(5, 7) - 1]}/${mes.slice(2, 4)}`; }
+    function mesLongo(mes) { return `${MESES_LONGOS[+mes.slice(5, 7) - 1]} de ${mes.slice(0, 4)}`; }
+    function sinal(v) { return vazio(v) ? '--' : (v > 0 ? '+' : v < 0 ? '−' : '') + fmt2(Math.abs(v)); }
+    function corDelta(v) { return v > 0 ? '#c0392b' : (v < 0 ? '#1e8449' : '#b8860b'); }
+    const hora = h => String(h).padStart(2, '0') + 'h';
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return {
+            dk,
+            bg: dk ? '#1e293b' : '#fff',
+            txt: dk ? '#e2e8f0' : '#333',
+            grelha: dk ? '#334155' : '#e6e6e6',
+            suave: dk ? '#94a3b8' : '#888',
+            total: dk ? '#f87171' : '#dc2626',
+            banda1: dk ? 'rgba(59,130,246,0.18)' : 'rgba(37,99,235,0.10)',
+            banda2: dk ? 'rgba(34,197,94,0.20)' : 'rgba(22,163,74,0.13)'
+        };
+    }
+
+    function exportacao(nome) {
+        return {
+            enabled: true,
+            filename: nome,
+            buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+        };
+    }
+
+    // Opções comuns: fundo, texto e grelha seguem o tema no momento do render.
+    function base(c, nome) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: false },
+            exporting: exportacao(nome),
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    const eixoX = (c, cats, extra) => Object.assign({ categories: cats, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha }, extra || {});
+    const eixoY = (c, titulo, extra) => Object.assign({ title: { text: titulo, style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha }, extra || {});
+
+    function limparGrafico(id, html) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = html || '';
+    }
+
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+
+    function media(arr) {
+        const v = arr.filter(x => !vazio(x));
+        return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+    }
+    function correlacao(a, b) {
+        const pares = a.map((x, i) => [x, b[i]]).filter(p => !vazio(p[0]) && !vazio(p[1]));
+        if (pares.length < 3) return null;
+        const ma = media(pares.map(p => p[0])), mb = media(pares.map(p => p[1]));
+        let num = 0, da = 0, db = 0;
+        pares.forEach(([x, y]) => { num += (x - ma) * (y - mb); da += (x - ma) ** 2; db += (y - mb) ** 2; });
+        return (da && db) ? num / Math.sqrt(da * db) : null;
+    }
+
+    // ==================================================================
+    // PERÍODO — dados por ano, botões, URL e partilha
+    // ==================================================================
+    // Os blocos 1, 2, 3, 5 e 7 seguem o período escolhido e são calculados
+    // aqui a partir de um ficheiro por ano (agregados/erc_diario/AAAA.json):
+    // totais por dia de mercado (como a REN) e, por dia em hora de Portugal, o
+    // ERC e o consumo de cada hora, o OMIE PT, os extremos, as perdas e os
+    // períodos horários. Os blocos 4 (dia a dia) e 6 (previsão) não dependem dele.
+    const PASTA_DIARIO = 'agregados/erc_diario/';
+    const _anos = new Map();          // ano → Promise<json | null>
+    const MERC = new Map();           // dia de mercado → [MWh, €, € de cada componente…]
+    const DIAS = new Map();           // dia (hora de Portugal) → { e, m, o, n, max, min, p, c }
+    let ORDEM_C = [];                 // ordem dos pares [€/MWh, peso] em DIAS[d].c
+    let MIN_DIA = null, FIM_DIA = null;
+    let periodo = { inicio: null, fim: null };
+    let _diaEscolhido = false;        // o dia do bloco 4 só vai para o link se foi escolhido
+
+    function carregarAno(ano) {
+        if (!_anos.has(ano)) {
+            _anos.set(ano, fetchDados(PASTA_DIARIO + ano + '.json')
+                .then(r => r.ok ? r.json() : null)
+                .then(j => {
+                    if (!j) return null;
+                    Object.entries(j.mercado || {}).forEach(([d, v]) => MERC.set(d, v));
+                    Object.entries(j.dias || {}).forEach(([d, v]) => DIAS.set(d, v));
+                    if (j.ordem_c) ORDEM_C = j.ordem_c;
+                    return j;
+                })
+                .catch(() => null));
+        }
+        return _anos.get(ano);
+    }
+    function carregarIntervalo(inicio, fim) {
+        const a0 = +inicio.slice(0, 4), a1 = +fim.slice(0, 4);
+        return Promise.all((R.diario.anos || []).filter(a => a >= a0 && a <= a1).map(carregarAno));
+    }
+
+    // Datas (AAAA-MM-DD, em UTC para não depender do fuso do visitante)
+    const DIA_MS = 86400000;
+    const tsDia = iso => { const [a, m, d] = iso.split('-').map(Number); return Date.UTC(a, m - 1, d); };
+    const isoDeTs = ts => new Date(ts).toISOString().slice(0, 10);
+    const addDias = (iso, n) => isoDeTs(tsDia(iso) + n * DIA_MS);
+    function deslocarMeses(iso, n) { const d = new Date(tsDia(iso)); d.setUTCMonth(d.getUTCMonth() + n); return isoDeTs(d.getTime()); }
+    const ultimoDoMes = iso => { const [a, m] = iso.split('-').map(Number); return isoDeTs(Date.UTC(a, m, 0)); };
+    const nDias = (a, b) => Math.round((tsDia(b) - tsDia(a)) / DIA_MS) + 1;
+    function diasDe(inicio, fim) { const out = []; for (let t = tsDia(inicio); t <= tsDia(fim); t += DIA_MS) out.push(isoDeTs(t)); return out; }
+    function tipoDia(iso) { const w = new Date(tsDia(iso)).getUTCDay(); return w === 6 ? 'sab' : (w === 0 ? 'dom' : 'util'); }
+
+    // Totais por dia de mercado (Σ€ ÷ ΣMWh, como a REN)
+    function totaisMercado(dias) {
+        let mwh = 0, eur = 0, n = 0;
+        const comp = Array(R.componentes.length).fill(0);
+        dias.forEach(d => {
+            const v = MERC.get(d);
+            if (!v) return;
+            n++; mwh += v[0]; eur += v[1];
+            comp.forEach((_, k) => { comp[k] += v[2 + k] || 0; });
+        });
+        return (n && mwh) ? { n, mwh, eur, erc: eur / mwh, comp: comp.map(x => x / mwh) } : null;
+    }
+    // ERC de cada dia de MERCADO do período (como a REN): [{ iso, v }, …]
+    const diasMercado = (inicio, fim) => diasDe(inicio, fim).filter(d => MERC.has(d) && MERC.get(d)[0])
+        .map(d => ({ iso: d, v: MERC.get(d)[1] / MERC.get(d)[0] }));
+    // Dias (hora de Portugal) do período com dados: [[iso, dia], …]
+    const diasLocais = (inicio, fim) => diasDe(inicio, fim).filter(d => DIAS.has(d)).map(d => [d, DIAS.get(d)]);
+    // Perfil por hora de um conjunto de dias: Σ(€/MWh × MWh) ÷ ΣMWh
+    function perfilHoras(lista) {
+        const s = Array(24).fill(0), w = Array(24).fill(0);
+        lista.forEach(d => d.e.forEach((v, h) => { const m = d.m[h]; if (!vazio(v) && !vazio(m)) { s[h] += v * m; w[h] += m; } }));
+        return s.map((x, h) => w[h] ? x / w[h] : null);
+    }
+
+    // Botões de período, relativos ao último dia com ERC publicado
+    const PRESETS = ['7d', 'mes', 'mespassado', '3m', '6m', '12m', 'ano'];
+    function getPresetDates(p) {
+        if (!FIM_DIA) return null;
+        const fim = FIM_DIA, clamp = s => (s < MIN_DIA ? MIN_DIA : s), hoje = hojeISO();
+        if (p === '7d') return { inicio: clamp(addDias(fim, -6)), fim };
+        if (p === 'mes') {
+            // Este mês do calendário; se ainda não há dias publicados dele, o do último dia publicado
+            let i = hoje.slice(0, 8) + '01';
+            if (i > fim) i = fim.slice(0, 8) + '01';
+            return { inicio: clamp(i), fim };
+        }
+        if (p === 'mespassado') {
+            let i = deslocarMeses(hoje.slice(0, 8) + '01', -1);
+            if (i > fim) i = deslocarMeses(fim.slice(0, 8) + '01', -1);
+            const f = ultimoDoMes(i);
+            return { inicio: clamp(i), fim: f < fim ? f : fim };
+        }
+        const meses = { '3m': 3, '6m': 6, '12m': 12 }[p];
+        if (meses) return { inicio: clamp(addDias(deslocarMeses(fim, -meses), 1)), fim };
+        if (p === 'ano') return { inicio: clamp(fim.slice(0, 4) + '-01-01'), fim };
+        if (p === 'tudo') return { inicio: MIN_DIA, fim };
+        return null;
+    }
+    function detectarPreset(inicio, fim) {
+        for (const p of PRESETS) { const d = getPresetDates(p); if (d && d.inicio === inicio && d.fim === fim) return p; }
+        return 'custom';
+    }
+    function atualizarBotoesPreset(p) {
+        document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === p));
+    }
+    function setDateInputsVisibilidade(p) {
+        document.querySelector('.date-selector-periodo').classList.toggle('no-dates', p !== 'custom');
+    }
+    function ativarToggle(id, v) {
+        document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+    }
+
+    // Estado na URL: só o que difere do que a página mostra por omissão
+    function lerURL() {
+        const p = new URLSearchParams(window.location.search);
+        const ler = k => (p.get(k) || '').trim() || null;
+        const iso = s => (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? s : null;
+        const i = iso(ler('inicio')), f = iso(ler('fim'));
+        return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null,
+                 est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas') };
+    }
+    function paramsAtuais(sempreDatas) {
+        const p = new URLSearchParams();
+        const d = getPresetDates('12m');
+        if (sempreDatas || !(d && periodo.inicio === d.inicio && periodo.fim === d.fim)) {
+            p.set('inicio', periodo.inicio); p.set('fim', periodo.fim);
+        }
+        if (_estacao !== 'todo') p.set('est', _estacao);
+        if (_ciclo !== 'BD') p.set('ciclo', _ciclo);
+        if (_diaEscolhido && _dia) p.set('dia', _dia);
+        if (_perdas !== 'sem') p.set('perdas', _perdas);
+        return p;
+    }
+    function atualizarURL() {
+        if (!periodo.inicio) return;
+        const q = paramsAtuais(false).toString();
+        window.history.replaceState(null, '', `${window.location.pathname}${q ? '?' + q : ''}${window.location.hash}`);
+    }
+
+    function mostrarFeedback(msg) {
+        const antigo = document.getElementById('toast-feedback');
+        if (antigo) antigo.remove();
+        const t = document.createElement('div');
+        t.id = 'toast-feedback'; t.className = 'toast-feedback'; t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { if (t.parentNode) t.remove(); }, 2500);
+    }
+
+    async function partilharVista() {
+        // O link leva sempre as datas, mesmo no período por omissão: quem o
+        // recebe vê exatamente o mesmo período.
+        const url = `${window.location.origin}${window.location.pathname}?${paramsAtuais(true).toString()}`;
+        const tot = totaisMercado(diasDe(periodo.inicio, periodo.fim));
+        let resumo = `⚖️ Custos de Regulação (ERC) — de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}`;
+        if (tot) {
+            const ck = fmtCkWh(tot.erc, media(diasLocais(periodo.inicio, periodo.fim).map(([, d]) => d.p)));
+            resumo += `\nMédia: ${fmtMWh(tot.erc)}${ck ? ` (≈ ${ck} com perdas)` : ''}`;
+        }
+        const texto = `${resumo}\n${url}`;
+        if (navigator.share) {
+            try { await navigator.share({ title: 'Custos de Regulação (ERC) — Tiago Felícia', text: resumo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try { await navigator.clipboard.writeText(texto); mostrarFeedback('✓ Link e resumo copiados'); return; }
+        catch (e) { /* sem permissão de clipboard — cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = texto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+            document.body.removeChild(ta);
+            mostrarFeedback('✓ Link e resumo copiados');
+        } catch (e) { prompt('Copie este link:', texto); }
+    }
+
+    // Aplica o período: carrega os anos precisos (com o período anterior, para a
+    // comparação do resumo) e redesenha os blocos que dependem dele.
+    let _pedidoPeriodo = 0;
+    async function aplicarPeriodo() {
+        const pedido = ++_pedidoPeriodo;
+        const L = nDias(periodo.inicio, periodo.fim);
+        document.getElementById('periodo-titulo').textContent =
+            `De ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} (${L} ${L === 1 ? 'dia' : 'dias'})`;
+        const antIni = addDias(periodo.inicio, -L);
+        await carregarIntervalo(antIni < MIN_DIA ? MIN_DIA : antIni, periodo.fim);
+        if (pedido !== _pedidoPeriodo) return;
+        renderPeriodo();
+    }
+    function renderPeriodo() {
+        renderKPIs();
+        renderEvolucao();
+        prepararEstacoes();
+        renderHoras();
+        renderPeriodos();
+        renderMapa();
+        renderRecordes();
+    }
+
+    function aplicarPreset(p) {
+        const d = getPresetDates(p);
+        if (!d) return;
+        periodo = { inicio: d.inicio, fim: d.fim };
+        document.getElementById('seletor-data-inicio').value = d.inicio;
+        document.getElementById('seletor-data-fim').value = d.fim;
+        document.getElementById('erro-periodo').style.display = 'none';
+        atualizarBotoesPreset(p);
+        setDateInputsVisibilidade(p);
+        atualizarURL();
+        aplicarPeriodo();
+    }
+    function aplicarDatasManuais() {
+        const inicio = document.getElementById('seletor-data-inicio').value;
+        const fim = document.getElementById('seletor-data-fim').value;
+        const erro = document.getElementById('erro-periodo');
+        if (!inicio || !fim) return;
+        if (inicio > fim) { erro.textContent = 'A data de início é posterior à data de fim.'; erro.style.display = 'block'; return; }
+        erro.style.display = 'none';
+        periodo = { inicio: inicio < MIN_DIA ? MIN_DIA : inicio, fim: fim > FIM_DIA ? FIM_DIA : fim };
+        atualizarBotoesPreset(detectarPreset(periodo.inicio, periodo.fim));
+        atualizarURL();
+        aplicarPeriodo();
+    }
+
+    // ==================================================================
+    // BLOCO 1 — RESUMO DO PERÍODO
+    // ==================================================================
+    function renderKPIs() {
+        const el = document.getElementById('erc-kpis');
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        const tot = totaisMercado(dias);
+        if (!tot) { el.innerHTML = '<div class="bloco-vazio" style="grid-column:1/-1">Sem dados neste período.</div>'; return; }
+        const L = dias.length;
+        const antIni = addDias(periodo.inicio, -L), antFim = addDias(periodo.inicio, -1);
+        const ant = antIni >= MIN_DIA ? totaisMercado(diasDe(antIni, antFim)) : null;
+        const locais = diasLocais(periodo.inicio, periodo.fim);
+        const perdas = media(locais.map(([, d]) => d.p));
+        const porDia = diasMercado(periodo.inicio, periodo.fim);
+        const caro = porDia.reduce((a, x) => (!a || x.v > a.v) ? x : a, null);
+        const barato = porDia.reduce((a, x) => (!a || x.v < a.v) ? x : a, null);
+        const ph = perfilHoras(locais.map(([, d]) => d));
+        const val = ph.filter(x => !vazio(x));
+        const hMax = val.length ? ph.indexOf(Math.max(...val)) : -1, hMin = val.length ? ph.indexOf(Math.min(...val)) : -1;
+        const faixa = h => `das ${String(h).padStart(2, '0')}:00 às ${String((h + 1) % 24).padStart(2, '0')}:00`;
+
+        const card = (label, valor, sub, delta) => `
+            <div class="kpi-card">
+                <div class="kpi-label">${label}</div>
+                <div class="kpi-value">${valor}</div>
+                ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+                ${delta || ''}
+            </div>`;
+        const ck = fmtCkWh(tot.erc, perdas);
+        const d = ant ? tot.erc - ant.erc : null;
+        let html = card('ERC médio no período', fmtMWh(tot.erc), ck ? `≈ ${ck} com perdas` : `${tot.n} dias`,
+            d === null ? '' : `<div class="kpi-delta" style="color:${corDelta(d)}">${d > 0 ? '▲' : d < 0 ? '▼' : '='} ${sinal(d)} €/MWh face aos ${L} dias anteriores</div>`);
+        html += caro ? card('Dia mais caro', fmtMWh(caro.v), `${diaSemana(caro.iso)}, ${fmtData(caro.iso)}`) : card('Dia mais caro', '--', '');
+        html += barato ? card('Dia mais barato', fmtMWh(barato.v), `${diaSemana(barato.iso)}, ${fmtData(barato.iso)}`) : card('Dia mais barato', '--', '');
+        html += hMax >= 0 ? card('Hora mais cara (média)', fmtMWh(ph[hMax]), faixa(hMax)) : card('Hora mais cara (média)', '--', '');
+        html += hMin >= 0 ? card('Hora mais barata (média)', fmtMWh(ph[hMin]), faixa(hMin)) : card('Hora mais barata (média)', '--', '');
+        el.innerHTML = html;
+    }
+
+    // ==================================================================
+    // BLOCO 2 — EVOLUÇÃO POR COMPONENTE
+    // ==================================================================
+    // Até 3 meses, uma barra por dia; acima disso, uma por mês.
+    const DIARIO_ATE_DIAS = 92;
+    function baldes(inicio, fim) {
+        const dias = diasDe(inicio, fim);
+        if (dias.length <= DIARIO_ATE_DIAS) {
+            return { porDia: true, lista: dias.map(d => ({ rotulo: fmtData(d).slice(0, 5), longo: `${diaSemana(d)}, ${fmtData(d)}`, dias: [d] })) };
+        }
+        const meses = new Map();
+        dias.forEach(d => { const m = d.slice(0, 7); if (!meses.has(m)) meses.set(m, []); meses.get(m).push(d); });
+        return { porDia: false, lista: [...meses].map(([m, ds]) => ({ rotulo: rotMes(m), longo: mesLongo(m), dias: ds, total: +ultimoDoMes(m + '-01').slice(8) })) };
+    }
+
+    function renderEvolucao() {
+        const c = _hcDark();
+        const B = baldes(periodo.inicio, periodo.fim);
+        const linhas = B.lista.map(b => Object.assign({}, b, { t: totaisMercado(b.dias) }));
+        if (!linhas.some(l => l.t)) { limparGrafico('grafico-mensal', '<div class="bloco-vazio">Sem dados neste período.</div>'); document.getElementById('mensal-resumo').textContent = ''; return; }
+        const series = R.componentes.map((cp, k) => ({
+            name: cp.nome, data: linhas.map(l => l.t ? l.t.comp[k] : null), color: COR_COMP[cp.id], stack: 'erc'
+        }));
+        series.push({ type: 'line', name: 'Total (ERC)', data: linhas.map(l => l.t ? l.t.erc : null), color: c.total,
+                      marker: { radius: B.porDia ? 2 : 3, symbol: 'circle' }, lineWidth: 2, zIndex: 5 });
+
+        limparGrafico('grafico-mensal');
+        Highcharts.chart('grafico-mensal', Object.assign(base(c, 'erc-evolucao'), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, linhas.map(l => l.rotulo)),
+            yAxis: eixoY(c, '€/MWh', { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            plotOptions: { column: { stacking: 'normal', borderWidth: 0, groupPadding: 0.06, pointPadding: 0.02 } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const l = linhas[this.points[0].point.index];
+                    if (!l.t) return `<b>${l.longo}</b><br>Sem dados`;
+                    let s = `<b>${l.longo}</b>`;
+                    if (!B.porDia && (l.t.n < l.total)) s += ` <span style="color:${c.suave}">(${l.t.n} de ${l.total} dias)</span>`;
+                    s += '<br>';
+                    this.points.slice().reverse().forEach(p => {
+                        if (p.series.type === 'line') return;
+                        s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmt2(p.y)}<br>`;
+                    });
+                    s += `<b>Total: ${fmtMWh(l.t.erc)}</b>`;
+                    s += `<br><span style="color:${c.suave}">${fmt1(l.t.eur / 1e6)} M€ em ${fmt2(l.t.mwh / 1e6)} TWh</span>`;
+                    return s;
+                }
+            }),
+            series
+        }));
+
+        const tot = totaisMercado(diasDe(periodo.inicio, periodo.fim));
+        const k = tot.comp.indexOf(Math.max(...tot.comp));
+        const validas = linhas.filter(l => l.t);
+        const caro = validas.reduce((a, l) => l.t.erc > a.t.erc ? l : a);
+        const barato = validas.reduce((a, l) => l.t.erc < a.t.erc ? l : a);
+        const quem = B.porDia ? 'o dia' : 'o mês';
+        document.getElementById('mensal-resumo').innerHTML =
+            `No período, o ERC foi <strong>${fmtMWh(tot.erc)}</strong>, e a maior parcela foram ${FRASE_COMP[R.componentes[k].id]} (${fmtMWh(tot.comp[k])}). ` +
+            (validas.length > 1 ? `${quem[0].toUpperCase() + quem.slice(1)} mais caro foi ${caro.longo} (${fmtMWh(caro.t.erc)}) e ${quem} mais barato ${barato.longo} (${fmtMWh(barato.t.erc)}).` : '');
+        document.getElementById('evolucao-nota').textContent = B.porDia
+            ? 'Uma barra por dia de mercado (até 3 meses; acima disso, uma por mês).'
+            : 'Uma barra por mês (dia de mercado, como no resumo mensal da REN); os meses incompletos no período dizem no tooltip quantos dias entram.';
+    }
+
+    // ==================================================================
+    // BLOCO 3 — PERFIL HORÁRIO
+    // ==================================================================
+    const ESTACAO_DO_MES = ['inverno', 'inverno', 'primavera', 'primavera', 'primavera', 'verao', 'verao', 'verao', 'outono', 'outono', 'outono', 'inverno'];
+    const estacaoDe = iso => ESTACAO_DO_MES[+iso.slice(5, 7) - 1];
+    function prepararEstacoes() {
+        const presentes = new Set(diasLocais(periodo.inicio, periodo.fim).map(([iso]) => estacaoDe(iso)));
+        document.querySelectorAll('#ctrl-estacao button').forEach(b => {
+            b.disabled = b.dataset.v !== 'todo' && !presentes.has(b.dataset.v);
+        });
+        if (_estacao !== 'todo' && !presentes.has(_estacao)) { _estacao = 'todo'; ativarToggle('ctrl-estacao', 'todo'); }
+    }
+
+    function renderHoras() {
+        const c = _hcDark();
+        const lista = diasLocais(periodo.inicio, periodo.fim).filter(([iso]) => _estacao === 'todo' || estacaoDe(iso) === _estacao);
+        if (!lista.length) { limparGrafico('grafico-horas', '<div class="bloco-vazio">Sem dados neste período.</div>'); document.getElementById('horas-resumo').textContent = ''; document.getElementById('horas-nota').textContent = ''; return; }
+        const porTipo = t => perfilHoras(lista.filter(([iso]) => tipoDia(iso) === t).map(([, d]) => d));
+        const sel = { util: porTipo('util'), sab: porTipo('sab'), dom: porTipo('dom'),
+                      omie: Array.from({ length: 24 }, (_, h) => media(lista.map(([, d]) => d.o ? d.o[h] : null))) };
+        const cats = Array.from({ length: 24 }, (_, h) => hora(h));
+        const series = [
+            { name: 'Dia útil', data: sel.util, color: '#2563eb' },
+            { name: 'Sábado', data: sel.sab, color: '#f59e0b' },
+            { name: 'Domingo', data: sel.dom, color: '#dc2626' }
+        ].filter(s => s.data.some(v => !vazio(v)))
+         .map(s => Object.assign(s, { yAxis: 0, marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2 }));
+        if (sel.omie.some(v => !vazio(v))) series.push({ name: 'OMIE PT (todos os dias)', data: sel.omie, yAxis: 1, color: c.suave,
+                                                         dashStyle: 'ShortDash', marker: { enabled: false }, lineWidth: 1.5 });
+
+        limparGrafico('grafico-horas');
+        Highcharts.chart('grafico-horas', Object.assign(base(c, 'erc-por-hora'), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, cats),
+            yAxis: [eixoY(c, 'ERC (€/MWh)'), eixoY(c, 'OMIE PT (€/MWh)', { opposite: true, gridLineWidth: 0 })],
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const h = this.points[0].point.index;
+                    let s = `<b>${String(h).padStart(2, '0')}:00–${String((h + 1) % 24).padStart(2, '0')}:00</b><br>`;
+                    this.points.forEach(p => { s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmtMWh(p.y)}<br>`; });
+                    return s;
+                }
+            }),
+            series
+        }));
+
+        // Resumo: hora mais cara e mais barata no dia útil (ou no que houver),
+        // domingo face ao dia útil nas horas de sol, e a correlação com o OMIE PT.
+        const u = sel.util.some(v => !vazio(v)) ? sel.util : (sel.sab.some(v => !vazio(v)) ? sel.sab : sel.dom);
+        const nomeU = u === sel.util ? 'dia útil' : (u === sel.sab ? 'sábado' : 'domingo');
+        const val = u.filter(x => !vazio(x));
+        const iMax = u.indexOf(Math.max(...val)), iMin = u.indexOf(Math.min(...val));
+        const sol = h => h >= 10 && h < 17;
+        const difDom = u === sel.util ? media(sel.dom.map((v, h) => sol(h) && !vazio(v) && !vazio(u[h]) ? v - u[h] : null)) : null;
+        const r = correlacao(u, sel.omie);
+        let txt = `${_estacao === 'todo' ? 'No período' : 'Nos dias de ' + NOME_ESTACAO[_estacao] + ' do período'}, em ${nomeU}, o ERC foi mais alto às <strong>${hora(iMax)}</strong> (${fmtMWh(u[iMax])}) e mais baixo às <strong>${hora(iMin)}</strong> (${fmtMWh(u[iMin])}).`;
+        if (!vazio(difDom)) txt += ` Entre as 10h e as 17h, ao domingo, ficou em média <strong>${sinal(difDom)} €/MWh</strong> face ao dia útil.`;
+        if (!vazio(r)) txt += ` A correlação entre o ERC e o OMIE PT ao longo do dia é de <strong>${fmt2(r)}</strong>${r < -0.5 ? ': quando um desce, o outro sobe' : ''}.`;
+        document.getElementById('horas-resumo').innerHTML = txt;
+        document.getElementById('horas-nota').textContent =
+            `${lista.length} ${lista.length === 1 ? 'dia' : 'dias'}, de ${fmtData(lista[0][0])} a ${fmtData(lista[lista.length - 1][0])}. Estações: inverno = dezembro a fevereiro, primavera = março a maio, verão = junho a agosto, outono = setembro a novembro. A hora 13h é o intervalo das 13:00 às 14:00.`;
+    }
+
+    // ==================================================================
+    // BLOCO 4 — OMIE PT + ERC, DIA A DIA
+    // ==================================================================
+    // Hoje e amanhã vêm do CSV dos Preços Horários (o mais fresco: atualiza com
+    // cada OMIE). Os outros dias vêm de um ficheiro por mês (agregados/erc_omie),
+    // descarregado só quando se escolhe um dia desse mês. As perdas vêm sempre
+    // do ficheiro do mês (só existem desde 2025).
+    const PASTA_DIAS = 'agregados/erc_omie/';
+    const _meses = new Map();      // 'AAAA-MM' → Promise<json | null>
+    function carregarMes(mes) {
+        if (!_meses.has(mes)) {
+            _meses.set(mes, fetchDados(PASTA_DIAS + mes + '.json')
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null));
+        }
+        return _meses.get(mes);
+    }
+    const SLOTS_96 = Array.from({ length: 96 }, (_, i) =>
+        `${String(Math.floor(i / 4)).padStart(2, '0')}:${String((i % 4) * 15).padStart(2, '0')}`);
+    const isoDePt = d => d.split('/').reverse().join('-');      // DD/MM/AAAA → AAAA-MM-DD
+
+    function lerPrecos(texto) {
+        // Só o primeiro bloco do CSV (antes da primeira linha vazia): a tabela
+        // quarto-horária. O OMIE é igual em todos os tarifários; o ERC previsto
+        // vem só nos que o faturam ao quarto de hora, e é igual entre eles.
+        const bloco = texto.replace(/^﻿/, '').split(/\r?\n\s*\r?\n/)[0];
+        const linhas = bloco.split(/\r?\n/).filter(l => l.trim());
+        const cab = linhas[0].split(',');
+        const i = n => cab.indexOf(n);
+        const iDia = i('dia'), iInt = i('intervalo'), iOmie = i('omie'), iErc = i('erc'), iOp = i('opcao');
+        if (iDia < 0 || iInt < 0 || iOmie < 0) return null;
+        const num = v => (v === undefined || v.trim() === '') ? null : parseFloat(v);
+        const porDia = new Map();
+        for (let k = 1; k < linhas.length; k++) {
+            const col = linhas[k].split(',');
+            if (iOp >= 0 && col[iOp] !== 'Simples') continue;
+            const m = /^\[(\d{2}:\d{2})/.exec(col[iInt] || '');
+            if (!col[iDia] || !m) continue;
+            const dia = isoDePt(col[iDia]);
+            if (!porDia.has(dia)) porDia.set(dia, new Map());
+            const mapa = porDia.get(dia);
+            const omie = num(col[iOmie]), erc = iErc >= 0 ? num(col[iErc]) : null;
+            const atual = mapa.get(m[1]) || { h: m[1], omie: null, erc: null };
+            if (atual.omie === null && omie !== null) atual.omie = omie * 1000;
+            if (atual.erc === null && erc !== null) atual.erc = erc;
+            mapa.set(m[1], atual);
+        }
+        const dias = [...porDia.keys()].sort();
+        const out = new Map();
+        dias.forEach(d => out.set(d, [...porDia.get(d).values()]));
+        return { dias, porDia: out };
+    }
+
+    // Os quartos de hora de um dia: { pts: [{h, omie, erc, perdas, prev}], previstos }
+    async function dadosDoDia(iso) {
+        const mes = await carregarMes(iso.slice(0, 7));
+        const d = mes && mes.dias ? mes.dias[iso] : null;
+        const slotsMes = d ? (d.slots || SLOTS_96).slice(0, d.omie.length) : [];
+        if (PRECOS && PRECOS.porDia.has(iso)) {
+            const perdasDe = h => { if (!d || !d.perdas) return null; const k = slotsMes.indexOf(h); return k >= 0 ? d.perdas[k] : null; };
+            const pts = PRECOS.porDia.get(iso).map(p => ({ h: p.h, omie: p.omie, erc: p.erc, perdas: perdasDe(p.h), prev: true }));
+            return { pts, previstos: pts.length };
+        }
+        if (!d) return null;
+        const n = d.omie.length, k = d.erc_previsto || 0;
+        const pts = slotsMes.map((h, i) => ({ h, omie: d.omie[i], erc: d.erc[i],
+                                             perdas: d.perdas ? d.perdas[i] : null, prev: i >= n - k }));
+        return { pts, previstos: k };
+    }
+
+    // Melhor hora seguida (4 quartos de hora) pelo valor dado; só janelas completas
+    function melhorHora(pts, valor) {
+        let melhor = null;
+        for (let k = 0; k + 4 <= pts.length; k++) {
+            const v = pts.slice(k, k + 4).map(valor);
+            if (v.some(vazio)) continue;
+            const m = v.reduce((a, b) => a + b, 0) / 4;
+            if (!melhor || m < melhor.m) melhor = { k, m };
+        }
+        return melhor;
+    }
+
+    function rotuloDia(iso) {
+        const dif = Math.round((tsLocal(iso) - tsLocal(hojeISO())) / 86400000);
+        const nome = dif === 0 ? 'Hoje' : dif === 1 ? 'Amanhã' : dif === -1 ? 'Ontem' : null;
+        return (nome ? nome + ' · ' : '') + fmtData(iso).slice(0, 5);
+    }
+
+    function marcarDia() {
+        document.querySelectorAll('#ctrl-dia button').forEach(b => b.classList.toggle('active', b.dataset.v === _dia));
+        const inp = document.getElementById('dia-outro');
+        if (_dia) inp.value = _dia;
+    }
+
+    function prepararDias(diaURL) {
+        const grupo = document.getElementById('ctrl-dia');
+        const inp = document.getElementById('dia-outro');
+        const rapidos = PRECOS ? PRECOS.dias : [];
+        grupo.innerHTML = rapidos.map(d => `<button type="button" data-v="${d}">${rotuloDia(d)}</button>`).join('');
+        grupo.hidden = !rapidos.length;
+        const D = R && R.dias_omie;
+        if (D) inp.min = D.de;
+        const fim = [D ? D.ate : null, rapidos[rapidos.length - 1]].filter(Boolean).sort().pop();
+        if (fim) inp.max = fim;
+        const hoje = hojeISO();
+        _dia = rapidos.includes(hoje) ? hoje : (rapidos[0] || (D ? D.ate : null));
+        if (diaURL && (!inp.min || diaURL >= inp.min) && (!inp.max || diaURL <= inp.max)) { _dia = diaURL; _diaEscolhido = true; }
+        marcarDia();
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.dataset.v === _dia) return;
+            _dia = b.dataset.v; _diaEscolhido = true; marcarDia(); renderHoje(); atualizarURL();
+        });
+        inp.addEventListener('change', () => {
+            if (!inp.value || inp.value === _dia) return;
+            if ((inp.min && inp.value < inp.min) || (inp.max && inp.value > inp.max)) { marcarDia(); return; }
+            _dia = inp.value; _diaEscolhido = true; marcarDia(); renderHoje(); atualizarURL();
+        });
+    }
+
+    let _pedidoHoje = 0;
+    async function renderHoje() {
+        const pedido = ++_pedidoHoje;
+        if (!_dia) return;
+        const dados = await dadosDoDia(_dia);
+        if (pedido !== _pedidoHoje) return;          // entretanto escolheu-se outro dia
+        const c = _hcDark();
+        const nota = document.getElementById('hoje-nota');
+        if (!dados || !dados.pts.some(p => !vazio(p.erc)) || !dados.pts.some(p => !vazio(p.omie))) {
+            limparGrafico('grafico-hoje', `<div class="bloco-vazio">Sem dados para ${fmtData(_dia)}.</div>`);
+            document.getElementById('hoje-resumo').textContent = '';
+            nota.textContent = '';
+            return;
+        }
+        const pts = dados.pts;
+        const temPerdas = pts.every(p => vazio(p.omie) || !vazio(p.perdas));
+        const comPerdas = _perdas === 'com' && temPerdas;
+        const fp = p => comPerdas ? p.perdas : 1;
+        const vO = p => vazio(p.omie) ? null : p.omie * fp(p);
+        const vE = p => vazio(p.erc) ? null : p.erc * fp(p);
+        const vT = p => (vazio(p.omie) || vazio(p.erc)) ? null : (p.omie + p.erc) * fp(p);
+        const todosPrev = dados.previstos >= pts.length;
+        const sufixo = comPerdas ? ' × perdas' : '';
+        const nomeOmie = 'OMIE PT' + sufixo;
+        const nomeErc = (todosPrev ? 'ERC previsto' : 'ERC') + sufixo;
+
+        const cats = pts.map(p => p.h);
+        const bOmie = melhorHora(pts, vO);
+        const bTotal = melhorHora(pts, vT);
+        // Fim de um quarto de hora ('13:45' → '14:00') e de uma hora que começa no índice k
+        const fim15 = hhmm => { const [h, m] = hhmm.split(':').map(Number); const t = h * 60 + m + 15;
+                                return `${String(Math.floor(t / 60) % 24).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`; };
+        const fimH = k => cats[k + 3] ? fim15(cats[k + 3]) : '';
+        // Etiquetas das bandas: sem corte à largura da banda (uma hora são ~30 px) e
+        // encostadas ao lado de dentro perto dos extremos do eixo, como nos Preços Horários.
+        const banda = (k, cor, borda, texto, y) => {
+            const centro = k + 1.5, margem = cats.length * 0.08;
+            const align = centro > cats.length - 1 - margem ? 'right' : (centro < margem ? 'left' : 'center');
+            return { from: k - 0.5, to: k + 3.5, color: cor, borderColor: borda, borderWidth: 1, zIndex: 0,
+                     label: { text: texto, align, verticalAlign: 'top', y,
+                              style: { color: c.txt, fontSize: '10px', fontWeight: 'bold', textOverflow: 'none', whiteSpace: 'nowrap' } } };
+        };
+        const bandas = [];
+        if (bOmie) bandas.push(banda(bOmie.k, c.banda1, 'rgba(37,99,235,0.45)', 'Mais barata só OMIE PT', 14));
+        if (bTotal && (!bOmie || bTotal.k !== bOmie.k)) bandas.push(banda(bTotal.k, c.banda2, 'rgba(22,163,74,0.55)', 'Mais barata OMIE PT + ERC', 30));
+        else if (bTotal) bandas[0].label.text = 'Mais barata (com e sem ERC)';
+
+        limparGrafico('grafico-hoje');
+        Highcharts.chart('grafico-hoje', Object.assign(base(c, 'omie-pt-mais-erc-' + _dia), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, cats, { labels: { step: window.innerWidth < 600 ? 16 : 8, style: { color: c.txt } }, plotBands: bandas }),
+            yAxis: eixoY(c, comPerdas ? '€/MWh, com perdas' : '€/MWh', { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            plotOptions: { column: { stacking: 'normal', borderWidth: 0, pointPadding: 0, groupPadding: 0.05 } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const p = pts[this.points[0].point.index];
+                    let s = `<b>${p.h}–${fim15(p.h)}</b><br>`;
+                    s += `<span style="color:#2563eb">●</span> OMIE PT: ${fmtMWh(p.omie)}<br>`;
+                    s += `<span style="color:#f59e0b">●</span> ERC${p.prev ? ' (previsão própria)' : ''}: ${fmtMWh(p.erc)}<br>`;
+                    if (comPerdas) s += `Fator de perdas: ${fmt3(p.perdas)}<br>`;
+                    if (!vazio(vT(p))) s += `<b>OMIE PT + ERC${comPerdas ? ', com perdas' : ''}: ${fmtMWh(vT(p))}</b>`;
+                    return s;
+                }
+            }),
+            series: [
+                { name: nomeErc, data: pts.map(vE), color: '#f59e0b' },
+                { name: nomeOmie, data: pts.map(vO), color: '#2563eb' }
+            ]
+        }));
+
+        let txt = '';
+        if (bOmie && bTotal) {
+            const iO = `${cats[bOmie.k]}–${fimH(bOmie.k)}`, iT = `${cats[bTotal.k]}–${fimH(bTotal.k)}`;
+            const cp = comPerdas ? ', com perdas' : '';
+            if (bOmie.k === bTotal.k) {
+                txt = `A hora mais barata é a mesma com e sem ERC: <strong>${iO}</strong> (OMIE PT ${fmtMWh(bOmie.m)}; com o ERC, ${fmtMWh(bTotal.m)}${comPerdas ? '; valores com perdas' : ''}).`;
+            } else {
+                const totO = media(pts.slice(bOmie.k, bOmie.k + 4).map(vT));
+                txt = `Só pelo OMIE PT${cp}, a hora mais barata seria <strong>${iO}</strong> (${fmtMWh(bOmie.m)}). Somando o ERC, passa a ser <strong>${iT}</strong> (${fmtMWh(bTotal.m)}, contra ${fmtMWh(totO)} na hora ${iO})`;
+                txt += (totO - bTotal.m) < 1 ? ` — mas a diferença é de apenas ${fmtMWh(totO - bTotal.m)}.` : '.';
+            }
+            const ercs = pts.map(p => p.erc).filter(x => !vazio(x));
+            txt += ` O ERC${todosPrev ? ' previsto' : ''} deste dia vai de ${fmtMWh(Math.min(...ercs))} a ${fmtMWh(Math.max(...ercs))} (média ${fmtMWh(media(ercs))}, sem perdas).`;
+        }
+        document.getElementById('hoje-resumo').innerHTML = txt;
+
+        const notas = [];
+        if (todosPrev) notas.push('O ERC deste dia ainda não tem valor publicado: é previsão própria, o mesmo cálculo dos simuladores.');
+        else if (dados.previstos > 0) notas.push(`Os últimos ${dados.previstos} quartos de hora deste dia ainda não têm ERC publicado: aí o valor é previsão própria.`);
+        else notas.push('ERC real, publicado pela REN.');
+        if (_perdas === 'com' && !temPerdas) notas.push('Não há fatores de perdas para este dia (só desde 01/01/2025): os valores são sem perdas.');
+        else if (comPerdas) notas.push('Com perdas: OMIE PT e ERC multiplicados pelo fator de perdas de cada quarto de hora (perfil de perdas em baixa tensão da ERSE).');
+        nota.textContent = notas.join(' ');
+    }
+
+    // ==================================================================
+    // BLOCO 5 — PERÍODOS HORÁRIOS
+    // ==================================================================
+    const PERIODOS_CICLO = { BD: ['V', 'F'], BS: ['V', 'F'], TD: ['V', 'C', 'P'], TS: ['V', 'C', 'P'] };
+    const NOME_CICLO = { BD: 'bi-horário diário', BS: 'bi-horário semanal', TD: 'tri-horário diário', TS: 'tri-horário semanal' };
+
+    // Média pesada (BTN C) do ERC de um período horário num conjunto de dias;
+    // sem período ('S'), todos os do ciclo juntos.
+    function ercPeriodo(listaDias, ciclo, p) {
+        const chaves = p === 'S' ? PERIODOS_CICLO[ciclo] : [p];
+        let s = 0, w = 0;
+        listaDias.forEach(d => {
+            if (!d.c) return;
+            chaves.forEach(k => {
+                const i = ORDEM_C.indexOf(`${ciclo}.${k}`);
+                const v = d.c[2 * i], peso = d.c[2 * i + 1];
+                if (i >= 0 && !vazio(v) && peso > 0) { s += v * peso; w += peso; }
+            });
+        });
+        return w ? s / w : null;
+    }
+
+    function renderPeriodos() {
+        const c = _hcDark();
+        const B = baldes(periodo.inicio, periodo.fim);
+        const periodos = PERIODOS_CICLO[_ciclo];
+        const linhas = B.lista.map(b => {
+            const lista = b.dias.filter(d => DIAS.has(d)).map(d => DIAS.get(d));
+            const l = { rotulo: b.rotulo, longo: b.longo, S: ercPeriodo(lista, _ciclo, 'S') };
+            periodos.forEach(p => { l[p] = ercPeriodo(lista, _ciclo, p); });
+            return l;
+        });
+        const desde = R.diario.periodos_desde;
+        if (!linhas.some(l => !vazio(l.S))) {
+            limparGrafico('grafico-periodos', `<div class="bloco-vazio">Sem dados por período horário neste período${desde ? ` (só existem desde ${fmtData(desde)})` : ''}.</div>`);
+            document.getElementById('periodos-resumo').textContent = '';
+            return;
+        }
+        const series = periodos.map(p => ({ type: 'column', name: NOME_PERIODO[p], data: linhas.map(l => l[p]), color: COR_PERIODO[p] }));
+        series.push({ type: 'line', name: 'Média do dia (simples)', data: linhas.map(l => l.S), color: c.suave,
+                      dashStyle: 'ShortDash', marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 1.5, zIndex: 5 });
+
+        limparGrafico('grafico-periodos');
+        Highcharts.chart('grafico-periodos', Object.assign(base(c, 'erc-periodos-' + _ciclo.toLowerCase()), {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, linhas.map(l => l.rotulo)),
+            yAxis: eixoY(c, '€/MWh', { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            plotOptions: { column: { borderWidth: 0, groupPadding: 0.12, pointPadding: 0.04 } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const l = linhas[this.points[0].point.index];
+                    let s = `<b>${l.longo}</b><br>`;
+                    this.points.forEach(p => { s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmtMWh(p.y)}<br>`; });
+                    return s;
+                }
+            }),
+            series
+        }));
+
+        // Resumo: o período inteiro, pesado como os meses
+        const todos = diasLocais(periodo.inicio, periodo.fim).map(([, d]) => d);
+        const med = p => ercPeriodo(todos, _ciclo, p);
+        const perdas = media(todos.map(d => d.p)) || 1.15;
+        let txt = `No período, em ${NOME_CICLO[_ciclo]}: ` + periodos.map(p => `${NOME_PERIODO[p].toLowerCase()} <strong>${fmtMWh(med(p))}</strong>`).join(', ') + '.';
+        const [a, b, nome] = periodos.length === 2 ? ['F', 'V', 'O fora de vazio'] : ['P', 'V', 'A ponta'];
+        const dif = med(a) - med(b);
+        if (!vazio(dif)) txt += ` ${nome} ficou ${sinal(dif)} €/MWh face ao vazio — com perdas, cerca de <strong>${sinal(dif * perdas / 10)} c€/kWh</strong>.`;
+        if (desde && periodo.inicio < desde) txt += ` Os períodos horários só existem desde ${fmtData(desde)}.`;
+        document.getElementById('periodos-resumo').innerHTML = txt;
+    }
+
+    // ==================================================================
+    // BLOCO 6 — PREVISÃO 14 DIAS
+    // ==================================================================
+    // Hora de Portugal escrita como se fosse UTC: o eixo mostra a hora de
+    // relógio sem depender do fuso do visitante nem da mudança de hora.
+    function tsLocal(iso, hhmm) {
+        const [a, m, d] = iso.split('-').map(Number);
+        const [h, mi] = (hhmm || '00:00').split(':').map(Number);
+        return Date.UTC(a, m - 1, d, h, mi);
+    }
+    function hojeISO() {
+        return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    }
+    function diaSemana(iso) { const [a, m, d] = iso.split('-').map(Number); return DIAS_SEMANA[new Date(Date.UTC(a, m - 1, d)).getUTCDay()]; }
+    function fmtTs(ts) {
+        const d = new Date(ts);
+        return `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+    }
+    // Médias por hora (0–23) a partir dos quartos de hora de um dia
+    function porHora(slots, qh) {
+        const soma = Array(24).fill(0), n = Array(24).fill(0);
+        slots.forEach((s, i) => { if (vazio(qh[i])) return; const h = +s.slice(0, 2); soma[h] += qh[i]; n[h]++; });
+        return soma.map((v, h) => n[h] ? v / n[h] : null);
+    }
+
+    function renderPrevisao() {
+        const c = _hcDark();
+        const P = R.previsao;
+        if (!P || !P.dias || !P.dias.length) {
+            limparGrafico('grafico-previsao', '<div class="bloco-vazio">Sem previsão: os dados da REN estão demasiado atrasados.</div>');
+            document.getElementById('previsao-resumo').textContent = '';
+            document.getElementById('tabela-previsao').innerHTML = '';
+            return;
+        }
+        const real = [], prev = [], margem = [];
+        P.reais.forEach(d => d.slots.forEach((s, i) => real.push([tsLocal(d.dia, s), d.qh[i]])));
+        P.dias.forEach(d => {
+            const e = P.erro.qh[d.h - 1];
+            d.slots.forEach((s, i) => {
+                const ts = tsLocal(d.dia, s), v = d.qh[i];
+                prev.push([ts, v]);
+                margem.push([ts, vazio(e) ? v : v - e, vazio(e) ? v : v + e]);
+            });
+        });
+        const hoje = hojeISO();
+        const tsHoje = tsLocal(hoje);
+        const tsBase1 = tsLocal(P.dias[0].dia);
+        const bandas = [], linhas = [];
+        if (tsHoje > tsBase1) bandas.push({ from: tsBase1, to: Math.min(tsHoje, tsLocal(P.dias[P.dias.length - 1].dia) + 86400000),
+            color: c.dk ? 'rgba(148,163,184,0.12)' : 'rgba(100,116,139,0.08)',
+            label: { text: 'já passou — ainda sem valor publicado', style: { color: c.suave, fontSize: '10px', textOverflow: 'none', whiteSpace: 'nowrap' }, y: 14 } });
+        if (tsHoje >= tsBase1) linhas.push({ value: tsHoje, color: c.suave, width: 1, dashStyle: 'Dash', zIndex: 4,
+            label: { text: 'hoje', rotation: 0, y: 28, style: { color: c.txt, fontSize: '10px', fontWeight: 'bold' } } });
+
+        limparGrafico('grafico-previsao');
+        Highcharts.chart('grafico-previsao', Object.assign(base(c, 'erc-previsao-14-dias'), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
+            xAxis: { type: 'datetime', lineColor: c.grelha, tickColor: c.grelha, plotBands: bandas, plotLines: linhas,
+                     labels: { style: { color: c.txt }, formatter: function () { const d = new Date(this.value); return `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}`; } } },
+            yAxis: eixoY(c, '€/MWh', { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    let s = `<b>${diaSemana(new Date(this.x).toISOString().slice(0, 10))}, ${fmtTs(this.x)}</b><br>`;
+                    this.points.forEach(p => {
+                        if (p.series.type === 'arearange') s += `<span style="color:${c.suave}">margem: ${fmt2(p.point.low)} a ${fmt2(p.point.high)} €/MWh</span><br>`;
+                        else s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmtMWh(p.y)}<br>`;
+                    });
+                    return s;
+                }
+            }),
+            plotOptions: { series: { marker: { enabled: false }, turboThreshold: 0 } },
+            series: [
+                { name: 'Real (REN)', data: real, color: '#2563eb', lineWidth: 1.5 },
+                { type: 'arearange', name: 'Margem (erro médio)', data: margem, color: '#f59e0b', fillOpacity: 0.2, lineWidth: 0, zIndex: 0 },
+                { name: 'Previsto', data: prev, color: '#f59e0b', lineWidth: 1.5, zIndex: 2 }
+            ]
+        }));
+
+        // Resumo e tabela por dia
+        const e = P.erro;
+        const futuros = P.dias.filter(d => d.dia >= hoje).slice(0, 7);
+        const mediaDia = d => media(d.qh);
+        let txt = `Previsão feita com os dados da REN até <strong>${fmtData(P.base)}</strong>. No último ano (${e.origens} previsões), o erro médio por quarto de hora foi de ${fmt1(e.qh[0])} €/MWh a 1 dia, ${fmt1(e.qh[6])} a 7 dias e ${fmt1(e.qh[13])} a 14 dias; na média do dia, de ${fmt1(e.dia[0])} a ${fmt1(e.dia[13])} €/MWh.`;
+        if (futuros.length) {
+            const caro = futuros.reduce((a, d) => mediaDia(d) > mediaDia(a) ? d : a);
+            txt += ` Nos próximos ${futuros.length} dias, a média prevista é de <strong>${fmtMWh(media(futuros.map(mediaDia)))}</strong>; o dia mais caro deverá ser ${diaSemana(caro.dia)}, ${fmtData(caro.dia).slice(0, 5)} (${fmtMWh(mediaDia(caro))}).`;
+        }
+        document.getElementById('previsao-resumo').innerHTML = txt;
+
+        let tb = '<caption>Previsão por dia</caption><thead><tr><th scope="col" class="esq">Dia</th><th scope="col">Média prevista</th><th scope="col">Hora mais barata (€/MWh)</th><th scope="col">Hora mais cara (€/MWh)</th><th scope="col">Margem da média (±)</th></tr></thead><tbody>';
+        P.dias.forEach(d => {
+            const ph = porHora(d.slots, d.qh);
+            const val = ph.filter(x => !vazio(x));
+            const hMin = ph.indexOf(Math.min(...val)), hMax = ph.indexOf(Math.max(...val));
+            const cls = d.dia === hoje ? 'hoje' : (d.dia < hoje ? 'passado' : '');
+            tb += `<tr class="${cls}"><td class="esq">${diaSemana(d.dia)}, ${fmtData(d.dia).slice(0, 5)}${d.dia === hoje ? ' (hoje)' : ''}</td>` +
+                  `<td>${fmtMWh(mediaDia(d))}</td><td>${hora(hMin)} · ${fmt1(ph[hMin])}</td><td>${hora(hMax)} · ${fmt1(ph[hMax])}</td>` +
+                  `<td>± ${fmt1(e.dia[d.h - 1])}</td></tr>`;
+        });
+        tb += '</tbody>';
+        document.getElementById('tabela-previsao').innerHTML = tb;
+    }
+
+    // ==================================================================
+    // BLOCO 7 — MAPA DE CALOR E RECORDES DO PERÍODO
+    // ==================================================================
+    function renderMapa() {
+        const c = _hcDark();
+        const lista = diasLocais(periodo.inicio, periodo.fim);
+        if (!lista.length) { limparGrafico('grafico-mapa', '<div class="bloco-vazio">Sem dados neste período.</div>'); document.getElementById('mapa-nota').textContent = ''; return; }
+        const data = [], vals = [];
+        lista.forEach(([iso, d]) => {
+            const ts = tsLocal(iso);
+            d.e.forEach((v, h) => { if (!vazio(v)) { data.push([ts, h, v]); vals.push(v); } });
+        });
+        vals.sort((a, b) => a - b);
+        const q = p => vals[Math.min(vals.length - 1, Math.max(0, Math.floor(p * vals.length)))];
+        const cMin = Math.floor(q(0.02)), cMax = Math.ceil(q(0.98));
+        const curto = lista.length <= 92;
+
+        limparGrafico('grafico-mapa');
+        Highcharts.chart('grafico-mapa', Object.assign(base(c, 'erc-mapa-de-calor'), {
+            chart: { type: 'heatmap', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, marginRight: 70 },
+            xAxis: { type: 'datetime', lineColor: c.grelha, tickColor: c.grelha,
+                     labels: { style: { color: c.txt }, formatter: function () {
+                         const d = new Date(this.value);
+                         return curto ? `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}`
+                                      : `${MESES[d.getUTCMonth()]}/${String(d.getUTCFullYear()).slice(2)}`;
+                     } } },
+            yAxis: { title: { text: 'Hora', style: { color: c.txt } }, min: 0, max: 23, reversed: true, endOnTick: false, startOnTick: false,
+                     tickPositions: [0, 3, 6, 9, 12, 15, 18, 21],
+                     labels: { style: { color: c.txt }, formatter: function () { return hora(this.value); } }, gridLineWidth: 0 },
+            colorAxis: { min: cMin, max: cMax, stops: [[0, '#16a34a'], [0.5, '#fbbf24'], [1, '#dc2626']],
+                         labels: { style: { color: c.txt }, format: '{value} €' } },
+            legend: { align: 'right', layout: 'vertical', verticalAlign: 'middle', margin: 6, symbolHeight: 300, itemStyle: { color: c.txt } },
+            tooltip: { useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                formatter: function () {
+                    const iso = new Date(this.point.x).toISOString().slice(0, 10);
+                    const h = this.point.y;
+                    return `<b>${diaSemana(iso)}, ${fmtData(iso)}</b><br>${hora(h)} (${String(h).padStart(2, '0')}:00–${String((h + 1) % 24).padStart(2, '0')}:00): <b>${fmtMWh(this.point.value)}</b>`;
+                } },
+            plotOptions: { series: { turboThreshold: 0 } },
+            series: [{ name: 'ERC', data, colsize: DIA_MS, borderWidth: 0 }]
+        }));
+        document.getElementById('mapa-nota').textContent = `De ${fmtData(lista[0][0])} a ${fmtData(lista[lista.length - 1][0])}. Escala de cores de ${cMin} a ${cMax} €/MWh; os valores fora deste intervalo ficam com a cor do extremo.`;
+    }
+
+    function renderRecordes() {
+        const lista = diasLocais(periodo.inicio, periodo.fim);
+        const fim15 = hhmm => { const [h, m] = hhmm.split(':').map(Number); const t = h * 60 + m + 15;
+                                return `${String(Math.floor(t / 60) % 24).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`; };
+        const N = 5;
+        const qhMax = lista.filter(([, d]) => d.max).map(([iso, d]) => ({ iso, v: d.max[0], h: d.max[1] })).sort((a, b) => b.v - a.v).slice(0, N);
+        const qhMin = lista.filter(([, d]) => d.min).map(([iso, d]) => ({ iso, v: d.min[0], h: d.min[1] })).sort((a, b) => a.v - b.v).slice(0, N);
+        const porDia = diasMercado(periodo.inicio, periodo.fim);
+        const diasCaros = porDia.slice().sort((a, b) => b.v - a.v).slice(0, N);
+        const diasBaratos = porDia.slice().sort((a, b) => a.v - b.v).slice(0, N);
+
+        const linhas = (caros, baratos, fq) => Array.from({ length: Math.max(caros.length, baratos.length) }, (_, i) => {
+            const x = caros[i], y = baratos[i];
+            return `<tr><td>${i + 1}</td><td class="esq">${x ? fq(x) : ''}</td><td>${x ? fmt2(x.v) : ''}</td><td class="esq">${y ? fq(y) : ''}</td><td>${y ? fmt2(y.v) : ''}</td></tr>`;
+        }).join('');
+        const cab = titulo => `<caption>${titulo}</caption><thead><tr><th scope="col">#</th><th scope="col" class="esq">Mais caros</th><th scope="col">€/MWh</th><th scope="col" class="esq">Mais baratos</th><th scope="col">€/MWh</th></tr></thead>`;
+        document.getElementById('rec-qh').innerHTML = qhMax.length
+            ? cab('Quartos de hora (no máximo um por dia)') + '<tbody>' + linhas(qhMax, qhMin, x => `${fmtData(x.iso)} ${x.h}–${fim15(x.h)}`) + '</tbody>' : '';
+        document.getElementById('rec-dias').innerHTML = porDia.length
+            ? cab('Dias (de mercado)') + '<tbody>' + linhas(diasCaros, diasBaratos, x => `${diaSemana(x.iso)}, ${fmtData(x.iso)}`) + '</tbody>' : '';
+    }
+
+    // ==================================================================
+    // ARRANQUE
+    // ==================================================================
+    function renderTudo() {
+        if (!R) return;
+        if (periodo.inicio && MERC.size) renderPeriodo();
+        renderPrevisao();
+        renderHoje();
+    }
+
+    ligarToggle('ctrl-estacao', v => { _estacao = v; renderHoras(); atualizarURL(); });
+    ligarToggle('ctrl-ciclo', v => { _ciclo = v; renderPeriodos(); atualizarURL(); });
+    ligarToggle('ctrl-perdas', v => { _perdas = v; renderHoje(); atualizarURL(); });
+    document.addEventListener('themeChanged', renderTudo);
+
+    document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (!FIM_DIA) return;
+            const p = this.dataset.preset;
+            if (p === 'custom') {
+                // Abre com a série completa, como ponto de partida da edição manual
+                const d = getPresetDates('tudo');
+                periodo = { inicio: d.inicio, fim: d.fim };
+                document.getElementById('seletor-data-inicio').value = d.inicio;
+                document.getElementById('seletor-data-fim').value = d.fim;
+                document.getElementById('erro-periodo').style.display = 'none';
+                atualizarBotoesPreset('custom');
+                setDateInputsVisibilidade('custom');
+                atualizarURL();
+                aplicarPeriodo();
+                return;
+            }
+            aplicarPreset(p);
+        });
+    });
+    document.getElementById('seletor-data-inicio').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('seletor-data-fim').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.addEventListener('beforeprint', () => document.querySelectorAll('details.faq-item').forEach(d => {
+        if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+    }));
+    window.addEventListener('afterprint', () => document.querySelectorAll('details.faq-item[data-opened-for-print]').forEach(d => {
+        d.removeAttribute('open'); delete d.dataset.openedForPrint;
+    }));
+
+    const URL_INICIAL = lerURL();
+    if (URL_INICIAL.perdas === 'com') { _perdas = 'com'; ativarToggle('ctrl-perdas', 'com'); }
+    if (PERIODOS_CICLO[URL_INICIAL.ciclo]) { _ciclo = URL_INICIAL.ciclo; ativarToggle('ctrl-ciclo', _ciclo); }
+    if (['inverno', 'primavera', 'verao', 'outono'].includes(URL_INICIAL.est)) { _estacao = URL_INICIAL.est; ativarToggle('ctrl-estacao', _estacao); }
+
+    const pResumo = fetchDados(URL_RESUMO)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(j => {
+            R = j;
+            MIN_DIA = R.diario.de; FIM_DIA = R.diario.ate;
+            document.getElementById('estado').hidden = true;
+            document.getElementById('badge-inicio').textContent = fmtData(R.primeira_data);
+            document.getElementById('badge-ultima').textContent = fmtData(R.ultima_data);
+            ['seletor-data-inicio', 'seletor-data-fim'].forEach(id => { const el = document.getElementById(id); el.min = MIN_DIA; el.max = FIM_DIA; });
+            const u = URL_INICIAL.datas;
+            if (u && u.fim >= MIN_DIA && u.inicio <= FIM_DIA) {
+                periodo = { inicio: u.inicio < MIN_DIA ? MIN_DIA : u.inicio, fim: u.fim > FIM_DIA ? FIM_DIA : u.fim };
+                document.getElementById('seletor-data-inicio').value = periodo.inicio;
+                document.getElementById('seletor-data-fim').value = periodo.fim;
+                const p = detectarPreset(periodo.inicio, periodo.fim);
+                atualizarBotoesPreset(p);
+                setDateInputsVisibilidade(p);
+                aplicarPeriodo();
+            } else {
+                aplicarPreset('12m');
+            }
+            renderPrevisao();
+        })
+        .catch(err => {
+            console.error('ERC:', err);
+            const el = document.getElementById('estado');
+            el.className = 'estado-erro';
+            el.textContent = 'Não foi possível carregar os dados do ERC. Tente novamente dentro de alguns minutos.';
+        });
+
+    // O CSV dos Preços Horários só serve o bloco 4 (hoje e amanhã): se falhar, o
+    // bloco continua com os ficheiros por mês e o resto da página não é afetado.
+    const pPrecos = fetchDados(URL_PRECOS)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(t => {
+            PRECOS = lerPrecos(t);
+            if (!PRECOS || !PRECOS.dias.length) { PRECOS = null; throw new Error('CSV sem dados'); }
+        })
+        .catch(err => console.error('Preços horários:', err));
+
+    Promise.allSettled([pResumo, pPrecos]).then(() => {
+        if (!PRECOS && !(R && R.dias_omie)) {
+            limparGrafico('grafico-hoje', '<div class="bloco-vazio">Não foi possível carregar os preços.</div>');
+            return;
+        }
+        prepararDias(URL_INICIAL.dia);
+        renderHoje();
+    });
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>

@@ -2310,7 +2310,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const hourlyAvg = Array(24).fill(null).map(() => ({ sumPT: 0, countPT: 0, sumES: 0, countES: 0 }));
                 dadosReaisDoPeriodo.forEach(row => {
                     let hour = -1;
-                    if (row.localTimestamp) hour = row.localTimestamp.getHours();
+                    if (row.localTimestamp) hour = row.localTimestamp.getUTCHours(); // hora de relógio guardada como UTC (Date.UTC na leitura)
                     else { try { hour = parseInt(row.hora.split(':')[0]); } catch(e){} }
                     if (hour < 0 || hour >= 24) return;
                     if (row.preco_pt !== null) { hourlyAvg[hour].sumPT += row.preco_pt; hourlyAvg[hour].countPT++; }
@@ -2338,7 +2338,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 dadosReaisDoPeriodo.forEach(row => {
                     if (row.preco_pt === null || isNaN(row.preco_pt)) return;
                     let hour = -1;
-                    if (row.localTimestamp) hour = row.localTimestamp.getHours();
+                    if (row.localTimestamp) hour = row.localTimestamp.getUTCHours(); // hora de relógio guardada como UTC (Date.UTC na leitura)
                     else { try { hour = parseInt(row.hora.split(':')[0]); } catch(e){} }
                     if (hour >= 0 && hour < 24) hourlyData[hour].push(row.preco_pt);
                 });

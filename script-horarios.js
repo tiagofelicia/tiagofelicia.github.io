@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const ate = constantes['ERC_REN_Ultimo_Dia'];
             const s = ate ? String(Math.round(ate)) : '';
             const ateTxt = s.length === 8 ? ` (dados até ${s.slice(6, 8)}/${s.slice(4, 6)}/${s.slice(0, 4)})` : '';
-            return `Varia a cada quarto de hora. Previsto a partir dos Encargos de Regulação imputados ao Consumo (ERC) publicados pela REN${ateTxt}: `
+            return `Varia a cada quarto de hora. Previsão própria, a partir dos Encargos de Regulação imputados ao Consumo (ERC) publicados pela REN${ateTxt}: `
                 + `a média desse quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo)`
                 + `${comPerdas ? ' e multiplicada por (1 + Perdas)' : ''}. `
                 + `Neste dia: média <strong>${kwh(media)}</strong>, de ${kwh(Math.min(...ercDia))} a ${kwh(Math.max(...ercDia))}`
