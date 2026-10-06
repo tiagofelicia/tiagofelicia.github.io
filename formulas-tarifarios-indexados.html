@@ -339,6 +339,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const TSE     = () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`;
     const PERDAS_QH  = "Perdas da rede fixadas pela ERSE, variáveis a cada quarto de hora (%).";
     const PERDAS_MED = "Médias para cada período, dos coeficientes de perdas publicados pela ERSE (%).";
+    // ERC da REN: o real onde a REN já publicou e uma previsão no resto
+    // (scripts/erc_previsao.py no dados-energia). A constante só entra sem dados da REN.
+    const ERC_PREVISAO = "uma previsão para os dias que a REN ainda não publicou (a média dos últimos dias publicados, ajustada ao tipo de dia; para datas mais distantes, a média dos últimos 12 meses com o perfil da mesma época do ano anterior)";
+    const ERC_QH = (chave, comPrecosHorarios = true) =>
+        `Corresponde aos Encargos de Regulação imputados ao Consumo (ERC) publicados pela REN, que variam a cada quarto de hora. `
+        + `${comPrecosHorarios ? 'Os <a href="/precos-horarios">Preços Horários</a> e os simuladores usam' : 'O simulador usa'} `
+        + `o ERC de cada quarto de hora: o real, quando já foi publicado, e ${ERC_PREVISAO}. `
+        + `Sem dados da REN, usa-se o valor médio: ${c(chave, '€/kWh', 5)}.`;
+    const ERC_MEDIA = (chave) =>
+        `Corresponde à média dos Encargos de Regulação imputados ao Consumo (ERC) publicados pela REN no período de faturação, tal como o OMIE. `
+        + `O simulador usa a média do período simulado: o ERC real nos dias já publicados e ${ERC_PREVISAO}. `
+        + `Sem dados da REN, usa-se o valor médio: ${c(chave, '€/kWh', 5)}.`;
 
     // ── Definição dos tarifários ──
     function definirTarifarios() {
@@ -356,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k + TAR + TSE`,
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
-                    ["CGS", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Alfa_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CGS", () => `Custos de gestão geral do sistema. ${ERC_QH('Alfa_CGS')}`],
                     ["Perdas", PERDAS_QH],
                     ["k", () => `Gastos operacionais Alfa Energia: ${c('Alfa_K', '€/kWh', 3)}`],
                     ["TAR", TAR],
@@ -374,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
                     ["FP", "Perfil de Perda (variável)"],
                     ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
-                    ["CS", () => `Custos de Sistema (valor mensal variável, com Fator de Perda aplicado) — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Coop_CS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CS", () => `Custos de Sistema, com Fator de Perda aplicado. ${ERC_QH('Coop_CS')}`],
                     ["TAR", TAR],
                     ["TSE", TSE],
                 ]
@@ -403,7 +415,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>) + TAR + TSE`,
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
-                    ["CGS", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('EZU_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CGS", () => `Custos de gestão geral do sistema. ${ERC_QH('EZU_CGS')}`],
                     ["Perda<sub>ERSE</sub>", PERDAS_QH],
                     ["k", () => { const mwh = constantes['EZU_K'] !== undefined ? ` (${(constantes['EZU_K']*1000).toFixed(2).replace('.',',')} €/MWh)` : ''; return `Gastos operacionais EZU Energia: ${c('EZU_K')}${mwh}`; }],
                     ["TAR", TAR],
@@ -420,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
                     ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
-                    ["K2", () => `Custos de gestão geral do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('G9_K2', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["K2", () => `Custos de gestão geral do sistema (ERS), já com as perdas: K2 = ERC × (1 + Perdas). ${ERC_QH('G9_K2')}`],
                     ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["TAR", TAR],
                 ]
@@ -464,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + CG) × (1 + FP) + K + TAR`,
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
-                    ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Meo_CG', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. ${ERC_QH('Meo_CG')}`],
                     ["K", () => `Margem comercial da MeoEnergia: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
                     ["TAR", TAR],
@@ -479,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 expr: `(OMIE + CGS + GDOs) × Perdas + Fee + TAR`,
                 legenda: [
                     ["OMIE", "Preço do mercado diário OMIE (€/kWh)"],
-                    ["CGS", () => `Custos de gestão do sistema da REN + custos de desvio — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Plenitude_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CGS", () => `Custos de gestão do sistema da REN + custos de desvio. ${ERC_QH('Plenitude_CGS')}`],
                     ["GDOs", () => `Custo das garantias de origem: ${c('Plenitude_GDOs', '€/kWh', 5)}`],
                     ["Perdas", "Perfil de perdas da rede de distribuição, com base no perfil de perdas regulado pela ERSE."],
                     ["Fee", () => `Margem comercial da Plenitude: ${c('Plenitude_Fee', '€/kWh', 3)}`],
@@ -607,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da energia horária no Mercado Diário OMIE — Portugal (€/kWh)"],
                     ["K", () => `Margem fixa LUZiGÁS: ${c('Luzigas_K', '€/kWh', 3)}`],
-                    ["CGS", () => `Custos do Gestor do Sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Luzigas_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CGS", () => `Custos do Gestor do Sistema. ${ERC_MEDIA('Luzigas_CGS')}`],
                     ["Perdas", PERDAS_MED],
                 ]
             },
@@ -621,7 +633,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 legenda: [
                     ["P<sub>p</sub>", "Preço de energia ativa a pagar (€/kWh)"],
                     ["OMIE<sub>h</sub>", "Preço horário médio mensal, no período faturado, no mercado OMIE (€/kWh)"],
-                    ["CGS<sub>h</sub>", () => `Custos de operação e gestão do sistema — Na ausência de um valor fixo, utiliza-se o valor médio de ERC do mês atual: ${c('Luzboa_CGS', '€/kWh', 5)}. Valor atualizado semanalmente.`],
+                    ["CGS<sub>h</sub>", () => `Custos de operação e gestão do sistema. ${ERC_QH('Luzboa_CGS', false)}`],
                     ["Perdas<sub>ERSE</sub>", "Perdas da rede fixadas pela ERSE — Entidade Reguladora dos Serviços Energéticos (%)"],
                     ["FA", () => `Fator de adequação: ${c('Luzboa_FA', '(adimensional)', 2)}`],
                     ["K<sub>p</sub>", () => `Gastos operacionais da Luzboa: ${c('Luzboa_Kp', '€/kWh', 3)}`],

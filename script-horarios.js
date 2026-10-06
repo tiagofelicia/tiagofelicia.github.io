@@ -427,7 +427,8 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         // ERC previsto do dia (€/MWh, coluna erc do CSV). Sem valores, o CSV usou a
-        // constante da BD: dados da REN em falta ou com mais de 10 dias de atraso.
+        // constante da BD: dados da REN em falta ou com mais de 30 dias de atraso
+        // (erc_previsao.ATRASO_MAX_DIAS no dados-energia).
         const ercDia = (dadosQH?.erc || []).filter(v => v !== null && !isNaN(v));
         const ercTexto = (chave, comPerdas = false) => {
             if (!ercDia.length) {
