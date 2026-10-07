@@ -78,7 +78,8 @@
       "spatialCoverage": { "@type": "Place", "name": "Portugal" },
       "variableMeasured": [
         { "@type": "PropertyValue", "name": "ERC total", "unitText": "EUR/MWh", "description": "Encargos de regulação a dividir pelo consumo do mercado, por quarto de hora, mês ou período horário." },
-        { "@type": "PropertyValue", "name": "Componentes do ERC", "unitText": "EUR/MWh", "description": "Restrições técnicas (PDBF, PDVD, PHF), banda de reserva aFRR, banda de reserva mFRR e outros." }
+        { "@type": "PropertyValue", "name": "Componentes do ERC", "unitText": "EUR/MWh", "description": "Restrições técnicas (PDBF, PDVD, PHF), banda de reserva aFRR, banda de reserva mFRR e outros." },
+        { "@type": "PropertyValue", "name": "Encargos por tipo", "unitText": "EUR", "description": "Valor e quantidade (MWh ou MW) de cada tipo de encargo por dia de mercado: restrições técnicas, bandas e energia de reserva, desvios, incumprimentos e outros serviços." }
       ],
       "creator": {
         "@type": "Person",
@@ -90,6 +91,7 @@
         { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_resumo.json" },
         { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_diario/" },
         { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_omie/" },
+        { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_tipo/" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/erc/isp/" }
       ]
     }
@@ -116,6 +118,13 @@
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "É o custo que a REN, como gestora do sistema elétrico, tem para manter a rede equilibrada e segura, repartido por toda a energia consumida em cada quarto de hora. Inclui as restrições técnicas (ajustar a produção que saiu do mercado para que a rede a consiga transportar com segurança), as bandas de reserva aFRR e mFRR (pagar a centrais para estarem disponíveis para subir ou descer a produção) e outros custos e acertos. A REN publica-o em euros e em euros por MWh, por quarto de hora."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que algumas parcelas do ERC são negativas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Porque o ERC é um saldo. Além dos custos (restrições técnicas, bandas de reserva, energia de reserva ativada a subir), a REN liquida receitas que o baixam: o que pagam os agentes que ficam em falta face ao que programaram (desvios), as penalizações por incumprimento de instruções, a energia retirada a outras centrais no reequilíbrio das restrições técnicas e a energia de reserva ativada a descer. Nos 12 meses até setembro de 2026, os desvios baixaram o ERC em cerca de 2,5 EUR/MWh. O bloco «De onde vem o ERC» mostra o saldo de cada grupo e o preço médio de cada encargo no período escolhido."
         }
       },{
         "@type": "Question",
@@ -247,7 +256,7 @@
         .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
         .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
         .btn-toggle button:last-child { border-right: none; }
-        .btn-toggle button:hover:not(:disabled) { background: #f1f5f9; }
+        .btn-toggle button:hover:not(:disabled):not(.active) { background: #f1f5f9; }
         .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
         .btn-toggle button:disabled { color: #cbd5e1; cursor: not-allowed; background: #fafafa; }
         .btn-toggle[hidden] { display: none; }
@@ -270,6 +279,11 @@
         .tabela-erc tbody tr:nth-child(even) { background: #fbfcfd; }
         .tabela-erc tr.hoje td { font-weight: 700; background: #eef6ff; }
         .tabela-erc tr.passado td { color: #6c757d; }
+        .tabela-erc td.nome { text-align: left; white-space: normal; min-width: 230px; }
+        .tabela-erc td.nome .cod { display: block; font-size: 0.78em; color: #94a3b8; font-family: ui-monospace, Consolas, monospace; }
+        .btn-mais { margin-top: 8px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 5px; padding: 6px 12px; font-size: 0.85em; cursor: pointer; }
+        .btn-mais:hover { background: #e2e8f0; }
+        #grafico-tipos { height: 560px; }
         .recordes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
         @media (max-width: 800px) { .recordes-grid { grid-template-columns: 1fr; } }
         .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
@@ -309,7 +323,7 @@
         [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
         [data-theme="dark"] .btn-toggle { border-color: #475569; }
         [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
-        [data-theme="dark"] .btn-toggle button:hover:not(:disabled) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button:hover:not(:disabled):not(.active) { background: #334155; }
         [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
         [data-theme="dark"] .btn-toggle button:disabled { color: #475569; background: #16202e; }
         [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
@@ -334,6 +348,9 @@
         [data-theme="dark"] .tabela-erc tbody tr:nth-child(even) { background: #16202e; }
         [data-theme="dark"] .tabela-erc tr.hoje td { background: #1e3a5f; }
         [data-theme="dark"] .tabela-erc tr.passado td { color: #94a3b8; }
+        [data-theme="dark"] .tabela-erc td.nome .cod { color: #64748b; }
+        [data-theme="dark"] .btn-mais { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .btn-mais:hover { background: #334155; }
 
         @page { size: A4 landscape; margin: 10mm; }
         @media print {
@@ -390,6 +407,7 @@
     <nav class="mini-nav" aria-label="Navegação rápida da página">
         <a href="#bloco-kpis" class="mini-nav-chip">💶 Resumo</a>
         <a href="#bloco-mensal" class="mini-nav-chip">📊 Evolução</a>
+        <a href="#bloco-tipos" class="mini-nav-chip">🧾 De onde vem</a>
         <a href="#bloco-horas" class="mini-nav-chip">🕒 Quando custa mais</a>
         <a href="#bloco-hoje" class="mini-nav-chip">⚡ OMIE PT + ERC</a>
         <a href="#bloco-previsao" class="mini-nav-chip">🔮 Previsão 14 dias</a>
@@ -418,18 +436,48 @@
             <ul>
                 <li><strong>Restrições técnicas</strong> — o custo de alterar o programa que saiu do mercado para que a rede o consiga transportar com segurança (por exemplo, ligar uma central que o mercado deixou de fora). São resolvidas em três momentos da programação: PDBF, PDVD e PHF.</li>
                 <li><strong>Banda de reserva aFRR e mFRR</strong> — o que se paga a centrais para estarem disponíveis para subir ou descer a produção, automaticamente em segundos (aFRR) ou por ordem do operador em minutos (mFRR).</li>
-                <li><strong>Outros</strong> — restantes custos e acertos; pode ser negativo.</li>
+                <li><strong>Outros</strong> — restantes custos e receitas; pode ser negativo. Em «Desdobrado» vê-se de que é feito: energia de reserva ativada, desvios, incumprimentos e outros serviços (explicados no bloco seguinte).</li>
             </ul>
+        </div>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Outros</span>
+            <div class="btn-toggle" id="ctrl-outros" role="group" aria-label="Detalhe da componente Outros">
+                <button type="button" data-v="agregado" class="active">Agregado</button>
+                <button type="button" data-v="detalhe">Desdobrado</button>
+            </div>
         </div>
         <div id="grafico-mensal" class="grafico"></div>
         <p class="resumo-bloco" id="mensal-resumo"></p>
         <p class="nota-bloco" id="evolucao-nota"></p>
     </div>
 
+    <!-- ====================== BLOCO 2B — DE ONDE VEM O ERC ====================== -->
+    <div class="grafico-box" id="bloco-tipos">
+        <h2>De onde vem o ERC — custos e receitas</h2>
+        <p class="grafico-intro">O ERC é o saldo de dezenas de encargos que a REN liquida para manter o sistema equilibrado e seguro. Uns são <strong>custos</strong> e sobem o ERC; outros são <strong>receitas</strong> — sobretudo o que os agentes pagam pelos seus desvios e incumprimentos — e baixam-no. Cada barra é o peso de um grupo no período escolhido, em €/MWh consumido — a vermelho os custos, a azul as receitas —, e a última é o ERC do período. A tabela mostra cada encargo, com a quantidade e o preço médio.</p>
+        <div class="metodo-box">
+            <p><strong>Os grupos:</strong></p>
+            <ul>
+                <li><strong>Restrições técnicas</strong> — no PDBF (o programa que sai do mercado diário), depois do PDVD e depois do PHF (mais perto do tempo real). No PDBF, desde 16/07/2025, a <strong>restrição</strong> (energia acrescentada a algumas centrais para a rede funcionar com segurança) e o <strong>reequilíbrio</strong> (energia retirada a outras para a produção continuar igual ao consumo) aparecem em separado; antes disso, juntos.</li>
+                <li><strong>Banda de reserva aFRR e mFRR</strong> — o pagamento pela disponibilidade (em MW) para subir ou descer a produção.</li>
+                <li><strong>Energia de reserva aFRR, mFRR e RR</strong> — a energia efetivamente ativada em tempo real: a subir é custo, a descer é receita. A RR só tem valores até 30/12/2025.</li>
+                <li><strong>Desvios</strong> — a diferença entre o que cada agente programou e o que produziu ou consumiu: quem fica em falta paga, quem fica em excesso recebe.</li>
+                <li><strong>Coordenação de desvios (IGCC)</strong> — a compensação de desvios de sentido contrário entre países vizinhos.</li>
+                <li><strong>Incumprimentos</strong> — o que pagam os agentes que não cumprem as instruções de despacho do operador.</li>
+                <li><strong>Outros serviços e acertos</strong> — energia FSKAR (controlo de frequência e rampas), arranque autónomo, compensação síncrona, redução de geração (curtailment), ensaios, comissionamento, apoio ibérico e o acerto do apagão de 28/04/2025.</li>
+            </ul>
+        </div>
+        <div id="grafico-tipos" class="grafico"><div class="estado-carregamento">A carregar…</div></div>
+        <p class="resumo-bloco" id="tipos-resumo"></p>
+        <div class="tabela-box"><table class="tabela-erc" id="tabela-tipos"></table></div>
+        <button type="button" id="btn-tipos-todos" class="btn-mais" hidden></button>
+        <p class="nota-bloco" id="tipos-nota"></p>
+    </div>
+
     <!-- ====================== BLOCO 3 — PERFIL HORÁRIO ====================== -->
     <div class="grafico-box" id="bloco-horas">
         <h2>Quando custa mais — o ERC ao longo do dia</h2>
-        <p class="grafico-intro">ERC médio de cada hora do dia no período, em hora de Portugal, para dias úteis, sábados e domingos. A linha tracejada é o <strong>OMIE PT</strong> médio das mesmas horas (eixo da direita): quando o OMIE PT desce, nas horas de sol, o ERC sobe. Nos períodos longos, escolha uma estação para não misturar o verão com o inverno.</p>
+        <p class="grafico-intro">ERC médio de cada hora do dia no período, em hora de Portugal, para dias úteis, sábados e domingos. A linha tracejada é o <strong>OMIE PT</strong> médio das mesmas horas (eixo da direita), e na legenda pode ligar também o de cada tipo de dia: quando o OMIE PT desce, nas horas de sol, o ERC sobe. Nos períodos longos, escolha uma estação para não misturar o verão com o inverno.</p>
         <div class="bloco-controls">
             <span class="ctrl-label">Dias</span>
             <div class="btn-toggle" id="ctrl-estacao" role="group" aria-label="Dias do perfil horário">
@@ -530,6 +578,19 @@
             </div>
         </details>
         <details class="faq-item">
+            <summary><strong>Porque é que algumas parcelas do ERC são negativas?</strong></summary>
+            <div class="faq-content">
+                <p>Porque o ERC é um <strong>saldo</strong>. Além dos custos (restrições técnicas, bandas de reserva, energia de reserva ativada a subir), a REN liquida <strong>receitas</strong> que o baixam:</p>
+                <ul>
+                    <li>o que pagam os agentes que ficam em falta face ao que programaram (<strong>desvios</strong>);</li>
+                    <li>as penalizações por <strong>incumprimento</strong> de instruções do operador;</li>
+                    <li>a energia retirada a outras centrais no <strong>reequilíbrio</strong> das restrições técnicas;</li>
+                    <li>a energia de reserva ativada <strong>a descer</strong>.</li>
+                </ul>
+                <p>Nos 12 meses até setembro de 2026, os desvios baixaram o ERC em cerca de 2,5 €/MWh. O bloco <a href="#bloco-tipos">«De onde vem o ERC»</a> mostra o saldo de cada grupo e o preço médio de cada encargo no período escolhido.</p>
+            </div>
+        </details>
+        <details class="faq-item">
             <summary><strong>Como aparece o ERC na minha fatura?</strong></summary>
             <div class="faq-content">
                 <p>Depende do tarifário:</p>
@@ -623,6 +684,23 @@ document.addEventListener('DOMContentLoaded', function () {
         rt_phf: 'as restrições técnicas no PHF', banda_afrr: 'a banda de reserva aFRR',
         banda_mfrr: 'a banda de reserva mFRR', outros: 'outros custos'
     };
+    // "Outros" desdobrado (bloco 2): os grupos da vista Tipo que a REN soma em
+    // "outros", juntos em quatro séries (os que não estiverem aqui vão para a última)
+    const DETALHE_OUTROS = [
+        { id: 'reserva', nome: 'Energia de reserva ativada', grupos: ['energia_afrr', 'energia_mfrr', 'mfrr_transitorio', 'energia_rr'], cor: '#e87ba4', corDk: '#d55181' },
+        { id: 'desvios', nome: 'Desvios e IGCC', grupos: ['desvios', 'igcc'], cor: '#1baf7a', corDk: '#199e70' },
+        { id: 'incump', nome: 'Incumprimentos', grupos: ['incumprimentos'], cor: '#4a3aa7', corDk: '#9085e9' },
+        { id: 'resto', nome: 'Outros serviços e acertos', grupos: [], cor: '#94a3b8', corDk: '#94a3b8' }
+    ];
+    // Nomes curtos dos grupos no eixo da cascata (o nome completo vai no tooltip)
+    const NOME_CURTO_GRUPO = {
+        rt_pdbf_restricao: 'Restrições PDBF — restrição', rt_pdbf_reequilibrio: 'Restrições PDBF — reequilíbrio',
+        rt_pdbf: 'Restrições PDBF (juntas)', rt_pdvd: 'Restrições após PDVD', rt_phf: 'Restrições após PHF',
+        banda_afrr: 'Banda aFRR', banda_mfrr: 'Banda mFRR', energia_afrr: 'Energia aFRR', energia_mfrr: 'Energia mFRR',
+        mfrr_transitorio: 'mFRR transitório', energia_rr: 'Energia RR', desvios: 'Desvios', igcc: 'IGCC',
+        incumprimentos: 'Incumprimentos', outros_servicos: 'Outros serviços'
+    };
+    const TIPOS_LINHAS_INICIAIS = 12;
     const NOME_ESTACAO = { inverno: 'inverno', primavera: 'primavera', verao: 'verão', outono: 'outono' };
     const NOME_PERIODO = { V: 'Vazio', F: 'Fora de vazio', C: 'Cheias', P: 'Ponta', S: 'Simples' };
     const COR_PERIODO = { V: '#16a34a', F: '#2563eb', C: '#f59e0b', P: '#dc2626' };
@@ -637,14 +715,18 @@ document.addEventListener('DOMContentLoaded', function () {
     let _dia = null;              // dia do bloco 4, AAAA-MM-DD
     let _perdas = 'sem';
     let _ciclo = 'BD';
+    let _outros = 'agregado';     // bloco 2: "Outros" agregado ou desdobrado
+    let _tiposTodos = false;      // bloco "De onde vem": tabela completa ou só as primeiras linhas
 
     // ==================================================================
     // FORMATAÇÃO
     // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
     const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const _nf3 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
     const vazio = v => v === null || v === undefined || !isFinite(v);
+    const fmt0 = v => vazio(v) ? '--' : _nf0.format(v);
     const fmt1 = v => vazio(v) ? '--' : _nf1.format(v);
     const fmt2 = v => vazio(v) ? '--' : _nf2.format(v);
     const fmt3 = v => vazio(v) ? '--' : _nf3.format(v);
@@ -761,6 +843,61 @@ document.addEventListener('DOMContentLoaded', function () {
         return Promise.all((R.diario.anos || []).filter(a => a >= a0 && a <= a1).map(carregarAno));
     }
 
+    // Vista Tipo (bloco "De onde vem" e "Outros" desdobrado): um ficheiro por ano
+    // (agregados/erc_tipo/AAAA.json), por dia de mercado [n.º de quartos de hora,
+    // i, €, quantidade, …], com i = posição do código em j.codigos.
+    const PASTA_TIPO = 'agregados/erc_tipo/';
+    const _anosTipo = new Map();      // ano → Promise<json | null>
+    const TIPO = new Map();           // dia de mercado → { n, v: [[código, €, quantidade], …] }
+    let _tipoPronto = false;          // os ficheiros do período já chegaram
+    function carregarAnoTipo(ano) {
+        if (!_anosTipo.has(ano)) {
+            _anosTipo.set(ano, fetchDados(PASTA_TIPO + ano + '.json')
+                .then(r => r.ok ? r.json() : null)
+                .then(j => {
+                    if (!j) return null;
+                    Object.entries(j.dias || {}).forEach(([d, a]) => {
+                        const v = [];
+                        for (let k = 1; k + 2 < a.length; k += 3) v.push([j.codigos[a[k]], a[k + 1], a[k + 2]]);
+                        TIPO.set(d, { n: a[0], v });
+                    });
+                    return j;
+                })
+                .catch(() => null));
+        }
+        return _anosTipo.get(ano);
+    }
+    function carregarIntervaloTipo(inicio, fim) {
+        if (!R.tipos) return Promise.resolve([]);
+        const a0 = +inicio.slice(0, 4), a1 = +fim.slice(0, 4);
+        return Promise.all((R.tipos.anos || []).filter(a => a >= a0 && a <= a1).map(carregarAnoTipo));
+    }
+    // Grupo de cada código (do resumo) e o grupo do bloco 2 de cada grupo de "outros"
+    const grupoDe = cod => (R.tipos.codigos[cod] || ['outros_servicos'])[0];
+    function detalheDe(grupo) {
+        const d = DETALHE_OUTROS.find(x => x.grupos.includes(grupo));
+        return d ? d.id : 'resto';
+    }
+    // Totais da vista Tipo num conjunto de dias de mercado: por código e por grupo
+    // (€ e quantidade), quartos de hora e consumo (MWh, dos mesmos dias)
+    function totaisTipo(dias) {
+        const porCodigo = new Map(), porGrupo = new Map();
+        let nQH = 0, mwh = 0, eur = 0, eurPub = 0, n = 0;
+        dias.forEach(d => {
+            const t = TIPO.get(d), m = MERC.get(d);
+            if (!t || !m || !m[0]) return;
+            n++; nQH += t.n; mwh += m[0]; eurPub += m[1];
+            t.v.forEach(([c, e, q]) => {
+                const a = porCodigo.get(c) || { eur: 0, q: 0 };
+                a.eur += e || 0; a.q += q || 0; porCodigo.set(c, a);
+                const g = grupoDe(c);
+                porGrupo.set(g, (porGrupo.get(g) || 0) + (e || 0));
+                eur += e || 0;
+            });
+        });
+        return n ? { n, nQH, mwh, eur, eurPub, porCodigo, porGrupo } : null;
+    }
+
     // Datas (AAAA-MM-DD, em UTC para não depender do fuso do visitante)
     const DIA_MS = 86400000;
     const tsDia = iso => { const [a, m, d] = iso.split('-').map(Number); return Date.UTC(a, m - 1, d); };
@@ -841,7 +978,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const iso = s => (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? s : null;
         const i = iso(ler('inicio')), f = iso(ler('fim'));
         return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null,
-                 est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas') };
+                 est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas'), outros: ler('outros') };
     }
     function paramsAtuais(sempreDatas) {
         const p = new URLSearchParams();
@@ -853,6 +990,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (_ciclo !== 'BD') p.set('ciclo', _ciclo);
         if (_diaEscolhido && _dia) p.set('dia', _dia);
         if (_perdas !== 'sem') p.set('perdas', _perdas);
+        if (_outros !== 'agregado') p.set('outros', _outros);
         return p;
     }
     function atualizarURL() {
@@ -906,13 +1044,22 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('periodo-titulo').textContent =
             `De ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} (${L} ${L === 1 ? 'dia' : 'dias'})`;
         const antIni = addDias(periodo.inicio, -L);
+        // A vista Tipo carrega em paralelo e não atrasa os outros blocos
+        _tipoPronto = false;
+        const pTipo = carregarIntervaloTipo(periodo.inicio, periodo.fim);
         await carregarIntervalo(antIni < MIN_DIA ? MIN_DIA : antIni, periodo.fim);
         if (pedido !== _pedidoPeriodo) return;
         renderPeriodo();
+        await pTipo;
+        if (pedido !== _pedidoPeriodo) return;
+        _tipoPronto = true;
+        renderTipos();
+        if (_outros === 'detalhe') renderEvolucao();
     }
     function renderPeriodo() {
         renderKPIs();
         renderEvolucao();
+        renderTipos();
         prepararEstacoes();
         renderHoras();
         renderPeriodos();
@@ -1004,9 +1151,25 @@ document.addEventListener('DOMContentLoaded', function () {
         const B = baldes(periodo.inicio, periodo.fim);
         const linhas = B.lista.map(b => Object.assign({}, b, { t: totaisMercado(b.dias) }));
         if (!linhas.some(l => l.t)) { limparGrafico('grafico-mensal', '<div class="bloco-vazio">Sem dados neste período.</div>'); document.getElementById('mensal-resumo').textContent = ''; return; }
+        // "Outros" desdobrado: em vez da componente, os grupos da vista Tipo que a REN
+        // lá soma, juntos em DETALHE_OUTROS (só quando esses ficheiros já chegaram)
+        const desdobrar = _outros === 'detalhe' && R.tipos && _tipoPronto;
         const series = R.componentes.map((cp, k) => ({
-            name: cp.nome, data: linhas.map(l => l.t ? l.t.comp[k] : null), color: COR_COMP[cp.id], stack: 'erc'
-        }));
+            name: cp.nome, data: linhas.map(l => l.t ? l.t.comp[k] : null), color: COR_COMP[cp.id], stack: 'erc', id: cp.id
+        })).filter(s => !(desdobrar && s.id === 'outros'));
+        if (desdobrar) {
+            const compDe = new Map(R.tipos.grupos.map(g => [g.id, g.comp]));
+            const tt = linhas.map(l => totaisTipo(l.dias));
+            DETALHE_OUTROS.forEach(d => {
+                const data = tt.map(t => {
+                    if (!t || !t.mwh) return null;
+                    let e = 0;
+                    t.porGrupo.forEach((v, g) => { if (compDe.get(g) === 'outros' && detalheDe(g) === d.id) e += v; });
+                    return e / t.mwh;
+                });
+                series.push({ name: d.nome, data, color: c.dk ? d.corDk : d.cor, stack: 'erc' });
+            });
+        }
         series.push({ type: 'line', name: 'Total (ERC)', data: linhas.map(l => l.t ? l.t.erc : null), color: c.total,
                       marker: { radius: B.porDia ? 2 : 3, symbol: 'circle' }, lineWidth: 2, zIndex: 5 });
 
@@ -1050,6 +1213,146 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==================================================================
+    // BLOCO 2B — DE ONDE VEM O ERC (vista Tipo da REN)
+    // ==================================================================
+    // Valor em € com sinal: M€, k€ ou €
+    function fmtEur(v) {
+        const a = Math.abs(v), s = v > 0 ? '+' : v < 0 ? '−' : '';
+        if (a >= 1e6) return `${s}${fmt2(a / 1e6)} M€`;
+        if (a >= 1e3) return `${s}${fmt1(a / 1e3)} k€`;
+        return `${s}${fmt0(a)} €`;
+    }
+    const nomeCodigo = c => { const x = R.tipos.codigos[c]; return x ? x[1] + (x[2] ? ' — ' + x[2] : '') : c; };
+    const unidadeDe = c => { const x = R.tipos.codigos[c]; return x ? x[3] : ''; };
+    // Valor por MWh (valor ÷ quantidade, com sinal) de um conjunto de códigos medidos em MWh
+    function precoMedio(t, filtro) {
+        let e = 0, q = 0;
+        t.porCodigo.forEach((a, c) => { if (unidadeDe(c) === 'MWh' && filtro(c)) { e += a.eur; q += a.q; } });
+        return q > 0 ? e / q : null;
+    }
+
+    function renderTipos() {
+        const bloco = document.getElementById('bloco-tipos');
+        const resumo = document.getElementById('tipos-resumo'), nota = document.getElementById('tipos-nota');
+        const tabela = document.getElementById('tabela-tipos'), btn = document.getElementById('btn-tipos-todos');
+        // Sem a vista Tipo no resumo (dados antigos), o bloco e o "Desdobrado" não aparecem
+        const temTipos = !!(R && R.tipos);
+        // (style.display e não o atributo hidden: .bloco-controls e os chips têm display próprio)
+        [bloco, document.getElementById('ctrl-outros').closest('.bloco-controls'),
+         document.querySelector('.mini-nav a[href="#bloco-tipos"]')].forEach(el => { if (el) el.style.display = temTipos ? '' : 'none'; });
+        if (!temTipos) return;
+        const limpar = msg => { limparGrafico('grafico-tipos', msg); resumo.textContent = ''; tabela.innerHTML = ''; btn.hidden = true; nota.textContent = ''; };
+        if (!_tipoPronto) { limpar('<div class="estado-carregamento">A carregar…</div>'); return; }
+        const t = totaisTipo(diasDe(periodo.inicio, periodo.fim));
+        if (!t || !t.mwh) { limpar('<div class="bloco-vazio">Sem dados neste período.</div>'); return; }
+
+        const c = _hcDark();
+        const COR_CUSTO = c.dk ? '#e66767' : '#e34948', COR_RECEITA = c.dk ? '#3987e5' : '#2a78d6';
+        const COR_TOTAL = c.dk ? '#cbd5e1' : '#475569';
+        const nomeGrupo = new Map(R.tipos.grupos.map(g => [g.id, g.nome]));
+        // Grupos pela ordem do resumo; os que não pesam no período ficam de fora
+        const pontos = [];
+        R.tipos.grupos.forEach(g => {
+            const e = t.porGrupo.get(g.id);
+            if (vazio(e) || Math.abs(e / t.mwh) < 0.0005) return;
+            pontos.push({ id: g.id, name: NOME_CURTO_GRUPO[g.id] || g.nome, y: e / t.mwh, eur: e, color: e >= 0 ? COR_CUSTO : COR_RECEITA });
+        });
+        // A soma dos encargos pode ficar acima do total publicado (diferença na
+        // fonte, nalguns quartos de hora): uma barra própria repõe o total
+        const dif = (t.eurPub - t.eur) / t.mwh;
+        if (Math.abs(dif) >= 0.005) pontos.push({ id: 'dif', name: 'Diferença na fonte', y: dif, eur: t.eurPub - t.eur, color: c.suave });
+        const total = t.eurPub / t.mwh;
+        pontos.push({ id: 'total', name: 'ERC do período', isSum: true, eur: t.eurPub, color: COR_TOTAL });
+
+        // Códigos de cada grupo, por valor absoluto (para o tooltip)
+        const codigosDoGrupo = g => [...t.porCodigo].filter(([cod]) => grupoDe(cod) === g)
+            .sort((a, b) => Math.abs(b[1].eur) - Math.abs(a[1].eur));
+        const linhaCodigo = ([cod, a]) => {
+            const un = unidadeDe(cod), p = (un === 'MWh' && a.q > 0) ? ` · ${fmt1(Math.abs(a.eur) / a.q)} €/MWh` : '';
+            return `${nomeCodigo(cod)}: ${fmtEur(a.eur)}${p}`;
+        };
+
+        const custosTot = pontos.filter(p => !p.isSum && p.id !== 'dif' && p.y > 0).reduce((a, p) => a + p.y, 0);
+        const receitasTot = pontos.filter(p => !p.isSum && p.id !== 'dif' && p.y < 0).reduce((a, p) => a + p.y, 0);
+
+        const alvo = document.getElementById('grafico-tipos');
+        alvo.style.height = (pontos.length * 34 + 70) + 'px';
+        limparGrafico('grafico-tipos');
+        Highcharts.chart('grafico-tipos', Object.assign(base(c, 'erc-de-onde-vem'), {
+            chart: { type: 'waterfall', inverted: true, backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            legend: { enabled: false },
+            xAxis: eixoX(c, pontos.map(p => p.name), { labels: { style: { color: c.txt, fontSize: '11px' } } }),
+            // Folga à direita para os valores ao lado das barras (mais no telemóvel)
+            yAxis: eixoY(c, '€/MWh consumido', { endOnTick: false, maxPadding: window.innerWidth < 600 ? 0.22 : 0.08,
+                                                 plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            plotOptions: { waterfall: { borderWidth: 0, pointPadding: 0.12, groupPadding: 0, lineColor: c.suave, dashStyle: 'Dot',
+                dataLabels: { enabled: true, inside: false, crop: false, overflow: 'allow',
+                    style: { color: c.txt, fontWeight: 'normal', fontSize: '11px', textOutline: 'none' },
+                    formatter: function () { return this.point.isSum ? fmt2(this.y) : sinal(this.y); } } } },
+            tooltip: Object.assign(base(c).tooltip, {
+                shared: false,
+                formatter: function () {
+                    const p = this.point;
+                    if (p.isSum) return `<b>ERC do período: ${fmtMWh(this.y)}</b><br>${fmt2(t.eurPub / 1e6)} M€ em ${fmt2(t.mwh / 1e6)} TWh consumidos`;
+                    if (p.id === 'dif') return `<b>Diferença na fonte: ${sinal(p.y)} €/MWh</b><br>Nalguns quartos de hora, o total publicado fica abaixo da soma dos encargos.<br>Esta barra repõe o total.`;
+                    let s = `<b>${nomeGrupo.get(p.id) || p.name}</b><br>${sinal(p.y)} €/MWh · ${fmtEur(p.eur)}`;
+                    if (p.y > 0) s += ` · ${fmt1(100 * p.y / custosTot)} % dos custos`;
+                    const cods = codigosDoGrupo(p.id);
+                    cods.slice(0, 5).forEach(x => { s += `<br><span style="color:${c.suave}">• ${linhaCodigo(x)}</span>`; });
+                    if (cods.length > 5) s += `<br><span style="color:${c.suave}">• e mais ${cods.length - 5}</span>`;
+                    return s;
+                }
+            }),
+            series: [{ name: 'ERC', data: pontos.map(p => ({ id: p.id, name: p.name, y: p.isSum ? undefined : p.y, isSum: !!p.isSum, color: p.color, eur: p.eur })) }]
+        }));
+
+        // Resumo
+        const maior = pontos.filter(p => !p.isSum && p.id !== 'dif').reduce((a, p) => (!a || p.y > a.y) ? p : a, null);
+        let txt = `No período, o ERC de <strong>${fmtMWh(total)}</strong> foi o saldo de <strong>${sinal(custosTot)} €/MWh</strong> em custos e <strong>${sinal(receitasTot)} €/MWh</strong> em receitas.`;
+        if (maior && maior.y > 0) txt += ` A maior parcela foi «${nomeGrupo.get(maior.id)}» (${fmtMWh(maior.y)}, ${fmt0(100 * maior.y / custosTot)} % dos custos).`;
+        const desv = t.porGrupo.get('desvios');
+        if (!vazio(desv) && Math.abs(desv / t.mwh) >= 0.01) txt += ` Os desvios dos agentes ${desv < 0 ? 'baixaram' : 'subiram'} o ERC em ${fmtMWh(Math.abs(desv / t.mwh))}.`;
+        const pRest = precoMedio(t, cod => cod.startsWith('RTPDBFF1')), pReeq = precoMedio(t, cod => cod.startsWith('RTPDBFF2'));
+        if (!vazio(pRest) && !vazio(pReeq) && pRest > 0) {
+            txt += ` Nas restrições técnicas no PDBF, cada MWh acrescentado custou, em média, ${fmt1(pRest)} €, ` +
+                   (pReeq < 0 ? `e cada MWh retirado para reequilibrar o programa abateu ${fmt1(-pReeq)} €.`
+                              : `e o reequilíbrio também foi um custo: ${fmt1(pReeq)} € por MWh retirado.`);
+        }
+        const sobe = g => cod => grupoDe(cod) === g && (R.tipos.codigos[cod] || [])[2] === 'Subir';
+        const pA = precoMedio(t, sobe('energia_afrr')), pM = precoMedio(t, sobe('energia_mfrr'));
+        const omie = media(diasLocais(periodo.inicio, periodo.fim).flatMap(([, d]) => d.o || []));
+        if (pA > 0 || pM > 0) {
+            const partes = [pA > 0 ? `${fmt1(pA)} €/MWh na aFRR` : null, pM > 0 ? `${fmt1(pM)} €/MWh na mFRR` : null].filter(Boolean);
+            txt += ` A energia de reserva ativada a subir custou, em média, ${partes.join(' e ')}${vazio(omie) ? '' : `, com o OMIE PT médio do período em ${fmtMWh(omie)}`}.`;
+        }
+        resumo.innerHTML = txt;
+
+        // Tabela: cada encargo, por valor absoluto
+        const linhas = [...t.porCodigo].filter(([, a]) => a.eur !== 0).sort((a, b) => Math.abs(b[1].eur) - Math.abs(a[1].eur));
+        const visiveis = _tiposTodos ? linhas : linhas.slice(0, TIPOS_LINHAS_INICIAIS);
+        const qtd = (cod, a) => {
+            const un = unidadeDe(cod);
+            if (un === 'MWh') return a.q >= 1000 ? `${fmt1(a.q / 1000)} GWh` : `${fmt0(a.q)} MWh`;
+            if (un === 'MW') return t.nQH ? `${fmt0(a.q / t.nQH)} MW em média` : '--';
+            return '—';
+        };
+        let tb = `<caption>Cada encargo no período (${linhas.length})</caption><thead><tr><th scope="col" class="esq">Encargo</th><th scope="col">Quantidade</th><th scope="col">Valor</th><th scope="col">Preço médio</th><th scope="col">No ERC (€/MWh)</th></tr></thead><tbody>`;
+        visiveis.forEach(([cod, a]) => {
+            const p = (unidadeDe(cod) === 'MWh' && a.q > 0) ? `${fmt1(Math.abs(a.eur) / a.q)} €/MWh` : '—';
+            tb += `<tr><td class="nome">${nomeCodigo(cod)}<span class="cod">${cod}</span></td><td>${qtd(cod, a)}</td><td>${fmtEur(a.eur)}</td><td>${p}</td><td>${sinal(a.eur / t.mwh)}</td></tr>`;
+        });
+        tabela.innerHTML = tb + '</tbody>';
+        btn.hidden = linhas.length <= TIPOS_LINHAS_INICIAIS;
+        btn.textContent = _tiposTodos ? `Mostrar só os ${TIPOS_LINHAS_INICIAIS} maiores` : `Mostrar os ${linhas.length} encargos`;
+
+        const notas = ['€/MWh consumido = o valor de cada encargo no período a dividir pelo consumo do mercado nos mesmos dias de mercado. Positivo = custo, negativo = receita.',
+                       'Preço médio = valor ÷ quantidade, só nos encargos medidos em MWh; nas bandas, a quantidade é a média dos MW de cada quarto de hora.',
+                       'Fonte: vista «Tipo» dos ERC da REN.'];
+        if (Math.abs(dif) >= 0.005) notas.push(`A soma dos encargos fica ${fmt2(Math.abs(dif))} €/MWh ${dif < 0 ? 'acima' : 'abaixo'} do total publicado neste período: a diferença está nos próprios dados da fonte.`);
+        nota.textContent = notas.join(' ');
+    }
+
+    // ==================================================================
     // BLOCO 3 — PERFIL HORÁRIO
     // ==================================================================
     const ESTACAO_DO_MES = ['inverno', 'inverno', 'primavera', 'primavera', 'primavera', 'verao', 'verao', 'verao', 'outono', 'outono', 'outono', 'inverno'];
@@ -1062,28 +1365,46 @@ document.addEventListener('DOMContentLoaded', function () {
         if (_estacao !== 'todo' && !presentes.has(_estacao)) { _estacao = 'todo'; ativarToggle('ctrl-estacao', 'todo'); }
     }
 
+    const TIPOS_DIA = [
+        { v: 'util', nome: 'Dia útil', cor: '#2563eb' },
+        { v: 'sab', nome: 'Sábado', cor: '#f59e0b' },
+        { v: 'dom', nome: 'Domingo', cor: '#dc2626' }
+    ];
+    const _omieLigado = new Set(['todos']);   // linhas do OMIE PT ligadas na legenda
+
     function renderHoras() {
         const c = _hcDark();
         const lista = diasLocais(periodo.inicio, periodo.fim).filter(([iso]) => _estacao === 'todo' || estacaoDe(iso) === _estacao);
         if (!lista.length) { limparGrafico('grafico-horas', '<div class="bloco-vazio">Sem dados neste período.</div>'); document.getElementById('horas-resumo').textContent = ''; document.getElementById('horas-nota').textContent = ''; return; }
-        const porTipo = t => perfilHoras(lista.filter(([iso]) => tipoDia(iso) === t).map(([, d]) => d));
-        const sel = { util: porTipo('util'), sab: porTipo('sab'), dom: porTipo('dom'),
-                      omie: Array.from({ length: 24 }, (_, h) => media(lista.map(([, d]) => d.o ? d.o[h] : null))) };
+        const diasDoTipo = t => lista.filter(([iso]) => tipoDia(iso) === t).map(([, d]) => d);
+        const omieHoras = dias => Array.from({ length: 24 }, (_, h) => media(dias.map(d => d.o ? d.o[h] : null)));
+        const sel = {}, omie = { todos: omieHoras(lista.map(([, d]) => d)) };
+        TIPOS_DIA.forEach(t => { const dias = diasDoTipo(t.v); sel[t.v] = perfilHoras(dias); omie[t.v] = omieHoras(dias); });
         const cats = Array.from({ length: 24 }, (_, h) => hora(h));
-        const series = [
-            { name: 'Dia útil', data: sel.util, color: '#2563eb' },
-            { name: 'Sábado', data: sel.sab, color: '#f59e0b' },
-            { name: 'Domingo', data: sel.dom, color: '#dc2626' }
-        ].filter(s => s.data.some(v => !vazio(v)))
-         .map(s => Object.assign(s, { yAxis: 0, marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2 }));
-        if (sel.omie.some(v => !vazio(v))) series.push({ name: 'OMIE PT (todos os dias)', data: sel.omie, yAxis: 1, color: c.suave,
-                                                         dashStyle: 'ShortDash', marker: { enabled: false }, lineWidth: 1.5 });
+        const temDados = arr => arr.some(v => !vazio(v));
+        // ERC por tipo de dia (eixo da esquerda) e o OMIE PT tracejado (eixo da
+        // direita): o de todos os dias, ligado por omissão, e o de cada tipo de dia,
+        // na mesma cor e desligado. O que o utilizador liga ou desliga na legenda
+        // mantém-se ao mudar de estação ou de período.
+        const series = [];
+        TIPOS_DIA.forEach(t => {
+            if (temDados(sel[t.v])) series.push({ name: t.nome, data: sel[t.v], color: t.cor, yAxis: 0,
+                                                  marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2 });
+        });
+        [{ v: 'todos', nome: 'OMIE PT (todos os dias)', cor: c.suave }]
+            .concat(TIPOS_DIA.map(t => ({ v: t.v, nome: 'OMIE PT — ' + t.nome.toLowerCase(), cor: t.cor })))
+            .forEach(t => {
+                if (!temDados(omie[t.v])) return;
+                series.push({ name: t.nome, data: omie[t.v], color: t.cor, yAxis: 1, dashStyle: 'ShortDash',
+                              marker: { enabled: false }, lineWidth: 1.5, visible: _omieLigado.has(t.v),
+                              events: { show: () => _omieLigado.add(t.v), hide: () => _omieLigado.delete(t.v) } });
+            });
 
         limparGrafico('grafico-horas');
         Highcharts.chart('grafico-horas', Object.assign(base(c, 'erc-por-hora'), {
             chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
             xAxis: eixoX(c, cats),
-            yAxis: [eixoY(c, 'ERC (€/MWh)'), eixoY(c, 'OMIE PT (€/MWh)', { opposite: true, gridLineWidth: 0 })],
+            yAxis: [eixoY(c, 'ERC (€/MWh)'), eixoY(c, 'OMIE PT (€/MWh)', { opposite: true, gridLineWidth: 0, showEmpty: false })],
             tooltip: Object.assign(base(c).tooltip, {
                 formatter: function () {
                     const h = this.points[0].point.index;
@@ -1103,7 +1424,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const iMax = u.indexOf(Math.max(...val)), iMin = u.indexOf(Math.min(...val));
         const sol = h => h >= 10 && h < 17;
         const difDom = u === sel.util ? media(sel.dom.map((v, h) => sol(h) && !vazio(v) && !vazio(u[h]) ? v - u[h] : null)) : null;
-        const r = correlacao(u, sel.omie);
+        const r = correlacao(u, u === sel.util ? omie.util : (u === sel.sab ? omie.sab : omie.dom));
         let txt = `${_estacao === 'todo' ? 'No período' : 'Nos dias de ' + NOME_ESTACAO[_estacao] + ' do período'}, em ${nomeU}, o ERC foi mais alto às <strong>${hora(iMax)}</strong> (${fmtMWh(u[iMax])}) e mais baixo às <strong>${hora(iMin)}</strong> (${fmtMWh(u[iMin])}).`;
         if (!vazio(difDom)) txt += ` Entre as 10h e as 17h, ao domingo, ficou em média <strong>${sinal(difDom)} €/MWh</strong> face ao dia útil.`;
         if (!vazio(r)) txt += ` A correlação entre o ERC e o OMIE PT ao longo do dia é de <strong>${fmt2(r)}</strong>${r < -0.5 ? ': quando um desce, o outro sobe' : ''}.`;
@@ -1256,7 +1577,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const todosPrev = dados.previstos >= pts.length;
         const sufixo = comPerdas ? ' × perdas' : '';
         const nomeOmie = 'OMIE PT' + sufixo;
-        const nomeErc = (todosPrev ? 'ERC previsto' : 'ERC') + sufixo;
+        // O ERC real e o previsto em duas séries com cores parecidas mas distintas
+        // (a do previsto é a dos Preços Horários), para se ver onde muda ao mudar de dia
+        const COR_ERC = '#f59e0b', COR_ERC_PREV = '#F4B183';
+        const dadosErc = pts.map(p => p.prev ? null : vE(p)), dadosErcPrev = pts.map(p => p.prev ? vE(p) : null);
 
         const cats = pts.map(p => p.h);
         const bOmie = melhorHora(pts, vO);
@@ -1290,14 +1614,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     const p = pts[this.points[0].point.index];
                     let s = `<b>${p.h}–${fim15(p.h)}</b><br>`;
                     s += `<span style="color:#2563eb">●</span> OMIE PT: ${fmtMWh(p.omie)}<br>`;
-                    s += `<span style="color:#f59e0b">●</span> ERC${p.prev ? ' (previsão própria)' : ''}: ${fmtMWh(p.erc)}<br>`;
+                    s += `<span style="color:${p.prev ? COR_ERC_PREV : COR_ERC}">●</span> ERC${p.prev ? ' (previsão própria)' : ''}: ${fmtMWh(p.erc)}<br>`;
                     if (comPerdas) s += `Fator de perdas: ${fmt3(p.perdas)}<br>`;
                     if (!vazio(vT(p))) s += `<b>OMIE PT + ERC${comPerdas ? ', com perdas' : ''}: ${fmtMWh(vT(p))}</b>`;
                     return s;
                 }
             }),
             series: [
-                { name: nomeErc, data: pts.map(vE), color: '#f59e0b' },
+                { name: 'ERC' + sufixo, data: dadosErc, color: COR_ERC, showInLegend: dadosErc.some(v => v !== null) },
+                { name: 'ERC previsto' + sufixo, data: dadosErcPrev, color: COR_ERC_PREV, showInLegend: dadosErcPrev.some(v => v !== null) },
                 { name: nomeOmie, data: pts.map(vO), color: '#2563eb' }
             ]
         }));
@@ -1580,6 +1905,8 @@ document.addEventListener('DOMContentLoaded', function () {
     ligarToggle('ctrl-estacao', v => { _estacao = v; renderHoras(); atualizarURL(); });
     ligarToggle('ctrl-ciclo', v => { _ciclo = v; renderPeriodos(); atualizarURL(); });
     ligarToggle('ctrl-perdas', v => { _perdas = v; renderHoje(); atualizarURL(); });
+    ligarToggle('ctrl-outros', v => { _outros = v; renderEvolucao(); atualizarURL(); });
+    document.getElementById('btn-tipos-todos').addEventListener('click', () => { _tiposTodos = !_tiposTodos; renderTipos(); });
     document.addEventListener('themeChanged', renderTudo);
 
     document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
@@ -1618,6 +1945,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const URL_INICIAL = lerURL();
     if (URL_INICIAL.perdas === 'com') { _perdas = 'com'; ativarToggle('ctrl-perdas', 'com'); }
+    if (URL_INICIAL.outros === 'detalhe') { _outros = 'detalhe'; ativarToggle('ctrl-outros', 'detalhe'); }
     if (PERIODOS_CICLO[URL_INICIAL.ciclo]) { _ciclo = URL_INICIAL.ciclo; ativarToggle('ctrl-ciclo', _ciclo); }
     if (['inverno', 'primavera', 'verao', 'outono'].includes(URL_INICIAL.est)) { _estacao = URL_INICIAL.est; ativarToggle('ctrl-estacao', _estacao); }
 
@@ -1668,6 +1996,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         prepararDias(URL_INICIAL.dia);
         renderHoje();
+        atualizarURL();               // o dia do link só fica conhecido aqui
     });
 });
 </script>
