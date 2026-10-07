@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Serviços de Sistema: reservas, desvios, restrições e curtailment | Tiago Felícia</title>
+    <meta name="description" content="Serviços de sistema da REN, para o período escolhido: energia cortada por ordem do operador (curtailment), desvios dos agentes, energia de reserva ativada (aFRR, mFRR, RR), bandas de reserva e restrições técnicas, com quantidades, preços médios e perfil por hora." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/servicos-sistema" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/servicos-sistema" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/servicos-sistema" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Serviços de Sistema: reservas, desvios, restrições e curtailment" />
+    <meta property="og:description" content="Quanta energia foi cortada, quanto custam as reservas e os desvios e a que horas: os serviços que mantêm a rede equilibrada." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/servicos-sistema" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Serviços de sistema da eletricidade — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Serviços de sistema da REN — reservas, desvios, restrições técnicas e redução de geração",
+      "description": "Por dia de mercado e por hora (hora de Portugal), desde 14 de março de 2024: energia cortada por ordem do operador (curtailment), desvios dos agentes em excesso e em falta, energia de reserva ativada (aFRR, mFRR, RR), bandas de reserva contratadas e restrições técnicas, com quantidades, valores e preços médios. Derivado dos Encargos de Regulação imputados ao Consumo (ERC), vista por tipo, publicados pela REN.",
+      "url": "https://www.tiagofelicia.pt/servicos-sistema",
+      "inLanguage": "pt-PT",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "spatialCoverage": { "@type": "Place", "name": "Portugal" },
+      "temporalCoverage": "2024-03-14/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Redução de geração (curtailment)", "unitText": "MWh" },
+        { "@type": "PropertyValue", "name": "Desvios dos agentes em excesso e em falta", "unitText": "MWh" },
+        { "@type": "PropertyValue", "name": "Energia de reserva ativada (aFRR, mFRR, RR)", "unitText": "MWh" },
+        { "@type": "PropertyValue", "name": "Bandas de reserva aFRR e mFRR", "unitText": "MW" },
+        { "@type": "PropertyValue", "name": "Restrições técnicas", "unitText": "MWh" },
+        { "@type": "PropertyValue", "name": "Preço médio de cada serviço", "unitText": "EUR/MWh" }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/servicos_sistema/" },
+        { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/erc_tipo/" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/erc/tipo/" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Serviços de Sistema", "item": "https://www.tiagofelicia.pt/servicos-sistema" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "O que são os serviços de sistema?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "São o que a REN, como gestora do sistema elétrico, contrata e liquida para que a produção seja igual ao consumo a cada instante e a rede funcione com segurança: as reservas (a disponibilidade, ou banda, e a energia ativada), a resolução de restrições técnicas, as ordens de redução de geração e a liquidação dos desvios dos agentes. O saldo de tudo isto é repartido pelo consumo: são os Encargos de Regulação imputados ao Consumo (ERC)."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que são aFRR, mFRR e RR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "São reservas para repor o equilíbrio entre produção e consumo. A aFRR é ativada automaticamente, em segundos; a mFRR por ordem do operador, em minutos; a RR (reserva de substituição) é mais lenta e serve para libertar as outras. A banda é o pagamento pela disponibilidade, em MW; a energia é o pagamento pelo que foi efetivamente ativado, em MWh, a subir ou a descer. Nestes dados, a RR só tem valores até 30/12/2025."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que são os desvios e porque é que quem fica em falta paga mais do que quem fica em excesso recebe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Um desvio é a diferença entre o que um agente programou e o que realmente produziu ou consumiu. Quem fica em falta paga a energia em falta; quem fica em excesso recebe pela energia a mais. No último ano (até outubro de 2026), a falta pagou em média cerca de 94 EUR/MWh e o excesso recebeu cerca de 32 EUR/MWh, com o OMIE PT médio perto de 74 EUR/MWh. A diferença incentiva os agentes a cumprir o programa, e o saldo baixa o ERC."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que é a redução de geração (curtailment)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É uma ordem do operador para centrais reduzirem a produção por razões de segurança da rede. Aparece nos encargos de regulação da REN desde 24/12/2025. Nestes dados, a energia reduzida não tem valor associado; o que tem valor são os incumprimentos dessas ordens, pagos pelos agentes."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que são as restrições técnicas e o reequilíbrio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O programa que sai do mercado nem sempre pode ser transportado pela rede com segurança. Para o resolver, o operador acrescenta energia a algumas centrais (restrição) e retira-a a outras para que a produção continue igual ao consumo (reequilíbrio). Acontece em várias fases: no PDBF, depois do mercado diário, e mais perto do tempo real (após o PDVD e após o PHF). No PDBF, a REN separa a restrição e o reequilíbrio desde 16/07/2025."
+        }
+      },{
+        "@type": "Question",
+        "name": "Qual é a relação com o ERC?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O ERC é o saldo de todos estes encargos a dividir pelo consumo. A página Custos de Regulação (ERC) mostra quanto pesa cada um em EUR por MWh consumido; esta página mostra as quantidades e os preços de cada serviço."
+        }
+      },{
+        "@type": "Question",
+        "name": "De onde vêm estes dados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Da vista por tipo dos Encargos de Regulação imputados ao Consumo do SIME da REN, por quarto de hora, recolhidos duas vezes por dia desde 14 de março de 2024. Os dados completos estão em dados.tiagofelicia.pt, sob licença CC BY 4.0."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        .aviso-box, .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .aviso-box, .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #666; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 0 0 14px 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e,
+           abaixo de 768px, position: sticky !important); um <nav> dentro do <main> apanha-as —
+           por isso são anuladas aqui. Sem o position: static, no telemóvel a
+           barra de atalhos ficava colada ao topo por cima dos gráficos. */
+        /* --- Controlos de período (como na mibgas-futuros) --- */
+        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+        .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
+        .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+        .date-selector-periodo label { font-weight: bold; font-size: 0.9em; }
+        .date-selector-periodo input { padding: 7px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95em; }
+        .date-selector-periodo.no-dates .date-input-wrapper { display: none; }
+        #btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 7px 14px; font-size: 0.95em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        #erro-periodo { display: none; max-width: 600px; margin: 0 auto 12px auto; background: #fdecea; border-left: 3px solid #c0392b; padding: 8px 12px; font-size: 0.88em; color: #7b241c; border-radius: 0 5px 5px 0; }
+        .periodo-titulo { font-weight: 600; color: #2c3e50 !important; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+        /* No telemóvel: sem o "Últimos" e os botões em grelha de 4 */
+        @media (max-width: 760px) {
+            .periodo-presets .ult { display: none; }
+            .periodo-presets .hh-mode-toggle { display: grid; grid-template-columns: repeat(4, auto); }
+            .periodo-presets .hh-mode-btn { padding: 6px 9px; font-size: 0.82em; border-bottom: 1px solid #cbd5e1; }
+            .periodo-presets .hh-mode-btn:nth-child(4n) { border-right: none; }
+            .periodo-presets .hh-mode-btn:nth-last-child(-n+4) { border-bottom: none; }
+        }
+
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        #ss-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 22px auto; }
+        @media (max-width: 1000px) { #ss-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 700px) { #ss-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #ss-kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.25em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .kpi-sub { font-size: 0.76em; color: #6c757d; margin-top: 5px; }
+        .kpi-delta { font-size: 0.74em; font-weight: 600; margin-top: 3px; }
+        .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; }
+        .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0 0 4px 0; }
+        .kpi-cabecalho p { font-size: 0.85em; color: #6c757d; margin: 0; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #666; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 440px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #6c757d; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .resumo-bloco { width: 100%; margin: 12px 0 0; font-size: 0.9em; color: #444; line-height: 1.6; }
+        .nota-bloco { font-size: 0.8em; color: #888; margin: 6px 0 0; }
+
+        .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
+        .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(:disabled):not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .btn-toggle button:disabled { color: #cbd5e1; cursor: not-allowed; background: #fafafa; }
+        .btn-toggle[hidden] { display: none; }
+        .ctrl-data { display: inline-flex; align-items: center; gap: 6px; }
+        .ctrl-data input { font-size: 0.85em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #475569; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box ul { margin: 4px 0 8px 0; padding-left: 20px; }
+        .metodo-box li { margin: 2px 0; }
+
+        .tabela-box { width: 100%; margin: 14px 0 0; overflow-x: auto; }
+        .tabela-erc { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-erc caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-erc th, .tabela-erc td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-erc th[scope="col"] { background: #f1f3f5; font-weight: 600; }
+        .tabela-erc td.esq, .tabela-erc th.esq { text-align: left; }
+        .tabela-erc tbody tr:nth-child(even) { background: #fbfcfd; }
+        .tabela-erc tr.hoje td { font-weight: 700; background: #eef6ff; }
+        .tabela-erc tr.passado td { color: #6c757d; }
+        .tabela-erc td.nome { text-align: left; white-space: normal; min-width: 230px; }
+        .tabela-erc td.nome .cod { display: block; font-size: 0.78em; color: #94a3b8; font-family: ui-monospace, Consolas, monospace; }
+        .btn-mais { margin-top: 8px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 5px; padding: 6px 12px; font-size: 0.85em; cursor: pointer; }
+        .btn-mais:hover { background: #e2e8f0; }
+        .recordes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
+        @media (max-width: 800px) { .recordes-grid { grid-template-columns: 1fr; } }
+        .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .cta-irma { font-size: 0.88em; color: #6c757d; margin-top: 12px; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 380px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.8em; }
+        }
+
+        /* --- Dark mode --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-cabecalho h2,
+        [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub,
+        [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
+        [data-theme="dark"] .nota-bloco, [data-theme="dark"] .cta-irma { color: #94a3b8; }
+        [data-theme="dark"] .resumo-bloco, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(:disabled):not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .btn-toggle button:disabled { color: #475569; background: #16202e; }
+        [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; border-bottom-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .date-selector-periodo input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .date-selector-periodo input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] #btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] #erro-periodo { background: #4a1c1c; color: #fca5a5; border-left-color: #dc2626; }
+        [data-theme="dark"] .periodo-titulo { color: #e2e8f0 !important; }
+        [data-theme="dark"] .ctrl-data input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .ctrl-data input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-erc { background: #1e293b; }
+        [data-theme="dark"] .tabela-erc caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-erc th, [data-theme="dark"] .tabela-erc td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-erc th[scope="col"] { background: #0f172a; }
+        [data-theme="dark"] .tabela-erc tbody tr:nth-child(even) { background: #16202e; }
+        [data-theme="dark"] .tabela-erc tr.hoje td { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-erc tr.passado td { color: #94a3b8; }
+        [data-theme="dark"] .tabela-erc td.nome .cod { color: #64748b; }
+        [data-theme="dark"] .btn-mais { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .btn-mais:hover { background: #334155; }
+
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav,
+            .periodo-presets, .date-selector-periodo, .toast-feedback,
+            .bloco-controls, .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li aria-current="page">Serviços de Sistema</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <div class="periodo-presets">
+            <div class="hh-mode-toggle" role="group" aria-label="Período">
+                <button type="button" class="hh-mode-btn" data-preset="7d"><span class="ult">Últimos </span>7 dias</button>
+                <button type="button" class="hh-mode-btn" data-preset="mes">Este mês</button>
+                <button type="button" class="hh-mode-btn" data-preset="mespassado">Mês passado</button>
+                <button type="button" class="hh-mode-btn" data-preset="3m"><span class="ult">Últimos </span>3 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="6m"><span class="ult">Últimos </span>6 meses</button>
+                <button type="button" class="hh-mode-btn active" data-preset="12m"><span class="ult">Últimos </span>12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="ano">Ano corrente</button>
+                <button type="button" class="hh-mode-btn" data-preset="custom" title="Escolher as datas — abre com a série completa, desde 14/03/2024">Personalizado</button>
+            </div>
+        </div>
+        <div class="date-selector-periodo no-dates">
+            <div class="date-input-wrapper"><label for="seletor-data-inicio">De:</label> <input type="date" id="seletor-data-inicio"></div>
+            <div class="date-input-wrapper"><label for="seletor-data-fim">até:</label> <input type="date" id="seletor-data-fim"></div>
+            <button type="button" id="btn-partilhar" title="Copiar ou partilhar o link desta vista" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
+        </div>
+        <div id="erro-periodo" role="alert"></div>
+        <p class="badge-global">Dados disponíveis desde <strong id="badge-inicio">--/--/----</strong> · Última atualização: <strong id="badge-ultima">--/--/----</strong></p>
+
+        <h1>Serviços de Sistema</h1>
+        <p>Reservas, desvios, restrições técnicas e redução de geração — o que a REN liquida para manter a rede equilibrada e segura</p>
+        <p class="periodo-titulo" id="periodo-titulo"></p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-kpis" class="mini-nav-chip">📋 Resumo</a>
+        <a href="#bloco-curt" class="mini-nav-chip">✂️ Curtailment</a>
+        <a href="#bloco-desv" class="mini-nav-chip">⚖️ Desvios</a>
+        <a href="#bloco-res" class="mini-nav-chip">⚡ Energia de reserva</a>
+        <a href="#bloco-banda" class="mini-nav-chip">🔋 Bandas de reserva</a>
+        <a href="#bloco-rt" class="mini-nav-chip">🛠️ Restrições técnicas</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados…</div>
+
+    <!-- ====================== RESUMO ====================== -->
+    <div class="kpi-cabecalho" id="bloco-kpis">
+        <h2>Resumo do período</h2>
+        <p>Quantidades em GWh (energia) ou MW (bandas); preços médios em €/MWh = valor ÷ quantidade. Os totais diários são por dia de mercado, como na REN; as horas são em hora de Portugal. O custo que tudo isto deixa no preço da eletricidade está nos <a href="erc">Custos de Regulação (ERC)</a>.</p>
+    </div>
+    <div id="ss-kpis"></div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/servicos-sistema</p></div>
+
+    <!-- ====================== CURTAILMENT ====================== -->
+    <div class="grafico-box" id="bloco-curt">
+        <h2>Redução de geração (curtailment)</h2>
+        <p class="grafico-intro">Energia que o operador mandou centrais deixarem de produzir, por razões de segurança da rede. Aparece nos encargos de regulação da REN desde 24/12/2025; nestes dados, a energia reduzida não tem valor associado — o que tem valor são os incumprimentos dessas ordens.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-curt" role="group" aria-label="Vista da redução de geração">
+                <button type="button" data-v="evol" class="active">Por dia ou mês</button>
+                <button type="button" data-v="hora">Por hora do dia</button>
+            </div>
+        </div>
+        <div id="grafico-curt" class="grafico"></div>
+        <p class="resumo-bloco" id="curt-resumo"></p>
+        <p class="nota-bloco" id="curt-nota"></p>
+    </div>
+
+    <!-- ====================== DESVIOS ====================== -->
+    <div class="grafico-box" id="bloco-desv">
+        <h2>Desvios dos agentes — excesso e falta</h2>
+        <p class="grafico-intro">A diferença entre o que cada agente programou e o que realmente produziu ou consumiu. Quem fica <strong>em falta</strong> paga a energia que faltou; quem fica <strong>em excesso</strong> recebe pela energia a mais. Os volumes são a soma dos desvios de cada agente, antes de se compensarem entre si.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-desv" role="group" aria-label="Vista dos desvios">
+                <button type="button" data-v="evol" class="active">Volume</button>
+                <button type="button" data-v="preco">Preço médio</button>
+                <button type="button" data-v="hora">Por hora do dia</button>
+            </div>
+        </div>
+        <div id="grafico-desv" class="grafico"></div>
+        <p class="resumo-bloco" id="desv-resumo"></p>
+        <p class="nota-bloco" id="desv-nota"></p>
+    </div>
+
+    <!-- ====================== ENERGIA DE RESERVA ====================== -->
+    <div class="grafico-box" id="bloco-res">
+        <h2>Energia de reserva ativada</h2>
+        <p class="grafico-intro">A energia que as reservas efetivamente produziram a mais (<strong>a subir</strong>) ou a menos (<strong>a descer</strong>) para repor o equilíbrio em tempo real. A <strong>aFRR</strong> é ativada automaticamente, em segundos; a <strong>mFRR</strong> por ordem do operador, em minutos; a <strong>RR</strong> é a reserva de substituição, mais lenta (nestes dados, só até 30/12/2025). A energia a subir é paga às centrais; na energia a descer são elas que pagam.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-res" role="group" aria-label="Vista da energia de reserva">
+                <button type="button" data-v="evol" class="active">Volume</button>
+                <button type="button" data-v="preco">Preço médio</button>
+                <button type="button" data-v="hora">Por hora do dia</button>
+            </div>
+        </div>
+        <div id="grafico-res" class="grafico"></div>
+        <p class="resumo-bloco" id="res-resumo"></p>
+        <p class="nota-bloco" id="res-nota"></p>
+    </div>
+
+    <!-- ====================== BANDAS ====================== -->
+    <div class="grafico-box" id="bloco-banda">
+        <h2>Bandas de reserva — a disponibilidade contratada</h2>
+        <p class="grafico-intro">Os MW que a REN paga a centrais para estarem prontas a subir ou descer a produção, usados ou não. A <strong>banda aFRR</strong> é contratada a subir e a descer; a <strong>banda mFRR</strong> em contratos anuais, trimestrais e mensais.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-banda" role="group" aria-label="Vista das bandas de reserva">
+                <button type="button" data-v="evol" class="active">MW contratados</button>
+                <button type="button" data-v="custo">Custo</button>
+                <button type="button" data-v="hora">Por hora do dia</button>
+            </div>
+        </div>
+        <div id="grafico-banda" class="grafico"></div>
+        <p class="resumo-bloco" id="banda-resumo"></p>
+        <p class="nota-bloco" id="banda-nota"></p>
+    </div>
+
+    <!-- ====================== RESTRIÇÕES TÉCNICAS ====================== -->
+    <div class="grafico-box" id="bloco-rt">
+        <h2>Restrições técnicas — energia acrescentada e retirada</h2>
+        <p class="grafico-intro">Quando o programa que sai do mercado não pode ser transportado pela rede com segurança, o operador <strong>acrescenta</strong> energia a algumas centrais e <strong>retira-a</strong> a outras para que a produção continue igual ao consumo (reequilíbrio). Acontece no PDBF (logo a seguir ao mercado diário), depois do PDVD e depois do PHF (mais perto do tempo real). No PDBF, a restrição e o reequilíbrio só aparecem em separado desde 16/07/2025.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-rt" role="group" aria-label="Vista das restrições técnicas">
+                <button type="button" data-v="evol" class="active">Volume</button>
+                <button type="button" data-v="preco">Preço médio</button>
+                <button type="button" data-v="hora">Por hora do dia</button>
+            </div>
+        </div>
+        <div id="grafico-rt" class="grafico"></div>
+        <p class="resumo-bloco" id="rt-resumo"></p>
+        <p class="nota-bloco" id="rt-nota"></p>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>E quanto pesa tudo isto na fatura?</h2>
+        <p>O saldo destes serviços é repartido pelo consumo: são os Encargos de Regulação imputados ao Consumo (ERC), que os tarifários indexados somam ao OMIE PT.</p>
+        <div class="botoes">
+            <a href="erc" class="button-link">⚖️ Custos de Regulação (ERC)</a>
+            <a href="eletricidade-tiagofelicia" class="button-link">⚡ Simular tarifários de eletricidade</a>
+        </div>
+        <p class="cta-irma">No ERC, o bloco <a href="erc#bloco-tipos">«De onde vem o ERC»</a> mostra quanto pesa cada um destes serviços em € por MWh consumido.</p>
+    </div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que são os serviços de sistema?</strong></summary>
+            <div class="faq-content">
+                <p>São o que a <strong>REN</strong>, como gestora do sistema elétrico, contrata e liquida para que a produção seja igual ao consumo a cada instante e a rede funcione com segurança:</p>
+                <ul>
+                    <li>as <strong>reservas</strong> — a disponibilidade (banda) e a energia ativada;</li>
+                    <li>a resolução de <strong>restrições técnicas</strong>;</li>
+                    <li>as ordens de <strong>redução de geração</strong>;</li>
+                    <li>a liquidação dos <strong>desvios</strong> dos agentes.</li>
+                </ul>
+                <p>O saldo de tudo isto é repartido pelo consumo: são os <a href="erc">Encargos de Regulação imputados ao Consumo (ERC)</a>.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que são aFRR, mFRR e RR?</strong></summary>
+            <div class="faq-content">
+                <p>São reservas para repor o equilíbrio entre produção e consumo:</p>
+                <ul>
+                    <li><strong>aFRR</strong> — ativada automaticamente, em segundos;</li>
+                    <li><strong>mFRR</strong> — ativada por ordem do operador, em minutos;</li>
+                    <li><strong>RR</strong> (reserva de substituição) — mais lenta, serve para libertar as outras. Nestes dados só tem valores até 30/12/2025.</li>
+                </ul>
+                <p>A <strong>banda</strong> é o pagamento pela disponibilidade, em MW; a <strong>energia</strong> é o pagamento pelo que foi efetivamente ativado, em MWh, a subir ou a descer.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que são os desvios e porque é que quem fica em falta paga mais do que quem fica em excesso recebe?</strong></summary>
+            <div class="faq-content">
+                <p>Um desvio é a diferença entre o que um agente programou e o que realmente produziu ou consumiu. Quem fica em falta paga a energia em falta; quem fica em excesso recebe pela energia a mais.</p>
+                <p>No último ano (até outubro de 2026), a falta pagou em média cerca de <strong>94 €/MWh</strong> e o excesso recebeu cerca de <strong>32 €/MWh</strong>, com o OMIE PT médio perto de 74 €/MWh. A diferença incentiva os agentes a cumprir o programa, e o saldo baixa o ERC.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que é a redução de geração (curtailment)?</strong></summary>
+            <div class="faq-content">
+                <p>É uma ordem do operador para centrais reduzirem a produção por razões de segurança da rede. Aparece nos encargos de regulação da REN desde <strong>24/12/2025</strong>.</p>
+                <p>Nestes dados, a energia reduzida não tem valor associado; o que tem valor são os incumprimentos dessas ordens, pagos pelos agentes.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que são as restrições técnicas e o reequilíbrio?</strong></summary>
+            <div class="faq-content">
+                <p>O programa que sai do mercado nem sempre pode ser transportado pela rede com segurança. Para o resolver, o operador <strong>acrescenta</strong> energia a algumas centrais (restrição) e <strong>retira-a</strong> a outras para que a produção continue igual ao consumo (reequilíbrio).</p>
+                <p>Acontece em várias fases: no <strong>PDBF</strong>, depois do mercado diário, e mais perto do tempo real (após o <strong>PDVD</strong> e após o <strong>PHF</strong>). No PDBF, a REN separa a restrição e o reequilíbrio desde 16/07/2025.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Qual é a relação com o ERC?</strong></summary>
+            <div class="faq-content">
+                <p>O <a href="erc">ERC</a> é o saldo de todos estes encargos a dividir pelo consumo. Lá vê-se quanto pesa cada um em € por MWh consumido (bloco <a href="erc#bloco-tipos">«De onde vem o ERC»</a>); aqui, as quantidades e os preços de cada serviço.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm estes dados?</strong></summary>
+            <div class="faq-content">
+                <p>Da vista por tipo dos <strong>Encargos de Regulação imputados ao Consumo</strong> do SIME da REN, por quarto de hora, recolhidos duas vezes por dia desde 14 de março de 2024. Os resumos desta página são recalculados uma vez por dia.</p>
+                <p>Os dados completos estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    // Por dia de mercado vem de agregados/erc_tipo/AAAA.json (o mesmo da página
+    // do ERC); por hora, de agregados/servicos_sistema/AAAA-MM.json, que só se
+    // descarrega quando se escolhe uma vista "Por hora do dia".
+    const URL_META = 'agregados/servicos_sistema/metadata.json';
+    const PASTA_TIPO = 'agregados/erc_tipo/';
+    const PASTA_HORAS = 'agregados/servicos_sistema/';
+
+    const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const MESES_LONGOS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho',
+                          'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const DIAS_SEMANA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+    // Cores (paleta validada: a mesma cor = a mesma coisa em todos os gráficos)
+    const COR = {
+        afrr: ['#2a78d6', '#3987e5'], mfrr: ['#eb6834', '#d95926'], trans: ['#1baf7a', '#199e70'],
+        rr: ['#eda100', '#c98500'], violeta: ['#4a3aa7', '#9085e9'], magenta: ['#e87ba4', '#d55181'],
+        verde: ['#1baf7a', '#199e70'], azul: ['#2a78d6', '#3987e5'], vermelho: ['#e34948', '#e66767'],
+        azulEsc: ['#1c5cab', '#86b6ef']
+    };
+    const cor = (k, c) => COR[k][c.dk ? 1 : 0];
+
+    // Grupos de códigos só usados no custo das bandas (os outros vêm dos indicadores)
+    const BANDA_CUSTO = [
+        { id: 'afrr', nome: 'Banda aFRR', cods: ['BAFRRMRCSUB', 'BAFRRMRCDES'], cor: 'afrr' },
+        { id: 'afrrext', nome: 'Banda aFRR extraordinária', cods: ['BAFRREXTSUB', 'BAFRREXTDES'], cor: 'trans' },
+        { id: 'mfrr', nome: 'Banda mFRR', cods: ['BMFRRANO', 'BMFRRTRI', 'BMFRRMES'], cor: 'mfrr' },
+        { id: 'inc', nome: 'Incumprimentos de banda', cods: ['BAFRRINCSUB', 'BAFRRINCDES', 'BMFRRINC'], cor: 'vermelho' }
+    ];
+
+    // ==================================================================
+    // ESTADO
+    // ==================================================================
+    let META = null;
+    let IND = {};                 // id → { nome, codigos: Set, unidade }
+    const VISTA = { curt: 'evol', desv: 'evol', res: 'evol', banda: 'evol', rt: 'evol' };
+    const VISTA_ID = { curt: 'ctrl-curt', desv: 'ctrl-desv', res: 'ctrl-res', banda: 'ctrl-banda', rt: 'ctrl-rt' };
+    const VISTAS_VALIDAS = { curt: ['evol', 'hora'], desv: ['evol', 'preco', 'hora'], res: ['evol', 'preco', 'hora'],
+                             banda: ['evol', 'custo', 'hora'], rt: ['evol', 'preco', 'hora'] };
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const fmt0 = v => vazio(v) ? '--' : _nf0.format(v);
+    const fmt1 = v => vazio(v) ? '--' : _nf1.format(v);
+    const fmt2 = v => vazio(v) ? '--' : _nf2.format(v);
+    const fmtMWh = v => vazio(v) ? '--' : fmt1(v) + ' €/MWh';
+    // Energia em MWh → "1,23 TWh", "45,67 GWh" ou "456 MWh"
+    const fmtEn = mwh => vazio(mwh) ? '--' : (Math.abs(mwh) >= 1e6 ? `${fmt2(mwh / 1e6)} TWh`
+                                            : Math.abs(mwh) >= 1000 ? `${fmt2(mwh / 1000)} GWh` : `${fmt0(mwh)} MWh`);
+    function fmtEur(v) {
+        if (vazio(v)) return '--';
+        const a = Math.abs(v), s = v < 0 ? '−' : '';
+        if (a >= 1e6) return `${s}${fmt2(a / 1e6)} M€`;
+        if (a >= 1e3) return `${s}${fmt1(a / 1e3)} k€`;
+        return `${s}${fmt0(a)} €`;
+    }
+    function fmtData(iso) { if (!iso) return '--/--/----'; const p = iso.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+    function rotMes(mes) { return `${MESES[+mes.slice(5, 7) - 1]}/${mes.slice(2, 4)}`; }
+    function mesLongo(mes) { return `${MESES_LONGOS[+mes.slice(5, 7) - 1]} de ${mes.slice(0, 4)}`; }
+    const hora = h => String(h).padStart(2, '0') + 'h';
+    const faixaHora = h => `${String(h).padStart(2, '0')}:00–${String((h + 1) % 24).padStart(2, '0')}:00`;
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6',
+                 suave: dk ? '#94a3b8' : '#888' };
+    }
+    function exportacao(nome) {
+        return { enabled: true, filename: nome,
+                 buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } } };
+    }
+    function base(c, nome) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: false },
+            exporting: exportacao(nome),
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    const eixoX = (c, cats, extra) => Object.assign({ categories: cats, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha }, extra || {});
+    const eixoY = (c, titulo, extra) => Object.assign({ title: { text: titulo, style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha }, extra || {});
+
+    function limparGrafico(id, html) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = html || '';
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    function ativarToggle(id, v) {
+        document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+    }
+    function media(arr) {
+        const v = arr.filter(x => !vazio(x));
+        return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+    }
+
+    // ==================================================================
+    // DATAS (AAAA-MM-DD, em UTC para não depender do fuso do visitante)
+    // ==================================================================
+    const DIA_MS = 86400000;
+    const tsDia = iso => { const [a, m, d] = iso.split('-').map(Number); return Date.UTC(a, m - 1, d); };
+    const isoDeTs = ts => new Date(ts).toISOString().slice(0, 10);
+    const addDias = (iso, n) => isoDeTs(tsDia(iso) + n * DIA_MS);
+    function deslocarMeses(iso, n) { const d = new Date(tsDia(iso)); d.setUTCMonth(d.getUTCMonth() + n); return isoDeTs(d.getTime()); }
+    const ultimoDoMes = iso => { const [a, m] = iso.split('-').map(Number); return isoDeTs(Date.UTC(a, m, 0)); };
+    const nDias = (a, b) => Math.round((tsDia(b) - tsDia(a)) / DIA_MS) + 1;
+    function diasDe(inicio, fim) { const out = []; for (let t = tsDia(inicio); t <= tsDia(fim); t += DIA_MS) out.push(isoDeTs(t)); return out; }
+    const diaSemana = iso => DIAS_SEMANA[new Date(tsDia(iso)).getUTCDay()];
+    function hojeISO() {
+        const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+        const v = t => p.find(x => x.type === t).value;
+        return `${v('year')}-${v('month')}-${v('day')}`;
+    }
+
+    // ==================================================================
+    // DADOS
+    // ==================================================================
+    // Por dia de mercado: TIPO[dia] = { n: quartos de hora, v: Map(código → {e, q}) }
+    const _anosTipo = new Map();
+    const TIPO = new Map();
+    function carregarAnoTipo(ano) {
+        if (!_anosTipo.has(ano)) {
+            _anosTipo.set(ano, fetchDados(PASTA_TIPO + ano + '.json')
+                .then(r => r.ok ? r.json() : null)
+                .then(j => {
+                    if (!j) return null;
+                    Object.entries(j.dias || {}).forEach(([d, a]) => {
+                        const v = new Map();
+                        for (let k = 1; k + 2 < a.length; k += 3) v.set(j.codigos[a[k]], { e: a[k + 1] || 0, q: a[k + 2] || 0 });
+                        TIPO.set(d, { n: a[0], v });
+                    });
+                    return j;
+                })
+                .catch(() => null));
+        }
+        return _anosTipo.get(ano);
+    }
+    function carregarIntervaloTipo(inicio, fim) {
+        const anos = [];
+        for (let a = +inicio.slice(0, 4); a <= +fim.slice(0, 4); a++) anos.push(a);
+        return Promise.all(anos.map(carregarAnoTipo));
+    }
+    // Por hora, em hora de Portugal: HORAS[dia] = { o, q, e, n }
+    const _mesesHoras = new Map();
+    const HORAS = new Map();
+    function carregarMesHoras(mes) {
+        if (!_mesesHoras.has(mes)) {
+            _mesesHoras.set(mes, fetchDados(PASTA_HORAS + mes + '.json')
+                .then(r => r.ok ? r.json() : null)
+                .then(j => { if (j) Object.entries(j.dias || {}).forEach(([d, v]) => HORAS.set(d, v)); return j; })
+                .catch(() => null));
+        }
+        return _mesesHoras.get(mes);
+    }
+    function carregarHorasPeriodo() {
+        const meses = [...new Set(diasDe(periodo.inicio, periodo.fim).map(d => d.slice(0, 7)))]
+            .filter(m => (META.meses || []).includes(m));
+        return Promise.all(meses.map(carregarMesHoras));
+    }
+
+    // Somas de um conjunto de dias de mercado
+    function somaTipo(dias) {
+        const porCod = new Map();
+        let n = 0, nd = 0;
+        dias.forEach(d => {
+            const t = TIPO.get(d);
+            if (!t) return;
+            nd++; n += t.n;
+            t.v.forEach((x, c) => { const a = porCod.get(c) || { e: 0, q: 0 }; a.e += x.e; a.q += x.q; porCod.set(c, a); });
+        });
+        return { porCod, n, nd };
+    }
+    function somaCods(t, cods) {
+        let e = 0, q = 0;
+        cods.forEach(c => { const x = t.porCod.get(c); if (x) { e += x.e; q += x.q; } });
+        return { e, q };
+    }
+    const somaInd = (t, id) => somaCods(t, IND[id] ? [...IND[id].codigos] : []);
+    const preco = x => (x && x.q > 0) ? Math.abs(x.e) / x.q : null;
+    const omieMedio = dias => media(dias.map(d => META.omie[d]));
+    // Por hora: somas de q e e por indicador, quartos de hora e OMIE PT médio de cada hora
+    function somaHoras(dias, ids) {
+        const out = {}, nh = Array(24).fill(0), os = Array(24).fill(0), on = Array(24).fill(0);
+        ids.forEach(id => { out[id] = { q: Array(24).fill(0), e: Array(24).fill(0) }; });
+        let nd = 0;
+        dias.forEach(d => {
+            const h = HORAS.get(d);
+            if (!h) return;
+            nd++;
+            for (let k = 0; k < 24; k++) {
+                nh[k] += h.n ? h.n[k] : 4;
+                if (h.o && !vazio(h.o[k])) { os[k] += h.o[k]; on[k]++; }
+            }
+            ids.forEach(id => {
+                const q = h.q[id], e = h.e[id];
+                if (!q) return;
+                for (let k = 0; k < 24; k++) { out[id].q[k] += q[k] || 0; out[id].e[k] += (e && e[k]) || 0; }
+            });
+        });
+        return { ind: out, nh, omie: os.map((s, k) => on[k] ? s / on[k] : null), nd };
+    }
+
+    // Baldes da evolução: até 3 meses, um por dia; acima disso, um por mês
+    const DIARIO_ATE_DIAS = 92;
+    function baldes() {
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        if (dias.length <= DIARIO_ATE_DIAS) {
+            return { porDia: true, lista: dias.map(d => ({ rotulo: fmtData(d).slice(0, 5), longo: `${diaSemana(d)}, ${fmtData(d)}`, dias: [d] })) };
+        }
+        const meses = new Map();
+        dias.forEach(d => { const m = d.slice(0, 7); if (!meses.has(m)) meses.set(m, []); meses.get(m).push(d); });
+        return { porDia: false, lista: [...meses].map(([m, ds]) => ({ rotulo: rotMes(m), longo: mesLongo(m), dias: ds })) };
+    }
+    const notaBaldes = (B, linhas) => {
+        const um = linhas ? 'Um ponto' : 'Uma barra', uma = linhas ? 'um' : 'uma';
+        return B.porDia ? `${um} por dia de mercado (até 3 meses; acima disso, ${uma} por mês).` : `${um} por mês (dias de mercado).`;
+    };
+
+    // ==================================================================
+    // GRÁFICOS GENÉRICOS
+    // ==================================================================
+    // Colunas (empilhadas) com as séries dadas; valores já na unidade final
+    function graficoColunas(id, nome, cats, series, titulo, sufixo, opts) {
+        const c = _hcDark();
+        limparGrafico(id);
+        Highcharts.chart(id, Object.assign(base(c, nome), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, cats),
+            yAxis: eixoY(c, titulo, { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            plotOptions: { column: { stacking: 'normal', borderWidth: 0, groupPadding: 0.06, pointPadding: 0.02 },
+                           line: { marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2 } },
+            tooltip: Object.assign(base(c).tooltip, (opts && opts.tooltip) || {
+                formatter: function () {
+                    let s = `<b>${(opts && opts.longo) ? opts.longo(this.points[0].point.index) : this.x}</b><br>`;
+                    this.points.forEach(p => { if (!vazio(p.y)) s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmt2(p.y)} ${sufixo}<br>`; });
+                    return s;
+                }
+            }),
+            series
+        }));
+    }
+    // Linhas (preços), com o OMIE PT tracejado
+    function graficoLinhas(id, nome, cats, series, titulo, opts) {
+        const c = _hcDark();
+        limparGrafico(id);
+        Highcharts.chart(id, Object.assign(base(c, nome), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, cats),
+            yAxis: eixoY(c, titulo, { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            plotOptions: { line: { marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2, connectNulls: false } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    let s = `<b>${(opts && opts.longo) ? opts.longo(this.points[0].point.index) : this.x}</b><br>`;
+                    this.points.forEach(p => { if (!vazio(p.y)) s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmtMWh(p.y)}<br>`; });
+                    return s;
+                }
+            }),
+            series
+        }));
+    }
+    const serieOmie = (c, data) => ({ name: 'OMIE PT', data, color: c.suave, dashStyle: 'ShortDash', marker: { enabled: false }, lineWidth: 1.5, zIndex: 1 });
+    const catsHoras = Array.from({ length: 24 }, (_, h) => hora(h));
+    // Unidade de energia para um conjunto de valores em MWh
+    const unidade = valores => (Math.max(0, ...valores.filter(v => !vazio(v)).map(Math.abs)) >= 2000)
+        ? { div: 1000, un: 'GWh' } : { div: 1, un: 'MWh' };
+
+    // A vista por hora precisa dos ficheiros por mês: carrega-os e volta a desenhar
+    let _horasProntas = false;
+    function precisaHoras(id) {
+        if (_horasProntas) return false;
+        limparGrafico(id, '<div class="estado-carregamento">A carregar os dados por hora…</div>');
+        const pedido = _pedidoPeriodo;
+        carregarHorasPeriodo().then(() => { if (pedido === _pedidoPeriodo) { _horasProntas = true; renderVistasHora(); } });
+        return true;
+    }
+    const semDados = (id, ...ids) => { limparGrafico(id, '<div class="bloco-vazio">Sem dados neste período.</div>'); ids.forEach(x => { document.getElementById(x).textContent = ''; }); };
+
+    // ==================================================================
+    // RESUMO
+    // ==================================================================
+    function renderKPIs() {
+        const el = document.getElementById('ss-kpis');
+        const t = somaTipo(diasDe(periodo.inicio, periodo.fim));
+        if (!t.nd) { el.innerHTML = '<div class="bloco-vazio" style="grid-column:1/-1">Sem dados neste período.</div>'; return; }
+        const omie = omieMedio(diasDe(periodo.inicio, periodo.fim));
+        const card = (label, valor, sub) => `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value">${valor}</div>${sub ? `<div class="kpi-sub">${sub}</div>` : ''}</div>`;
+        const curt = somaInd(t, 'curt');
+        const exc = somaInd(t, 'dexc'), def = somaInd(t, 'ddef');
+        const somaVarios = ids => ids.map(id => somaInd(t, id)).reduce((a, x) => ({ e: a.e + x.e, q: a.q + x.q }), { e: 0, q: 0 });
+        const sobe = somaVarios(['asub', 'msub', 'tsub', 'rsub']), desce = somaVarios(['ades', 'mdes', 'tdes', 'rdes']);
+        const bas = somaInd(t, 'bas'), bad = somaInd(t, 'bad'), bm = somaInd(t, 'bm');
+        const rtA = somaVarios(['rt1', 'rt0']), rtR = somaInd(t, 'rt2');
+        const desdeCurt = '2025-12-24';
+        let html = card('Energia cortada (curtailment)', curt.q ? fmtEn(curt.q) : '0',
+            periodo.fim < desdeCurt ? 'sem registos antes de 24/12/2025' : `${diasCom('curt')} dias com cortes`);
+        html += card('Desvios: excesso / falta', `${fmtEn(exc.q)} / ${fmtEn(def.q)}`,
+            `o excesso recebeu ${fmtMWh(preco(exc))}; a falta pagou ${fmtMWh(preco(def))}`);
+        html += card('Reserva ativada a subir', fmtEn(sobe.q), `a ${fmtMWh(preco(sobe))}${vazio(omie) ? '' : ` (OMIE PT: ${fmtMWh(omie)})`}`);
+        html += card('Reserva ativada a descer', fmtEn(desce.q), `as centrais pagaram ${fmtMWh(preco(desce))}`);
+        html += card('Banda aFRR (média)', t.n ? `${fmt0(bas.q / t.n)} / ${fmt0(bad.q / t.n)} MW` : '--',
+            `a subir / a descer · mFRR: ${t.n ? fmt0(bm.q / t.n) : '--'} MW`);
+        html += card('Restrições técnicas no PDBF', fmtEn(rtA.q),
+            `acrescentados a ${fmtMWh(preco(rtA))}${rtR.q ? `; ${fmtEn(rtR.q)} retirados a ${fmtMWh(preco(rtR))}` : ''}`);
+        el.innerHTML = html;
+    }
+    function diasCom(id) {
+        return diasDe(periodo.inicio, periodo.fim).filter(d => { const t = TIPO.get(d); return t && [...IND[id].codigos].some(c => (t.v.get(c) || {}).q > 0); }).length;
+    }
+
+    // ==================================================================
+    // CURTAILMENT
+    // ==================================================================
+    function renderCurt() {
+        const c = _hcDark(), id = 'grafico-curt';
+        const resumo = document.getElementById('curt-resumo'), nota = document.getElementById('curt-nota');
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        const t = somaTipo(dias), tot = somaInd(t, 'curt');
+        if (!t.nd) return semDados(id, 'curt-resumo', 'curt-nota');
+        if (!tot.q) {
+            limparGrafico(id, `<div class="bloco-vazio">Sem energia cortada neste período${periodo.fim < '2025-12-24' ? ' — este encargo só existe nos dados da REN desde 24/12/2025' : ''}.</div>`);
+            resumo.textContent = ''; nota.textContent = '';
+            return;
+        }
+        const porDia = dias.map(d => ({ d, q: somaInd(somaTipo([d]), 'curt').q })).filter(x => x.q > 0);
+        const maior = porDia.reduce((a, x) => (!a || x.q > a.q) ? x : a, null);
+        if (VISTA.curt === 'hora') {
+            if (precisaHoras(id)) return;
+            const h = somaHoras(dias, ['curt']).ind.curt.q;
+            const u = unidade(h);
+            graficoColunas(id, 'curtailment-por-hora', catsHoras, [{ name: 'Energia cortada', data: h.map(v => v / u.div), color: cor('verde', c) }],
+                `${u.un} no período`, u.un, { longo: k => faixaHora(k) });
+            const hMax = h.indexOf(Math.max(...h));
+            const sol = h.slice(10, 17).reduce((a, b) => a + b, 0) / (h.reduce((a, b) => a + b, 0) || 1);
+            resumo.innerHTML = `A hora com mais energia cortada foi a das <strong>${faixaHora(hMax)}</strong> (${fmtEn(h[hMax])} no período). Entre as 10h e as 17h ficou <strong>${fmt0(100 * sol)} %</strong> do total.`;
+            nota.textContent = 'Soma de cada hora do dia em todo o período, em hora de Portugal.';
+            return;
+        }
+        const B = baldes();
+        const vals = B.lista.map(b => somaInd(somaTipo(b.dias), 'curt').q);
+        const u = unidade(vals);
+        graficoColunas(id, 'curtailment', B.lista.map(b => b.rotulo), [{ name: 'Energia cortada', data: vals.map(v => v / u.div), color: cor('verde', c) }],
+            u.un, u.un, { longo: k => B.lista[k].longo });
+        const inc = somaCods(t, ['CURTLMINC']);
+        resumo.innerHTML = `No período foram cortados <strong>${fmtEn(tot.q)}</strong> em ${porDia.length} ${porDia.length === 1 ? 'dia' : 'dias'}; o dia com mais cortes foi ${diaSemana(maior.d)}, ${fmtData(maior.d)} (${fmtEn(maior.q)}).` +
+            (inc.e ? ` Os incumprimentos destas ordens deram ${fmtEur(Math.abs(inc.e))} ${inc.e < 0 ? 'pagos pelos agentes' : 'de custo'}.` : '');
+        nota.textContent = notaBaldes(B) + ' Este encargo só existe nos dados da REN desde 24/12/2025.';
+    }
+
+    // ==================================================================
+    // DESVIOS
+    // ==================================================================
+    function renderDesv() {
+        const c = _hcDark(), id = 'grafico-desv';
+        const resumo = document.getElementById('desv-resumo'), nota = document.getElementById('desv-nota');
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        const t = somaTipo(dias);
+        if (!t.nd) return semDados(id, 'desv-resumo', 'desv-nota');
+        const exc = somaInd(t, 'dexc'), def = somaInd(t, 'ddef'), omie = omieMedio(dias);
+        let txt = `No período, os agentes ficaram <strong>${fmtEn(exc.q)}</strong> em excesso e <strong>${fmtEn(def.q)}</strong> em falta. ` +
+            `Em média, a falta pagou <strong>${fmtMWh(preco(def))}</strong> e o excesso recebeu <strong>${fmtMWh(preco(exc))}</strong>` +
+            `${vazio(omie) ? '' : `, com o OMIE PT médio em ${fmtMWh(omie)}`}. O saldo para o sistema foi de ${fmtEur(-(exc.e + def.e))} ${exc.e + def.e < 0 ? 'de receita' : 'de custo'}.`;
+        if (VISTA.desv === 'hora') {
+            if (precisaHoras(id)) return;
+            const H = somaHoras(dias, ['dexc', 'ddef']);
+            const he = H.ind.dexc, hd = H.ind.ddef;
+            const u = unidade(he.q.concat(hd.q));
+            const c2 = _hcDark();
+            graficoColunas(id, 'desvios-por-hora', catsHoras, [
+                { name: 'Excesso', data: he.q.map(v => v / u.div), color: cor('azul', c2) },
+                { name: 'Falta', data: hd.q.map(v => -v / u.div), color: cor('vermelho', c2) }
+            ], `${u.un} no período`, u.un, { tooltip: { formatter: function () {
+                const k = this.points[0].point.index;
+                return `<b>${faixaHora(k)}</b><br><span style="color:${cor('azul', c2)}">●</span> Excesso: ${fmtEn(he.q[k])} · recebeu ${fmtMWh(preco({ e: he.e[k], q: he.q[k] }))}` +
+                       `<br><span style="color:${cor('vermelho', c2)}">●</span> Falta: ${fmtEn(hd.q[k])} · pagou ${fmtMWh(preco({ e: hd.e[k], q: hd.q[k] }))}` +
+                       (vazio(H.omie[k]) ? '' : `<br>OMIE PT: ${fmtMWh(H.omie[k])}`);
+            } } });
+            const pf = hd.q.map((q, k) => preco({ e: hd.e[k], q }));
+            const kMax = pf.indexOf(Math.max(...pf.filter(x => !vazio(x))));
+            resumo.innerHTML = txt + ` A falta foi mais cara às <strong>${faixaHora(kMax)}</strong> (${fmtMWh(pf[kMax])}).`;
+            nota.textContent = 'Soma de cada hora do dia em todo o período, em hora de Portugal; o preço de cada hora está no tooltip.';
+            return;
+        }
+        const B = baldes();
+        const ts = B.lista.map(b => somaTipo(b.dias));
+        const cats = B.lista.map(b => b.rotulo), longo = k => B.lista[k].longo;
+        if (VISTA.desv === 'preco') {
+            graficoLinhas(id, 'desvios-preco', cats, [
+                { name: 'Falta (pagou)', data: ts.map(x => preco(somaInd(x, 'ddef'))), color: cor('vermelho', c) },
+                { name: 'Excesso (recebeu)', data: ts.map(x => preco(somaInd(x, 'dexc'))), color: cor('azul', c) },
+                serieOmie(c, B.lista.map(b => omieMedio(b.dias)))
+            ], '€/MWh', { longo });
+            nota.textContent = notaBaldes(B, true) + ' Preço médio = valor ÷ quantidade. OMIE PT = média simples das horas dos mesmos dias.';
+        } else {
+            const ve = ts.map(x => somaInd(x, 'dexc').q), vd = ts.map(x => somaInd(x, 'ddef').q);
+            const u = unidade(ve.concat(vd));
+            graficoColunas(id, 'desvios-volume', cats, [
+                { name: 'Excesso', data: ve.map(v => v / u.div), color: cor('azul', c) },
+                { name: 'Falta', data: vd.map(v => -v / u.div), color: cor('vermelho', c) },
+                { type: 'line', name: 'Saldo (excesso − falta)', data: ve.map((v, k) => (v - vd[k]) / u.div), color: c.txt, zIndex: 5 }
+            ], u.un, u.un, { longo });
+            nota.textContent = notaBaldes(B) + ' A falta aparece abaixo de zero.';
+        }
+        resumo.innerHTML = txt;
+    }
+
+    // ==================================================================
+    // ENERGIA DE RESERVA
+    // ==================================================================
+    const PRODUTOS = [
+        { nome: 'aFRR', sub: 'asub', des: 'ades', cor: 'afrr' },
+        { nome: 'mFRR', sub: 'msub', des: 'mdes', cor: 'mfrr' },
+        { nome: 'mFRR transitório', sub: 'tsub', des: 'tdes', cor: 'trans' },
+        { nome: 'RR', sub: 'rsub', des: 'rdes', cor: 'rr' }
+    ];
+    function renderRes() {
+        const c = _hcDark(), id = 'grafico-res';
+        const resumo = document.getElementById('res-resumo'), nota = document.getElementById('res-nota');
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        const t = somaTipo(dias);
+        if (!t.nd) return semDados(id, 'res-resumo', 'res-nota');
+        const ativos = PRODUTOS.filter(p => somaInd(t, p.sub).q || somaInd(t, p.des).q);
+        const omie = omieMedio(dias);
+        const a = somaInd(t, 'asub'), m = somaInd(t, 'msub'), ad = somaInd(t, 'ades'), md = somaInd(t, 'mdes');
+        let txt = `A energia a subir custou, em média, <strong>${fmtMWh(preco(a))}</strong> na aFRR e <strong>${fmtMWh(preco(m))}</strong> na mFRR` +
+            `${vazio(omie) ? '' : ` (OMIE PT médio: ${fmtMWh(omie)})`}; na energia a descer, as centrais pagaram ${fmtMWh(preco(ad))} (aFRR) e ${fmtMWh(preco(md))} (mFRR).`;
+        const tot = ativos.map(p => ({ p, s: somaInd(t, p.sub).q, d: somaInd(t, p.des).q }));
+        txt = `No período foram ativados <strong>${fmtEn(tot.reduce((x, y) => x + y.s, 0))}</strong> a subir e <strong>${fmtEn(tot.reduce((x, y) => x + y.d, 0))}</strong> a descer. ` + txt;
+        if (VISTA.res === 'hora') {
+            if (precisaHoras(id)) return;
+            const ids = ativos.flatMap(p => [p.sub, p.des]);
+            const H = somaHoras(dias, ids);
+            const u = unidade(ids.flatMap(x => H.ind[x].q));
+            const series = [];
+            ativos.forEach(p => {
+                series.push({ name: p.nome, data: H.ind[p.sub].q.map(v => v / u.div), color: cor(p.cor, c), stack: 'e' });
+                series.push({ name: p.nome + ' a descer', data: H.ind[p.des].q.map(v => -v / u.div), color: cor(p.cor, c), stack: 'e', linkedTo: ':previous', opacity: 0.6 });
+            });
+            graficoColunas(id, 'reserva-por-hora', catsHoras, series, `${u.un} no período`, u.un, { tooltip: { formatter: function () {
+                const k = this.points[0].point.index;
+                let s = `<b>${faixaHora(k)}</b>`;
+                ativos.forEach(p => {
+                    const su = { e: H.ind[p.sub].e[k], q: H.ind[p.sub].q[k] }, de = { e: H.ind[p.des].e[k], q: H.ind[p.des].q[k] };
+                    s += `<br><span style="color:${cor(p.cor, c)}">●</span> ${p.nome}: ↑ ${fmtEn(su.q)} a ${fmtMWh(preco(su))} · ↓ ${fmtEn(de.q)} a ${fmtMWh(preco(de))}`;
+                });
+                return s + (vazio(H.omie[k]) ? '' : `<br>OMIE PT: ${fmtMWh(H.omie[k])}`);
+            } } });
+            resumo.innerHTML = txt;
+            nota.textContent = 'Soma de cada hora do dia em todo o período, em hora de Portugal: a subir acima de zero, a descer abaixo. Os preços de cada hora estão no tooltip.';
+            return;
+        }
+        const B = baldes();
+        const ts = B.lista.map(b => somaTipo(b.dias));
+        const cats = B.lista.map(b => b.rotulo), longo = k => B.lista[k].longo;
+        if (VISTA.res === 'preco') {
+            const series = [];
+            ativos.filter(p => p.sub === 'asub' || p.sub === 'msub').forEach(p => {
+                series.push({ name: p.nome + ' a subir', data: ts.map(x => preco(somaInd(x, p.sub))), color: cor(p.cor, c) });
+                series.push({ name: p.nome + ' a descer', data: ts.map(x => preco(somaInd(x, p.des))), color: cor(p.cor, c), dashStyle: 'Dot' });
+            });
+            series.push(serieOmie(c, B.lista.map(b => omieMedio(b.dias))));
+            graficoLinhas(id, 'reserva-preco', cats, series, '€/MWh', { longo });
+            nota.textContent = notaBaldes(B, true) + ' Preço médio = valor ÷ quantidade; a descer, o que as centrais pagaram. OMIE PT = média simples das horas dos mesmos dias.';
+        } else {
+            const todos = ativos.flatMap(p => ts.flatMap(x => [somaInd(x, p.sub).q, somaInd(x, p.des).q]));
+            const u = unidade(todos);
+            const series = [];
+            ativos.forEach(p => {
+                series.push({ name: p.nome, data: ts.map(x => somaInd(x, p.sub).q / u.div), color: cor(p.cor, c), stack: 'e' });
+                series.push({ name: p.nome + ' a descer', data: ts.map(x => -somaInd(x, p.des).q / u.div), color: cor(p.cor, c), stack: 'e', linkedTo: ':previous', opacity: 0.6 });
+            });
+            graficoColunas(id, 'reserva-volume', cats, series, u.un, u.un, { longo });
+            nota.textContent = notaBaldes(B) + ' A subir acima de zero, a descer abaixo (mais claro).';
+        }
+        resumo.innerHTML = txt;
+    }
+
+    // ==================================================================
+    // BANDAS
+    // ==================================================================
+    function renderBanda() {
+        const c = _hcDark(), id = 'grafico-banda';
+        const resumo = document.getElementById('banda-resumo'), nota = document.getElementById('banda-nota');
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        const t = somaTipo(dias);
+        if (!t.nd || !t.n) return semDados(id, 'banda-resumo', 'banda-nota');
+        const mw = (x, ids) => x.n ? ids.reduce((a, i) => a + somaInd(x, i).q, 0) / x.n : null;
+        const custo = BANDA_CUSTO.map(g => ({ g, e: somaCods(t, g.cods).e })).filter(x => x.e);
+        const totCusto = custo.reduce((a, x) => a + x.e, 0);
+        const txt = `Em média estiveram contratados <strong>${fmt0(mw(t, ['bas']))} MW</strong> de banda aFRR a subir, <strong>${fmt0(mw(t, ['bad']))} MW</strong> a descer e <strong>${fmt0(mw(t, ['bm']))} MW</strong> de banda mFRR. ` +
+            `O custo das bandas no período foi de <strong>${fmtEur(totCusto)}</strong>` +
+            (custo.length ? ` (${custo.map(x => `${x.g.nome}: ${fmtEur(x.e)}`).join('; ')}).` : '.');
+        if (VISTA.banda === 'hora') {
+            if (precisaHoras(id)) return;
+            const H = somaHoras(dias, ['bas', 'bad', 'bm']);
+            const porHora = k => H.nh[k] ? 1 / H.nh[k] : null;
+            graficoLinhasMW(id, 'bandas-por-hora', catsHoras, [
+                { name: 'aFRR a subir', data: H.ind.bas.q.map((v, k) => v * porHora(k)), color: cor('afrr', c) },
+                { name: 'aFRR a descer', data: H.ind.bad.q.map((v, k) => v * porHora(k)), color: cor('violeta', c) },
+                { name: 'mFRR', data: H.ind.bm.q.map((v, k) => v * porHora(k)), color: cor('mfrr', c) }
+            ], k => faixaHora(k));
+            resumo.innerHTML = txt;
+            nota.textContent = 'MW médios contratados em cada hora do dia, no período, em hora de Portugal.';
+            return;
+        }
+        const B = baldes();
+        const ts = B.lista.map(b => somaTipo(b.dias));
+        const cats = B.lista.map(b => b.rotulo), longo = k => B.lista[k].longo;
+        if (VISTA.banda === 'custo') {
+            const todos = BANDA_CUSTO.flatMap(g => ts.map(x => somaCods(x, g.cods).e));
+            const div = Math.max(0, ...todos.map(Math.abs)) >= 1e6 ? 1e6 : 1e3, un = div === 1e6 ? 'M€' : 'k€';
+            graficoColunas(id, 'bandas-custo', cats, BANDA_CUSTO.map(g => ({ name: g.nome, data: ts.map(x => somaCods(x, g.cods).e / div), color: cor(g.cor, c) })),
+                un, un, { longo });
+            nota.textContent = notaBaldes(B) + ' Os incumprimentos de banda são pagos pelos agentes e aparecem abaixo de zero.';
+        } else {
+            graficoLinhasMW(id, 'bandas-mw', cats, [
+                { name: 'aFRR a subir', data: ts.map(x => mw(x, ['bas'])), color: cor('afrr', c) },
+                { name: 'aFRR a descer', data: ts.map(x => mw(x, ['bad'])), color: cor('violeta', c) },
+                { name: 'mFRR', data: ts.map(x => mw(x, ['bm'])), color: cor('mfrr', c) }
+            ], longo);
+            nota.textContent = notaBaldes(B, true) + ' MW médios contratados em cada quarto de hora. A banda mFRR soma os contratos anuais, trimestrais e mensais.';
+        }
+        resumo.innerHTML = txt;
+    }
+    function graficoLinhasMW(id, nome, cats, series, longo) {
+        const c = _hcDark();
+        limparGrafico(id);
+        Highcharts.chart(id, Object.assign(base(c, nome), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, cats),
+            yAxis: eixoY(c, 'MW', { min: 0 }),
+            plotOptions: { line: { marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2 } },
+            tooltip: Object.assign(base(c).tooltip, { formatter: function () {
+                let s = `<b>${longo(this.points[0].point.index)}</b><br>`;
+                this.points.forEach(p => { if (!vazio(p.y)) s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmt0(p.y)} MW<br>`; });
+                return s;
+            } }),
+            series
+        }));
+    }
+
+    // ==================================================================
+    // RESTRIÇÕES TÉCNICAS
+    // ==================================================================
+    const RT = [
+        { id: 'rt1', nome: 'PDBF — restrição', cor: 'azul', sinal: 1 },
+        { id: 'rt0', nome: 'PDBF (antes da separação)', cor: 'azulEsc', sinal: 1 },
+        { id: 'rtv', nome: 'Após o PDVD', cor: 'mfrr', sinal: 1 },
+        { id: 'rtfs', nome: 'Após o PHF a subir', cor: 'trans', sinal: 1 },
+        { id: 'rt2', nome: 'PDBF — reequilíbrio', cor: 'magenta', sinal: -1 },
+        { id: 'rtfd', nome: 'Após o PHF a descer', cor: 'rr', sinal: -1 }
+    ];
+    function renderRT() {
+        const c = _hcDark(), id = 'grafico-rt';
+        const resumo = document.getElementById('rt-resumo'), nota = document.getElementById('rt-nota');
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        const t = somaTipo(dias);
+        if (!t.nd) return semDados(id, 'rt-resumo', 'rt-nota');
+        const ativos = RT.filter(r => somaInd(t, r.id).q);
+        const acres = ativos.filter(r => r.sinal > 0).map(r => somaInd(t, r.id)).reduce((a, x) => ({ e: a.e + x.e, q: a.q + x.q }), { e: 0, q: 0 });
+        const r1 = somaInd(t, 'rt1'), r2 = somaInd(t, 'rt2'), rv = somaInd(t, 'rtv'), omie = omieMedio(dias);
+        let txt = `No período, as restrições técnicas acrescentaram <strong>${fmtEn(acres.q)}</strong> a centrais, a ${fmtMWh(preco(acres))} em média${vazio(omie) ? '' : ` (OMIE PT médio: ${fmtMWh(omie)})`}.`;
+        if (r1.q && r2.q) txt += ` No PDBF, a restrição custou ${fmtMWh(preco(r1))} e o reequilíbrio retirou ${fmtEn(r2.q)} ${r2.e < 0 ? `que abateram ${fmtMWh(preco(r2))}` : `que também custaram ${fmtMWh(preco(r2))}`}.`;
+        if (rv.q) txt += ` Depois do PDVD, mais perto do tempo real, a energia acrescentada custou ${fmtMWh(preco(rv))}.`;
+        if (VISTA.rt === 'hora') {
+            if (precisaHoras(id)) return;
+            const H = somaHoras(dias, ativos.map(r => r.id));
+            const u = unidade(ativos.flatMap(r => H.ind[r.id].q));
+            graficoColunas(id, 'restricoes-por-hora', catsHoras, ativos.map(r => ({ name: r.nome, data: H.ind[r.id].q.map(v => r.sinal * v / u.div), color: cor(r.cor, c) })),
+                `${u.un} no período`, u.un, { tooltip: { formatter: function () {
+                    const k = this.points[0].point.index;
+                    let s = `<b>${faixaHora(k)}</b>`;
+                    ativos.forEach(r => { const x = { e: H.ind[r.id].e[k], q: H.ind[r.id].q[k] }; if (x.q) s += `<br><span style="color:${cor(r.cor, c)}">●</span> ${r.nome}: ${fmtEn(x.q)} a ${fmtMWh(preco(x))}`; });
+                    return s + (vazio(H.omie[k]) ? '' : `<br>OMIE PT: ${fmtMWh(H.omie[k])}`);
+                } } });
+            resumo.innerHTML = txt;
+            nota.textContent = 'Soma de cada hora do dia em todo o período, em hora de Portugal: a energia acrescentada acima de zero, a retirada abaixo.';
+            return;
+        }
+        const B = baldes();
+        const ts = B.lista.map(b => somaTipo(b.dias));
+        const cats = B.lista.map(b => b.rotulo), longo = k => B.lista[k].longo;
+        if (VISTA.rt === 'preco') {
+            const series = ativos.filter(r => ['rt1', 'rt2', 'rt0', 'rtv'].includes(r.id))
+                .map(r => ({ name: r.nome, data: ts.map(x => preco(somaInd(x, r.id))), color: cor(r.cor, c), dashStyle: r.sinal < 0 ? 'Dot' : 'Solid' }));
+            series.push(serieOmie(c, B.lista.map(b => omieMedio(b.dias))));
+            graficoLinhas(id, 'restricoes-preco', cats, series, '€/MWh', { longo });
+            nota.textContent = notaBaldes(B, true) + ' Preço médio = valor ÷ quantidade (no reequilíbrio, o que abateu por MWh retirado). OMIE PT = média simples das horas dos mesmos dias.';
+        } else {
+            const todos = ativos.flatMap(r => ts.map(x => somaInd(x, r.id).q));
+            const u = unidade(todos);
+            graficoColunas(id, 'restricoes-volume', cats, ativos.map(r => ({ name: r.nome, data: ts.map(x => r.sinal * somaInd(x, r.id).q / u.div), color: cor(r.cor, c) })),
+                u.un, u.un, { longo });
+            nota.textContent = notaBaldes(B) + ' Energia acrescentada acima de zero, retirada abaixo.';
+        }
+        resumo.innerHTML = txt;
+    }
+
+    // ==================================================================
+    // PERÍODO — botões, URL e partilha
+    // ==================================================================
+    let MIN_DIA = null, FIM_DIA = null;
+    let periodo = { inicio: null, fim: null };
+    const PRESETS = ['7d', 'mes', 'mespassado', '3m', '6m', '12m', 'ano'];
+    function getPresetDates(p) {
+        if (!FIM_DIA) return null;
+        const fim = FIM_DIA, clamp = s => (s < MIN_DIA ? MIN_DIA : s), hoje = hojeISO();
+        if (p === '7d') return { inicio: clamp(addDias(fim, -6)), fim };
+        if (p === 'mes') {
+            let i = hoje.slice(0, 8) + '01';
+            if (i > fim) i = fim.slice(0, 8) + '01';
+            return { inicio: clamp(i), fim };
+        }
+        if (p === 'mespassado') {
+            let i = deslocarMeses(hoje.slice(0, 8) + '01', -1);
+            if (i > fim) i = deslocarMeses(fim.slice(0, 8) + '01', -1);
+            const f = ultimoDoMes(i);
+            return { inicio: clamp(i), fim: f < fim ? f : fim };
+        }
+        const meses = { '3m': 3, '6m': 6, '12m': 12 }[p];
+        if (meses) return { inicio: clamp(addDias(deslocarMeses(fim, -meses), 1)), fim };
+        if (p === 'ano') return { inicio: clamp(fim.slice(0, 4) + '-01-01'), fim };
+        if (p === 'tudo') return { inicio: MIN_DIA, fim };
+        return null;
+    }
+    function detectarPreset(inicio, fim) {
+        for (const p of PRESETS) { const d = getPresetDates(p); if (d && d.inicio === inicio && d.fim === fim) return p; }
+        return 'custom';
+    }
+    function atualizarBotoesPreset(p) {
+        document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === p));
+    }
+    function setDateInputsVisibilidade(p) {
+        document.querySelector('.date-selector-periodo').classList.toggle('no-dates', p !== 'custom');
+    }
+    function lerURL() {
+        const p = new URLSearchParams(window.location.search);
+        const ler = k => (p.get(k) || '').trim() || null;
+        const iso = s => (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? s : null;
+        const i = iso(ler('inicio')), f = iso(ler('fim'));
+        const vistas = {};
+        Object.keys(VISTA).forEach(k => { const v = ler(k); if (v && VISTAS_VALIDAS[k].includes(v)) vistas[k] = v; });
+        return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null, vistas };
+    }
+    function paramsAtuais(sempreDatas) {
+        const p = new URLSearchParams();
+        const d = getPresetDates('12m');
+        if (sempreDatas || !(d && periodo.inicio === d.inicio && periodo.fim === d.fim)) {
+            p.set('inicio', periodo.inicio); p.set('fim', periodo.fim);
+        }
+        Object.keys(VISTA).forEach(k => { if (VISTA[k] !== 'evol') p.set(k, VISTA[k]); });
+        return p;
+    }
+    function atualizarURL() {
+        if (!periodo.inicio) return;
+        const q = paramsAtuais(false).toString();
+        window.history.replaceState(null, '', `${window.location.pathname}${q ? '?' + q : ''}${window.location.hash}`);
+    }
+    function mostrarFeedback(msg) {
+        const antigo = document.getElementById('toast-feedback');
+        if (antigo) antigo.remove();
+        const t = document.createElement('div');
+        t.id = 'toast-feedback'; t.className = 'toast-feedback'; t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { if (t.parentNode) t.remove(); }, 2500);
+    }
+    async function partilharVista() {
+        const url = `${window.location.origin}${window.location.pathname}?${paramsAtuais(true).toString()}`;
+        const resumo = `⚡ Serviços de Sistema — de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}`;
+        const texto = `${resumo}\n${url}`;
+        if (navigator.share) {
+            try { await navigator.share({ title: 'Serviços de Sistema — Tiago Felícia', text: resumo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try { await navigator.clipboard.writeText(texto); mostrarFeedback('✓ Link copiado'); return; }
+        catch (e) { /* sem permissão de clipboard — cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = texto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+            document.body.removeChild(ta);
+            mostrarFeedback('✓ Link copiado');
+        } catch (e) { prompt('Copie este link:', texto); }
+    }
+
+    let _pedidoPeriodo = 0;
+    async function aplicarPeriodo() {
+        const pedido = ++_pedidoPeriodo;
+        _horasProntas = false;
+        const L = nDias(periodo.inicio, periodo.fim);
+        document.getElementById('periodo-titulo').textContent =
+            `De ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} (${L} ${L === 1 ? 'dia' : 'dias'})`;
+        await carregarIntervaloTipo(periodo.inicio, periodo.fim);
+        if (pedido !== _pedidoPeriodo) return;
+        renderPeriodo();
+    }
+    function renderPeriodo() {
+        renderKPIs();
+        renderCurt();
+        renderDesv();
+        renderRes();
+        renderBanda();
+        renderRT();
+    }
+    // Depois de chegarem os ficheiros por hora, só os blocos nessa vista
+    function renderVistasHora() {
+        if (VISTA.curt === 'hora') renderCurt();
+        if (VISTA.desv === 'hora') renderDesv();
+        if (VISTA.res === 'hora') renderRes();
+        if (VISTA.banda === 'hora') renderBanda();
+        if (VISTA.rt === 'hora') renderRT();
+    }
+    function aplicarPreset(p) {
+        const d = getPresetDates(p);
+        if (!d) return;
+        periodo = { inicio: d.inicio, fim: d.fim };
+        document.getElementById('seletor-data-inicio').value = d.inicio;
+        document.getElementById('seletor-data-fim').value = d.fim;
+        document.getElementById('erro-periodo').style.display = 'none';
+        atualizarBotoesPreset(p);
+        setDateInputsVisibilidade(p);
+        atualizarURL();
+        aplicarPeriodo();
+    }
+    function aplicarDatasManuais() {
+        const inicio = document.getElementById('seletor-data-inicio').value;
+        const fim = document.getElementById('seletor-data-fim').value;
+        const erro = document.getElementById('erro-periodo');
+        if (!inicio || !fim) return;
+        if (inicio > fim) { erro.textContent = 'A data de início é posterior à data de fim.'; erro.style.display = 'block'; return; }
+        erro.style.display = 'none';
+        periodo = { inicio: inicio < MIN_DIA ? MIN_DIA : inicio, fim: fim > FIM_DIA ? FIM_DIA : fim };
+        atualizarBotoesPreset(detectarPreset(periodo.inicio, periodo.fim));
+        atualizarURL();
+        aplicarPeriodo();
+    }
+
+    // ==================================================================
+    // ARRANQUE
+    // ==================================================================
+    const RENDER = { curt: renderCurt, desv: renderDesv, res: renderRes, banda: renderBanda, rt: renderRT };
+    Object.keys(VISTA).forEach(k => ligarToggle(VISTA_ID[k], v => { VISTA[k] = v; RENDER[k](); atualizarURL(); }));
+    document.addEventListener('themeChanged', () => { if (META && periodo.inicio && TIPO.size) renderPeriodo(); });
+
+    document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (!FIM_DIA) return;
+            const p = this.dataset.preset;
+            if (p === 'custom') {
+                const d = getPresetDates('tudo');
+                periodo = { inicio: d.inicio, fim: d.fim };
+                document.getElementById('seletor-data-inicio').value = d.inicio;
+                document.getElementById('seletor-data-fim').value = d.fim;
+                document.getElementById('erro-periodo').style.display = 'none';
+                atualizarBotoesPreset('custom');
+                setDateInputsVisibilidade('custom');
+                atualizarURL();
+                aplicarPeriodo();
+                return;
+            }
+            aplicarPreset(p);
+        });
+    });
+    document.getElementById('seletor-data-inicio').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('seletor-data-fim').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.addEventListener('beforeprint', () => document.querySelectorAll('details.faq-item').forEach(d => {
+        if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+    }));
+    window.addEventListener('afterprint', () => document.querySelectorAll('details.faq-item[data-opened-for-print]').forEach(d => {
+        d.removeAttribute('open'); delete d.dataset.openedForPrint;
+    }));
+
+    const URL_INICIAL = lerURL();
+    Object.entries(URL_INICIAL.vistas).forEach(([k, v]) => { VISTA[k] = v; ativarToggle(VISTA_ID[k], v); });
+
+    fetchDados(URL_META)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(j => {
+            META = j;
+            (META.indicadores || []).forEach(i => { IND[i.id] = { nome: i.nome, codigos: new Set(i.codigos), unidade: i.unidade }; });
+            MIN_DIA = META.de; FIM_DIA = META.ate;
+            document.getElementById('estado').hidden = true;
+            document.getElementById('badge-inicio').textContent = fmtData(META.de);
+            document.getElementById('badge-ultima').textContent = fmtData(META.ate);
+            ['seletor-data-inicio', 'seletor-data-fim'].forEach(id => { const el = document.getElementById(id); el.min = MIN_DIA; el.max = FIM_DIA; });
+            const u = URL_INICIAL.datas;
+            if (u && u.fim >= MIN_DIA && u.inicio <= FIM_DIA) {
+                periodo = { inicio: u.inicio < MIN_DIA ? MIN_DIA : u.inicio, fim: u.fim > FIM_DIA ? FIM_DIA : u.fim };
+                document.getElementById('seletor-data-inicio').value = periodo.inicio;
+                document.getElementById('seletor-data-fim').value = periodo.fim;
+                const p = detectarPreset(periodo.inicio, periodo.fim);
+                atualizarBotoesPreset(p);
+                setDateInputsVisibilidade(p);
+                atualizarURL();
+                aplicarPeriodo();
+            } else {
+                aplicarPreset('12m');
+            }
+        })
+        .catch(err => {
+            console.error('Serviços de sistema:', err);
+            const el = document.getElementById('estado');
+            el.className = 'estado-erro';
+            el.textContent = 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.';
+        });
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
