@@ -434,13 +434,13 @@
 
     <nav class="mini-nav" aria-label="Navegação rápida da página">
         <a href="#bloco-kpis" class="mini-nav-chip">💶 Resumo</a>
-        <a href="#bloco-calc" class="mini-nav-chip">🧮 Quanto paga</a>
         <a href="#bloco-mensal" class="mini-nav-chip">📊 Evolução</a>
         <a href="#bloco-tipos" class="mini-nav-chip">🧾 De onde vem</a>
         <a href="#bloco-horas" class="mini-nav-chip">🕒 Quando custa mais</a>
         <a href="#bloco-hoje" class="mini-nav-chip">⚡ OMIE PT + ERC</a>
         <a href="#bloco-previsao" class="mini-nav-chip">🔮 Previsão 14 dias</a>
         <a href="#bloco-periodos" class="mini-nav-chip">🌙 Vazio e fora de vazio</a>
+        <a href="#bloco-calc" class="mini-nav-chip">🧮 Quanto paga</a>
         <a href="#bloco-mapa" class="mini-nav-chip">🗓️ Mapa e recordes</a>
         <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
     </nav>
@@ -450,55 +450,11 @@
     <!-- ====================== BLOCO 1 — RESUMO ====================== -->
     <div class="kpi-cabecalho" id="bloco-kpis">
         <h2>Resumo do período</h2>
-        <p>Em €/MWh, como a REN publica. Na fatura o ERC aparece com o fator de perdas e em €/kWh; o valor «com perdas» usa o fator médio do período para um consumo doméstico (perfil ERSE C, só desde 2025). Os dias são dias de mercado, como na REN; as horas são em hora de Portugal.</p>
+        <p>Em €/MWh, como a REN publica. Na fatura o ERC aparece com o fator de perdas e em €/kWh; o valor «com perdas» usa o fator médio do período para um consumo doméstico (perfil ERSE C, só desde 2025). Os dias são dias de mercado, como na REN; as horas são em hora de Portugal. Quanto paga por ano? Veja a <a href="#bloco-calc">calculadora</a>.</p>
     </div>
     <div id="erc-kpis"></div>
 
     <div class="link-section"><p>https://www.tiagofelicia.pt/erc</p></div>
-
-    <!-- ====================== CALCULADORA — QUANTO PAGA POR ANO ====================== -->
-    <div class="grafico-box" id="bloco-calc">
-        <h2>Quanto paga de ERC por ano?</h2>
-        <p class="grafico-intro">Escreva o seu consumo anual e o ciclo horário. O cálculo usa o ERC de cada quarto de hora do período escolhido, pesado pelo perfil de consumo doméstico da ERSE (perfil C) dentro de cada período horário, e as perdas da rede — como aparece na fatura de um tarifário indexado que fatura o ERC ao quarto de hora. Num tarifário de preço fixo, o ERC está diluído no preço da energia.</p>
-        <div class="calc-form">
-            <div class="calc-campo">
-                <label class="ctrl-label" for="calc-kwh">Consumo anual</label>
-                <div class="calc-linha">
-                    <input type="number" id="calc-kwh" min="1" max="1000000" step="100" value="2500" inputmode="numeric" aria-label="Consumo anual em kWh"> <span>kWh</span>
-                    <div class="btn-toggle" id="calc-rapido" role="group" aria-label="Consumos típicos">
-                        <button type="button" data-v="1500">1 500</button>
-                        <button type="button" data-v="2500" class="active">2 500</button>
-                        <button type="button" data-v="3500">3 500</button>
-                        <button type="button" data-v="5000">5 000</button>
-                    </div>
-                </div>
-            </div>
-            <div class="calc-campo">
-                <span class="ctrl-label">Ciclo horário</span>
-                <div class="btn-toggle" id="calc-ciclo" role="group" aria-label="Ciclo horário">
-                    <button type="button" data-v="S" class="active">Simples</button>
-                    <button type="button" data-v="BD">Bi diário</button>
-                    <button type="button" data-v="BS">Bi semanal</button>
-                    <button type="button" data-v="TD">Tri diário</button>
-                    <button type="button" data-v="TS">Tri semanal</button>
-                </div>
-            </div>
-            <div class="calc-campo" id="calc-repart" hidden>
-                <span class="ctrl-label">Onde cai o seu consumo</span>
-                <div class="calc-linha">
-                    <label>Vazio <input type="number" id="calc-pv" min="0" max="100" step="1" inputmode="numeric"> %</label>
-                    <label id="calc-lbl-pc">Cheias <input type="number" id="calc-pc" min="0" max="100" step="1" inputmode="numeric"> %</label>
-                    <span id="calc-resto" class="calc-resto"></span>
-                    <button type="button" id="calc-repor" class="btn-mais" title="Voltar à repartição do perfil doméstico da ERSE no período">Perfil ERSE</button>
-                </div>
-            </div>
-        </div>
-        <div id="calc-erro" class="calc-erro" role="alert" hidden></div>
-        <div id="calc-kpis" class="calc-kpis"></div>
-        <div id="grafico-calc" class="grafico"></div>
-        <p class="resumo-bloco" id="calc-resumo"></p>
-        <p class="nota-bloco" id="calc-nota"></p>
-    </div>
 
     <!-- ====================== BLOCO 2 — EVOLUÇÃO POR COMPONENTE ====================== -->
     <div class="grafico-box" id="bloco-mensal">
@@ -611,6 +567,50 @@
         </div>
         <div id="grafico-periodos" class="grafico"></div>
         <p class="resumo-bloco" id="periodos-resumo"></p>
+    </div>
+
+    <!-- ====================== CALCULADORA — QUANTO PAGA POR ANO ====================== -->
+    <div class="grafico-box" id="bloco-calc">
+        <h2>Quanto paga de ERC por ano?</h2>
+        <p class="grafico-intro">Escreva o seu consumo anual e o ciclo horário. O cálculo usa o ERC de cada quarto de hora do período escolhido, pesado pelo perfil de consumo doméstico da ERSE (perfil C) dentro de cada período horário, e as perdas da rede — como aparece na fatura de um tarifário indexado que fatura o ERC ao quarto de hora. Num tarifário de preço fixo, o ERC está diluído no preço da energia.</p>
+        <div class="calc-form">
+            <div class="calc-campo">
+                <label class="ctrl-label" for="calc-kwh">Consumo anual</label>
+                <div class="calc-linha">
+                    <input type="number" id="calc-kwh" min="1" max="1000000" step="100" value="2500" inputmode="numeric" aria-label="Consumo anual em kWh"> <span>kWh</span>
+                    <div class="btn-toggle" id="calc-rapido" role="group" aria-label="Consumos típicos">
+                        <button type="button" data-v="1500">1 500</button>
+                        <button type="button" data-v="2500" class="active">2 500</button>
+                        <button type="button" data-v="3500">3 500</button>
+                        <button type="button" data-v="5000">5 000</button>
+                    </div>
+                </div>
+            </div>
+            <div class="calc-campo">
+                <span class="ctrl-label">Ciclo horário</span>
+                <div class="btn-toggle" id="calc-ciclo" role="group" aria-label="Ciclo horário">
+                    <button type="button" data-v="S" class="active">Simples</button>
+                    <button type="button" data-v="BD">Bi diário</button>
+                    <button type="button" data-v="BS">Bi semanal</button>
+                    <button type="button" data-v="TD">Tri diário</button>
+                    <button type="button" data-v="TS">Tri semanal</button>
+                </div>
+            </div>
+            <div class="calc-campo" id="calc-repart" hidden>
+                <span class="ctrl-label">Onde cai o seu consumo</span>
+                <div class="calc-linha">
+                    <label>Vazio <input type="number" id="calc-pv" min="0" max="100" step="1" inputmode="numeric"> %</label>
+                    <label id="calc-lbl-pc">Cheias <input type="number" id="calc-pc" min="0" max="100" step="1" inputmode="numeric"> %</label>
+                    <span id="calc-resto" class="calc-resto"></span>
+                    <button type="button" id="calc-repor" class="btn-mais" title="Voltar à repartição do perfil doméstico da ERSE no período">Perfil ERSE</button>
+                </div>
+            </div>
+        </div>
+        <div id="calc-erro" class="calc-erro" role="alert" hidden></div>
+        <div id="calc-kpis" class="calc-kpis"></div>
+        <div id="grafico-calc" class="grafico"></div>
+        <p class="resumo-bloco" id="calc-resumo"></p>
+        <p class="nota-bloco" id="calc-nota"></p>
     </div>
 
     <!-- ====================== BLOCO 7 — MAPA DE CALOR E RECORDES ====================== -->
