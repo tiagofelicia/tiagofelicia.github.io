@@ -128,6 +128,13 @@
         }
       },{
         "@type": "Question",
+        "name": "Quanto pago de ERC por ano?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Depende do consumo e das horas em que consome. Nos 12 meses até outubro de 2026, um consumo doméstico de 2500 kWh por ano, com o perfil da ERSE, pagou cerca de 47 EUR de ERC sem IVA (cerca de 1,9 cêntimos por kWh, já com perdas). A calculadora desta página faz a conta para o seu consumo anual e ciclo horário, com o ERC de cada quarto de hora do período escolhido."
+        }
+      },{
+        "@type": "Question",
         "name": "Como aparece o ERC na minha fatura?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -284,6 +291,22 @@
         .btn-mais { margin-top: 8px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 5px; padding: 6px 12px; font-size: 0.85em; cursor: pointer; }
         .btn-mais:hover { background: #e2e8f0; }
         #grafico-tipos { height: 560px; }
+        .calc-form { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-end; margin: 0 0 14px 0; }
+        .calc-campo { display: flex; flex-direction: column; gap: 6px; }
+        .calc-campo[hidden] { display: none; }
+        .calc-campo .ctrl-label { align-self: flex-start; }
+        .calc-linha { display: flex; align-items: center; gap: 8px 10px; flex-wrap: wrap; font-size: 0.9em; color: #334155; }
+        .calc-linha input { width: 96px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.95em; background: #fff; color: #1e293b; font-variant-numeric: tabular-nums; }
+        .calc-linha label { display: inline-flex; align-items: center; gap: 6px; }
+        .calc-linha label input { width: 64px; }
+        .calc-linha label[hidden] { display: none; }
+        .calc-linha .btn-mais { margin-top: 0; }
+        .calc-resto { color: #6c757d; }
+        .calc-erro { background: #fdecea; border-left: 3px solid #c0392b; padding: 8px 12px; font-size: 0.88em; color: #7b241c; border-radius: 0 5px 5px 0; margin: 0 0 12px 0; }
+        .calc-erro[hidden] { display: none; }
+        .calc-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 0 0 14px 0; }
+        @media (max-width: 800px) { .calc-kpis { grid-template-columns: repeat(2, 1fr); } }
+        #grafico-calc { height: 340px; }
         .recordes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
         @media (max-width: 800px) { .recordes-grid { grid-template-columns: 1fr; } }
         .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
@@ -352,6 +375,10 @@
         [data-theme="dark"] .tabela-erc td.nome .cod { color: #64748b; }
         [data-theme="dark"] .btn-mais { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .btn-mais:hover { background: #334155; }
+        [data-theme="dark"] .calc-linha { color: #cbd5e1; }
+        [data-theme="dark"] .calc-linha input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .calc-resto { color: #94a3b8; }
+        [data-theme="dark"] .calc-erro { background: #4a1c1c; color: #fca5a5; border-left-color: #dc2626; }
 
         @page { size: A4 landscape; margin: 10mm; }
         @media print {
@@ -407,6 +434,7 @@
 
     <nav class="mini-nav" aria-label="Navegação rápida da página">
         <a href="#bloco-kpis" class="mini-nav-chip">💶 Resumo</a>
+        <a href="#bloco-calc" class="mini-nav-chip">🧮 Quanto paga</a>
         <a href="#bloco-mensal" class="mini-nav-chip">📊 Evolução</a>
         <a href="#bloco-tipos" class="mini-nav-chip">🧾 De onde vem</a>
         <a href="#bloco-horas" class="mini-nav-chip">🕒 Quando custa mais</a>
@@ -427,6 +455,50 @@
     <div id="erc-kpis"></div>
 
     <div class="link-section"><p>https://www.tiagofelicia.pt/erc</p></div>
+
+    <!-- ====================== CALCULADORA — QUANTO PAGA POR ANO ====================== -->
+    <div class="grafico-box" id="bloco-calc">
+        <h2>Quanto paga de ERC por ano?</h2>
+        <p class="grafico-intro">Escreva o seu consumo anual e o ciclo horário. O cálculo usa o ERC de cada quarto de hora do período escolhido, pesado pelo perfil de consumo doméstico da ERSE (perfil C) dentro de cada período horário, e as perdas da rede — como aparece na fatura de um tarifário indexado que fatura o ERC ao quarto de hora. Num tarifário de preço fixo, o ERC está diluído no preço da energia.</p>
+        <div class="calc-form">
+            <div class="calc-campo">
+                <label class="ctrl-label" for="calc-kwh">Consumo anual</label>
+                <div class="calc-linha">
+                    <input type="number" id="calc-kwh" min="1" max="1000000" step="100" value="2500" inputmode="numeric" aria-label="Consumo anual em kWh"> <span>kWh</span>
+                    <div class="btn-toggle" id="calc-rapido" role="group" aria-label="Consumos típicos">
+                        <button type="button" data-v="1500">1 500</button>
+                        <button type="button" data-v="2500" class="active">2 500</button>
+                        <button type="button" data-v="3500">3 500</button>
+                        <button type="button" data-v="5000">5 000</button>
+                    </div>
+                </div>
+            </div>
+            <div class="calc-campo">
+                <span class="ctrl-label">Ciclo horário</span>
+                <div class="btn-toggle" id="calc-ciclo" role="group" aria-label="Ciclo horário">
+                    <button type="button" data-v="S" class="active">Simples</button>
+                    <button type="button" data-v="BD">Bi diário</button>
+                    <button type="button" data-v="BS">Bi semanal</button>
+                    <button type="button" data-v="TD">Tri diário</button>
+                    <button type="button" data-v="TS">Tri semanal</button>
+                </div>
+            </div>
+            <div class="calc-campo" id="calc-repart" hidden>
+                <span class="ctrl-label">Onde cai o seu consumo</span>
+                <div class="calc-linha">
+                    <label>Vazio <input type="number" id="calc-pv" min="0" max="100" step="1" inputmode="numeric"> %</label>
+                    <label id="calc-lbl-pc">Cheias <input type="number" id="calc-pc" min="0" max="100" step="1" inputmode="numeric"> %</label>
+                    <span id="calc-resto" class="calc-resto"></span>
+                    <button type="button" id="calc-repor" class="btn-mais" title="Voltar à repartição do perfil doméstico da ERSE no período">Perfil ERSE</button>
+                </div>
+            </div>
+        </div>
+        <div id="calc-erro" class="calc-erro" role="alert" hidden></div>
+        <div id="calc-kpis" class="calc-kpis"></div>
+        <div id="grafico-calc" class="grafico"></div>
+        <p class="resumo-bloco" id="calc-resumo"></p>
+        <p class="nota-bloco" id="calc-nota"></p>
+    </div>
 
     <!-- ====================== BLOCO 2 — EVOLUÇÃO POR COMPONENTE ====================== -->
     <div class="grafico-box" id="bloco-mensal">
@@ -589,6 +661,13 @@
                     <li>a energia de reserva ativada <strong>a descer</strong>.</li>
                 </ul>
                 <p>Nos 12 meses até setembro de 2026, os desvios baixaram o ERC em cerca de 2,5 €/MWh. O bloco <a href="#bloco-tipos">«De onde vem o ERC»</a> mostra o saldo de cada grupo e o preço médio de cada encargo no período escolhido.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Quanto pago de ERC por ano?</strong></summary>
+            <div class="faq-content">
+                <p>Depende do consumo e das horas em que consome. Nos 12 meses até outubro de 2026, um consumo doméstico de <strong>2500 kWh por ano</strong>, com o perfil da ERSE, pagou cerca de <strong>47 € de ERC sem IVA</strong> — cerca de 1,9 cêntimos por kWh, já com perdas.</p>
+                <p>A <a href="#bloco-calc">calculadora</a> faz a conta para o seu consumo anual e ciclo horário, com o ERC de cada quarto de hora do período escolhido.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -979,7 +1058,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const iso = s => (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? s : null;
         const i = iso(ler('inicio')), f = iso(ler('fim'));
         return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null,
-                 est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas'), outros: ler('outros') };
+                 est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas'), outros: ler('outros'),
+                 kwh: ler('kwh'), calc: ler('calc'), pv: ler('pv'), pc: ler('pc') };
     }
     function paramsAtuais(sempreDatas) {
         const p = new URLSearchParams();
@@ -992,6 +1072,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (_diaEscolhido && _dia) p.set('dia', _dia);
         if (_perdas !== 'sem') p.set('perdas', _perdas);
         if (_outros !== 'agregado') p.set('outros', _outros);
+        if (CALC.kwh !== CALC_KWH_OMISSAO) p.set('kwh', CALC.kwh);
+        if (CALC.ciclo !== 'S') p.set('calc', CALC.ciclo);
+        if (CALC.ciclo !== 'S' && CALC.pv !== null) p.set('pv', CALC.pv);
+        if ((CALC.ciclo === 'TD' || CALC.ciclo === 'TS') && CALC.pc !== null) p.set('pc', CALC.pc);
         return p;
     }
     function atualizarURL() {
@@ -1059,6 +1143,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function renderPeriodo() {
         renderKPIs();
+        renderCalc();
         renderEvolucao();
         renderTipos();
         prepararEstacoes();
@@ -1130,6 +1215,161 @@ document.addEventListener('DOMContentLoaded', function () {
         html += hMax >= 0 ? card('Hora mais cara (média)', fmtMWh(ph[hMax]), faixa(hMax)) : card('Hora mais cara (média)', '--', '');
         html += hMin >= 0 ? card('Hora mais barata (média)', fmtMWh(ph[hMin]), faixa(hMin)) : card('Hora mais barata (média)', '--', '');
         el.innerHTML = html;
+    }
+
+    // ==================================================================
+    // CALCULADORA — QUANTO PAGA DE ERC POR ANO
+    // ==================================================================
+    // Para cada período horário do ciclo, o ERC do período escolhido pesado pelo
+    // perfil ERSE C (o 'c' de cada dia) e multiplicado pelas perdas médias do dia
+    // ('p'); a repartição do consumo entre períodos é a do perfil, ou a que o
+    // utilizador escrever. O consumo de cada mês segue o peso do perfil nesse mês.
+    const CALC = { kwh: 2500, ciclo: 'S', pv: null, pc: null };
+    const CALC_KWH_OMISSAO = 2500;
+    const NOME_CICLO_CALC = { S: 'simples', BD: 'bi-horário diário', BS: 'bi-horário semanal', TD: 'tri-horário diário', TS: 'tri-horário semanal' };
+
+    // Somas por mês e período horário: e = Σ ERC × peso × perdas, w = Σ peso
+    function somasCalc(lista, ciclo) {
+        const base = ciclo === 'S' ? 'BD' : ciclo, periodos = PERIODOS_CICLO[base];
+        const meses = new Map();
+        lista.forEach(([iso, d]) => {
+            if (!d.c || vazio(d.p)) return;
+            const m = iso.slice(0, 7);
+            if (!meses.has(m)) meses.set(m, { dias: 0, p: {} });
+            const M = meses.get(m);
+            M.dias++;
+            periodos.forEach(k => {
+                const i = ORDEM_C.indexOf(`${base}.${k}`);
+                const v = d.c[2 * i], peso = d.c[2 * i + 1];
+                if (i < 0 || vazio(v) || !(peso > 0)) return;
+                const a = M.p[k] || (M.p[k] = { e: 0, en: 0, w: 0 });
+                a.e += v * peso * d.p; a.en += v * peso; a.w += peso;
+            });
+        });
+        return { periodos, meses };
+    }
+    // Repartição pelo perfil ERSE no conjunto dos meses
+    function repartPerfil(S) {
+        const w = {}; let tot = 0;
+        S.periodos.forEach(k => { w[k] = 0; });
+        S.meses.forEach(M => S.periodos.forEach(k => { const a = M.p[k]; if (a) { w[k] += a.w; tot += a.w; } }));
+        const r = {};
+        S.periodos.forEach(k => { r[k] = tot ? w[k] / tot : null; });
+        return r;
+    }
+    function repartUtilizador(perfil) {
+        if (CALC.ciclo === 'S') return null;
+        const tri = CALC.ciclo === 'TD' || CALC.ciclo === 'TS';
+        if (CALC.pv === null && (!tri || CALC.pc === null)) return null;
+        const v = CALC.pv === null ? 100 * perfil.V : CALC.pv;
+        if (!tri) return { V: v / 100, F: 1 - v / 100 };
+        const ch = CALC.pc === null ? 100 * perfil.C : CALC.pc;
+        return { V: v / 100, C: ch / 100, P: 1 - v / 100 - ch / 100 };
+    }
+
+    function renderCalc() {
+        const resumo = document.getElementById('calc-resumo'), nota = document.getElementById('calc-nota');
+        const kpis = document.getElementById('calc-kpis'), erro = document.getElementById('calc-erro');
+        const repart = document.getElementById('calc-repart');
+        const tri = CALC.ciclo === 'TD' || CALC.ciclo === 'TS';
+        repart.hidden = CALC.ciclo === 'S';
+        document.getElementById('calc-lbl-pc').hidden = !tri;
+        const desde = R.diario.periodos_desde;
+        const S = somasCalc(diasLocais(periodo.inicio, periodo.fim), CALC.ciclo);
+        if (!S.meses.size) {
+            limparGrafico('grafico-calc', `<div class="bloco-vazio">O cálculo precisa do perfil de consumo e das perdas, que só existem desde ${fmtData(desde)}: escolha um período a partir dessa data.</div>`);
+            kpis.innerHTML = ''; resumo.textContent = ''; nota.textContent = ''; erro.hidden = true;
+            return;
+        }
+        const perfil = repartPerfil(S);
+        // Campos da repartição: o valor do utilizador ou, vazio, o do perfil
+        const pv = document.getElementById('calc-pv'), pc = document.getElementById('calc-pc');
+        pv.placeholder = vazio(perfil.V) ? '' : fmt0(100 * perfil.V);
+        pc.placeholder = (tri && !vazio(perfil.C)) ? fmt0(100 * perfil.C) : '';
+        if (document.activeElement !== pv) pv.value = CALC.pv === null ? '' : CALC.pv;
+        if (document.activeElement !== pc) pc.value = CALC.pc === null ? '' : CALC.pc;
+        let u = repartUtilizador(perfil);
+        erro.hidden = true;
+        if (u && Object.values(u).some(x => x < -1e-9 || x > 1 + 1e-9)) {
+            erro.textContent = 'A repartição tem de somar 100 %: os valores escritos passam disso. A usar o perfil ERSE.';
+            erro.hidden = false;
+            u = null;
+        }
+        const reparto = u || perfil;
+        const resto = CALC.ciclo === 'S' ? '' : (tri ? `Ponta: ${fmt0(100 * reparto.P)} %` : `Fora de vazio: ${fmt0(100 * reparto.F)} %`);
+        document.getElementById('calc-resto').textContent = resto + (u ? '' : ' (perfil ERSE)');
+
+        // Por mês: consumo do mês = consumo anual × dias/365 × peso do mês no período;
+        // ERC do mês = Σ repartição × ERC do período horário (com e sem perdas)
+        const L = [...S.meses.values()].reduce((a, M) => a + M.dias, 0);
+        let wTot = 0;
+        S.meses.forEach(M => S.periodos.forEach(k => { if (M.p[k]) wTot += M.p[k].w; }));
+        const ercDe = (M, chave) => {
+            let x = 0, peso = 0;
+            S.periodos.forEach(k => { const a = M.p[k]; if (a && a.w > 0 && !vazio(reparto[k])) { x += reparto[k] * a[chave] / a.w; peso += reparto[k]; } });
+            return peso ? x / peso : null;
+        };
+        const meses = [...S.meses.keys()].sort();
+        const linhas = meses.map(m => {
+            const M = S.meses.get(m);
+            let w = 0; S.periodos.forEach(k => { if (M.p[k]) w += M.p[k].w; });
+            const kwh = CALC.kwh * (L / 365) * (w / wTot);
+            const erc = ercDe(M, 'e'), ercN = ercDe(M, 'en');        // €/MWh, com e sem perdas
+            return { m, dias: M.dias, kwh, erc, ercN, eur: kwh / 1000 * erc };
+        });
+        const eurPeriodo = linhas.reduce((a, l) => a + l.eur, 0), kwhPeriodo = linhas.reduce((a, l) => a + l.kwh, 0);
+        const ercMed = eurPeriodo / kwhPeriodo * 1000;                 // €/MWh com perdas
+        const ercMedN = linhas.reduce((a, l) => a + l.kwh * l.ercN, 0) / kwhPeriodo;
+        const anual = CALC.kwh / 1000 * ercMed;
+
+        const card = (label, valor, sub) => `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value">${valor}</div>${sub ? `<div class="kpi-sub">${sub}</div>` : ''}</div>`;
+        kpis.innerHTML = card('ERC por ano', `${fmt2(anual)} €`, 'sem IVA') +
+            card('Por mês, em média', `${fmt2(anual / 12)} €`, 'sem IVA') +
+            card('ERC médio, com perdas', `${fmt2(ercMed / 10)} c€/kWh`, 'como aparece na fatura') +
+            card('ERC médio, sem perdas', fmtMWh(ercMedN), 'como a REN publica');
+
+        // Gráfico: € de ERC em cada mês do período, para o consumo escrito
+        const c = _hcDark();
+        const totalMes = m => +ultimoDoMes(m + '-01').slice(8);
+        limparGrafico('grafico-calc');
+        Highcharts.chart('grafico-calc', Object.assign(base(c, 'erc-por-ano-' + CALC.kwh + 'kwh'), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            legend: { enabled: false },
+            xAxis: eixoX(c, linhas.map(l => rotMes(l.m))),
+            yAxis: eixoY(c, '€ de ERC no mês (sem IVA)', { min: 0 }),
+            plotOptions: { column: { borderWidth: 0, groupPadding: 0.1, pointPadding: 0.04, color: '#f59e0b',
+                dataLabels: { enabled: linhas.length <= 13, style: { color: c.txt, fontWeight: 'normal', fontSize: '10px', textOutline: 'none' },
+                              formatter: function () { return fmt2(this.y); } } } },
+            tooltip: Object.assign(base(c).tooltip, { formatter: function () {
+                const l = linhas[this.points[0].point.index];
+                return `<b>${mesLongo(l.m)}</b>${l.dias < totalMes(l.m) ? ` <span style="color:${c.suave}">(${l.dias} de ${totalMes(l.m)} dias)</span>` : ''}` +
+                       `<br>Consumo estimado: ${fmt0(l.kwh)} kWh<br>ERC: ${fmt2(l.erc / 10)} c€/kWh com perdas (${fmtMWh(l.ercN)} sem perdas)` +
+                       `<br><b>${fmt2(l.eur)} € sem IVA</b>`;
+            } }),
+            series: [{ name: 'ERC no mês', data: linhas.map(l => l.eur) }]
+        }));
+
+        // Resumo e comparações
+        let txt = `Com <strong>${fmt0(CALC.kwh)} kWh</strong> por ano em ${NOME_CICLO_CALC[CALC.ciclo]}, pagaria cerca de <strong>${fmt2(anual)} €</strong> de ERC por ano sem IVA, ao ERC do período escolhido.`;
+        const caro = linhas.reduce((a, l) => (!a || l.erc > a.erc) ? l : a, null), barato = linhas.reduce((a, l) => (!a || l.erc < a.erc) ? l : a, null);
+        if (linhas.length > 1) txt += ` O mês mais caro por kWh foi ${mesLongo(caro.m)} (${fmt2(caro.erc / 10)} c€/kWh) e o mais barato ${mesLongo(barato.m)} (${fmt2(barato.erc / 10)} c€/kWh).`;
+        if (CALC.ciclo !== 'S') {
+            // Quanto muda o custo por cada 10 pontos de consumo do período mais caro para o vazio
+            const ercP = k => { let e = 0, w = 0; S.meses.forEach(M => { const a = M.p[k]; if (a) { e += a.e; w += a.w; } }); return w ? e / w : null; };
+            const alvo = tri ? 'P' : 'F', nomeAlvo = tri ? 'da ponta' : 'do fora de vazio';
+            const dif = ercP(alvo) - ercP('V');
+            if (!vazio(dif)) {
+                const eur10 = CALC.kwh / 1000 * 0.10 * dif;
+                txt += ` Passar 10 % do consumo ${nomeAlvo} para o vazio ${eur10 >= 0 ? 'poupa' : 'custa'} cerca de <strong>${fmt2(Math.abs(eur10))} € por ano</strong> de ERC` +
+                       (eur10 < 0 ? ' — neste período, o ERC do vazio saiu mais caro.' : '.');
+            }
+        }
+        if (periodo.inicio < desde) txt += ` O perfil e as perdas só existem desde ${fmtData(desde)}: os dias anteriores ficam de fora.`;
+        resumo.innerHTML = txt;
+        nota.textContent = 'Só o ERC: a fatura tem ainda a energia (OMIE ou preço fixo), as tarifas de acesso, a potência, as taxas e os impostos. ' +
+            'Consumo de cada mês = consumo anual repartido pelo perfil doméstico da ERSE (perfil C); dentro de cada período horário, o ERC é pesado pelo mesmo perfil e multiplicado pelas perdas médias do dia. ' +
+            'Os meses no início e no fim do período podem estar incompletos (o tooltip diz quantos dias entram). ' +
+            'Alguns comercializadores faturam a média mensal ou valores próprios, e o valor pode diferir.';
     }
 
     // ==================================================================
@@ -1905,6 +2145,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     ligarToggle('ctrl-estacao', v => { _estacao = v; renderHoras(); atualizarURL(); });
     ligarToggle('ctrl-ciclo', v => { _ciclo = v; renderPeriodos(); atualizarURL(); });
+
+    // Calculadora
+    const kwhInput = document.getElementById('calc-kwh');
+    const marcarRapido = () => document.querySelectorAll('#calc-rapido button').forEach(b => b.classList.toggle('active', +b.dataset.v === CALC.kwh));
+    const redesenharCalc = () => { if (R && periodo.inicio && DIAS.size) renderCalc(); atualizarURL(); };
+    kwhInput.addEventListener('input', () => {
+        const v = Math.round(+kwhInput.value);
+        if (!(v >= 1 && v <= 1000000)) return;
+        CALC.kwh = v; marcarRapido(); redesenharCalc();
+    });
+    document.getElementById('calc-rapido').addEventListener('click', e => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        CALC.kwh = +b.dataset.v; kwhInput.value = CALC.kwh; marcarRapido(); redesenharCalc();
+    });
+    ligarToggle('calc-ciclo', v => { CALC.ciclo = v; CALC.pv = null; CALC.pc = null; redesenharCalc(); });
+    const lerPct = el => { const t = el.value.trim(); if (t === '') return null; const v = +t; return (v >= 0 && v <= 100) ? v : undefined; };
+    ['calc-pv', 'calc-pc'].forEach(id => document.getElementById(id).addEventListener('input', e => {
+        const v = lerPct(e.target);
+        if (v === undefined) return;
+        if (id === 'calc-pv') CALC.pv = v; else CALC.pc = v;
+        redesenharCalc();
+    }));
+    document.getElementById('calc-repor').addEventListener('click', () => { CALC.pv = null; CALC.pc = null; redesenharCalc(); });
     ligarToggle('ctrl-perdas', v => { _perdas = v; renderHoje(); atualizarURL(); });
     ligarToggle('ctrl-outros', v => { _outros = v; renderEvolucao(); atualizarURL(); });
     document.getElementById('btn-tipos-todos').addEventListener('click', () => { _tiposTodos = !_tiposTodos; renderTipos(); });
@@ -1947,6 +2211,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const URL_INICIAL = lerURL();
     if (URL_INICIAL.perdas === 'com') { _perdas = 'com'; ativarToggle('ctrl-perdas', 'com'); }
     if (URL_INICIAL.outros === 'detalhe') { _outros = 'detalhe'; ativarToggle('ctrl-outros', 'detalhe'); }
+    {
+        const k = Math.round(+URL_INICIAL.kwh);
+        if (k >= 1 && k <= 1000000) { CALC.kwh = k; document.getElementById('calc-kwh').value = k; }
+        document.querySelectorAll('#calc-rapido button').forEach(b => b.classList.toggle('active', +b.dataset.v === CALC.kwh));
+        if (['BD', 'BS', 'TD', 'TS'].includes(URL_INICIAL.calc)) { CALC.ciclo = URL_INICIAL.calc; ativarToggle('calc-ciclo', CALC.ciclo); }
+        const pct = t => { const v = +t; return (t !== null && v >= 0 && v <= 100) ? v : null; };
+        if (CALC.ciclo !== 'S') { CALC.pv = pct(URL_INICIAL.pv); if (CALC.ciclo[0] === 'T') CALC.pc = pct(URL_INICIAL.pc); }
+    }
     if (PERIODOS_CICLO[URL_INICIAL.ciclo]) { _ciclo = URL_INICIAL.ciclo; ativarToggle('ctrl-ciclo', _ciclo); }
     if (['inverno', 'primavera', 'verao', 'outono'].includes(URL_INICIAL.est)) { _estacao = URL_INICIAL.est; ativarToggle('ctrl-estacao', _estacao); }
 
