@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Quotas por Agente de Mercado: quem abastece o consumo de eletricidade | Tiago Felícia</title>
+    <meta name="description" content="A quota de cada agente de mercado (BRP) no consumo de eletricidade abastecido em mercado em Portugal, para o período escolhido: quotas, evolução, perfil por hora, ERC médio por MWh e entradas e saídas, calculados a partir dos dados da REN." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/quotas-agentes" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/quotas-agentes" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/quotas-agentes" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Quotas por Agente de Mercado — eletricidade" />
+    <meta property="og:description" content="Quanto do consumo de eletricidade passa por cada agente de mercado, como evolui e a que horas — a partir dos dados da REN." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/quotas-agentes" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Quotas por agente de mercado — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Quotas do consumo de eletricidade por agente de mercado (BRP) em Portugal",
+      "description": "Por dia de mercado, desde 14 de março de 2024: o consumo abastecido em mercado por cada agente (BRP) e o ERC que lhe foi imputado, calculados a partir da repartição dos Encargos de Regulação imputados ao Consumo (ERC) publicada pela REN; e, por mês, o consumo de cada agente em cada hora do dia. Os nomes dos agentes vêm da lista de unidades de programação da REN.",
+      "url": "https://www.tiagofelicia.pt/quotas-agentes",
+      "inLanguage": "pt-PT",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "spatialCoverage": { "@type": "Place", "name": "Portugal" },
+      "temporalCoverage": "2024-03-14/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Consumo abastecido por agente", "unitText": "MWh" },
+        { "@type": "PropertyValue", "name": "Quota do consumo do mercado", "unitText": "%" },
+        { "@type": "PropertyValue", "name": "ERC imputado a cada agente", "unitText": "EUR" }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/agentes/" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/erc/brp/" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/erc/erc_agentes.csv" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Quotas por Agente", "item": "https://www.tiagofelicia.pt/quotas-agentes" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "O que é um agente de mercado (BRP)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É a entidade que compra (ou vende) a energia no mercado e responde perante a REN pelos desvios de uma carteira de consumo ou produção: em inglês, Balance Responsible Party. Cada comercializador tem de estar numa carteira, a sua ou a de outro agente."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que estas quotas não são as quotas dos comercializadores?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Porque um agente pode representar vários comercializadores: um comercializador mais pequeno pode estar na carteira de outro agente, e aí o seu consumo conta para esse agente. Também há empresas do mesmo grupo com agentes diferentes. As quotas desta página são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como se calcula o consumo de cada agente?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A REN reparte o ERC de cada período pelos agentes ao mesmo valor por MWh para todos. Por isso, a parte do ERC de um agente num período é a sua parte do consumo do mercado: consumo do agente = (ERC do agente ÷ ERC total) × consumo do mercado. Nos poucos períodos em que o ERC total é quase zero, usa-se a quota do agente nesse dia. Até 30/09/2025 a repartição é por hora; desde 01/10/2025, por quarto de hora."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que o ERC médio por MWh é diferente de agente para agente?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Porque o ERC muda a cada quarto de hora e cada agente tem clientes com horários de consumo diferentes. Quem tem mais consumo nas horas em que o ERC é mais alto, como as horas de sol e os fins de semana, paga mais por MWh."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que é a EDP Serviço Universal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É o nome com que a REN identifica o comercializador de último recurso, que fornece os clientes com tarifa regulada. A sua quota mostra o peso do comercializador de último recurso no consumo abastecido em mercado."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que vários agentes deixam de aparecer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nestes dados, um agente que deixa de aparecer pode ter saído do mercado ou passado a ser representado por outro agente. Em 2025 vários agentes deixaram de aparecer e, a 01/07/2025, muitos mudaram de unidade de liquidação."
+        }
+      },{
+        "@type": "Question",
+        "name": "De onde vêm estes dados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Da repartição dos Encargos de Regulação imputados ao Consumo por agente (BRP) do SIME da REN, recolhida duas vezes por dia desde 14 de março de 2024, e da lista de unidades de programação da REN, que dá o nome de cada agente. Os dados completos estão em dados.tiagofelicia.pt, sob licença CC BY 4.0."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        .aviso-box, .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .aviso-box, .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #666; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 0 0 14px 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e,
+           abaixo de 768px, position: sticky !important); um <nav> dentro do <main> apanha-as —
+           por isso são anuladas aqui. Sem o position: static, no telemóvel a
+           barra de atalhos ficava colada ao topo por cima dos gráficos. */
+        /* --- Controlos de período (como na mibgas-futuros) --- */
+        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+        .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
+        .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+        .date-selector-periodo label { font-weight: bold; font-size: 0.9em; }
+        .date-selector-periodo input { padding: 7px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95em; }
+        .date-selector-periodo.no-dates .date-input-wrapper { display: none; }
+        #btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 7px 14px; font-size: 0.95em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        #erro-periodo { display: none; max-width: 600px; margin: 0 auto 12px auto; background: #fdecea; border-left: 3px solid #c0392b; padding: 8px 12px; font-size: 0.88em; color: #7b241c; border-radius: 0 5px 5px 0; }
+        .periodo-titulo { font-weight: 600; color: #2c3e50 !important; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+        /* No telemóvel: sem o "Últimos" e os botões em grelha de 4 */
+        @media (max-width: 760px) {
+            .periodo-presets .ult { display: none; }
+            .periodo-presets .hh-mode-toggle { display: grid; grid-template-columns: repeat(4, auto); }
+            .periodo-presets .hh-mode-btn { padding: 6px 9px; font-size: 0.82em; border-bottom: 1px solid #cbd5e1; }
+            .periodo-presets .hh-mode-btn:nth-child(4n) { border-right: none; }
+            .periodo-presets .hh-mode-btn:nth-last-child(-n+4) { border-bottom: none; }
+        }
+
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        #qa-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 22px auto; }
+        @media (max-width: 1000px) { #qa-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 700px) { #qa-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #qa-kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #6c757d; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.25em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .kpi-sub { font-size: 0.76em; color: #6c757d; margin-top: 5px; }
+        .kpi-delta { font-size: 0.74em; font-weight: 600; margin-top: 3px; }
+        .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; }
+        .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0 0 4px 0; }
+        .kpi-cabecalho p { font-size: 0.85em; color: #6c757d; margin: 0; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #666; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 440px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #6c757d; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .resumo-bloco { width: 100%; margin: 12px 0 0; font-size: 0.9em; color: #444; line-height: 1.6; }
+        .nota-bloco { font-size: 0.8em; color: #888; margin: 6px 0 0; }
+
+        .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
+        .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(:disabled):not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .btn-toggle button:disabled { color: #cbd5e1; cursor: not-allowed; background: #fafafa; }
+        .btn-toggle[hidden] { display: none; }
+        .ctrl-data { display: inline-flex; align-items: center; gap: 6px; }
+        .ctrl-data input { font-size: 0.85em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #475569; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box ul { margin: 4px 0 8px 0; padding-left: 20px; }
+        .metodo-box li { margin: 2px 0; }
+
+        .tabela-box { width: 100%; margin: 14px 0 0; overflow-x: auto; }
+        .tabela-erc { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-erc caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-erc th, .tabela-erc td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-erc th[scope="col"] { background: #f1f3f5; font-weight: 600; }
+        .tabela-erc td.esq, .tabela-erc th.esq { text-align: left; }
+        .tabela-erc tbody tr:nth-child(even) { background: #fbfcfd; }
+        .tabela-erc tr.hoje td { font-weight: 700; background: #eef6ff; }
+        .tabela-erc tr.passado td { color: #6c757d; }
+        .tabela-erc td.nome { text-align: left; white-space: normal; min-width: 230px; }
+        .tabela-erc td.nome .cod { display: block; font-size: 0.78em; color: #94a3b8; font-family: ui-monospace, Consolas, monospace; }
+        .btn-mais { margin-top: 8px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 5px; padding: 6px 12px; font-size: 0.85em; cursor: pointer; }
+        .btn-mais:hover { background: #e2e8f0; }
+        .recordes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
+        @media (max-width: 800px) { .recordes-grid { grid-template-columns: 1fr; } }
+        .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .cta-irma { font-size: 0.88em; color: #6c757d; margin-top: 12px; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 380px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.8em; }
+        }
+
+        /* --- Dark mode --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-cabecalho h2,
+        [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub,
+        [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
+        [data-theme="dark"] .nota-bloco, [data-theme="dark"] .cta-irma { color: #94a3b8; }
+        [data-theme="dark"] .resumo-bloco, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(:disabled):not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .btn-toggle button:disabled { color: #475569; background: #16202e; }
+        [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; border-bottom-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .date-selector-periodo input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .date-selector-periodo input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] #btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] #erro-periodo { background: #4a1c1c; color: #fca5a5; border-left-color: #dc2626; }
+        [data-theme="dark"] .periodo-titulo { color: #e2e8f0 !important; }
+        [data-theme="dark"] .ctrl-data input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .ctrl-data input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-erc { background: #1e293b; }
+        [data-theme="dark"] .tabela-erc caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-erc th, [data-theme="dark"] .tabela-erc td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-erc th[scope="col"] { background: #0f172a; }
+        [data-theme="dark"] .tabela-erc tbody tr:nth-child(even) { background: #16202e; }
+        [data-theme="dark"] .tabela-erc tr.hoje td { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-erc tr.passado td { color: #94a3b8; }
+        [data-theme="dark"] .tabela-erc td.nome .cod { color: #64748b; }
+        [data-theme="dark"] .btn-mais { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .btn-mais:hover { background: #334155; }
+
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav,
+            .periodo-presets, .date-selector-periodo, .toast-feedback,
+            .bloco-controls, .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+        .aviso-box { width: 95%; margin: 0 auto 14px auto; background: #fff8e6; border: 1px solid #f1d58a; border-left: 4px solid #eda100; border-radius: 0 6px 6px 0; padding: 10px 14px; font-size: 0.87em; color: #5c4a12; line-height: 1.5; }
+        .aviso-box p { margin: 0; }
+        .tabela-erc td .dif { color: #6c757d; font-size: 0.9em; }
+        [data-theme="dark"] .aviso-box { background: #3b3216; border-color: #6b5a1e; border-left-color: #c98500; color: #f3e3b3; }
+        [data-theme="dark"] .tabela-erc td .dif { color: #94a3b8; }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li aria-current="page">Quotas por Agente</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <div class="periodo-presets">
+            <div class="hh-mode-toggle" role="group" aria-label="Período">
+                <button type="button" class="hh-mode-btn" data-preset="7d"><span class="ult">Últimos </span>7 dias</button>
+                <button type="button" class="hh-mode-btn" data-preset="mes">Este mês</button>
+                <button type="button" class="hh-mode-btn" data-preset="mespassado">Mês passado</button>
+                <button type="button" class="hh-mode-btn" data-preset="3m"><span class="ult">Últimos </span>3 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="6m"><span class="ult">Últimos </span>6 meses</button>
+                <button type="button" class="hh-mode-btn active" data-preset="12m"><span class="ult">Últimos </span>12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="ano">Ano corrente</button>
+                <button type="button" class="hh-mode-btn" data-preset="custom" title="Escolher as datas — abre com a série completa, desde 14/03/2024">Personalizado</button>
+            </div>
+        </div>
+        <div class="date-selector-periodo no-dates">
+            <div class="date-input-wrapper"><label for="seletor-data-inicio">De:</label> <input type="date" id="seletor-data-inicio"></div>
+            <div class="date-input-wrapper"><label for="seletor-data-fim">até:</label> <input type="date" id="seletor-data-fim"></div>
+            <button type="button" id="btn-partilhar" title="Copiar ou partilhar o link desta vista" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
+        </div>
+        <div id="erro-periodo" role="alert"></div>
+        <p class="badge-global">Dados disponíveis desde <strong id="badge-inicio">--/--/----</strong> · Última atualização: <strong id="badge-ultima">--/--/----</strong></p>
+
+        <h1>Quotas por Agente de Mercado</h1>
+        <p>Quanto do consumo de eletricidade abastecido em mercado passa por cada agente (BRP) — calculado a partir da repartição dos custos de regulação pela REN</p>
+        <p class="periodo-titulo" id="periodo-titulo"></p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-kpis" class="mini-nav-chip">📋 Resumo</a>
+        <a href="#bloco-quotas" class="mini-nav-chip">🥧 Quotas</a>
+        <a href="#bloco-evol" class="mini-nav-chip">📈 Evolução</a>
+        <a href="#bloco-horas" class="mini-nav-chip">🕒 Por hora</a>
+        <a href="#bloco-entradas" class="mini-nav-chip">🚪 Entradas e saídas</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div class="aviso-box">
+        <p><strong>Agente não é o mesmo que marca comercial.</strong> Um agente de mercado (BRP) pode representar vários comercializadores, e há grupos com mais do que um agente. As quotas são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso.</p>
+    </div>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados…</div>
+
+    <!-- ====================== RESUMO ====================== -->
+    <div class="kpi-cabecalho" id="bloco-kpis">
+        <h2>Resumo do período</h2>
+        <p>Consumo de cada agente = a sua parte do ERC de cada período × o consumo do mercado nesse período (a REN reparte o ERC ao mesmo €/MWh por todos). Os dias são dias de mercado, como na REN.</p>
+    </div>
+    <div id="qa-kpis"></div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/quotas-agentes</p></div>
+
+    <!-- ====================== QUOTAS ====================== -->
+    <div class="grafico-box" id="bloco-quotas">
+        <h2>Quotas no período</h2>
+        <p class="grafico-intro">A parte de cada agente no consumo abastecido em mercado no período escolhido. Em «ERC médio por MWh», quanto pagou cada agente de custos de regulação por MWh: muda com o horário de consumo dos seus clientes, porque o ERC muda a cada quarto de hora.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-quotas" role="group" aria-label="Vista das quotas">
+                <button type="button" data-v="quota" class="active">Quota</button>
+                <button type="button" data-v="erc">ERC médio por MWh</button>
+            </div>
+        </div>
+        <div id="grafico-quotas" class="grafico"></div>
+        <p class="resumo-bloco" id="quotas-resumo"></p>
+        <div class="tabela-box"><table class="tabela-erc" id="tabela-agentes"></table></div>
+        <button type="button" id="btn-agentes-todos" class="btn-mais" hidden></button>
+        <p class="nota-bloco" id="quotas-nota"></p>
+    </div>
+
+    <!-- ====================== EVOLUÇÃO ====================== -->
+    <div class="grafico-box" id="bloco-evol">
+        <h2>Evolução das quotas</h2>
+        <p class="grafico-intro">Os sete maiores agentes da série, cada um sempre com a mesma cor, e os restantes juntos em «Outros».</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-evol" role="group" aria-label="Vista da evolução">
+                <button type="button" data-v="quota" class="active">Quota (%)</button>
+                <button type="button" data-v="volume">Consumo</button>
+            </div>
+        </div>
+        <div id="grafico-evol" class="grafico"></div>
+        <p class="resumo-bloco" id="evol-resumo"></p>
+        <p class="nota-bloco" id="evol-nota"></p>
+    </div>
+
+    <!-- ====================== POR HORA ====================== -->
+    <div class="grafico-box" id="bloco-horas">
+        <h2>Quotas e consumo ao longo do dia</h2>
+        <p class="grafico-intro">Em «Quota por hora», a parte de cada agente no consumo de cada hora do dia; em «Perfil de consumo», como o consumo de cada agente se distribui pelas 24 horas, comparado com o do mercado (tracejado). Em hora de Portugal.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-horas" role="group" aria-label="Vista por hora">
+                <button type="button" data-v="quota" class="active">Quota por hora</button>
+                <button type="button" data-v="perfil">Perfil de consumo</button>
+            </div>
+        </div>
+        <div id="grafico-horas" class="grafico"></div>
+        <p class="resumo-bloco" id="horas-resumo"></p>
+        <p class="nota-bloco" id="horas-nota"></p>
+    </div>
+
+    <!-- ====================== ENTRADAS E SAÍDAS ====================== -->
+    <div class="grafico-box" id="bloco-entradas">
+        <h2>Entradas e saídas</h2>
+        <p class="grafico-intro">Os agentes cujo primeiro ou último dia com consumo, em toda a série desde 14/03/2024, cai no período escolhido. Um agente que deixa de aparecer pode ter saído do mercado ou passado a ser representado por outro agente.</p>
+        <div class="tabela-box"><table class="tabela-erc" id="tabela-entradas"></table></div>
+        <p class="nota-bloco" id="entradas-nota"></p>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>Compare os comercializadores pelo que realmente paga</h2>
+        <p>O simulador calcula a fatura de cada tarifário com os seus consumos, incluindo o ERC de cada quarto de hora nos tarifários indexados.</p>
+        <div class="botoes">
+            <a href="eletricidade-tiagofelicia" class="button-link">⚡ Simular tarifários de eletricidade</a>
+            <a href="erc" class="button-link">⚖️ Custos de Regulação (ERC)</a>
+        </div>
+        <p class="cta-irma">Os serviços que o ERC paga — reservas, desvios, restrições técnicas — estão em <a href="servicos-sistema">Serviços de Sistema</a>.</p>
+    </div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que é um agente de mercado (BRP)?</strong></summary>
+            <div class="faq-content">
+                <p>É a entidade que compra (ou vende) a energia no mercado e responde perante a REN pelos <strong>desvios</strong> de uma carteira de consumo ou produção — em inglês, <em>Balance Responsible Party</em>. Cada comercializador tem de estar numa carteira: a sua ou a de outro agente.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que estas quotas não são as quotas dos comercializadores?</strong></summary>
+            <div class="faq-content">
+                <p>Porque um agente pode representar <strong>vários comercializadores</strong>: um comercializador mais pequeno pode estar na carteira de outro agente, e aí o seu consumo conta para esse agente. Também há empresas do mesmo grupo com agentes diferentes.</p>
+                <p>As quotas desta página são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como se calcula o consumo de cada agente?</strong></summary>
+            <div class="faq-content">
+                <p>A REN reparte o <a href="erc">ERC</a> de cada período pelos agentes ao <strong>mesmo valor por MWh</strong> para todos. Por isso, a parte do ERC de um agente num período é a sua parte do consumo do mercado:</p>
+                <p><strong>consumo do agente = (ERC do agente ÷ ERC total) × consumo do mercado</strong></p>
+                <p>Nos poucos períodos em que o ERC total é quase zero, usa-se a quota do agente nesse dia. Até 30/09/2025 a repartição é por hora; desde 01/10/2025, por quarto de hora. Em cada dia, a soma dos agentes dá o consumo do mercado.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o ERC médio por MWh é diferente de agente para agente?</strong></summary>
+            <div class="faq-content">
+                <p>Porque o ERC muda a cada quarto de hora e cada agente tem clientes com horários de consumo diferentes. Quem tem mais consumo nas horas em que o ERC é mais alto — as horas de sol e os fins de semana — paga mais por MWh.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que é a EDP Serviço Universal?</strong></summary>
+            <div class="faq-content">
+                <p>É o nome com que a REN identifica o <strong>comercializador de último recurso</strong>, que fornece os clientes com tarifa regulada. A sua quota mostra o peso do comercializador de último recurso no consumo abastecido em mercado.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que vários agentes deixam de aparecer?</strong></summary>
+            <div class="faq-content">
+                <p>Nestes dados, um agente que deixa de aparecer pode ter saído do mercado ou passado a ser representado por outro agente. Em 2025 vários agentes deixaram de aparecer e, a 01/07/2025, muitos mudaram de unidade de liquidação.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm estes dados?</strong></summary>
+            <div class="faq-content">
+                <p>Da repartição dos <strong>Encargos de Regulação imputados ao Consumo</strong> por agente (BRP) do SIME da REN, recolhida duas vezes por dia desde 14 de março de 2024, e da lista de unidades de programação da REN, que dá o nome de cada agente.</p>
+                <p>Os dados completos estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    // agregados/agentes/metadata.json (agentes, nomes, cores) e AAAA.json: por dia
+    // de mercado [MWh e € do mercado, i, MWh, €, …] e, por mês, o consumo de cada
+    // agente em cada hora (hora de Portugal).
+    const URL_META = 'agregados/agentes/metadata.json';
+    const PASTA = 'agregados/agentes/';
+    const COD_CUR = 'EDPSU';                  // comercializador de último recurso
+    const LINHAS_INICIAIS = 12;
+
+    const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const MESES_LONGOS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho',
+                          'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const DIAS_SEMANA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+    // Paleta validada (light, dark): a cor segue o agente (os 7 maiores da série)
+    const PALETA = [['#2a78d6', '#3987e5'], ['#eb6834', '#d95926'], ['#1baf7a', '#199e70'], ['#eda100', '#c98500'],
+                    ['#e87ba4', '#d55181'], ['#008300', '#008300'], ['#4a3aa7', '#9085e9']];
+
+    // ==================================================================
+    // ESTADO
+    // ==================================================================
+    let META = null;
+    const AG = new Map();             // código → agente do metadata
+    const VISTA = { quotas: 'quota', evol: 'quota', horas: 'quota' };
+    const VISTA_ID = { quotas: 'ctrl-quotas', evol: 'ctrl-evol', horas: 'ctrl-horas' };
+    const VISTAS_VALIDAS = { quotas: ['quota', 'erc'], evol: ['quota', 'volume'], horas: ['quota', 'perfil'] };
+    const VISTA_OMISSAO = { quotas: 'quota', evol: 'quota', horas: 'quota' };
+    let _todos = false;
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const fmt0 = v => vazio(v) ? '--' : _nf0.format(v);
+    const fmt1 = v => vazio(v) ? '--' : _nf1.format(v);
+    const fmt2 = v => vazio(v) ? '--' : _nf2.format(v);
+    const fmtPct = v => vazio(v) ? '--' : (v > 0 && v < 0.005 ? '< 0,01 %' : (Math.abs(v) < 0.1 && v !== 0 ? fmt2(v) : fmt1(v)) + ' %');
+    const fmtMWh = v => vazio(v) ? '--' : fmt2(v) + ' €/MWh';
+    const fmtEn = mwh => vazio(mwh) ? '--' : (Math.abs(mwh) >= 1e6 ? `${fmt2(mwh / 1e6)} TWh`
+                                            : Math.abs(mwh) >= 1000 ? `${fmt2(mwh / 1000)} GWh` : `${fmt0(mwh)} MWh`);
+    function fmtEur(v) {
+        if (vazio(v)) return '--';
+        const a = Math.abs(v), s = v < 0 ? '−' : '';
+        if (a >= 1e6) return `${s}${fmt2(a / 1e6)} M€`;
+        if (a >= 1e3) return `${s}${fmt1(a / 1e3)} k€`;
+        return `${s}${fmt0(a)} €`;
+    }
+    function fmtData(iso) { if (!iso) return '--/--/----'; const p = iso.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+    function rotMes(mes) { return `${MESES[+mes.slice(5, 7) - 1]}/${mes.slice(2, 4)}`; }
+    function mesLongo(mes) { return `${MESES_LONGOS[+mes.slice(5, 7) - 1]} de ${mes.slice(0, 4)}`; }
+    const hora = h => String(h).padStart(2, '0') + 'h';
+    const faixaHora = h => `${String(h).padStart(2, '0')}:00–${String((h + 1) % 24).padStart(2, '0')}:00`;
+    const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6',
+                 suave: dk ? '#94a3b8' : '#888', outros: dk ? '#64748b' : '#94a3b8' };
+    }
+    const corAgente = (cod, c) => { const a = AG.get(cod); return (a && a.cor) ? PALETA[a.cor - 1][c.dk ? 1 : 0] : c.outros; };
+    const nomeCurto = cod => (AG.get(cod) || {}).curto || cod;
+    function exportacao(nome) {
+        return { enabled: true, filename: nome,
+                 buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } } };
+    }
+    function base(c, nome) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: false },
+            exporting: exportacao(nome),
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    const eixoX = (c, cats, extra) => Object.assign({ categories: cats, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha }, extra || {});
+    const eixoY = (c, titulo, extra) => Object.assign({ title: { text: titulo, style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha }, extra || {});
+    function limparGrafico(id, html) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = html || '';
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    function ativarToggle(id, v) {
+        document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+    }
+
+    // ==================================================================
+    // DATAS
+    // ==================================================================
+    const DIA_MS = 86400000;
+    const tsDia = iso => { const [a, m, d] = iso.split('-').map(Number); return Date.UTC(a, m - 1, d); };
+    const isoDeTs = ts => new Date(ts).toISOString().slice(0, 10);
+    const addDias = (iso, n) => isoDeTs(tsDia(iso) + n * DIA_MS);
+    function deslocarMeses(iso, n) { const d = new Date(tsDia(iso)); d.setUTCMonth(d.getUTCMonth() + n); return isoDeTs(d.getTime()); }
+    const ultimoDoMes = iso => { const [a, m] = iso.split('-').map(Number); return isoDeTs(Date.UTC(a, m, 0)); };
+    const nDias = (a, b) => Math.round((tsDia(b) - tsDia(a)) / DIA_MS) + 1;
+    function diasDe(inicio, fim) { const out = []; for (let t = tsDia(inicio); t <= tsDia(fim); t += DIA_MS) out.push(isoDeTs(t)); return out; }
+    const diaSemana = iso => DIAS_SEMANA[new Date(tsDia(iso)).getUTCDay()];
+    function hojeISO() {
+        const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+        const v = t => p.find(x => x.type === t).value;
+        return `${v('year')}-${v('month')}-${v('day')}`;
+    }
+
+    // ==================================================================
+    // DADOS
+    // ==================================================================
+    const _anos = new Map();
+    const DIA = new Map();            // dia de mercado → { mwh, eur, a: Map(código → [MWh, €]) }
+    const PERF = new Map();           // mês → { nac: [24], a: Map(código → [24]) }
+    function carregarAno(ano) {
+        if (!_anos.has(ano)) {
+            _anos.set(ano, fetchDados(PASTA + ano + '.json')
+                .then(r => r.ok ? r.json() : null)
+                .then(j => {
+                    if (!j) return null;
+                    Object.entries(j.dias || {}).forEach(([d, x]) => {
+                        const a = new Map();
+                        for (let k = 2; k + 2 < x.length; k += 3) a.set(j.agentes[x[k]], [x[k + 1] || 0, x[k + 2] || 0]);
+                        DIA.set(d, { mwh: x[0], eur: x[1], a });
+                    });
+                    Object.entries(j.perfis || {}).forEach(([m, p]) => {
+                        const a = new Map();
+                        Object.entries(p).forEach(([i, v]) => { if (i !== '_') a.set(j.agentes[+i], v); });
+                        PERF.set(m, { nac: p._, a });
+                    });
+                    return j;
+                })
+                .catch(() => null));
+        }
+        return _anos.get(ano);
+    }
+    function carregarIntervalo(inicio, fim) {
+        const anos = (META.anos || []).filter(a => a >= +inicio.slice(0, 4) && a <= +fim.slice(0, 4));
+        return Promise.all(anos.map(carregarAno));
+    }
+    // Somas de um conjunto de dias de mercado
+    function soma(dias) {
+        const porAg = new Map();
+        let mwh = 0, eur = 0, n = 0;
+        dias.forEach(d => {
+            const x = DIA.get(d);
+            if (!x) return;
+            n++; mwh += x.mwh; eur += x.eur;
+            x.a.forEach(([m, e], c) => {
+                const s = porAg.get(c) || { mwh: 0, eur: 0, de: null, ate: null };
+                s.mwh += m; s.eur += e;
+                if (m > 0) { if (!s.de) s.de = d; s.ate = d; }
+                porAg.set(c, s);
+            });
+        });
+        return { n, mwh, eur, porAg };
+    }
+    const ordenados = t => [...t.porAg].filter(([, s]) => s.mwh > 0).sort((a, b) => b[1].mwh - a[1].mwh);
+    const DESTAQUE = () => META.agentes.filter(a => a.cor).sort((a, b) => a.cor - b.cor).map(a => a.codigo);
+
+    const DIARIO_ATE_DIAS = 92;
+    function baldes() {
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        if (dias.length <= DIARIO_ATE_DIAS) {
+            return { porDia: true, lista: dias.map(d => ({ rotulo: fmtData(d).slice(0, 5), longo: `${diaSemana(d)}, ${fmtData(d)}`, dias: [d] })) };
+        }
+        const meses = new Map();
+        dias.forEach(d => { const m = d.slice(0, 7); if (!meses.has(m)) meses.set(m, []); meses.get(m).push(d); });
+        return { porDia: false, lista: [...meses].map(([m, ds]) => ({ rotulo: rotMes(m), longo: mesLongo(m), dias: ds })) };
+    }
+    const semDados = (id, ...ids) => { limparGrafico(id, '<div class="bloco-vazio">Sem dados neste período.</div>'); ids.forEach(x => { document.getElementById(x).textContent = ''; }); };
+
+    // ==================================================================
+    // RESUMO
+    // ==================================================================
+    function renderKPIs() {
+        const el = document.getElementById('qa-kpis');
+        const t = soma(diasDe(periodo.inicio, periodo.fim));
+        if (!t.n || !t.mwh) { el.innerHTML = '<div class="bloco-vazio" style="grid-column:1/-1">Sem dados neste período.</div>'; return; }
+        const lista = ordenados(t);
+        const q = s => 100 * s.mwh / t.mwh;
+        const cr3 = lista.slice(0, 3).reduce((a, [, s]) => a + q(s), 0);
+        const hhi = lista.reduce((a, [, s]) => a + q(s) ** 2, 0);
+        const acima1 = lista.filter(([, s]) => q(s) >= 1).length;
+        const cur = t.porAg.get(COD_CUR);
+        const card = (label, valor, sub) => `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value">${valor}</div>${sub ? `<div class="kpi-sub">${sub}</div>` : ''}</div>`;
+        let html = card('Consumo do mercado', fmtEn(t.mwh), `${t.n} dias · ERC médio ${fmtMWh(t.eur / t.mwh)}`);
+        html += card('Agentes com consumo', fmt0(lista.length), `${acima1} com mais de 1 %`);
+        html += card('Maior agente', `${fmtPct(q(lista[0][1]))}`, esc(nomeCurto(lista[0][0])));
+        html += card('Os 3 maiores juntos', fmtPct(cr3), lista.slice(0, 3).map(([c]) => esc(nomeCurto(c))).join(', '));
+        html += card('Concentração (IHH)', fmt0(hhi), 'soma dos quadrados das quotas: de 0 a 10 000 (um só agente)');
+        html += card('Último recurso', cur ? fmtPct(q(cur)) : '--', 'EDP Serviço Universal');
+        el.innerHTML = html;
+    }
+
+    // ==================================================================
+    // QUOTAS NO PERÍODO
+    // ==================================================================
+    function renderQuotas() {
+        const c = _hcDark(), id = 'grafico-quotas';
+        const resumo = document.getElementById('quotas-resumo'), nota = document.getElementById('quotas-nota');
+        const tabela = document.getElementById('tabela-agentes'), btn = document.getElementById('btn-agentes-todos');
+        const t = soma(diasDe(periodo.inicio, periodo.fim));
+        if (!t.n || !t.mwh) { semDados(id, 'quotas-resumo', 'quotas-nota'); tabela.innerHTML = ''; btn.hidden = true; return; }
+        const lista = ordenados(t);
+        const ercNac = t.eur / t.mwh;
+        let pontos, titulo, sufixo, plotLines = [];
+        if (VISTA.quotas === 'erc') {
+            // Só os agentes com pelo menos 0,5 % (nos pequenos, o médio é pouco representativo)
+            const sel = lista.filter(([, s]) => 100 * s.mwh / t.mwh >= 0.5).sort((a, b) => b[1].eur / b[1].mwh - a[1].eur / a[1].mwh);
+            // A diferença face ao mercado: as diferenças são pequenas e, a partir de zero, não se veriam
+            pontos = sel.map(([cod, s]) => ({ name: nomeCurto(cod), y: s.eur / s.mwh - ercNac, color: corAgente(cod, c), cod }));
+            titulo = `€/MWh face ao mercado (${fmt2(ercNac)} €/MWh)`; sufixo = ' €/MWh';
+            plotLines = [{ value: 0, color: c.txt, width: 1, zIndex: 5 }];
+            const maior = sel[0], menor = sel[sel.length - 1];
+            resumo.innerHTML = sel.length > 1 ? `Entre os agentes com pelo menos 0,5 % do consumo, o ERC médio foi de <strong>${fmtMWh(menor[1].eur / menor[1].mwh)}</strong> (${esc(nomeCurto(menor[0]))}) a <strong>${fmtMWh(maior[1].eur / maior[1].mwh)}</strong> (${esc(nomeCurto(maior[0]))}), contra ${fmtMWh(ercNac)} no conjunto do mercado.` : '';
+            nota.textContent = 'ERC médio = ERC imputado ao agente ÷ consumo do agente; as barras são a diferença face à média do mercado. Só os agentes com pelo menos 0,5 % do consumo no período. Quem tem mais consumo nas horas de sol paga mais (ver «Perfil de consumo», abaixo).';
+        } else {
+            pontos = lista.map(([cod, s]) => ({ name: nomeCurto(cod), y: 100 * s.mwh / t.mwh, color: corAgente(cod, c), cod }));
+            titulo = '% do consumo'; sufixo = ' %';
+            const [c1, s1] = lista[0];
+            resumo.innerHTML = `No período, <strong>${esc(nomeCurto(c1))}</strong> abasteceu <strong>${fmtPct(100 * s1.mwh / t.mwh)}</strong> do consumo do mercado (${fmtEn(s1.mwh)}). ` +
+                `${lista.length} agentes tiveram consumo; os ${Math.min(5, lista.length)} maiores somaram ${fmtPct(lista.slice(0, 5).reduce((a, [, s]) => a + 100 * s.mwh / t.mwh, 0))}.`;
+            nota.textContent = 'Quota = consumo do agente ÷ consumo do mercado nos mesmos dias de mercado. Os sete maiores da série têm sempre a mesma cor; os restantes, cinzento.';
+        }
+        const alvo = document.getElementById(id);
+        alvo.style.height = Math.max(260, pontos.length * 24 + 100) + 'px';
+        limparGrafico(id);
+        Highcharts.chart(id, Object.assign(base(c, VISTA.quotas === 'erc' ? 'erc-medio-por-agente' : 'quotas-por-agente'), {
+            // Margem em cima para a 1.ª barra não ficar sob o botão de exportar
+            chart: { type: 'bar', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, marginTop: 40 },
+            legend: { enabled: false },
+            xAxis: eixoX(c, pontos.map(p => p.name), { labels: { style: { color: c.txt, fontSize: '11px' } } }),
+            yAxis: eixoY(c, titulo, Object.assign({ plotLines, endOnTick: false, maxPadding: window.innerWidth < 600 ? 0.25 : 0.12 },
+                                                  VISTA.quotas === 'erc' ? { startOnTick: false, minPadding: window.innerWidth < 600 ? 0.25 : 0.12 } : { min: 0 })),
+            plotOptions: { bar: { borderWidth: 0, pointPadding: 0.08, groupPadding: 0,
+                dataLabels: { enabled: true, crop: false, overflow: 'allow', style: { color: c.txt, fontWeight: 'normal', fontSize: '11px', textOutline: 'none' },
+                              formatter: function () { return VISTA.quotas === 'erc' ? `${this.y >= 0 ? '+' : '−'}${fmt2(Math.abs(this.y))}` : fmtPct(this.y); } } } },
+            tooltip: Object.assign(base(c).tooltip, { shared: false, formatter: function () {
+                const cod = this.point.options.cod, s = t.porAg.get(cod), a = AG.get(cod) || {};
+                return `<b>${esc(a.nome || cod)}</b> (${cod})<br>Quota: ${fmtPct(100 * s.mwh / t.mwh)} · ${fmtEn(s.mwh)}<br>ERC: ${fmtEur(s.eur)} · ${fmtMWh(s.eur / s.mwh)}`;
+            } }),
+            series: [{ name: VISTA.quotas === 'erc' ? 'ERC médio' : 'Quota', data: pontos.map(p => ({ y: p.y, color: p.color, cod: p.cod })) }]
+        }));
+
+        // Tabela
+        const vis = _todos ? lista : lista.slice(0, LINHAS_INICIAIS);
+        let tb = `<caption>Agentes no período (${lista.length})</caption><thead><tr><th scope="col" class="esq">Agente</th><th scope="col">Quota</th><th scope="col">Consumo</th><th scope="col">ERC imputado</th><th scope="col">ERC médio</th><th scope="col">Com consumo no período</th></tr></thead><tbody>`;
+        vis.forEach(([cod, s]) => {
+            const a = AG.get(cod) || {};
+            const dif = s.eur / s.mwh - ercNac;
+            tb += `<tr><td class="nome">${esc(a.nome || cod)}<span class="cod">${cod}</span></td><td>${fmtPct(100 * s.mwh / t.mwh)}</td><td>${fmtEn(s.mwh)}</td><td>${fmtEur(s.eur)}</td>` +
+                  `<td>${fmtMWh(s.eur / s.mwh)} <span class="dif">(${dif >= 0 ? '+' : '−'}${fmt2(Math.abs(dif))})</span></td>` +
+                  `<td>${s.de === periodo.inicio && s.ate === periodo.fim ? 'todo o período' : `${fmtData(s.de)} a ${fmtData(s.ate)}`}</td></tr>`;
+        });
+        tabela.innerHTML = tb + '</tbody>';
+        btn.hidden = lista.length <= LINHAS_INICIAIS;
+        btn.textContent = _todos ? `Mostrar só os ${LINHAS_INICIAIS} maiores` : `Mostrar os ${lista.length} agentes`;
+    }
+
+    // ==================================================================
+    // EVOLUÇÃO
+    // ==================================================================
+    function renderEvol() {
+        const c = _hcDark(), id = 'grafico-evol';
+        const resumo = document.getElementById('evol-resumo'), nota = document.getElementById('evol-nota');
+        const B = baldes();
+        const ts = B.lista.map(b => soma(b.dias));
+        if (!ts.some(t => t.mwh)) return semDados(id, 'evol-resumo', 'evol-nota');
+        const dest = DESTAQUE();
+        const pct = VISTA.evol === 'quota';
+        const u = pct ? null : (Math.max(...ts.map(t => t.mwh)) >= 1e6 ? { div: 1e6, un: 'TWh' } : { div: 1000, un: 'GWh' });
+        const val = (t, mwh) => !t.mwh ? null : (pct ? 100 * mwh / t.mwh : mwh / u.div);
+        const series = dest.map(cod => ({ name: nomeCurto(cod), color: corAgente(cod, c), cod,
+            data: ts.map(t => val(t, (t.porAg.get(cod) || { mwh: 0 }).mwh)) }));
+        series.push({ name: 'Outros', color: c.outros, data: ts.map(t => {
+            let o = t.mwh; dest.forEach(cod => { o -= (t.porAg.get(cod) || { mwh: 0 }).mwh; }); return val(t, o);
+        }) });
+        limparGrafico(id);
+        Highcharts.chart(id, Object.assign(base(c, pct ? 'quotas-evolucao' : 'consumo-por-agente'), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, B.lista.map(b => b.rotulo)),
+            yAxis: eixoY(c, pct ? '% do consumo' : u.un, pct ? { max: 100, min: 0 } : { min: 0 }),
+            plotOptions: { column: { stacking: 'normal', borderWidth: 0, groupPadding: 0.06, pointPadding: 0.02 } },
+            tooltip: Object.assign(base(c).tooltip, { formatter: function () {
+                const k = this.points[0].point.index, t = ts[k];
+                let s = `<b>${B.lista[k].longo}</b>`;
+                this.points.slice().reverse().forEach(p => {
+                    const mwh = pct ? p.y * t.mwh / 100 : p.y * u.div;
+                    s += `<br><span style="color:${p.color}">●</span> ${esc(p.series.name)}: ${fmtPct(pct ? p.y : 100 * mwh / t.mwh)} · ${fmtEn(mwh)}`;
+                });
+                return s + `<br><b>Mercado: ${fmtEn(t.mwh)}</b>`;
+            } }),
+            series
+        }));
+        // Resumo: quem mais ganhou e perdeu quota entre o primeiro e o último balde
+        const ini = ts.find(t => t.mwh), fim = [...ts].reverse().find(t => t.mwh);
+        if (ini && fim && ini !== fim) {
+            const todos = new Set([...ini.porAg.keys(), ...fim.porAg.keys()]);
+            const var_ = [...todos].map(cod => ({ cod, d: 100 * (fim.porAg.get(cod) || { mwh: 0 }).mwh / fim.mwh - 100 * (ini.porAg.get(cod) || { mwh: 0 }).mwh / ini.mwh }))
+                .sort((a, b) => b.d - a.d);
+            const ganhou = var_[0], perdeu = var_[var_.length - 1];
+            const iL = B.lista[ts.indexOf(ini)].longo, fL = B.lista[ts.indexOf(fim)].longo;
+            resumo.innerHTML = `De ${iL} a ${fL}, quem mais ganhou quota foi <strong>${esc(nomeCurto(ganhou.cod))}</strong> (${ganhou.d >= 0 ? '+' : '−'}${fmt1(Math.abs(ganhou.d))} pontos) e quem mais perdeu foi <strong>${esc(nomeCurto(perdeu.cod))}</strong> (${perdeu.d >= 0 ? '+' : '−'}${fmt1(Math.abs(perdeu.d))} pontos).`;
+        } else resumo.textContent = '';
+        nota.textContent = (B.porDia ? 'Uma barra por dia de mercado (até 3 meses; acima disso, uma por mês).' : 'Uma barra por mês (dias de mercado).') +
+            ' Pontos = diferença entre as quotas, em percentagem do consumo.';
+    }
+
+    // ==================================================================
+    // POR HORA
+    // ==================================================================
+    function renderHoras() {
+        const c = _hcDark(), id = 'grafico-horas';
+        const resumo = document.getElementById('horas-resumo'), nota = document.getElementById('horas-nota');
+        const meses = [...new Set(diasDe(periodo.inicio, periodo.fim).map(d => d.slice(0, 7)))].filter(m => PERF.has(m));
+        if (!meses.length) return semDados(id, 'horas-resumo', 'horas-nota');
+        const nac = Array(24).fill(0), por = new Map();
+        meses.forEach(m => {
+            const p = PERF.get(m);
+            p.nac.forEach((v, h) => { nac[h] += v || 0; });
+            p.a.forEach((v, cod) => { const a = por.get(cod) || Array(24).fill(0); v.forEach((x, h) => { a[h] += x || 0; }); por.set(cod, a); });
+        });
+        const dest = DESTAQUE().filter(cod => por.has(cod));
+        const cats = Array.from({ length: 24 }, (_, h) => hora(h));
+        let series, titulo;
+        if (VISTA.horas === 'perfil') {
+            const totN = nac.reduce((a, b) => a + b, 0);
+            series = dest.map(cod => { const a = por.get(cod), tot = a.reduce((x, y) => x + y, 0);
+                return { name: nomeCurto(cod), color: corAgente(cod, c), data: a.map(v => tot ? 100 * v / tot : null) }; });
+            series.push({ name: 'Mercado', color: c.txt, dashStyle: 'ShortDash', lineWidth: 2.5, data: nac.map(v => 100 * v / totN), zIndex: 5 });
+            titulo = '% do consumo do dia';
+            // Quem tem mais consumo nas horas de sol (10h–17h) face ao mercado
+            const sol = a => { const tot = a.reduce((x, y) => x + y, 0); return tot ? 100 * a.slice(10, 17).reduce((x, y) => x + y, 0) / tot : null; };
+            const sN = sol(nac), lista = dest.map(cod => ({ cod, s: sol(por.get(cod)) })).sort((a, b) => b.s - a.s);
+            resumo.innerHTML = `Entre as 10h e as 17h fica <strong>${fmt1(sN)} %</strong> do consumo do mercado. Entre os sete maiores agentes, vai de ${fmt1(lista[lista.length - 1].s)} % (${esc(nomeCurto(lista[lista.length - 1].cod))}) a ${fmt1(lista[0].s)} % (${esc(nomeCurto(lista[0].cod))}).`;
+        } else {
+            series = dest.map(cod => ({ name: nomeCurto(cod), color: corAgente(cod, c), data: por.get(cod).map((v, h) => nac[h] ? 100 * v / nac[h] : null) }));
+            titulo = '% do consumo da hora';
+            const amp = dest.map(cod => { const q = por.get(cod).map((v, h) => nac[h] ? 100 * v / nac[h] : 0);
+                const mx = Math.max(...q), mn = Math.min(...q); return { cod, mx, mn, hMx: q.indexOf(mx), hMn: q.indexOf(mn) }; })
+                .sort((a, b) => (b.mx - b.mn) - (a.mx - a.mn))[0];
+            resumo.innerHTML = amp ? `A quota que mais muda ao longo do dia é a de <strong>${esc(nomeCurto(amp.cod))}</strong>: de ${fmtPct(amp.mn)} às ${faixaHora(amp.hMn)} a ${fmtPct(amp.mx)} às ${faixaHora(amp.hMx)}.` : '';
+        }
+        limparGrafico(id);
+        Highcharts.chart(id, Object.assign(base(c, VISTA.horas === 'perfil' ? 'perfil-consumo-por-agente' : 'quota-por-hora'), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, cats),
+            yAxis: eixoY(c, titulo, { min: 0 }),
+            plotOptions: { line: { marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2 } },
+            tooltip: Object.assign(base(c).tooltip, { formatter: function () {
+                let s = `<b>${faixaHora(this.points[0].point.index)}</b>`;
+                this.points.slice().sort((a, b) => b.y - a.y).forEach(p => { s += `<br><span style="color:${p.color}">●</span> ${esc(p.series.name)}: ${fmtPct(p.y)}`; });
+                return s;
+            } }),
+            series
+        }));
+        const pM = meses.length === 1 ? mesLongo(meses[0]) : `${mesLongo(meses[0])} a ${mesLongo(meses[meses.length - 1])}`;
+        nota.textContent = `Por hora, os dados estão agregados por mês: estes valores usam os meses que o período toca (${pM}). Os sete maiores agentes da série, em hora de Portugal.`;
+    }
+
+    // ==================================================================
+    // ENTRADAS E SAÍDAS
+    // ==================================================================
+    function renderEntradas() {
+        const tabela = document.getElementById('tabela-entradas'), nota = document.getElementById('entradas-nota');
+        const ev = [];
+        META.agentes.forEach(a => {
+            if (a.de && a.de > META.de && a.de >= periodo.inicio && a.de <= periodo.fim) ev.push({ d: a.de, tipo: 'Primeiro dia', a });
+            if (a.ate && a.ate < META.ate && a.ate >= periodo.inicio && a.ate <= periodo.fim) ev.push({ d: a.ate, tipo: 'Último dia', a });
+        });
+        ev.sort((x, y) => x.d < y.d ? -1 : x.d > y.d ? 1 : 0);
+        if (!ev.length) { tabela.innerHTML = '<caption>Sem entradas nem saídas no período</caption>'; nota.textContent = ''; return; }
+        let tb = `<caption>Entradas e saídas no período (${ev.length})</caption><thead><tr><th scope="col" class="esq">Dia</th><th scope="col" class="esq">Agente</th><th scope="col" class="esq">O quê</th><th scope="col">Consumo em toda a série</th></tr></thead><tbody>`;
+        ev.forEach(x => {
+            tb += `<tr><td class="esq">${fmtData(x.d)}</td><td class="nome">${esc(x.a.nome)}<span class="cod">${x.a.codigo}</span></td><td class="esq">${x.tipo === 'Primeiro dia' ? '🟢 primeiro dia com consumo' : '🔴 último dia com consumo'}</td><td>${fmtEn(x.a.mwh)}</td></tr>`;
+        });
+        tabela.innerHTML = tb + '</tbody>';
+        nota.textContent = `Primeiro e último dia com consumo em toda a série (${fmtData(META.de)} a ${fmtData(META.ate)}); um agente com uma pausa pelo meio aparece só pelos extremos.`;
+    }
+
+    // ==================================================================
+    // PERÍODO — botões, URL e partilha
+    // ==================================================================
+    let MIN_DIA = null, FIM_DIA = null;
+    let periodo = { inicio: null, fim: null };
+    const PRESETS = ['7d', 'mes', 'mespassado', '3m', '6m', '12m', 'ano'];
+    function getPresetDates(p) {
+        if (!FIM_DIA) return null;
+        const fim = FIM_DIA, clamp = s => (s < MIN_DIA ? MIN_DIA : s), hoje = hojeISO();
+        if (p === '7d') return { inicio: clamp(addDias(fim, -6)), fim };
+        if (p === 'mes') {
+            let i = hoje.slice(0, 8) + '01';
+            if (i > fim) i = fim.slice(0, 8) + '01';
+            return { inicio: clamp(i), fim };
+        }
+        if (p === 'mespassado') {
+            let i = deslocarMeses(hoje.slice(0, 8) + '01', -1);
+            if (i > fim) i = deslocarMeses(fim.slice(0, 8) + '01', -1);
+            const f = ultimoDoMes(i);
+            return { inicio: clamp(i), fim: f < fim ? f : fim };
+        }
+        const meses = { '3m': 3, '6m': 6, '12m': 12 }[p];
+        if (meses) return { inicio: clamp(addDias(deslocarMeses(fim, -meses), 1)), fim };
+        if (p === 'ano') return { inicio: clamp(fim.slice(0, 4) + '-01-01'), fim };
+        if (p === 'tudo') return { inicio: MIN_DIA, fim };
+        return null;
+    }
+    function detectarPreset(inicio, fim) {
+        for (const p of PRESETS) { const d = getPresetDates(p); if (d && d.inicio === inicio && d.fim === fim) return p; }
+        return 'custom';
+    }
+    function atualizarBotoesPreset(p) {
+        document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === p));
+    }
+    function setDateInputsVisibilidade(p) {
+        document.querySelector('.date-selector-periodo').classList.toggle('no-dates', p !== 'custom');
+    }
+    function lerURL() {
+        const p = new URLSearchParams(window.location.search);
+        const ler = k => (p.get(k) || '').trim() || null;
+        const iso = s => (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? s : null;
+        const i = iso(ler('inicio')), f = iso(ler('fim'));
+        const vistas = {};
+        Object.keys(VISTA).forEach(k => { const v = ler(k); if (v && VISTAS_VALIDAS[k].includes(v)) vistas[k] = v; });
+        return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null, vistas };
+    }
+    function paramsAtuais(sempreDatas) {
+        const p = new URLSearchParams();
+        const d = getPresetDates('12m');
+        if (sempreDatas || !(d && periodo.inicio === d.inicio && periodo.fim === d.fim)) {
+            p.set('inicio', periodo.inicio); p.set('fim', periodo.fim);
+        }
+        Object.keys(VISTA).forEach(k => { if (VISTA[k] !== VISTA_OMISSAO[k]) p.set(k, VISTA[k]); });
+        return p;
+    }
+    function atualizarURL() {
+        if (!periodo.inicio) return;
+        const q = paramsAtuais(false).toString();
+        window.history.replaceState(null, '', `${window.location.pathname}${q ? '?' + q : ''}${window.location.hash}`);
+    }
+    function mostrarFeedback(msg) {
+        const antigo = document.getElementById('toast-feedback');
+        if (antigo) antigo.remove();
+        const t = document.createElement('div');
+        t.id = 'toast-feedback'; t.className = 'toast-feedback'; t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { if (t.parentNode) t.remove(); }, 2500);
+    }
+    async function partilharVista() {
+        const url = `${window.location.origin}${window.location.pathname}?${paramsAtuais(true).toString()}`;
+        const resumo = `👥 Quotas por agente de mercado — de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}`;
+        const texto = `${resumo}\n${url}`;
+        if (navigator.share) {
+            try { await navigator.share({ title: 'Quotas por Agente — Tiago Felícia', text: resumo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try { await navigator.clipboard.writeText(texto); mostrarFeedback('✓ Link copiado'); return; }
+        catch (e) { /* sem permissão de clipboard — cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = texto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+            document.body.removeChild(ta);
+            mostrarFeedback('✓ Link copiado');
+        } catch (e) { prompt('Copie este link:', texto); }
+    }
+
+    let _pedidoPeriodo = 0;
+    async function aplicarPeriodo() {
+        const pedido = ++_pedidoPeriodo;
+        const L = nDias(periodo.inicio, periodo.fim);
+        document.getElementById('periodo-titulo').textContent =
+            `De ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} (${L} ${L === 1 ? 'dia' : 'dias'})`;
+        await carregarIntervalo(periodo.inicio, periodo.fim);
+        if (pedido !== _pedidoPeriodo) return;
+        renderPeriodo();
+    }
+    function renderPeriodo() {
+        renderKPIs();
+        renderQuotas();
+        renderEvol();
+        renderHoras();
+        renderEntradas();
+    }
+    function aplicarPreset(p) {
+        const d = getPresetDates(p);
+        if (!d) return;
+        periodo = { inicio: d.inicio, fim: d.fim };
+        document.getElementById('seletor-data-inicio').value = d.inicio;
+        document.getElementById('seletor-data-fim').value = d.fim;
+        document.getElementById('erro-periodo').style.display = 'none';
+        atualizarBotoesPreset(p);
+        setDateInputsVisibilidade(p);
+        atualizarURL();
+        aplicarPeriodo();
+    }
+    function aplicarDatasManuais() {
+        const inicio = document.getElementById('seletor-data-inicio').value;
+        const fim = document.getElementById('seletor-data-fim').value;
+        const erro = document.getElementById('erro-periodo');
+        if (!inicio || !fim) return;
+        if (inicio > fim) { erro.textContent = 'A data de início é posterior à data de fim.'; erro.style.display = 'block'; return; }
+        erro.style.display = 'none';
+        periodo = { inicio: inicio < MIN_DIA ? MIN_DIA : inicio, fim: fim > FIM_DIA ? FIM_DIA : fim };
+        atualizarBotoesPreset(detectarPreset(periodo.inicio, periodo.fim));
+        atualizarURL();
+        aplicarPeriodo();
+    }
+
+    // ==================================================================
+    // ARRANQUE
+    // ==================================================================
+    const RENDER = { quotas: renderQuotas, evol: renderEvol, horas: renderHoras };
+    Object.keys(VISTA).forEach(k => ligarToggle(VISTA_ID[k], v => { VISTA[k] = v; RENDER[k](); atualizarURL(); }));
+    document.getElementById('btn-agentes-todos').addEventListener('click', () => { _todos = !_todos; renderQuotas(); });
+    document.addEventListener('themeChanged', () => { if (META && periodo.inicio && DIA.size) renderPeriodo(); });
+
+    document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (!FIM_DIA) return;
+            const p = this.dataset.preset;
+            if (p === 'custom') {
+                const d = getPresetDates('tudo');
+                periodo = { inicio: d.inicio, fim: d.fim };
+                document.getElementById('seletor-data-inicio').value = d.inicio;
+                document.getElementById('seletor-data-fim').value = d.fim;
+                document.getElementById('erro-periodo').style.display = 'none';
+                atualizarBotoesPreset('custom');
+                setDateInputsVisibilidade('custom');
+                atualizarURL();
+                aplicarPeriodo();
+                return;
+            }
+            aplicarPreset(p);
+        });
+    });
+    document.getElementById('seletor-data-inicio').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('seletor-data-fim').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.addEventListener('beforeprint', () => document.querySelectorAll('details.faq-item').forEach(d => {
+        if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+    }));
+    window.addEventListener('afterprint', () => document.querySelectorAll('details.faq-item[data-opened-for-print]').forEach(d => {
+        d.removeAttribute('open'); delete d.dataset.openedForPrint;
+    }));
+
+    const URL_INICIAL = lerURL();
+    Object.entries(URL_INICIAL.vistas).forEach(([k, v]) => { VISTA[k] = v; ativarToggle(VISTA_ID[k], v); });
+
+    fetchDados(URL_META)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(j => {
+            META = j;
+            (META.agentes || []).forEach(a => AG.set(a.codigo, a));
+            MIN_DIA = META.de; FIM_DIA = META.ate;
+            document.getElementById('estado').hidden = true;
+            document.getElementById('badge-inicio').textContent = fmtData(META.de);
+            document.getElementById('badge-ultima').textContent = fmtData(META.ate);
+            ['seletor-data-inicio', 'seletor-data-fim'].forEach(id => { const el = document.getElementById(id); el.min = MIN_DIA; el.max = FIM_DIA; });
+            const u = URL_INICIAL.datas;
+            if (u && u.fim >= MIN_DIA && u.inicio <= FIM_DIA) {
+                periodo = { inicio: u.inicio < MIN_DIA ? MIN_DIA : u.inicio, fim: u.fim > FIM_DIA ? FIM_DIA : u.fim };
+                document.getElementById('seletor-data-inicio').value = periodo.inicio;
+                document.getElementById('seletor-data-fim').value = periodo.fim;
+                const p = detectarPreset(periodo.inicio, periodo.fim);
+                atualizarBotoesPreset(p);
+                setDateInputsVisibilidade(p);
+                atualizarURL();
+                aplicarPeriodo();
+            } else {
+                aplicarPreset('12m');
+            }
+        })
+        .catch(err => {
+            console.error('Quotas por agente:', err);
+            const el = document.getElementById('estado');
+            el.className = 'estado-erro';
+            el.textContent = 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.';
+        });
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
