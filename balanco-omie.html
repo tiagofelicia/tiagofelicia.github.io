@@ -106,6 +106,17 @@
         .link-section { text-align: center; margin: 30px auto; }
         .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
 
+        /* ===== Identificação / crédito de fonte (sob gráficos e tabelas) ===== */
+        .nota-fonte { text-align: center; font-size: 0.82em; color: #555; margin: 18px 0 4px; }
+        .nota-fonte a { color: inherit; }
+        [data-theme="dark"] .nota-fonte { color: #94a3b8; }
+        .export-credit { text-align: center; font-size: 0.7em; color: #94a3b8; margin: 4px 0 10px; padding: 0 8px; font-variant-numeric: tabular-nums; user-select: text; letter-spacing: 0.01em; }
+        .export-credit a { color: inherit; text-decoration: none; }
+        .export-credit a:hover { color: #2563eb; text-decoration: underline; }
+        [data-theme="dark"] .export-credit { color: #64748b; }
+        [data-theme="dark"] .export-credit a:hover { color: #60a5fa; }
+        @media print { .export-credit { color: #1e293b; font-size: 0.85em; font-weight: 500; margin-top: 12px; } .export-credit a { color: #1e293b; } }
+
         /* === DARK MODE — Estilos específicos desta página === */
         [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
         [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
@@ -187,7 +198,7 @@
         .tabela-balanco { width: 100%; border-collapse: collapse; font-size: 0.9em; background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
         .tabela-balanco thead th { background: #343a40; color: #fff; padding: 10px 12px; text-align: left; vertical-align: bottom; }
         .tabela-balanco thead th small { color: #ccc; font-weight: normal; }
-        .tabela-balanco td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+        .tabela-balanco td { padding: 6px 12px; border-bottom: 1px solid #eee; text-align: left; }
         .tabela-balanco td.num, .tabela-balanco th.num { text-align: right; font-variant-numeric: tabular-nums; }
         /* Ponta + Energia a negrito apenas nas linhas cujo nome (1ª coluna) está a negrito */
         .tabela-balanco .nivel-0 td.num { font-weight: 700; }
@@ -332,12 +343,14 @@
 
     <div class="grafico-wrapper">
         <div id="grafico-container"></div>
+        <p class="export-credit" id="credito-grafico"></p>
     </div>
 
     <div id="balanco-section" style="display: none;">
         <h2>Balanço Energético do dia</h2>
         <div class="section-sub" id="balanco-sub"></div>
         <div id="tabela-balanco-container"></div>
+        <p class="export-credit" id="credito-balanco"></p>
     </div>
 
     <div id="donut-section" style="display: none;">
@@ -351,6 +364,11 @@
             <div id="grafico-donut-container"></div>
             <div id="tabela-mix-container"></div>
         </div>
+        <p class="export-credit" id="credito-mix"></p>
+    </div>
+
+    <div class="fonte-identificacao">
+        <p class="nota-fonte">Fonte: <a href="https://datahub.ren.pt/" target="_blank" rel="noopener">REN | Redes Energéticas Nacionais</a> e <a href="https://www.omie.es/" target="_blank" rel="noopener">OMIE</a> | tiagofelicia.pt</p>
     </div>
 
     <div class="link-section"> <p>https://www.tiagofelicia.pt/balanco-omie</p> </div>
@@ -686,6 +704,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (abs >= 1e6) return (eur / 1e6).toFixed(2).replace('.', ',') + ' M€';
         if (abs >= 1e3) return (eur / 1e3).toFixed(1).replace('.', ',') + ' mil €';
         return Math.round(eur).toLocaleString('pt-PT') + ' €';
+    }
+
+    // --- Identificação/crédito sob os gráficos e tabelas (URL · data de geração · dia) ---
+    function _nowDateBR() {
+        const d = new Date();
+        return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+    }
+    function setCreditoFonte(dataTitulo, isProvisorio) {
+        const url = '<a href="https://www.tiagofelicia.pt/balanco-omie" rel="noopener">tiagofelicia.pt/balanco-omie</a>';
+        const ctx = 'Dia ' + dataTitulo + (isProvisorio ? ' (provisório)' : '');
+        const linha = ['🔗 ' + url, _nowDateBR(), ctx].join(' · ');
+        ['credito-grafico', 'credito-balanco', 'credito-mix'].forEach(function (id) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = linha;
+        });
     }
 
     function renderKpisProducao(a, dataTitulo, isProvisorio, horaLimite) {
@@ -1245,6 +1278,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mix do dia (donut + tabela) com botão Produção/Consumo
         _mixCtx = { a, dataTitulo, isProvisorio };
         renderMix();
+        setCreditoFonte(dataTitulo, isProvisorio);
         // Título dinâmico da tab
         const pctTitulo = (a && a.pctRenovavelFinal !== undefined) ? a.pctRenovavelFinal : (a ? a.pctRenovavel : 0);
         const pct = a && a.count ? Math.round(pctTitulo) + '% renov.' : '';

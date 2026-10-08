@@ -145,7 +145,7 @@
         "name": "Porque é que o ERC é mais alto nas horas de sol?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Nos últimos 12 meses, as parcelas que mais sobem entre as 10h e as 17h são a banda de reserva aFRR e as restrições técnicas. Ambas têm a ver com manter a rede segura quando a produção é dominada pela solar: é preciso pagar a outras centrais para estarem ligadas ou disponíveis. São também as horas em que o OMIE PT é mais baixo, por isso o ERC come parte da vantagem de consumir nessas horas. Ao fim de semana o efeito é maior, porque o custo é repartido por menos consumo."
+          "text": "Nos últimos 12 meses, as parcelas que mais sobem entre as 10h e as 17h são a banda de reserva aFRR e as restrições técnicas. Ambas têm a ver com manter a rede segura quando a produção é dominada pela solar: é preciso pagar a outras centrais para estarem ligadas ou disponíveis. São também as horas em que o OMIE PT é mais baixo, por isso o ERC come parte da vantagem de consumir nessas horas. Ao fim de semana o efeito é maior, porque o custo é repartido por menos consumo. Nos quartos de hora em que o sol cobre 40 a 60 % do consumo, o ERC fica vários euros por MWh acima do da noite, e essa diferença tem crescido; mas de um dia para o outro o nível do ERC depende sobretudo das restrições técnicas, e quase nada da quota solar."
         }
       },{
         "@type": "Question",
@@ -437,6 +437,7 @@
         <a href="#bloco-mensal" class="mini-nav-chip">📊 Evolução</a>
         <a href="#bloco-tipos" class="mini-nav-chip">🧾 De onde vem</a>
         <a href="#bloco-horas" class="mini-nav-chip">🕒 Quando custa mais</a>
+        <a href="#bloco-solar" class="mini-nav-chip">☀️ ERC e sol</a>
         <a href="#bloco-hoje" class="mini-nav-chip">⚡ OMIE PT + ERC</a>
         <a href="#bloco-previsao" class="mini-nav-chip">🔮 Previsão 14 dias</a>
         <a href="#bloco-periodos" class="mini-nav-chip">🌙 Vazio e fora de vazio</a>
@@ -520,6 +521,23 @@
         <div id="grafico-horas" class="grafico"></div>
         <p class="resumo-bloco" id="horas-resumo"></p>
         <p class="nota-bloco" id="horas-nota"></p>
+    </div>
+
+    <!-- ====================== BLOCO 3B — O ERC E O SOL ====================== -->
+    <div class="grafico-box" id="bloco-solar">
+        <h2>O ERC e o sol</h2>
+        <p class="grafico-intro">A <strong>quota solar</strong> é a produção solar a dividir pelo consumo, em cada quarto de hora, com os dados de produção da REN (a solar ligada à rede, sem o autoconsumo). Dentro do dia, o ERC sobe com o sol; de um dia para o outro, quase não depende dele.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Vista</span>
+            <div class="btn-toggle" id="ctrl-solar" role="group" aria-label="Vista do ERC e do sol">
+                <button type="button" data-v="classes" class="active">Por quota solar</button>
+                <button type="button" data-v="meses">Horas de sol e resto do dia</button>
+                <button type="button" data-v="dias">Dia a dia</button>
+            </div>
+        </div>
+        <div id="grafico-solar" class="grafico"></div>
+        <p class="resumo-bloco" id="solar-resumo"></p>
+        <p class="nota-bloco" id="solar-nota"></p>
     </div>
 
     <!-- ====================== BLOCO 4 — OMIE PT + ERC, DIA A DIA ====================== -->
@@ -687,6 +705,7 @@
                 <p>Nos últimos 12 meses, as parcelas que mais sobem entre as 10h e as 17h são a <strong>banda de reserva aFRR</strong> e as <strong>restrições técnicas</strong>. Ambas têm a ver com manter a rede segura quando a produção é dominada pela solar: é preciso pagar a outras centrais para estarem ligadas ou disponíveis.</p>
                 <p>São também as horas em que o OMIE PT é mais baixo, por isso o ERC <strong>come parte da vantagem</strong> de consumir nessas horas — é o que mostra o gráfico «OMIE PT + ERC».</p>
                 <p>Ao fim de semana o efeito é maior, porque grande parte destes custos não depende do consumo e, num domingo, é repartida por menos MWh.</p>
+                <p>O bloco <a href="#bloco-solar">«O ERC e o sol»</a> mede-o com os dados de produção da REN: dentro do dia, o ERC sobe com a quota solar, e a diferença face ao resto do dia tem crescido; de um dia para o outro, o nível quase não depende do sol e sim, sobretudo, das restrições técnicas.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -1059,7 +1078,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const i = iso(ler('inicio')), f = iso(ler('fim'));
         return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null,
                  est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas'), outros: ler('outros'),
-                 kwh: ler('kwh'), calc: ler('calc'), pv: ler('pv'), pc: ler('pc') };
+                 kwh: ler('kwh'), calc: ler('calc'), pv: ler('pv'), pc: ler('pc'), sol: ler('sol') };
     }
     function paramsAtuais(sempreDatas) {
         const p = new URLSearchParams();
@@ -1072,6 +1091,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (_diaEscolhido && _dia) p.set('dia', _dia);
         if (_perdas !== 'sem') p.set('perdas', _perdas);
         if (_outros !== 'agregado') p.set('outros', _outros);
+        if (_vistaSolar !== 'classes') p.set('sol', _vistaSolar);
         if (CALC.kwh !== CALC_KWH_OMISSAO) p.set('kwh', CALC.kwh);
         if (CALC.ciclo !== 'S') p.set('calc', CALC.ciclo);
         if (CALC.ciclo !== 'S' && CALC.pv !== null) p.set('pv', CALC.pv);
@@ -1148,6 +1168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderTipos();
         prepararEstacoes();
         renderHoras();
+        renderSolar();
         renderPeriodos();
         renderMapa();
         renderRecordes();
@@ -1675,6 +1696,166 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==================================================================
+    // BLOCO 3B — O ERC E O SOL
+    // ==================================================================
+    // Por quota solar: da tabela mensal do resumo (R.solar), com os meses que o
+    // período toca. Horas de sol e dia a dia: dos dias (e, m e s de cada hora).
+    let _vistaSolar = 'classes';
+    const HORAS_SOL = h => h >= 10 && h < 17;
+    const fmtLim = n => Number.isInteger(n) ? fmt0(n) : fmt1(n);
+    function rotuloClasse(k, cls) {
+        const a = cls[k], b = cls[k + 1];
+        if (k === 0) return 'Noite';
+        return b === undefined ? `${fmtLim(a)} % ou mais` : `${fmtLim(a)}–${fmtLim(b)} %`;
+    }
+    // "a banda…" → "da banda…"; sem artigo → "de …"
+    const deFrase = f => { const m = /^(a|as|o|os) /.exec(f); return m ? ({ a: 'da', as: 'das', o: 'do', os: 'dos' }[m[1]]) + f.slice(m[1].length) : 'de ' + f; };
+    function renderSolar() {
+        const c = _hcDark(), id = 'grafico-solar';
+        const resumo = document.getElementById('solar-resumo'), nota = document.getElementById('solar-nota');
+        const S = R.solar;
+        const bloco = document.getElementById('bloco-solar');
+        bloco.style.display = S ? '' : 'none';
+        document.querySelector('.mini-nav a[href="#bloco-solar"]').style.display = S ? '' : 'none';
+        if (!S) return;
+        const locais = diasLocais(periodo.inicio, periodo.fim).filter(([, d]) => d.s);
+        const vazioBloco = msg => { limparGrafico(id, `<div class="bloco-vazio">${msg}</div>`); resumo.textContent = ''; nota.textContent = ''; };
+
+        if (_vistaSolar === 'classes') {
+            const meses = [...new Set(diasDe(periodo.inicio, periodo.fim).map(d => d.slice(0, 7)))].filter(m => S.meses[m]);
+            if (!meses.length) return vazioBloco('Sem dados neste período.');
+            const cls = S.classes, nc = R.componentes.length;
+            const acc = cls.map(() => ({ n: 0, mwh: 0, eur: 0, comp: Array(nc).fill(0) }));
+            meses.forEach(m => S.meses[m].forEach(([k, n, mwh, eur, ...cp]) => {
+                const a = acc[k]; a.n += n; a.mwh += mwh; a.eur += eur; cp.forEach((v, i) => { a.comp[i] += v || 0; });
+            }));
+            const ks = acc.map((a, k) => k).filter(k => acc[k].mwh > 0 && acc[k].n >= 20);
+            const nTot = acc.reduce((x, a) => x + a.n, 0);
+            const cats = ks.map(k => rotuloClasse(k, cls));
+            const series = R.componentes.map((cp, i) => ({ name: cp.nome, data: ks.map(k => acc[k].comp[i] / acc[k].mwh), color: COR_COMP[cp.id], stack: 'erc' }));
+            series.push({ type: 'line', name: 'Total (ERC)', data: ks.map(k => acc[k].eur / acc[k].mwh), color: c.total,
+                          marker: { radius: 4, symbol: 'circle' }, lineWidth: 2, zIndex: 5 });
+            limparGrafico(id);
+            Highcharts.chart(id, Object.assign(base(c, 'erc-por-quota-solar'), {
+                chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+                xAxis: eixoX(c, cats, { title: { text: 'Quota solar no quarto de hora', style: { color: c.txt } } }),
+                yAxis: eixoY(c, '€/MWh', { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+                plotOptions: { column: { stacking: 'normal', borderWidth: 0, groupPadding: 0.12, pointPadding: 0.04 } },
+                tooltip: Object.assign(base(c).tooltip, { formatter: function () {
+                    const a = acc[ks[this.points[0].point.index]];
+                    let s = `<b>${this.x}</b> <span style="color:${c.suave}">(${fmt1(100 * a.n / nTot)} % dos quartos de hora)</span><br>`;
+                    this.points.slice().reverse().forEach(p => { if (p.series.type !== 'line') s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmt2(p.y)}<br>`; });
+                    return s + `<b>Total: ${fmtMWh(a.eur / a.mwh)}</b>`;
+                } }),
+                series
+            }));
+            const kN = ks[0], kS = ks.filter(k => k > 0 && acc[k].n >= 200).pop();
+            let txt = '';
+            if (kN === 0 && kS !== undefined) {
+                const eN = acc[0].eur / acc[0].mwh, eS = acc[kS].eur / acc[kS].mwh;
+                const dif = R.componentes.map((cp, i) => ({ cp, d: acc[kS].comp[i] / acc[kS].mwh - acc[0].comp[i] / acc[0].mwh })).sort((x, y) => y.d - x.d);
+                txt = `Nos quartos de hora em que o sol cobriu ${rotuloClasse(kS, cls)} do consumo, o ERC foi <strong>${fmtMWh(eS)}</strong>, contra <strong>${fmtMWh(eN)}</strong> à noite. ` +
+                      `A diferença vem sobretudo ${deFrase(FRASE_COMP[dif[0].cp.id])} (${sinal(dif[0].d)} €/MWh) e ${deFrase(FRASE_COMP[dif[1].cp.id])} (${sinal(dif[1].d)} €/MWh).`;
+            }
+            resumo.innerHTML = txt;
+            const pM = meses.length === 1 ? mesLongo(meses[0]) : `${mesLongo(meses[0])} a ${mesLongo(meses[meses.length - 1])}`;
+            nota.textContent = `Por quota solar, os dados estão agregados por mês: estes valores usam os meses que o período toca (${pM}). Noite = quota solar abaixo de 0,5 %. Classes com menos de 20 quartos de hora ficam de fora.`;
+            return;
+        }
+
+        if (!locais.length) return vazioBloco(`Sem dados de produção solar neste período${S.de ? ` (desde ${fmtData(S.de)})` : ''}.`);
+        // ERC e quota solar de um conjunto de dias, nas horas escolhidas (pesados pelo consumo)
+        const somar = (dias, filtro) => {
+            let e = 0, w = 0, q = 0, wq = 0;
+            dias.forEach(d => d.e.forEach((v, h) => {
+                const m = d.m[h];
+                if (!filtro(h) || vazio(v) || vazio(m)) return;
+                e += v * m; w += m;
+                if (d.s && !vazio(d.s[h])) { q += d.s[h] * m; wq += m; }
+            }));
+            return { erc: w ? e / w : null, q: wq ? q / wq : null };
+        };
+
+        if (_vistaSolar === 'meses') {
+            const B = baldes(periodo.inicio, periodo.fim);
+            const linhas = B.lista.map(b => {
+                const ds = b.dias.filter(d => DIAS.has(d) && DIAS.get(d).s).map(d => DIAS.get(d));
+                return { b, sol: somar(ds, HORAS_SOL), resto: somar(ds, h => !HORAS_SOL(h)) };
+            });
+            const cs = '#eb6834', cr = c.dk ? '#3987e5' : '#2a78d6';
+            limparGrafico(id);
+            Highcharts.chart(id, Object.assign(base(c, 'erc-horas-de-sol'), {
+                chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+                xAxis: eixoX(c, B.lista.map(b => b.rotulo)),
+                yAxis: eixoY(c, '€/MWh', { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+                plotOptions: { line: { marker: { radius: B.porDia ? 2 : 3.5, symbol: 'circle' }, lineWidth: 2 } },
+                tooltip: Object.assign(base(c).tooltip, { formatter: function () {
+                    const l = linhas[this.points[0].point.index];
+                    let s = `<b>${l.b.longo}</b><br>`;
+                    this.points.forEach(p => { s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmtMWh(p.y)}<br>`; });
+                    if (!vazio(l.sol.erc) && !vazio(l.resto.erc)) s += `Diferença: <b>${sinal(l.sol.erc - l.resto.erc)} €/MWh</b><br>`;
+                    if (!vazio(l.sol.q)) s += `<span style="color:${c.suave}">Quota solar das 10h às 17h: ${fmt0(l.sol.q)} %</span>`;
+                    return s;
+                } }),
+                series: [
+                    { name: 'Horas de sol (10h–17h)', data: linhas.map(l => l.sol.erc), color: cs },
+                    { name: 'Resto do dia', data: linhas.map(l => l.resto.erc), color: cr }
+                ]
+            }));
+            const val = linhas.filter(l => !vazio(l.sol.erc) && !vazio(l.resto.erc));
+            const tot = { sol: somar(locais.map(([, d]) => d), HORAS_SOL), resto: somar(locais.map(([, d]) => d), h => !HORAS_SOL(h)) };
+            let txt = `No período, nas horas de sol (das 10h às 17h) o ERC foi <strong>${fmtMWh(tot.sol.erc)}</strong>, contra <strong>${fmtMWh(tot.resto.erc)}</strong> no resto do dia (${sinal(tot.sol.erc - tot.resto.erc)} €/MWh), com o sol a cobrir ${fmt0(tot.sol.q)} % do consumo nessas horas.`;
+            if (val.length > 1) {
+                const a = val[0], z = val[val.length - 1];
+                txt += ` A diferença passou de ${sinal(a.sol.erc - a.resto.erc)} €/MWh em ${a.b.longo} para ${sinal(z.sol.erc - z.resto.erc)} €/MWh em ${z.b.longo}.`;
+            }
+            resumo.innerHTML = txt;
+            nota.textContent = (B.porDia ? 'Um ponto por dia (até 3 meses; acima disso, um por mês).' : 'Um ponto por mês.') +
+                ' Dias em hora de Portugal; o ERC de cada conjunto de horas é pesado pelo consumo.';
+            return;
+        }
+
+        // Dia a dia: ERC do dia contra a quota solar do dia
+        const pts = locais.map(([iso, d]) => { const x = somar([d], () => true); return { iso, x: x.q, y: x.erc }; })
+            .filter(p => !vazio(p.x) && !vazio(p.y));
+        const r = correlacao(pts.map(p => p.x), pts.map(p => p.y));
+        const rH = correlacao(...(() => {
+            // Dentro do dia: ERC e quota solar por hora, no perfil médio do período
+            const e = Array(24).fill(0), w = Array(24).fill(0), q = Array(24).fill(0);
+            locais.forEach(([, d]) => d.e.forEach((v, h) => { const m = d.m[h]; if (vazio(v) || vazio(m) || !d.s || vazio(d.s[h])) return; e[h] += v * m; q[h] += d.s[h] * m; w[h] += m; }));
+            return [q.map((x, h) => w[h] ? x / w[h] : null), e.map((x, h) => w[h] ? x / w[h] : null)];
+        })());
+        const cor = c.dk ? 'rgba(57,135,229,0.55)' : 'rgba(42,120,214,0.5)';
+        limparGrafico(id);
+        Highcharts.chart(id, Object.assign(base(c, 'erc-dia-vs-quota-solar'), {
+            chart: { type: 'scatter', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            legend: { enabled: false },
+            xAxis: { title: { text: 'Quota solar do dia (%)', style: { color: c.txt } }, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, gridLineWidth: 0 },
+            yAxis: eixoY(c, 'ERC do dia (€/MWh)'),
+            plotOptions: { scatter: { marker: { radius: 3.5, symbol: 'circle', fillColor: cor, lineWidth: 0 } } },
+            tooltip: Object.assign(base(c).tooltip, { shared: false, formatter: function () {
+                const p = pts[this.point.index];
+                return `<b>${diaSemana(p.iso)}, ${fmtData(p.iso)}</b><br>Quota solar: ${fmt1(p.x)} %<br>ERC: ${fmtMWh(p.y)}`;
+            } }),
+            series: [{ name: 'Dias', data: pts.map(p => [p.x, p.y]) }]
+        }));
+        // Quanto da variação do ERC de dia para dia vem de cada componente (cov ÷ var), por dia de mercado
+        const md = diasDe(periodo.inicio, periodo.fim).filter(d => MERC.has(d) && MERC.get(d)[0]).map(d => MERC.get(d));
+        const ercD = md.map(v => v[1] / v[0]);
+        const partes = R.componentes.map((cp, i) => {
+            const x = md.map(v => (v[2 + i] || 0) / v[0]), me = media(ercD), mx = media(x);
+            let cov = 0, va = 0; ercD.forEach((e, k) => { cov += (e - me) * (x[k] - mx); va += (e - me) ** 2; });
+            return { cp, p: va ? cov / va : null };
+        }).filter(x => !vazio(x.p)).sort((a, b) => b.p - a.p);
+        let txt = `De dia para dia, a correlação entre a quota solar e o ERC é de <strong>${fmt2(r)}</strong> — ${Math.abs(r) < 0.3 ? 'quase nenhuma' : (r > 0 ? 'positiva' : 'negativa')}. ` +
+            `Dentro do dia, hora a hora, é de <strong>${fmt2(rH)}</strong>: o sol explica a forma do dia, mas pouco do nível.`;
+        if (partes.length && partes[0].p >= 0.5 && md.length >= 14)
+            txt += ` O nível depende sobretudo ${deFrase(FRASE_COMP[partes[0].cp.id])}, que ${/^(as|os|outros) /.test(FRASE_COMP[partes[0].cp.id]) ? 'explicam' : 'explica'} <strong>${fmt0(100 * partes[0].p)} %</strong> da variação do ERC de um dia para o outro no período.`;
+        resumo.innerHTML = txt;
+        nota.textContent = `${pts.length} dias, em hora de Portugal. Quota solar do dia = produção solar ÷ consumo, pesada pelo consumo de cada hora.`;
+    }
+
+    // ==================================================================
     // BLOCO 4 — OMIE PT + ERC, DIA A DIA
     // ==================================================================
     // Hoje e amanhã vêm do CSV dos Preços Horários (o mais fresco: atualiza com
@@ -2145,6 +2326,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     ligarToggle('ctrl-estacao', v => { _estacao = v; renderHoras(); atualizarURL(); });
     ligarToggle('ctrl-ciclo', v => { _ciclo = v; renderPeriodos(); atualizarURL(); });
+    ligarToggle('ctrl-solar', v => { _vistaSolar = v; renderSolar(); atualizarURL(); });
 
     // Calculadora
     const kwhInput = document.getElementById('calc-kwh');
@@ -2211,6 +2393,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const URL_INICIAL = lerURL();
     if (URL_INICIAL.perdas === 'com') { _perdas = 'com'; ativarToggle('ctrl-perdas', 'com'); }
     if (URL_INICIAL.outros === 'detalhe') { _outros = 'detalhe'; ativarToggle('ctrl-outros', 'detalhe'); }
+    if (['meses', 'dias'].includes(URL_INICIAL.sol)) { _vistaSolar = URL_INICIAL.sol; ativarToggle('ctrl-solar', _vistaSolar); }
     {
         const k = Math.round(+URL_INICIAL.kwh);
         if (k >= 1 && k <= 1000000) { CALC.kwh = k; document.getElementById('calc-kwh').value = k; }

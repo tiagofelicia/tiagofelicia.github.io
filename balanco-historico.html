@@ -2,7 +2,12 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <!-- CSP mínima para ESTA página (não copiar o template geral: cada host a mais
+         é superfície de ataque). Necessita: scripts próprios + gtag + Highcharts
+         (jsdelivr, com SRI); fetch a dados.tiagofelicia.pt / GitHub raw (fallback
+         do dados.js) + Google Analytics; img blob:/data: para o export local dos
+         gráficos. Sem forms nem iframes externos. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
@@ -22,7 +27,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:alt" content="Tiago Felícia — Simuladores de Energia" />
+    <meta property="og:image:alt" content="Histórico do Balanço Energético em Portugal — Tiago Felícia" />
     <meta property="og:locale" content="pt_PT" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@tiagofelicia" />
@@ -132,8 +137,8 @@
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Produção (15 min) — histórico anual",
-          "contentUrl": "https://github.com/tiagofelicia/dados-energia/tree/main/data"
+          "name": "Produção (15 min) — histórico anual (um ficheiro por ano; ex.: 2025)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/producao/historico/producao_historico_2025.csv"
         },
         {
           "@type": "DataDownload",
@@ -225,7 +230,7 @@
         .tabela-balanco { width: 100%; border-collapse: collapse; font-size: 0.9em; background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
         .tabela-balanco thead th { background: #343a40; color: #fff; padding: 10px 12px; text-align: left; vertical-align: bottom; }
         .tabela-balanco thead th small { color: #ccc; font-weight: normal; }
-        .tabela-balanco td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+        .tabela-balanco td { padding: 6px 12px; border-bottom: 1px solid #eee; text-align: left; }
         .tabela-balanco td.num, .tabela-balanco th.num { text-align: right; font-variant-numeric: tabular-nums; }
         .tabela-balanco .nivel-0 td.num { font-weight: 700; }
         .tabela-balanco .nivel-1 td.num { font-weight: 600; }
@@ -691,6 +696,17 @@ Highcharts.setOptions({
         shortMonths: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],
         weekdays: ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],
         shortWeekdays: ['dom','seg','ter','qua','qui','sex','sáb']
+    },
+    exporting: {
+        // Exportação local (client-side): o fallback ao servidor da Highcharts seria
+        // bloqueado pela CSP (form-action 'self'). PDF fora do menu: o export local
+        // de PDF precisa de libs externas (jsPDF) que o script-src também bloqueia.
+        fallbackToExportServer: false,
+        buttons: { contextButton: { menuItems: [
+            'viewFullscreen', 'printChart', 'separator',
+            'downloadPNG', 'downloadSVG', 'separator',
+            'downloadCSV', 'downloadXLS'
+        ] } }
     }
 });
 
@@ -744,6 +760,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Cache OMIE: { ano: Map('DD/MM/YYYYintervalo' -> { pt, es }) }
     const _cacheOmie = {};
+    // LRU do OMIE: cada ano ≈ 35 mil entradas no Map (~3 MB). Sem limite, o fallback
+    // dos recordes (todos os anos) acumulava ~50 MB. O _cacheDiario fica SEM LRU de
+    // propósito: é pequeno (~0,5 MB/ano) e os recordes client-side precisam de todos.
+    const _ordemOmie = [];
+    const MAX_ANOS_OMIE = 4;
+    function _reterOmie(ano, idx) {
+        if (!_cacheOmie[ano]) _ordemOmie.push(ano);
+        _cacheOmie[ano] = idx;
+        while (_ordemOmie.length > MAX_ANOS_OMIE) {
+            const velho = _ordemOmie.shift();
+            if (velho !== ano) delete _cacheOmie[velho];
+        }
+    }
     const _bombagemDiaria = {}; // 'DD/MM/YYYY' -> GWh (float)
     let _bombagemCarregada = false;
     let _dataMaximaAtual = null; // 'YYYY-MM-DD'
@@ -852,6 +881,30 @@ document.addEventListener('DOMContentLoaded', function() {
     function darkActivo() {
         return document.documentElement.getAttribute('data-theme') === 'dark';
     }
+    // Persistência das escolhas de legenda do gráfico de evolução (as variantes
+    // diária e 15 min partilham os nomes de série, logo partilham o estado).
+    // Estrutura: { "<nome da série>": true(=escondida) / false(=visível) }
+    const LS_LEGENDA = 'bal_hist_legend_state';
+    function lerEstadoLegenda() {
+        try { return JSON.parse(localStorage.getItem(LS_LEGENDA)) || {}; } catch (_) { return {}; }
+    }
+    function aplicarEstadoLegenda(seriesArr) {
+        const st = lerEstadoLegenda();
+        seriesArr.forEach(s => { if (st[s.name] !== undefined) s.visible = !st[s.name]; });
+        return seriesArr;
+    }
+    function guardarEstadoLegenda(chart) {
+        const st = lerEstadoLegenda();
+        chart.series.forEach(s => { st[s.name] = !s.visible; });
+        try { localStorage.setItem(LS_LEGENDA, JSON.stringify(st)); } catch (_) {}
+    }
+    // Capturar o estado APÓS o Highcharts aplicar o toggle (daí o setTimeout 0)
+    const _legendaEvolucaoEvents = {
+        legendItemClick: function () {
+            const ch = this.chart;
+            setTimeout(() => guardarEstadoLegenda(ch), 0);
+        }
+    };
     function mostrarErro(msg) {
         if (!msg) {
             erroEl.classList.remove('visivel');
@@ -1007,11 +1060,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     // 4. CARREGAMENTO DE DADOS
     // ============================================================
-    // Lê um ficheiro de data/ como texto, com cache-busting.
-    // fetchDados (dados.js) trata do fallback entre /data/ e GitHub raw.
-    async function fetchDadosTexto(caminho) {
-        const bust = '?_=' + Date.now();
-        const r = await fetchDados(caminho + bust, { cache: 'no-store' });
+    // Lê um ficheiro de data/ como texto. fetchDados (dados.js) trata do fallback
+    // entre origens. Ficheiros MUTÁVEIS (atuais do ano corrente, bombagem, records)
+    // levam cache-busting + no-store; os históricos anuais são IMUTÁVEIS (~4-6 MB
+    // por ano) e usam a cache normal do browser — com o busting, cada visita
+    // re-descarregava megabytes idênticos (ex.: "Últimos 12 meses" ≈ 12 MB).
+    async function fetchDadosTexto(caminho, imutavel) {
+        const sufixo = imutavel ? '' : ('?_=' + Date.now());
+        const opts = imutavel ? {} : { cache: 'no-store' };
+        const r = await fetchDados(caminho + sufixo, opts);
         if (!r.ok) throw new Error('HTTP ' + r.status + ' a carregar ' + caminho);
         return r.text();
     }
@@ -1040,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const caminho = usaAtuais ? URL_OMIE_ATUAIS : (URL_OMIE_HISTORICO_BASE + ano + '.csv');
         const idx = new Map();
         try {
-            const txt = await fetchDadosTexto(caminho);
+            const txt = await fetchDadosTexto(caminho, !usaAtuais);
             for (const r of parseCSV(txt)) {
                 const dia = (r['dia'] || '').trim();
                 const intervalo = (r['intervalo'] || '').trim();
@@ -1049,14 +1106,23 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) {
             console.warn('OMIE indisponível para ' + ano + ':', e);
         }
-        _cacheOmie[ano] = idx;
+        _reterOmie(ano, idx);
         return idx;
     }
 
+    // Downloads em curso por ano — duas navegações concorrentes que peçam o mesmo
+    // ano partilham a mesma Promise em vez de duplicarem a descarga do CSV (~4 MB).
+    const _anoEmCurso = {};
     async function carregarAno(ano) {
         // Reaproveita o cache só se também tiver as linhas de 15 min (podem ter sido
         // descartadas pelo LRU). Senão, recarrega para as voltar a ter disponíveis.
         if (_cacheDiario[ano] && _cacheLinhas[ano]) return _cacheDiario[ano];
+        if (_anoEmCurso[ano]) return _anoEmCurso[ano];
+        _anoEmCurso[ano] = _carregarAnoImpl(ano);
+        try { return await _anoEmCurso[ano]; }
+        finally { delete _anoEmCurso[ano]; }
+    }
+    async function _carregarAnoImpl(ano) {
         const anoAtualLisboa = parseInt(getLisboaDateString().slice(0, 4), 10);
         const usaAtuais = (ano === anoAtualLisboa);
         const caminho = usaAtuais ? URL_PRODUCAO_ATUAIS : (URL_PRODUCAO_HISTORICO_BASE + ano + '.csv');
@@ -1064,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Produção (obrigatória) e OMIE (opcional) em paralelo. carregarOmieAno
             // nunca lança, logo só uma falha de produção rejeita este Promise.all.
-            [txt, omieIdx] = await Promise.all([fetchDadosTexto(caminho), carregarOmieAno(ano)]);
+            [txt, omieIdx] = await Promise.all([fetchDadosTexto(caminho, !usaAtuais), carregarOmieAno(ano)]);
         } catch (e) {
             console.error('Erro a carregar ano ' + ano, e);
             throw e;
@@ -1488,7 +1554,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const t = temaCores();
         const ordemFontes = FONTES_15MIN; // mesma ordenação do gráfico de 15 min
         const seriesGrafico = ordemFontes.map(f => ({
-            name: f,
+            name: nomeSerieFonte(f),
             type: 'column',
             stack: 'producao',
             color: CORES_FONTES[f],
@@ -1519,9 +1585,10 @@ document.addEventListener('DOMContentLoaded', function() {
             name: 'Preço OMIE (PT)', type: 'line', yAxis: 1, color: '#FF0000',
             lineWidth: 2, zIndex: 6, marker: { enabled: false }, visible: false, data: series.preco
         });
+        aplicarEstadoLegenda(seriesGrafico);
 
         Highcharts.chart('grafico-evolucao', {
-            chart: { type: 'column', backgroundColor: t.bg, zoomType: 'x', height: 690 },
+            chart: { type: 'column', backgroundColor: t.bg, zooming: { type: 'x' }, height: 690 },
             title: { text: null },
             subtitle: { text: _periodoTxt, style: { color: t.sub, fontSize: '0.8em' } },
             credits: { enabled: false },
@@ -1574,7 +1641,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                     }
-                }
+                },
+                series: { events: _legendaEvolucaoEvents }
             },
             legend: { itemStyle: { color: t.txt }, itemHoverStyle: { color: darkActivo() ? '#fff' : '#000' } },
             exporting: { enabled: true, buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadSVG', 'downloadCSV', 'downloadXLS'] } } },
@@ -1586,6 +1654,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ordem (base→topo do stack) igual à do balanco-omie.
     const FONTES_15MIN = ['Solar', 'Hídrica', 'Importação', 'Eólica', 'Gás Natural',
                           'Outra Térmica', 'Carvão', 'Biomassa', 'Ondas', 'Injeção de Baterias'];
+    // Nome a mostrar na legenda/tooltip (a Hídrica já inclui a turbinagem de bombagem).
+    function nomeSerieFonte(f) { return f === 'Hídrica' ? 'Hídrica + Produção Bombagem' : f; }
     // ms (UTC) do INÍCIO do intervalo. Usa a coluna `intervalo` ("[HH:MM-HH:MM["),
     // que tem o início exato — a coluna `hora` é o FIM e no último intervalo do dia
     // vem como "23:59" (não 00:00). Highcharts usa useUTC, logo a hora aparece tal e qual.
@@ -1647,7 +1717,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'balanco-omie?data=' + iso;
         };
         const seriesGrafico = FONTES_15MIN.map(f => ({
-            name: f, type: 'area', stack: 'producao', color: CORES_FONTES[f],
+            name: nomeSerieFonte(f), type: 'area', stack: 'producao', color: CORES_FONTES[f],
             data: serie.fontes[f], lineWidth: 0.5, fillOpacity: 1, marker: { enabled: false }
         }));
         ['Bombagem (consumo)', 'Consumo Baterias', 'Exportação'].forEach(s => {
@@ -1669,8 +1739,9 @@ document.addEventListener('DOMContentLoaded', function() {
             name: 'Preço OMIE (PT)', type: 'line', yAxis: 1, color: '#FF0000',
             lineWidth: 2, zIndex: 6, marker: { enabled: false }, visible: false, data: serie.preco
         });
+        aplicarEstadoLegenda(seriesGrafico);
         Highcharts.chart('grafico-evolucao', {
-            chart: { type: 'area', backgroundColor: t.bg, zoomType: 'x', height: 690, animation: false },
+            chart: { type: 'area', backgroundColor: t.bg, zooming: { type: 'x' }, height: 690, animation: false },
             title: { text: null },
             subtitle: { text: _periodoTxt + ' · 15 min · clique para abrir o dia', style: { color: t.sub, fontSize: '0.8em' } },
             credits: { enabled: false },
@@ -1701,7 +1772,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 area: { stacking: 'normal', lineWidth: 0.5, marker: { enabled: false }, animation: false,
                         cursor: 'pointer', point: { events: { click: drillDia } } },
                 line: { marker: { enabled: false }, animation: false, cursor: 'pointer', point: { events: { click: drillDia } } },
-                series: { turboThreshold: 0, animation: false }
+                series: { turboThreshold: 0, animation: false, events: _legendaEvolucaoEvents }
             },
             legend: { itemStyle: { color: t.txt }, itemHoverStyle: { color: darkActivo() ? '#fff' : '#000' } },
             exporting: { enabled: true, buttons: { contextButton: { menuItems: ['downloadPNG', 'downloadSVG', 'downloadCSV', 'downloadXLS'] } } },
@@ -1767,7 +1838,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         Highcharts.chart('grafico-renovaveis', {
-            chart: { backgroundColor: t.bg, height: 360, zoomType: 'x' },
+            chart: { backgroundColor: t.bg, height: 360, zooming: { type: 'x' } },
             title: { text: null },
             subtitle: { text: _periodoTxt, style: { color: t.sub, fontSize: '0.8em' } },
             credits: { enabled: false },
@@ -2061,7 +2132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             color: (v === null) ? undefined : (v >= 0 ? '#ED7D31' : '#2E75B6')
         }));
         Highcharts.chart('grafico-saldo', {
-            chart: { type: 'column', backgroundColor: 'transparent', height: 320, zoomType: 'x' },
+            chart: { type: 'column', backgroundColor: 'transparent', height: 320, zooming: { type: 'x' } },
             title: { text: null },
             subtitle: { text: _periodoTxt, style: { color: t.sub, fontSize: '0.8em' } },
             credits: { enabled: false },
@@ -2106,7 +2177,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    async function renderInsight(totais, dataInicio, dataFim, kpisAtual, series) {
+    async function renderInsight(totais, dataInicio, dataFim, kpisAtual, series, seq) {
         const el = document.getElementById('insight-periodo');
         if (!el) return;
         const toGWh = mwh => mwh / 1000;
@@ -2234,6 +2305,9 @@ document.addEventListener('DOMContentLoaded', function() {
         notas.push('* CO₂ evitado é uma estimativa indicativa com fator 0,4 tCO₂/MWh (substituição típica por gás natural em ciclo combinado).');
         blocos.push(`<p class="insight-nota">${notas.join(' ')}</p>`);
 
+        // O bloco de comparação acima pode ter carregado dados (await); se entretanto
+        // o utilizador mudou de período, não sobrepor a análise atual com uma obsoleta.
+        if (seq !== undefined && seq !== _aplicarSeq) return;
         el.innerHTML = '<span class="insight-titulo">📖 Análise do período</span>' + blocos.join('');
         el.style.display = 'block';
     }
@@ -2243,7 +2317,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (rows.length === 0) return '<p style="text-align:center;font-size:0.85em;color:#888;">Sem dados.</p>';
             let html = `<table class="top-dia-table" aria-label="Top dias"><thead><tr><th scope="col">#</th><th scope="col">Dia</th><th scope="col" class="num">${valueLabel}</th></tr></thead><tbody>`;
             rows.forEach((r, i) => {
-                const data = new Date(r.ts).toLocaleDateString('pt-PT');
+                // ts é meia-noite UTC → formatar em UTC (senão, em fusos a oeste de
+                // UTC — Açores no inverno, Américas — mostrava o dia anterior)
+                const data = new Date(r.ts).toLocaleDateString('pt-PT', { timeZone: 'UTC' });
                 const iso = new Date(r.ts).toISOString().slice(0, 10);
                 html += `<tr data-iso="${iso}"><td class="rank">${i + 1}</td><td>${data}</td><td class="num">${fmt(r.v)}</td></tr>`;
             });
@@ -2312,6 +2388,26 @@ document.addEventListener('DOMContentLoaded', function() {
             return `De ${d0.getDate()} a ${d1.getDate()} de ${NOMES_MES_LONGO_PT[d0.getMonth()]} de ${d0.getFullYear()}`;
         }
         return `De ${d0.toLocaleDateString('pt-PT')} a ${d1.toLocaleDateString('pt-PT')}`;
+    }
+
+    // O intervalo sem o ano, para a comparação ano a ano: "outubro",
+    // "7 de outubro", "de 1 a 7 de outubro", "de 8 de outubro a 7 de dezembro"
+    function descreverIntervaloSemAno(inicio, fim) {
+        const d0 = new Date(inicio + 'T00:00:00');
+        const d1 = new Date(fim + 'T00:00:00');
+        const dia = d => `${d.getDate()} de ${NOMES_MES_LONGO_PT[d.getMonth()]}`;
+        const anos = d1.getFullYear() - d0.getFullYear();
+        if (anos === 0 && d0.getMonth() === 0 && d0.getDate() === 1 && d1.getMonth() === 11 && d1.getDate() === 31) {
+            return 'ano completo';
+        }
+        if (anos === 0 && d0.getMonth() === d1.getMonth()) {
+            const ultimo = new Date(d1.getFullYear(), d1.getMonth() + 1, 0).getDate();
+            if (d0.getDate() === 1 && d1.getDate() === ultimo) return NOMES_MES_LONGO_PT[d0.getMonth()];
+            if (d0.getDate() === d1.getDate()) return dia(d0);
+            return `de ${d0.getDate()} a ${dia(d1)}`;
+        }
+        const depois = anos === 1 ? ' do ano seguinte' : anos > 1 ? ` de ${anos} anos depois` : '';
+        return `de ${dia(d0)} a ${dia(d1)}${depois}`;
     }
 
     function horaInicioInterval(horaFim) {
@@ -2686,15 +2782,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const d1 = new Date(refFim + 'T00:00:00');
         const mIni = d0.getMonth(), dIni = d0.getDate();
         const mFim = d1.getMonth(), dFim = d1.getDate();
-        const fundIni = (a) => `${a}-${String(mIni + 1).padStart(2, '0')}-${String(dIni).padStart(2, '0')}`;
-        const fundFim = (a) => `${a}-${String(mFim + 1).padStart(2, '0')}-${String(dFim).padStart(2, '0')}`;
+        // Anos que o intervalo atravessa (ex.: "Últimos 12 meses" = 1): o fim fica
+        // nesse número de anos depois do início, em cada ano da comparação
+        const anos = d1.getFullYear() - d0.getFullYear();
+        // 29 de fevereiro num ano comum passa a 28
+        const fund = (a, m, d) => `${a}-${String(m + 1).padStart(2, '0')}-${String(Math.min(d, new Date(a, m + 1, 0).getDate())).padStart(2, '0')}`;
 
         const anoCorrente = parseInt((_dataMaximaAtual || getLisboaDateString()).slice(0, 4), 10);
         const dadosPorAno = [];
         await carregarBombagem();
         for (let ano = ANO_INICIO_HISTORICO; ano <= anoCorrente; ano++) {
-            let iniAno = fundIni(ano);
-            let fimAno = fundFim(ano);
+            let iniAno = fund(ano, mIni, dIni);
+            let fimAno = fund(ano + anos, mFim, dFim);
             if (iniAno > _dataMaximaAtual) continue;
             if (fimAno > _dataMaximaAtual) fimAno = _dataMaximaAtual;
             try {
@@ -2702,7 +2801,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const t = totaisPeriodo(iniAno, fimAno);
                 if (t.diasTotais > 0) {
                     const k = calcularKPIs(t);
-                    dadosPorAno.push({ ano, percRenov: k.percRenov, consumoGWh: k.consumoTotalGWh, dias: t.diasTotais });
+                    dadosPorAno.push({ ano, rotulo: anos ? `${ano}/${String(ano + anos).slice(2)}` : String(ano),
+                                       percRenov: k.percRenov, consumoGWh: k.consumoTotalGWh, dias: t.diasTotais });
                 }
             } catch (e) { console.warn('YoY ano', ano, e); }
         }
@@ -2747,15 +2847,15 @@ document.addEventListener('DOMContentLoaded', function() {
             cont.innerHTML = '<div class="yoy-loading">Sem dados suficientes.</div>';
             return;
         }
-        const periodoTxt = descreverPeriodo(refIni, refFim).replace(/^Em /, '').replace(/^De /, 'De ');
+        const periodoTxt = descreverIntervaloSemAno(refIni, refFim);
         cont.innerHTML = `
             <p style="text-align:center;font-size:0.85em;color:#6c757d;margin:0 0 12px 0;">
-                Comparação do mesmo intervalo (${periodoTxt.replace(/^de \d{4}$/, '')}) em cada ano disponível.
+                Comparação do mesmo intervalo (${periodoTxt}) em cada ano disponível.
             </p>
             <div id="grafico-yoy" style="height:380px;"></div>
         `;
         const t = temaCores();
-        const labels = dados.map(d => String(d.ano));
+        const labels = dados.map(d => d.rotulo || String(d.ano));
         const percRenov = dados.map(d => +d.percRenov.toFixed(1));
         const consumo = dados.map(d => +d.consumoGWh.toFixed(2));
         Highcharts.chart('grafico-yoy', {
@@ -2780,7 +2880,8 @@ document.addEventListener('DOMContentLoaded', function() {
             tooltip: {
                 shared: true,
                 formatter: function() {
-                    let s = '<b>' + this.x + '</b><br/>';
+                    // this.x é a posição da categoria; o nome (2026, 2025/26) vem no key
+                    let s = '<b>' + (this.points[0].key ?? this.x) + '</b><br/>';
                     this.points.forEach(p => {
                         if (p.series.name === '% Renováveis') s += '🌱 % Renováveis: <b>' + formatarPT(p.y, 1) + '%</b><br/>';
                         else s += '⚡ Consumo: <b>' + formatarEnergia(p.y) + '</b><br/>';
@@ -2953,7 +3054,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
     function atualizarURLPeriodo(inicio, fim) {
-        const p = new URLSearchParams();
+        // Preserva os restantes parâmetros do URL (ex.: ?source=fs, que o dados.js
+        // relê em cada fetch — sem isto o override perdia-se no primeiro render).
+        const p = new URLSearchParams(window.location.search);
         p.set('inicio', inicio); p.set('fim', fim);
         window.history.replaceState(null, '', window.location.pathname + '?' + p.toString());
     }
@@ -2961,6 +3064,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     // 10. ORQUESTRAÇÃO
     // ============================================================
+    let _aplicarSeq = 0; // token anti-corrida: só a execução mais recente renderiza
     async function aplicarPeriodo(dataInicio, dataFim, opts) {
         opts = opts || {};
         mostrarErro(null);
@@ -2983,9 +3087,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dataInicio > dataFim) dataInicio = dataFim;
             if (document.activeElement !== inputInicio) inputInicio.value = dataInicio;
         }
+        const seq = ++_aplicarSeq;
         loadingEl.style.display = 'block';
         try {
             await Promise.all([carregarBombagem(), carregarPeriodo(dataInicio, dataFim)]);
+            if (seq !== _aplicarSeq) return; // navegação mudou entretanto — descartar
             const totais = totaisPeriodo(dataInicio, dataFim);
             if (totais.diasTotais === 0) {
                 mostrarErro('Sem dados para o período selecionado.');
@@ -3026,7 +3132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             renderMix();
             renderBalancoPeriodo(totais, periodoLabel);
             renderTopDias(series);
-            renderInsight(totais, dataInicio, dataFim, kpis, series);
+            renderInsight(totais, dataInicio, dataFim, kpis, series, seq);
 
             // Títulos do H1 (mix-sub é populado pelo renderMix)
             tituloInicio.textContent = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-PT');
@@ -3043,7 +3149,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error(e);
             mostrarErro('Erro ao carregar dados. Verifique a ligação e tente novamente.');
         } finally {
-            loadingEl.style.display = 'none';
+            // Uma execução obsoleta não deve apagar o loading da execução mais recente
+            if (seq === _aplicarSeq) loadingEl.style.display = 'none';
         }
     }
 
@@ -3077,7 +3184,11 @@ document.addEventListener('DOMContentLoaded', function() {
     inputFim.addEventListener('change', aoMudarDatas);
 
     btnPartilhar.addEventListener('click', async () => {
-        const url = `${window.location.origin}${window.location.pathname}?inicio=${inputInicio.value}&fim=${inputFim.value}`;
+        const p = new URLSearchParams();
+        p.set('inicio', inputInicio.value); p.set('fim', inputFim.value);
+        const _src = new URLSearchParams(window.location.search).get('source');
+        if (_src) p.set('source', _src);
+        const url = `${window.location.origin}${window.location.pathname}?${p.toString()}`;
         const titulo = 'Balanço Energético em Portugal';
         const texto = `Balanço Energético ${inputInicio.value} a ${inputFim.value}`;
         try {
@@ -3161,6 +3272,17 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (e.key === 'ArrowRight') { e.preventDefault(); aplicarAtalhoSeta('next'); }
     });
 
+    // Impressão: abrir as FAQ antes de imprimir (CSS não consegue revelar o conteúdo
+    // de <details> fechados) e repor o estado original depois.
+    let _faqAbertasPrint = null;
+    window.addEventListener('beforeprint', () => {
+        _faqAbertasPrint = Array.from(document.querySelectorAll('details.faq-item:not([open])'));
+        _faqAbertasPrint.forEach(d => { d.open = true; });
+    });
+    window.addEventListener('afterprint', () => {
+        if (_faqAbertasPrint) { _faqAbertasPrint.forEach(d => { d.open = false; }); _faqAbertasPrint = null; }
+    });
+
     // Mix: toggle entre Produção e Consumo
     document.querySelectorAll('.mix-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -3227,6 +3349,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Re-render gráficos ao mudar tema
     const themeObserver = new MutationObserver(() => {
         if (inputInicio.value && inputFim.value) aplicarPeriodo(inputInicio.value, inputFim.value, { skipURL: true });
+        // O YoY é lazy (fora do aplicarPeriodo) — re-render se estiver aberto
+        const yoyEl = document.getElementById('yoy-section');
+        if (yoyEl && yoyEl.open && _yoyDados) renderYoY(_yoyDados, _yoyRefInicio, _yoyRefFim);
     });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 

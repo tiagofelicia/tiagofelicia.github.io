@@ -169,26 +169,75 @@
         [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub { color:#94a3b8; }
         [data-theme="dark"] .kpi-value { color:#f1f5f9; }
 
-        .categorias-wrap { max-width: 1300px; margin: 0 auto 30px auto; padding: 0 12px; box-sizing: border-box; }
-        .categorias-title { font-size: 1.05em; color: #2c3e50; margin: 0 0 10px 0; }
-        [data-theme="dark"] .categorias-title { color: #e2e8f0; }
-        .categorias-table-wrap { overflow-x: auto; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; }
-        [data-theme="dark"] .categorias-table-wrap { background: #1e293b; border-color: #334155; }
-        .categorias-table { width: 100%; border-collapse: collapse; font-size: 0.92em; }
-        .categorias-table th, .categorias-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
-        [data-theme="dark"] .categorias-table th, [data-theme="dark"] .categorias-table td { border-bottom-color: #334155; }
-        .categorias-table thead th { background: #f8fafc; color: #475569; font-weight: 600; font-size: 0.82em; text-transform: uppercase; letter-spacing: 0.03em; position: sticky; top: 0; }
-        [data-theme="dark"] .categorias-table thead th { background: #0f172a; color: #cbd5e1; }
-        .categorias-table tbody tr:hover { background: #f8fafc; }
-        [data-theme="dark"] .categorias-table tbody tr:hover { background: #0f172a; }
-        .categorias-table th.num, .categorias-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
-        .categorias-table .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; vertical-align: -2px; border: 1px solid rgba(0,0,0,0.1); }
-        .categorias-table .group-header td { background: #eef2f7; font-weight: 600; font-size: 0.82em; color: #334155; text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 12px; }
-        [data-theme="dark"] .categorias-table .group-header td { background: #0f172a; color: #94a3b8; }
+        /* Detalhe por categoria: mesmo aspeto das tabelas do balanço e do mix */
+        .categorias-table-wrap { max-width: 900px; margin: 0 auto; overflow-x: auto; }
+        .categorias-table { width: 100%; border-collapse: collapse; font-size: 0.9em; background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .categorias-table thead th { background: #343a40; color: #fff; padding: 9px 12px; text-align: left; }
+        .categorias-table td { padding: 6px 12px; border-bottom: 1px solid #eee; text-align: left; }
+        .categorias-table th.num, .categorias-table td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .categorias-table tbody tr:not(.group-header) td:first-child { padding-left: 26px; }
+        .categorias-table .group-header td { border-top: 1px solid #ccc; background: #f1f3f5; font-weight: 700; text-transform: uppercase; font-size: 0.92em; color: #2c3e50; }
+        .categorias-table .swatch { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 7px; vertical-align: -1px; border: 1px solid rgba(0,0,0,0.1); }
         .categorias-table .muted { color: #94a3b8; }
+        [data-theme="dark"] .categorias-table { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .categorias-table thead th { background: #0f172a; color: #e2e8f0; }
+        [data-theme="dark"] .categorias-table td { border-bottom-color: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .categorias-table .group-header td { background: #334155; border-top-color: #475569; color: #e2e8f0; }
 
         .nota-fonte { text-align:center; font-size:0.82em; color:#555; margin:5px 0 15px 0; }
         [data-theme="dark"] .nota-fonte { color:#94a3b8; }
+        /* Identificação/crédito sob os gráficos e tabelas (como no balanco-historico) */
+        .export-credit { text-align: center; font-size: 0.7em; color: #94a3b8; margin: 4px 0 10px; padding: 0 8px; font-variant-numeric: tabular-nums; user-select: text; letter-spacing: 0.01em; }
+        .export-credit a { color: inherit; text-decoration: none; }
+        .export-credit a:hover { color: #2563eb; text-decoration: underline; }
+        [data-theme="dark"] .export-credit { color: #64748b; }
+        [data-theme="dark"] .export-credit a:hover { color: #60a5fa; }
+        @media print { .export-credit { color: #1e293b; font-size: 0.85em; font-weight: 500; margin-top: 12px; } .export-credit a { color: #1e293b; } }
+
+        /* ===== Análise do período (como no balanco-historico) ===== */
+        #insight-periodo { width: calc(95% - 24px); max-width: 1276px; margin: -12px auto 30px auto; padding: 16px 20px; box-sizing: border-box; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 10px; border-left: 4px solid #16a34a; font-size: 0.95em; line-height: 1.6; color: #14532d; }
+        #insight-periodo p { margin: 0 0 8px 0; }
+        #insight-periodo p:last-child { margin-bottom: 0; }
+        #insight-periodo strong { color: #166534; }
+        #insight-periodo .insight-titulo { font-size: 0.85em; color: #16a34a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: block; }
+        #insight-periodo .insight-delta-up { color: #166534; font-weight: 700; }
+        #insight-periodo .insight-delta-down { color: #b91c1c; font-weight: 700; }
+        #insight-periodo .insight-divisor { border-top: 1px solid rgba(22, 101, 52, 0.18); margin: 10px 0 8px 0; }
+        #insight-periodo .insight-nota { font-size: 0.78em; color: #166534; opacity: 0.75; margin-top: 6px; font-style: italic; }
+        [data-theme="dark"] #insight-periodo { background: linear-gradient(135deg, #1e293b 0%, #14331f 100%); color: #cbd5e1; border-left-color: #4ade80; }
+        [data-theme="dark"] #insight-periodo strong { color: #86efac; }
+        [data-theme="dark"] #insight-periodo .insight-titulo { color: #4ade80; }
+        [data-theme="dark"] #insight-periodo .insight-delta-up { color: #86efac; }
+        [data-theme="dark"] #insight-periodo .insight-delta-down { color: #fca5a5; }
+        [data-theme="dark"] #insight-periodo .insight-divisor { border-top-color: rgba(134, 239, 172, 0.18); }
+        [data-theme="dark"] #insight-periodo .insight-nota { color: #86efac; opacity: 0.7; }
+
+        /* ===== Top dias do período (como no balanco-historico) ===== */
+        .top-dias-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .top-dias-grid { grid-template-columns: 1fr; } }
+        .top-dia-titulo { text-align: center; font-size: 0.95em; margin: 0 0 10px 0; padding: 8px; border-radius: 6px; font-weight: 700; }
+        .top-dia-titulo-renov { background: #e6f4ea; color: #1b5e20; }
+        .top-dia-titulo-consumo { background: #fff3cd; color: #856404; }
+        .top-dia-titulo-import { background: #fde2cf; color: #9a4515; }
+        .top-dia-table { width: 100%; border-collapse: collapse; font-size: 0.85em; background: #fff; border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden; }
+        .top-dia-table th, .top-dia-table td { padding: 7px 9px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        .top-dia-table th { background: #f8f9fa; font-weight: 600; color: #495057; font-size: 0.88em; }
+        .top-dia-table tbody tr { cursor: pointer; transition: background 0.12s; }
+        .top-dia-table tbody tr:hover { background: #f1f5f9; }
+        .top-dia-table tbody tr:last-child td { border-bottom: none; }
+        .top-dia-table td.num, .top-dia-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+        .top-dia-table td.rank { width: 28px; text-align: center; color: #6c757d; font-weight: 600; }
+        .top-dia-vazio { text-align: center; font-size: 0.85em; color: #888; }
+        @media (max-width: 700px) { .top-dia-table { font-size: 0.78em; } .top-dia-table th, .top-dia-table td { padding: 5px 6px; } }
+        [data-theme="dark"] .top-dia-titulo-renov { background: #1a3320; color: #c3e6cb; }
+        [data-theme="dark"] .top-dia-titulo-consumo { background: #422006; color: #fde68a; }
+        [data-theme="dark"] .top-dia-titulo-import { background: #3a2010; color: #fed7aa; }
+        [data-theme="dark"] .top-dia-table { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .top-dia-table th { background: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .top-dia-table th, [data-theme="dark"] .top-dia-table td { border-bottom-color: #334155; }
+        [data-theme="dark"] .top-dia-table tbody tr:hover { background: #334155; }
+        [data-theme="dark"] .top-dia-table td { color: #e2e8f0; }
+        [data-theme="dark"] .top-dia-table td.rank { color: #94a3b8; }
 
         /* Indicador de anchor (correção do "Restante" do forecast) */
         .anchor-indicator {
@@ -270,7 +319,7 @@
         .tabela-balanco { width:100%; max-width:720px; margin:0 auto; border-collapse:collapse; font-size:0.9em; background:#fff; border:1px solid #ddd; border-radius:8px; overflow:hidden; }
         .tabela-balanco thead th { background:#343a40; color:#fff; padding:9px 12px; text-align:left; }
         .tabela-balanco thead th.num { text-align:right; }
-        .tabela-balanco td { padding:6px 12px; border-bottom:1px solid #eee; }
+        .tabela-balanco td { padding:6px 12px; border-bottom:1px solid #eee; text-align:left; }
         .tabela-balanco td.num, .tabela-balanco th.num { text-align:right; font-variant-numeric:tabular-nums; }
         .tabela-balanco .nivel-0 td { border-top:1px solid #ccc; background:#f1f3f5; }
         .tabela-balanco .nivel-0 td:first-child { font-weight:700; text-transform:uppercase; font-size:0.92em; color:#2c3e50; }
@@ -311,24 +360,34 @@
         [data-theme="dark"] .mix-toggle-btn { background:#1e293b; color:#cbd5e1; border-color:#475569; }
         [data-theme="dark"] .mix-toggle-btn:hover:not(.active) { background:#334155; }
         [data-theme="dark"] .mix-toggle-btn.active { background:#2563eb; color:#fff; border-color:#2563eb; }
-        .mix-grid { display:grid; grid-template-columns: 340px 1fr; gap:24px; align-items:center; max-width:820px; margin:0 auto; }
-        @media (max-width: 680px) { .mix-grid { grid-template-columns:1fr; } }
-        .mix-donut-wrap { position:relative; height:340px; }
-        .mix-tabela { width:100%; border-collapse:collapse; font-size:0.88em; }
-        .mix-tabela thead th { text-align:left; font-size:0.78em; text-transform:uppercase; letter-spacing:0.03em; color:#64748b; border-bottom:1px solid #e2e8f0; padding:4px 8px; }
-        .mix-tabela thead th.num { text-align:right; }
-        .mix-tabela td { padding:4px 8px; border-bottom:1px solid #f1f5f9; }
-        .mix-tabela td.num { text-align:right; font-variant-numeric:tabular-nums; }
-        .mix-tabela .swatch { display:inline-block; width:11px; height:11px; border-radius:2px; margin-right:7px; vertical-align:-1px; border:1px solid rgba(0,0,0,0.1); }
-        .mix-tabela tr.mix-macro td { font-weight:600; }
-        .mix-tabela tr.mix-fonte td:first-child { padding-left:26px; color:#475569; font-size:0.95em; }
-        .mix-tabela tr.mix-total td { border-top:2px solid #cbd5e1; font-weight:700; }
-        .mix-tabela td.mix-nota { font-size:0.82em; color:#64748b; font-weight:400; padding-top:8px; border-bottom:none; line-height:1.4; }
-        [data-theme="dark"] .mix-tabela td.mix-nota { color:#94a3b8; }
-        [data-theme="dark"] .mix-tabela thead th { color:#94a3b8; border-bottom-color:#334155; }
-        [data-theme="dark"] .mix-tabela td { border-bottom-color:#334155; color:#e2e8f0; }
-        [data-theme="dark"] .mix-tabela tr.mix-fonte td:first-child { color:#cbd5e1; }
-        [data-theme="dark"] .mix-tabela tr.mix-total td { border-top-color:#475569; }
+        /* Grelha, gráfico e tabela com o mesmo aspeto do "Mix do período" do balanco-historico */
+        .mix-grid { display:grid; grid-template-columns: 1.1fr 0.9fr; gap:24px; align-items:center; }
+        @media (max-width: 800px) { .mix-grid { grid-template-columns:1fr; } }
+        #chart-donut { background:transparent; border-radius:8px; }
+        [data-theme="dark"] #chart-donut { background:#1e293b; }
+        .tabela-mix { width:100%; border-collapse:collapse; font-size:0.9em; background:#fff; border:1px solid #ddd; border-radius:8px; overflow:hidden; }
+        .tabela-mix thead th { background:#343a40; color:#fff; padding:9px 12px; text-align:left; }
+        .tabela-mix th.num, .tabela-mix td.num { text-align:right; font-variant-numeric:tabular-nums; }
+        .tabela-mix td.num { white-space:nowrap; }
+        .mix-grid > * { min-width:0; }
+        @media (max-width: 480px) {
+            .tabela-mix { font-size:0.84em; }
+            .tabela-mix thead th, .tabela-mix td { padding-left:8px; padding-right:8px; }
+            .tabela-mix .mix-fonte td:first-child { padding-left:22px; }
+        }
+        .tabela-mix td { padding:6px 12px; border-bottom:1px solid #eee; text-align:left; }
+        .tabela-mix .mix-macro td:first-child { padding-left:12px; }
+        .tabela-mix .mix-macro td { font-weight:700; background:#f1f3f5; border-top:1px solid #ccc; }
+        .tabela-mix .mix-fonte td:first-child { padding-left:34px; font-weight:400; }
+        .tabela-mix .mix-total td { font-weight:700; background:#e9ecef; border-top:2px solid #ccc; }
+        .tabela-mix .fonte-cor { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:7px; vertical-align:middle; }
+        [data-theme="dark"] .tabela-mix { background:#1e293b; border-color:#475569; }
+        [data-theme="dark"] .tabela-mix thead th { background:#0f172a; color:#e2e8f0; }
+        [data-theme="dark"] .tabela-mix td { border-bottom-color:#334155; color:#e2e8f0; }
+        [data-theme="dark"] .tabela-mix .mix-macro td { background:#334155; border-top-color:#475569; }
+        [data-theme="dark"] .tabela-mix .mix-total td { background:#334155; border-top-color:#475569; }
+        .bal-notas { font-size:0.72em; color:#888; margin-top:8px; line-height:1.5; }
+        [data-theme="dark"] .bal-notas { color:#94a3b8; }
     </style>
 </head>
 <body>
@@ -403,6 +462,7 @@
             <span id="custom-info" style="font-size:0.82em; opacity:0.7;" data-i18n="maxDias">(15 min até 62 dias · diário até 365)</span>
         </div>
 
+        <div class="controls-row" id="dados-info" style="font-size:0.78em; color:#6b7280;"></div>
         <div class="controls-row" style="font-size:0.78em; color:#6b7280;">
             <span data-i18n="atalhos">Atalhos:</span> <span class="kbd-hint">&larr;</span> <span class="kbd-hint">&rarr;</span> <span data-i18n="navegar">navegar</span> ·
             <span class="kbd-hint">D</span>/<span class="kbd-hint">W</span>/<span class="kbd-hint">M</span>/<span class="kbd-hint">P</span> <span data-i18n="modo">modo</span> ·
@@ -418,6 +478,7 @@
             <div id="chart-producao" tabindex="0" role="img" aria-label="Gráfico intra-diário de produção de eletricidade"></div>
             <p id="chart-sem-dados" class="chart-sem-dados" role="status" hidden></p>
         </div>
+        <p class="export-credit" id="credito-producao"></p>
         <p class="nota-fonte">
             <span data-i18n="notaFonte">Fonte: ENTSO-E Transparency Platform — Produção pública líquida | tiagofelicia.pt</span>
             <span id="anchor-indicator" class="anchor-indicator" title="Correção aplicada ao 'Restante' do forecast, baseada no erro médio entre actuals e previsão nas últimas horas." data-i18n="anchorDash">Âncora: —</span>
@@ -499,6 +560,8 @@
         </div>
     </section>
 
+    <div id="insight-periodo" style="display: none;" aria-live="polite"></div>
+
     <section class="secao" id="balanco-section" aria-label="Balanço energético do período">
         <h2 data-i18n="secBalanco">Balanço energético do período</h2>
         <div class="secao-sub" id="balanco-sub">—</div>
@@ -510,6 +573,7 @@
                 <tbody id="balanco-body"></tbody>
             </table>
         </div>
+        <p class="export-credit" id="credito-balanco"></p>
     </section>
 
     <section class="secao" id="mix-section" aria-label="Mix do período">
@@ -520,30 +584,55 @@
             <button type="button" class="mix-toggle-btn" data-view="consumo" id="mix-btn-cons" data-i18n="mvConsumo">Consumo</button>
         </div>
         <div class="mix-grid">
-            <div class="mix-donut-wrap"><div id="chart-donut" role="img" aria-label="Donut do mix" style="height:100%;"></div></div>
-            <table class="mix-tabela">
-                <thead><tr><th data-i18n="thFonte">Fonte</th><th class="num" data-i18n="thEnergiaGWh">Energia</th><th class="num" data-i18n="thPct">%</th></tr></thead>
-                <tbody id="mix-tabela-body"></tbody>
-            </table>
+            <div id="chart-donut" role="img" aria-label="Donut do mix"></div>
+            <div id="tabela-mix-container">
+                <table class="tabela-mix">
+                    <thead><tr><th data-i18n="thFonte">Fonte</th><th class="num" data-i18n="thEnergiaGWh">Energia</th><th class="num" id="mix-th-pct" data-i18n="thPct">%</th></tr></thead>
+                    <tbody id="mix-tabela-body"></tbody>
+                </table>
+                <p class="bal-notas" id="mix-notas"></p>
+            </div>
         </div>
+        <p class="export-credit" id="credito-mix"></p>
     </section>
 
-    <section class="categorias-wrap" aria-label="Detalhe por categoria">
-        <h2 class="categorias-title" data-i18n="secCat">Detalhe por categoria</h2>
+    <section class="secao" id="top-dias-section" aria-label="Top dias do período" style="display: none;">
+        <h2 data-i18n="secTopDias">Top dias do período</h2>
+        <div class="top-dias-grid">
+            <div>
+                <div class="top-dia-titulo top-dia-titulo-renov" data-i18n="topRenov">🌱 Mais renováveis (% da produção)</div>
+                <div id="top-dias-renov"></div>
+            </div>
+            <div>
+                <div class="top-dia-titulo top-dia-titulo-consumo" data-i18n="topConsumo">⚡ Maior consumo</div>
+                <div id="top-dias-consumo"></div>
+            </div>
+            <div>
+                <div class="top-dia-titulo top-dia-titulo-import" id="top-dia-titulo-saldo">🔄 Mais importador (saldo)</div>
+                <div id="top-dias-saldo"></div>
+            </div>
+        </div>
+        <p class="export-credit" id="credito-topdias"></p>
+    </section>
+
+    <section class="secao" id="categorias-section" aria-label="Detalhe por categoria">
+        <h2 data-i18n="secCat">Detalhe por categoria</h2>
+        <div class="secao-sub" id="categorias-sub">—</div>
         <div class="categorias-table-wrap">
             <table class="categorias-table" id="tbl-categorias">
                 <thead>
                     <tr>
                         <th data-i18n="thCategoria">Categoria</th>
-                        <th class="num" data-i18n="thPicoReal">Pico real (GW)</th>
-                        <th class="num" data-i18n="thTotalReal">Total real (GWh)</th>
-                        <th class="num" data-i18n="thPicoPrev">Pico previsto (GW)</th>
-                        <th class="num" data-i18n="thTotalPrev">Total previsto (GWh)</th>
+                        <th class="num" data-i18n="thPicoReal">Pico real</th>
+                        <th class="num" data-i18n="thTotalReal">Total real</th>
+                        <th class="num" data-i18n="thPicoPrev">Pico previsto</th>
+                        <th class="num" data-i18n="thTotalPrev">Total previsto</th>
                     </tr>
                 </thead>
                 <tbody id="tbl-categorias-body"></tbody>
             </table>
         </div>
+        <p class="export-credit" id="credito-categorias"></p>
     </section>
 
     <article class="content-support">
@@ -683,6 +772,7 @@ document.addEventListener('DOMContentLoaded', function() {
             lblPais: 'País:', lblModo: 'Modo:', mDia: 'Dia', mSemana: 'Semana', mMes: 'Mês', mCustom: 'Personalizado',
             share: '🔗 Partilhar', lblAno: 'Ano:', lblSemana: 'Semana ISO:', lblInicio: 'Início:', lblFim: 'Fim:',
             maxDias: '(15 min até 62 dias · diário até 365)', mediaDiaria: 'média diária',
+            infoDesde: 'Dados disponíveis desde {a}', infoAte: 'Dados reais até {b} (hora local)',
             atalhos: 'Atalhos:', navegar: 'navegar', modo: 'modo', focaPais: 'foca país', partilhar: 'partilhar', resetZoom: 'reset zoom', ajuda: 'ajuda',
             notaFonte: 'Fonte: ENTSO-E Transparency Platform — Produção pública líquida | tiagofelicia.pt',
             kPeakGen: 'Pico de geração', kPeakLoad: 'Pico de consumo', kEnergy: 'Produção total (período)', kGwhGer: 'GWh gerados',
@@ -721,7 +811,11 @@ document.addEventListener('DOMContentLoaded', function() {
             balSaldo: 'Saldo importador', balImport: 'Importação', balExport: 'Exportação', balConsumo: 'Consumo',
             grpProducao: 'Produção', grpOutras: 'Outras séries',
             mixProdTotal: 'Produção total', mixConsumoTotal: 'Consumo total', mixImport: '+ Importação', mixExport: '− Exportação', mixNaoRenovavel: 'Não renovável',
-            mixArmazenam: '− p/ armazenamento', mixConsumo: '= Consumo', mixDoConsumo: '% do consumo', mix100: '100%',
+            mixArmazenam: '− Consumo p/ armazenamento', mixConsumo: '= Consumo', mixDoConsumo: '% do consumo', mix100: '100%',
+            mixDaProducao: '% da produção', mixProdIgual: 'Produção = {p}% do consumo', mixConsumo100: 'Consumo (100%)',
+            mixPctConsumo: '% consumo', mixParaArmaz: 'Para armazenam.',
+            credDia: 'Dia {a}', credPeriodo: 'Período {a} a {b}',
+            secTopDias: 'Top dias do período', topRenov: '🌱 Mais renováveis (% da produção)', topConsumo: '⚡ Maior consumo',
             mixNota: 'Consumo = Produção + Importação − Exportação − consumo para armazenamento. A produção pode passar 100% (excedente exportado/armazenado) ou ficar abaixo (importação cobre). Pequenos desvios devem-se a perdas/arredondamento.',
             semConsumo: 'Sem dados de consumo (load) para este país neste período.',
             semDadosPeriodo: 'Sem dados para o período.',
@@ -765,6 +859,7 @@ document.addEventListener('DOMContentLoaded', function() {
             lblPais: 'Country:', lblModo: 'Mode:', mDia: 'Day', mSemana: 'Week', mMes: 'Month', mCustom: 'Custom',
             share: '🔗 Share', lblAno: 'Year:', lblSemana: 'ISO week:', lblInicio: 'Start:', lblFim: 'End:',
             maxDias: '(15 min up to 62 days · daily up to 365)', mediaDiaria: 'daily average',
+            infoDesde: 'Data available since {a}', infoAte: 'Actual data up to {b} (local time)',
             atalhos: 'Shortcuts:', navegar: 'navigate', modo: 'mode', focaPais: 'focus country', partilhar: 'share', resetZoom: 'reset zoom', ajuda: 'help',
             notaFonte: 'Source: ENTSO-E Transparency Platform — Net public generation | tiagofelicia.pt',
             kPeakGen: 'Peak generation', kPeakLoad: 'Peak load', kEnergy: 'Total generation (period)', kGwhGer: 'GWh generated',
@@ -803,7 +898,11 @@ document.addEventListener('DOMContentLoaded', function() {
             balSaldo: 'Net imports', balImport: 'Imports', balExport: 'Exports', balConsumo: 'Consumption',
             grpProducao: 'Generation', grpOutras: 'Other series',
             mixProdTotal: 'Total generation', mixConsumoTotal: 'Total consumption', mixImport: '+ Imports', mixExport: '− Exports', mixNaoRenovavel: 'Non-renewable',
-            mixArmazenam: '− to storage', mixConsumo: '= Consumption', mixDoConsumo: '% of consumption', mix100: '100%',
+            mixArmazenam: '− Consumption for storage', mixConsumo: '= Consumption', mixDoConsumo: '% of consumption', mix100: '100%',
+            mixDaProducao: '% of generation', mixProdIgual: 'Generation = {p}% of consumption', mixConsumo100: 'Consumption (100%)',
+            mixPctConsumo: '% consumption', mixParaArmaz: 'To storage',
+            credDia: 'Day {a}', credPeriodo: 'Period {a} to {b}',
+            secTopDias: 'Top days of the period', topRenov: '🌱 Most renewable (% of generation)', topConsumo: '⚡ Highest consumption',
             mixNota: 'Consumption = Generation + Imports − Exports − consumption for storage. Generation can exceed 100% (surplus exported/stored) or fall below (imports cover the gap). Small deviations are due to losses/rounding.',
             semConsumo: 'No consumption (load) data for this country in this period.',
             semDadosPeriodo: 'No data for the period.',
@@ -2539,6 +2638,12 @@ document.addEventListener('DOMContentLoaded', function() {
         var p = getPeriod();
         var hasPrice = !!(rawC.price && rawC.price.times && rawC.price.times.length);
         var tzLabel = rawC.timezone || 'UTC';
+        // Fecho do último intervalo: cada valor é a média do seu intervalo (o das 23:00 nos
+        // países horários é a média das 23:00 às 24:00; o das 23:45, das 23:45 às 24:00), mas
+        // a linha só vai de ponto a ponto e acabava 1 h (ou 15 min) antes do fim do dia.
+        // Repete-se o último valor no fim do período; esse ponto não entra na dica nem no CSV.
+        var _fimPeriodoMs = localMidnightUtcSec(toISO(addDays(parseISO(p.end), 1)), tzLabel) * 1000;
+        var _xFecho = null;
 
         // Tradução dataset (Chart.js-shape de buildDatasets) -> série Highcharts
         function toSeries(ds) {
@@ -2548,6 +2653,11 @@ document.addEventListener('DOMContentLoaded', function() {
             for (var i = 0; i < ds.data.length; i++) {
                 var pt = ds.data[i];
                 data.push([pt.x, (pt.y == null ? null : pt.y)]);
+            }
+            var nD = data.length;
+            if (nD >= 2 && data[nD - 1][0] + (data[nD - 1][0] - data[nD - 2][0]) === _fimPeriodoMs) {
+                data.push([_fimPeriodoMs, data[nD - 1][1]]);
+                _xFecho = _fimPeriodoMs;
             }
             var s = {
                 name: displayLabel(ds.label), _origLabel: ds.label, data: data,
@@ -2604,7 +2714,12 @@ document.addEventListener('DOMContentLoaded', function() {
         chart = Highcharts.chart('chart-producao', {
             chart: {
                 type: 'area', zooming: { type: 'x' }, panning: { enabled: true, type: 'x' }, panKey: 'shift',
-                backgroundColor: 'transparent', style: { color: _txt }, animation: false
+                backgroundColor: 'transparent', style: { color: _txt }, animation: false,
+                // O ponto de fecho (24:00) repete o anterior: fora do CSV/XLS
+                events: { exportData: function(e) {
+                    if (_xFecho == null) return;
+                    for (var r = e.dataRows.length - 1; r >= 1; r--) if (e.dataRows[r].x === _xFecho) e.dataRows.splice(r, 1);
+                } }
             },
             time: { timezone: tzLabel },
             title: {
@@ -2642,7 +2757,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 style: { color: _txt }, borderColor: _grid,
                 formatter: function() {
                     var pts = this.points || [];
-                    if (!pts.length) return false;
+                    if (!pts.length || this.x === _xFecho) return false;
                     // Usar o time do PRÓPRIO chart (fuso do país), não o Highcharts.dateFormat global (UTC)
                     var _t = pts[0].series.chart.time;
                     var s = '<b>' + _t.dateFormat('%a, %d %b %Y %H:%M', this.x) + '</b>';
@@ -2820,6 +2935,335 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCategoriasTable();
         updateBalancoMix();
         applyKpiPaisMode();
+        setCreditoFonte();
+        renderTopDias();
+        renderAnalise();
+    }
+
+    // Identificação/crédito sob os gráficos e tabelas (URL · data de geração · país · período),
+    // como no balanco-historico. Datas em dd/mm/aaaa em PT e em aaaa-mm-dd em EN.
+    var CREDITOS = ['credito-producao', 'credito-balanco', 'credito-mix', 'credito-topdias', 'credito-categorias'];
+    function setCreditoFonte() {
+        var p = getPeriod();
+        var fmtD = function(iso) { return LANG === 'en' ? iso : iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4); };
+        var ctx = p.start === p.end ? T('credDia').replace('{a}', fmtD(p.start))
+                                    : T('credPeriodo').replace('{a}', fmtD(p.start)).replace('{b}', fmtD(p.end));
+        var href = 'https://www.tiagofelicia.pt/europe-balance' + (LANG === 'en' ? '?lang=en' : '');
+        var linha = ['🔗 <a href="' + href + '" rel="noopener">tiagofelicia.pt/europe-balance</a>',
+                     fmtD(toISO(new Date())), escHtml(countryName(selPais.value)), ctx].join(' · ');
+        CREDITOS.forEach(function(id) { var el = document.getElementById(id); if (el) el.innerHTML = linha; });
+    }
+    function limparCreditos() {
+        CREDITOS.forEach(function(id) { var el = document.getElementById(id); if (el) el.innerHTML = ''; });
+    }
+
+    // ===== Análise do período e Top dias (como no balanco-historico) =====
+    var EN = (LANG === 'en');
+    // 1.ª semana com ficheiros no dados-energia (2026-W01): antes disto não há dados para comparar
+    var DADOS_DESDE = '2025-12-29';
+    var MESES_TXT = EN ? ['January','February','March','April','May','June','July','August','September','October','November','December']
+                       : ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    function fmtDia(iso) { return EN ? iso : iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4); }
+    function juntarLista(itens) {
+        if (itens.length < 2) return itens.join('');
+        return itens.slice(0, -1).join(', ') + (EN ? ' and ' : ' e ') + itens[itens.length - 1];
+    }
+    // "De 1 a 7 de outubro de 2026", "Em setembro de 2026" (PT) / "From 1 to 7 October 2026" (EN)
+    function descreverPeriodoTxt(ini, fim) {
+        var a = parseISO(ini), b = parseISO(fim);
+        var dA = a.getDate(), dB = b.getDate(), mA = a.getMonth(), mB = b.getMonth(), yA = a.getFullYear(), yB = b.getFullYear();
+        if (ini === fim) return EN ? 'On ' + dA + ' ' + MESES_TXT[mA] + ' ' + yA : 'Em ' + dA + ' de ' + MESES_TXT[mA] + ' de ' + yA;
+        if (yA === yB && mA === mB && dA === 1 && dB === new Date(yB, mB + 1, 0).getDate())
+            return EN ? 'In ' + MESES_TXT[mA] + ' ' + yA : 'Em ' + MESES_TXT[mA] + ' de ' + yA;
+        if (yA === yB && mA === mB) return EN ? 'From ' + dA + ' to ' + dB + ' ' + MESES_TXT[mA] + ' ' + yA : 'De ' + dA + ' a ' + dB + ' de ' + MESES_TXT[mA] + ' de ' + yA;
+        if (yA === yB) return EN ? 'From ' + dA + ' ' + MESES_TXT[mA] + ' to ' + dB + ' ' + MESES_TXT[mB] + ' ' + yA
+                                 : 'De ' + dA + ' de ' + MESES_TXT[mA] + ' a ' + dB + ' de ' + MESES_TXT[mB] + ' de ' + yA;
+        return EN ? 'From ' + fmtDia(ini) + ' to ' + fmtDia(fim) : 'De ' + fmtDia(ini) + ' a ' + fmtDia(fim);
+    }
+    // Data e hora de um instante no fuso do país
+    function partesLocais(ts, tz) {
+        var o = {};
+        try {
+            new Intl.DateTimeFormat('en-CA', { timeZone: tz || 'UTC', year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(ts * 1000))
+                .forEach(function(x) { o[x.type] = x.value; });
+        } catch (_) {}
+        o.iso = o.year + '-' + o.month + '-' + o.day;
+        o.hm = o.hour + ':' + o.minute;
+        return o;
+    }
+    // Totais de cada dia (no fuso do país): produção, renovável, consumo, saldo e horas com dados
+    function totaisPorDia(raw) {
+        var tz = raw.timezone || 'UTC';
+        var fmt = _dayBucketFmt(tz);
+        var dtH = stepHoursArr(raw.times);
+        var names = Object.keys(raw.seriesByName);
+        var ren = names.map(function(n) { return macroOf(n) === 'Renovável'; });
+        var dias = {}, ordem = [], ultimoTs = null, ultimoPasso = 0;
+        for (var i = 0; i < raw.times.length; i++) {
+            if (raw.lastActualTs != null && raw.times[i] > raw.lastActualTs) continue; // previsões: fora
+            var soma = 0, sR = 0, tem = false;
+            for (var k = 0; k < names.length; k++) {
+                var v = raw.seriesByName[names[k]][i];
+                if (v == null) continue;
+                tem = true;
+                if (v > 0) { soma += v; if (ren[k]) sR += v; }
+            }
+            if (!tem) continue;
+            var h = dtH[i] || 1;
+            var dia = fmt.format(new Date(raw.times[i] * 1000));
+            var d = dias[dia];
+            if (!d) { d = dias[dia] = { iso: dia, prod: 0, ren: 0, load: 0, horasLoad: 0, saldo: 0, temSaldo: false, horas: 0 }; ordem.push(dia); }
+            d.prod += soma * h; d.ren += sR * h; d.horas += h;
+            var lv = raw.load ? raw.load[i] : null;
+            if (lv != null && lv > 0) { d.load += lv * h; d.horasLoad += h; }
+            var cv = raw.crossBorder ? raw.crossBorder[i] : null;
+            if (cv != null) { d.saldo += cv * h; d.temSaldo = true; }
+            ultimoTs = raw.times[i]; ultimoPasso = h;
+        }
+        var lista = ordem.map(function(x) { return dias[x]; });
+        lista.ultimoTs = ultimoTs; lista.ultimoPasso = ultimoPasso;
+        return lista;
+    }
+    // Dias completos (≥ 20 h com dados: os de mudança de hora têm 23 ou 25 h)
+    function diasCompletos(dias) { return dias.filter(function(d) { return d.horas >= 20; }); }
+    // % renovável (sobre o consumo, ou a produção sem consumo) e média diária dos dias completos
+    function indicadoresDias(dias) {
+        var c = diasCompletos(dias);
+        if (!c.length) return null;
+        var ren = 0, prod = 0, load = 0, hL = 0, h = 0;
+        c.forEach(function(d) { ren += d.ren; prod += d.prod; load += d.load; hL += d.horasLoad; h += d.horas; });
+        var comLoad = load > 0 && hL >= 0.9 * h;
+        return { n: c.length, comLoad: comLoad,
+                 renPct: comLoad ? ren / load * 100 : (prod > 0 ? ren / prod * 100 : null),
+                 mediaDia: comLoad ? load / hL * 24 : prod / h * 24 };
+    }
+    // Dados de um intervalo qualquer (para a comparação com o período anterior), pela cache das semanas
+    async function dadosIntervalo(cc, ini, fim) {
+        var ws = getWeeksInRange(ini, fim);
+        var rs = await Promise.all(ws.map(function(iw) { return fetchWeek(cc, iw); }));
+        var ps = rs.filter(Boolean);
+        if (!ps.length) return null;
+        var m = mergeWeekPayloads(ps);
+        var tz = m.timezone || 'UTC';
+        m = trimPayload(m, localMidnightUtcSec(ini, tz), localMidnightUtcSec(toISO(addDays(parseISO(fim), 1)), tz));
+        return processPayload(m);
+    }
+    // Grupo de cada fonte para o texto da análise
+    function grupoFonte(nome) {
+        var n = String(nome).toLowerCase(), m = macroOf(nome);
+        if (m === 'Armazenamento') return 'armaz';
+        if (m === 'Renovável') {
+            if (n.indexOf('wind') !== -1) return 'eolica';
+            if (n.indexOf('solar') !== -1) return 'solar';
+            if (n.indexOf('hydro') !== -1) return 'hidrica';
+            if (n.indexOf('biomass') !== -1) return 'biomassa';
+            return 'outrasRen';
+        }
+        if (m === 'Nuclear') return 'nuclear';
+        if (n.indexOf('fossil gas') !== -1) return 'gas';
+        if (n.indexOf('coal') !== -1 || n.indexOf('lignite') !== -1) return 'carvao';
+        if (n.indexOf('oil') !== -1) return 'petroleo';
+        return 'outras';
+    }
+    var NOMES_GRUPO = {
+        eolica: ['a eólica', 'wind'], solar: ['a solar', 'solar'], hidrica: ['a hídrica', 'hydro'],
+        biomassa: ['a biomassa', 'biomass'], outrasRen: ['outras renováveis', 'other renewables'],
+        nuclear: ['o nuclear', 'nuclear'], gas: ['o gás natural', 'natural gas'], carvao: ['o carvão', 'coal'],
+        petroleo: ['o fuelóleo', 'oil'], outras: ['outras', 'others']
+    };
+
+    async function renderAnalise() {
+        var el = document.getElementById('insight-periodo');
+        var seq = _reloadSeq;
+        var agg = periodAggregates();
+        if (!_rawData || !agg || agg.totalProd <= 0) { el.style.display = 'none'; return; }
+        var raw = _rawData, tz = raw.timezone || 'UTC', cc = selPais.value;
+        var per = getPeriod();
+        var dias = totaisPorDia(raw);
+        if (!dias.length) { el.style.display = 'none'; return; }
+        var comLoad = agg.loadGWh > 0;
+        var base = comLoad ? agg.loadGWh : agg.totalProd;
+        var pct = function(g) { return base > 0 ? g / base * 100 : 0; };
+        var pctTxt = function(g) { return '<strong>' + fmtN(pct(g), 0) + '%</strong>'; };
+        var baseTxt = comLoad ? (EN ? 'of consumption' : 'do consumo') : (EN ? 'of generation' : 'da produção');
+
+        // Até onde há dados reais (as previsões não entram)
+        var fimDados = partesLocais(dias.ultimoTs + dias.ultimoPasso * 3600, tz);
+        var ultimoDia = dias[dias.length - 1].iso;
+        var cortado = ultimoDia < per.end || dias[dias.length - 1].horas < 20;
+        var periodoTxt = descreverPeriodoTxt(per.start, ultimoDia < per.end ? ultimoDia : per.end);
+
+        // ---------- Bloco 1: consumo, ponta, fontes e saldo ----------
+        var blocos = [];
+        if (cortado) periodoTxt += ' (' + (EN ? 'actual data up to ' : 'dados reais até ') + fmtDia(fimDados.iso) + (EN ? ' at ' : ' às ') + fimDados.hm + ')';
+        var frase = periodoTxt + (EN ? ', ' : ' ') + (comLoad ? (EN ? 'consumption totalled ' : 'o consumo totalizou ') : (EN ? 'generation totalled ' : 'a produção totalizou '))
+                  + '<strong>' + fmtEnergy(base) + '</strong>';
+        if (comLoad && agg.peakLoad > 0) {
+            var iPk = raw.load.indexOf(agg.peakLoad);
+            if (iPk >= 0) {
+                var pk = partesLocais(raw.times[iPk], tz);
+                // Num só dia a data da ponta não se repete
+                var diaPk = per.start === per.end ? '' : (EN ? ' on ' : ' a ') + (+pk.day) + ' ' + (EN ? '' : 'de ') + MESES_TXT[+pk.month - 1];
+                frase += (EN ? ', with a peak of <strong>' : ', com uma ponta de <strong>') + fmtPower(agg.peakLoad) + '</strong>' + diaPk + (EN ? ' at ' : ' às ') + pk.hm;
+            }
+        }
+        blocos.push('<p>' + frase + '.</p>');
+
+        var porGrupo = {};
+        for (var nm in agg.bySource) { var g = grupoFonte(nm); porGrupo[g] = (porGrupo[g] || 0) + agg.bySource[nm]; }
+        var lista = function(chaves) {
+            return chaves.filter(function(k) { return porGrupo[k] && pct(porGrupo[k]) >= 0.5; })
+                         .sort(function(a, b) { return porGrupo[b] - porGrupo[a]; })
+                         .map(function(k) { return NOMES_GRUPO[k][EN ? 1 : 0] + ' ' + pctTxt(porGrupo[k]); });
+        };
+        var ren = lista(['eolica', 'solar', 'hidrica', 'biomassa', 'outrasRen']);
+        var fRen = (EN ? 'Renewable generation covered ' : 'A produção renovável abasteceu ') + pctTxt(agg.renGWh) + ' ' + baseTxt;
+        if (ren.length) fRen += ': ' + juntarLista(ren);
+        var outras = lista(['nuclear', 'gas', 'carvao', 'petroleo', 'outras']);
+        if (outras.length) fRen += '. ' + (EN ? 'Other sources: ' : 'Das restantes fontes: ') + juntarLista(outras);
+        if (porGrupo.armaz && pct(porGrupo.armaz) >= 0.5) {
+            fRen += '. ' + (EN ? 'Storage (pumped-storage turbining and batteries) covered ' : 'O armazenamento (turbinagem da bombagem e baterias) abasteceu ') + pctTxt(porGrupo.armaz);
+        }
+        blocos.push('<p>' + fRen + '.</p>');
+
+        if (raw.crossBorder) {
+            var sp = pct(Math.abs(agg.netGWh));
+            var fS;
+            if (sp < 0.5) fS = EN ? 'Net cross-border exchange was practically balanced' : 'O saldo de trocas com o estrangeiro foi praticamente nulo';
+            else if (agg.netGWh > 0) fS = EN ? 'Net cross-border exchange was <strong>importing</strong>, equivalent to <strong>' + fmtN(sp, 0) + '%</strong> ' + baseTxt
+                                             : 'O saldo de trocas com o estrangeiro foi <strong>importador</strong>, equivalente a <strong>' + fmtN(sp, 0) + '%</strong> ' + baseTxt;
+            else fS = EN ? 'Net cross-border exchange was <strong>exporting</strong>, equivalent to <strong>' + fmtN(sp, 0) + '%</strong> ' + baseTxt
+                         : 'O saldo de trocas com o estrangeiro foi <strong>exportador</strong>, equivalente a <strong>' + fmtN(sp, 0) + '%</strong> ' + baseTxt;
+            blocos.push('<p>' + fS + '.</p>');
+        }
+
+        // ---------- Bloco 2: destaques dos dias ----------
+        var destaques = [];
+        var compl = diasCompletos(dias);
+        if (compl.length >= 2) {
+            var mR = null;
+            compl.forEach(function(d) { if (d.prod > 0) { var r = d.ren / d.prod * 100; if (!mR || r > mR.v) mR = { v: r, iso: d.iso }; } });
+            if (mR) destaques.push((EN ? 'Day with the highest renewable share: ' : 'Dia com maior peso renovável: ') + '<strong>' + fmtDia(mR.iso) + '</strong> (<strong>'
+                                   + fmtN(mR.v, 1) + '%</strong> ' + (EN ? 'of generation' : 'da produção') + ').');
+            var cs = compl.filter(function(d) { return d.temSaldo; });
+            if (cs.length) {
+                var exportador = agg.netGWh < 0;
+                var ext = cs.reduce(function(a, d) { return (exportador ? d.saldo < a.saldo : d.saldo > a.saldo) ? d : a; });
+                if (exportador ? ext.saldo < 0 : ext.saldo > 0) {
+                    var val = (ext.saldo > 0 ? '+' : '−') + fmtEnergy(Math.abs(ext.saldo));
+                    destaques.push((exportador ? (EN ? 'Most exporting day: ' : 'Dia mais exportador: ') : (EN ? 'Most importing day: ' : 'Dia mais importador: '))
+                                   + '<strong>' + fmtDia(ext.iso) + '</strong>' + (EN ? ', with <strong>' + val + '</strong> net.' : ', com <strong>' + val + '</strong> de saldo.'));
+                }
+            }
+        }
+
+        // ---------- Bloco 3: comparação com o período anterior equivalente ----------
+        var compHTML = '';
+        var atual = indicadoresDias(dias);
+        if (atual) {
+            var nDias = daysBetween(parseISO(per.start), parseISO(per.end));
+            var fimComp = compl[compl.length - 1].iso;
+            var iniAnt = toISO(addDays(parseISO(per.start), -nDias));
+            var fimAnt = toISO(addDays(parseISO(fimComp), -nDias));
+            if (iniAnt >= DADOS_DESDE) try {
+                var rawAnt = await dadosIntervalo(cc, iniAnt, fimAnt);
+                if (seq !== _reloadSeq) return; // o utilizador mudou de período ou de país entretanto
+                var ant = rawAnt ? indicadoresDias(totaisPorDia(rawAnt)) : null;
+                if (ant && ant.comLoad === atual.comLoad && ant.n >= 0.9 * atual.n && ant.renPct != null && atual.renPct != null) {
+                    var dR = atual.renPct - ant.renPct;
+                    var dC = ant.mediaDia > 0 ? (atual.mediaDia - ant.mediaDia) / ant.mediaDia * 100 : 0;
+                    var rot = iniAnt === fimAnt ? (EN ? 'Vs. previous day (' : 'Vs. dia anterior (') + fmtDia(iniAnt) + ')'
+                                                : (EN ? 'Vs. equivalent previous period (' + fmtDia(iniAnt) + ' to ' : 'Vs. período anterior equivalente (' + fmtDia(iniAnt) + ' a ') + fmtDia(fimAnt) + ')';
+                    compHTML = rot + ': ' + (EN ? 'renewable share ' : '% renovável ')
+                        + '<span class="' + (dR >= 0 ? 'insight-delta-up' : 'insight-delta-down') + '">' + (dR >= 0 ? '▲' : '▼') + ' ' + fmtN(Math.abs(dR), 1) + ' pp</span>, '
+                        + (iniAnt === fimAnt ? (atual.comLoad ? (EN ? 'consumption ' : 'consumo ') : (EN ? 'generation ' : 'produção '))
+                                             : (atual.comLoad ? (EN ? 'average daily consumption ' : 'consumo médio diário ') : (EN ? 'average daily generation ' : 'produção média diária ')))
+                        + '<span class="' + (dC <= 0 ? 'insight-delta-up' : 'insight-delta-down') + '">' + (dC >= 0 ? '▲' : '▼') + ' ' + fmtN(Math.abs(dC), 1) + '%</span>.';
+                }
+            } catch (_) { /* sem dados do período anterior → sem comparação */ }
+        }
+        if (seq !== _reloadSeq) return;
+
+        if (destaques.length || compHTML) {
+            blocos.push('<div class="insight-divisor"></div>');
+            if (destaques.length) blocos.push('<p>' + destaques.join(' ') + '</p>');
+            if (compHTML) blocos.push('<p>' + compHTML + '</p>');
+        }
+        var notas = [];
+        notas.push(EN ? "Times in the country’s local time" + (cortado ? '; forecasts are not included in this analysis.' : '.')
+                      : 'Horas na hora local do país' + (cortado ? '; as previsões não entram nesta análise.' : '.'));
+        notas.push(comLoad ? (EN ? 'Percentages of the consumption (load) reported to ENTSO-E; the renewable share of each day is of generation.'
+                                 : 'Percentagens sobre o consumo (load) reportado à ENTSO-E; a % renovável de cada dia é sobre a produção.')
+                           : (EN ? 'No consumption (load) data: percentages of generation.' : 'Sem dados de consumo (load): percentagens sobre a produção.'));
+        if (compHTML) notas.push(EN ? 'The comparison only uses complete days.' : 'A comparação usa só dias completos.');
+        blocos.push('<p class="insight-nota">' + notas.join(' ') + '</p>');
+
+        el.innerHTML = '<span class="insight-titulo">📖 ' + (EN ? 'Period analysis' : 'Análise do período') + ' — ' + escHtml(countryName(cc)) + '</span>' + blocos.join('');
+        el.style.display = 'block';
+    }
+
+    // Linha "Dados disponíveis desde … · Dados reais até …" (como no balanco-historico), a partir
+    // da última semana publicada do país (metadata.json do dados-energia; as semanas ficam em cache)
+    var _metaProducao = null;
+    async function atualizarInfoDados() {
+        var el = document.getElementById('dados-info');
+        var cc = selPais.value;
+        var txt = T('infoDesde').replace('{a}', fmtDia(DADOS_DESDE));
+        try {
+            if (!_metaProducao) {
+                var r = await fetchDados(DATA_REL_BASE + 'metadata.json', { cache: 'no-cache' });
+                _metaProducao = (r && r.ok) ? await r.json() : {};
+            }
+            var m = _metaProducao[cc];
+            var w = m ? await fetchWeek(cc, { year: m.ultima_iso_year, week: m.ultima_iso_week }) : null;
+            if (cc !== selPais.value) return; // o país mudou entretanto
+            if (w && w.last_actual_ts) {
+                var fim = partesLocais(w.last_actual_ts + (w.interval_minutes || 15) * 60, w.timezone);
+                txt += ' · ' + T('infoAte').replace('{b}', '<strong>' + fmtDia(fim.iso) + ' ' + fim.hm + '</strong>');
+            }
+        } catch (_) { /* sem metadata: fica só o "desde" */ }
+        el.innerHTML = '<span>' + txt + '</span>'; // um só item na linha flex
+    }
+
+    // Abre um dia (clique no Top dias)
+    function abrirDia(iso) {
+        currentMode = 'day';
+        document.getElementById('mode-day').checked = true;
+        currentDate = iso;
+        document.getElementById('inp-date').value = iso;
+        updateModeUI();
+        reload();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function renderTopDias() {
+        var sec = document.getElementById('top-dias-section');
+        var agg = periodAggregates();
+        var compl = (_rawData && agg) ? diasCompletos(totaisPorDia(_rawData)) : [];
+        if (compl.length < 2) { sec.style.display = 'none'; return; }
+        sec.style.display = 'block';
+        function tabela(id, linhas, rotulo, fmt) {
+            var cont = document.getElementById(id);
+            if (!linhas.length) { cont.innerHTML = '<p class="top-dia-vazio">' + (EN ? 'No data.' : 'Sem dados.') + '</p>'; return; }
+            var h = '<table class="top-dia-table"><thead><tr><th scope="col">#</th><th scope="col">' + (EN ? 'Day' : 'Dia') + '</th><th scope="col" class="num">' + rotulo + '</th></tr></thead><tbody>';
+            linhas.forEach(function(r, i) {
+                h += '<tr data-iso="' + r.iso + '" title="' + (EN ? 'Open this day' : 'Abrir este dia') + '"><td class="rank">' + (i + 1) + '</td><td>' + fmtDia(r.iso) + '</td><td class="num">' + fmt(r.v) + '</td></tr>';
+            });
+            cont.innerHTML = h + '</tbody></table>';
+            cont.querySelectorAll('tbody tr[data-iso]').forEach(function(tr) {
+                tr.addEventListener('click', function() { abrirDia(tr.getAttribute('data-iso')); });
+            });
+        }
+        var top5 = function(arr, desc) { return arr.sort(function(a, b) { return desc ? b.v - a.v : a.v - b.v; }).slice(0, 5); };
+        tabela('top-dias-renov', top5(compl.filter(function(d) { return d.prod > 0; }).map(function(d) { return { iso: d.iso, v: d.ren / d.prod * 100 }; }), true),
+               '%', function(v) { return fmtN(v, 1) + '%'; });
+        tabela('top-dias-consumo', top5(compl.filter(function(d) { return d.horasLoad >= 20; }).map(function(d) { return { iso: d.iso, v: d.load }; }), true),
+               EN ? 'Energy' : 'Energia', function(v) { return fmtEnergy(v); });
+        var exportador = agg.netGWh < 0;
+        document.getElementById('top-dia-titulo-saldo').textContent = exportador ? (EN ? '🔄 Most exporting (net)' : '🔄 Mais exportador (saldo)')
+                                                                                 : (EN ? '🔄 Most importing (net)' : '🔄 Mais importador (saldo)');
+        tabela('top-dias-saldo', top5(compl.filter(function(d) { return d.temSaldo; }).map(function(d) { return { iso: d.iso, v: d.saldo }; }), !exportador),
+               EN ? 'Energy' : 'Energia', function(v) { return (v >= 0 ? '+' : '−') + fmtEnergy(Math.abs(v)); });
     }
 
     // Sub-texto de fronteira (Importação/Exportação), estilo balanco-historico
@@ -2867,8 +3311,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // === Balanço energético + Mix do período (estilo balanco-omie) ===
     var MACRO_ORDER = ['Renovável', 'Nuclear', 'Fóssil', 'Armazenamento', 'Outros'];
     var MACRO_COLORS = {
-        'Renovável': '#16a34a', 'Nuclear': '#FF4040', 'Fóssil': '#78716c',
-        'Armazenamento': '#0d9488', 'Outros': '#B19EC3'
+        'Renovável': '#A9D18E', 'Nuclear': '#FF4040', 'Fóssil': '#D9D9D9',
+        'Armazenamento': '#4472C4', 'Outros': '#B19EC3'
     };
     function macroOf(name) {
         var n = String(name).toLowerCase();
@@ -2905,20 +3349,21 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     function nomePt(name) { var m = NOME[LANG] || NOME.pt; return m[name] || NOME.pt[name] || name; }
 
-    function periodAggregates() {
-        if (!_rawData) return null;
-        var times = _rawData.times || [];
+    function periodAggregates(raw) {
+        raw = raw || _rawData;
+        if (!raw) return null;
+        var times = raw.times || [];
         var n = times.length;
         if (n < 1) return null;
         // Passo por ponto — aguenta mudanças de resolução a meio do período
         var dtH = stepHoursArr(times);
-        var names = Object.keys(_rawData.seriesByName);
+        var names = Object.keys(raw.seriesByName);
 
         var bySource = {}, peakBySource = {};
         var byMacro = { 'Renovável':0, 'Nuclear':0, 'Fóssil':0, 'Armazenamento':0, 'Outros':0 };
         var totalProd = 0;
         for (var s = 0; s < names.length; s++) {
-            var arr = _rawData.seriesByName[names[s]];
+            var arr = raw.seriesByName[names[s]];
             if (!arr) continue;
             var g = 0, pk = 0;
             for (var i = 0; i < arr.length; i++) {
@@ -2935,7 +3380,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var t = 0; t < n; t++) {
             var sT = 0, sR = 0, sN = 0, sA = 0;
             for (var s2 = 0; s2 < names.length; s2++) {
-                var a2 = _rawData.seriesByName[names[s2]];
+                var a2 = raw.seriesByName[names[s2]];
                 if (!a2) continue;
                 var vv = a2[t];
                 if (vv == null || vv <= 0) continue;
@@ -2951,12 +3396,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (sA > peakArm) peakArm = sA;
         }
         var loadGWh = 0, peakLoad = 0;
-        if (_rawData.load) for (var l = 0; l < _rawData.load.length; l++) { var lv = _rawData.load[l]; if (lv != null && lv > 0) { loadGWh += lv * (dtH[l] || 1); if (lv > peakLoad) peakLoad = lv; } }
+        if (raw.load) for (var l = 0; l < raw.load.length; l++) { var lv = raw.load[l]; if (lv != null && lv > 0) { loadGWh += lv * (dtH[l] || 1); if (lv > peakLoad) peakLoad = lv; } }
         var pumpGWh = 0, peakPump = 0;
-        if (_rawData.pumpedConsumption) for (var p = 0; p < _rawData.pumpedConsumption.length; p++) { var pv = _rawData.pumpedConsumption[p]; if (pv != null) { var apv = Math.abs(pv); pumpGWh += apv * (dtH[p] || 1); if (apv > peakPump) peakPump = apv; } }
+        if (raw.pumpedConsumption) for (var p = 0; p < raw.pumpedConsumption.length; p++) { var pv = raw.pumpedConsumption[p]; if (pv != null) { var apv = Math.abs(pv); pumpGWh += apv * (dtH[p] || 1); if (apv > peakPump) peakPump = apv; } }
         var impGWh = 0, expGWh = 0, peakImp = 0, peakExp = 0;
-        if (_rawData.crossBorder) for (var c = 0; c < _rawData.crossBorder.length; c++) {
-            var cv = _rawData.crossBorder[c];
+        if (raw.crossBorder) for (var c = 0; c < raw.crossBorder.length; c++) {
+            var cv = raw.crossBorder[c];
             if (cv == null) continue;
             if (cv > 0) { impGWh += cv * (dtH[c] || 1); if (cv > peakImp) peakImp = cv; }
             else { expGWh += (-cv) * (dtH[c] || 1); if (-cv > peakExp) peakExp = -cv; }
@@ -3005,6 +3450,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!agg || agg.totalProd <= 0) {
             if (balBody) balBody.innerHTML = '<tr><td colspan="3" class="muted" style="text-align:center;padding:14px;">' + T('semDadosPeriodo') + '</td></tr>';
             if (mixBody) mixBody.innerHTML = '';
+            document.getElementById('mix-notas').innerHTML = '';
             if (_donutChart) { _donutChart.destroy(); _donutChart = null; }
             document.getElementById('kpi-saldo').textContent = '—';
             document.getElementById('kpi-dom').textContent = '—';
@@ -3081,7 +3527,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var _donutChart = null;
     var _mixView = 'producao';
     var FLOW_COL = { imp: '#ED7D31', exp: '#8E44AD', pump: '#8497B0', prod: '#475569' };
-    var COR_NAO_RENOVAVEL = '#78716c';
+    var COR_NAO_RENOVAVEL = '#D9D9D9';
     // Macros agrupados para o Mix: Renovável · Não renovável (Nuclear+Fóssil+Outros) · Armazenamento.
     function _macrosMix(agg) {
         var defs = [
@@ -3099,94 +3545,131 @@ document.addEventListener('DOMContentLoaded', function() {
         return out;
     }
     function renderMix(agg) {
-        // Nesta secção ("Mix do período") a energia usa sempre o mínimo GWh (nunca MWh).
+        // Mesmo aspeto do "Mix do período" do balanco-historico (donut de 2 anéis com legenda,
+        // barras por fonte em % do consumo, tabela com cabeçalho escuro e notas por baixo).
+        // Nesta secção a energia usa sempre o mínimo GWh (nunca MWh).
         var fmtEnergy = fmtEnergyMinGWh;
         var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        var _txtDon = isDark ? '#e2e8f0' : '#333';
-        var _sub = isDark ? '#94a3b8' : '#666';
-        var _grid = isDark ? '#334155' : '#e5e7eb';
-        var _bgDon = isDark ? '#1e293b' : '#ffffff';
+        var txtC = isDark ? '#e2e8f0' : '#333';
+        var tipBg = isDark ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.96)';
         var mixBody = document.getElementById('mix-tabela-body');
-        var sw = function(c) { return '<span class="swatch" style="background:' + c + ';"></span>'; };
+        var notasEl = document.getElementById('mix-notas');
+        var thPct = document.getElementById('mix-th-pct');
+        var sw = function(c) { return '<span class="fonte-cor" style="background:' + c + ';"></span>'; };
+        var p = getPeriod();
+        var periodoTxt = (p.start === p.end) ? p.start : (p.start + ' → ' + p.end);
+        var subBase = countryName(selPais.value) + ' · ' + periodoTxt + ' · ';
+        var cem = fmtN(100, 1) + '%';
         if (_donutChart) { _donutChart.destroy(); _donutChart = null; }
+        notasEl.innerHTML = '';
 
         if (_mixView === 'producao') {
             // ===== Produção: donut DUPLO (interno=fontes, externo=macros), % da produção =====
+            thPct.textContent = T('thPct');
             var macros = _macrosMix(agg), total = agg.totalProd;
             var inner = [], outer = [];
             macros.forEach(function(m) { outer.push({ name: m.nome, y: m.gwh, color: m.cor }); m.fontes.forEach(function(f) { inner.push({ name: f.nome, y: f.gwh, color: f.cor }); }); });
+            // 420 px como no balanco-historico; cresce com a legenda nos países com muitas fontes
+            // (a legenda fica numa só coluna nos ecrãs estreitos)
+            var linhasLegenda = document.getElementById('chart-donut').clientWidth < 480 ? inner.length : Math.ceil(inner.length / 2);
             _donutChart = Highcharts.chart('chart-donut', {
-                chart: { type: 'pie', backgroundColor: 'transparent', style: { color: _txtDon }, animation: false },
-                title: { text: null }, credits: { enabled: false },
+                chart: { type: 'pie', height: Math.max(420, 300 + linhasLegenda * 24), backgroundColor: 'transparent', style: { color: txtC }, animation: false },
+                title: { text: null },
+                subtitle: { text: subBase + T('mixDaProducao'), style: { color: txtC, fontSize: '0.8em' } },
+                credits: { enabled: false },
                 tooltip: {
-                    backgroundColor: isDark ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.96)', style: { color: _txtDon },
-                    pointFormatter: function() { var pct = total > 0 ? (this.y / total * 100) : 0; return '<b>' + this.name + '</b>: ' + fmtEnergy(this.y) + ' (' + fmtN(pct, 1) + '%)'; }
+                    useHTML: true, backgroundColor: tipBg, style: { color: txtC },
+                    pointFormatter: function() { return '<b>' + this.name + '</b><br>' + fmtEnergy(this.y) + ' · ' + fmtN(this.percentage, 1) + '%'; }
                 },
-                legend: { enabled: false },
-                plotOptions: { pie: { borderColor: _bgDon, borderWidth: 1, center: ['50%', '50%'] } },
+                legend: { itemStyle: { color: txtC }, itemHoverStyle: { color: isDark ? '#fff' : '#000' } },
+                plotOptions: { pie: { borderWidth: 1, borderColor: isDark ? '#0f172a' : '#fff' } },
+                exporting: { enabled: true },
                 series: [
                     {
-                        name: 'Fonte', size: '52%', innerSize: '28%', data: inner,
-                        dataLabels: { enabled: true, distance: -14, format: '{point.percentage:.0f}%',
-                            style: { color: '#fff', fontSize: '0.6em', fontWeight: 'bold', textOutline: '1px contrast' },
-                            filter: { property: 'percentage', operator: '>', value: 8 } }
+                        name: T('thFonte'), size: '62%', innerSize: '38%', data: inner,
+                        dataLabels: { enabled: true, distance: -22, format: '{point.percentage:.0f}%',
+                            style: { color: '#fff', fontSize: '0.72em', fontWeight: 'bold', textOutline: '1px contrast' },
+                            filter: { property: 'percentage', operator: '>', value: 4 } },
+                        showInLegend: true
                     },
                     {
-                        name: 'Categoria', size: '80%', innerSize: '55%', data: outer,
-                        dataLabels: { enabled: true, distance: 8, format: '{point.name} {point.percentage:.0f}%',
-                            style: { color: _txtDon, fontSize: '0.66em', textOutline: 'none' }, connectorColor: _txtDon,
-                            filter: { property: 'percentage', operator: '>', value: 4 } }
+                        name: 'Categoria', size: '92%', innerSize: '66%', data: outer,
+                        dataLabels: { enabled: true, format: '{point.name}<br><b>{point.percentage:.1f}%</b>',
+                            style: { color: txtC, fontSize: '0.85em', textOutline: 'none' },
+                            connectorColor: txtC, distance: 20,
+                            filter: { property: 'percentage', operator: '>', value: 1 } },
+                        showInLegend: false
                     }
-                ]
+                ],
+                // Ecrãs estreitos: donut 20 % mais pequeno e só a % à volta (os nomes estão na tabela logo abaixo)
+                responsive: { rules: [{ condition: { maxWidth: 480 }, chartOptions: {
+                    series: [{ size: '50%', innerSize: '30%' },
+                             { size: '74%', innerSize: '53%', dataLabels: { format: '<b>{point.percentage:.1f}%</b>', distance: 8 } }]
+                } }] }
             });
-            var fP = function(v) { return total > 0 ? fmtN(v / total * 100, 1) : '0,0'; };
+            var fP = function(v) { return total > 0 ? fmtN(v / total * 100, 1) : fmtN(0, 1); };
             var body = '';
             macros.forEach(function(m) {
                 body += '<tr class="mix-macro"><td>' + sw(m.cor) + m.nome + '</td><td class="num">' + fmtEnergy(m.gwh) + '</td><td class="num">' + fP(m.gwh) + '%</td></tr>';
                 if (m.fontes.length > 1) m.fontes.forEach(function(f) { body += '<tr class="mix-fonte"><td>' + sw(f.cor) + f.nome + '</td><td class="num">' + fmtEnergy(f.gwh) + '</td><td class="num">' + fP(f.gwh) + '%</td></tr>'; });
             });
-            body += '<tr class="mix-total"><td>' + T('mixProdTotal') + '</td><td class="num">' + fmtEnergy(total) + '</td><td class="num">100,0%</td></tr>';
+            body += '<tr class="mix-total"><td>' + T('mixProdTotal') + '</td><td class="num">' + fmtEnergy(total) + '</td><td class="num">' + cem + '</td></tr>';
             mixBody.innerHTML = body;
             return;
         }
 
-        // ===== Consumo: BARRAS com % REAL do consumo (valores reais, como balanco-omie) =====
+        // ===== Consumo: BARRAS por fonte com a % REAL do consumo =====
+        thPct.textContent = T('mixPctConsumo');
         var load = agg.loadGWh;
         if (!_rawData.load || load <= 0) {
-            mixBody.innerHTML = '<tr><td class="muted" style="padding:12px;">' + T('semConsumo') + '</td></tr>';
+            mixBody.innerHTML = '<tr><td colspan="3" class="muted" style="padding:12px;">' + T('semConsumo') + '</td></tr>';
             return;
         }
         var pctC = function(g) { return load > 0 ? g / load * 100 : 0; };
+        var grupos = _macrosMix(agg);
         var cats = [], barData = [];
         function pushBar(name, gwh, color) { cats.push(name); barData.push({ y: pctC(gwh), gwh: gwh, color: color }); }
         pushBar(T('mixProdTotal'), agg.totalProd, FLOW_COL.prod);
-        _macrosMix(agg).forEach(function(g) { pushBar(g.nome, g.gwh, g.cor); });
+        grupos.forEach(function(g) { g.fontes.forEach(function(f) { pushBar(f.nome, f.gwh, f.cor); }); });
         if (agg.impGWh > 0.001) pushBar(T('balImport'), agg.impGWh, FLOW_COL.imp);
         if (agg.expGWh > 0.001) pushBar(T('balExport'), agg.expGWh, FLOW_COL.exp);
-        if (agg.pumpGWh > 0.001) pushBar(LANG === 'en' ? 'To storage' : 'p/ Armazenam.', agg.pumpGWh, FLOW_COL.pump);
-        var maxBar = Math.max(110, Math.max.apply(null, barData.map(function(d) { return d.y; }))) * 1.12;
+        if (agg.pumpGWh > 0.001) pushBar(T('mixParaArmaz'), agg.pumpGWh, FLOW_COL.pump);
+        var maxBar = Math.max(125, Math.max.apply(null, barData.map(function(d) { return d.y; }))) * 1.12;
+        var prodPct = pctC(agg.totalProd);
         _donutChart = Highcharts.chart('chart-donut', {
-            chart: { type: 'bar', backgroundColor: 'transparent', style: { color: _txtDon }, animation: false, marginRight: 6 },
-            accessibility: { enabled: false }, title: { text: null }, credits: { enabled: false },
-            xAxis: { categories: cats, labels: { style: { color: _txtDon, fontSize: '0.7em' } }, lineColor: _grid, tickColor: _grid },
+            // 420 px como no balanco-historico; cresce nos países com muitas fontes
+            chart: { type: 'bar', height: Math.max(420, 110 + cats.length * 24), backgroundColor: 'transparent', style: { color: txtC }, animation: false },
+            accessibility: { enabled: false },
+            title: { text: null },
+            subtitle: { text: subBase + T('mixDoConsumo') + '<br>' + T('mixProdIgual').replace('{p}', fmtN(prodPct, 0)), style: { color: txtC, fontSize: '0.8em' } },
+            credits: { enabled: false },
+            xAxis: { categories: cats, labels: { style: { color: txtC, fontSize: '0.8em' } } },
             yAxis: {
-                min: 0, max: maxBar, title: { text: T('mixDoConsumo'), style: { color: _sub } },
-                labels: { format: '{value:.0f}%', style: { color: _sub } }, gridLineColor: _grid,
-                plotLines: [{ value: 100, color: '#e53935', width: 2, dashStyle: 'ShortDash', zIndex: 5,
-                    label: { text: '100%', align: 'right', x: -2, y: -3, style: { color: '#e53935', fontSize: '0.66em', fontWeight: 'bold' } } }]
+                min: 0, max: maxBar,
+                title: { text: T('mixDoConsumo'), style: { color: txtC } },
+                labels: { format: '{value:.0f}%', style: { color: txtC } },
+                gridLineColor: isDark ? '#334155' : '#e9ecef',
+                plotLines: [{
+                    value: 100, color: '#e53935', width: 2, dashStyle: 'ShortDash', zIndex: 5,
+                    label: {
+                        useHTML: true, verticalAlign: 'bottom', align: 'right', textAlign: 'right', rotation: 0, x: -5, y: -6,
+                        text: '<span style="background:#c62828;color:#fff;font-weight:bold;padding:1px 6px;border-radius:3px;white-space:nowrap;">' + T('mixConsumo100') + '</span>'
+                    }
+                }]
             },
             legend: { enabled: false },
             tooltip: {
-                backgroundColor: isDark ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.96)', style: { color: _txtDon },
-                pointFormatter: function() { return '<b>' + this.category + '</b>: ' + fmtEnergy(this.gwh) + ' (' + fmtN(this.y, 1) + ' ' + T('mixDoConsumo') + ')'; }
+                useHTML: true, backgroundColor: tipBg, style: { color: txtC },
+                pointFormatter: function() { return '<b>' + this.category + '</b><br>' + fmtEnergy(this.gwh) + ' · ' + fmtN(this.y, 1) + T('mixDoConsumo'); }
             },
-            plotOptions: { bar: { borderWidth: 0, dataLabels: { enabled: true, formatter: function() { return fmtN(this.y, 0) + '%'; }, style: { color: _txtDon, textOutline: 'none', fontSize: '0.64em', fontWeight: 'normal' } } } },
+            plotOptions: { bar: { borderWidth: 0, dataLabels: { enabled: true, formatter: function() { return fmtN(this.y, 1) + '%'; }, style: { color: txtC, textOutline: 'none', fontSize: '0.72em', fontWeight: 'normal' } } } },
+            exporting: { enabled: true },
             series: [{ name: T('mixDoConsumo'), data: barData, colorByPoint: true }]
         });
         // Tabela do consumo: macros + fontes em % REAL do consumo + fluxos + identidade
         var fPc = function(v) { return fmtN(pctC(v), 1); };
         var b2 = '';
-        _macrosMix(agg).forEach(function(g) {
+        grupos.forEach(function(g) {
             b2 += '<tr class="mix-macro"><td>' + sw(g.cor) + g.nome + '</td><td class="num">' + fmtEnergy(g.gwh) + '</td><td class="num">' + fPc(g.gwh) + '%</td></tr>';
             if (g.fontes.length > 1) g.fontes.forEach(function(f) { b2 += '<tr class="mix-fonte"><td>' + sw(f.cor) + f.nome + '</td><td class="num">' + fmtEnergy(f.gwh) + '</td><td class="num">' + fPc(f.gwh) + '%</td></tr>'; });
         });
@@ -3194,9 +3677,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (agg.impGWh > 0.001) b2 += '<tr class="mix-fonte"><td>' + sw(FLOW_COL.imp) + T('mixImport') + '</td><td class="num">' + fmtEnergy(agg.impGWh) + '</td><td class="num">+' + fPc(agg.impGWh) + '%</td></tr>';
         if (agg.expGWh > 0.001) b2 += '<tr class="mix-fonte"><td>' + sw(FLOW_COL.exp) + T('mixExport') + '</td><td class="num">' + fmtEnergy(agg.expGWh) + '</td><td class="num">−' + fPc(agg.expGWh) + '%</td></tr>';
         if (agg.pumpGWh > 0.001) b2 += '<tr class="mix-fonte"><td>' + sw(FLOW_COL.pump) + T('mixArmazenam') + '</td><td class="num">' + fmtEnergy(agg.pumpGWh) + '</td><td class="num">−' + fPc(agg.pumpGWh) + '%</td></tr>';
-        b2 += '<tr class="mix-total"><td>' + T('mixConsumo') + '</td><td class="num">' + fmtEnergy(load) + '</td><td class="num">100,0%</td></tr>';
-        b2 += '<tr><td colspan="3" class="mix-nota">' + T('mixNota') + '</td></tr>';
+        b2 += '<tr class="mix-total"><td>' + T('mixConsumo') + '</td><td class="num">' + fmtEnergy(load) + '</td><td class="num">' + cem + '</td></tr>';
         mixBody.innerHTML = b2;
+        notasEl.innerHTML = T('mixNota');
     }
 
     // --- Tabela de detalhe por categoria (real + previsto) ---
@@ -3220,8 +3703,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!anyVal) return { peak: null, total: null };
             return { peak: peak === -Infinity ? null : peak, total: total };
         }
-        function _fmtPeak(v) { return v == null ? '<span class="muted">—</span>' : fmtPower(v); }
-        function _fmtTot(v) { return v == null ? '<span class="muted">—</span>' : fmtEnergy(v); }
+        // Como nas tabelas do balanço e do mix: potência escalada e energia com mínimo GWh
+        var _fmtPeak = _gwCell, _fmtTot = _gwhCell;
+        var _p = getPeriod();
+        document.getElementById('categorias-sub').textContent = (_p.start === _p.end) ? _p.start : (_p.start + ' → ' + _p.end);
         function _swatch(color) {
             return '<span class="swatch" style="background:' + color + ';"></span>';
         }
@@ -3332,6 +3817,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Limpa o gráfico/KPIs quando não há dados (evita mostrar o país anterior) ---
     function clearChartState() {
         _rawData = null; _ptKpi = null;
+        limparCreditos();
+        document.getElementById('insight-periodo').style.display = 'none';
+        document.getElementById('top-dias-section').style.display = 'none';
         if (chart) { chart.destroy(); chart = null; }
         var ids = ['kpi-peak-gen','kpi-peak-gen-ts','kpi-peak-load','kpi-peak-load-ts',
                    'kpi-peak-ren','kpi-peak-ren-ts','kpi-energy','kpi-energy-ren','kpi-consumo','kpi-ren','kpi-ren-prod',
@@ -3361,6 +3849,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (bb) bb.innerHTML = '<tr><td colspan="3" class="muted" style="text-align:center;padding:14px;">' + T('semDadosPeriodo') + '</td></tr>';
         var mb = document.getElementById('mix-tabela-body');
         if (mb) mb.innerHTML = '';
+        document.getElementById('mix-notas').innerHTML = '';
         if (_donutChart) { _donutChart.destroy(); _donutChart = null; }
     }
 
@@ -3369,6 +3858,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var _reloadSeq = 0; // token anti-corrida: só a resposta mais recente renderiza
     async function reload() {
         var seq = ++_reloadSeq;
+        atualizarInfoDados();
         var res = await fetchData();
         if (seq !== _reloadSeq) return; // navegação mudou entretanto — descartar resposta obsoleta
         if (!res) { clearChartState(); scheduleShareUrl(); return; }
@@ -3571,6 +4061,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // --- Arranque ---
+    // Impressão: abrir as FAQ antes de imprimir (o CSS não revela o conteúdo de <details>
+    // fechados) e repor o estado original depois (como no balanco-historico)
+    var _faqAbertasPrint = null;
+    window.addEventListener('beforeprint', function() {
+        _faqAbertasPrint = Array.prototype.slice.call(document.querySelectorAll('details.faq-item:not([open])'));
+        _faqAbertasPrint.forEach(function(d) { d.open = true; });
+    });
+    window.addEventListener('afterprint', function() {
+        if (_faqAbertasPrint) { _faqAbertasPrint.forEach(function(d) { d.open = false; }); _faqAbertasPrint = null; }
+    });
+
     reload();
 });
 
