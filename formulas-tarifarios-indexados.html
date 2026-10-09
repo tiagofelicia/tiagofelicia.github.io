@@ -33,6 +33,7 @@
     <link rel="manifest" href="/images/site.webmanifest" />
     <link rel="stylesheet" href="style.css" />
     <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
 
     <script type="application/ld+json">
     {
@@ -726,10 +727,14 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // ── Carregar CSV e iniciar ──
-    const CSV_URL = "https://huggingface.co/spaces/tiagofelicia/simulador-tarifarios-eletricidade/resolve/main/data/csv/Constantes.csv"
-                  + "?cache_bust=" + new Date().getTime();
+    // As mesmas constantes que o simulador lê, do repo dados-energia via fetchDados()
+    // (dados.tiagofelicia.pt com fallback para o GitHub raw — ver dados.js)
+    const CSV_CAMINHO = "simuladores/simulador-tarifarios-eletricidade/csv/Constantes.csv"
+                      + "?cache_bust=" + new Date().getTime();
 
-    fetch(CSV_URL)
+    (typeof fetchDados === 'function'
+        ? fetchDados(CSV_CAMINHO, { cache: 'no-store' })
+        : fetch("https://dados.tiagofelicia.pt/data/" + CSV_CAMINHO, { cache: 'no-store' }))
         .then(res => {
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             return res.text();
