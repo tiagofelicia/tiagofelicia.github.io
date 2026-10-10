@@ -451,7 +451,7 @@
     <!-- ====================== BLOCO 1 — RESUMO ====================== -->
     <div class="kpi-cabecalho" id="bloco-kpis">
         <h2>Resumo do período</h2>
-        <p>Em €/MWh, como a REN publica. Na fatura o ERC aparece com o fator de perdas e em €/kWh; o valor «com perdas» usa o fator médio do período para um consumo doméstico (perfil ERSE C, só desde 2025). Os dias são dias de mercado, como na REN; as horas são em hora de Portugal. Quanto paga por ano? Veja a <a href="#bloco-calc">calculadora</a>.</p>
+        <p>Em €/MWh, como a REN publica. Na fatura o ERC aparece com o fator de perdas e em €/kWh; o valor «com perdas» usa o fator médio do período para um consumo doméstico (perfil ERSE C). Os dias são dias de mercado, como na REN; as horas são em hora de Portugal. Quanto paga por ano? Veja a <a href="#bloco-calc">calculadora</a>.</p>
     </div>
     <div id="erc-kpis"></div>
 
@@ -573,7 +573,7 @@
     <!-- ====================== BLOCO 5 — PERÍODOS HORÁRIOS ====================== -->
     <div class="grafico-box" id="bloco-periodos">
         <h2>ERC no vazio, fora de vazio, cheias e ponta</h2>
-        <p class="grafico-intro">ERC médio de cada período horário, por dia ou por mês do período, pesado pelo perfil de consumo doméstico da ERSE (perfil C; disponível desde 2025). Num tarifário indexado que fature o ERC ao quarto de hora, é esta a diferença que o ERC faz entre períodos — e pode pesar na escolha entre simples, bi-horário e tri-horário.</p>
+        <p class="grafico-intro">ERC médio de cada período horário, por dia ou por mês do período, pesado pelo perfil de consumo doméstico da ERSE (perfil C). Num tarifário indexado que fature o ERC ao quarto de hora, é esta a diferença que o ERC faz entre períodos — e pode pesar na escolha entre simples, bi-horário e tri-horário.</p>
         <div class="bloco-controls">
             <span class="ctrl-label">Ciclo</span>
             <div class="btn-toggle" id="ctrl-ciclo" role="group" aria-label="Ciclo horário">
@@ -1861,7 +1861,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Hoje e amanhã vêm do CSV dos Preços Horários (o mais fresco: atualiza com
     // cada OMIE). Os outros dias vêm de um ficheiro por mês (agregados/erc_omie),
     // descarregado só quando se escolhe um dia desse mês. As perdas vêm sempre
-    // do ficheiro do mês (só existem desde 2025).
+    // do ficheiro do mês (desde dias_omie.perdas_desde).
     const PASTA_DIAS = 'agregados/erc_omie/';
     const _meses = new Map();      // 'AAAA-MM' → Promise<json | null>
     function carregarMes(mes) {
@@ -2069,7 +2069,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (todosPrev) notas.push('O ERC deste dia ainda não tem valor publicado: é previsão própria, o mesmo cálculo dos simuladores.');
         else if (dados.previstos > 0) notas.push(`Os últimos ${dados.previstos} quartos de hora deste dia ainda não têm ERC publicado: aí o valor é previsão própria.`);
         else notas.push('ERC real, publicado pela REN.');
-        if (_perdas === 'com' && !temPerdas) notas.push('Não há fatores de perdas para este dia (só desde 01/01/2025): os valores são sem perdas.');
+        const perdasDesde = R && R.dias_omie && R.dias_omie.perdas_desde;
+        if (_perdas === 'com' && !temPerdas) notas.push(`Não há fatores de perdas para este dia${perdasDesde ? ` (só desde ${fmtData(perdasDesde)})` : ''}: os valores são sem perdas.`);
         else if (comPerdas) notas.push('Com perdas: OMIE PT e ERC multiplicados pelo fator de perdas de cada quarto de hora (perfil de perdas em baixa tensão da ERSE).');
         nota.textContent = notas.join(' ');
     }
