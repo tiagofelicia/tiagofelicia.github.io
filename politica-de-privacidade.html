@@ -158,7 +158,7 @@
     <a href="/" class="back-link">← Voltar à página principal</a>
 
     <h1>🔒 Política de Privacidade</h1>
-    <p class="subtitle">Última atualização: Setembro 2026 · Em conformidade com o RGPD (Regulamento UE 2016/679) e Lei n.º 58/2019</p>
+    <p class="subtitle">Última atualização: Outubro 2026 · Em conformidade com o RGPD (Regulamento UE 2016/679) e Lei n.º 58/2019</p>
 
     <div class="callout success">
         <strong>Em resumo:</strong> O site <em>tiagofelicia.pt</em> foi desenhado para tratar o <strong>mínimo possível de dados pessoais</strong>. Todas as simulações são processadas <strong>no seu próprio dispositivo</strong> (browser) — os seus consumos da E-Redes, valores de faturas ou ficheiros carregados <strong>nunca são enviados</strong> para qualquer servidor. Os únicos dados pessoais que podem ser tratados são (1) estatísticas de utilização anónimas via Google Analytics, <strong>apenas com o seu consentimento</strong>, (2) os dados que voluntariamente inserir no formulário de contacto e (3) as coordenadas geográficas do local que escolher no simulador de autoconsumo, enviadas ao serviço PVGIS da Comissão Europeia para calcular a produção solar.
@@ -178,13 +178,14 @@
     <ul>
         <li>Toda a lógica de cálculo corre em <strong>JavaScript executado no seu browser</strong>;</li>
         <li>Os ficheiros que carrega (diagrama de carga da E-Redes em <code>.xlsx</code>, dados de propostas comerciais, etc.) <strong>permanecem no seu dispositivo</strong>;</li>
+        <li>As <strong>faturas em PDF</strong> que abre com o botão "Ler fatura (PDF)" dos simuladores de Eletricidade, Gás Natural e Dual são lidas <strong>no seu browser</strong>, com a biblioteca pdf.js alojada neste Site. O ficheiro e o seu conteúdo — incluindo o nome, a morada, o NIF, o CPE ou o IBAN que a fatura contenha — <strong>não são enviados para lado nenhum nem guardados</strong>: apenas os valores que confirmar (potência, opção horária, escalão, período, consumos e preços) passam para os campos do simulador, e o ficheiro é descartado quando fecha a janela de leitura. A única exceção é voluntária: se decidir copiar o texto da fatura (sem dados pessoais) e enviá-lo pelo formulário de contacto, para ajudar a alargar o leitor a outros comercializadores (ver secção 3);</li>
         <li>Os valores que insere (consumos, potência contratada, valor da fatura, potência e orientação dos painéis) <strong>nunca saem do seu browser</strong>. A única exceção são as <strong>coordenadas geográficas</strong> do local escolhido no simulador de autoconsumo, que têm de ser enviadas ao serviço PVGIS para obter o perfil de produção solar (ver secção 3);</li>
         <li>As preferências guardadas (modo escuro, consentimento de cookies, preferências de interface das páginas de mercado, consumos introduzidos na página de Preços Horários, cenários gravados nos simuladores) ficam exclusivamente no <strong>localStorage</strong> do seu próprio browser; os simuladores guardam ainda uma cópia local dos ficheiros de tarifários (<strong>IndexedDB</strong>), tal como o Mapa de Preços da Europa guarda em <strong>Cache Storage</strong> os ficheiros de que precisa, para acelerar carregamentos seguintes. Nenhum destes dados é enviado ao Site.</li>
     </ul>
     <p>Em consequência, o Site <strong>não recolhe</strong> dados de consumo de energia, ficheiros pessoais, NIPC, código de ponto de entrega (CPE) ou qualquer informação técnica relacionada com o seu contrato.</p>
 
     <h2>3. Que dados pessoais podem ser tratados?</h2>
-    <p>Apesar do desenho minimalista, quatro fluxos podem implicar tratamento de dados pessoais. A tabela seguinte resume cada um:</p>
+    <p>Apesar do desenho minimalista, cinco fluxos podem implicar tratamento de dados pessoais. A tabela seguinte resume cada um:</p>
 
     <table class="data-table">
         <caption class="sr-only">Dados pessoais tratados, finalidade, base legal e prazo de conservação</caption>
@@ -211,6 +212,13 @@
                 <td>Responder a sugestões, dúvidas ou correções enviadas pelo utilizador</td>
                 <td>Execução de pré-contrato / interesse legítimo (art.º 6.º, n.º 1, alíneas b) e f) do RGPD)</td>
                 <td>Até 12 meses após a última troca de mensagens, ou até pedido de eliminação</td>
+            </tr>
+            <tr>
+                <td><strong>Texto de faturas para o leitor de faturas</strong> (enviado pelo formulário de contacto)</td>
+                <td>Texto de uma fatura de eletricidade ou gás, copiado no botão "Copiar o texto da fatura (sem dados pessoais)" e colado voluntariamente na mensagem do formulário de contacto. O leitor tapa automaticamente o nome, a morada, o NIF, o CPE/CUI, o IBAN, o banco e os números de contrato e de cliente; o texto mantém os consumos, os preços, as datas e o comercializador, e pode conter algum dado pessoal que o utilizador não tenha apagado na revisão</td>
+                <td>Acrescentar comercializadores ao leitor de faturas, corrigir erros de leitura e testar que o leitor continua a funcionar</td>
+                <td><strong>Consentimento</strong> (art.º 6.º, n.º 1, alínea a) do RGPD), que pode ser retirado a qualquer momento</td>
+                <td>Guardado apenas no computador do autor, sem ser partilhado nem publicado, enquanto for necessário para os testes do leitor de faturas; apagado a pedido. Os valores guardados para os testes automáticos não incluem dados pessoais</td>
             </tr>
             <tr>
                 <td><strong>Simulador de autoconsumo</strong> (PVGIS)</td>
