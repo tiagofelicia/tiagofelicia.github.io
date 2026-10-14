@@ -515,6 +515,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["TAR", TAR],
                 ]
             },
+            {
+                // A mesma fórmula do Leve Sem Mais, com o QTarifa da oferta para empresas
+                tipo: 'qh',
+                nome: "Repsol | Leve PRO Sem Mais",
+                comercializador: "Repsol",
+                url: "https://www.repsol.pt/formulario-online/inicio/?canal=2&producto=plano-leve-sem-mais-pro",
+                notaLimitacao: null,
+                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS) + TAR`,
+                legenda: [
+                    ["P<sub>OMIE 15min</sub>", "Preço marginal no sistema Português por quarto de hora, publicado pelo OMIE (€/MWh)"],
+                    ["Perdas<sub>15min</sub>", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
+                    ["FA", () => `Fator de adequação: ${c('Repsol_FA', '(adimensional)', 2)}`],
+                    ["QTarifa", () => `Serviços Complementares, Encargos, Desvios e Margem Repsol (oferta PRO): ${c('Repsol_Q_Tarifa_Pro', '€/kWh', 5)}`],
+                    ["FinTS", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                    ["TAR", TAR],
+                ]
+            },
 
             // ═══════════════════════════════════
             // INDEXADOS MÉDIA
@@ -652,6 +669,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ── Renderizar ──
+    // O hash é o slug do nome do tarifário. O simulador usa o nome da BD, que nem sempre é igual
+    // ao daqui ("EDP | Eletricidade Indexada Horária" ↔ "EDP | Indexada Horária"): sem o exato,
+    // abre o mais parecido do mesmo comercializador — o que tem mais palavras do hash, contando
+    // também as palavras juntas ("meo-energia" ↔ "meoenergia")
+    function acordeaoDoHash(hash) {
+        const itens = [...document.querySelectorAll('details.tarifario-item')];
+        const exato = itens.find(d => d.id === hash);
+        if (exato) return exato;
+        const partes = hash.split('-').filter(Boolean);
+        const doHash = new Set(partes);
+        partes.slice(1).forEach((p, k) => doHash.add(partes[k] + p));
+        let melhor = null, nota = 0, comuns = 0;
+        itens.forEach(d => {
+            const pal = d.id.split('-').filter(Boolean);
+            if (!pal.length || !doHash.has(pal[0])) return;   // outro comercializador
+            const n = pal.filter(p => doHash.has(p)).length;
+            const r = n / pal.length;
+            if (r > nota || (r === nota && n > comuns)) { melhor = d; nota = r; comuns = n; }
+        });
+        return nota >= 0.6 ? melhor : null;
+    }
+
     function renderizar() {
         const tarifarios = definirTarifarios();
         const lista = document.getElementById('lista-tarifarios');
@@ -713,8 +752,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Abrir acordeão se a URL tiver hash correspondente
         if (window.location.hash) {
-            const alvo = document.querySelector(window.location.hash);
-            if (alvo && alvo.tagName === 'DETAILS') {
+            const alvo = acordeaoDoHash(decodeURIComponent(window.location.hash.slice(1)));
+            if (alvo) {
                 alvo.open = true;
                 setTimeout(() => alvo.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
             }
