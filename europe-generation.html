@@ -191,7 +191,7 @@
         #loading-indicator { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 15px 25px; border-radius: 8px; z-index: 1000; font-size: 1.1em; }
 
         .info-control { padding: 10px 14px; background: white; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,0.2); font-size: 0.9em; line-height: 1.5; min-width: 160px; }
-        .info-control h4 { margin: 0 0 5px; color: #777; font-size: 0.85em; }
+        .info-control h4 { margin: 0 0 5px; color: #666; font-size: 0.85em; }
         .info-control b { font-size: 1.05em; }
         .info-control .ren-value { font-size: 1.3em; font-weight: bold; margin-top: 4px; }
         .info-control .prod-detail { font-size: 0.85em; margin-top: 6px; line-height: 1.6; }
@@ -306,7 +306,8 @@
         .heatmap-cell:hover { transform: scale(1.2); outline: 1.5px solid #15803d; outline-offset: 1px; z-index: 1; position: relative; }
         .heatmap-cell.empty { background: transparent !important; cursor: default; }
         .heatmap-cell.no-data { background: #e5e7eb; cursor: default; }
-        .heatmap-day-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.7em; color: #94a3b8; }
+        .heatmap-day-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.7em; color: #64748b; }
+        [data-theme="dark"] .heatmap-day-header { color: #94a3b8; }
         .heatmap-day-numbers { display: grid; grid-template-columns: repeat(31, 1fr); gap: 2px; flex: 1; }
         .heatmap-day-numbers span { text-align: center; }
         [data-theme="dark"] #heatmap-wrapper h2 { color: #e2e8f0; }
@@ -356,7 +357,7 @@
         [data-theme="dark"] .ranked-table .spark-cell svg polyline { stroke: #60a5fa; }
         [data-theme="dark"] .ranked-table tr.ref-row { background: #422006; }
         [data-theme="dark"] .ranked-table tr.ref-row:hover { background: #78350f; }
-        .ranked-table .rank-cell { width: 40px; color: #888; }
+        .ranked-table .rank-cell { width: 40px; color: #666; }
         .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
         .flag-img { display: inline-block; vertical-align: middle; margin-right: 5px; border: 1px solid rgba(0,0,0,0.15); border-radius: 1px; }
         [data-theme="dark"] .flag-img { border-color: rgba(255,255,255,0.2); }
@@ -396,7 +397,8 @@
         [data-theme="dark"] .ranked-table th { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .ranked-table td { border-color: #334155; color: #e2e8f0; }
         [data-theme="dark"] .ranked-table tr:hover { background: #1e293b; }
-        [data-theme="dark"] .ranked-table .rank-cell { color: #64748b; }
+        [data-theme="dark"] .ranked-table .rank-cell { color: #94a3b8; }
+        [data-theme="dark"] main [style*="color:#6b7280"] { color: #94a3b8 !important; }   /* cinzento escrito no HTML/JS (3,0:1 no escuro) */
         [data-theme="dark"] .nota-fonte { color: #94a3b8; }
         [data-theme="dark"] .btn-fullscreen { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .btn-fullscreen:hover { background: #334155; }
@@ -653,7 +655,7 @@
         <div style="text-align:center; margin-top:15px;">
             <button type="button" id="btn-share" class="mode-btn" style="border-radius:5px;" title="Copiar link partilhável para o estado atual" data-i18n="btnShare" data-i18n-title="btnShareTitle">&#128279; Copiar link de partilha</button>
             <button type="button" id="btn-csv" class="mode-btn" style="border-radius:5px; margin-left:8px;" title="Descarregar tabela em CSV (Excel / LibreOffice)" data-i18n="btnCsv" data-i18n-title="btnCsvTitle">&#x2B07; Exportar CSV</button>
-            <span id="share-feedback" style="margin-left:10px; font-size:0.85em; color:#16a34a; display:none;" data-i18n="shareCopied">Copiado!</span>
+            <span id="share-feedback" style="margin-left:10px; font-size:0.85em; color:var(--txt-verde); display:none;" data-i18n="shareCopied">Copiado!</span>
             <div style="margin-top:10px; font-size:0.82em; color:#6b7280;" data-i18n-html="atalhosHtml">
                 Atalhos: <span class="kbd-hint">←</span> <span class="kbd-hint">→</span> navegar · <span class="kbd-hint">D</span>/<span class="kbd-hint">W</span>/<span class="kbd-hint">M</span>/<span class="kbd-hint">P</span> modo · <span class="kbd-hint">/</span> pesquisar · <span class="kbd-hint">S</span> partilhar · <span class="kbd-hint">?</span> ajuda
             </div>
@@ -680,12 +682,12 @@
             <div class="faq-content">
                 <div data-lang-block="pt">
                 <p>Este mapa apresenta a <strong>percentagem de energia renovável</strong> no mix de produção de eletricidade de cada país europeu.</p>
-                <p>As cores variam do <strong style="color:#15803d;">verde</strong> (alta percentagem renovável) ao <strong style="color:#78350f;">castanho</strong> (baixa percentagem renovável). A escala de luminosidade foi escolhida para melhor acessibilidade a utilizadores daltónicos.</p>
+                <p>As cores variam do <strong><span class="cor-amostra" style="background:#15803d"></span>verde</strong> (alta percentagem renovável) ao <strong><span class="cor-amostra" style="background:#78350f"></span>castanho</strong> (baixa percentagem renovável). A escala de luminosidade foi escolhida para melhor acessibilidade a utilizadores daltónicos.</p>
                 <p>Além do mapa, a página tem um <strong>gráfico de mix de produção</strong> (barras empilhadas) para o país seleccionado, um <strong>gráfico de Evolução</strong> (colunas ou áreas) para o período em análise, um <strong>heatmap anual</strong> de % renovável, e uma <strong>tabela ranked</strong> com todos os países — todas as vistas reagem ao dia/período e às opções de cálculo.</p>
                 </div>
                 <div data-lang-block="en">
                 <p>This map shows the <strong>share of renewable energy</strong> in each European country's electricity generation mix.</p>
-                <p>Colours range from <strong style="color:#15803d;">green</strong> (high renewable share) to <strong style="color:#78350f;">brown</strong> (low renewable share). The lightness scale was chosen for better accessibility to colour-blind users.</p>
+                <p>Colours range from <strong><span class="cor-amostra" style="background:#15803d"></span>green</strong> (high renewable share) to <strong><span class="cor-amostra" style="background:#78350f"></span>brown</strong> (low renewable share). The lightness scale was chosen for better accessibility to colour-blind users.</p>
                 <p>Besides the map, the page has a <strong>generation mix chart</strong> (stacked bars) for the selected country, an <strong>Evolution chart</strong> (bars or areas) for the period under analysis, an <strong>annual heatmap</strong> of renewable %, and a <strong>ranked table</strong> with every country — all views react to the day/period and the calculation options.</p>
                 </div>
             </div>
@@ -1040,6 +1042,7 @@
         crossorigin=""></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js" integrity="sha384-Cs3dgUx6+jDxxuqHvVH8Onpyj2LF1gKZurLDlhqzuJmUqVYMJ0THTWpxK5Z086Zm" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js" integrity="sha384-dwwI6ICEN/0ZQlS5owhUa/6ZzvwUPmjH45bFVCAcjgjTulbHJvlE+TGU3g1k0N3R" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js" integrity="sha384-3N9GHhCtN3CQef6tNfqgZlv7sQLYIkcChN+uaTZ7xVdzKYp/SjBNPxa92+hM7EAY" crossorigin="anonymous"></script>

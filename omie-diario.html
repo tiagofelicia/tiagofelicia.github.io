@@ -40,6 +40,7 @@
     <link rel="preload" as="fetch" href="https://dados.tiagofelicia.pt/data/omie/omie_dados_atuais.csv" type="text/csv" crossorigin="anonymous">
 
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
@@ -164,6 +165,11 @@
         [data-theme="dark"] .date-selector label { color: #cbd5e1; }
         [data-theme="dark"] .date-selector input { background: #1e293b; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .card { background: #1e293b; border-color: #475569; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        /* Títulos dos cartões no escuro: o h3 claro (#e2e8f0) ficava a 1,4–3,5:1 sobre as cores dos períodos */
+        [data-theme="dark"] .card-title-bd, [data-theme="dark"] .card-title-bs, [data-theme="dark"] .card-title-td,
+        [data-theme="dark"] .card-title-ts, [data-theme="dark"] .card-title-media-pt, [data-theme="dark"] .card-title-media-es { color: #000; }
+        [data-theme="dark"] #badge-data-cards { color: #1e293b; }
+        #badge-data-cards { color: #444; }   /* data no título do Bi-horário Diário: o #888 ficava a 2,7:1 no verde-claro */
         [data-theme="dark"] .card-principal { color: #e2e8f0; }
         [data-theme="dark"] .valor-principal { color: #e2e8f0; }
         [data-theme="dark"] .data-item { border-bottom-color: #334155; }
@@ -200,11 +206,11 @@
         .fuso-toggle .fuso-label { font-size: 0.82em; color: #64748b; font-weight: 600; margin-right: 4px; }
         .fuso-btn { background: #fff; border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 14px; font-size: 0.82em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
         .fuso-btn:hover:not(.active) { background: #e2e8f0; }
-        .fuso-btn.active { background: #0ea5e9; color: #fff; border-color: #0ea5e9; font-weight: 600; }
+        .fuso-btn.active { background: #0369a1; color: #fff; border-color: #0369a1; font-weight: 600; }
         [data-theme="dark"] .fuso-toggle .fuso-label { color: #94a3b8; }
         [data-theme="dark"] .fuso-btn { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .fuso-btn:hover:not(.active) { background: #334155; }
-        [data-theme="dark"] .fuso-btn.active { background: #0284c7; border-color: #0284c7; color: #fff; }
+        [data-theme="dark"] .fuso-btn.active { background: #0369a1; border-color: #0369a1; color: #fff; }
         @media print { .fuso-toggle { display: none !important; } }
 
         /* ===== Aviso ERSE em hora PT (mostrado só em modo CET) ===== */
@@ -227,7 +233,7 @@
         .yoy-deltas .yoy-pair { white-space: nowrap; }
         .yoy-deltas .yoy-sep { color: #aaa; margin: 0 6px; }
         .yoy-deltas .yoy-up { color: #dc3545; font-weight: 600; }
-        .yoy-deltas .yoy-down { color: #28a745; font-weight: 600; }
+        .yoy-deltas .yoy-down { color: #15803d; font-weight: 600; }
         .yoy-deltas .yoy-flat { color: #888; }
         [data-theme="dark"] .yoy-deltas .yoy-up { color: #f87171; }
         [data-theme="dark"] .yoy-deltas .yoy-down { color: #4ade80; }
@@ -240,16 +246,16 @@
         @media (max-width: 700px) { .top-horas-grid { grid-template-columns: 1fr; } }
         .top-horas-card { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 16px; }
         .top-horas-card-title { font-size: 0.92em; font-weight: 700; margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px; }
-        .top-horas-baratas .top-horas-card-title { color: #16a34a; }
+        .top-horas-baratas .top-horas-card-title { color: #15803d; }
         .top-horas-caras .top-horas-card-title { color: #dc2626; }
         .top-horas-list { list-style: none; margin: 0; padding: 0; }
         .top-horas-list li { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #eef0f3; font-size: 0.92em; }
         .top-horas-list li:last-child { border-bottom: none; }
         .top-horas-list .hora { font-weight: 600; font-variant-numeric: tabular-nums; }
         .top-horas-list .preco { font-weight: 700; font-variant-numeric: tabular-nums; }
-        .top-horas-baratas .preco { color: #16a34a; }
+        .top-horas-baratas .preco { color: #15803d; }
         .top-horas-caras .preco { color: #dc2626; }
-        .top-horas-list .rank-badge { font-size: 0.75em; color: #94a3b8; margin-right: 8px; }
+        .top-horas-list .rank-badge { font-size: 0.75em; color: var(--txt-cinza); margin-right: 8px; }
         [data-theme="dark"] #top-horas-section h2 { color: #e2e8f0; }
         [data-theme="dark"] .top-horas-card { background: #1e293b; border-color: #475569; }
         [data-theme="dark"] .top-horas-list li { border-bottom-color: #334155; }
@@ -491,7 +497,7 @@
     <div class="link-section"> <p>https://www.tiagofelicia.pt/omie-diario</p> </div>
 
     <section id="top-horas-section" style="display: none;">
-        <h2>💡 Quando consumir / evitar? <small id="top-horas-subtitulo" style="font-weight:normal;color:#888;">(médias horárias PT)</small></h2>
+        <h2>💡 Quando consumir / evitar? <small id="top-horas-subtitulo" style="font-weight:normal;color:var(--txt-cinza);">(médias horárias PT)</small></h2>
         <div class="top-horas-grid">
             <div class="top-horas-card top-horas-baratas">
                 <h3 class="top-horas-card-title">⭐ 3 horas mais baratas</h3>
@@ -635,7 +641,7 @@
                 <div class="faq-content">
                     <ul>
                         <li><strong>Linhas / Barras</strong> — alterna o tipo do gráfico (botões acima do gráfico).</li>
-                        <li><strong>Sobrepor ontem</strong> — adiciona o preço PT de ontem em <span style="color:#9aa0a6;">cinza tracejado</span>, permitindo comparar visualmente sem mudar de página. A escolha fica memorizada.</li>
+                        <li><strong>Sobrepor ontem</strong> — adiciona o preço PT de ontem em <span class="cor-amostra" style="background:#9aa0a6"></span>cinza tracejado, permitindo comparar visualmente sem mudar de página. A escolha fica memorizada.</li>
                         <li><strong>Setas ← / →</strong> (teclado) — navega para o <strong>dia anterior / seguinte</strong>.</li>
                         <li><strong>Botões « Ontem · Hoje · Amanhã »</strong> — atalhos para os dias mais consultados.</li>
                         <li><strong>📤 Partilhar</strong> — copia/partilha um resumo do dia com link direto.</li>
@@ -740,7 +746,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return { precos, atualizacoes, futurosPT, futurosES };
     }
 
-    function formatarValor(valor, casasDecimais = 2) { if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,-- €'; } const textoFormatado = valor.toFixed(casasDecimais).replace('.', ',') + ' €'; return valor < 0 ? `<span style="color: red;">${textoFormatado}</span>` : textoFormatado; }
+    function formatarValor(valor, casasDecimais = 2) { if (valor === null || typeof valor === 'undefined' || isNaN(valor)) { return '--,-- €'; } const textoFormatado = valor.toFixed(casasDecimais).replace('.', ',') + ' €'; return valor < 0 ? `<span style="color: var(--txt-vermelho);">${textoFormatado}</span>` : textoFormatado; }
     function calcularMedia(arr) { if (!Array.isArray(arr)) return null; const nums = arr.filter(v => v !== null && !isNaN(v)); return nums.length > 0 ? nums.reduce((a, b) => a + b, 0) / nums.length : null; }
 
     // --- FUNÇÃO PARA CARREGAR DADOS HISTÓRICOS ---

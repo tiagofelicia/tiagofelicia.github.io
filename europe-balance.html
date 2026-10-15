@@ -107,6 +107,8 @@
         .painel-header p { margin: 5px 0 0; font-size: 0.9em; color: #666; }
         [data-theme="dark"] .painel-header h1 { color: #e2e8f0; }
         [data-theme="dark"] .painel-header p { color: #94a3b8; }
+        [data-theme="dark"] #dados-info { color: #94a3b8 !important; }
+        [data-theme="dark"] main [style*="color:#6b7280"], [data-theme="dark"] h1 span[style*="color:#64748b"] { color: #94a3b8 !important; }
 
         .controls { max-width: 1300px; margin: 0 auto 18px auto; padding: 0 12px; box-sizing: border-box; }
         .controls-row { display: flex; flex-wrap: wrap; gap: 10px 14px; justify-content: center; align-items: center; margin-bottom: 10px; font-size: 0.92em; }
@@ -158,9 +160,9 @@
         .kpi-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; text-align:center; }
         .kpi-label { font-size: 0.78em; color:#64748b; font-weight:600; margin-bottom:6px; }
         .kpi-value { font-size: 1.35em; font-weight: 700; color:#0f172a; line-height:1.2; }
-        .kpi-sub { font-size: 0.72em; color:#888; margin-top:4px; }
-        .kpi-info { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 5px; border-radius: 50%; background: #cbd5e1; color: #fff; font-size: 10px; font-weight: 700; font-style: normal; line-height: 1; cursor: help; vertical-align: middle; user-select: none; }
-        .kpi-info:hover, .kpi-info:focus { background: #64748b; outline: none; }
+        .kpi-sub { font-size: 0.72em; color:#666; margin-top:4px; }
+        .kpi-info { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 5px; border-radius: 50%; background: #64748b; color: #fff; font-size: 10px; font-weight: 700; font-style: normal; line-height: 1; cursor: help; vertical-align: middle; user-select: none; }
+        .kpi-info:hover, .kpi-info:focus { background: #475569; outline: none; }
         [data-theme="dark"] .kpi-info { background: #475569; }
         .kpi-tip-box { position: absolute; display: none; max-width: 260px; background: #0f172a; color: #fff; font-size: 11px; line-height: 1.45; text-align: left; padding: 8px 11px; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.28); z-index: 9999; opacity: 0; transition: opacity 0.12s; }
         .kpi-tip-box.vis { opacity: 1; }
@@ -187,10 +189,10 @@
         .nota-fonte { text-align:center; font-size:0.82em; color:#555; margin:5px 0 15px 0; }
         [data-theme="dark"] .nota-fonte { color:#94a3b8; }
         /* Identificação/crédito sob os gráficos e tabelas (como no balanco-historico) */
-        .export-credit { text-align: center; font-size: 0.7em; color: #94a3b8; margin: 4px 0 10px; padding: 0 8px; font-variant-numeric: tabular-nums; user-select: text; letter-spacing: 0.01em; }
+        .export-credit { text-align: center; font-size: 0.7em; color: #64748b; margin: 4px 0 10px; padding: 0 8px; font-variant-numeric: tabular-nums; user-select: text; letter-spacing: 0.01em; }
         .export-credit a { color: inherit; text-decoration: none; }
         .export-credit a:hover { color: #2563eb; text-decoration: underline; }
-        [data-theme="dark"] .export-credit { color: #64748b; }
+        [data-theme="dark"] .export-credit { color: #94a3b8; }
         [data-theme="dark"] .export-credit a:hover { color: #60a5fa; }
         @media print { .export-credit { color: #1e293b; font-size: 0.85em; font-weight: 500; margin-top: 12px; } .export-credit a { color: #1e293b; } }
 
@@ -296,7 +298,7 @@
 
         /* ===== KPIs com cor de destaque (mesmas classes do balanco-historico) ===== */
         .kpi-card.kpi-renovavel .kpi-value { color:#16a34a; }
-        .kpi-card.kpi-importador .kpi-value { color:#ED7D31; }
+        .kpi-card.kpi-importador .kpi-value { color:#c2410c; }
         .kpi-card.kpi-exportador .kpi-value { color:#8E44AD; }
         .kpi-card.kpi-dominante .kpi-value { color:#2563eb; }
         [data-theme="dark"] .kpi-card.kpi-renovavel .kpi-value { color:#4ade80; }
@@ -386,7 +388,7 @@
         [data-theme="dark"] .tabela-mix td { border-bottom-color:#334155; color:#e2e8f0; }
         [data-theme="dark"] .tabela-mix .mix-macro td { background:#334155; border-top-color:#475569; }
         [data-theme="dark"] .tabela-mix .mix-total td { background:#334155; border-top-color:#475569; }
-        .bal-notas { font-size:0.72em; color:#888; margin-top:8px; line-height:1.5; }
+        .bal-notas { font-size:0.72em; color:#666; margin-top:8px; line-height:1.5; }
         [data-theme="dark"] .bal-notas { color:#94a3b8; }
     </style>
 </head>
@@ -694,6 +696,7 @@
 
 <!-- Highcharts (uniformizado com o resto do site: balanco-omie / balanco-historico) -->
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>

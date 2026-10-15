@@ -57,6 +57,7 @@
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
 
     <!-- Google Analytics (GA4) + Consent Mode v2 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
@@ -207,11 +208,11 @@
         .fuso-toggle .fuso-label { font-size: 0.82em; color: #64748b; font-weight: 600; margin-right: 4px; }
         .fuso-btn { background: #fff; border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 14px; font-size: 0.82em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
         .fuso-btn:hover:not(.active) { background: #e2e8f0; }
-        .fuso-btn.active { background: #0ea5e9; color: #fff; border-color: #0ea5e9; font-weight: 600; }
+        .fuso-btn.active { background: #0369a1; color: #fff; border-color: #0369a1; font-weight: 600; }
         [data-theme="dark"] .fuso-toggle .fuso-label { color: #94a3b8; }
         [data-theme="dark"] .fuso-btn { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .fuso-btn:hover:not(.active) { background: #334155; }
-        [data-theme="dark"] .fuso-btn.active { background: #0284c7; border-color: #0284c7; color: #fff; }
+        [data-theme="dark"] .fuso-btn.active { background: #0369a1; border-color: #0369a1; color: #fff; }
         @media print { .fuso-toggle { display: none !important; } }
 
         /* ===== Seletor de intervalo de 15 min (métrica "slot" do mapa) ===== */
@@ -274,14 +275,14 @@
         /* Crédito de exportação — visível em screenshots, prints e screen.
            Discreto no ecrã, ligeiramente reforçado em impressão. */
         .export-credit {
-            text-align: center; font-size: 0.7em; color: #94a3b8;
+            text-align: center; font-size: 0.7em; color: #64748b;
             margin: 8px 0 4px; padding: 0 8px;
             font-variant-numeric: tabular-nums; user-select: text;
             letter-spacing: 0.01em;
         }
         .export-credit a { color: inherit; text-decoration: none; }
         .export-credit a:hover { color: #2563eb; text-decoration: underline; }
-        [data-theme="dark"] .export-credit { color: #64748b; }
+        [data-theme="dark"] .export-credit { color: #94a3b8; }
         [data-theme="dark"] .export-credit a:hover { color: #60a5fa; }
         @media print {
             .export-credit { color: #1e293b; font-size: 0.85em; font-weight: 500; margin-top: 12px; }
@@ -289,7 +290,7 @@
         }
         .share-btn { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; }
         .share-btn:hover { background: #e2e8f0; }
-        .share-feedback { margin-left: 10px; font-size: 0.85em; color: #16a34a; display: none; }
+        .share-feedback { margin-left: 10px; font-size: 0.85em; color: #15803d; display: none; }
 
         /* Foco visivel (a11y) */
         .btn-nav:focus-visible, .btn-fullscreen:focus-visible,
@@ -322,7 +323,7 @@
 
         /* Info control (tooltip ao passar o rato) */
         .info-control { padding: 10px 14px; background: white; border-radius: 6px; box-shadow: 0 1px 5px rgba(0,0,0,0.2); font-size: 0.9em; line-height: 1.5; min-width: 140px; }
-        .info-control h4 { margin: 0 0 5px; color: #777; font-size: 0.85em; }
+        .info-control h4 { margin: 0 0 5px; color: #666; font-size: 0.85em; }
         .info-control b { font-size: 1.05em; }
         .info-control .price-value { font-size: 1.3em; font-weight: bold; margin-top: 4px; }
         .info-control .stats-detail { font-size: 0.85em; margin-top: 6px; line-height: 1.6; }
@@ -366,7 +367,7 @@
         #zone-panel > label { display: inline-flex; align-items: center; gap: 6px; }
         #zone-panel select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; min-width: 160px; max-width: 100%; }
         #zone-panel .compare-label { color: #475569; }
-        .zone-panel-hint { font-size: 0.85em; color: #64748b; font-style: italic; margin-left: auto; }
+        .zone-panel-hint { font-size: 0.85em; color: #475569; font-style: italic; margin-left: auto; }
         [data-theme="dark"] #zone-panel { background: #1e293b; }
         [data-theme="dark"] #zone-panel select { background: #0f172a; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] #zone-panel .compare-label { color: #cbd5e1; }
@@ -455,7 +456,7 @@
         .chart-legend-item { display: inline-flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 4px; cursor: pointer; user-select: none; font-weight: 600; transition: background 0.15s, opacity 0.15s; }
         .chart-legend-item:hover { background: rgba(0,0,0,0.05); }
         [data-theme="dark"] .chart-legend-item:hover { background: rgba(255,255,255,0.07); }
-        .chart-legend-item.hidden { opacity: 0.45; text-decoration: line-through; }
+        .chart-legend-item.hidden { opacity: 0.7; text-decoration: line-through; }
         .chart-legend-swatch { display: inline-block; width: 26px; height: 14px; flex-shrink: 0; border-radius: 2px; }
         .intraday-stats { text-align: center; font-size: 0.9em; color: #475569; margin: -6px 0 10px; min-height: 1.2em; }
         .intraday-stats strong { color: #0f172a; font-variant-numeric: tabular-nums; }
@@ -475,7 +476,7 @@
         #heatmap-hour-wrapper.viz-wide .hh-cell { min-height: 22px; }
         .hh-cell.hh-header { background: #cbd5e1; font-weight: 600; cursor: default; }
         .hh-cell.hh-data { color: #fff; font-weight: 600; text-shadow: 0 0 2px rgba(0,0,0,0.7), 0 0 1px rgba(0,0,0,0.9); }
-        .hh-cell.hh-data.hh-light { color: #0f172a; font-weight: 700; text-shadow: 0 0 2px rgba(255,255,255,0.6); }
+        .hh-cell.hh-data.hh-light { color: #000; font-weight: 700; text-shadow: 0 0 2px rgba(255,255,255,0.6); }
         .hh-cell.hh-empty { background: #f8fafc; }
         .hh-cell.hh-partial { font-style: italic; }
         .hh-cell.hh-partial::after { content: '*'; }
@@ -487,7 +488,7 @@
         .viz-wide .hh-cell.hh-spacer { background: #f1f5f9; box-shadow: 0 0 0 1px #f1f5f9; }
         [data-theme="dark"] .hh-cell.hh-spacer { background: #1e293b; box-shadow: 0 0 0 1px #1e293b; }
         [data-theme="dark"] .viz-wide .hh-cell.hh-spacer { background: #0f172a; box-shadow: 0 0 0 1px #0f172a; }
-        .hh-cell.hh-avg-header { background: #94a3b8; color: #fff; font-weight: 700; }
+        .hh-cell.hh-avg-header { background: #94a3b8; color: #000; font-weight: 700; }
         .hh-cell.hh-avg { font-weight: 700; }
         [data-theme="dark"] .hh-cell.hh-avg-header { background: #475569; color: #fff; }
         [data-theme="dark"] #heatmap-hour-wrapper h2 { color: #e2e8f0; }
@@ -495,7 +496,8 @@
         [data-theme="dark"] .hh-cell { background: #1e293b; color: #e2e8f0; }
         [data-theme="dark"] .hh-cell.hh-header { background: #334155; color: #e2e8f0; }
         [data-theme="dark"] .hh-cell.hh-empty { background: #0f172a; }
-        [data-theme="dark"] .hh-cell.hh-data.hh-light { color: #0f172a; }
+        [data-theme="dark"] .hh-cell.hh-data { color: #fff; }
+        [data-theme="dark"] .hh-cell.hh-data.hh-light { color: #000; }
 
         /* Indicador de dados parciais */
         .price-label.partial { font-style: italic; }
@@ -536,9 +538,10 @@
         .heatmap-cell.no-data { background: #e5e7eb; cursor: default; }
         .heatmap-spacer { background: transparent; }
         .heatmap-month-avg { aspect-ratio: auto; height: 22px; min-width: 40px; max-width: 56px; border-radius: 3px; cursor: default; display: flex; align-items: center; justify-content: center; font-size: 0.75em; font-weight: 700; color: #fff; text-shadow: 0 0 2px rgba(0,0,0,0.7); }
-        .heatmap-month-avg.light { color: #0f172a; text-shadow: 0 0 2px rgba(255,255,255,0.6); }
+        .heatmap-month-avg.light { color: #000; text-shadow: 0 0 2px rgba(255,255,255,0.6); }
         .heatmap-month-avg.no-data { background: #e5e7eb; color: #94a3b8; text-shadow: none; }
-        .heatmap-day-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.7em; color: #94a3b8; }
+        .heatmap-day-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 0.7em; color: #64748b; }
+        [data-theme="dark"] .heatmap-day-header { color: #94a3b8; }
         .heatmap-day-numbers { display: grid; grid-template-columns: repeat(31, 1fr) 10px minmax(40px, 56px); gap: 2px; flex: 1; padding-left: 0; }
         .heatmap-day-numbers span { text-align: center; }
         .heatmap-day-numbers .heatmap-spacer { background: transparent; }
@@ -606,7 +609,7 @@
         .ranked-table td { padding: 6px 12px; border-bottom: 1px solid #eee; }
         .ranked-table tr:hover { background: #f8fafc; }
         .ranked-table .price-cell { font-weight: bold; text-align: center; padding-right: 20px; }
-        .ranked-table .rank-cell { text-align: center; width: 50px; color: #888; }
+        .ranked-table .rank-cell { text-align: center; width: 50px; color: #666; }
         .ranked-table .color-indicator { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
         .ranked-table .row-expand { display: inline-block; width: 14px; text-align: center; color: #64748b; font-size: 0.85em; transition: transform 0.15s; cursor: pointer; user-select: none; margin-right: 4px; }
         .ranked-table tr.expanded .row-expand { transform: rotate(90deg); color: #2563eb; }
@@ -638,7 +641,7 @@
         .ranked-table th { text-align: center; }
         .ranked-table td.num { text-align: center; font-variant-numeric: tabular-nums; }
         .ranked-table td.zone-cell { text-align: left; }
-        .ranked-table td.hour-col, .ranked-table th.hour-col { text-align: center; color: #64748b; font-size: 0.85em; }
+        .ranked-table td.hour-col, .ranked-table th.hour-col { text-align: center; color: #475569; font-size: 0.85em; }
         .ranked-table td.neg { color: #dc2626; font-weight: bold; }
         [data-theme="dark"] .ranked-table td.neg { color: #f87171; }
         .ranked-table th.sortable { cursor: pointer; user-select: none; }
@@ -707,7 +710,7 @@
         [data-theme="dark"] .ranked-table th { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .ranked-table td { border-color: #334155; color: #e2e8f0; }
         [data-theme="dark"] .ranked-table tr:hover { background: #1e293b; }
-        [data-theme="dark"] .ranked-table .rank-cell { color: #64748b; }
+        [data-theme="dark"] .ranked-table .rank-cell { color: #94a3b8; }
         [data-theme="dark"] .aviso-provisorio { color: #f87171; }
         [data-theme="dark"] .nota-horas { color: #94a3b8; }
         [data-theme="dark"] .nota-fonte { color: #94a3b8; }
@@ -928,11 +931,11 @@
             <div class="faq-content">
                 <div data-lang-block="pt">
                 <p>Este mapa apresenta o <strong>preço médio diário de eletricidade</strong> (mercado day-ahead) para cada zona de licitação europeia, expresso em <strong>€/MWh</strong>.</p>
-                <p>As cores variam do <strong style="color:#7c3aed;">roxo</strong> (preços <em>negativos</em>, evento raro de excesso de renovável) e <strong style="color:#2166ac;">azul</strong> (preços baixos), passando por <strong style="color:#fec44f;">amarelo</strong> e <strong style="color:#e08214;">laranja</strong>, até ao <strong style="color:#b2182b;">vermelho escuro</strong> (preços mais altos). Esta paleta foi escolhida para boa acessibilidade a utilizadores daltónicos e para destacar visualmente eventos de preços negativos.</p>
+                <p>As cores variam do <strong><span class="cor-amostra" style="background:#7c3aed"></span>roxo</strong> (preços <em>negativos</em>, evento raro de excesso de renovável) e <strong><span class="cor-amostra" style="background:#2166ac"></span>azul</strong> (preços baixos), passando por <strong><span class="cor-amostra" style="background:#fec44f"></span>amarelo</strong> e <strong><span class="cor-amostra" style="background:#e08214"></span>laranja</strong>, até ao <strong><span class="cor-amostra" style="background:#b2182b"></span>vermelho escuro</strong> (preços mais altos). Esta paleta foi escolhida para boa acessibilidade a utilizadores daltónicos e para destacar visualmente eventos de preços negativos.</p>
                 </div>
                 <div data-lang-block="en">
                 <p>This map shows the <strong>daily average electricity price</strong> (day-ahead market) for each European bidding zone, expressed in <strong>€/MWh</strong>.</p>
-                <p>Colours range from <strong style="color:#7c3aed;">purple</strong> (<em>negative</em> prices, a rare event of renewable oversupply) and <strong style="color:#2166ac;">blue</strong> (low prices), through <strong style="color:#fec44f;">yellow</strong> and <strong style="color:#e08214;">orange</strong>, up to <strong style="color:#b2182b;">dark red</strong> (highest prices). This palette was chosen for good accessibility to colour-blind users and to visually highlight negative-price events.</p>
+                <p>Colours range from <strong><span class="cor-amostra" style="background:#7c3aed"></span>purple</strong> (<em>negative</em> prices, a rare event of renewable oversupply) and <strong><span class="cor-amostra" style="background:#2166ac"></span>blue</strong> (low prices), through <strong><span class="cor-amostra" style="background:#fec44f"></span>yellow</strong> and <strong><span class="cor-amostra" style="background:#e08214"></span>orange</strong>, up to <strong><span class="cor-amostra" style="background:#b2182b"></span>dark red</strong> (highest prices). This palette was chosen for good accessibility to colour-blind users and to visually highlight negative-price events.</p>
                 </div>
             </div>
         </details>
@@ -2487,6 +2490,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return '#860020';                    // Vermelho 4 (mais escuro para 165+)
     }
 
+    // Letra preta (true) ou branca sobre uma cor da escala: a que tiver mais contraste (WCAG)
+    function textoEscuroSobre(hex) {
+        var c = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex || '');
+        if (!c) return false;
+        var f = function(h) { var v = parseInt(h, 16) / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+        var lum = 0.2126 * f(c[1]) + 0.7152 * f(c[2]) + 0.0722 * f(c[3]);
+        return (lum + 0.05) / 0.05 > 1.05 / (lum + 0.05);
+    }
+
     // --- GERADOR AUTOMÁTICO DE ESCALAS DE COR ---
     function renderColorScales() {
             // 1. As tuas matrizes exatas de valores e textos
@@ -2994,7 +3006,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var list = getCompareZones();
         var html = '';
         if (!list.length) {
-            html = '<span class="cmp-chip" style="border-left-color:transparent; color:#94a3b8; font-style:italic;">' + T('cmpNone') + '</span>';
+            html = '<span class="cmp-chip" style="border-left-color:transparent; color:var(--txt-cinza); font-style:italic;">' + T('cmpNone') + '</span>';
         } else {
             var mainZ = (document.getElementById('global-zone-select') || {}).value;
             var refDate = (document.getElementById('seletor-data') || {}).value;
@@ -3722,12 +3734,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Helper: detetar se a cor da escala precisa de texto preto (faixa central clara)
-        var isLightBg = function(v) {
-            if (v == null) return false;
-            if (v >= -15 && v < 0) return true;
-            if (v >= 15 && v < 105) return true;
-            return false;
-        };
+        var isLightBg = function(v) { return v != null && textoEscuroSobre(getColor(v)); };
 
         // Construir grelha: linha header (1..31 + Média) + 12 linhas mensais
         var html = '<div class="heatmap-grid">';
@@ -3998,6 +4005,33 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     if (typeof Chart !== 'undefined') Chart.register(zeroLinePlugin);
 
+    // Contorno das linhas com a cor da escala de preços ("Médias diárias (linha)"): a cor segue a média do período e,
+    // conforme o preço, podia quase desaparecer no fundo (azul-marinho ou vermelho-escuro no escuro, amarelos no claro).
+    // Desenha o mesmo traço por baixo, mais largo, na cor do contorno (dataset._contorno).
+    var contornoLinhaPlugin = {
+        id: 'contornoLinha',
+        beforeDatasetDraw: function(chart, args) {
+            var ds = chart.data.datasets[args.index];
+            var line = args.meta && args.meta.dataset;
+            if (!ds || !ds._contorno || !line || typeof line.path !== 'function') return;
+            var area = chart.chartArea;
+            var ctx = chart.ctx;
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(area.left, area.top, area.right - area.left, area.bottom - area.top);
+            ctx.clip();
+            ctx.strokeStyle = ds._contorno;
+            ctx.lineWidth = (line.options.borderWidth || 4) + 3.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            line.path(ctx);
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
+    if (typeof Chart !== 'undefined') Chart.register(contornoLinhaPlugin);
+
     function getChartColors() {
         var dark = document.documentElement.getAttribute('data-theme') === 'dark';
         return {
@@ -4051,7 +4085,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Constrói legenda HTML interativa para o gráfico Evolução de preços.
-    // Cada item: swatch colorido + texto na mesma cor da série; click toggle.
+    // Cada item: swatch colorido + texto na cor normal (na cor da série, várias ficavam ilegíveis no escuro); click toggle.
     function renderChartLegend(chart, mainColor) {
         var holder = document.getElementById('chart-legend');
         if (!holder || !chart) return;
@@ -4077,7 +4111,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 swatch = '<span class="chart-legend-swatch" style="height:' + thick + 'px; align-self:center;' + dash + '"></span>';
             }
             html += '<span class="chart-legend-item' + (hidden ? ' hidden' : '')
-                  + '" data-idx="' + i + '" style="color:' + col + ';">'
+                  + '" data-idx="' + i + '">'
                   + swatch + '<span>' + ds.label + '</span></span>';
         }
         holder.innerHTML = html;
@@ -4282,6 +4316,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 label: T('legDailyLine'),
                 data: avgLineData,
                 borderColor: avgColor,
+                _contorno: darkMode ? '#e2e8f0' : '#334155',   // contornoLinhaPlugin: vê-se seja qual for a cor do preço
                 backgroundColor: 'rgba(0,0,0,0)',
                 borderWidth: 4,  // ~3x mais grossa que MA7/MA30
                 pointRadius: 0, pointHoverRadius: 4,
@@ -4760,12 +4795,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         var globalAvg = allVals.length ? (allVals.reduce(function(a, b) { return a + b; }, 0) / allVals.length) : null;
 
-        var lightOnDark = function(v) {
-            if (v == null) return false;
-            if (v >= -15 && v < 0) return true;
-            if (v >= 15 && v < 105) return true;
-            return false;
-        };
+        var lightOnDark = function(v) { return v != null && textoEscuroSobre(getColor(v)); };
         var wWide = !!(document.getElementById('heatmap-week-wrapper') && document.getElementById('heatmap-week-wrapper').classList.contains('viz-wide'));
         var fmtCell = function(v) { return wWide ? fmtN(v, 2) : String(Math.round(v)); };
         // Media RAW do periodo (mesma definicao do Heatmap horario): mean de
@@ -4983,12 +5013,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Cor de texto: claro/escuro
-        var lightOnDark = function(v) {
-            if (v == null) return false;
-            if (v >= -15 && v < 0) return true;
-            if (v >= 15 && v < 105) return true;
-            return false;
-        };
+        var lightOnDark = function(v) { return v != null && textoEscuroSobre(getColor(v)); };
 
         // Calcular medias por hora (linha das medias por dia) e por dia
         // (coluna das medias por hora). NULLs sao ignorados.

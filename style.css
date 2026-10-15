@@ -348,9 +348,9 @@ select {
 .form-container button {
     width: auto;
     padding: 12px 25px;
-    border: 1px solid #3498db;
+    border: 1px solid #0066cc;
     background-color: white;
-    color: #3498db;
+    color: #0066cc; /* #3498db ficava a 3,15:1 */
     font-size: 1em;
     font-weight: bold;
     border-radius: 4px;
@@ -359,7 +359,7 @@ select {
 }
 
 .form-container button:hover {
-    background-color: #3498db;
+    background-color: #0066cc;
     color: white;
 }
 
@@ -785,7 +785,7 @@ nav > ul > li:hover > .dropdown-content {
 }
 .copy-code-btn {
     padding: 8px 14px;
-    background-color: #007bff;
+    background-color: #0066cc; /* #007bff ficava a 3,98:1 com o branco */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -1219,6 +1219,24 @@ nav > ul > li:hover > .dropdown-content {
     color: #e2e8f0;
 }
 
+/* Links no meio do texto sem cor própria: no escuro ficavam com o #0000ee do browser (1,6:1).
+   O :where() deixa a especificidade no mínimo, para não passar por cima das cores que cada página já define. */
+[data-theme="dark"] :where(main, #main-content) :where(a:not([class])) { color: #93c5fd; }
+
+/* «Dados disponíveis desde…» dos painéis (OMIE, OMIE Diário, balanços, Europa): #555 inline ficava a 2,0:1 no escuro */
+[data-theme="dark"] p[style*="font-size: 0.70em; color: #555"] { color: #94a3b8 !important; }
+
+/* Caixas de destaque com fundo claro inline (página do simulador em Excel): no escuro o texto passa a claro */
+[data-theme="dark"] div[style*="background-color: #f0f8ff"] { background-color: #14222a !important; }
+
+/* Quadradinho com a cor de que o texto fala ("do roxo ao vermelho escuro"): a palavra fica na cor normal */
+.cor-amostra { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 2px; margin: 0 0.25em 0 0.1em; vertical-align: -0.03em; box-shadow: inset 0 0 0 1px rgba(127, 127, 127, 0.35); }
+
+/* Cores de texto que funcionam nos dois temas, para o JS pintar subidas/descidas e notas: style="color:var(--txt-verde)".
+   As linhas destacadas das tabelas redefinem-nas (fundo azul-claro no claro, azul-escuro no escuro). */
+:root { --txt-verde: #15803d; --txt-vermelho: #c0392b; --txt-ambar: #a16207; --txt-cinza: #64748b; }
+[data-theme="dark"] { --txt-verde: #4ade80; --txt-vermelho: #f87171; --txt-ambar: #fbbf24; --txt-cinza: #94a3b8; }
+
 /* Em mobile, breadcrumb mais compacto */
 @media (max-width: 600px) {
     .breadcrumb {
@@ -1498,7 +1516,7 @@ nav > ul > li:hover > .dropdown-content {
 /* --- Link section (referência URL) --- */
 [data-theme="dark"] .link-section p {
     background-color: #334155;
-    color: #94a3b8;
+    color: #cbd5e1; /* #94a3b8 ficava a 4,04:1 */
 }
 
 /* --- Hero section (homepage) --- */
@@ -1574,11 +1592,12 @@ nav > ul > li:hover > .dropdown-content {
 }
 [data-theme="dark"] .form-container button {
     background-color: #1e293b;
-    border-color: #3b82f6;
-    color: #3b82f6;
+    border-color: #60a5fa;
+    color: #60a5fa; /* #3b82f6 ficava a 3,98:1 */
 }
 [data-theme="dark"] .form-container button:hover {
-    background-color: #3b82f6;
+    background-color: #2563eb;
+    border-color: #2563eb;
     color: #fff;
 }
 
@@ -2057,11 +2076,11 @@ li.dropdown:focus-within > .mega-dropdown {
     transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .tf-cookie-banner-accept {
-    background: #16a34a;
+    background: #15803d; /* #16a34a ficava a 3,3:1 com o branco */
     color: #fff;
-    border-color: #16a34a;
+    border-color: #15803d;
 }
-.tf-cookie-banner-accept:hover { background: #15803d; border-color: #15803d; }
+.tf-cookie-banner-accept:hover { background: #166534; border-color: #166534; }
 .tf-cookie-banner-reject {
     background: transparent;
     color: #475569;

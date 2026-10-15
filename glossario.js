@@ -1120,7 +1120,11 @@
     function nodoIgnoravel(node) {
         if (!node) return true;
         if (node.nodeType !== 1) return false;
-        if (TAGS_SKIP[node.tagName]) return true;
+        // Os elementos SVG (gráficos Highcharts) têm o nome em minúsculas ("svg"): sem o toUpperCase escapavam ao
+        // TAGS_SKIP e o <abbr> metido num <text> fazia desaparecer a palavra (ex.: "TAR" na legenda dos Preços Horários)
+        if (TAGS_SKIP[node.tagName.toUpperCase()]) return true;
+        if (node.namespaceURI === 'http://www.w3.org/2000/svg') return true;
+        if (node.classList && node.classList.contains('highcharts-container')) return true;   // rótulos HTML dos gráficos
         if (node.dataset && (node.dataset.glossario === 'off' || node.dataset.glHandled === '1')) return true;
         if (node.classList && node.classList.contains('gl-term')) return true;
         return false;
