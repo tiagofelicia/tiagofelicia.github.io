@@ -2338,9 +2338,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (stats.avg == null) continue;
                 if (!perZone[zone]) perZone[zone] = {
                     avgs: [], min: null, min_date: null, min_hour: null, max: null, max_date: null, max_hour: null,
-                    slotSum: new Array(SLOTS_DIA).fill(0), slotCnt: new Array(SLOTS_DIA).fill(0)
+                    slotSum: new Array(SLOTS_DIA).fill(0), slotCnt: new Array(SLOTS_DIA).fill(0),
+                    somaPond: 0, minutos: 0
                 };
                 perZone[zone].avgs.push(stats.avg);
+                // Média do período ponderada pela duração de cada preço (como o
+                // Heatmap horário e o omie.html): um dia incompleto (ex.: Portugal
+                // sem a última hora) ou com 23/25 horas (mudança de hora) pesa o
+                // que dura, e não um dia inteiro.
+                var minAntes = perZone[zone].minutos;
+                if (stats.values && stats.values.length) {
+                    var nv = stats.values.length;
+                    var resP = stats.resolution || (nv >= 90 ? 'PT15M' : (nv >= 46 ? 'PT30M' : 'PT60M'));
+                    var minSlot = resP === 'PT15M' ? 15 : (resP === 'PT30M' ? 30 : 60);
+                    for (var vi = 0; vi < stats.values.length; vi++) {
+                        var vv = stats.values[vi];
+                        if (vv == null || isNaN(vv)) continue;
+                        perZone[zone].somaPond += vv * minSlot;
+                        perZone[zone].minutos += minSlot;
+                    }
+                }
+                if (perZone[zone].minutos === minAntes) {   // dia sem valores intradiários
+                    perZone[zone].somaPond += stats.avg * 1440;
+                    perZone[zone].minutos += 1440;
+                }
                 // Acumular por intervalo de 15 min (grelha fixa de 96 slots) para
                 // suportar a métrica "slot" também nos modos agregados.
                 if (stats.values && stats.values.length) {
@@ -2374,8 +2395,6 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var z in perZone) {
             var p = perZone[z];
             if (!p.avgs.length) continue;
-            var sum = 0;
-            for (var k = 0; k < p.avgs.length; k++) sum += p.avgs[k];
             var slotVals = new Array(SLOTS_DIA);
             var temSlots = false;
             for (var si = 0; si < SLOTS_DIA; si++) {
@@ -2383,7 +2402,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 else slotVals[si] = null;
             }
             result[z] = {
-                avg: sum / p.avgs.length,
+                avg: p.somaPond / p.minutos,
                 min: p.min, min_date: p.min_date, min_hour: p.min_hour,
                 max: p.max, max_date: p.max_date, max_hour: p.max_hour,
                 // slotValues (e não values) para não afetar isPartial/partialInfo,
