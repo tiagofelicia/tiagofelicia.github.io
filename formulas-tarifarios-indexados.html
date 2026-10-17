@@ -430,13 +430,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "G9 Energia",
                 url: "https://g9.pt/energia/",
                 notaLimitacao: null,
-                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR`,
+                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR + TSE`,
                 legenda: [
-                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh). Se for negativo, conta como 0"],
                     ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
                     ["K2", () => `Custos de gestão geral do sistema (ERS), já com as perdas: K2 = ERC × (1 + Perdas). ${ERC_QH('G9_K2')}`],
                     ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["TAR", TAR],
+                    ["TSE", TSE],
                 ]
             },
             {
@@ -481,6 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. ${ERC_QH('Meo_CG')}`],
                     ["K", () => `Margem comercial da MeoEnergia: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
+                    ["Piso", "Se (P<sub>OMIE</sub> + CG) × (1 + FP) + K der negativo num quarto de hora, conta como 0 (a TAR soma-se depois)"],
                     ["TAR", TAR],
                 ]
             },

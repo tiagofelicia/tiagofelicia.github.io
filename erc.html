@@ -1231,7 +1231,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const ck = fmtCkWh(tot.erc, perdas);
         const d = ant ? tot.erc - ant.erc : null;
         let html = card('ERC médio no período', fmtMWh(tot.erc), ck ? `≈ ${ck} com perdas` : `${tot.n} dias`,
-            d === null ? '' : `<div class="kpi-delta" style="color:${corDelta(d)}">${d > 0 ? '▲' : d < 0 ? '▼' : '='} ${sinal(d)} €/MWh face aos ${L} dias anteriores</div>`);
+            d === null ? '' : `<div class="kpi-delta" style="color:${corDelta(d)}">${d > 0 ? '▲' : d < 0 ? '▼' : '='} ${sinal(d)} €/MWh face ${L === 1 ? 'ao dia anterior' : `aos ${L} dias anteriores`}</div>`);
         html += caro ? card('Dia mais caro', fmtMWh(caro.v), `${diaSemana(caro.iso)}, ${fmtData(caro.iso)}`) : card('Dia mais caro', '--', '');
         html += barato ? card('Dia mais barato', fmtMWh(barato.v), `${diaSemana(barato.iso)}, ${fmtData(barato.iso)}`) : card('Dia mais barato', '--', '');
         html += hMax >= 0 ? card('Hora mais cara (média)', fmtMWh(ph[hMax]), faixa(hMax)) : card('Hora mais cara (média)', '--', '');
@@ -1898,10 +1898,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!porDia.has(dia)) porDia.set(dia, new Map());
             const mapa = porDia.get(dia);
             const omie = num(col[iOmie]), erc = iErc >= 0 ? num(col[iErc]) : null;
-            const atual = mapa.get(m[1]) || { h: m[1], omie: null, erc: null };
+            // A 2.ª passagem pela hora que se repete em outubro vem marcada " (2.ª)": é outro quarto de hora
+            const rep = (col[iInt] || '').includes('(2.ª)');
+            const chave = m[1] + (rep ? '#2' : '');
+            const atual = mapa.get(chave) || { h: m[1], rep, omie: null, erc: null };
             if (atual.omie === null && omie !== null) atual.omie = omie * 1000;
             if (atual.erc === null && erc !== null) atual.erc = erc;
-            mapa.set(m[1], atual);
+            mapa.set(chave, atual);
         }
         const dias = [...porDia.keys()].sort();
         const out = new Map();
@@ -1915,8 +1918,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const d = mes && mes.dias ? mes.dias[iso] : null;
         const slotsMes = d ? (d.slots || SLOTS_96).slice(0, d.omie.length) : [];
         if (PRECOS && PRECOS.porDia.has(iso)) {
-            const perdasDe = h => { if (!d || !d.perdas) return null; const k = slotsMes.indexOf(h); return k >= 0 ? d.perdas[k] : null; };
-            const pts = PRECOS.porDia.get(iso).map(p => ({ h: p.h, omie: p.omie, erc: p.erc, perdas: perdasDe(p.h), prev: true }));
+            // Na hora que se repete, as perdas da 2.ª passagem são as da 2.ª etiqueta igual
+            const perdasDe = (h, rep) => { if (!d || !d.perdas) return null; const k = rep ? slotsMes.lastIndexOf(h) : slotsMes.indexOf(h); return k >= 0 ? d.perdas[k] : null; };
+            const pts = PRECOS.porDia.get(iso).map(p => ({ h: p.h, omie: p.omie, erc: p.erc, perdas: perdasDe(p.h, p.rep), prev: true }));
             return { pts, previstos: pts.length };
         }
         if (!d) return null;

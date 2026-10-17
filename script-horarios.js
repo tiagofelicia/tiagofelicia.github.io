@@ -23,18 +23,27 @@ document.addEventListener('DOMContentLoaded', function () {
         return new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(Date.now() + 24 * 60 * 60 * 1000));
     }
     // Data + hora atuais em Lisboa. hourCycle h23 evita "24" à meia-noite em alguns browsers.
+    // horaInverno: Lisboa está em UTC+0 (hora de inverno). No último domingo de outubro a hora
+    // 01:00–02:00 passa duas vezes: a 1.ª ainda em hora de verão, a 2.ª já em hora de inverno.
     function getAgoraLisboa() {
+        const agora = new Date();
         const partes = new Intl.DateTimeFormat('pt-PT', {
             timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric',
             hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
-        }).formatToParts(new Date());
+        }).formatToParts(agora);
         const val = t => partes.find(p => p.type === t)?.value || '00';
+        const hora = parseInt(val('hour'), 10);
         return {
             dia: `${val('day')}/${val('month')}/${val('year')}`,
-            hora: parseInt(val('hour'), 10),
-            minuto: parseInt(val('minute'), 10)
+            hora: hora,
+            minuto: parseInt(val('minute'), 10),
+            horaInverno: (hora - agora.getUTCHours() + 24) % 24 === 0
         };
     }
+    // Etiqueta da 2.ª passagem pela hora que se repete no último domingo de outubro (o CSV
+    // marca-a com " (2.ª)", ver SUFIXO_HORA_REPETIDA no atualizar_precos-horarios_csv.py)
+    const SUFIXO_REPETIDA = ' (2.ª)';
+    const ehRepetida = cat => (cat || '').includes(SUFIXO_REPETIDA);
     // Índice do intervalo em curso. Procura pela etiqueta ("[HH:MM-") para ser
     // robusto em dias de mudança de hora (92/100 pontos); só usa aritmética como recurso.
     function encontrarIndiceAgora(dados, vista, agora) {
@@ -42,8 +51,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const hh = String(agora.hora).padStart(2, '0');
         const mm = vista === "horaria" ? '00' : String(Math.floor(agora.minuto / 15) * 15).padStart(2, '0');
         const alvo = `${hh}:${mm}`;
-        const idx = dados.categorias.findIndex(c => (c || '').replace('[', '').split('-')[0] === alvo);
-        if (idx !== -1) return idx;
+        const iguais = [];
+        dados.categorias.forEach((c, i) => { if ((c || '').replace('[', '').split('-')[0] === alvo) iguais.push(i); });
+        // Na hora que se repete há duas etiquetas iguais: a 2.ª é a que já está em hora de inverno
+        if (iguais.length) return (iguais.length > 1 && agora.horaInverno) ? iguais[iguais.length - 1] : iguais[0];
         const fallback = vista === "horaria" ? agora.hora : (agora.hora * 4) + Math.floor(agora.minuto / 15);
         return (fallback >= 0 && fallback < dados.categorias.length) ? fallback : -1;
     }
@@ -232,33 +243,53 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- CONSTRUIR DADOS HORÁRIOS (média das 4 QH de cada hora) ---
     // Equivale matematicamente ao bloco TABELA_HORARIA do CSV, mas obtemos
     // tar e omieTar para que as linhas opcionais do gráfico funcionem na vista Horária.
+    // As horas agrupam-se pela ETIQUETA de cada quarto de hora e não pela posição: nos dias de
+    // mudança de hora há 92 (março, sem as 01:00) ou 100 quartos de hora (outubro, a hora 01:00
+    // passa duas vezes), e a conta por posição desalinhava todas as horas seguintes.
+    function horasDosIntervalos(categorias) {
+        // Para cada quarto de hora: { chave, rotulo } da hora a que pertence. A 2.ª passagem pela
+        // hora repetida vem marcada no CSV; num CSV antigo sem a marca, reconhece-se por o
+        // relógio andar para trás.
+        let anterior = -1, horaRepetida = null;
+        return categorias.map(cat => {
+            const min = minutosDoIntervalo(cat), h = Math.floor(min / 60);
+            let rep;
+            if (ehRepetida(cat)) rep = true;
+            else {
+                if (min < anterior) horaRepetida = h;
+                rep = (horaRepetida === h);
+                if (!rep) horaRepetida = null;
+            }
+            anterior = min;
+            const hh = String(h).padStart(2, '0'), fimH = String((h + 1) % 24).padStart(2, '0');
+            return { chave: h + (rep ? 'b' : ''), rotulo: `[${hh}:00-${fimH}:00[` + (rep ? SUFIXO_REPETIDA : '') };
+        });
+    }
     function construirDadosHorarios() {
         dadosEstruturadosHora = {};
-        const acumular = (arr, h) => {
-            let sum = 0, cnt = 0;
-            for (let q = 0; q < 4; q++) {
-                const v = arr[h * 4 + q];
-                if (v !== null && v !== undefined && !isNaN(v)) { sum += v; cnt++; }
-            }
-            return cnt > 0 ? sum / cnt : null;
-        };
+        const media = v => { const n = v.filter(x => x !== null && x !== undefined && !isNaN(x)); return n.length ? n.reduce((a, b) => a + b, 0) / n.length : null; };
         for (const dia in dadosEstruturados) {
             dadosEstruturadosHora[dia] = {};
             for (const tarifario in dadosEstruturados[dia]) {
                 dadosEstruturadosHora[dia][tarifario] = {};
                 for (const opcao in dadosEstruturados[dia][tarifario]) {
                     const qh = dadosEstruturados[dia][tarifario][opcao];
+                    // Índices dos quartos de hora de cada hora, pela ordem em que as horas aparecem
+                    const grupos = new Map();
+                    horasDosIntervalos(qh.categorias).forEach((hr, i) => {
+                        if (!grupos.has(hr.chave)) grupos.set(hr.chave, { rotulo: hr.rotulo, idx: [] });
+                        grupos.get(hr.chave).idx.push(i);
+                    });
                     const hora = { categorias: [], colunas: [], omie: [], tar: [], omieTar: [], erc: [] };
-                    for (let h = 0; h < 24; h++) {
-                        const start = h.toString().padStart(2, '0') + ':00';
-                        const endLabel = h === 23 ? '00:00' : (h + 1).toString().padStart(2, '0') + ':00';
-                        hora.categorias.push(`[${start}-${endLabel}[`);
-                        hora.colunas.push(acumular(qh.colunas, h));
-                        hora.omie.push(acumular(qh.omie, h));
-                        hora.tar.push(acumular(qh.tar, h));
-                        hora.omieTar.push(acumular(qh.omieTar, h));
-                        hora.erc.push(acumular(qh.erc || [], h));
-                    }
+                    grupos.forEach(g => {
+                        const de = arr => media(g.idx.map(i => (arr || [])[i]));
+                        hora.categorias.push(g.rotulo);
+                        hora.colunas.push(de(qh.colunas));
+                        hora.omie.push(de(qh.omie));
+                        hora.tar.push(de(qh.tar));
+                        hora.omieTar.push(de(qh.omieTar));
+                        hora.erc.push(de(qh.erc));
+                    });
                     dadosEstruturadosHora[dia][tarifario][opcao] = hora;
                 }
             }
@@ -493,14 +524,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 ]
             },
             "G9 Smart Dynamic SPOT 8!": {
-                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR`,
+                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR + TSE`,
                 legenda: [
-                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
+                    ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh). Se for negativo, conta como 0"],
                     ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
                     ["Perdas", "Perdas nas redes de transporte e distribuição (variável)"],
                     ["K2", () => `Custos de gestão geral do sistema (ERS), já com as perdas. ${ercTexto('G9_K2', true)}`],
                     ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
+                    ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
             "Galp Plano Dinâmico": {
@@ -530,6 +562,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. ${ercTexto('Meo_CG')}`],
                     ["K", () => `Margem comercial da MeoEnergia: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
+                    ["Piso", "Se (P<sub>OMIE</sub> + CG) × (1 + FP) + K der negativo num quarto de hora, conta como 0 (a TAR soma-se depois)"],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
@@ -630,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const decimaisMR = getVistaAtual() === "horaria" ? 4 : 5;
         const fmtPreco = v => v.toFixed(decimaisMR).replace('.', ',') + ' €/kWh';
-        const fmtHora = cat => (cat || '').replace('[', '').split('-')[0];
+        const fmtHora = cat => (cat || '').replace('[', '').split('-')[0] + (ehRepetida(cat) ? SUFIXO_REPETIDA : '');
 
         let html = '';
         html += `<div class="mini-resumo-chip">Mais barato: <strong>${fmtHora(dados.categorias[minimo.i])} (${fmtPreco(minimo.v)})</strong></div>`;
@@ -835,7 +868,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (!melhor) return limpar();
 
-        const inicio = inicioIntervalo(cats[melhor.i]);
+        // O fim já traz o " (2.ª)" da hora repetida; o início só o leva se a janela sair dela
+        const inicio = inicioIntervalo(cats[melhor.i])
+            + (ehRepetida(cats[melhor.i]) && !ehRepetida(cats[melhor.fim]) ? SUFIXO_REPETIDA : '');
         const fim = fimIntervalo(cats[melhor.fim]);
         const decimais = sel.vista === "horaria" ? 4 : 5;
 
@@ -1222,12 +1257,22 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Linha tracejada com os preços de amanhã, quando aplicável
+        // Linha tracejada com os preços de amanhã, quando aplicável. Alinhada pela hora de cada
+        // intervalo e não pela posição: na véspera de uma mudança de hora os dois dias têm um
+        // n.º diferente de quartos de hora (96 contra 92 ou 100).
         if (dadosAmanha && Array.isArray(dadosAmanha.colunas)) {
+            const amanhaPorHora = new Map();
+            dadosAmanha.categorias.forEach((c, i) => {
+                if (!ehRepetida(c) && !amanhaPorHora.has(inicioIntervalo(c))) amanhaPorHora.set(inicioIntervalo(c), dadosAmanha.colunas[i]);
+            });
+            const amanhaAlinhado = dados.categorias.map(c => {
+                const v = ehRepetida(c) ? undefined : amanhaPorHora.get(inicioIntervalo(c));
+                return v === undefined ? null : v;
+            });
             seriesArr.push({
                 name: `Amanhã (${amanhaStr})`,
                 type: 'line',
-                data: dadosAmanha.colunas,
+                data: amanhaAlinhado,
                 color: '#8e44ad',
                 dashStyle: 'ShortDash',
                 lineWidth: 2,

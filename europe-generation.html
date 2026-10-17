@@ -2586,7 +2586,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- HEATMAP CALENDÁRIO ANUAL ---
-    var MES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var MES_NOMES = (LANG === 'en')
+        ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
     async function updateHeatmap() {
         var countrySel = document.getElementById('heatmap-country');
         var yearSel = document.getElementById('heatmap-year');
@@ -2597,9 +2599,16 @@ document.addEventListener('DOMContentLoaded', function() {
         var country = countrySel.value, year = parseInt(yearSel.value, 10);
         if (!country || !year) return;
 
-        // Carregar todos os meses do ano
+        // Carregar todos os meses do ano que já existem: os posteriores ao último dia publicado
+        // (+1 dia, a previsão day-ahead) ainda não estão no servidor e só davam erros 404
         var months = [];
         for (var m = 1; m <= 12; m++) months.push(year + '-' + String(m).padStart(2, '0'));
+        if (ultimaDataDisponivel) {
+            var limiteDia = new Date(ultimaDataDisponivel + 'T12:00:00Z');
+            limiteDia.setUTCDate(limiteDia.getUTCDate() + 1);
+            var ultimoMes = limiteDia.toISOString().slice(0, 7);
+            months = months.filter(function(ym) { return ym <= ultimoMes; });
+        }
         var promises = [];
         for (var mi = 0; mi < months.length; mi++) promises.push(ensureMonth(months[mi]));
         await Promise.all(promises);

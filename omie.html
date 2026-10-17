@@ -3615,30 +3615,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 return acc;
             }, {});
 
-            // 4. Calcular a média de cada dia e classificar (real vs futuro)
+            // 4. Classificar os dias (real vs futuro). A média do mês pondera cada quarto de hora,
+            // como o resto da página (antes era a média das médias diárias).
             let precosFinaisDoMes = [];
             for (const diaStr in dadosAgrupados) {
-                // Apenas calcular média se houver dados (ignora dias só com 'null')
+                // Ignora dias só com 'null'
                 if (dadosAgrupados[diaStr].length > 0) {
-                    const mediaDia = calcularMedia(dadosAgrupados[diaStr]);
-                    if (mediaDia !== null) {
-                        precosFinaisDoMes.push(mediaDia);
+                    precosFinaisDoMes.push(...dadosAgrupados[diaStr]);
 
-                        // Classificar o dia
-                        const diaInputFormat = formatarDataParaInput(diaStr);
-                        if (diaInputFormat <= dataOMIEInputFormat) {
-                            diasReais.add(diaStr);
-                        } else {
-                            diasFuturos.add(diaStr);
-                        }
+                    // Classificar o dia
+                    const diaInputFormat = formatarDataParaInput(diaStr);
+                    if (diaInputFormat <= dataOMIEInputFormat) {
+                        diasReais.add(diaStr);
+                    } else {
+                        diasFuturos.add(diaStr);
                     }
                 }
             }
 
             const mediaFinalMes = calcularMedia(precosFinaisDoMes);
+            // O último dia com OMIE fica sem a última hora (23h–24h de PT, do leilão seguinte), que
+            // no CSV vem dos futuros: dizê-lo, em vez de o contar como um dia inteiro com OMIE
+            const ultimoDiaIncompleto = diasReais.has(dataOMIE)
+                && dadosDoMesCompleto.some(d => d.dia === dataOMIE && d.preco_pt !== null && d.preco_es === null);
+            const notaUltimo = ultimoDiaIncompleto ? ', o último até às 23h,' : '';
             let notaFuturos = '';
             if (diasFuturos.size > 0) {
-                notaFuturos = `(${diasReais.size} dias com OMIE e ${diasFuturos.size} dias com futuros)`;
+                notaFuturos = `(${diasReais.size} dias com OMIE${notaUltimo} e ${diasFuturos.size} dias com futuros)`;
             } else if (diasReais.size > 0) {
                 notaFuturos = `(mês com ${diasReais.size} dias)`;
             } else {

@@ -2287,8 +2287,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const sinalC = dConsumo <= 0 ? 'insight-delta-up' : 'insight-delta-down';
                     const setaR = dRenov >= 0 ? '▲' : '▼';
                     const setaC = dConsumo >= 0 ? '▲' : '▼';
-                    compHTML = `Vs. ${nDias} dia${nDias === 1 ? '' : 's'} anteriores ` +
-                        `(${new Date(iniAntISO + 'T00:00:00').toLocaleDateString('pt-PT')} a ${new Date(fimAntISO + 'T00:00:00').toLocaleDateString('pt-PT')}): ` +
+                    const fmtAnt = iso => new Date(iso + 'T00:00:00').toLocaleDateString('pt-PT');
+                    compHTML = (nDias === 1
+                        ? `Vs. dia anterior (${fmtAnt(iniAntISO)}): `
+                        : `Vs. ${nDias} dias anteriores (${fmtAnt(iniAntISO)} a ${fmtAnt(fimAntISO)}): `) +
                         `% renováveis <span class="${sinalR}">${setaR} ${formatarPT(Math.abs(dRenov), 1)}pp</span>, ` +
                         `consumo <span class="${sinalC}">${setaC} ${formatarPT(Math.abs(pctConsumo), 1)}%</span>.`;
                 }
@@ -2486,6 +2488,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (bal.aplicaBomb) notas.push('¹ Hídrica renovável: a energia já exclui a turbinagem de bombagem; a ponta inclui-a (não é separável a 15 min).');
         else notas.push('² Produção por Bombagem indisponível para parte do período (valor diário da REN só publicado após o fecho do dia).');
         notas.push('Ponta = máximo observado num intervalo de 15 min em qualquer dia do período. Energia = soma diária ao longo do período.');
+        notas.push('Consumo: valor publicado pela REN. Somando as parcelas da tabela (produção + saldo importador − consumo para armazenamento) obtém-se um pouco mais, cerca de 0,3 GWh por dia: a diferença já existe nos dados da REN.');
         notas.push('Fonte: REN — Repartição da Produção (15 min) e Balanço Diário.');
         const sub = document.getElementById('balanco-sub');
         if (sub) sub.textContent = periodoLabel;

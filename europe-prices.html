@@ -1672,6 +1672,14 @@ document.addEventListener('DOMContentLoaded', function() {
         "FR-COR": "FR",        // Corsega integra a zona FR no ENTSO-E
         "LU": "DE-LU"
     };
+    // Chave dos dados de uma zona (LU → DE-LU, IE → IE(SEM)...): é por esta que currentData está indexado.
+    function chaveDados(z) { return ZONE_DATA_MAP[z] || z; }
+    // Zona que é só outro nome da MESMA zona de dados, com o mesmo nome visível (IE = IE(SEM), as duas
+    // "Irlanda"): nas listas e nas preferências fica só a chave dos dados, para não aparecer repetida.
+    function zonaCanonica(z) {
+        var d = ZONE_DATA_MAP[z];
+        return (d && ZONE_NAMES[d] && zoneName(d) === zoneName(z)) ? d : z;
+    }
 
     // Fuso horario IANA por zona (para calcular offset vs UTC e mostrar
     // desfasamento entre zonas comparadas).
@@ -1913,20 +1921,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function getAggregatedIntradayStats(zone, period) {
         // Media por slot ao longo dos dias do periodo. Resolucao = a mais comum.
+        // Em hora de mercado usa a vista CET de cada dia (como o mapa e a tabela).
         var dataZone = ZONE_DATA_MAP[zone] || zone;
         var resCount = {};
         var dayList = datesInRange(period.start, period.end);
         var entries = [];
+        // Média do período ponderada pela duração de cada preço (igual à do mapa):
+        // a média dos 96 intervalos não serve quando falta algum intervalo num dos dias.
+        var somaPond = 0, minutos = 0;
         for (var i = 0; i < dayList.length; i++) {
             var ds = dayList[i];
-            var ym = ds.substring(0, 7);
-            var month = dataCache[ym];
-            if (!month || !month[ds]) continue;
-            var raw = month[ds][dataZone];
+            var raw;
+            if (_isMarketTime()) {
+                raw = getStatsZonaVista(zone, ds);
+            } else {
+                var month = dataCache[ds.substring(0, 7)];
+                raw = (month && month[ds]) ? month[ds][dataZone] : null;
+            }
             if (!raw || typeof raw === 'number' || !raw.values) continue;
-            var res = raw.resolution || 'PT60M';
-            resCount[res] = (resCount[res] || 0) + 1;
-            entries.push({ res: res, values: raw.values });
+            var resD = raw.resolution || 'PT60M';
+            var minD = resD === 'PT15M' ? 15 : (resD === 'PT30M' ? 30 : 60);
+            for (var vi = 0; vi < raw.values.length; vi++) {
+                if (raw.values[vi] == null || isNaN(raw.values[vi])) continue;
+                somaPond += raw.values[vi] * minD;
+                minutos += minD;
+            }
+            resCount[resD] = (resCount[resD] || 0) + 1;
+            entries.push({ res: resD, values: raw.values });
         }
         if (!entries.length) return null;
         var bestRes = Object.keys(resCount).sort(function(a, b) { return resCount[b] - resCount[a]; })[0];
@@ -1951,7 +1972,8 @@ document.addEventListener('DOMContentLoaded', function() {
             var mins = s * slot;
             labels.push(String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
         }
-        return { values: avg, resolution: bestRes, slotMinutes: slot, labels: labels };
+        return { values: avg, resolution: bestRes, slotMinutes: slot, labels: labels,
+                 mediaPeriodo: minutos ? somaPond / minutos : null };
     }
 
     // --- Formatacao numerica (pt-PT) ---
@@ -1961,6 +1983,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (v == null || isNaN(v)) return '—';
         if (dec == null) dec = 2;
         var out = Number(v).toFixed(dec);
+        if (/^-0(\.0+)?$/.test(out)) out = out.slice(1);   // -0,004 arredonda para "0,00", não "-0,00"
         return (DEC_SEP === ',') ? out.replace('.', ',') : out;
     }
     function fmtT(v, dec) {
@@ -1968,7 +1991,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dec == null) dec = 2;
         var s = Number(v).toFixed(dec);
         var sign = '';
-        if (s.charAt(0) === '-') { sign = '-'; s = s.slice(1); }
+        if (s.charAt(0) === '-') { s = s.slice(1); if (/[1-9]/.test(s)) sign = '-'; }
         var parts = s.split('.');
         var intPart = parts[0];
         if (intPart.length > 4) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, THOU_SEP);
@@ -2203,7 +2226,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Zona de referência (home zone): conduz a mensagem de comparação, a coluna Δ
     // da tabela e a zona inicial dos gráficos. Persistida; default PT; pode vir de ?ref=.
-    var refZone = (prefs && prefs.refZone && ZONE_NAMES[prefs.refZone]) ? prefs.refZone : 'PT';
+    var refZone = (prefs && prefs.refZone && ZONE_NAMES[prefs.refZone]) ? zonaCanonica(prefs.refZone) : 'PT';
 
     // Métrica mostrada no mapa: 'avg' (default), 'min', 'max' ou 'slot' (um
     // intervalo de 15 min à escolha). Persistida e partilhável via ?metric=/?slot=.
@@ -2292,6 +2315,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return out;
     }
+    // Pedidos de mês em curso: os vários blocos da página (mapa, gráficos, heatmaps) pedem os
+    // mesmos meses ao mesmo tempo no arranque, e sem isto cada um descarregava-os de novo
+    // (o mesmo ficheiro de ~1 MB chegava a ser pedido 5 vezes).
+    var _pedidosMes = {};
     async function ensureMonthsLoaded(months) {
         // Considera "por carregar" tanto inexistentes como falhados ha >5 min
         var now = Date.now();
@@ -2302,21 +2329,28 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         });
         if (!toLoad.length) return;
-        await Promise.all(toLoad.map(async function(ym) {
-            try {
-                var resp = await fetchComFallback(ym + ".json");
-                if (resp && resp.ok) {
-                    dataCache[ym] = await resp.json();
-                } else {
-                    // BUGFIX B2: não cachear 404s permanentemente. Marcar com
-                    // _failed para distinguir de "carregado vazio" e permitir
-                    // retry numa próxima chamada (ex: ao voltar ao tab via
-                    // visibilitychange auto-refresh).
-                    dataCache[ym] = { _failed: true, _at: Date.now() };
-                }
-            } catch (e) {
-                dataCache[ym] = { _failed: true, _at: Date.now() };
+        await Promise.all(toLoad.map(function(ym) {
+            if (!_pedidosMes[ym]) {
+                _pedidosMes[ym] = (async function() {
+                    try {
+                        var resp = await fetchComFallback(ym + ".json");
+                        if (resp && resp.ok) {
+                            dataCache[ym] = await resp.json();
+                        } else {
+                            // BUGFIX B2: não cachear 404s permanentemente. Marcar com
+                            // _failed para distinguir de "carregado vazio" e permitir
+                            // retry numa próxima chamada (ex: ao voltar ao tab via
+                            // visibilitychange auto-refresh).
+                            dataCache[ym] = { _failed: true, _at: Date.now() };
+                        }
+                    } catch (e) {
+                        dataCache[ym] = { _failed: true, _at: Date.now() };
+                    } finally {
+                        delete _pedidosMes[ym];
+                    }
+                })();
             }
+            return _pedidosMes[ym];
         }));
     }
 
@@ -2635,57 +2669,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return this._div;
     };
 
-    // Construir SVG sparkline para os últimos 7 dias (incluindo o atual)
-    function buildSparkline(zone, currentDateStr) {
-        var dataZone = ZONE_DATA_MAP[zone] || zone;
-        var partes = currentDateStr.split('-');
-        var cur = new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
-        var days = [];
-        for (var i = 6; i >= 0; i--) {
-            var d = new Date(cur);
-            d.setDate(d.getDate() - i);
-            var y = d.getFullYear();
-            var m = String(d.getMonth() + 1).padStart(2, '0');
-            var dd = String(d.getDate()).padStart(2, '0');
-            var ds = y + '-' + m + '-' + dd;
-            var ym = ds.substring(0, 7);
-            var monthData = dataCache[ym];
-            var v = null;
-            if (monthData && monthData[ds] && monthData[ds][dataZone] != null) {
-                var raw = monthData[ds][dataZone];
-                v = (typeof raw === 'number') ? raw : (raw.avg != null ? raw.avg : null);
-            }
-            days.push({ date: ds, value: v, label: dd + '/' + m });
-        }
-
-        var valid = days.filter(function(p) { return p.value != null; });
-        if (valid.length < 2) return '';
-
-        var w = 160, h = 40, pad = 4;
-        var vals = valid.map(function(p) { return p.value; });
-        var minV = Math.min.apply(null, vals);
-        var maxV = Math.max.apply(null, vals);
-        var range = maxV - minV || 1;
-        var stepX = (w - pad * 2) / (days.length - 1);
-
-        var pts = [];
-        var circles = '';
-        for (var k = 0; k < days.length; k++) {
-            var p = days[k];
-            if (p.value == null) continue;
-            var x = pad + k * stepX;
-            var y2 = h - pad - ((p.value - minV) / range) * (h - pad * 2);
-            pts.push(x.toFixed(1) + ',' + y2.toFixed(1));
-            var isLast = (k === days.length - 1);
-            circles += '<circle cx="' + x.toFixed(1) + '" cy="' + y2.toFixed(1) + '" r="' + (isLast ? 3 : 1.8) + '" fill="' + (isLast ? '#dc2626' : '#2563eb') + '"><title>' + p.label + ': ' + fmtN(p.value, 2) + ' €/MWh</title></circle>';
-        }
-        var path = '<polyline fill="none" stroke="#2563eb" stroke-width="1.5" points="' + pts.join(' ') + '"/>';
-        return '<div class="sparkline-wrap">'
-            + '<div class="sparkline-label">' + (LANG === 'en' ? 'Last 7 days (min ' : 'Últimos 7 dias (mín ') + fmtN(minV, 2) + (LANG === 'en' ? ' / max ' : ' / máx ') + fmtN(maxV, 2) + ')</div>'
-            + '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" class="sparkline">' + path + circles + '</svg>'
-            + '</div>';
-    }
-
     // Sparkline intradiaria (24h curve) com cores por preco e marcador de hora atual
     function buildIntradaySparkline(intra, dayStats) {
         if (!intra || !intra.values || !intra.values.length) return '';
@@ -2794,7 +2777,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += '<div class="stats-amplitude">' + T('ampPre') + fmtN(stats.max - stats.min, 2) + ' €/MWh</div>';
                 }
                 var curDate = document.getElementById('seletor-data').value;
-                // Em modo Diário, mostrar sparkline intradiária; em período, sparkline 7 dias.
+                // Em modo Diário, sparkline intradiária do dia; em período, a média de cada intervalo no período.
                 if (!isPeriodoMap && curDate) {
                     var intra = getZoneIntradayStats(zone, curDate);
                     if (intra) {
@@ -2987,7 +2970,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var main = (document.getElementById('global-zone-select') || {}).value;
         // Filtrar zonas inexistentes ou iguais a zona principal; deduplicate
         var seen = {};
-        return arr.filter(function(z) {
+        return arr.map(zonaCanonica).filter(function(z) {
             if (!ZONE_NAMES[z]) return false;
             if (z === main) return false;
             if (seen[z]) return false;
@@ -3066,7 +3049,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 : '<option value="">' + T('addCompare') + '</option>';
             for (var s = 0; s < sorted.length; s++) {
                 var zk = sorted[s];
-                if (zk === main || current.indexOf(zk) !== -1) continue;
+                if (zk === main || current.indexOf(zk) !== -1 || zonaCanonica(zk) !== zk) continue;
                 opts += '<option value="' + zk + '">' + zoneName(zk) + '</option>';
             }
             addSel.innerHTML = opts;
@@ -3218,17 +3201,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Zona de referência (refZone) — base da coluna Δ
+        // Zona de referência (refZone) — base da coluna Δ. currentData está pela chave dos
+        // dados (LU → DE-LU, GB-NIR → IE(SEM), FR-COR → FR).
+        var refKey = chaveDados(refZone);
         var refVal = null;
-        if (currentData[refZone] != null) {
-            refVal = (typeof currentData[refZone] === 'number') ? currentData[refZone] : (currentData[refZone].avg != null ? currentData[refZone].avg : null);
+        if (currentData[refKey] != null) {
+            refVal = (typeof currentData[refKey] === 'number') ? currentData[refKey] : (currentData[refKey].avg != null ? currentData[refKey].avg : null);
         }
 
         // Dia anterior (só Diário) para variação
-        var prevData = null;
+        var prevData = null, prevDs = null;
         if (!isPeriodo) {
             var prevD = parseDateStr(seletorData.value); prevD.setDate(prevD.getDate() - 1);
-            var prevDs = formatDateStr(prevD);
+            prevDs = formatDateStr(prevD);
             var prevYm = prevDs.substring(0, 7);
             prevData = (dataCache[prevYm] || {})[prevDs] || null;
         }
@@ -3253,14 +3238,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 // Δ vs zona de referência
                 var deltaPt = null, deltaPtPct = null;
-                if (refVal != null && zone !== refZone) {
+                if (refVal != null && zone !== refKey) {
                     deltaPt = stats.avg - refVal;
                     deltaPtPct = refVal !== 0 ? (deltaPt / refVal * 100) : null;
                 }
                 // Variação vs dia anterior
                 var varDia = null, varDiaPct = null;
-                if (!isPeriodo && prevData && prevData[zone] != null) {
-                    var prevRaw = prevData[zone];
+                // Em hora de mercado, o dia anterior também tem de estar em CET (como o de hoje)
+                var prevRaw = isPeriodo ? null
+                    : (_isMarketTime() ? getStatsZonaVista(zone, prevDs) : (prevData ? prevData[zone] : null));
+                if (prevRaw != null) {
                     var prevAvg = (typeof prevRaw === 'number') ? prevRaw : (prevRaw.avg != null ? prevRaw.avg : null);
                     if (prevAvg != null) {
                         varDia = stats.avg - prevAvg;
@@ -3355,7 +3342,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var partialMark = e.partial ? ' <span class="partial-badge" title="' + T('partialDataPre') + e.partialKnown + '/' + e.partialTotal + T('slotsWord') + '">' + T('partialBadge') + '</span>' : '';
             var avgTitle = e.partial ? (T('avgTitlePartialPre') + e.partialKnown + '/' + e.partialTotal + T('avgTitlePartialSuf')) : T('avgTitleDaily');
             html += '<td class="price-cell num' + negCls(e.avg) + '" title="' + avgTitle + '">' + fmtN(e.avg, 2) + partialMark + '</td>';
-            if (showDeltaPt) html += '<td class="num" title="' + T('tdDeltaTitle') + '">' + (e.zone === refZone ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
+            if (showDeltaPt) html += '<td class="num" title="' + T('tdDeltaTitle') + '">' + (e.zone === refKey ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
             if (showVarDia) html += '<td class="num" title="' + T('tdVarTitle') + '">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
             html += '<td class="num' + negCls(e.min) + '" title="' + T('tdMinTitle') + '">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
             var horaTipPrefix = _isMarketTime() ? T('hrCetPrefix') : T('hrLocalPrefix');
@@ -3717,6 +3704,12 @@ document.addEventListener('DOMContentLoaded', function() {
             months.unshift((year - 1) + '-12');
             months.push((year + 1) + '-01');
         }
+        // Os meses depois do último dia publicado (+1 dia: a 1.ª hora das zonas CET+1) ainda
+        // não existem no servidor — pedi-los só dava erros 404.
+        if (ultimaDataDisponivel) {
+            var ultimoMes = _isoNextDate(ultimaDataDisponivel, 1).substring(0, 7);
+            months = months.filter(function(ym) { return ym <= ultimoMes; });
+        }
         await ensureMonthsLoaded(months);
 
         // Recolher valores
@@ -3727,6 +3720,9 @@ document.addEventListener('DOMContentLoaded', function() {
             var monthData = dataCache[ym] || {};
             for (var ds in monthData) {
                 if (!monthData.hasOwnProperty(ds)) continue;
+                // Depois do último dia publicado, os dados só trazem a 1.ª hora local das zonas
+                // em CET+1 (vem do leilão da véspera): não é um dia, fica de fora.
+                if (ultimaDataDisponivel && ds > ultimaDataDisponivel) continue;
                 // Em modo mercado, usa a vista CET-shifted; senão raw
                 var raw = _isMarketTime() ? getStatsZonaVista(zone, ds) : monthData[ds][dataZone];
                 if (raw == null) continue;
@@ -4327,9 +4323,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         if (avgLineData && avgLineData.length) {
-            // Cor da linha = cor da MÉDIA do período (para que o utilizador
-            // identifique visualmente a "altura média"). Espessura ~3x MA7/MA30.
-            var avgColor = (periodAvg != null) ? getColor(periodAvg) : '#475569';
+            // Cor fixa (cinzento-ardósia; o cores-graficos.js clareia-a no tema
+            // escuro) com o contorno do contornoLinhaPlugin, que a destaca sobre
+            // barras de qualquer cor. Espessura ~3x MA7/MA30.
+            var avgColor = '#475569';
             datasets.push({
                 type: 'line',
                 label: T('legDailyLine'),
@@ -4500,7 +4497,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             months = monthsInRange(period.start, period.end);
         }
-        await ensureMonthsLoaded(months);
+        // Em hora de mercado, a vista CET precisa do dia anterior/seguinte (zonas WET/EET)
+        await ensureMonthsLoaded(_addAdjacentMonths(months, period.start, period.end));
 
         var intra1 = isDiario
             ? getZoneIntradayStats(zone, seletorData.value)
@@ -4636,7 +4634,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!vv.length) return label + ': ' + T('noData');
                 var mn = Math.min.apply(null, vv);
                 var mx = Math.max.apply(null, vv);
-                var av = vv.reduce(function(a, b) { return a + b; }, 0) / vv.length;
+                // No período, a média é a do período (a mesma do mapa), não a dos 96 intervalos médios
+                var av = (intra.mediaPeriodo != null) ? intra.mediaPeriodo
+                    : vv.reduce(function(a, b) { return a + b; }, 0) / vv.length;
                 return label + ': ' + T('stAvg') + ' ' + fmtSigned(av) + ' · ' + T('stMin') + ' ' + fmtSigned(mn) + ' · ' + T('stMax') + ' ' + fmtSigned(mx) + ' €/MWh';
             };
             var lines = [];
@@ -5368,8 +5368,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var prevDay = parseDateStr(dateStr); prevDay.setDate(prevDay.getDate() - 1);
         var prevDayMonth = formatDateStr(prevDay).substring(0, 7);
         var allMonths = months.concat(sparkMonths).concat([prevDayMonth]).filter(function(v, i, a) { return a.indexOf(v) === i; });
-        // Em modo mercado, carregar também D-1 (para WET zones) e D+1 (para EET zones) do período
-        allMonths = _addAdjacentMonths(allMonths, period.start, period.end);
+        // Em modo mercado, carregar também D-1 (para WET zones) e D+1 (para EET zones) do período;
+        // no Diário, a partir da véspera (a variação vs ontem também usa a vista CET da véspera)
+        var inicioCarga = formatDateStr(prevDay) < period.start ? formatDateStr(prevDay) : period.start;
+        allMonths = _addAdjacentMonths(allMonths, inicioCarga, period.end);
         await ensureMonthsLoaded(allMonths);
 
         // Construir currentData
@@ -5495,8 +5497,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var sum = 0; for (var i = 0; i < entries.length; i++) sum += entries[i].avg;
         var media = sum / entries.length;
 
-        var refVal = currentData[refZone] != null
-            ? ((typeof currentData[refZone] === 'number') ? currentData[refZone] : currentData[refZone].avg)
+        var refRaw = currentData[chaveDados(refZone)];
+        var refVal = refRaw != null
+            ? ((typeof refRaw === 'number') ? refRaw : refRaw.avg)
             : null;
 
         var prefix;
@@ -6053,17 +6056,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 var optsHtml = '';
                 for (var z = 0; z < zonesSorted.length; z++) {
                     var zk = zonesSorted[z];
-                    optsHtml += '<option value="' + zk + '">' + zoneName(zk) + '</option>';
+                    if (zonaCanonica(zk) !== zk) continue;   // IE = IE(SEM): uma só "Irlanda"
+                    optsHtml +='<option value="' + zk + '">' + zoneName(zk) + '</option>';
                 }
                 zoneSel.innerHTML = optsHtml;
                 var _urlParams = new URLSearchParams(window.location.search);
                 // Zona de referência: ?ref= > pref guardada > PT
                 var urlRef = _urlParams.get('ref');
-                if (urlRef && ZONE_NAMES[urlRef]) { refZone = urlRef; savePref('refZone', refZone); }
+                if (urlRef && ZONE_NAMES[urlRef]) { refZone = zonaCanonica(urlRef); savePref('refZone', refZone); }
                 // Zona dos gráficos: ?zone= > última zona navegada > zona de referência
                 zoneSel.value = refZone;
                 var urlZone = _urlParams.get('zone') || prefs.zone;
-                if (urlZone && ZONE_NAMES[urlZone]) zoneSel.value = urlZone;
+                if (urlZone && ZONE_NAMES[urlZone]) zoneSel.value = zonaCanonica(urlZone);
                 // Seletor da zona de referência (topo) — conduz comparação, coluna Δ e gráficos
                 var refSel = document.getElementById('ref-zone-select');
                 if (refSel) {
@@ -6094,7 +6098,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var urlCompare = _urlParams.get('compare');
                 if (urlCompare) {
                     var validCmp = urlCompare.split(',')
-                        .map(function(s) { return s.trim(); })
+                        .map(function(s) { return zonaCanonica(s.trim()); })
                         .filter(function(s, i, arr) {
                             return s && s !== zoneSel.value && ZONE_NAMES[s] && arr.indexOf(s) === i;
                         })
