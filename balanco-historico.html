@@ -1104,6 +1104,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const dia = (r['dia'] || '').trim();
                 const intervalo = (r['intervalo'] || '').trim();
                 if (dia && intervalo) idx.set(dia + '' + intervalo, { pt: r['preco_pt'], es: r['preco_es'] });
+                // Também pelo data_utc: no último domingo de outubro o 'intervalo' da hora
+                // 01:00–02:00 repete-se e, só por ele, a 2.ª passagem escrevia por cima da 1.ª
+                const utc = (r['data_utc'] || '').trim();
+                if (utc) idx.set(utc, { pt: r['preco_pt'], es: r['preco_es'] });
             }
         } catch (e) {
             console.warn('OMIE indisponível para ' + ano + ':', e);
@@ -1138,9 +1142,12 @@ document.addEventListener('DOMContentLoaded', function() {
             throw e;
         }
         const linhas = parseCSV(txt);
-        // Juntar o preço OMIE (pt/es) a cada intervalo de 15 min, por dia+intervalo.
+        // Juntar o preço OMIE (pt/es) a cada intervalo de 15 min: pelo data_utc quando os dois
+        // ficheiros o têm, senão por dia+intervalo (ficheiros sem a coluna).
         for (const r of linhas) {
-            const o = omieIdx.get((r['dia'] || '').trim() + '' + (r['intervalo'] || '').trim());
+            const utc = (r['data_utc'] || '').trim();
+            const o = (utc && omieIdx.get(utc)) ||
+                      omieIdx.get((r['dia'] || '').trim() + '' + (r['intervalo'] || '').trim());
             if (o) { r._pt = o.pt; r._es = o.es; }
         }
         const diario = indexarPorDiaEAgregar(linhas);

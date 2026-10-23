@@ -1339,9 +1339,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Junta pelo data_utc quando os dois ficheiros o têm: no último domingo de outubro a
+        // hora 01:00–02:00 repete-se e, pelo 'intervalo', as duas passagens apanhavam o mesmo
+        // preço. Sem data_utc num deles (ficheiros antigos), fica o 'intervalo'.
+        const porUtc = dadosProducaoDoDia.length > 0 && !!dadosProducaoDoDia[0].data_utc &&
+                       dadosOmieDoDia.length > 0 && !!dadosOmieDoDia[0].data_utc;
         const dadosConjugados = [];
         for (const prodReg of dadosProducaoDoDia) {
-            const omieReg = dadosOmieDoDia.find(d => d.intervalo === prodReg.intervalo);
+            const omieReg = porUtc ? dadosOmieDoDia.find(d => d.data_utc === prodReg.data_utc)
+                                   : dadosOmieDoDia.find(d => d.intervalo === prodReg.intervalo);
             if (omieReg) {
                 dadosConjugados.push({ ...omieReg, ...prodReg });
             } else {

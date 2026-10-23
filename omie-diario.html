@@ -728,7 +728,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const lines = text.trim().split('\n'); if (lines[0].charCodeAt(0) === 0xFEFF) { lines[0] = lines[0].substring(1); }
         const headers = lines.shift().split(',').map(h => h.trim());
         const precos = lines.map(line => {
-            const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || []; const row = {};
+            // split e não a regex antiga, que saltava campos vazios: com o data_utc no fim, um
+            // preco_es vazio (dias estimados) fazia ler a data como preço
+            const values = line.split(','); const row = {};
             headers.forEach((header, index) => { let value = (values.length > index && values[index]) ? values[index].trim() : ''; if (value.startsWith('"') && value.endsWith('"')) { value = value.substring(1, value.length - 1); } if (header === 'preco_pt' || header === 'preco_es') { row[header] = (value && value !== "") ? parseFloat(value) : null; } else { row[header] = value; } });
              try { const [dia, mes, ano] = row.dia.split('/'); const [horaInicioStr] = row.intervalo.substring(1).split('-'); const [horaInicio, minInicio] = horaInicioStr.split(':'); row.timestamp = Date.UTC(parseInt(ano), parseInt(mes)-1, parseInt(dia), parseInt(horaInicio), parseInt(minInicio)); row.localTimestamp = new Date(row.timestamp); } catch(e) { row.timestamp = null; row.localTimestamp = null; }
             return row;
