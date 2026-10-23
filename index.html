@@ -57,7 +57,7 @@
         "Simulador de tarifários de eletricidade (fixos e indexados ao OMIE)",
         "Análise de diagramas de carga da E-Redes hora a hora",
         "Simulador de tarifários de gás natural",
-        "Simulador dual (eletricidade + gás) com ofertas de pacote conjunto — versão beta",
+        "Simulador dual (eletricidade + gás) com ofertas de pacote conjunto",
         "Códigos amigo (referral) de eletricidade e gás",
         "Simulador de autoconsumo solar fotovoltaico com PVGIS",
         "Comparação de propostas comerciais e cálculo de Payback",
@@ -140,8 +140,8 @@
                 <a href="gas-natural-tiagofelicia" class="button-link">Poupar no Gás</a>
             </div>
             <div class="simulator-card">
-                <h3>⚡🔥 Simulador Dual<span class="title-extra"> (Eletricidade + Gás)</span> <span class="badge-beta">beta</span></h3>
-                <p>Encontre a combinação de eletricidade e gás mais barata para a sua casa.<span class="desc-extra"> Inclui as ofertas DUAL, com preços próprios para pacotes conjuntos. <strong>Está em versão beta:</strong> os resultados podem ainda ter erros e a base de ofertas dual está a crescer — agradeço que me reporte qualquer problema.</span></p>
+                <h3>⚡🔥 Simulador Dual<span class="title-extra"> (Eletricidade + Gás)</span></h3>
+                <p>Encontre a combinação de eletricidade e gás mais barata para a sua casa.<span class="desc-extra"> Inclui as ofertas DUAL, com preços próprios para pacotes conjuntos.</span></p>
                 <a href="dual-tiagofelicia" class="button-link">Comparar Dual</a>
             </div>
             <div class="simulator-card">
@@ -339,7 +339,9 @@
     function preencherOMIE(tile, dia) {
         if (!tile) return false;
         var pt = dia && dia.pt;
-        setTexto(tile, '.painel-tile-data', dia && dia.data ? '· ' + dataPT(dia.data) : '');
+        // No último dia publicado a última hora (23h–24h) ainda não é conhecida e fica de fora
+        var parcial = dia && typeof dia.intervalos_reais === 'number' && dia.intervalos_reais < dia.intervalos;
+        setTexto(tile, '.painel-tile-data', dia && dia.data ? '· ' + dataPT(dia.data) + (parcial ? ' · até às 23h' : '') : '');
         if (!pt || typeof pt.medio !== 'number' || dia.real === false) {
             setTexto(tile, '.painel-tile-valor b', '—');
             setTexto(tile, '.painel-tile-sub', 'Ainda não publicado pelo OMIE (habitualmente a partir das 13h30)');

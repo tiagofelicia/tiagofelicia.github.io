@@ -631,6 +631,9 @@ nav > ul > li:hover > .dropdown-content {
 /* Empurra o botão para o fundo, alinhando-os entre cartões */
 .home-grid > .simulator-card p { flex: 1; }
 .home-grid > .simulator-card .button-link { align-self: center; }
+/* Títulos dos cartões um pouco mais pequenos (era 1,17em, o h3 por omissão): «⚡🔥 Simulador Dual
+   (Eletricidade + Gás)» cabe numa linha */
+.home-grid > .simulator-card h3 { font-size: 1.05em; }
 
 /* Selo "beta" nos cartões */
 .badge-beta {
@@ -889,12 +892,13 @@ nav > ul > li:hover > .dropdown-content {
 
 .hero-section {
     text-align: center;
-    padding: 60px 20px;
+    padding: 24px 20px;
     background-color: #f8f9fa; /* Um cinzento muito claro */
 }
 
 .hero-section h1 {
-    font-size: 2.5em;
+    font-size: 2.1875em; /* a meio entre os 2,5em de origem e 1,875em */
+    margin-top: 0;
     margin-bottom: 10px;
     color: #333;
 }
@@ -903,8 +907,7 @@ nav > ul > li:hover > .dropdown-content {
     font-size: 1.2em;
     color: #555;
     max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 .secondary-tools {
@@ -1811,6 +1814,24 @@ li.dropdown:focus-within > .mega-dropdown {
     width: 1px;
     background: rgba(74, 98, 122, 0.5);
     align-self: stretch;
+}
+
+/* Entre 769 e 1020 px o menu não cabia numa linha: os primeiros itens ficavam cortados à
+   esquerda e o resto alargava a página. Letra e margens um pouco menores e, se mesmo
+   assim não couber, uma 2.ª linha. */
+@media (min-width: 769px) and (max-width: 1020px) {
+    nav > ul { flex-wrap: wrap; }
+    nav > ul > li > a { padding: 1em 9px; font-size: 14px; }
+}
+
+/* Até 1365 px os submenus dos últimos itens (Recursos, Regulação, Projeto) abrem para a
+   esquerda, alinhados pelo fim do item: mesmo escondidos (visibility: hidden) ocupam
+   espaço e saíam do ecrã, o que dava a barra horizontal em todas as páginas. */
+@media (min-width: 769px) and (max-width: 1365px) {
+    nav > ul > li:nth-last-child(-n+3) > .dropdown-content { left: auto; right: 0; }
+    .mega-dropdown { left: auto; right: 0; transform: translateY(8px); }
+    li.dropdown:hover > .mega-dropdown,
+    li.dropdown:focus-within > .mega-dropdown { transform: translateY(0); }
 }
 
 /* === MOBILE: CSS completo === */
