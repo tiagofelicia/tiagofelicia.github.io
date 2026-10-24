@@ -1816,6 +1816,92 @@ document.addEventListener('DOMContentLoaded', function() {
     var SLOT_MIN = 15;
     var SLOTS_DIA = 24 * 60 / SLOT_MIN;   // 96
 
+    // --- DIAS DE MUDANÇA DE HORA ---
+    // Num dia de mudança de hora, 'values' pode vir em dois formatos: a grelha de 96 posições
+    // pela hora local (a antiga, que perde a 2.ª passagem pela hora que se repete e preenche a
+    // que não existe) ou o comprimento real (92 ou 100 quartos de hora, pela ordem do tempo desde
+    // a meia-noite local). Nos outros dias coincidem. Estas funções distinguem os dois pelo
+    // comprimento e só fazem contas com o fuso nos dias em que ele não é 1440 minutos.
+
+    // Fuso em que está um 'values': o da zona em hora local; o de Berlim (CET) em hora de mercado
+    function _tzVista(zone) {
+        if (_isMarketTime()) return 'Europe/Berlin';
+        return ZONE_TZ[zone] || ZONE_TZ[ZONE_DATA_MAP[zone]] || 'Europe/Berlin';
+    }
+    function _slotMinDe(stats) {
+        var r = (stats && stats.resolution) || 'PT60M';
+        return r === 'PT15M' ? 15 : (r === 'PT30M' ? 30 : 60);
+    }
+    // Data e hora do relógio de 'tz' num instante (ms)
+    function _relogio(ms, tz) {
+        var c = _relogio.fmt || (_relogio.fmt = {});
+        var f = c[tz] || (c[tz] = new Intl.DateTimeFormat('en-GB', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }));
+        var p = {};
+        f.formatToParts(new Date(ms)).forEach(function(x) { p[x.type] = x.value; });
+        return { dia: p.year + '-' + p.month + '-' + p.day, mins: (parseInt(p.hour, 10) % 24) * 60 + parseInt(p.minute, 10) };
+    }
+    // Meia-noite local de 'dateStr' (AAAA-MM-DD) em 'tz', em ms. A mudança de hora nunca é à
+    // meia-noite, por isso basta procurar, à volta das 00:00 UTC, a hora certa que dá 00:00 local.
+    function _meiaNoite(dateStr, tz) {
+        var c = _meiaNoite.c || (_meiaNoite.c = {}), k = dateStr + '|' + tz;
+        if (c[k] !== undefined) return c[k];
+        var p = dateStr.split('-'), base = Date.UTC(+p[0], +p[1] - 1, +p[2]), r = NaN;
+        for (var h = -4; h <= 2 && isNaN(r); h++) {
+            var x = _relogio(base + h * 3600000, tz);
+            if (x.dia === dateStr && x.mins === 0) r = base + h * 3600000;
+        }
+        return (c[k] = r);
+    }
+    // Minutos do dia local: 1380 e 1500 nos dias de mudança de hora, 1440 nos outros
+    function _minutosDia(dateStr, tz) {
+        var a = _meiaNoite(dateStr, tz), b = _meiaNoite(_isoNextDate(dateStr, 1), tz);
+        return (isNaN(a) || isNaN(b)) ? 1440 : Math.round((b - a) / 60000);
+    }
+    // Hora do relógio (minutos desde as 00:00) de cada posição de um dia com o comprimento real;
+    // null se 'n' posições não forem o comprimento real desse dia (grelha ou dia normal).
+    function _relogioPosicoes(n, slotMin, dateStr, tz) {
+        if (!n || n * slotMin === 1440 || n * slotMin !== _minutosDia(dateStr, tz)) return null;
+        var c = _relogioPosicoes.c || (_relogioPosicoes.c = {}), k = dateStr + '|' + tz + '|' + slotMin;
+        if (c[k]) return c[k];
+        var ini = _meiaNoite(dateStr, tz), out = [];
+        for (var i = 0; i < n; i++) out.push(_relogio(ini + i * slotMin * 60000, tz).mins);
+        return (c[k] = out);
+    }
+    // 'values' na grelha da hora do relógio (1440 / slotMin posições). Num dia com o comprimento
+    // real, a hora que se repete fica com a média das duas passagens e a que não existe a null;
+    // em todos os outros casos devolve 'values' tal como está.
+    function _grelhaRelogio(values, slotMin, dateStr, tz) {
+        var pos = values ? _relogioPosicoes(values.length, slotMin, dateStr, tz) : null;
+        if (!pos) return values;
+        var c = _grelhaRelogio.c || (_grelhaRelogio.c = new WeakMap());
+        var porTz = c.get(values) || {};
+        if (porTz[tz]) return porTz[tz];
+        var n = 1440 / slotMin, soma = new Array(n).fill(0), cont = new Array(n).fill(0);
+        for (var i = 0; i < values.length; i++) {
+            if (values[i] == null || isNaN(values[i])) continue;
+            var j = Math.floor(pos[i] / slotMin);
+            soma[j] += values[i]; cont[j]++;
+        }
+        porTz[tz] = soma.map(function(s, j) { return cont[j] ? s / cont[j] : null; });
+        c.set(values, porTz);
+        return porTz[tz];
+    }
+    // Etiqueta 'HH:MM' da posição i: pela posição numa grelha ou num dia normal; pelo relógio num
+    // dia com o comprimento real, com ' (2.ª)' na 2.ª passagem pela hora que se repete
+    function _etiquetaPosicao(i, n, slotMin, dateStr, tz) {
+        var pos = _relogioPosicoes(n, slotMin, dateStr, tz);
+        var mins = pos ? pos[i] : i * slotMin;
+        var t = String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0');
+        var porHora = 60 / slotMin;
+        if (pos && i >= porHora && pos[i - porHora] === mins) t += (LANG === 'en' ? ' (2nd)' : ' (2.ª)');
+        return t;
+    }
+    function _etiquetasDia(n, slotMin, dateStr, tz) {
+        var out = [];
+        for (var i = 0; i < n; i++) out.push(_etiquetaPosicao(i, n, slotMin, dateStr, tz));
+        return out;
+    }
+
     function slotLabelFor(idx) {
         var ini = idx * SLOT_MIN;
         var fim = ini + SLOT_MIN;
@@ -1850,10 +1936,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Valor de uma zona no slot selecionado. Usa 'values' (modo Diário) ou
     // 'slotValues' (média por slot ao longo do período, modos agregados).
-    function valorNoSlot(stats, idx) {
+    // Com 'zone', os 'values' de um dia com o comprimento real passam à grelha do relógio.
+    function valorNoSlot(stats, idx, zone) {
         if (!stats || typeof stats === 'number') return null;
         var vals = stats.slotValues || stats.values;
         if (!vals || !vals.length) return null;
+        if (!stats.slotValues && zone && currentMode === 'diario' && seletorData && seletorData.value) {
+            vals = _grelhaRelogio(vals, _slotMinDe(stats), seletorData.value, _tzVista(zone));
+        }
         var j = Math.floor(idx * vals.length / SLOTS_DIA);
         if (j >= vals.length) j = vals.length - 1;
         var v = vals[j];
@@ -1866,7 +1956,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (val === null || val === undefined) return null;
         if (typeof val === 'number') return val;  // formato antigo
         // Métrica do mapa: min/max/slot com fallback para a média se não existirem.
-        if (mapMetric === 'slot') return valorNoSlot(val, mapSlot);
+        if (mapMetric === 'slot') return valorNoSlot(val, mapSlot, zone);
         if (mapMetric === 'min' && val.min != null) return val.min;
         if (mapMetric === 'max' && val.max != null) return val.max;
         return val.avg;
@@ -1911,13 +2001,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         var res = raw.resolution || 'PT60M';
         var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
-        var n = raw.values.length;
-        var labels = [];
-        for (var i = 0; i < n; i++) {
-            var mins = i * slot;
-            labels.push(String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
-        }
-        return { values: raw.values.slice(), resolution: res, slotMinutes: slot, labels: labels };
+        // Em hora de mercado todas as zonas partilham os instantes do dia CET, por isso ficam os
+        // valores reais (92/100 nos dias de mudança de hora). Em hora local passam à grelha do
+        // relógio, para as zonas comparadas, de fusos diferentes, ficarem alinhadas pela hora.
+        var tz = _tzVista(zone);
+        var values = _isMarketTime() ? raw.values : _grelhaRelogio(raw.values, slot, dateStr, tz);
+        // Média, mínimo e máximo do dia pelos valores reais (na grelha, a hora que se repete é média)
+        var reais = raw.values.filter(function(v) { return v != null && !isNaN(v); });
+        return { values: values.slice(), resolution: res, slotMinutes: slot,
+                 labels: _etiquetasDia(values.length, slot, dateStr, tz),
+                 mediaDia: reais.length ? reais.reduce(function(a, b) { return a + b; }, 0) / reais.length : null,
+                 minDia: reais.length ? Math.min.apply(null, reais) : null,
+                 maxDia: reais.length ? Math.max.apply(null, reais) : null };
     }
     function getAggregatedIntradayStats(zone, period) {
         // Media por slot ao longo dos dias do periodo. Resolucao = a mais comum.
@@ -1947,7 +2042,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 minutos += minD;
             }
             resCount[resD] = (resCount[resD] || 0) + 1;
-            entries.push({ res: resD, values: raw.values });
+            // Média por intervalo do relógio: cada dia na grelha da hora local (ou CET)
+            entries.push({ res: resD, values: _grelhaRelogio(raw.values, minD, ds, _tzVista(zone)) });
         }
         if (!entries.length) return null;
         var bestRes = Object.keys(resCount).sort(function(a, b) { return resCount[b] - resCount[a]; })[0];
@@ -2143,8 +2239,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return {
             avg: sum / validVals.length,
             min: minV, max: maxV,
-            min_hour: minIdx >= 0 ? _slotIdxToTime(minIdx, slotMin) : '',
-            max_hour: maxIdx >= 0 ? _slotIdxToTime(maxIdx, slotMin) : '',
+            // Pela hora do relógio CET: num dia com o comprimento real, a posição não chega
+            min_hour: minIdx >= 0 ? _etiquetaPosicao(minIdx, values.length, slotMin, dateStr, 'Europe/Berlin') : '',
+            max_hour: maxIdx >= 0 ? _etiquetaPosicao(maxIdx, values.length, slotMin, dateStr, 'Europe/Berlin') : '',
             values: values,
             resolution: res
         };
@@ -2399,11 +2496,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Acumular por intervalo de 15 min (grelha fixa de 96 slots) para
                 // suportar a métrica "slot" também nos modos agregados.
                 if (stats.values && stats.values.length) {
-                    var vlen = stats.values.length;
+                    // Pela hora do relógio: num dia com o comprimento real (92/100), a hora que se
+                    // repete conta com a média das duas passagens e a que não existe fica de fora
+                    var vgr = _grelhaRelogio(stats.values, _slotMinDe(stats), ds, _tzVista(zone));
+                    var vlen = vgr.length;
                     for (var sIdx = 0; sIdx < SLOTS_DIA; sIdx++) {
                         var nativeIdx = Math.floor(sIdx * vlen / SLOTS_DIA);
                         if (nativeIdx >= vlen) nativeIdx = vlen - 1;
-                        var sv = stats.values[nativeIdx];
+                        var sv = vgr[nativeIdx];
                         if (sv == null || isNaN(sv)) continue;
                         perZone[zone].slotSum[sIdx] += sv;
                         perZone[zone].slotCnt[sIdx] += 1;
@@ -2706,6 +2806,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var marks = '';
         if (dayStats && dayStats.min_hour && dayStats.max_hour) {
             var labelToIdx = function(lbl) {
+                var porEtiqueta = intra.labels ? intra.labels.indexOf(lbl) : -1;
+                if (porEtiqueta >= 0) return porEtiqueta;
                 var p = lbl.split(':');
                 if (p.length < 2) return -1;
                 var totalMin = parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
@@ -2760,7 +2862,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (mapMetric === 'slot') {
                     // Métrica por intervalo de 15 min: o valor grande é o do slot
                     // escolhido; a média do dia/período desce para o detalhe.
-                    var vSlot = valorNoSlot(stats, mapSlot);
+                    var vSlot = valorNoSlot(stats, mapSlot, zone);
                     html += '<div class="period-label">' + (isPeriodoMap ? T('slotInfoAvgPre') : T('slotInfoPre')) + slotLabelFor(mapSlot) + '</div>';
                     html += '<div class="price-value">' + (vSlot == null ? T('slotNoData') : (fmtN(vSlot, 2) + ' €/MWh')) + '</div>';
                     html += '<div class="stats-detail">' + T('stAvg') + ': ' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
@@ -4632,10 +4734,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!intra || !intra.values) return '';
                 var vv = intra.values.filter(function(v) { return v != null; });
                 if (!vv.length) return label + ': ' + T('noData');
-                var mn = Math.min.apply(null, vv);
-                var mx = Math.max.apply(null, vv);
+                // No dia, pelos valores reais (na grelha do relógio a hora que se repete é média)
+                var mn = (intra.minDia != null) ? intra.minDia : Math.min.apply(null, vv);
+                var mx = (intra.maxDia != null) ? intra.maxDia : Math.max.apply(null, vv);
                 // No período, a média é a do período (a mesma do mapa), não a dos 96 intervalos médios
                 var av = (intra.mediaPeriodo != null) ? intra.mediaPeriodo
+                    : (intra.mediaDia != null) ? intra.mediaDia
                     : vv.reduce(function(a, b) { return a + b; }, 0) / vv.length;
                 return label + ': ' + T('stAvg') + ' ' + fmtSigned(av) + ' · ' + T('stMin') + ' ' + fmtSigned(mn) + ' · ' + T('stMax') + ' ' + fmtSigned(mx) + ' €/MWh';
             };
@@ -4771,12 +4875,14 @@ document.addEventListener('DOMContentLoaded', function() {
             var res = raw.resolution || 'PT60M';
             var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
             var perHour = 60 / slot;
+            // Por hora do relógio (num dia de mudança de hora com o comprimento real, a posição não chega)
+            var vals = _grelhaRelogio(raw.values, slot, ds, _tzVista(zone));
             for (var hh = 0; hh < 24; hh++) {
                 var s = 0, c = 0;
                 for (var qq = 0; qq < perHour; qq++) {
                     var idx = hh * perHour + qq;
-                    if (idx < raw.values.length && raw.values[idx] != null) {
-                        s += raw.values[idx]; c++;
+                    if (idx < vals.length && vals[idx] != null) {
+                        s += vals[idx]; c++;
                     }
                 }
                 if (c > 0) {
@@ -5014,12 +5120,14 @@ document.addEventListener('DOMContentLoaded', function() {
             var res = raw.resolution || 'PT60M';
             var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
             var perHour = 60 / slot;  // 4, 2 ou 1
+            // Por hora do relógio (num dia de mudança de hora com o comprimento real, a posição não chega)
+            var vals = _grelhaRelogio(raw.values, slot, ds, _tzVista(zone));
             for (var hh = 0; hh < 24; hh++) {
                 var sum = 0, count = 0, hasNull = false;
                 for (var qq = 0; qq < perHour; qq++) {
                     var idx = hh * perHour + qq;
-                    if (idx < raw.values.length) {
-                        if (raw.values[idx] != null) { sum += raw.values[idx]; count++; }
+                    if (idx < vals.length) {
+                        if (vals[idx] != null) { sum += vals[idx]; count++; }
                         else hasNull = true;
                     }
                 }
@@ -5450,11 +5558,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var faltaRef = showProv, faltaAlguma = showProv;
         if (showProv && slotMode) {
             var stRef = getZoneStats(refZone);
-            faltaRef = !!(isPartial(stRef) && valorNoSlot(stRef, mapSlot) == null);
+            faltaRef = !!(isPartial(stRef) && valorNoSlot(stRef, mapSlot, refZone) == null);
             faltaAlguma = false;
             for (var z in currentData) {
                 if (!currentData.hasOwnProperty(z)) continue;
-                if (isPartial(currentData[z]) && valorNoSlot(currentData[z], mapSlot) == null) { faltaAlguma = true; break; }
+                if (isPartial(currentData[z]) && valorNoSlot(currentData[z], mapSlot, z) == null) { faltaAlguma = true; break; }
             }
         }
         var avisoEl = document.getElementById('aviso-provisorio');
