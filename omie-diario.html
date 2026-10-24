@@ -989,14 +989,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const dadosHorarios = []; 
         let qh_idx = 0; 
-        const numHoras = Math.ceil(dadosDoDiaCompleto.length / 4);
+        // Sempre 24 linhas: com ceil(92/4) = 23 a hora 23:00–24:00 do dia de março ficava de fora.
+        const numHoras = 24;
+        // A hora que se repete (outubro) ou falta (março) é a 01h em Portugal e a 02h em CET
+        const hMudanca = emCET ? 2 : 1;
 
         for (let h = 0; h < numHoras; h++) { 
             let nq = 4; 
             let hFim = String(h + 1).padStart(2,'0'); 
             if (hFim === '24') hFim = '00'; 
             const hLbl = `[${String(h).padStart(2, '0')}:00-${hFim}:00[`; 
-            if (dadosDoDiaCompleto.length === 100 && h === 1) nq = 8; 
+            if (dadosDoDiaCompleto.length === 100 && h === hMudanca) nq = 8; 
             
             const qComp = dadosDoDiaCompleto.slice(qh_idx, qh_idx + nq); 
             const qReal = []; 
@@ -1006,7 +1009,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } 
             } 
             
-            if (dadosDoDiaCompleto.length === 92 && h === 1) { 
+            if (dadosDoDiaCompleto.length === 92 && h === hMudanca) { 
                 dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null, isHoraAtual: false }); 
                 continue; 
             } 
@@ -1109,7 +1112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (isHoje) {
-            const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
+            const qhIndex = indiceQuartoAtual(dadosDoDiaCompleto, horaAtualLisboa, minutoAtualLisboa);
             if (qhIndex >= 0 && qhIndex < dadosDoDiaCompleto.length) {
                 xAxisConfig.plotBands.push({
                     from: qhIndex - 0.5,
@@ -1171,8 +1174,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         
             // Lógica para mostrar o tooltip no carregamento
             if (isHoje) {
-                // 1. Calcular o índice do quarto-hora (0-95)
-                const qhIndex = (horaAtualLisboa * 4) + Math.floor(minutoAtualLisboa / 15);
+                // 1. Calcular o índice do quarto-hora (0-95; 92 ou 100 nos dias de mudança de hora)
+                const qhIndex = indiceQuartoAtual(dadosDoDiaCompleto, horaAtualLisboa, minutoAtualLisboa);
 
                 // 2. Validar o índice
                 if (qhIndex >= 0 && qhIndex < dadosDoDiaCompleto.length) {
@@ -1344,11 +1347,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Estado: fuso horário ativo ('pt' = hora de Portugal | 'cet' = hora de mercado/Espanha)
     let _fusoAtivo = 'pt';
 
+    // Hora de Madrid (CET/CEST) de um instante em ms, e o instante de um data_utc 'AAAA-MM-DD HH:MM'
+    function _horaCET(ms) {
+        _horaCET.fmt = _horaCET.fmt || new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+        const p = {};
+        _horaCET.fmt.formatToParts(new Date(ms)).forEach(x => { p[x.type] = x.value; });
+        return { h: +p.hour % 24, m: +p.minute };
+    }
+    function _msDeDataUtc(s) {
+        return s ? Date.parse(s.replace(' ', 'T') + ':00Z') : NaN;
+    }
+
     /**
      * Constrói a "vista CET" do dia selecionado:
      *  - últimas 4 qh do dia PT anterior (corresponde a 00:00-01:00 CET do dia selecionado)
      *  - + primeiras (N-4) qh do dia PT atual (corresponde a 01:00-24:00 CET do dia selecionado)
-     *  - Re-etiqueta o campo `intervalo` para refletir o tempo CET.
+     *  - Re-etiqueta o campo `intervalo` para refletir o tempo CET: pela hora de Madrid do
+     *    data_utc quando a linha o traz; senão pela posição (que desacerta uma hora nos dias de
+     *    mudança de hora).
      * Devolve um novo array (não muta os originais).
      */
     function construirVistaCET(dadosDiaAnteriorPT, dadosDoDiaPT) {
@@ -1359,6 +1375,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const combinados = ultimas4.concat(restantes);
         const pad = (n) => String(n).padStart(2, '0');
         return combinados.map((row, idx) => {
+            const ms = _msDeDataUtc(row.data_utc);
+            if (Number.isFinite(ms)) {
+                const i = _horaCET(ms), f = _horaCET(ms + 900000);
+                const fim = (f.h === 0 && f.m === 0) ? '24:00' : `${pad(f.h)}:${pad(f.m)}`;
+                return { ...row, intervalo: `[${pad(i.h)}:${pad(i.m)}-${fim}[` };
+            }
             const minutosInicio = idx * 15;
             const minutosFim = minutosInicio + 15;
             const hI = Math.floor(minutosInicio / 60);
@@ -1368,6 +1390,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const hFLabel = (hF === 24) ? '24' : pad(hF % 24);
             return { ...row, intervalo: `[${pad(hI)}:${pad(mI)}-${hFLabel}:${pad(mF)}[` };
         });
+    }
+
+    // Posição do quarto de hora atual no dia mostrado: pelo data_utc quando existe (nos dias de
+    // mudança de hora, hora × 4 + minutos / 15 desacerta quatro posições); senão por essa conta.
+    function indiceQuartoAtual(dados, hora, minuto) {
+        if (dados.some(d => d.data_utc)) {
+            const agora = new Date(Math.floor(Date.now() / 900000) * 900000).toISOString().slice(0, 16).replace('T', ' ');
+            return dados.findIndex(d => d.data_utc === agora);
+        }
+        return (hora * 4) + Math.floor(minuto / 15);
     }
 
     // --- URL state (deep-linking de um dia) ---

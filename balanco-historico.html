@@ -1683,6 +1683,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return Date.UTC(+dp[2], (+dp[1]) - 1, +dp[0]) + startMin * 60000;
     }
+    // Instante real (ms) do início do intervalo, a partir do data_utc; NaN se a linha não o tiver
+    function _instante15min(r) {
+        const u = (r['data_utc'] || '').trim();
+        return u ? Date.parse(u.replace(' ', 'T') + ':00Z') : NaN;
+    }
     function series15min(dataInicio, dataFim) {
         const iniMs = Date.UTC(+dataInicio.slice(0, 4), (+dataInicio.slice(5, 7)) - 1, +dataInicio.slice(8, 10));
         const fimMs = Date.UTC(+dataFim.slice(0, 4), (+dataFim.slice(5, 7)) - 1, +dataFim.slice(8, 10)) + 86400000;
@@ -1690,31 +1695,42 @@ document.addEventListener('DOMContentLoaded', function() {
         FONTES_15MIN.forEach(f => out.fontes[f] = []);
         const num = (r, k) => parseFloat((r[k] || '0').replace(',', '.')) || 0;
         const anoIni = +dataInicio.slice(0, 4), anoFim = +dataFim.slice(0, 4);
+        // Eixo pelo instante real (data_utc) quando todas as linhas do período o têm: a hora que se
+        // repete em outubro fica pela ordem. O 'ts' (hora de PT escrita como UTC) continua a
+        // escolher as linhas do período.
+        out.comInstante = true;
+        for (let ano = anoIni; ano <= anoFim && out.comInstante; ano++) {
+            for (const r of (_cacheLinhas[ano] || [])) {
+                const ts = _ts15min(r);
+                if (isFinite(ts) && ts >= iniMs && ts < fimMs && !isFinite(_instante15min(r))) { out.comInstante = false; break; }
+            }
+        }
         for (let ano = anoIni; ano <= anoFim; ano++) {
             const linhas = _cacheLinhas[ano];
             if (!linhas) continue;
             for (const r of linhas) {
                 const ts = _ts15min(r);
                 if (!isFinite(ts) || ts < iniMs || ts >= fimMs) continue;
-                out.fontes['Solar'].push([ts, num(r, 'Solar')]);
-                out.fontes['Hídrica'].push([ts, num(r, 'Hídrica')]);
-                out.fontes['Eólica'].push([ts, num(r, 'Eólica')]);
-                out.fontes['Biomassa'].push([ts, num(r, 'Biomassa')]);
-                out.fontes['Ondas'].push([ts, num(r, 'Ondas')]);
-                out.fontes['Gás Natural'].push([ts, num(r, 'Gás Natural - Ciclo Combinado') + num(r, 'Gás natural - Cogeração')]);
-                out.fontes['Outra Térmica'].push([ts, num(r, 'Outra Térmica')]);
-                out.fontes['Carvão'].push([ts, num(r, 'Carvão')]);
-                out.fontes['Importação'].push([ts, num(r, 'Importação')]);
-                out.fontes['Injeção de Baterias'].push([ts, num(r, 'Injeção de Baterias')]);
-                out.sumidouros['Bombagem (consumo)'].push([ts, -num(r, 'Bombagem')]);
-                out.sumidouros['Consumo Baterias'].push([ts, -num(r, 'Consumo Baterias')]);
-                out.sumidouros['Exportação'].push([ts, -num(r, 'Exportação')]);
+                const x = out.comInstante ? _instante15min(r) : ts;
+                out.fontes['Solar'].push([x, num(r, 'Solar')]);
+                out.fontes['Hídrica'].push([x, num(r, 'Hídrica')]);
+                out.fontes['Eólica'].push([x, num(r, 'Eólica')]);
+                out.fontes['Biomassa'].push([x, num(r, 'Biomassa')]);
+                out.fontes['Ondas'].push([x, num(r, 'Ondas')]);
+                out.fontes['Gás Natural'].push([x, num(r, 'Gás Natural - Ciclo Combinado') + num(r, 'Gás natural - Cogeração')]);
+                out.fontes['Outra Térmica'].push([x, num(r, 'Outra Térmica')]);
+                out.fontes['Carvão'].push([x, num(r, 'Carvão')]);
+                out.fontes['Importação'].push([x, num(r, 'Importação')]);
+                out.fontes['Injeção de Baterias'].push([x, num(r, 'Injeção de Baterias')]);
+                out.sumidouros['Bombagem (consumo)'].push([x, -num(r, 'Bombagem')]);
+                out.sumidouros['Consumo Baterias'].push([x, -num(r, 'Consumo Baterias')]);
+                out.sumidouros['Exportação'].push([x, -num(r, 'Exportação')]);
                 const cons = num(r, 'Consumo');
-                out.consumo.push([ts, cons]);
+                out.consumo.push([x, cons]);
                 // Consumo + Armazenamento = Consumo + Bombagem + Consumo Baterias (como balanco-omie)
-                out.consumoArmaz.push([ts, cons + num(r, 'Bombagem') + num(r, 'Consumo Baterias')]);
+                out.consumoArmaz.push([x, cons + num(r, 'Bombagem') + num(r, 'Consumo Baterias')]);
                 const p = parseFloat(r._pt);   // preço OMIE PT (€/MWh), juntado em carregarAno
-                out.preco.push([ts, isFinite(p) ? p : null]);
+                out.preco.push([x, isFinite(p) ? p : null]);
             }
         }
         return out;
@@ -1722,7 +1738,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderGraficoIntradiario(serie, dataInicio, dataFim) {
         const t = temaCores();
         const drillDia = function () {
-            const iso = new Date(this.x).toISOString().slice(0, 10);
+            const iso = this.series.chart.time.dateFormat('%Y-%m-%d', this.x);
             window.location.href = 'balanco-omie?data=' + iso;
         };
         const seriesGrafico = FONTES_15MIN.map(f => ({
@@ -1750,6 +1766,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         aplicarEstadoLegenda(seriesGrafico);
         Highcharts.chart('grafico-evolucao', {
+            // Com o instante real, o eixo e o tooltip mostram a hora de Lisboa
+            time: serie.comInstante ? { timezone: 'Europe/Lisbon' } : undefined,
             chart: { type: 'area', backgroundColor: t.bg, zooming: { type: 'x' }, height: 690, animation: false },
             title: { text: null },
             subtitle: { text: _periodoTxt + ' · 15 min · clique para abrir o dia', style: { color: t.sub, fontSize: '0.8em' } },
@@ -1764,7 +1782,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // formatter explícito (em vez de xDateFormat): o motor de templates do HC12
                 // parte a sintaxe (point.key:formato) no primeiro ':' e o %H:%M tem um ':'.
                 formatter: function () {
-                    let s = '<span style="font-size:0.85em">' + Highcharts.dateFormat('%a, %d %b %Y · %H:%M', this.x) + '</span><br/>';
+                    const tempo = (this.points && this.points[0]) ? this.points[0].series.chart.time : Highcharts;
+                    let s = '<span style="font-size:0.85em">' + tempo.dateFormat('%a, %d %b %Y · %H:%M', this.x) + '</span><br/>';
                     (this.points || []).forEach(function (p) {
                         let v;
                         if (p.series.yAxis && p.series.yAxis.index === 1) {   // linha de preço (€/MWh)

@@ -1014,6 +1014,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const values = line.split(','); const row = {};
             headers.forEach((header, index) => { let value = (values.length > index && values[index]) ? values[index].trim() : ''; if (value.startsWith('"') && value.endsWith('"')) { value = value.substring(1, value.length - 1); } if (header === 'preco_pt' || header === 'preco_es') { row[header] = (value && value !== "") ? parseFloat(value) : null; } else { row[header] = value; } });
              try { const [dia, mes, ano] = row.dia.split('/'); const [horaInicioStr] = row.intervalo.substring(1).split('-'); const [horaInicio, minInicio] = horaInicioStr.split(':'); row.timestamp = Date.UTC(parseInt(ano), parseInt(mes)-1, parseInt(dia), parseInt(horaInicio), parseInt(minInicio)); row.localTimestamp = new Date(row.timestamp); } catch(e) { row.timestamp = null; row.localTimestamp = null; }
+            // Instante real (ms) a partir do data_utc. O 'timestamp' acima é a hora de PT escrita
+            // como se fosse UTC (serve para agrupar por hora e dia), e repete-se em outubro.
+            row.instante = row.data_utc ? Date.parse(row.data_utc.replace(' ', 'T') + ':00Z') : NaN;
             return row;
         });
         return precos;
@@ -1342,14 +1345,37 @@ document.addEventListener('DOMContentLoaded', function() {
         return `[${pad(hI)}:${pad(mI)}-${hFLabel}:${pad(mF)}[`;
     }
 
+    // Hora de Madrid (CET/CEST) de um instante em ms. Com ela a vista CET sai do data_utc e não
+    // da posição no dia, que nos dias de mudança de hora desacerta uma hora.
+    function _relogioCET(ms) {
+        _relogioCET.fmt = _relogioCET.fmt || new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+        const p = {};
+        _relogioCET.fmt.formatToParts(new Date(ms)).forEach(x => { p[x.type] = x.value; });
+        return { ano: +p.year, mes: +p.month, dia: +p.day, h: +p.hour % 24, m: +p.minute };
+    }
+
     /**
      * Constrói um row vistaCET a partir de um row PT original.
      * - diaCETLabel: o dia do CET market day (DD/MM/YYYY) — vai para o campo .dia
      * - idxNoVista: posição (0..95) — usado para re-etiquetar intervalo e construir timestamp CET
+     *   quando a linha não traz data_utc (com ele, a hora CET vem do instante real)
      * Preserva: .preco_pt, .preco_es, .BD/.BS/.TD/.TS, .hora (texto original)
      */
     function _toCETRow(rowPT, diaCETLabel, idxNoVista) {
         if (!rowPT) return null;
+        if (Number.isFinite(rowPT.instante)) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const i = _relogioCET(rowPT.instante), f = _relogioCET(rowPT.instante + 900000);
+            const fim = (f.h === 0 && f.m === 0) ? '24:00' : `${pad(f.h)}:${pad(f.m)}`;
+            const tsCET = Date.UTC(i.ano, i.mes - 1, i.dia, i.h, i.m);
+            return {
+                ...rowPT,
+                dia: diaCETLabel,
+                intervalo: `[${pad(i.h)}:${pad(i.m)}-${fim}[`,
+                timestamp: tsCET,
+                localTimestamp: new Date(tsCET)
+            };
+        }
         const [dd, mm, yyyy] = diaCETLabel.split('/').map(Number);
         const minutosInicio = idxNoVista * 15;
         const hInicio = Math.floor(minutosInicio / 60);
@@ -2407,13 +2433,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- GRÁFICO QUARTO-HORÁRIO DETALHADO ---
     function atualizarGraficoQuartosDetalhado(dadosReaisDoPeriodo, dataInicioCSV, dataFimCSV, isDataFimUltimoDiaOMIE, emCET) {
-        const dadosOrdenados = [...dadosReaisDoPeriodo].sort((a, b) => { if (!a.timestamp || !b.timestamp) return 0; return a.timestamp - b.timestamp; });
-        const seriesDataPT = dadosOrdenados.map(row => row.timestamp ? [row.timestamp, row.preco_pt] : null).filter(p => p !== null);
-        const seriesDataES = dadosOrdenados.map(row => row.timestamp ? [row.timestamp, row.preco_es] : null).filter(p => p !== null);
+        // Com o instante real (data_utc) e o fuso no Highcharts, a hora que se repete em outubro
+        // aparece duas vezes e pela ordem; com o 'timestamp' (hora local) as duas passagens
+        // caíam no mesmo ponto e ficavam intercaladas.
+        const comInstante = dadosReaisDoPeriodo.length > 0 && dadosReaisDoPeriodo.every(r => Number.isFinite(r.instante));
+        const xDe = comInstante ? (r => r.instante) : (r => r.timestamp);
+        const dadosOrdenados = [...dadosReaisDoPeriodo].sort((a, b) => { if (!xDe(a) || !xDe(b)) return 0; return xDe(a) - xDe(b); });
+        const seriesDataPT = dadosOrdenados.map(row => xDe(row) ? [xDe(row), row.preco_pt] : null).filter(p => p !== null);
+        const seriesDataES = dadosOrdenados.map(row => xDe(row) ? [xDe(row), row.preco_es] : null).filter(p => p !== null);
         const tituloGrafico = `Valores Quarto-Horários no Período (${dataInicioCSV} a ${dataFimCSV})${(isDataFimUltimoDiaOMIE && !emCET) ? ' (PT até 23h)' : ''}${emCET ? ' (em hora CET)' : ''}`;
         const nomeFicheiroBase = `quartos-detalhe-omie-${dataInicioCSV.replace(/\//g, '-')}-a-${dataFimCSV.replace(/\//g, '-')}`;
         const _d3 = _hcDark();
         Highcharts.chart('grafico-quartos-detalhado-container', {
+            time: comInstante ? { timezone: emCET ? 'Europe/Madrid' : 'Europe/Lisbon' } : undefined,
             chart: { type: 'line', zoomType: 'x', height: 600, backgroundColor: _d3.bg, style: { color: _d3.txt } }, title: { text: tituloGrafico, style: { color: _d3.txt } }, subtitle: { text: 'Pode arrastar horizontalmente no gráfico para fazer zoom.', style: { color: _d3.txt } },
             xAxis: {
                 type: 'datetime', title: { text: emCET ? 'Data e Hora (CET)' : 'Data e Hora (PT)', style: { color: _d3.txt } }, crosshair: true, labels: { style: { color: _d3.txt } },

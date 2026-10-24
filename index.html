@@ -311,13 +311,19 @@
         svg.querySelector('polyline').setAttribute('points', pts.join(' '));
     }
 
-    // Índice do slot de 15 min atual em Portugal (0-95), para não sugerir horas que já passaram
+    // Índice do slot de 15 min atual em Portugal (0-95; 92 ou 100 slots nos dias de mudança de
+    // hora), para não sugerir horas que já passaram. Conta os quartos de hora desde a meia-noite
+    // de Lisboa pelo relógio real: hora × 4 desacertava quatro posições depois da mudança.
     function slotAtualLisboa() {
         try {
-            var partes = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
-            var h = 0, m = 0;
-            partes.forEach(function (p) { if (p.type === 'hour') h = parseInt(p.value, 10); if (p.type === 'minute') m = parseInt(p.value, 10); });
-            return h * 4 + Math.floor(m / 15);
+            var agora = Date.now(), d = {};
+            new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date(agora))
+                .forEach(function (p) { d[p.type] = parseInt(p.value, 10); });
+            // A meia-noite de Lisboa é às 00:00 UTC no inverno e às 23:00 UTC da véspera no verão
+            var meiaNoite = Date.UTC(d.year, d.month - 1, d.day);
+            var h = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', hour: '2-digit', hourCycle: 'h23' }).format(new Date(meiaNoite));
+            if (parseInt(h, 10) !== 0) meiaNoite -= 3600000;
+            return Math.floor((agora - meiaNoite) / 900000);
         } catch (e) { return 0; }
     }
 
