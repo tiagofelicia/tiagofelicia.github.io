@@ -1984,7 +1984,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var i = 0; i < total; i++) if (stats.values[i] != null) known++;
         return { known: known, total: total };
     }
-    function getZoneIntradayStats(zone, dateStr) {
+    function getZoneIntradayStats(zone, dateStr, valoresReais) {
         // Devolve {values, resolution, slotMinutes, labels} para um dia em modo Diário, ou null.
         // Em modo mercado, devolve a vista CET (deslocada) se a zona não estiver em CET.
         var stats = _isMarketTime() ? getStatsZonaVista(zone, dateStr) : null;
@@ -2002,10 +2002,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var res = raw.resolution || 'PT60M';
         var slot = res === 'PT15M' ? 15 : (res === 'PT30M' ? 30 : 60);
         // Em hora de mercado todas as zonas partilham os instantes do dia CET, por isso ficam os
-        // valores reais (92/100 nos dias de mudança de hora). Em hora local passam à grelha do
-        // relógio, para as zonas comparadas, de fusos diferentes, ficarem alinhadas pela hora.
+        // valores reais (92/100 nos dias de mudança de hora). Em hora local também, com
+        // 'valoresReais' (gráficos de uma zona, ou de zonas do mesmo fuso); sem ele passam à
+        // grelha do relógio, para zonas de fusos diferentes ficarem alinhadas pela hora.
         var tz = _tzVista(zone);
-        var values = _isMarketTime() ? raw.values : _grelhaRelogio(raw.values, slot, dateStr, tz);
+        var values = (_isMarketTime() || valoresReais) ? raw.values : _grelhaRelogio(raw.values, slot, dateStr, tz);
         // Média, mínimo e máximo do dia pelos valores reais (na grelha, a hora que se repete é média)
         var reais = raw.values.filter(function(v) { return v != null && !isNaN(v); });
         return { values: values.slice(), resolution: res, slotMinutes: slot,
@@ -2806,7 +2807,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var marks = '';
         if (dayStats && dayStats.min_hour && dayStats.max_hour) {
             var labelToIdx = function(lbl) {
-                var porEtiqueta = intra.labels ? intra.labels.indexOf(lbl) : -1;
+                var norm = function(s) { return String(s).replace(' (2nd)', ' (2.ª)'); };
+                var porEtiqueta = intra.labels ? intra.labels.map(norm).indexOf(norm(lbl)) : -1;
                 if (porEtiqueta >= 0) return porEtiqueta;
                 var p = lbl.split(':');
                 if (p.length < 2) return -1;
@@ -2881,7 +2883,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var curDate = document.getElementById('seletor-data').value;
                 // Em modo Diário, sparkline intradiária do dia; em período, a média de cada intervalo no período.
                 if (!isPeriodoMap && curDate) {
-                    var intra = getZoneIntradayStats(zone, curDate);
+                    var intra = getZoneIntradayStats(zone, curDate, true);
                     if (intra) {
                         html += buildIntradaySparkline(intra, stats);
                     }
@@ -3578,7 +3580,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         var intra = isPeriodo
             ? getAggregatedIntradayStats(zone, computePeriod())
-            : getZoneIntradayStats(zone, dateStr);
+            : getZoneIntradayStats(zone, dateStr, true);
             
         var newRow = document.createElement('tr');
         newRow.className = 'intraday-row';
@@ -4602,13 +4604,24 @@ document.addEventListener('DOMContentLoaded', function() {
         // Em hora de mercado, a vista CET precisa do dia anterior/seguinte (zonas WET/EET)
         await ensureMonthsLoaded(_addAdjacentMonths(months, period.start, period.end));
 
+        // Em hora local, os valores reais (92/100 nos dias de mudança de hora) se todas as zonas
+        // do gráfico estiverem no mesmo fuso; com fusos diferentes, cada uma repete uma hora
+        // diferente e só a grelha do relógio as mantém alinhadas pela hora.
+        var reais = isDiario && [zone].concat(compares).every(function(z) {
+            return zoneShiftVsCET(z) === zoneShiftVsCET(zone);
+        });
         var intra1 = isDiario
-            ? getZoneIntradayStats(zone, seletorData.value)
+            ? getZoneIntradayStats(zone, seletorData.value, reais)
             : getAggregatedIntradayStats(zone, period);
         var intrasC = compares.map(function(cz) {
-            return isDiario ? getZoneIntradayStats(cz, seletorData.value)
+            return isDiario ? getZoneIntradayStats(cz, seletorData.value, reais)
                             : getAggregatedIntradayStats(cz, period);
         });
+        // Se alguma zona ainda tiver o dia na grelha antiga (96) e outra não, a grelha alinha todas
+        if (reais && intra1 && intrasC.some(function(x) { return x && x.values.length !== intra1.values.length; })) {
+            intra1 = getZoneIntradayStats(zone, seletorData.value);
+            intrasC = compares.map(function(cz) { return getZoneIntradayStats(cz, seletorData.value); });
+        }
 
         var labels = (intra1 && intra1.labels)
             || (intrasC.find(function(x) { return x && x.labels; }) || {}).labels
