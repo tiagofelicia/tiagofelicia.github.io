@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Preços Médios de Eletricidade na Europa - Day-Ahead | Tiago Felícia</title>
-    <meta name="description" content="Mapa interativo dos preços médios diários de eletricidade (day-ahead) em 47 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, curva intradiária, heatmaps e comparação entre zonas. Dados oficiais ENTSO-E Transparency Platform." />
+    <meta name="description" content="Mapa interativo dos preços médios diários de eletricidade (day-ahead) em 47 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, perfil diário de preços, heatmaps e comparação entre zonas. Dados oficiais ENTSO-E Transparency Platform." />
     <meta name="keywords" content="preços eletricidade Europa, day-ahead, mapa preços eletricidade, OMIE, EPEX, Nord Pool, zonas licitação, mercado elétrico, ENTSO-E, Tiago Felícia" />
     <meta name="author" content="Tiago Felícia" />
 
@@ -142,7 +142,7 @@
             "Tabela ordenável com média, mínimo, máximo e amplitude",
             "Diferença vs Portugal (ΔPT) e variação vs dia anterior",
             "Gráfico de evolução com comparação entre zonas",
-            "Curva intradiária (15 min, 30 min ou horária)",
+            "Perfil diário de preços (15 min, 30 min ou horário)",
             "Heatmap horário (hora × dia do mês) por zona",
             "Heatmap anual de preços",
             "Indicador de dados parciais",
@@ -858,7 +858,7 @@
     </div>
 
     <div id="intraday-wrapper">
-        <h2 id="intraday-titulo" data-i18n="intradayTitle">Curva intradiária</h2>
+        <h2 id="intraday-titulo" data-i18n="intradayTitle">Perfil diário de preços</h2>
         <p id="intraday-stats" class="intraday-stats" aria-live="polite"></p>
         <div class="chart-canvas-wrap"><canvas id="chart-intraday"></canvas></div>
         <p class="export-credit" id="credit-intraday"></p>
@@ -1055,8 +1055,8 @@
                 <ul>
                     <li><strong>Mapa coroplético europeu:</strong> 47 zonas de licitação coloridas pelo preço médio. Etiquetas numéricas sobre cada zona (asterisco se dados parciais).</li>
                     <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, Δ (vs a zona de referência), variação vs ontem. Mostra hora local do mín/máx por zona.</li>
-                    <li><strong>Curva intradiária:</strong> gráfico de barras com a curva 24h da zona selecionada. Cores na mesma escala do mapa. Resolução adapta-se ao publicado pela bolsa (15 min, 30 min ou horário). Em modos agregados mostra a média horária do período. Linha vermelha tracejada em y=0 quando há valores negativos.</li>
-                    <li><strong>Curva intradiária por linha da tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva 24h logo por baixo. Várias zonas em simultâneo para comparar.</li>
+                    <li><strong>Perfil diário de preços:</strong> gráfico de barras com a curva do dia da zona selecionada. Cores na mesma escala do mapa. Resolução adapta-se ao publicado pela bolsa (15 min, 30 min ou horário). Em modos agregados mostra a média horária do período. Linha vermelha tracejada em y=0 quando há valores negativos.</li>
+                    <li><strong>Perfil diário por linha da tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva do dia logo por baixo. Várias zonas em simultâneo para comparar.</li>
                     <li><strong>Gráfico de evolução de preços:</strong> barras coloridas pela escala do mapa para a zona selecionada. Mín, máx e amplitude sempre visíveis no tooltip. Suporta até 4 comparações simultâneas (linhas sobrepostas com cores distintas). A legenda abaixo do gráfico permite ativar/ocultar séries adicionais (default ocultas):
                         <ul>
                             <li><strong>MA7</strong> — média móvel a 7 dias (ciclo semanal, requer ≥14 dias)</li>
@@ -1068,15 +1068,15 @@
                     <li><strong>Heatmap horário (24h × ~30 dias):</strong> grelha de horas vs dias, em modo "mês deslizante" terminado no Dia final escolhido (entre 28 e 31 dias consoante o mês). Inclui coluna lateral com <strong>média por hora</strong>, linha inferior com <strong>média por dia</strong> e canto com <strong>média global</strong>. Em modo "↔ Largura total" mostra valores com 2 casas decimais.</li>
                     <li><strong>Perfil semanal (24h × 7 dias da semana):</strong> agrega todos os dias do período (30/60/90/365 dias) por dia da semana. Permite identificar padrões recorrentes ("sextas à noite são consistentemente mais caras", "domingos têm vale mais profundo de manhã"). Inclui as mesmas médias laterais e global.</li>
                     <li><strong>Heatmap anual:</strong> calendário 12 meses × 31 dias, células coloridas pelo preço — clica num dia para abrir esse dia no mapa.</li>
-                    <li><strong>Sparkline no mapa (info-control):</strong> ao passar o rato (desktop) ou tocar (mobile) numa zona, mini-curva intradiária com marcadores mín/máx e barras coloridas.</li>
+                    <li><strong>Sparkline no mapa (info-control):</strong> ao passar o rato (desktop) ou tocar (mobile) numa zona, mini-perfil diário com marcadores mín/máx e barras coloridas.</li>
                 </ul>
                 </div>
                 <div data-lang-block="en">
                 <ul>
                     <li><strong>European choropleth map:</strong> 47 bidding zones coloured by the average price. Numeric labels over each zone (asterisk if data is partial).</li>
                     <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, Δ (vs the reference zone), change vs yesterday. Shows the local time of the min/max per zone.</li>
-                    <li><strong>Intraday curve:</strong> bar chart with the 24h curve of the selected zone. Colours on the same scale as the map. Resolution adapts to what the exchange publishes (15 min, 30 min or hourly). In aggregated modes it shows the period's hourly average. Dashed red line at y=0 when there are negative values.</li>
-                    <li><strong>Intraday curve per table row:</strong> click a zone's name (or the chevron <kbd>▸</kbd>) to open/close the 24h curve right below it. Several zones at once for comparison.</li>
+                    <li><strong>Daily price profile:</strong> bar chart with the day curve of the selected zone. Colours on the same scale as the map. Resolution adapts to what the exchange publishes (15 min, 30 min or hourly). In aggregated modes it shows the period's hourly average. Dashed red line at y=0 when there are negative values.</li>
+                    <li><strong>Daily price profile per table row:</strong> click a zone's name (or the chevron <kbd>▸</kbd>) to open/close the day curve right below it. Several zones at once for comparison.</li>
                     <li><strong>Price evolution chart:</strong> bars coloured by the map scale for the selected zone. Min, max and range always visible in the tooltip. Supports up to 4 simultaneous comparisons (overlaid lines in distinct colours). The legend below the chart lets you toggle extra series (hidden by default):
                         <ul>
                             <li><strong>MA7</strong> — 7-day moving average (weekly cycle, requires ≥14 days)</li>
@@ -1088,7 +1088,7 @@
                     <li><strong>Hourly heatmap (24h × ~30 days):</strong> grid of hours vs days, in "rolling month" mode ending on the chosen End day (between 28 and 31 days depending on the month). Includes a side column with the <strong>average per hour</strong>, a bottom row with the <strong>average per day</strong> and a corner with the <strong>overall average</strong>. In "↔ Full width" mode it shows values with 2 decimals.</li>
                     <li><strong>Weekly profile (24h × 7 weekdays):</strong> aggregates every day in the period (30/60/90/365 days) by weekday. Helps identify recurring patterns ("Friday evenings are consistently more expensive", "Sundays have a deeper morning trough"). Includes the same side and overall averages.</li>
                     <li><strong>Annual heatmap:</strong> a 12-month × 31-day calendar, cells coloured by price — click a day to open it on the map.</li>
-                    <li><strong>Map sparkline (info-control):</strong> hovering (desktop) or tapping (mobile) a zone shows a mini intraday curve with min/max markers and coloured bars.</li>
+                    <li><strong>Map sparkline (info-control):</strong> hovering (desktop) or tapping (mobile) a zone shows a mini daily price profile with min/max markers and coloured bars.</li>
                 </ul>
                 </div>
             </div>
@@ -1099,12 +1099,12 @@
             <div class="faq-content">
                 <div data-lang-block="pt">
                 <ul>
-                    <li><strong>Modos temporais:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês deslizante terminado no dia selecionado — 28 a 31 dias conforme o mês) e Personalizado (intervalo à escolha). Médias agregadas no mapa, tabela, gráfico e curva intradiária.</li>
+                    <li><strong>Modos temporais:</strong> Diário (um dia), Semanal (7 dias), Mensal (mês deslizante terminado no dia selecionado — 28 a 31 dias conforme o mês) e Personalizado (intervalo à escolha). Médias agregadas no mapa, tabela, gráfico e perfil diário de preços.</li>
                     <li><strong>🌍 A minha zona (zona de referência):</strong> seletor no topo da página que define a tua zona base — conduz a mensagem de comparação, a coluna Δ da tabela e a zona inicial dos gráficos. É guardada no browser e incluída no link de partilha (<code>?ref=</code>).</li>
-                    <li><strong>Selector único de zona:</strong> um só dropdown "Zona" controla simultaneamente Evolução, Curva intradiária, Heatmap horário e Heatmap anual. Clicar numa zona do mapa atualiza tudo.</li>
-                    <li><strong>Comparação multi-zona:</strong> chips com até 4 zonas adicionais comparadas no gráfico de evolução e na curva intradiária — cada uma com cor própria e linha distinta sobre as barras da zona principal. Cada chip mostra também o desfasamento de fuso horário face à zona principal (ex: <kbd>+1h</kbd> para ES quando a principal é PT). Os valores são apresentados em <em>hora local de cada zona</em>.</li>
+                    <li><strong>Selector único de zona:</strong> um só dropdown "Zona" controla simultaneamente Evolução, Perfil diário de preços, Heatmap horário e Heatmap anual. Clicar numa zona do mapa atualiza tudo.</li>
+                    <li><strong>Comparação multi-zona:</strong> chips com até 4 zonas adicionais comparadas no gráfico de evolução e no perfil diário de preços — cada uma com cor própria e linha distinta sobre as barras da zona principal. Cada chip mostra também o desfasamento de fuso horário face à zona principal (ex: <kbd>+1h</kbd> para ES quando a principal é PT). Os valores são apresentados em <em>hora local de cada zona</em>.</li>
                     <li><strong>Pesquisa de zona:</strong> campo "🔍 Procurar zona" filtra a tabela, destaca a zona no mapa e faz auto-zoom se for um único resultado. Procura por código e nome (PT e EN), e ignora acentos.</li>
-                    <li><strong>Toque no mapa (mobile):</strong> tap único mostra o info-control (com curva intradiária); segundo tap na mesma zona seleciona-a em todas as visualizações. Toque no fundo do mapa fecha o info-control.</li>
+                    <li><strong>Toque no mapa (mobile):</strong> tap único mostra o info-control (com o perfil diário de preços); segundo tap na mesma zona seleciona-a em todas as visualizações. Toque no fundo do mapa fecha o info-control.</li>
                     <li><strong>Validação do intervalo personalizado:</strong> datas inválidas (início > fim, fora do intervalo de dados, &gt;366 dias) ficam com borda vermelha e mensagem inline; o botão "Aplicar" desativa-se até o erro ser resolvido.</li>
                     <li><strong>Δ vs a zona de referência:</strong> coluna opcional na tabela (€/MWh e %) com a diferença de cada zona face à zona escolhida em "🌍 A minha zona". Útil para avaliar o custo de importar/exportar.</li>
                     <li><strong>Variação vs ontem:</strong> opcional na tabela em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
@@ -1114,12 +1114,12 @@
                 </div>
                 <div data-lang-block="en">
                 <ul>
-                    <li><strong>Time modes:</strong> Daily (one day), Weekly (7 days), Monthly (rolling month ending on the selected day — 28 to 31 days depending on the month) and Custom (range of your choice). Aggregated averages on the map, table, chart and intraday curve.</li>
+                    <li><strong>Time modes:</strong> Daily (one day), Weekly (7 days), Monthly (rolling month ending on the selected day — 28 to 31 days depending on the month) and Custom (range of your choice). Aggregated averages on the map, table, chart and daily price profile.</li>
                     <li><strong>🌍 My zone (reference zone):</strong> a selector at the top of the page that sets your base zone — it drives the comparison message, the table's Δ column and the initial chart zone. It is stored in the browser and included in the share link (<code>?ref=</code>).</li>
-                    <li><strong>Single zone selector:</strong> a single "Zone" dropdown simultaneously controls Evolution, Intraday curve, Hourly heatmap and Annual heatmap. Clicking a zone on the map updates everything.</li>
-                    <li><strong>Multi-zone comparison:</strong> chips with up to 4 additional zones compared on the evolution chart and the intraday curve — each with its own colour and a distinct line over the main zone's bars. Each chip also shows the time-zone offset relative to the main zone (e.g. <kbd>+1h</kbd> for ES when the main one is PT). Values are shown in <em>each zone's local time</em>.</li>
+                    <li><strong>Single zone selector:</strong> a single "Zone" dropdown simultaneously controls Evolution, Daily price profile, Hourly heatmap and Annual heatmap. Clicking a zone on the map updates everything.</li>
+                    <li><strong>Multi-zone comparison:</strong> chips with up to 4 additional zones compared on the evolution chart and the daily price profile — each with its own colour and a distinct line over the main zone's bars. Each chip also shows the time-zone offset relative to the main zone (e.g. <kbd>+1h</kbd> for ES when the main one is PT). Values are shown in <em>each zone's local time</em>.</li>
                     <li><strong>Zone search:</strong> the "🔍 Search zone" field filters the table, highlights the zone on the map and auto-zooms if there is a single result. Searches by code and name (PT and EN), ignoring accents.</li>
-                    <li><strong>Map tap (mobile):</strong> a single tap shows the info-control (with the intraday curve); a second tap on the same zone selects it across all visualizations. Tapping the map background closes the info-control.</li>
+                    <li><strong>Map tap (mobile):</strong> a single tap shows the info-control (with the daily price profile); a second tap on the same zone selects it across all visualizations. Tapping the map background closes the info-control.</li>
                     <li><strong>Custom range validation:</strong> invalid dates (start > end, outside the data range, &gt;366 days) get a red border and an inline message; the "Apply" button is disabled until the error is resolved.</li>
                     <li><strong>Δ vs the reference zone:</strong> optional table column (€/MWh and %) with each zone's difference against the zone chosen in "🌍 My zone". Useful to assess the cost of importing/exporting.</li>
                     <li><strong>Change vs yesterday:</strong> optional in the table in Daily mode, shows how each zone moved compared with the previous day.</li>
@@ -1136,7 +1136,7 @@
                 <div data-lang-block="pt">
                 <ul>
                     <li><strong>Zonas favoritas:</strong> clica na estrela <kbd>☆</kbd> ao lado do nome para adicionar uma zona aos favoritos. Aparecem num painel "⭐ Favoritas" no topo da tabela com o preço atual e cor da escala. Click num chip seleciona a zona em todas as visualizações; <kbd>×</kbd> remove. Em desktop, podes <strong>arrastar</strong> os chips (⋮⋮) para reordenar. Persistidas no browser.</li>
-                    <li><strong>Largura total (↔):</strong> botão no painel de zona faz com que as 4 visualizações (Curva intradiária, Evolução, Heatmap horário, Heatmap anual) ocupem toda a largura do ecrã. No heatmap horário, ativa formatação com 2 casas decimais nas células.</li>
+                    <li><strong>Largura total (↔):</strong> botão no painel de zona faz com que as 4 visualizações (Perfil diário de preços, Evolução, Heatmap horário, Heatmap anual) ocupem toda a largura do ecrã. No heatmap horário, ativa formatação com 2 casas decimais nas células.</li>
                     <li><strong>Modo escuro:</strong> respeita a preferência do site (toggle no menu).</li>
                     <li><strong>Ecrã inteiro do mapa:</strong> botão no canto superior do mapa para visualização imersiva.</li>
                     <li><strong>Preferências persistidas:</strong> escolhas de zona, comparações, favoritas, modo, toggles, largura total — tudo guardado em localStorage.</li>
@@ -1153,7 +1153,7 @@
                 <div data-lang-block="en">
                 <ul>
                     <li><strong>Favorite zones:</strong> click the star <kbd>☆</kbd> next to a name to add a zone to favorites. They appear in a "⭐ Favorites" panel at the top of the table with the current price and scale colour. Clicking a chip selects the zone across all visualizations; <kbd>×</kbd> removes it. On desktop you can <strong>drag</strong> the chips (⋮⋮) to reorder. Persisted in the browser.</li>
-                    <li><strong>Full width (↔):</strong> a button in the zone panel makes the 4 visualizations (Intraday curve, Evolution, Hourly heatmap, Annual heatmap) span the full screen width. In the hourly heatmap it enables 2-decimal formatting in the cells.</li>
+                    <li><strong>Full width (↔):</strong> a button in the zone panel makes the 4 visualizations (Daily price profile, Evolution, Hourly heatmap, Annual heatmap) span the full screen width. In the hourly heatmap it enables 2-decimal formatting in the cells.</li>
                     <li><strong>Dark mode:</strong> follows the site preference (toggle in the menu).</li>
                     <li><strong>Map fullscreen:</strong> a button in the top corner of the map for an immersive view.</li>
                     <li><strong>Persisted preferences:</strong> zone choices, comparisons, favorites, mode, toggles, full width — all stored in localStorage.</li>
@@ -1308,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             addCompareAria: 'Adicionar zona à comparação', compareAria: 'Zonas em comparação',
             btnVizWide: '↔ Largura total', btnVizWideTitle: 'Alternar largura total das visualizações',
             zonePanelHint: 'Máx. 4 comparações · Dica: clica numa zona no mapa para mudar',
-            intradayTitle: 'Curva intradiária',
+            intradayTitle: 'Perfil diário de preços',
             chartTitle: 'Evolução de preços',
             hmHourTitle: 'Heatmap horário', ariaHmHour: 'Heatmap horário',
             hmWeekTitle: 'Perfil semanal (24h × dia da semana)', ariaHmWeek: 'Perfil semanal',
@@ -1339,8 +1339,8 @@ document.addEventListener('DOMContentLoaded', function() {
             mapTitleAggMax: 'Preços Máximos de Eletricidade Day-Ahead - ',
             ogTitle: 'Preços Médios de Eletricidade Day-Ahead na Europa',
             twTitle: 'Preços Médios de Eletricidade Day-Ahead na Europa',
-            metaDesc: 'Mapa interativo dos preços médios diários de eletricidade (day-ahead) em 47 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, curva intradiária, heatmaps e comparação entre zonas. Dados oficiais da ENTSO-E Transparency Platform.',
-            ogDesc: 'Preços médios diários de eletricidade em 47 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução, curva intradiária e heatmap anual.',
+            metaDesc: 'Mapa interativo dos preços médios diários de eletricidade (day-ahead) em 47 zonas de licitação europeias. Vistas diária, semanal, mensal e personalizada, gráfico de evolução, perfil diário de preços, heatmaps e comparação entre zonas. Dados oficiais da ENTSO-E Transparency Platform.',
+            ogDesc: 'Preços médios diários de eletricidade em 47 zonas de licitação europeias, com vistas diária/semanal/mensal, gráfico de evolução, perfil diário de preços e heatmap anual.',
             twDesc: 'Preços médios diários de eletricidade em 47 zonas de licitação europeias.',
             rankedAgg: 'Preços por zona de licitação — ',
             sufMarket: ' [hora de mercado / CET]', sufMarketList: ' (hora de mercado, CET)',
@@ -1372,8 +1372,8 @@ document.addEventListener('DOMContentLoaded', function() {
             capDaily: 'Tabela de preços médios diários de eletricidade day-ahead por zona de licitação europeia, incluindo média, mínimo, máximo, respetivas horas locais e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.',
             capPeriod: 'Tabela de preços médios de eletricidade day-ahead por zona de licitação europeia para o período selecionado, incluindo média, mínimo, máximo e amplitude (€/MWh). Fonte: ENTSO-E Transparency Platform.',
             favRemove: 'Remover dos favoritos', favAdd: 'Adicionar aos favoritos',
-            tdZoneTitle: 'Clique para mostrar/ocultar curva intradiária',
-            expandAria: 'Expandir curva intradiária',
+            tdZoneTitle: 'Clique para mostrar/ocultar o perfil diário de preços',
+            expandAria: 'Expandir perfil diário de preços',
             partialBadge: 'parcial', partialDataPre: 'Dados parciais: ',
             slotsPub: ' slots publicados', slotsWord: ' slots',
             avgTitlePartialPre: 'Preço médio (parcial: ', avgTitlePartialSuf: ' slots publicados)',
@@ -1451,7 +1451,7 @@ document.addEventListener('DOMContentLoaded', function() {
             addCompareAria: 'Add zone to comparison', compareAria: 'Zones being compared',
             btnVizWide: '↔ Full width', btnVizWideTitle: 'Toggle full width for the visualizations',
             zonePanelHint: 'Max. 4 comparisons · Tip: click a zone on the map to switch',
-            intradayTitle: 'Intraday curve',
+            intradayTitle: 'Daily price profile',
             chartTitle: 'Price evolution',
             hmHourTitle: 'Hourly heatmap', ariaHmHour: 'Hourly heatmap',
             hmWeekTitle: 'Weekly profile (24h × day of week)', ariaHmWeek: 'Weekly profile',
@@ -1482,8 +1482,8 @@ document.addEventListener('DOMContentLoaded', function() {
             mapTitleAggMax: 'Maximum Day-Ahead electricity prices - ',
             ogTitle: 'Average Day-Ahead Electricity Prices in Europe',
             twTitle: 'Average Day-Ahead Electricity Prices in Europe',
-            metaDesc: 'Interactive map of daily average day-ahead electricity prices across 47 European bidding zones. Daily, weekly, monthly and custom views, price evolution chart, intraday curve, heatmaps and zone comparison. Official ENTSO-E Transparency Platform data.',
-            ogDesc: 'Daily average electricity prices across 47 European bidding zones, with daily/weekly/monthly views, price evolution chart, intraday curve and annual heatmap.',
+            metaDesc: 'Interactive map of daily average day-ahead electricity prices across 47 European bidding zones. Daily, weekly, monthly and custom views, price evolution chart, daily price profile, heatmaps and zone comparison. Official ENTSO-E Transparency Platform data.',
+            ogDesc: 'Daily average electricity prices across 47 European bidding zones, with daily/weekly/monthly views, price evolution chart, daily price profile and annual heatmap.',
             twDesc: 'Daily average electricity prices across 47 European bidding zones.',
             rankedAgg: 'Prices by bidding zone — ',
             sufMarket: ' [market time / CET]', sufMarketList: ' (market time, CET)',
@@ -1515,8 +1515,8 @@ document.addEventListener('DOMContentLoaded', function() {
             capDaily: 'Table of daily average day-ahead electricity prices by European bidding zone, including average, minimum, maximum, their local hours and range (€/MWh). Source: ENTSO-E Transparency Platform.',
             capPeriod: 'Table of average day-ahead electricity prices by European bidding zone for the selected period, including average, minimum, maximum and range (€/MWh). Source: ENTSO-E Transparency Platform.',
             favRemove: 'Remove from favorites', favAdd: 'Add to favorites',
-            tdZoneTitle: 'Click to show/hide the intraday curve',
-            expandAria: 'Expand intraday curve',
+            tdZoneTitle: 'Click to show/hide the daily price profile',
+            expandAria: 'Expand daily price profile',
             partialBadge: 'partial', partialDataPre: 'Partial data: ',
             slotsPub: ' slots published', slotsWord: ' slots',
             avgTitlePartialPre: 'Average price (partial: ', avgTitlePartialSuf: ' slots published)',
@@ -1541,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', function() {
             icZona: 'Bidding zone', icTouch: 'Tap a zone on the map', icHover: 'Hover over a zone',
             cmpNone: '— none —',
             tipAvgWeekHourPre: 'Average ', tipWeekHourSuf: ' across the week: ',
-            tipHourTitle: 'Hour ', daysDot: ' days · '
+            tipHourTitle: 'Time ', daysDot: ' days · '
         }
     };
 
@@ -1832,6 +1832,27 @@ document.addEventListener('DOMContentLoaded', function() {
         var r = (stats && stats.resolution) || 'PT60M';
         return r === 'PT15M' ? 15 : (r === 'PT30M' ? 30 : 60);
     }
+    // Resolução a que a bolsa publicou. O 'resolution' diz sempre PT15M (os preços horários vêm
+    // repetidos pelos 4 quartos), por isso sai dos valores: um quarto diferente do outro na mesma
+    // meia hora dá 15 min; meias horas diferentes na mesma hora, 30 min. Os grupos de 4 coincidem
+    // com as horas do relógio, porque o dia começa à meia-noite e a hora muda em horas inteiras.
+    // Num dia a meio, com menos de 6 horas publicadas, não há por onde decidir: devolve null.
+    function _resolucaoNativa(values, slot) {
+        if (slot !== 15) return slot === 30 ? 'PT30M' : 'PT60M';
+        if (!values) return null;
+        var difere = function(a, b) { return a != null && b != null && a !== b; };
+        var meia = false, horas = 0;
+        for (var h = 0; h + 3 < values.length; h += 4) {
+            if (difere(values[h], values[h + 1]) || difere(values[h + 2], values[h + 3])) return 'PT15M';
+            if (difere(values[h], values[h + 2])) meia = true;
+            if (values[h] != null && values[h + 3] != null) horas++;
+        }
+        return meia ? 'PT30M' : (horas >= 6 ? 'PT60M' : null);
+    }
+    function _rotuloResolucao(intra) {
+        var r = intra && (intra.resolucaoNativa || intra.resolution);
+        return r === 'PT15M' ? '15 min' : (r === 'PT30M' ? '30 min' : T('resHorario'));
+    }
     // Data e hora do relógio de 'tz' num instante (ms)
     function _relogio(ms, tz) {
         var c = _relogio.fmt || (_relogio.fmt = {});
@@ -2010,6 +2031,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Média, mínimo e máximo do dia pelos valores reais (na grelha, a hora que se repete é média)
         var reais = raw.values.filter(function(v) { return v != null && !isNaN(v); });
         return { values: values.slice(), resolution: res, slotMinutes: slot,
+                 resolucaoNativa: _resolucaoNativa(raw.values, slot),
                  labels: _etiquetasDia(values.length, slot, dateStr, tz),
                  mediaDia: reais.length ? reais.reduce(function(a, b) { return a + b; }, 0) / reais.length : null,
                  minDia: reais.length ? Math.min.apply(null, reais) : null,
@@ -2025,6 +2047,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Média do período ponderada pela duração de cada preço (igual à do mapa):
         // a média dos 96 intervalos não serve quando falta algum intervalo num dos dias.
         var somaPond = 0, minutos = 0;
+        var nativas = {};   // resoluções publicadas no período; o rótulo fica com a mais fina
         for (var i = 0; i < dayList.length; i++) {
             var ds = dayList[i];
             var raw;
@@ -2043,6 +2066,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 minutos += minD;
             }
             resCount[resD] = (resCount[resD] || 0) + 1;
+            var nativaD = _resolucaoNativa(raw.values, minD);
+            if (nativaD) nativas[nativaD] = true;
             // Média por intervalo do relógio: cada dia na grelha da hora local (ou CET)
             entries.push({ res: resD, values: _grelhaRelogio(raw.values, minD, ds, _tzVista(zone)) });
         }
@@ -2070,6 +2095,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels.push(String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
         }
         return { values: avg, resolution: bestRes, slotMinutes: slot, labels: labels,
+                 resolucaoNativa: nativas.PT15M ? 'PT15M' : nativas.PT30M ? 'PT30M' : nativas.PT60M ? 'PT60M' : null,
                  mediaPeriodo: minutos ? somaPond / minutos : null };
     }
 
@@ -2834,7 +2860,7 @@ document.addEventListener('DOMContentLoaded', function() {
                        + '<text x="' + (w / 2 - 6) + '" y="' + (h - 1) + '" font-size="8" fill="#64748b">12h</text>'
                        + '<text x="' + (w - pad - 16) + '" y="' + (h - 1) + '" font-size="8" fill="#64748b">24h</text>';
 
-        var resLabel = intra.resolution === 'PT15M' ? '15 min' : (intra.resolution === 'PT30M' ? '30 min' : T('resHorario'));
+        var resLabel = _rotuloResolucao(intra);
         return '<div class="sparkline-wrap">'
             + '<div class="sparkline-label">' + T('intradayTitle') + ' (' + resLabel + ')</div>'
             + '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" class="sparkline">' + bars + path + marks + axisLabels + '</svg>'
@@ -3603,11 +3629,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function buildIntradayRowChart(zone, intra, isPeriodo) {
         var name = zoneName(zone);
         if (!intra || !intra.values || !intra.values.length) {
-            return '<div class="intraday-row-empty">' + (LANG === 'en' ? 'No intraday data for ' : 'Sem dados intradiários para ') + name + '.</div>';
+            return '<div class="intraday-row-empty">' + (LANG === 'en' ? 'No daily price profile for ' : 'Sem perfil diário de preços para ') + name + '.</div>';
         }
         
         var n = intra.values.length;
-        var resTxt = intra.resolution === 'PT15M' ? '15 min' : (intra.resolution === 'PT30M' ? '30 min' : 'horário');
+        var resTxt = _rotuloResolucao(intra);
         var partialNote = '';
         var lastNonNull = -1;
         for (var ii = n - 1; ii >= 0; ii--) if (intra.values[ii] != null) { lastNonNull = ii; break; }
@@ -3618,7 +3644,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var header = '<div class="intraday-row-header">'
             + '<strong>' + zoneFlag(zone) + ' ' + name + '</strong> · '
-            + (isPeriodo ? (LANG === 'en' ? 'hourly average of the period' : 'média horária do período') : (LANG === 'en' ? '24h curve' : 'curva 24h'))
+            + (isPeriodo ? (LANG === 'en' ? 'hourly average of the period' : 'média horária do período') : (LANG === 'en' ? 'day curve' : 'curva do dia'))
             + ' (' + resTxt + ')' + partialNote
             + '</div>';
 
@@ -4719,8 +4745,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var labelMode = isDiario
                 ? fmtDateBR(seletorData.value)
                 : ((LANG === 'en' ? 'avg ' : 'média ') + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
-            var resTxt = (intra1 && intra1.resolution === 'PT15M') ? ' · 15 min'
-                       : (intra1 && intra1.resolution === 'PT30M') ? ' · 30 min' : ' · ' + T('resHorario');
+            var resTxt = ' · ' + _rotuloResolucao(intra1);
             var compTxt = '';
             if (hasCompare) {
                 compTxt = ' vs ' + compares.map(function(z) { return zoneName(z); }).join(', ');
@@ -4730,7 +4755,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (_isMarketTime()) {
                 hourNote = (LANG === 'en') ? ' · in market time (CET)' : ' · em hora de mercado (CET)';
             } else if (hasCompare) {
-                hourNote = (LANG === 'en') ? ' · in each zone local time' : ' · em hora local de cada zona';
+                hourNote = (LANG === 'en') ? ' · in each zone\'s local time' : ' · em hora local de cada zona';
             } else {
                 hourNote = '';
             }
@@ -4771,7 +4796,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ctxIntra[0] += ' vs ' + compares.map(function(z) { return zoneName(z); }).join(', ');
         }
         ctxIntra.push(isDiario
-            ? (LANG === 'en' ? '24h curve ' : 'Curva 24h ') + fmtDateBR(seletorData.value)
+            ? (LANG === 'en' ? 'Day curve ' : 'Curva do dia ') + fmtDateBR(seletorData.value)
             : (LANG === 'en' ? 'Hourly average ' : 'Média horária ') + fmtDateBR(period.start) + ' → ' + fmtDateBR(period.end));
         setExportCredit('credit-intraday', ctxIntra);
     }
