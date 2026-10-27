@@ -853,6 +853,8 @@
             <label class="chart-toggle"><input type="checkbox" id="toggle-horas-neg"> <span data-i18n="toggleHorasNeg">Mostrar horas com preço ≤ 0</span></label>
             <label class="chart-toggle"><input type="checkbox" id="toggle-spread"> <span data-i18n="toggleSpread">Mostrar spread de</span></label>
             <select id="spread-horas" class="spread-horas-sel" aria-label="Horas do spread" data-i18n-aria="spreadHorasAria"><option value="1">1 h</option><option value="2" selected>2 h</option><option value="4">4 h</option></select>
+            <label class="chart-toggle"><input type="checkbox" id="toggle-ano-ant"> <span data-i18n="toggleAnoAnt">Mostrar variação vs ano anterior</span></label>
+            <label class="chart-toggle"><input type="checkbox" id="toggle-captura"> <span data-i18n="toggleCaptura">Mostrar preço capturado (solar e eólico)</span></label>
         </div>
         <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de preços por zona" data-i18n-aria="ariaTabela">
             <p class="no-data-msg" data-i18n="loading">A carregar dados...</p>
@@ -1088,7 +1090,7 @@
                 <div data-lang-block="pt">
                 <ul>
                     <li><strong>Mapa coroplético europeu:</strong> 47 zonas de licitação coloridas pelo preço médio. Etiquetas numéricas sobre cada zona (asterisco se dados parciais).</li>
-                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, Δ (vs a zona de referência), variação vs ontem. Mostra hora local do mín/máx por zona. A caixa "Mostrar horas com preço ≤ 0" acrescenta a coluna <strong>h ≤ 0</strong>: quantas horas o preço esteve a zero ou negativo no dia ou período (cada quarto de hora conta 0,25 h). A caixa "Mostrar spread de" acrescenta a coluna <strong>Spread</strong> de 1, 2 ou 4 h: a média das horas mais caras do dia menos a das mais baratas (no período, a média dos dias). As zonas virtuais levam o selo <strong>virtual</strong>.</li>
+                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, Δ (vs a zona de referência), variação vs ontem. Mostra hora local do mín/máx por zona. A caixa "Mostrar horas com preço ≤ 0" acrescenta a coluna <strong>h ≤ 0</strong>: quantas horas o preço esteve a zero ou negativo no dia ou período (cada quarto de hora conta 0,25 h). A caixa "Mostrar spread de" acrescenta a coluna <strong>Spread</strong> de 1, 2 ou 4 h: a média das horas mais caras do dia menos a das mais baratas (no período, a média dos dias). "Mostrar variação vs ano anterior" compara com o mesmo dia ou período um ano antes. "Mostrar preço capturado" acrescenta o preço médio a que se vendeu a produção solar e a eólica de cada país (desde 2026; nas zonas de um mesmo país usa-se a produção do país) — abaixo da média da zona quando o sol ou o vento baixam o preço das horas em que produzem. As zonas virtuais levam o selo <strong>virtual</strong>.</li>
                     <li><strong>Perfil diário de preços:</strong> gráfico de barras com a curva do dia da zona selecionada. Cores na mesma escala do mapa. Resolução adapta-se ao publicado pela bolsa (15 min, 30 min ou horário). Em modos agregados mostra a média horária do período. Linha vermelha tracejada em y=0 quando há valores negativos.</li>
                     <li><strong>Perfil diário por linha da tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva do dia logo por baixo. Várias zonas em simultâneo para comparar.</li>
                     <li><strong>Curva de duração de preços:</strong> os preços do dia ou período ordenados do mais caro para o mais barato, para a zona e as comparações. Cada ponto diz que percentagem do tempo o preço esteve igual ou acima daquele valor; por cima, a mediana, os 10 % mais caros e mais baratos e as horas com preço ≤ 0.</li>
@@ -1098,6 +1100,7 @@
                             <li><strong>MA30</strong> — média móvel a 30 dias (ciclo mensal, requer ≥30 dias)</li>
                             <li><strong>Médias diárias (linha)</strong> — os mesmos valores das barras, em formato de linha grossa na cor da média do período (útil para sobrepor com comparações ou ver a tendência)</li>
                             <li><strong>Médias diárias — ano anterior</strong> — linha tracejada roxa com os valores diários do mesmo período há um ano (alinhados dia-a-dia)</li>
+                            <li><strong>Média europeia</strong> — linha tracejada azul-petróleo com a média europeia de cada dia, pesada pelo consumo de cada país (como no resumo)</li>
                         </ul>
                     </li>
                     <li><strong>Heatmap horário (24h × ~30 dias):</strong> grelha de horas vs dias, em modo "mês deslizante" terminado no Dia final escolhido (entre 28 e 31 dias consoante o mês). Inclui coluna lateral com <strong>média por hora</strong>, linha inferior com <strong>média por dia</strong> e canto com <strong>média global</strong>. Em modo "↔ Largura total" mostra valores com 2 casas decimais. O tooltip de cada hora mostra os quartos de hora (nos dias publicados a 15 min) e o da média por hora, a média de cada quarto no período. Nos dias de mudança de hora, a hora que não existe aparece tracejada e a que se repete tem um contorno duplo e mostra a média das duas passagens.</li>
@@ -1109,7 +1112,7 @@
                 <div data-lang-block="en">
                 <ul>
                     <li><strong>European choropleth map:</strong> 47 bidding zones coloured by the average price. Numeric labels over each zone (asterisk if data is partial).</li>
-                    <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, Δ (vs the reference zone), change vs yesterday. Shows the local time of the min/max per zone. The "Show hours with price ≤ 0" box adds the <strong>h ≤ 0</strong> column: how many hours the price was zero or negative in the day or period (each quarter-hour counts 0.25 h). The "Show spread of" box adds the <strong>Spread</strong> column for 1, 2 or 4 h: the average of the day's most expensive hours minus the cheapest (over a period, the average of the days). Virtual zones carry the <strong>virtual</strong> tag.</li>
+                    <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, Δ (vs the reference zone), change vs yesterday. Shows the local time of the min/max per zone. The "Show hours with price ≤ 0" box adds the <strong>h ≤ 0</strong> column: how many hours the price was zero or negative in the day or period (each quarter-hour counts 0.25 h). The "Show spread of" box adds the <strong>Spread</strong> column for 1, 2 or 4 h: the average of the day's most expensive hours minus the cheapest (over a period, the average of the days). "Show change vs previous year" compares with the same day or period one year earlier. "Show capture price" adds the average price at which each country's solar and wind output was sold (since 2026; zones of one country use the country's output) — below the zone's average when sun or wind push down the price of the hours they produce in. Virtual zones carry the <strong>virtual</strong> tag.</li>
                     <li><strong>Daily price profile:</strong> bar chart with the day curve of the selected zone. Colours on the same scale as the map. Resolution adapts to what the exchange publishes (15 min, 30 min or hourly). In aggregated modes it shows the period's hourly average. Dashed red line at y=0 when there are negative values.</li>
                     <li><strong>Daily price profile per table row:</strong> click a zone's name (or the chevron <kbd>▸</kbd>) to open/close the day curve right below it. Several zones at once for comparison.</li>
                     <li><strong>Price duration curve:</strong> the day's or period's prices sorted from most to least expensive, for the zone and the compared zones. Each point tells what share of the time the price was at or above that value; above it, the median, the top and bottom 10% and the hours with price ≤ 0.</li>
@@ -1119,6 +1122,7 @@
                             <li><strong>MA30</strong> — 30-day moving average (monthly cycle, requires ≥30 days)</li>
                             <li><strong>Daily averages (line)</strong> — the same values as the bars, as a thick line in the period-average colour (useful to overlay with comparisons or see the trend)</li>
                             <li><strong>Daily averages — previous year</strong> — purple dashed line with the daily values of the same period a year ago (aligned day by day)</li>
+                            <li><strong>European average</strong> — teal dashed line with each day's European average, weighted by each country's consumption (as in the summary)</li>
                         </ul>
                     </li>
                     <li><strong>Hourly heatmap (24h × ~30 days):</strong> grid of hours vs days, in "rolling month" mode ending on the chosen End day (between 28 and 31 days depending on the month). Includes a side column with the <strong>average per hour</strong>, a bottom row with the <strong>average per day</strong> and a corner with the <strong>overall average</strong>. In "↔ Full width" mode it shows values with 2 decimals. Each hour's tooltip shows its quarter-hours (on days published at 15 min), and the hourly average's tooltip the average of each quarter over the period. On clock-change days, the hour that does not exist is hatched, and the repeated hour has a double outline and shows the average of both passes.</li>
@@ -1292,6 +1296,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return (l === 'en') ? 'en' : 'pt';
     })();
     var DEC_SEP  = (LANG === 'en') ? '.' : ',';
+    var SEP_INTERVALO = (LANG === 'en') ? ' to ' : ' a ';   // legendas de preço: "-30 a -15" / "-30 to -15"
     var THOU_SEP = (LANG === 'en') ? ',' : ' ';
 
     var I18N = {
@@ -1449,6 +1454,18 @@ document.addEventListener('DOMContentLoaded', function() {
             hrMinSuf: ' mínimo', hrMaxSuf: ' máximo',
             ampPre: 'Amplitude: ',
             legMA: ' — Média', legPrevYear: 'Médias diárias — ano anterior', legDailyLine: 'Médias diárias (linha)',
+            legEuAvg: 'Média europeia (pesada pelo consumo)',
+            touchHint: '👉 Toque novamente para ver tudo desta zona',
+            compareMaxPre: '+ Máximo de ', compareMaxSuf: ' atingido', copyLinkPrompt: 'Copie o link:',
+            resNeg1: 'Numa zona o preço chegou a zero ou abaixo', resNegPre: 'Em ', resNegSuf: ' zonas o preço chegou a zero ou abaixo',
+            resNegMin: 'o mais baixo: ',
+            toggleAnoAnt: 'Mostrar variação vs ano anterior', thAnoAnt: 'vs ano ant.',
+            thAnoAntTitle: 'Ordenar pela variação face ao mesmo dia ou período do ano anterior', tdAnoAntPre: 'Diferença face a ',
+            csvAnoAnt: 'vs ano anterior',
+            toggleCaptura: 'Mostrar preço capturado (solar e eólico)', thCapSolar: 'Captura solar', thCapEolica: 'Captura eólica',
+            thCapTitle: 'Ordenar pelo preço capturado',
+            tdCapSolar: 'Preço médio a que se vendeu a produção solar do país', tdCapEolica: 'Preço médio a que se vendeu a produção eólica do país',
+            tdCapPct: ' da média da zona', tdCapSem: 'Sem dados de produção (só desde 2026)',
             legMA7: 'MA7 (média móvel 7 dias)', legMA30: 'MA30 (média móvel 30 dias)',
             tipRange: 'Amplitude',
             hmHora: 'Hora', hmData: 'Data', hmDia: 'Dia',
@@ -1619,6 +1636,18 @@ document.addEventListener('DOMContentLoaded', function() {
             hrMinSuf: ' minimum', hrMaxSuf: ' maximum',
             ampPre: 'Range: ',
             legMA: ' — Avg', legPrevYear: 'Daily averages — previous year', legDailyLine: 'Daily averages (line)',
+            legEuAvg: 'European average (consumption-weighted)',
+            touchHint: '👉 Tap again to see everything for this zone',
+            compareMaxPre: '+ Maximum of ', compareMaxSuf: ' reached', copyLinkPrompt: 'Copy the link:',
+            resNeg1: 'In one zone the price reached zero or below', resNegPre: 'In ', resNegSuf: ' zones the price reached zero or below',
+            resNegMin: 'lowest: ',
+            toggleAnoAnt: 'Show change vs previous year', thAnoAnt: 'vs prev. year',
+            thAnoAntTitle: 'Sort by the change vs the same day or period of the previous year', tdAnoAntPre: 'Difference vs ',
+            csvAnoAnt: 'vs previous year',
+            toggleCaptura: 'Show capture price (solar and wind)', thCapSolar: 'Solar capture', thCapEolica: 'Wind capture',
+            thCapTitle: 'Sort by capture price',
+            tdCapSolar: "Average price at which the country's solar output was sold", tdCapEolica: "Average price at which the country's wind output was sold",
+            tdCapPct: " of the zone's average", tdCapSem: 'No generation data (only since 2026)',
             legMA7: 'MA7 (7-day moving average)', legMA30: 'MA30 (30-day moving average)',
             tipRange: 'Range',
             hmHora: 'Hour', hmData: 'Date', hmDia: 'Day',
@@ -2574,9 +2603,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var cab = ['#', T('thZona'), T('csvCodigo'), eur(t.avgLabel)];
         if (t.showDeltaPt) cab.push(eur('Δ' + t.refZone), 'Δ' + t.refZone + ' (%)');
         if (t.showVarDia) cab.push(eur(T('thVsYesterday')), T('thVsYesterday') + ' (%)');
+        if (t.showAnoAnt) cab.push(eur(T('csvAnoAnt')), T('csvAnoAnt') + ' (%)');
         cab.push(eur(t.minLabel), t.hourMinLabel, eur(t.maxLabel), t.hourMaxLabel, eur(T('thAmplitude')));
         if (t.showHorasNeg) cab.push(T('csvHorasNeg'));
         if (t.showSpread) cab.push(T('csvSpread') + ' ' + t.spreadHoras + ' h (€/MWh)');
+        if (t.showCaptura) cab.push(eur(T('thCapSolar')), eur(T('thCapEolica')));
         cab.push(T('csvParcial'));
         var linhas = [cab];
         t.entries.forEach(function(e, i) {
@@ -2585,9 +2616,11 @@ document.addEventListener('DOMContentLoaded', function() {
             var l = [i + 1, e.name, e.zone, _csvNum(e.avg)];
             if (t.showDeltaPt) l.push(ref ? '' : _csvNum(e.deltaPt), ref ? '' : _csvNum(e.deltaPtPct, 1));
             if (t.showVarDia) l.push(_csvNum(e.varDia), _csvNum(e.varDiaPct, 1));
+            if (t.showAnoAnt) l.push(_csvNum(e.varAno), _csvNum(e.varAnoPct, 1));
             l.push(_csvNum(e.min), e.minHour || '', _csvNum(e.max), e.maxHour || '', _csvNum(e.amplitude));
             if (t.showHorasNeg) l.push(_csvNum(e.horasNeg));
             if (t.showSpread) l.push(_csvNum(e.spread));
+            if (t.showCaptura) l.push(_csvNum(e.capSolar), _csvNum(e.capEolica));
             l.push(e.partial ? e.partialKnown + '/' + e.partialTotal : '');
             linhas.push(l);
         });
@@ -2938,7 +2971,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 1. As tuas matrizes exatas de valores e textos
             var grades = [-45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
             var labels = [
-                '< -30', '-30 a -15', '-15 a 0', 
+                '< -30', '-30' + SEP_INTERVALO + '-15', '-15' + SEP_INTERVALO + '0', 
                 '0-15', '15-30', '30-45', '45-60', '60-75', 
                 '75-90', '90-105', '105-120', '120-135', 
                 '135-150', '150-165', '165+'
@@ -3204,7 +3237,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 // Em touch: dica para o segundo tap
                 if (IS_TOUCH_DEVICE) {
-                    html += '<div class="touch-hint">👉 Toque novamente para ver tudo desta zona</div>';
+                    html += '<div class="touch-hint">' + T('touchHint') + '</div>';
                 }
                 this._div.innerHTML = html;
             } else {
@@ -3241,7 +3274,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         var grades = [-45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165];
         var labels = [
-            '< -30', '-30 a -15', '-15 a 0', 
+            '< -30', '-30' + SEP_INTERVALO + '-15', '-15' + SEP_INTERVALO + '0', 
             '0-15', '15-30', '30-45', '45-60', '60-75', 
             '75-90', '90-105', '105-120', '120-135', 
             '135-150', '150-165', '165+'
@@ -3476,7 +3509,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return zoneName(a).localeCompare(zoneName(b));
             });
             var opts = atMax
-                ? '<option value="">+ Máximo de ' + MAX_COMPARE + ' atingido</option>'
+                ? '<option value="">' + T('compareMaxPre') + MAX_COMPARE + T('compareMaxSuf') + '</option>'
                 : '<option value="">' + T('addCompare') + '</option>';
             for (var s = 0; s < sorted.length; s++) {
                 var zk = sorted[s];
@@ -3608,7 +3641,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var sortState = { key: 'avg', dir: 'asc' };
     // Caixas das colunas opcionais da tabela e o nome que levam no link de partilha (?cols=)
     var COLUNAS_PARTILHA = [['toggle-delta-pt', 'delta'], ['toggle-var-dia', 'var'],
-                            ['toggle-horas-neg', 'neg'], ['toggle-spread', 'spread']];
+                            ['toggle-horas-neg', 'neg'], ['toggle-spread', 'spread'],
+                            ['toggle-ano-ant', 'ano'], ['toggle-captura', 'cap']];
 
     function updateRankedList(isUltimoDia) {
         var container = document.getElementById('ranked-list-content');
@@ -3656,6 +3690,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var showVarDia = !isPeriodo && !!document.getElementById('toggle-var-dia') && document.getElementById('toggle-var-dia').checked;
         var showHorasNeg = !!document.getElementById('toggle-horas-neg') && document.getElementById('toggle-horas-neg').checked;
         var showSpread = !!document.getElementById('toggle-spread') && document.getElementById('toggle-spread').checked;
+        var showAnoAnt = !!document.getElementById('toggle-ano-ant') && document.getElementById('toggle-ano-ant').checked;
+        var showCaptura = !!document.getElementById('toggle-captura') && document.getElementById('toggle-captura').checked;
+        var anoAnt = showAnoAnt ? dadosAnoAnterior() : null;
+        var pTabela = computePeriod();
+        var capOk = showCaptura ? capturaPronta(pTabela) : false;
 
         var entries = [];
         for (var zone in currentData) {
@@ -3690,6 +3729,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         varDiaPct = prevAvg !== 0 ? (varDia / prevAvg * 100) : null;
                     }
                 }
+                var varAno = null, varAnoPct = null;
+                var aa = (anoAnt && anoAnt.dados && anoAnt.dados[zone]) ? anoAnt.dados[zone].avg : null;
+                if (aa != null) {
+                    varAno = stats.avg - aa;
+                    varAnoPct = aa !== 0 ? (varAno / aa * 100) : null;
+                }
+                var cap = capOk ? capturaZona(zone, pTabela) : null;
                 var partialFlag = isPartial(stats);
                 var partialCount = partialFlag ? partialInfo(stats) : null;
                 entries.push({
@@ -3703,6 +3749,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // No período já vem somado (aggregatePeriod); no dia conta-se agora
                     horasNeg: (stats.horasNeg !== undefined) ? stats.horasNeg : _horasNeg(stats),
                     spread: spreadDe(stats, spreadHoras),
+                    varAno: varAno, varAnoPct: varAnoPct,
+                    capSolar: cap ? cap.solar : null, capEolica: cap ? cap.eolica : null,
                     deltaPt: deltaPt, deltaPtPct: deltaPtPct,
                     varDia: varDia, varDiaPct: varDiaPct,
                     partial: partialFlag,
@@ -3741,6 +3789,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var hourMaxLabel = isPeriodo ? T('thDtMax') : T('thHrMax');
         _tabelaCsv = { entries: entries, refKey: refKey, refZone: refZone, showDeltaPt: showDeltaPt, showVarDia: showVarDia,
                        showHorasNeg: showHorasNeg, showSpread: showSpread, spreadHoras: spreadHoras,
+                       showAnoAnt: showAnoAnt, showCaptura: showCaptura,
                        avgLabel: avgLabel, minLabel: minLabelTh, maxLabel: maxLabelTh,
                        hourMinLabel: hourMinLabel, hourMaxLabel: hourMaxLabel };
 
@@ -3753,6 +3802,7 @@ document.addEventListener('DOMContentLoaded', function() {
             + '<th class="sortable" data-sort="avg" scope="col" title="' + T('thAvgTitle') + '">' + avgLabel + ' ' + arrow('avg') + '</th>'
             + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" scope="col" title="' + T('thDeltaTitle') + '">Δ' + refZone + ' ' + arrow('deltaPt') + '</th>' : '')
             + (showVarDia ? '<th class="sortable" data-sort="varDia" scope="col" title="' + T('thVarTitle') + '">' + T('thVsYesterday') + ' ' + arrow('varDia') + '</th>' : '')
+            + (showAnoAnt ? '<th class="sortable" data-sort="varAno" scope="col" title="' + T('thAnoAntTitle') + '">' + T('thAnoAnt') + ' ' + arrow('varAno') + '</th>' : '')
             + '<th class="sortable" data-sort="min" scope="col" title="' + T('thMinTitle') + '">' + minLabelTh + ' ' + arrow('min') + '</th>'
             + '<th class="hour-col" scope="col" title="' + T('thHrMinTitle') + '">' + hourMinLabel + '</th>'
             + '<th class="sortable" data-sort="max" scope="col" title="' + T('thMaxTitle') + '">' + maxLabelTh + ' ' + arrow('max') + '</th>'
@@ -3760,6 +3810,8 @@ document.addEventListener('DOMContentLoaded', function() {
             + '<th class="sortable" data-sort="amplitude" scope="col" title="' + T('thAmpTitle') + '">' + T('thAmplitude') + ' ' + arrow('amplitude') + '</th>'
             + (showHorasNeg ? '<th class="sortable" data-sort="horasNeg" scope="col" title="' + T('thHorasNegTitle') + '">' + T('thHorasNeg') + ' ' + arrow('horasNeg') + '</th>' : '')
             + (showSpread ? '<th class="sortable" data-sort="spread" scope="col" title="' + T('thSpreadTitle') + '">' + T('thSpread') + ' ' + spreadHoras + ' h ' + arrow('spread') + '</th>' : '')
+            + (showCaptura ? '<th class="sortable" data-sort="capSolar" scope="col" title="' + T('thCapTitle') + '">' + T('thCapSolar') + ' ' + arrow('capSolar') + '</th>'
+                + '<th class="sortable" data-sort="capEolica" scope="col" title="' + T('thCapTitle') + '">' + T('thCapEolica') + ' ' + arrow('capEolica') + '</th>' : '')
             + '</tr></thead>';
         html += '<tbody>';
 
@@ -3792,6 +3844,8 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<td class="price-cell num' + negCls(e.avg) + '" title="' + avgTitle + '">' + fmtN(e.avg, 2) + partialMark + '</td>';
             if (showDeltaPt) html += '<td class="num" title="' + T('tdDeltaTitle') + '">' + (e.zone === refKey ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
             if (showVarDia) html += '<td class="num" title="' + T('tdVarTitle') + '">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
+            if (showAnoAnt) html += '<td class="num" title="' + T('tdAnoAntPre') + fmtDateBR(anoAnt.a) + (anoAnt.a !== anoAnt.b ? ' → ' + fmtDateBR(anoAnt.b) : '') + '">'
+                + (anoAnt.aCarregar ? '…' : fmtDelta(e.varAno, e.varAnoPct)) + '</td>';
             html += '<td class="num' + negCls(e.min) + '" title="' + T('tdMinTitle') + '">' + (e.min != null ? fmtN(e.min, 2) : '—') + '</td>';
             var horaTipPrefix = _isMarketTime() ? T('hrCetPrefix') : T('hrLocalPrefix');
             html += '<td class="hour-col" title="' + horaTipPrefix + T('hrMinSuf') + '">' + (e.minHour || '—') + '</td>';
@@ -3800,6 +3854,15 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<td class="num" title="' + T('tdAmpTitle') + '">' + (e.amplitude != null ? fmtN(e.amplitude, 2) : '—') + '</td>';
             if (showHorasNeg) html += '<td class="num" title="' + T('tdHorasNegTitle') + '">' + fmtHoras(e.horasNeg) + '</td>';
             if (showSpread) html += '<td class="num" title="' + T('tdSpreadTitle') + '">' + (e.spread != null ? fmtN(e.spread, 2) : '—') + '</td>';
+            if (showCaptura) {
+                var celCap = function(v, rot) {
+                    if (!capOk) return '<td class="num">…</td>';
+                    if (v == null) return '<td class="num" title="' + T('tdCapSem') + '">—</td>';
+                    var pct = (e.avg) ? ': ' + fmtN(v / e.avg * 100, 0) + '%' + T('tdCapPct') : '';
+                    return '<td class="num" title="' + rot + pct + '">' + fmtN(v, 2) + '</td>';
+                };
+                html += celCap(e.capSolar, T('tdCapSolar')) + celCap(e.capEolica, T('tdCapEolica'));
+            }
             html += '</tr>';
         }
 
@@ -4596,6 +4659,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     else if (ds2.label.indexOf('MA30') === 0) savePref('lineMA30', nowVisible);
                     else if (ds2.label.indexOf(T('legDailyLine')) === 0) savePref('lineAvg', nowVisible);
                     else if (ds2.label.indexOf(T('legPrevYear')) === 0) savePref('linePrevYear', nowVisible);
+                    else if (ds2.label.indexOf(T('legEuAvg')) === 0) savePref('lineEuAvg', nowVisible);
                 }
             });
         }
@@ -4805,6 +4869,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 tension: 0, spanGaps: true,
                 hidden: !prefs.linePrevYear,
                 order: -13
+            });
+        }
+        // Média europeia de cada dia, pesada pelo consumo (visível por omissão)
+        var euData = serieMediaEuropeia(chartStart, chartEnd);
+        if (euData.some(function(v) { return v != null; })) {
+            datasets.push({
+                type: 'line',
+                label: T('legEuAvg'),
+                data: euData,
+                borderColor: '#0891b2',
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderDash: [6, 3],
+                borderWidth: 2,
+                pointRadius: 0, pointHoverRadius: 4,
+                tension: 0, spanGaps: true,
+                hidden: prefs.lineEuAvg === false,
+                order: -14
             });
         }
         // Variáveis legacy para o tooltip afterBody (já não acrescentamos MAs ali)
@@ -6117,6 +6198,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // --- VARIAÇÃO VS ANO ANTERIOR (coluna da tabela) ---
+    var anoAnterior = { chave: null, dados: null, pendente: null };
+    // O mesmo dia, um ano antes (29/02 passa a 28/02)
+    function _umAnoAntes(ds) {
+        var p = ds.split('-'), d = (p[1] === '02' && p[2] === '29') ? '28' : p[2];
+        return (parseInt(p[0], 10) - 1) + '-' + p[1] + '-' + d;
+    }
+    // Médias do mesmo dia ou período um ano antes. Na 1.ª vez carrega os meses e volta a
+    // desenhar a tabela quando estiverem prontos (entretanto a coluna mostra "…").
+    function dadosAnoAnterior() {
+        var p = computePeriod();
+        var a = _umAnoAntes(p.start), b = _umAnoAntes(p.end);
+        if (b < DATA_INICIO) return { dados: null, a: a, b: b };
+        if (a < DATA_INICIO) a = DATA_INICIO;
+        var chave = a + '|' + b + '|' + (_isMarketTime() ? 'cet' : 'local');
+        if (anoAnterior.chave === chave) return { dados: anoAnterior.dados, a: a, b: b };
+        if (anoAnterior.pendente !== chave) {
+            anoAnterior.pendente = chave;
+            ensureMonthsLoaded(_addAdjacentMonths(monthsInRange(a, b), a, b)).then(function() {
+                anoAnterior = { chave: chave, dados: aggregatePeriod(a, b), pendente: null };
+                updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
+            });
+        }
+        return { dados: null, a: a, b: b, aCarregar: true };
+    }
+
+    // --- PREÇO CAPTURADO (colunas da tabela) ---
+    // data/mapas/captura/AAAA-MM.json (gerar_captura_precos.py): por zona e dia, o preço pesado pela
+    // produção solar ("s") e eólica ("w") do país, e essa produção em GWh. Só desde 2026-01.
+    var capturaCache = {}, _pedidosCaptura = {};
+    // true se os meses do período já estão carregados; senão pede-os e volta a desenhar a tabela
+    function capturaPronta(p) {
+        var falta = monthsInRange(p.start, p.end).filter(function(ym) { return ym >= '2026-01' && !(ym in capturaCache); });
+        if (!falta.length) return true;
+        var chave = falta.join(',');
+        if (!_pedidosCaptura[chave]) {
+            _pedidosCaptura[chave] = Promise.all(falta.map(function(ym) {
+                return fetchDados('mapas/captura/' + ym + '.json')
+                    .then(function(r) { return (r && r.ok) ? r.json() : {}; })
+                    .catch(function() { return {}; })
+                    .then(function(j) { capturaCache[ym] = j || {}; });
+            })).then(function() {
+                delete _pedidosCaptura[chave];
+                updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
+            });
+        }
+        return false;
+    }
+    // Preço capturado de uma zona no período: Σ(preço × GWh) / Σ GWh, solar e eólico
+    function capturaZona(zone, p) {
+        var o = { s: [0, 0], w: [0, 0] };
+        datesInRange(p.start, p.end).forEach(function(ds) {
+            var c = ((capturaCache[ds.substring(0, 7)] || {})[ds] || {})[zone];
+            if (!c) return;
+            ['s', 'w'].forEach(function(k) {
+                if (c[k]) { o[k][0] += c[k][0] * c[k][1]; o[k][1] += c[k][1]; }
+            });
+        });
+        return { solar: o.s[1] > 0 ? o.s[0] / o.s[1] : null, eolica: o.w[1] > 0 ? o.w[0] / o.w[1] : null };
+    }
+
     // --- MÉDIA EUROPEIA PESADA PELO CONSUMO ---
     // data/mapas/consumo_paises.json (gerar_consumo_paises.py): consumo diário por país, real ou
     // previsto, e uma quota fixa por país para os dias sem dados (antes de 2026).
@@ -6127,6 +6269,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (r && r.ok) {
                 consumoPaises = await r.json();
                 updateResumoRapido();
+                if (typeof updateChart === 'function') updateChart();   // a média europeia da Evolução também
             }
         } catch (e) {
             console.warn('consumo_paises.json não carregou:', e.message);
@@ -6160,14 +6303,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Média europeia: as zonas de um país contam pela média delas e cada país pesa o seu consumo.
     // Sem o ficheiro do consumo, a média simples das zonas.
-    function mediaEuropeia(entries) {
+    function mediaEuropeia(entries, p) {
         var porPais = {};
         entries.forEach(function(e) {
             var c = ZONE_COUNTRY[e.zone];
             if (c) (porPais[c] = porPais[c] || []).push(e.avg);
         });
         var paises = Object.keys(porPais);
-        var pesos = pesosConsumo(paises, computePeriod());
+        var pesos = pesosConsumo(paises, p || computePeriod());
         if (pesos) {
             var sp = 0, sw = 0;
             paises.forEach(function(c) {
@@ -6181,6 +6324,23 @@ document.addEventListener('DOMContentLoaded', function() {
         var s = 0;
         entries.forEach(function(e) { s += e.avg; });
         return { valor: s / entries.length, pesada: false };
+    }
+
+    // Média europeia de cada dia de um intervalo (gráfico de Evolução), pesada pelo consumo como a
+    // do resumo; as zonas virtuais desse dia ficam de fora
+    function serieMediaEuropeia(start, end) {
+        return datesInRange(start, end).map(function(ds) {
+            var dia = (dataCache[ds.substring(0, 7)] || {})[ds];
+            if (!dia) return null;
+            var entries = [];
+            Object.keys(dia).forEach(function(z) {
+                if (ZONAS_VIRTUAIS[z] || (ZONAS_VIRTUAIS_ATE[z] && ds <= ZONAS_VIRTUAIS_ATE[z])) return;
+                var st = _isMarketTime() ? getStatsZonaVista(z, ds) : dia[z];
+                var a = (st == null) ? null : (typeof st === 'number' ? st : st.avg);
+                if (a != null) entries.push({ zone: z, avg: a });
+            });
+            return (entries.length >= 2) ? mediaEuropeia(entries, { start: ds, end: ds }).valor : null;
+        });
     }
 
     function updateResumoRapido() {
@@ -6232,6 +6392,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         html += T('resCheap') + ': <span class="resumo-cheap">' + zoneFlag(cheap.zone) + ' ' + zoneName(cheap.zone) + ' (' + fmtN(cheap.avg, 2) + ')</span>. ';
         html += T('resExpensive') + ': <span class="resumo-expensive">' + zoneFlag(expensive.zone) + ' ' + zoneName(expensive.zone) + ' (' + fmtN(expensive.avg, 2) + ')</span>.';
+        // Zonas em que o preço chegou a zero ou abaixo (o mínimo do dia ou do período), com a mais baixa
+        var minDe = function(e) { var st = currentData[e.zone]; return (st && typeof st === 'object') ? st.min : null; };
+        var negs = entries.filter(function(e) { var mn = minDe(e); return mn != null && mn <= 0; });
+        if (negs.length) {
+            var maisBaixa = negs.reduce(function(a, b) { return minDe(a) <= minDe(b) ? a : b; });
+            html += ' ' + (negs.length === 1 ? T('resNeg1') : T('resNegPre') + negs.length + T('resNegSuf'))
+                + ' (' + T('resNegMin') + zoneFlag(maisBaixa.zone) + ' ' + zoneName(maisBaixa.zone) + ', '
+                + fmtN(minDe(maisBaixa), 2) + ' €/MWh).';
+        }
         el.innerHTML = html;
         el.style.display = 'block';
     }
@@ -6509,10 +6678,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     };
                     if (navigator.clipboard && navigator.clipboard.writeText) {
                         navigator.clipboard.writeText(url).then(showOk).catch(function() {
-                            window.prompt('Copie o link:', url);
+                            window.prompt(T('copyLinkPrompt'), url);
                         });
                     } else {
-                        window.prompt('Copie o link:', url);
+                        window.prompt(T('copyLinkPrompt'), url);
                     }
                 });
             }
@@ -7023,6 +7192,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
                 });
             }
+            // Variação vs ano anterior e preço capturado: só se carregam dados extra com a caixa ligada
+            [['toggle-ano-ant', 'anoAntCol'], ['toggle-captura', 'capturaCol']].forEach(function(c) {
+                var el = document.getElementById(c[0]);
+                if (!el) return;
+                if (prefs[c[1]]) el.checked = true;
+                el.addEventListener('change', function() {
+                    savePref(c[1], el.checked);
+                    updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
+                });
+            });
             var tSpread = document.getElementById('toggle-spread');
             if (tSpread) {
                 if (prefs.spreadCol) tSpread.checked = true;
@@ -7055,7 +7234,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
                 var _sort = _qpTab.get('sort');
-                if (_sort && /^-?(name|avg|deltaPt|varDia|min|max|amplitude|horasNeg|spread)$/.test(_sort)) {
+                if (_sort && /^-?(name|avg|deltaPt|varDia|min|max|amplitude|horasNeg|spread|varAno|capSolar|capEolica)$/.test(_sort)) {
                     sortState.key = _sort.replace(/^-/, '');
                     sortState.dir = (_sort.charAt(0) === '-') ? 'desc' : 'asc';
                 }
