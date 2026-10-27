@@ -87,7 +87,7 @@
       "name": "Como usar este simulador?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Selecione o dia, o seu tarifário e a opção horária. O gráfico mostrará a curva de preços para esse dia. Ative a opção \"Simular consumos horários\" e introduza um valor de consumo (em kWh) na tabela para cada hora. O simulador calculará automaticamente o custo para esse período e o custo total, permitindo-lhe perceber o impacto de concentrar os seus maiores consumos (como carregar um veículo elétrico ou usar a máquina de lavar) nas horas mais baratas."
+        "text": "Selecione o dia, o seu tarifário e a opção horária. O gráfico mostra a curva de preços desse dia. Na tabela por baixo do gráfico (a opção \"Simular consumos\" vem ligada), escreva o consumo (em kWh) de cada quarto de hora ou hora, ou use \"Preencher\" para repartir um total pelo perfil típico de uma casa, por igual ou na melhor janela do dia. O simulador calcula o custo de cada período e o total, e compara-o com as outras opções horárias do mesmo tarifário e com os outros tarifários indexados, o que ajuda a perceber o impacto de concentrar os maiores consumos (como carregar um veículo elétrico ou usar a máquina de lavar) nas horas mais baratas."
       }
     },
     {
@@ -103,7 +103,7 @@
       "name": "Os preços mostrados incluem IVA?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Não. Os valores em €/kWh são o preço da energia, já com a TAR de energia incluída, mas sem IVA, sem o termo fixo de potência e sem taxas (DGEG e contribuição audiovisual). Servem para comparar horas dentro do mesmo dia e para comparar tarifários indexados entre si, não para reproduzir o total da fatura."
+        "text": "Não. Os valores em €/kWh são o preço da energia, já com a TAR de energia incluída, mas sem IVA, sem o imposto especial de consumo (IEC), sem o termo fixo de potência e sem taxas (DGEG e contribuição audiovisual). Servem para comparar horas dentro do mesmo dia e para comparar tarifários indexados entre si, não para reproduzir o total da fatura."
       }
     },
     {
@@ -202,7 +202,7 @@
                 </div>
 
                 <div class="dropdown-item">
-                    <label for="dropdownOpcao">Opção Horária e Ciclo</label>
+                    <label for="dropdownOpcao"><span class="so-largo">Opção Horária e Ciclo</span><span class="so-estreito">Opção</span></label>
                     <select id="dropdownOpcao"></select>
                 </div>
 
@@ -261,6 +261,16 @@
                 <h3 id="tabelaTitulo">Tabela Quarto-horária</h3>
                 <p id="subtituloTabela"></p>
                 <div class="tabela-acoes">
+                    <div class="preencher-consumos" role="group" aria-label="Preencher os consumos da tabela">
+                        <span class="preencher-rotulo">Repartir</span>
+                        <input type="number" id="preencherKwh" min="0" step="0.1" value="8" inputmode="decimal" aria-label="Consumo total a repartir, em kWh" title="Consumo total a repartir (kWh); uma casa gasta tipicamente 6 a 10 kWh por dia"> kWh
+                        <select id="preencherModo" aria-label="Como repartir o consumo">
+                            <option value="perfil">com o perfil típico de uma casa (ERSE)</option>
+                            <option value="igual">por igual ao longo do dia</option>
+                            <option value="janela">na melhor janela de 2h do dia</option>
+                        </select>
+                        <button type="button" id="btnPreencher" class="btn-limpar-consumos">Preencher</button>
+                    </div>
                     <button type="button" id="btnLimparConsumos" class="btn-limpar-consumos" title="Limpa todos os consumos gravados desta vista (Horária ou Quarto-horária)">Limpar consumos gravados</button>
                 </div>
                 <table id="tabelaHoraria">
@@ -299,7 +309,7 @@
                 <details class="faq-item">
                     <summary><strong>Como usar este simulador?</strong></summary>
                     <div class="faq-content">
-                        <p>Selecione o dia, o seu tarifário e a opção horária. O gráfico mostrará a curva de preços para esse dia. Ative a opção "Simular consumos horários" e introduza um valor de consumo (em kWh) na tabela para cada hora. O simulador calculará automaticamente o custo para esse período e o custo total, permitindo-lhe perceber o impacto de concentrar os seus maiores consumos (como carregar um veículo elétrico ou usar a máquina de lavar) nas horas mais baratas.</p>
+                        <p>Selecione o dia, o seu tarifário e a opção horária. O gráfico mostra a curva de preços desse dia. Na tabela por baixo do gráfico (a opção "Simular consumos" vem ligada), escreva o consumo (em kWh) de cada quarto de hora ou hora, ou use "Preencher" para repartir um total pelo perfil típico de uma casa, por igual ou na melhor janela do dia. O simulador calcula o custo de cada período e o total, e compara-o com as outras opções horárias do mesmo tarifário e com os outros tarifários indexados, o que ajuda a perceber o impacto de concentrar os maiores consumos (como carregar um veículo elétrico ou usar a máquina de lavar) nas horas mais baratas.</p>
                     </div>
                 </details>
 
@@ -314,7 +324,7 @@
                 <details class="faq-item">
                     <summary><strong>Os preços mostrados incluem IVA?</strong></summary>
                     <div class="faq-content">
-                        <p>Não. Os valores em €/kWh são o preço da energia, já com a TAR de energia incluída, mas <strong>sem IVA</strong>, sem o termo fixo de potência e sem taxas (DGEG e contribuição audiovisual). Servem para comparar horas dentro do mesmo dia e para comparar tarifários indexados entre si, não para reproduzir o total da fatura. Para o valor final da fatura, use o <a href="/eletricidade-tiagofelicia">simulador de eletricidade</a>.</p>
+                        <p>Não. Os valores em €/kWh são o preço da energia, já com a TAR de energia incluída, mas <strong>sem IVA</strong>, sem o imposto especial de consumo (IEC), sem o termo fixo de potência e sem taxas (DGEG e contribuição audiovisual). Servem para comparar horas dentro do mesmo dia e para comparar tarifários indexados entre si, não para reproduzir o total da fatura. Para o valor final da fatura, use o <a href="/eletricidade-tiagofelicia">simulador de eletricidade</a>.</p>
                     </div>
                 </details>
 
@@ -475,6 +485,12 @@
             .janela-controlo label > span { padding: 2px 8px; }
             .so-largo { display: none; }
             .so-estreito { display: inline; }
+            /* Seletores numa linha cada, com o rótulo à esquerda: empilhados (rótulo por cima) ocupavam
+               ~270 px e o gráfico só começava a ~1030 px num ecrã de 375 */
+            .dropdown-container { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 12px; }
+            .dropdown-item { flex-direction: row; align-items: center; gap: 8px; }
+            .dropdown-item label { flex: 0 0 4.6em; text-align: right; }
+            .dropdown-item select { flex: 1 1 auto; min-width: 0; width: 100%; }
         }
 
         /* O atributo border="1" foi removido (obsoleto): as bordas, o padding e as cores
@@ -483,7 +499,17 @@
         #tabelaHoraria thead th:focus-visible { outline: 2px solid #495057; outline-offset: -2px; }
         [data-theme="dark"] #tabelaHoraria thead th:focus-visible { outline-color: #cbd5e1; }
 
-        .tabela-acoes { text-align: center; margin: 4px auto 10px auto; }
+        .tabela-acoes { display: flex; flex-wrap: wrap; gap: 8px 14px; justify-content: center; align-items: center; margin: 4px auto 10px auto; }
+        /* Preencher consumos: perfil ERSE, por igual ou na melhor janela */
+        .preencher-consumos { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; font-size: 0.85em; color: #495057; }
+        .preencher-consumos .preencher-rotulo { font-weight: 600; }
+        .preencher-consumos input { width: 64px; padding: 4px 6px; font-size: 1em; }
+        .preencher-consumos select { min-width: 0; padding: 4px 6px; font-size: 1em; }   /* o style.css dá 200px a todos os select */
+        .preencher-consumos .btn-limpar-consumos { font-size: 1em; }
+        .badge-pill.incompleto { background: #e9ecef; color: #495057; font-weight: normal; }
+        [data-theme="dark"] .preencher-consumos { color: #cbd5e1; }
+        [data-theme="dark"] .preencher-consumos input { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; }
+        [data-theme="dark"] .badge-pill.incompleto { background: #334155; color: #cbd5e1; }
         .btn-limpar-consumos { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 4px 12px; font-size: 0.85em; color: #495057; cursor: pointer; }
         .btn-limpar-consumos:hover { background: #e9ecef; }
 

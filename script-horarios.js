@@ -314,6 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const diasDisponiveis = Object.keys(dadosEstruturados).sort((a, b) => parseDiaPt(a) - parseDiaPt(b));
         // O value continua a ser a data crua (é a chave de dadosEstruturados); só a etiqueta muda
         diaSelect.innerHTML = diasDisponiveis.map(d => `<option value="${d}">${etiquetaDia(d)}</option>`).join("");
+        hojeDasEtiquetas = hojePadrao;
 
         if (diasDisponiveis.includes(hojePadrao)) {
             diaSelect.value = hojePadrao;
@@ -634,32 +635,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const minimo = ordenados[0];
         const maximo = ordenados[ordenados.length - 1];
         const media = valores.reduce((s, x) => s + x.v, 0) / valores.length;
+        // O último dia publicado ainda não tem a última hora (é leiloada no dia seguinte): a média
+        // é só até aí, e diz-se, como no omie-diario
+        const ultimoComPreco = valores[valores.length - 1].i;
+        const ateAs = ultimoComPreco < dados.colunas.length - 1 ? fimIntervalo(dados.categorias[ultimoComPreco]) : null;
 
-        // Média de um dia do dataset, para as comparações entre dias
-        const mediaDoDia = (diaLabel) => {
-            const dat = fonte[diaLabel]?.[tarifario]?.[opcao];
-            if (!dat?.colunas) return null;
-            const v = dat.colunas.filter(x => x !== null && x !== undefined && !isNaN(x));
-            return v.length > 0 ? v.reduce((s, x) => s + x, 0) / v.length : null;
-        };
-
-        // Média do dia anterior (no dataset; pode não ser literalmente "ontem" se houver gaps)
+        // Dia anterior no dataset (pode não ser literalmente "ontem" se houver gaps)
         const diasOrdenados = Object.keys(fonte).sort((a, b) => parseDiaPt(a) - parseDiaPt(b));
         const idxAtual = diasOrdenados.indexOf(dia);
-        let mediaAnterior = null;
-        let diaAnteriorLabel = null;
-        if (idxAtual > 0) {
-            diaAnteriorLabel = diasOrdenados[idxAtual - 1];
-            mediaAnterior = mediaDoDia(diaAnteriorLabel);
-        }
+        const diaAnteriorLabel = idxAtual > 0 ? diasOrdenados[idxAtual - 1] : null;
+        // As comparações entre dias usam só os intervalos que os dois têm: amanhã sem a última
+        // hora contra hoje com as 24 enviesava a percentagem
+        const comparacaoAnterior = diaAnteriorLabel ? mediasNasMesmasHoras(dados, fonte[diaAnteriorLabel]?.[tarifario]?.[opcao]) : null;
 
         // O dataset só traz hoje e amanhã, pelo que na vista por omissão (hoje) nunca
         // há dia anterior. Nesse caso comparamos com amanhã, que é a informação útil
         // para quem está a decidir se adia um consumo.
-        let mediaAmanha = null;
-        if (mediaAnterior === null && dia === getHojeStr()) {
-            mediaAmanha = mediaDoDia(getAmanhaStr());
-        }
+        const comparacaoAmanha = (!comparacaoAnterior && dia === getHojeStr())
+            ? mediasNasMesmasHoras(dados, fonte[getAmanhaStr()]?.[tarifario]?.[opcao]) : null;
+        // Tooltip das comparações quando ficaram de fora intervalos (ex.: a última hora de amanhã)
+        const notaMesmasHoras = c => c && c.n < Math.max(dados.colunas.length, c.nOutro)
+            ? ` — só nos intervalos com preço nos dois dias (até às ${c.ateAs})` : '';
 
         const horaria = getVistaAtual() === "horaria";
         const decimaisMR = horaria ? 4 : 5;
@@ -673,20 +669,21 @@ document.addEventListener('DOMContentLoaded', function () {
         let html = '';
         html += `<div class="mini-resumo-chip">${rotuloMin}: <strong>${fmtHora(dados.categorias[minimo.i])} (${fmtPreco(minimo.v)})</strong></div>`;
         html += `<div class="mini-resumo-chip">${rotuloMax}: <strong>${fmtHora(dados.categorias[maximo.i])} (${fmtPreco(maximo.v)})</strong></div>`;
-        html += `<div class="mini-resumo-chip">Média do dia: <strong>${fmtPreco(media)}</strong></div>`;
+        const tipMedia = ateAs ? ` title="A última hora deste dia ainda não foi leiloada: a média vai até às ${ateAs}"` : '';
+        html += `<div class="mini-resumo-chip"${tipMedia}>Média do dia${ateAs ? ` (até às ${ateAs})` : ''}: <strong>${fmtPreco(media)}</strong></div>`;
 
-        if (mediaAnterior !== null && mediaAnterior !== 0) {
-            const diff = (media - mediaAnterior) / mediaAnterior * 100;
+        if (comparacaoAnterior && comparacaoAnterior.b !== 0) {
+            const diff = (comparacaoAnterior.a - comparacaoAnterior.b) / comparacaoAnterior.b * 100;
             const cls = diff > 0.05 ? 'up' : (diff < -0.05 ? 'down' : '');
             const sinal = diff > 0 ? '+' : '';
-            const tipLabel = diaAnteriorLabel ? ` (vs. ${diaAnteriorLabel})` : '';
-            html += `<div class="mini-resumo-chip ${cls}" title="Comparação com a média do dia anterior disponível${tipLabel}">Vs. dia anterior: <strong>${sinal}${diff.toFixed(1).replace('.', ',')}%</strong></div>`;
-        } else if (mediaAmanha !== null && media !== 0) {
+            const tipLabel = ` (vs. ${diaAnteriorLabel})${notaMesmasHoras(comparacaoAnterior)}`;
+            html += `<div class="mini-resumo-chip ${cls}" title="${escAttr('Comparação com a média do dia anterior disponível' + tipLabel)}">Vs. dia anterior: <strong>${sinal}${diff.toFixed(1).replace('.', ',')}%</strong></div>`;
+        } else if (comparacaoAmanha && comparacaoAmanha.a !== 0) {
             // Quanto amanhã fica acima/abaixo de hoje (sinal na perspetiva de amanhã)
-            const diff = (mediaAmanha - media) / media * 100;
+            const diff = (comparacaoAmanha.b - comparacaoAmanha.a) / comparacaoAmanha.a * 100;
             const cls = diff > 0.05 ? 'up' : (diff < -0.05 ? 'down' : '');
             const sinal = diff > 0 ? '+' : '';
-            html += `<div class="mini-resumo-chip ${cls}" title="Média de amanhã (${getAmanhaStr()}) comparada com a média de hoje">Amanhã vs. hoje: <strong>${sinal}${diff.toFixed(1).replace('.', ',')}%</strong></div>`;
+            html += `<div class="mini-resumo-chip ${cls}" title="${escAttr(`Média de amanhã (${getAmanhaStr()}) comparada com a média de hoje${notaMesmasHoras(comparacaoAmanha)}`)}">Amanhã vs. hoje: <strong>${sinal}${diff.toFixed(1).replace('.', ',')}%</strong></div>`;
         }
 
         if (html !== htmlMiniResumoRenderizado) {
@@ -722,6 +719,21 @@ document.addEventListener('DOMContentLoaded', function () {
     function minutosDoIntervalo(cat) {
         const [h, m] = inicioIntervalo(cat).split(':');
         return (parseInt(h, 10) || 0) * 60 + (parseInt(m, 10) || 0);
+    }
+    const temValor = v => v !== null && v !== undefined && !isNaN(v);
+    // Médias de dois dias só nos intervalos com preço em ambos, emparelhados pela etiqueta (nos dias
+    // de mudança de hora a hora a mais ou a menos fica de fora). a/b: médias; n: intervalos usados;
+    // nOutro: intervalos do 2.º dia; ateAs: fim do último intervalo usado.
+    function mediasNasMesmasHoras(datA, datB) {
+        if (!datA?.colunas || !datB?.colunas) return null;
+        const doB = new Map();
+        datB.categorias.forEach((c, i) => { if (temValor(datB.colunas[i])) doB.set(c, datB.colunas[i]); });
+        let sa = 0, sb = 0, n = 0, ultima = null;
+        datA.categorias.forEach((c, i) => {
+            if (!temValor(datA.colunas[i]) || !doB.has(c)) return;
+            sa += datA.colunas[i]; sb += doB.get(c); n++; ultima = c;
+        });
+        return n ? { a: sa / n, b: sb / n, n, nOutro: datB.colunas.length, ateAs: fimIntervalo(ultima) } : null;
     }
 
     // --- PREÇOS ATUAIS (OMIE + comercializador do intervalo em curso) ---
@@ -771,7 +783,8 @@ document.addEventListener('DOMContentLoaded', function () {
         let html = '';
         html += `<div class="agora-chip periodo" title="Intervalo em curso, hora de Portugal continental">Agora · ${intervalo}</div>`;
         html += `<div class="agora-chip" title="${escAttr(omieTip)}">OMIE: <strong>${omieMwh} €/MWh</strong></div>`;
-        html += `<div class="agora-chip" title="${escAttr(precoTip)}">Comercializador: <strong>${temPreco ? fmtPt(precoKwh, decimais) + ' €/kWh' : '—'}</strong></div>`;
+        // «Tarifário» e não «Comercializador»: é o preço do tarifário e opção escolhidos (o nome vai no tooltip)
+        html += `<div class="agora-chip" title="${escAttr(precoTip)}">Tarifário: <strong>${temPreco ? fmtPt(precoKwh, decimais) + ' €/kWh' : '—'}</strong></div>`;
 
         container.innerHTML = html;
     }
@@ -900,10 +913,12 @@ document.addEventListener('DOMContentLoaded', function () {
         // Aviso "amanhã ainda melhor": só quando estamos a ver hoje, a janela de hoje
         // cabe (não é já o recurso a amanhã) e a diferença é material. A resposta
         // principal é sempre a de hoje — este chip acrescenta, não substitui.
-        // Se a janela já entra pela noite dentro, o chip seria redundante (e confuso:
-        // proporia horas de amanhã que a própria janela já inclui).
-        const chipAmanha = (isHoje && noGrafico && !cruzaMeiaNoite)
-            ? construirChipAmanha(fonte, sel, pontos, melhor, decimais) : '';
+        // Se a janela já entra pela noite dentro, a de amanhã procura-se só depois de ela
+        // acabar: propor horas que a própria janela já inclui seria redundante, mas uma
+        // janela bem mais barata noutra altura de amanhã (o sol do meio-dia) não pode
+        // ficar escondida (27/10 às 19h: 23:30–01:30 a 0,332 contra 09:30–11:30 a 0,170).
+        const chipAmanha = (isHoje && noGrafico)
+            ? construirChipAmanha(fonte, sel, pontos, melhor, decimais, cruzaMeiaNoite ? melhor.fim - nHoje : -1) : '';
 
         const marcaAmanha = cruzaMeiaNoite ? '<span class="janela-escopo"> (acaba amanhã)</span>' : '';
         const fimTexto = cruzaMeiaNoite ? `${fim} de amanhã` : fim;
@@ -936,13 +951,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const GANHO_MIN_PCT = 15;
     const GANHO_MIN_KWH = 0.03;
 
-    function construirChipAmanha(fonte, sel, pontos, melhorHoje, decimais) {
+    // fimJaIncluido: índice (em amanhã) onde acaba a janela de hoje quando ela atravessa a
+    // meia-noite, ou -1; a janela de amanhã só pode começar depois dele.
+    function construirChipAmanha(fonte, sel, pontos, melhorHoje, decimais, fimJaIncluido) {
         // Preços negativos ou nulos: a comparação relativa deixa de fazer sentido
         if (!(melhorHoje.media > 0)) return '';
 
         const amanhaStr = getAmanhaStr();
         const dadosAmanha = fonte[amanhaStr]?.[sel.tarifario]?.[sel.opcao];
-        const melhorAmanha = calcularMelhorJanela(dadosAmanha, pontos, 0);
+        const cruza = fimJaIncluido >= 0;
+        const melhorAmanha = calcularMelhorJanela(dadosAmanha, pontos, cruza ? fimJaIncluido + 1 : 0);
         if (!melhorAmanha) return '';
 
         const ganhoAbs = melhorHoje.media - melhorAmanha.media;
@@ -951,7 +969,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const inicio = inicioIntervalo(dadosAmanha.categorias[melhorAmanha.i]);
         const fim = fimIntervalo(dadosAmanha.categorias[melhorAmanha.fim]);
-        const tip = `Clique para ver amanhã no gráfico. A melhor janela de amanhã fica ${fmtPt(ganhoPct, 0)}% mais barata (menos ${fmtPt(ganhoAbs, decimais)} €/kWh) do que a melhor que resta hoje.`;
+        const tip = `Clique para ver amanhã no gráfico. A melhor janela de amanhã fica ${fmtPt(ganhoPct, 0)}% mais barata (menos ${fmtPt(ganhoAbs, decimais)} €/kWh) do que a melhor ${cruza ? 'a começar hoje (que acaba amanhã às ' + fimIntervalo(dadosAmanha.categorias[fimJaIncluido]) + ')' : 'que resta hoje'}.`;
 
         // "ainda melhor" desaparece em ecrãs estreitos (CSS), para o chip caber numa linha
         return `<button type="button" class="janela-chip amanha" data-dia="${escAttr(amanhaStr)}" title="${escAttr(tip)}">` +
@@ -1094,6 +1112,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Texto da checkbox do simulador, conforme vista
         const lblSim = document.getElementById('labelSimular');
         if (lblSim) lblSim.textContent = vista === "horaria" ? "Simular consumos horários?" : "Simular consumos quarto-horários?";
+        // Preenchimento «na melhor janela de Nh»: acompanha a duração escolhida
+        const optJanela = document.querySelector('#preencherModo option[value="janela"]');
+        if (optJanela) optJanela.textContent = `na melhor janela de ${getHorasJanela()}h do dia`;
 
         // Atualizar visibilidade do checkbox "Sobrepor amanhã" antes de o lermos
         atualizarVisibilidadeSobreporAmanha();
@@ -1437,27 +1458,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const resumo = [`⚡ Preços horários — ${tarifario} (${opcao})`, etiquetaDia(dia), ...chips, linhaJanela].filter(Boolean).join('\n');
         const url = window.location.href;
         const textoCompleto = `${resumo}\n${url}`;
-        const aviso = msg => {
-            const antigo = document.getElementById('toast-feedback');
-            if (antigo) antigo.remove();
-            const t = document.createElement('div');
-            t.id = 'toast-feedback';
-            t.className = 'toast-feedback';
-            t.textContent = msg;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 2500);
-        };
         if (navigator.share) {
             try { await navigator.share({ title: 'Preços horários — Tiago Felícia', text: resumo, url }); return; }
             catch (e) { if (e && e.name === 'AbortError') return; }
         }
         try {
             await navigator.clipboard.writeText(textoCompleto);
-            aviso('✓ Link e resumo copiados');
+            avisoToast('✓ Link e resumo copiados');
         } catch (e) {
             prompt('Copie este link:', textoCompleto);
         }
     };
+
+    // Aviso breve no canto (o do Partilhar; também o dos preços de amanhã e do preenchimento)
+    function avisoToast(msg) {
+        const antigo = document.getElementById('toast-feedback');
+        if (antigo) antigo.remove();
+        const t = document.createElement('div');
+        t.id = 'toast-feedback';
+        t.className = 'toast-feedback';
+        t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2500);
+    }
 
     window.controlarTabela = function() {
         const checkbox = document.getElementById("checkboxSimular");
@@ -1494,6 +1518,128 @@ document.addEventListener('DOMContentLoaded', function () {
                 prepararDadosTabela(dia, tarifario, opcao, vista);
             }
         });
+    }
+
+    // --- PREENCHER CONSUMOS (perfil típico da ERSE, por igual ou na melhor janela) ---
+    // 96 caixas vazias afastavam quem queria só uma ideia do custo do dia, e as comparações só
+    // aparecem com consumos. Isto preenche a vista atual num clique; os valores ficam guardados
+    // como os escritos à mão (por vista e por intervalo).
+    const PERFIL_ERSE = 'BTN_C';   // até 13,8 kVA e até 7140 kWh/ano: a maioria das casas
+    let perfilErsePromessa = null;
+
+    // Ano do perfil: o ficheiro não o diz. Descobre-se pelo fim de semana, que tem a menor fatia
+    // do consumo do dia entre as 7h e as 9h: o ano certo é o que põe aí o sábado e o domingo.
+    function anoDoPerfil(perfil, anoRef) {
+        const fatia = [0, 0, 0, 0, 0, 0, 0];
+        for (let dia = 0; dia < 364 && (dia + 1) * 96 <= perfil.length; dia++) {
+            let manha = 0, total = 0;
+            for (let k = 0; k < 96; k++) { const v = perfil[dia * 96 + k]; total += v; if (k >= 28 && k < 36) manha += v; }
+            if (total > 0) fatia[dia % 7] += manha / total;
+        }
+        const baixos = [0, 1, 2, 3, 4, 5, 6].sort((a, b) => fatia[a] - fatia[b]).slice(0, 2);
+        for (const ano of [anoRef, anoRef - 1, anoRef + 1, anoRef - 2]) {
+            const jan1 = new Date(Date.UTC(ano, 0, 1)).getUTCDay();   // 0 = domingo
+            if (baixos.map(k => (jan1 + k) % 7).sort().join() === '0,6') return ano;
+        }
+        return anoRef;
+    }
+
+    function carregarPerfilErse() {
+        if (!perfilErsePromessa) {
+            perfilErsePromessa = fetchDados('regulado/perfis_erse_9.json')
+                .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                .then(j => {
+                    const p = j[PERFIL_ERSE];
+                    if (!Array.isArray(p) || p.length < 96 * 364) throw new Error('perfil ' + PERFIL_ERSE);
+                    return { pesos: p, ano: anoDoPerfil(p, new Date().getFullYear()) };
+                })
+                .catch(e => { perfilErsePromessa = null; throw e; });
+        }
+        return perfilErsePromessa;
+    }
+
+    // Os 96 pesos do dia (96 por dia, todos os dias, como no simulador de autoconsumo): o mesmo dia
+    // do calendário no ano do perfil, acertado para o mesmo dia da semana — os perfis da ERSE
+    // distinguem dias úteis, sábados e domingos.
+    function pesosPerfilDoDia(perfil, diaStr) {
+        const [d, m, a] = diaStr.split('/').map(Number);
+        const semana = new Date(Date.UTC(a, m - 1, d)).getUTCDay();
+        const base = new Date(Date.UTC(perfil.ano, m - 1, d));
+        let delta = (semana - base.getUTCDay() + 7) % 7;
+        if (delta > 3) delta -= 7;
+        const nDias = Math.floor(perfil.pesos.length / 96);
+        let doAno = Math.round((base.getTime() - Date.UTC(perfil.ano, 0, 1)) / 86400000) + delta;
+        if (doAno < 0) doAno += 7;
+        if (doAno >= nDias) doAno -= 7;
+        return perfil.pesos.slice(doAno * 96, doAno * 96 + 96);
+    }
+
+    async function preencherConsumos() {
+        const sel = getSelecao();
+        const dados = sel && getFonteDadosAtual()[sel.dia]?.[sel.tarifario]?.[sel.opcao];
+        if (!dados) return;
+        const total = parseFloat(String(document.getElementById('preencherKwh').value).replace(',', '.'));
+        if (!(total > 0)) { avisoToast('Escreva primeiro quantos kWh quer repartir'); return; }
+        if (estadoTabela.dados.some(d => d.consumo > 0) && !confirm('Substituir os consumos que já estão na tabela?')) return;
+
+        const modo = document.getElementById('preencherModo').value;
+        const comPreco = dados.colunas.map(temValor);
+        let pesos, descricao;
+        if (modo === 'janela') {
+            // A melhor janela do DIA mostrado, desde as 00:00: é uma simulação do custo do dia,
+            // não a janela «a partir de agora» dos chips
+            const horas = getHorasJanela();
+            const jan = calcularMelhorJanela(dados, sel.vista === 'horaria' ? horas : horas * 4, 0);
+            if (!jan) { avisoToast('Não há preços para uma janela de ' + horas + 'h neste dia'); return; }
+            pesos = dados.colunas.map((_, i) => (i >= jan.i && i <= jan.fim) ? 1 : 0);
+            descricao = `entre as ${inicioIntervalo(dados.categorias[jan.i])} e as ${fimIntervalo(dados.categorias[jan.fim])}`;
+        } else if (modo === 'igual') {
+            pesos = comPreco.map(c => c ? 1 : 0);
+            descricao = 'repartidos por igual';
+        } else {
+            const btn = document.getElementById('btnPreencher');
+            const textoBtn = btn.textContent;
+            btn.disabled = true; btn.textContent = 'A carregar o perfil…';
+            try {
+                const pesos96 = pesosPerfilDoDia(await carregarPerfilErse(), sel.dia);
+                // Na vista horária, cada hora soma os seus 4 quartos; a hora repetida de outubro
+                // usa os pesos da mesma hora
+                pesos = dados.categorias.map(c => {
+                    const q = Math.floor(minutosDoIntervalo(c) / 15);
+                    if (sel.vista !== 'horaria') return pesos96[q] || 0;
+                    return (pesos96[q] || 0) + (pesos96[q + 1] || 0) + (pesos96[q + 2] || 0) + (pesos96[q + 3] || 0);
+                });
+                descricao = 'com o perfil típico de uma casa (ERSE)';
+            } catch (e) {
+                avisoToast('Não foi possível carregar o perfil da ERSE');
+                return;
+            } finally {
+                btn.disabled = false; btn.textContent = textoBtn;
+            }
+        }
+        // Só nos intervalos com preço (no último dia publicado falta a última hora)
+        pesos = pesos.map((p, i) => comPreco[i] ? p : 0);
+        const soma = pesos.reduce((s, p) => s + p, 0);
+        if (!(soma > 0)) return;
+        // 3 casas, como as caixas; o que o arredondamento deixa vai para o maior, para o total bater certo
+        const valores = pesos.map(p => Math.round(total * p / soma * 1000) / 1000);
+        let iMaior = 0;
+        valores.forEach((v, i) => { if (v > valores[iMaior]) iMaior = i; });
+        valores[iMaior] = Math.round((valores[iMaior] + total - valores.reduce((s, v) => s + v, 0)) * 1000) / 1000;
+
+        const guardar = {};
+        dados.categorias.forEach((c, i) => { if (valores[i] > 0) guardar[c] = valores[i]; });
+        try { localStorage.setItem(chaveConsumos(sel.vista), JSON.stringify(guardar)); } catch (e) {}
+        prepararDadosTabela(sel.dia, sel.tarifario, sel.opcao, sel.vista);
+        // Também sem localStorage (navegação privada): os valores vão diretos para a tabela
+        estadoTabela.dados.forEach(d => { d.consumo = guardar[d.hora] || 0; d.custo = d.consumo * (d.precoMedio || 0); });
+        renderizarTabela();
+        avisoToast(`✓ ${fmtPt(total, 3).replace(/,?0+$/, '')} kWh ${descricao}`);
+    }
+
+    function ligarPreenchimento() {
+        const btn = document.getElementById('btnPreencher');
+        if (btn) btn.addEventListener('click', preencherConsumos);
     }
 
     // --- TABELA ---
@@ -1690,9 +1836,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const opcoes = Object.keys(tarifarioDados);
 
-        // Se só existe uma opção horária, a comparação não tem sentido
-        if (opcoes.length < 2) { container.innerHTML = ''; return; }
-
         // Soma do consumo do utilizador
         let consumoTotalUtilizador = 0;
         estadoTabela.dados.forEach(d => { consumoTotalUtilizador += (d.consumo || 0); });
@@ -1704,68 +1847,76 @@ document.addEventListener('DOMContentLoaded', function () {
             if (d.consumo > 0) consumosPorIntervalo[d.hora] = d.consumo;
         });
 
-        // Para cada opção, calcula o custo aplicando os preços dessa opção ao padrão do utilizador
-        const resultados = opcoes.map(opcao => {
-            const dadosOp = tarifarioDados[opcao];
-            let custo = 0;
-            let consumoCoberto = 0;
-            for (let i = 0; i < dadosOp.categorias.length; i++) {
-                const intervalo = dadosOp.categorias[i];
-                const preco = dadosOp.colunas[i];
-                const consumo = consumosPorIntervalo[intervalo];
-                if (consumo && preco !== null && preco !== undefined && !isNaN(preco)) {
+        // Custo do padrão do utilizador com os preços de uma série (opção ou tarifário)
+        const custoCom = dadosX => {
+            let custo = 0, consumoCoberto = 0;
+            for (let i = 0; i < dadosX.categorias.length; i++) {
+                const consumo = consumosPorIntervalo[dadosX.categorias[i]];
+                const preco = dadosX.colunas[i];
+                if (consumo && temValor(preco)) {
                     custo += consumo * preco;
                     consumoCoberto += consumo;
                 }
             }
-            return { opcao, custo, consumoCoberto };
-        });
+            return { custo, consumoCoberto };
+        };
 
-        // Mais barato — apenas entre os que cobrem (pelo menos) o mesmo consumo da opção atual
-        const consumoCobertoAtual = resultados.find(r => r.opcao === opcaoAtual)?.consumoCoberto || 0;
-        const elegiveisMB = resultados.filter(r => Math.abs(r.consumoCoberto - consumoCobertoAtual) < 1e-6);
-        const maisBarato = elegiveisMB.length > 0
-            ? elegiveisMB.reduce((min, r) => r.custo < min.custo ? r : min)
-            : null;
-
-        const custoAtual = resultados.find(r => r.opcao === opcaoAtual)?.custo;
-
-        // Render
-        let html = '';
-        html += `<h4 class="comparacao-titulo">Comparação de opções horárias</h4>`;
-        html += `<p class="comparacao-subtitulo">Custo que pagaria com o mesmo padrão de consumo introduzido, para cada opção do tarifário <strong>${tarifario}</strong></p>`;
-        html += `<table class="comparacao-tabela"><thead><tr><th>Opção horária e ciclo</th><th>Custo total (€)</th><th>vs. atual</th></tr></thead><tbody>`;
-
-        resultados.forEach(r => {
-            const isAtual = r.opcao === opcaoAtual;
-            const isMaisBarato = (maisBarato && r === maisBarato && !isAtual);
-            const classes = [];
-            if (isAtual) classes.push('atual');
-            if (isMaisBarato) classes.push('mais-barato');
-
-            let badges = '';
-            if (isAtual) badges += ` <span class="badge-pill atual">Atual</span>`;
-            if (isMaisBarato) badges += ` <span class="badge-pill mb">Mais barato</span>`;
-
-            let diffStr;
-            if (isAtual) {
-                diffStr = '—';
-            } else if (custoAtual && custoAtual !== 0) {
-                const diff = (r.custo - custoAtual) / custoAtual * 100;
-                const sinal = diff > 0 ? '+' : '';
-                diffStr = `${sinal}${fmtPt(diff, 1)}%`;
-            } else {
-                diffStr = '—';
-            }
-
-            html += `<tr class="${classes.join(' ')}">
-                <td>${r.opcao}${badges}</td>
+        // Tabela de comparação: linhas {nome, custo, consumoCoberto}, a atual marcada; o «mais barato» só
+        // entre as que cobrem o mesmo consumo que a atual (uma série com buracos pareceria mais barata)
+        const tabelaComparacao = (linhas, nomeAtual, cabecalhoNome, cabecalhoCusto) => {
+            const cobertoAtual = linhas.find(r => r.nome === nomeAtual)?.consumoCoberto || 0;
+            const elegiveis = linhas.filter(r => Math.abs(r.consumoCoberto - cobertoAtual) < 1e-6);
+            const maisBarato = elegiveis.length ? elegiveis.reduce((min, r) => r.custo < min.custo ? r : min) : null;
+            const custoAtual = linhas.find(r => r.nome === nomeAtual)?.custo;
+            let t = `<table class="comparacao-tabela"><thead><tr><th>${cabecalhoNome}</th><th>${cabecalhoCusto}</th><th>vs. atual</th></tr></thead><tbody>`;
+            linhas.forEach(r => {
+                const isAtual = r.nome === nomeAtual;
+                const isMaisBarato = (maisBarato && r === maisBarato && !isAtual);
+                const classes = [];
+                if (isAtual) classes.push('atual');
+                if (isMaisBarato) classes.push('mais-barato');
+                let badges = '';
+                if (isAtual) badges += ` <span class="badge-pill atual">Atual</span>`;
+                if (isMaisBarato) badges += ` <span class="badge-pill mb">Mais barato</span>`;
+                if (Math.abs(r.consumoCoberto - cobertoAtual) >= 1e-6) badges += ` <span class="badge-pill incompleto" title="Faltam preços em parte dos intervalos com consumo">incompleto</span>`;
+                let diffStr = '—';
+                if (!isAtual && custoAtual) {
+                    const diff = (r.custo - custoAtual) / custoAtual * 100;
+                    diffStr = `${diff > 0 ? '+' : ''}${fmtPt(diff, 1)}%`;
+                }
+                t += `<tr class="${classes.join(' ')}">
+                <td>${r.nome}${badges}</td>
                 <td>${fmtPt(r.custo, 4)}</td>
                 <td>${diffStr}</td>
             </tr>`;
-        });
+            });
+            return t + `</tbody></table>`;
+        };
 
-        html += `</tbody></table>`;
+        let html = '';
+
+        // Opções horárias do mesmo tarifário (só quando há mais do que uma)
+        if (opcoes.length >= 2) {
+            const resultados = opcoes.map(opcao => ({ nome: opcao, ...custoCom(tarifarioDados[opcao]) }));
+            html += `<h4 class="comparacao-titulo">Comparação de opções horárias</h4>`;
+            html += `<p class="comparacao-subtitulo">Custo que pagaria com o mesmo padrão de consumo introduzido, para cada opção do tarifário <strong>${tarifario}</strong></p>`;
+            html += tabelaComparacao(resultados, opcaoAtual, 'Opção horária e ciclo', 'Custo total (€)');
+        }
+
+        // Os outros tarifários indexados, na mesma opção, do mais barato para o mais caro. Só a energia:
+        // o termo fixo de potência muda de tarifário para tarifário e não está no CSV
+        const tarifariosDia = fonte[dia] || {};
+        const porTarifario = Object.keys(tarifariosDia)
+            .filter(t => tarifariosDia[t]?.[opcaoAtual])
+            .map(t => ({ nome: t, ...custoCom(tarifariosDia[t][opcaoAtual]) }))
+            .sort((a, b) => a.custo - b.custo);
+        if (porTarifario.length >= 2) {
+            html += `<h4 class="comparacao-titulo">Comparação de tarifários indexados</h4>`;
+            html += `<p class="comparacao-subtitulo">O mesmo padrão de consumo na opção <strong>${opcaoAtual}</strong> dos ${porTarifario.length} tarifários deste dia. `
+                + `Só a energia (com TAR de energia, sem IVA): o termo fixo de potência muda de tarifário para tarifário e não está aqui — para o custo total use o <a href="/eletricidade-tiagofelicia">simulador de eletricidade</a>.</p>`;
+            html += tabelaComparacao(porTarifario, tarifario, 'Tarifário', 'Custo da energia (€)');
+        }
+
         container.innerHTML = html;
     }
 
@@ -1857,6 +2008,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 construirDadosHorarios();
                 parseConstantes(data);
                 ligarBotaoLimparConsumos();
+                ligarPreenchimento();
                 ligarChipAmanha();
                 const hojeEmLisboa = getHojeStr();
                 populaDropdowns(hojeEmLisboa);
@@ -1873,9 +2025,80 @@ document.addEventListener('DOMContentLoaded', function () {
         desenhaGrafico();
     });
 
+    // --- DADOS NOVOS COM A PÁGINA ABERTA ---
+    // O CSV só era lido ao abrir: quem deixava o separador aberto de manhã não via os preços de
+    // amanhã quando saíam (~13h CET), e depois da meia-noite o «Hoje» ficava no dia anterior.
+    // Agora o seletor do dia acompanha a viragem do dia e, enquanto faltarem os preços de hoje
+    // ou (a partir das 12h) os de amanhã, o CSV volta a ser pedido de 10 em 10 minutos.
+    const VERIFICAR_CADA_MS = 10 * 60 * 1000;
+    let ultimaVerificacao = Date.now();
+    let hojeDasEtiquetas = null;   // o «hoje» com que o seletor do dia foi escrito
+    let aVerificar = false;
+
+    function faltamDadosNovos() {
+        const dias = Object.keys(dadosEstruturados);
+        if (!dias.length) return false;
+        if (!dias.includes(getHojeStr())) return true;
+        return !dias.includes(getAmanhaStr()) && getAgoraLisboa().hora >= 12;
+    }
+
+    // Reescreve o seletor do dia (etiquetas «Hoje»/«Amanhã») mantendo a escolha; se a escolha era
+    // o «hoje» que entretanto passou, segue para o novo hoje. Depois redesenha tudo (o «hoje» mudou
+    // os chips Agora, a melhor janela, o «Sobrepor amanhã» e o link).
+    function reescreverSeletorDia() {
+        const diaSelect = document.getElementById('dropdownDia');
+        if (!diaSelect) return;
+        const antes = diaSelect.value;
+        const hoje = getHojeStr();
+        const dias = Object.keys(dadosEstruturados).sort((a, b) => parseDiaPt(a) - parseDiaPt(b));
+        diaSelect.innerHTML = dias.map(d => `<option value="${d}">${etiquetaDia(d)}</option>`).join('');
+        let novo = (antes === hojeDasEtiquetas && antes !== hoje && dias.includes(hoje)) ? hoje : antes;
+        if (!dias.includes(novo)) novo = dias.includes(hoje) ? hoje : dias[dias.length - 1];
+        diaSelect.value = novo;
+        hojeDasEtiquetas = hoje;
+        diaSelect.dispatchEvent(new Event('change'));
+    }
+
+    function acompanharViragemDoDia() {
+        if (hojeDasEtiquetas && getHojeStr() !== hojeDasEtiquetas && Object.keys(dadosEstruturados).length) reescreverSeletorDia();
+    }
+
+    function verificarDadosNovos(forcar) {
+        if (aVerificar || document.hidden) return;
+        if (!forcar && Date.now() - ultimaVerificacao < VERIFICAR_CADA_MS) return;
+        if (!faltamDadosNovos()) return;
+        aVerificar = true;
+        ultimaVerificacao = Date.now();
+        // Sem cache_bust: o browser revalida o que já tem (304 quando nada mudou) em vez de voltar
+        // a descarregar o ficheiro inteiro de 10 em 10 minutos
+        fetchDados("omie/precos-horarios.csv", { cache: 'no-cache' })
+            .then(res => res.ok ? res.text() : null)
+            .then(data => {
+                if (!data || data === dadosCSVGlobal) return;
+                const tinhaAmanha = !!dadosEstruturados[getAmanhaStr()];
+                dadosCSVGlobal = data;
+                parseCSV(data);
+                construirDadosHorarios();
+                parseConstantes(data);
+                reescreverSeletorDia();
+                if (!tinhaAmanha && dadosEstruturados[getAmanhaStr()]) avisoToast('✓ Já há preços de amanhã');
+            })
+            .catch(() => {})
+            .finally(() => { aVerificar = false; });
+    }
+
+    // No telemóvel o browser não recarrega o separador quando se volta a ele
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) return;
+        acompanharViragemDoDia();
+        if (Date.now() - ultimaVerificacao > 60000) verificarDadosNovos(true);
+    });
+
     // Manter "Agora" e "Melhor janela" em dia: ao virar o quarto de hora, os chips
     // e as bandas do gráfico mudam sozinhos, sem redesenhar o gráfico (preserva o zoom).
     setInterval(function () {
+        acompanharViragemDoDia();
+        verificarDadosNovos(false);
         atualizarPrecosAgora();
         sincronizarBandaAgora();
         sincronizarBandaJanela(atualizarMelhorJanela());
