@@ -346,6 +346,7 @@
         .legend { line-height: 18px; font-size: 0.75em; padding: 6px 8px !important; min-width: auto !important; }
         .legend i { width: 16px; height: 12px; display: inline-block; margin-right: 4px; vertical-align: middle; border-radius: 2px; }
         .legend-title { font-weight: bold; margin-bottom: 4px; font-size: 0.85em; }
+        .legend-nota { max-width: 150px; margin-top: 4px; font-size: 0.9em; line-height: 1.3; white-space: normal; }
 
         /* Price labels no mapa */
         .price-label { background: none; border: none; font-size: 12px; font-weight: bold; color: #333; text-align: center; white-space: nowrap; text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; }
@@ -787,6 +788,8 @@
             <button type="button" class="fuso-btn metric-btn" data-metric="slot" data-i18n="metricSlot" data-i18n-title="metricSlotTitle" title="Preço de cada zona num intervalo de 15 minutos à escolha">🕐 15 min</button>
             <button type="button" class="fuso-btn metric-btn" data-metric="neg" data-i18n="metricNeg" data-i18n-title="metricNegTitle" title="Horas com preço zero ou negativo em cada zona, no dia ou período">🟣 h ≤ 0</button>
             <button type="button" class="fuso-btn metric-btn" data-metric="spread" data-i18n="metricSpread" data-i18n-title="metricSpreadTitle" title="Spread diário de cada zona: média das horas mais caras menos a das mais baratas (as horas escolhem-se junto à tabela)">🔋 Spread</button>
+            <button type="button" class="fuso-btn metric-btn" data-metric="capS" data-i18n="metricCapS" data-i18n-title="metricCapSTitle" title="Preço capturado solar de cada zona, em % da média da zona (dados desde 2026)">☀️ Captura solar</button>
+            <button type="button" class="fuso-btn metric-btn" data-metric="capW" data-i18n="metricCapW" data-i18n-title="metricCapWTitle" title="Preço capturado eólico de cada zona, em % da média da zona (dados desde 2026)">💨 Captura eólica</button>
         </div>
 
         <div class="fuso-toggle slot-toggle" id="slot-picker" role="group" aria-label="Intervalo de 15 minutos" data-i18n-aria="ariaSlot" style="display:none;">
@@ -855,16 +858,17 @@
             <select id="spread-horas" class="spread-horas-sel" aria-label="Horas do spread" data-i18n-aria="spreadHorasAria"><option value="1">1 h</option><option value="2" selected>2 h</option><option value="4">4 h</option></select>
             <label class="chart-toggle"><input type="checkbox" id="toggle-ano-ant"> <span data-i18n="toggleAnoAnt">Mostrar variação vs ano anterior</span></label>
             <label class="chart-toggle"><input type="checkbox" id="toggle-captura"> <span data-i18n="toggleCaptura">Mostrar preço capturado (solar e eólico)</span></label>
+            <label class="chart-toggle"><input type="checkbox" id="toggle-acop"> <span data-i18n="toggleAcop">Mostrar acoplamento com a zona de referência</span></label>
         </div>
         <div id="ranked-list-content" role="region" aria-live="polite" aria-label="Tabela de preços por zona" data-i18n-aria="ariaTabela">
             <p class="no-data-msg" data-i18n="loading">A carregar dados...</p>
         </div>
+        <p class="export-credit" id="credit-table"></p>
         <div class="share-wrapper">
             <button type="button" id="btn-share" class="share-btn" title="Copiar link partilhável para o dia atual" data-i18n="btnShare" data-i18n-title="btnShareTitle">&#128279; Copiar link de partilha</button>
             <button type="button" id="btn-csv-tabela" class="share-btn" style="margin-left:8px;" title="Descarregar a tabela em CSV (Excel / LibreOffice)" data-i18n="btnCsv" data-i18n-title="btnCsvTitle">&#x2B07; Exportar CSV</button>
             <span id="share-feedback" class="share-feedback" data-i18n="shareCopied">Copiado!</span>
         </div>
-        <p class="export-credit" id="credit-table"></p>
     </div>
 
     <div id="zone-panel">
@@ -883,10 +887,10 @@
         <h2 id="intraday-titulo" data-i18n="intradayTitle">Perfil diário de preços</h2>
         <p id="intraday-stats" class="intraday-stats" aria-live="polite"></p>
         <div class="chart-canvas-wrap"><canvas id="chart-intraday"></canvas></div>
+        <p class="export-credit" id="credit-intraday"></p>
         <div class="share-wrapper">
             <button type="button" id="btn-csv-quartos" class="share-btn" title="Descarregar em CSV o preço de cada quarto de hora da zona e das comparações, no dia ou período escolhido" data-i18n="btnCsvQh" data-i18n-title="btnCsvQhTitle">&#x2B07; Exportar CSV dos quartos de hora</button>
         </div>
-        <p class="export-credit" id="credit-intraday"></p>
     </div>
 
     <div id="duracao-wrapper">
@@ -1021,6 +1025,7 @@
                     <li><strong>🕐 15 min:</strong> em vez de um agregado, mostra o preço de um <strong>intervalo de 15 minutos à escolha</strong> (o dataset é quarto-horário — 96 intervalos por dia). Aparece um seletor com slider, setas <kbd>❮</kbd> <kbd>❯</kbd> e botões <strong>▶ Animar</strong> e <strong>⏱ Agora</strong>. O <strong>▶ Animar</strong> percorre sozinho os 96 intervalos em ciclo (~4 por segundo), para ver a onda de preços a atravessar a Europa; clicar de novo (ou mexer no slider/setas) pára. Com o slider focado, as setas <kbd>←</kbd> <kbd>→</kbd> do teclado avançam intervalo a intervalo.</li>
                     <li><strong>🟣 h ≤ 0:</strong> horas com preço zero ou negativo no dia ou no período (cada quarto de hora conta 0,25 h). A cor segue a média de horas por dia, para valer em qualquer período; a etiqueta mostra o total.</li>
                     <li><strong>🔋 Spread:</strong> média das horas mais caras do dia menos a das mais baratas — o que uma bateria ganharia por ciclo diário, antes de perdas. As horas (1, 2 ou 4) escolhem-se junto à tabela; no período, é a média dos dias.</li>
+                    <li><strong>☀️ Captura solar / 💨 Captura eólica:</strong> o preço médio a que se vendeu a produção solar (ou eólica) do país, em <strong>% da média da zona</strong> no dia ou período. Abaixo de 100% (laranja a vermelho), essa produção vendeu-se mais barata do que a média, porque o sol ou o vento baixam o preço das horas em que produzem; acima de 100% (verde), mais cara. Só há dados desde 2026, e as zonas sem produção dessa fonte na ENTSO-E ficam a cinzento.</li>
                 </ul>
                 <p>Em modo <strong>Diário</strong>, o valor é o preço efetivo desse intervalo. Nos modos <strong>Semanal / Mensal / Personalizado</strong>, é a <strong>média desse mesmo intervalo ao longo de todos os dias</strong> do período (por exemplo, quanto custa em média a eletricidade às 19:45).</p>
                 <p>O intervalo é lido no fuso ativo: em <strong>🌍 Hora local</strong>, "19:45" é a hora local de cada zona; em <strong>🇪🇺 Hora de mercado (CET)</strong>, é o mesmo instante em toda a Europa. O botão <strong>⏱ Agora</strong> usa o relógio da zona de referência ("🌍 A minha zona") ou o relógio CET, conforme o fuso escolhido.</p>
@@ -1034,6 +1039,7 @@
                     <li><strong>🕐 15 min:</strong> instead of an aggregate, it shows the price of a <strong>15-minute interval of your choice</strong> (the dataset is quarter-hourly — 96 intervals per day). A picker appears with a slider, <kbd>❮</kbd> <kbd>❯</kbd> arrows and the <strong>▶ Play</strong> and <strong>⏱ Now</strong> buttons. <strong>▶ Play</strong> steps through all 96 intervals on a loop (~4 per second), so you can watch the price wave cross Europe; clicking again (or touching the slider/arrows) stops it. With the slider focused, the keyboard <kbd>←</kbd> <kbd>→</kbd> arrows step one interval at a time.</li>
                     <li><strong>🟣 h ≤ 0:</strong> hours with zero or negative price in the day or period (each quarter-hour counts 0.25 h). The colour follows the average hours per day, so it works for any period; the label shows the total.</li>
                     <li><strong>🔋 Spread:</strong> average of the day's most expensive hours minus the cheapest — what a battery would earn per daily cycle, before losses. The hours (1, 2 or 4) are chosen next to the table; over a period, it is the average of the days.</li>
+                    <li><strong>☀️ Solar capture / 💨 Wind capture:</strong> the average price at which the country's solar (or wind) output was sold, as a <strong>% of the zone's average</strong> for the day or period. Below 100% (orange to red), that output sold cheaper than the average, because sun or wind push down the price of the hours they produce in; above 100% (green), dearer. Data only since 2026; zones with no output of that source in ENTSO-E are grey.</li>
                 </ul>
                 <p>In <strong>Daily</strong> mode the value is the actual price for that interval. In <strong>Weekly / Monthly / Custom</strong> modes it is the <strong>average of that same interval across every day</strong> in the period (for example, how much electricity costs on average at 19:45).</p>
                 <p>The interval is read in the active time basis: under <strong>🌍 Local time</strong>, "19:45" is each zone's local clock; under <strong>🇪🇺 Market time (CET)</strong>, it is the same instant across Europe. The <strong>⏱ Now</strong> button uses the reference zone's clock ("🌍 My zone") or the CET clock, depending on the chosen time basis.</p>
@@ -1090,7 +1096,7 @@
                 <div data-lang-block="pt">
                 <ul>
                     <li><strong>Mapa coroplético europeu:</strong> 47 zonas de licitação coloridas pelo preço médio. Etiquetas numéricas sobre cada zona (asterisco se dados parciais).</li>
-                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, Δ (vs a zona de referência), variação vs ontem. Mostra hora local do mín/máx por zona. A caixa "Mostrar horas com preço ≤ 0" acrescenta a coluna <strong>h ≤ 0</strong>: quantas horas o preço esteve a zero ou negativo no dia ou período (cada quarto de hora conta 0,25 h). A caixa "Mostrar spread de" acrescenta a coluna <strong>Spread</strong> de 1, 2 ou 4 h: a média das horas mais caras do dia menos a das mais baratas (no período, a média dos dias). "Mostrar variação vs ano anterior" compara com o mesmo dia ou período um ano antes. "Mostrar preço capturado" acrescenta o preço médio a que se vendeu a produção solar e a eólica de cada país (desde 2026; nas zonas de um mesmo país usa-se a produção do país) — abaixo da média da zona quando o sol ou o vento baixam o preço das horas em que produzem. As zonas virtuais levam o selo <strong>virtual</strong>.</li>
+                    <li><strong>Tabela ordenável:</strong> clica nos cabeçalhos para ordenar por preço, mín, máx, amplitude, Δ (vs a zona de referência), variação vs ontem. Mostra hora local do mín/máx por zona. A caixa "Mostrar horas com preço ≤ 0" acrescenta a coluna <strong>h ≤ 0</strong>: quantas horas o preço esteve a zero ou negativo no dia ou período (cada quarto de hora conta 0,25 h). A caixa "Mostrar spread de" acrescenta a coluna <strong>Spread</strong> de 1, 2 ou 4 h: a média das horas mais caras do dia menos a das mais baratas (no período, a média dos dias). "Mostrar variação vs ano anterior" compara com o mesmo dia ou período um ano antes. "Mostrar preço capturado" acrescenta o preço médio a que se vendeu a produção solar e a eólica de cada país (desde 2026; nas zonas de um mesmo país usa-se a produção do país) — abaixo da média da zona quando o sol ou o vento baixam o preço das horas em que produzem. "Mostrar acoplamento com a zona de referência" acrescenta a % dos quartos de hora em que cada zona teve <strong>o mesmo preço que a zona de referência</strong> (diferença até 0,01 €/MWh, comparados pelo mesmo instante): perto de 100% quando a interligação chega para unir os dois mercados, mais baixo quando fica cheia e os preços se separam. As zonas virtuais levam o selo <strong>virtual</strong>.</li>
                     <li><strong>Perfil diário de preços:</strong> gráfico de barras com a curva do dia da zona selecionada. Cores na mesma escala do mapa. Resolução adapta-se ao publicado pela bolsa (15 min, 30 min ou horário). Em modos agregados mostra a média horária do período. Linha vermelha tracejada em y=0 quando há valores negativos.</li>
                     <li><strong>Perfil diário por linha da tabela:</strong> clica no nome de uma zona (ou no chevron <kbd>▸</kbd>) para abrir/fechar a curva do dia logo por baixo. Várias zonas em simultâneo para comparar.</li>
                     <li><strong>Curva de duração de preços:</strong> os preços do dia ou período ordenados do mais caro para o mais barato, para a zona e as comparações. Cada ponto diz que percentagem do tempo o preço esteve igual ou acima daquele valor; por cima, a mediana, os 10 % mais caros e mais baratos e as horas com preço ≤ 0.</li>
@@ -1101,6 +1107,7 @@
                             <li><strong>Médias diárias (linha)</strong> — os mesmos valores das barras, em formato de linha grossa na cor da média do período (útil para sobrepor com comparações ou ver a tendência)</li>
                             <li><strong>Médias diárias — ano anterior</strong> — linha tracejada roxa com os valores diários do mesmo período há um ano (alinhados dia-a-dia)</li>
                             <li><strong>Média europeia</strong> — linha tracejada azul-petróleo com a média europeia de cada dia, pesada pelo consumo de cada país (como no resumo)</li>
+                            <li><strong>Preço capturado solar / eólico</strong> — linhas âmbar e azul com o preço médio a que se vendeu, em cada dia, a produção solar e a eólica do país (desde 2026; o tooltip diz a % da média do dia)</li>
                         </ul>
                     </li>
                     <li><strong>Heatmap horário (24h × ~30 dias):</strong> grelha de horas vs dias, em modo "mês deslizante" terminado no Dia final escolhido (entre 28 e 31 dias consoante o mês). Inclui coluna lateral com <strong>média por hora</strong>, linha inferior com <strong>média por dia</strong> e canto com <strong>média global</strong>. Em modo "↔ Largura total" mostra valores com 2 casas decimais. O tooltip de cada hora mostra os quartos de hora (nos dias publicados a 15 min) e o da média por hora, a média de cada quarto no período. Nos dias de mudança de hora, a hora que não existe aparece tracejada e a que se repete tem um contorno duplo e mostra a média das duas passagens.</li>
@@ -1112,7 +1119,7 @@
                 <div data-lang-block="en">
                 <ul>
                     <li><strong>European choropleth map:</strong> 47 bidding zones coloured by the average price. Numeric labels over each zone (asterisk if data is partial).</li>
-                    <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, Δ (vs the reference zone), change vs yesterday. Shows the local time of the min/max per zone. The "Show hours with price ≤ 0" box adds the <strong>h ≤ 0</strong> column: how many hours the price was zero or negative in the day or period (each quarter-hour counts 0.25 h). The "Show spread of" box adds the <strong>Spread</strong> column for 1, 2 or 4 h: the average of the day's most expensive hours minus the cheapest (over a period, the average of the days). "Show change vs previous year" compares with the same day or period one year earlier. "Show capture price" adds the average price at which each country's solar and wind output was sold (since 2026; zones of one country use the country's output) — below the zone's average when sun or wind push down the price of the hours they produce in. Virtual zones carry the <strong>virtual</strong> tag.</li>
+                    <li><strong>Sortable table:</strong> click the headers to sort by price, min, max, range, Δ (vs the reference zone), change vs yesterday. Shows the local time of the min/max per zone. The "Show hours with price ≤ 0" box adds the <strong>h ≤ 0</strong> column: how many hours the price was zero or negative in the day or period (each quarter-hour counts 0.25 h). The "Show spread of" box adds the <strong>Spread</strong> column for 1, 2 or 4 h: the average of the day's most expensive hours minus the cheapest (over a period, the average of the days). "Show change vs previous year" compares with the same day or period one year earlier. "Show capture price" adds the average price at which each country's solar and wind output was sold (since 2026; zones of one country use the country's output) — below the zone's average when sun or wind push down the price of the hours they produce in. "Show coupling with the reference zone" adds the % of quarter-hours in which each zone had <strong>the same price as the reference zone</strong> (difference up to 0.01 €/MWh, compared at the same instant): close to 100% when interconnection is enough to join the two markets, lower when it is congested and prices split. Virtual zones carry the <strong>virtual</strong> tag.</li>
                     <li><strong>Daily price profile:</strong> bar chart with the day curve of the selected zone. Colours on the same scale as the map. Resolution adapts to what the exchange publishes (15 min, 30 min or hourly). In aggregated modes it shows the period's hourly average. Dashed red line at y=0 when there are negative values.</li>
                     <li><strong>Daily price profile per table row:</strong> click a zone's name (or the chevron <kbd>▸</kbd>) to open/close the day curve right below it. Several zones at once for comparison.</li>
                     <li><strong>Price duration curve:</strong> the day's or period's prices sorted from most to least expensive, for the zone and the compared zones. Each point tells what share of the time the price was at or above that value; above it, the median, the top and bottom 10% and the hours with price ≤ 0.</li>
@@ -1123,6 +1130,7 @@
                             <li><strong>Daily averages (line)</strong> — the same values as the bars, as a thick line in the period-average colour (useful to overlay with comparisons or see the trend)</li>
                             <li><strong>Daily averages — previous year</strong> — purple dashed line with the daily values of the same period a year ago (aligned day by day)</li>
                             <li><strong>European average</strong> — teal dashed line with each day's European average, weighted by each country's consumption (as in the summary)</li>
+                            <li><strong>Solar / wind capture price</strong> — amber and blue lines with the average price at which the country's solar and wind output was sold each day (since 2026; the tooltip shows the % of the day's average)</li>
                         </ul>
                     </li>
                     <li><strong>Hourly heatmap (24h × ~30 days):</strong> grid of hours vs days, in "rolling month" mode ending on the chosen End day (between 28 and 31 days depending on the month). Includes a side column with the <strong>average per hour</strong>, a bottom row with the <strong>average per day</strong> and a corner with the <strong>overall average</strong>. In "↔ Full width" mode it shows values with 2 decimals. Each hour's tooltip shows its quarter-hours (on days published at 15 min), and the hourly average's tooltip the average of each quarter over the period. On clock-change days, the hour that does not exist is hatched, and the repeated hour has a double outline and shows the average of both passes.</li>
@@ -1356,6 +1364,12 @@ document.addEventListener('DOMContentLoaded', function() {
             mapTitleAggSpreadSuf: ' h (baterias) - ',
             legNeg: 'h ≤ 0', legNegPeriodo: 'h ≤ 0 por dia', legSpread: 'Spread €/MWh',
             infoNegPre: 'Horas com preço ≤ 0', infoSpreadPre: 'Spread de ', infoSpreadPeriodo: ' (média dos dias)',
+            metricCapS: '☀️ Captura solar', metricCapSTitle: 'Preço capturado solar de cada zona, em % da média da zona (dados desde 2026)',
+            metricCapW: '💨 Captura eólica', metricCapWTitle: 'Preço capturado eólico de cada zona, em % da média da zona (dados desde 2026)',
+            mapTitleAggCapS: 'Preço capturado solar em % da média - ', mapTitleAggCapW: 'Preço capturado eólico em % da média - ',
+            legCapS: 'Captura solar, % da média', legCapW: 'Captura eólica, % da média',
+            legCapSemDados: 'Sem dados neste dia ou período: a produção da ENTSO-E chega com uns dias de atraso e só existe desde 2026.',
+            infoCapSPre: 'Preço capturado solar', infoCapWPre: 'Preço capturado eólico',
             duracaoTitle: 'Curva de duração de preços', duracaoX: '% do tempo com preço igual ou superior',
             duracaoTempo: '% do tempo', duracaoMediana: 'mediana', duracaoTop: '10% mais caro ≥ ',
             duracaoBottom: '10% mais barato ≤ ',
@@ -1466,6 +1480,11 @@ document.addEventListener('DOMContentLoaded', function() {
             thCapTitle: 'Ordenar pelo preço capturado',
             tdCapSolar: 'Preço médio a que se vendeu a produção solar do país', tdCapEolica: 'Preço médio a que se vendeu a produção eólica do país',
             tdCapPct: ' da média da zona', tdCapSem: 'Sem dados: a produção da ENTSO-E começa em 2026 e falta nalgumas zonas e dias',
+            legCapSolar: 'Preço capturado solar', legCapEolica: 'Preço capturado eólico', tipCapPct: ' da média do dia',
+            toggleAcop: 'Mostrar acoplamento com a zona de referência', thAcopPre: 'Igual a ',
+            thAcopTitle: 'Ordenar pela % dos quartos de hora com o mesmo preço que a zona de referência',
+            tdAcopMeio: ' dos quartos de hora com o mesmo preço que ', tdAcopDe: ' de ',
+            tdAcopSem: 'Sem quartos de hora em comum com a zona de referência',
             legMA7: 'MA7 (média móvel 7 dias)', legMA30: 'MA30 (média móvel 30 dias)',
             tipRange: 'Amplitude',
             hmHora: 'Hora', hmData: 'Data', hmDia: 'Dia',
@@ -1538,6 +1557,12 @@ document.addEventListener('DOMContentLoaded', function() {
             mapTitleAggSpreadSuf: ' h batteries - ',
             legNeg: 'h ≤ 0', legNegPeriodo: 'h ≤ 0 per day', legSpread: 'Spread €/MWh',
             infoNegPre: 'Hours with price ≤ 0', infoSpreadPre: 'Spread for ', infoSpreadPeriodo: ' (average of the days)',
+            metricCapS: '☀️ Solar capture', metricCapSTitle: "Each zone's solar capture price, as % of the zone's average (data since 2026)",
+            metricCapW: '💨 Wind capture', metricCapWTitle: "Each zone's wind capture price, as % of the zone's average (data since 2026)",
+            mapTitleAggCapS: 'Solar capture price as % of the average - ', mapTitleAggCapW: 'Wind capture price as % of the average - ',
+            legCapS: 'Solar capture, % of average', legCapW: 'Wind capture, % of average',
+            legCapSemDados: 'No data for this day or period: ENTSO-E generation arrives a few days late and only exists since 2026.',
+            infoCapSPre: 'Solar capture price', infoCapWPre: 'Wind capture price',
             duracaoTitle: 'Price duration curve', duracaoX: '% of the time with price at or above',
             duracaoTempo: '% of the time', duracaoMediana: 'median', duracaoTop: 'top 10% ≥ ',
             duracaoBottom: 'bottom 10% ≤ ',
@@ -1648,6 +1673,11 @@ document.addEventListener('DOMContentLoaded', function() {
             thCapTitle: 'Sort by capture price',
             tdCapSolar: "Average price at which the country's solar output was sold", tdCapEolica: "Average price at which the country's wind output was sold",
             tdCapPct: " of the zone's average", tdCapSem: 'No data: ENTSO-E generation starts in 2026 and is missing for some zones and days',
+            legCapSolar: 'Solar capture price', legCapEolica: 'Wind capture price', tipCapPct: " of the day's average",
+            toggleAcop: 'Show coupling with the reference zone', thAcopPre: 'Same as ',
+            thAcopTitle: 'Sort by the % of quarter-hours with the same price as the reference zone',
+            tdAcopMeio: ' of quarter-hours with the same price as ', tdAcopDe: ' of ',
+            tdAcopSem: 'No quarter-hours in common with the reference zone',
             legMA7: 'MA7 (7-day moving average)', legMA30: 'MA30 (30-day moving average)',
             tipRange: 'Range',
             hmHora: 'Hour', hmData: 'Date', hmDia: 'Day',
@@ -2112,7 +2142,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mapMetric === 'max' && val.max != null) return val.max;
         if (mapMetric === 'neg') return (val.horasNeg !== undefined) ? val.horasNeg : _horasNeg(val);
         if (mapMetric === 'spread') return spreadDe(val, spreadHoras);
+        if (ehMetricaCaptura()) return capturaPctZona(dataZone, val);
         return val.avg;
+    }
+    // Métricas ☀️/💨: preço capturado solar ou eólico em % da média da zona no dia ou período. Null sem
+    // média positiva (a % não quer dizer nada) ou enquanto os meses da captura não chegam (capturaPronta
+    // pede-os e volta a desenhar o mapa).
+    function ehMetricaCaptura() { return mapMetric === 'capS' || mapMetric === 'capW'; }
+    function capturaPctZona(dataZone, val) {
+        var p = computePeriod();
+        if (!val || !(val.avg > 0) || !capturaPronta(p)) return null;
+        var c = capturaZona(dataZone, p);
+        var v = (mapMetric === 'capS') ? c.solar : c.eolica;
+        return (v == null) ? null : v / val.avg * 100;
     }
 
     function getZoneStats(zone) {
@@ -2488,7 +2530,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // intervalo de 15 min à escolha). Persistida e partilhável via ?metric=/?slot=.
     // Afeta apenas a cor das zonas, os números das etiquetas, o info-control e o
     // título do mapa; tabela, gráficos e heatmaps mantêm-se sempre na média.
-    var METRICS_VALIDAS = ['avg', 'min', 'max', 'slot', 'neg', 'spread'];
+    var METRICS_VALIDAS = ['avg', 'min', 'max', 'slot', 'neg', 'spread', 'capS', 'capW'];
     var _urlMetric = null, _urlSlot = null;
     // Horas do spread (1, 2 ou 4): a coluna da tabela e a métrica do mapa usam as mesmas
     var spreadHoras = (prefs && [1, 2, 4].indexOf(prefs.spreadHoras) !== -1) ? prefs.spreadHoras : 2;
@@ -2602,6 +2644,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var eur = function(s) { return /€/.test(s) ? s : s + ' (€/MWh)'; };
         var cab = ['#', T('thZona'), T('csvCodigo'), eur(t.avgLabel)];
         if (t.showDeltaPt) cab.push(eur('Δ' + t.refZone), 'Δ' + t.refZone + ' (%)');
+        if (t.showAcop) cab.push(T('thAcopPre') + t.refZone + ' (%)');
         if (t.showVarDia) cab.push(eur(T('thVsYesterday')), T('thVsYesterday') + ' (%)');
         if (t.showAnoAnt) cab.push(eur(T('csvAnoAnt')), T('csvAnoAnt') + ' (%)');
         cab.push(eur(t.minLabel), t.hourMinLabel, eur(t.maxLabel), t.hourMaxLabel, eur(T('thAmplitude')));
@@ -2615,6 +2658,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var ref = (e.zone === t.refKey);
             var l = [i + 1, e.name, e.zone, _csvNum(e.avg)];
             if (t.showDeltaPt) l.push(ref ? '' : _csvNum(e.deltaPt), ref ? '' : _csvNum(e.deltaPtPct, 1));
+            if (t.showAcop) l.push(_csvNum(e.acop, 1));
             if (t.showVarDia) l.push(_csvNum(e.varDia), _csvNum(e.varDiaPct, 1));
             if (t.showAnoAnt) l.push(_csvNum(e.varAno), _csvNum(e.varAnoPct, 1));
             l.push(_csvNum(e.min), e.minHour || '', _csvNum(e.max), e.maxHour || '', _csvNum(e.amplitude));
@@ -3019,6 +3063,10 @@ document.addEventListener('DOMContentLoaded', function() {
                       [6, '#7c3aed'], [8, '#5b21b6'], [Infinity, '#3b0764']];
     var ESCALA_SPREAD = [[20, '#ccfbf1'], [40, '#99f6e4'], [60, '#5eead4'], [80, '#2dd4bf'], [100, '#14b8a6'],
                          [150, '#0d9488'], [200, '#0f766e'], [Infinity, '#134e4a']];
+    // Captura em % da média: vermelho quando a produção se vendeu muito abaixo da média (canibalização),
+    // verde acima de 100%
+    var ESCALA_CAP = [[50, '#7f1d1d'], [60, '#b91c1c'], [70, '#ea580c'], [80, '#f59e0b'], [90, '#fde047'],
+                      [100, '#bef264'], [110, '#4ade80'], [Infinity, '#15803d']];
     function corEscala(escala, v) {
         for (var i = 0; i < escala.length; i++) if (v <= escala[i][0]) return escala[i][1];
         return escala[escala.length - 1][1];
@@ -3030,9 +3078,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return corEscala(ESCALA_NEG, v / ((st && st._ndays) ? st._ndays : 1));
         }
         if (mapMetric === 'spread') return corEscala(ESCALA_SPREAD, v);
+        if (ehMetricaCaptura()) return corEscala(ESCALA_CAP, v);
         return getColor(v);
     }
     function rotuloMapa(v) {
+        if (ehMetricaCaptura()) return fmtN(v, 0) + '%';
         return (mapMetric === 'neg') ? fmtHoras(v) : fmtN(v, 2);
     }
 
@@ -3205,6 +3255,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += '<div class="price-value">' + (vM == null ? T('noData')
                         : (mapMetric === 'neg' ? fmtHoras(vM) + ' h' : fmtN(vM, 2) + ' €/MWh')) + '</div>';
                     html += '<div class="stats-detail">' + T('stAvg') + ': ' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
+                } else if (ehMetricaCaptura()) {
+                    // Captura: o valor grande é o preço capturado; a % e a média descem para o detalhe
+                    var pctCap = getZonePrice(zone);
+                    var cZ = (pctCap != null) ? capturaZona(ZONE_DATA_MAP[zone] || zone, computePeriod()) : null;
+                    var vCap = cZ ? (mapMetric === 'capS' ? cZ.solar : cZ.eolica) : null;
+                    html += '<div class="period-label">' + T(mapMetric === 'capS' ? 'infoCapSPre' : 'infoCapWPre') + '</div>';
+                    html += '<div class="price-value">' + (vCap == null ? T('noData') : fmtN(vCap, 2) + ' €/MWh') + '</div>';
+                    html += '<div class="stats-detail">' + (vCap == null ? '' : fmtN(pctCap, 0) + '%' + T('tdCapPct') + ' · ')
+                        + T('stAvg') + ': ' + fmtN(stats.avg, 2) + ' €/MWh' + partialBadge + '</div>';
                 } else if (mapMetric === 'slot') {
                     // Métrica por intervalo de 15 min: o valor grande é o do slot
                     // escolhido; a média do dia/período desce para o detalhe.
@@ -3259,16 +3318,25 @@ document.addEventListener('DOMContentLoaded', function() {
         preencherLegenda(div);
         return div;
     };
-    // A legenda muda com a métrica: escala de preços, horas ≤ 0 ou spread
+    // A legenda muda com a métrica: escala de preços, horas ≤ 0, spread ou captura
     function preencherLegenda(div) {
-        if (mapMetric === 'neg' || mapMetric === 'spread') {
-            var esc = (mapMetric === 'neg') ? ESCALA_NEG : ESCALA_SPREAD;
+        if (mapMetric === 'neg' || mapMetric === 'spread' || ehMetricaCaptura()) {
+            var esc = (mapMetric === 'neg') ? ESCALA_NEG : (mapMetric === 'spread' ? ESCALA_SPREAD : ESCALA_CAP);
             var rot = (mapMetric === 'neg')
                 ? ['0', '≤ ' + fmtHoras(0.5), fmtHoras(0.5) + '–1', '1–2', '2–4', '4–6', '6–8', '8+']
-                : ['< 20', '20–40', '40–60', '60–80', '80–100', '100–150', '150–200', '200+'];
-            var tit = (mapMetric === 'spread') ? T('legSpread') : (currentMode === 'diario' ? T('legNeg') : T('legNegPeriodo'));
+                : (mapMetric === 'spread' ? ['< 20', '20–40', '40–60', '60–80', '80–100', '100–150', '150–200', '200+']
+                    : ['≤ 50%', '50–60%', '60–70%', '70–80%', '80–90%', '90–100%', '100–110%', '> 110%']);
+            var tit = (mapMetric === 'spread') ? T('legSpread')
+                : (ehMetricaCaptura() ? T(mapMetric === 'capS' ? 'legCapS' : 'legCapW')
+                : (currentMode === 'diario' ? T('legNeg') : T('legNegPeriodo')));
             var h = '<div class="legend-title">' + tit + '</div>';
             for (var k = 0; k < esc.length; k++) h += '<i style="background:' + esc[k][1] + '"></i>' + rot[k] + '<br>';
+            // Captura sem nenhuma zona com dados (os dias mais recentes e antes de 2026): dizer porquê, senão
+            // o mapa fica todo cinzento sem explicação
+            if (ehMetricaCaptura() && capturaPronta(computePeriod())
+                && !Object.keys(currentData).some(function(z) { return getZonePrice(z) != null; })) {
+                h += '<div class="legend-nota">' + T('legCapSemDados') + '</div>';
+            }
             div.innerHTML = h;
             return;
         }
@@ -3642,7 +3710,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Caixas das colunas opcionais da tabela e o nome que levam no link de partilha (?cols=)
     var COLUNAS_PARTILHA = [['toggle-delta-pt', 'delta'], ['toggle-var-dia', 'var'],
                             ['toggle-horas-neg', 'neg'], ['toggle-spread', 'spread'],
-                            ['toggle-ano-ant', 'ano'], ['toggle-captura', 'cap']];
+                            ['toggle-ano-ant', 'ano'], ['toggle-captura', 'cap'], ['toggle-acop', 'acop']];
 
     function updateRankedList(isUltimoDia) {
         var container = document.getElementById('ranked-list-content');
@@ -3695,6 +3763,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var anoAnt = showAnoAnt ? dadosAnoAnterior() : null;
         var pTabela = computePeriod();
         var capOk = showCaptura ? capturaPronta(pTabela) : false;
+        var showAcop = !!document.getElementById('toggle-acop') && document.getElementById('toggle-acop').checked;
+        var acop = showAcop ? acoplamentoPeriodo(refKey, pTabela, Object.keys(currentData)) : null;
 
         var entries = [];
         for (var zone in currentData) {
@@ -3751,6 +3821,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     spread: spreadDe(stats, spreadHoras),
                     varAno: varAno, varAnoPct: varAnoPct,
                     capSolar: cap ? cap.solar : null, capEolica: cap ? cap.eolica : null,
+                    acop: (acop && acop[zone] && zone !== refKey) ? acop[zone].pct : null,
+                    acopIguais: (acop && acop[zone]) ? acop[zone].iguais : 0, acopTotal: (acop && acop[zone]) ? acop[zone].total : 0,
                     deltaPt: deltaPt, deltaPtPct: deltaPtPct,
                     varDia: varDia, varDiaPct: varDiaPct,
                     partial: partialFlag,
@@ -3789,7 +3861,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var hourMaxLabel = isPeriodo ? T('thDtMax') : T('thHrMax');
         _tabelaCsv = { entries: entries, refKey: refKey, refZone: refZone, showDeltaPt: showDeltaPt, showVarDia: showVarDia,
                        showHorasNeg: showHorasNeg, showSpread: showSpread, spreadHoras: spreadHoras,
-                       showAnoAnt: showAnoAnt, showCaptura: showCaptura,
+                       showAnoAnt: showAnoAnt, showCaptura: showCaptura, showAcop: showAcop,
                        avgLabel: avgLabel, minLabel: minLabelTh, maxLabel: maxLabelTh,
                        hourMinLabel: hourMinLabel, hourMaxLabel: hourMaxLabel };
 
@@ -3801,6 +3873,7 @@ document.addEventListener('DOMContentLoaded', function() {
             + '<th class="sortable" data-sort="name" scope="col" title="' + T('thZonaTitle') + '">' + T('thZona') + ' ' + arrow('name') + '</th>'
             + '<th class="sortable" data-sort="avg" scope="col" title="' + T('thAvgTitle') + '">' + avgLabel + ' ' + arrow('avg') + '</th>'
             + (showDeltaPt ? '<th class="sortable" data-sort="deltaPt" scope="col" title="' + T('thDeltaTitle') + '">Δ' + refZone + ' ' + arrow('deltaPt') + '</th>' : '')
+            + (showAcop ? '<th class="sortable" data-sort="acop" scope="col" title="' + T('thAcopTitle') + '">' + T('thAcopPre') + refZone + ' ' + arrow('acop') + '</th>' : '')
             + (showVarDia ? '<th class="sortable" data-sort="varDia" scope="col" title="' + T('thVarTitle') + '">' + T('thVsYesterday') + ' ' + arrow('varDia') + '</th>' : '')
             + (showAnoAnt ? '<th class="sortable" data-sort="varAno" scope="col" title="' + T('thAnoAntTitle') + '">' + T('thAnoAnt') + ' ' + arrow('varAno') + '</th>' : '')
             + '<th class="sortable" data-sort="min" scope="col" title="' + T('thMinTitle') + '">' + minLabelTh + ' ' + arrow('min') + '</th>'
@@ -3843,6 +3916,12 @@ document.addEventListener('DOMContentLoaded', function() {
             var avgTitle = e.partial ? (T('avgTitlePartialPre') + e.partialKnown + '/' + e.partialTotal + T('avgTitlePartialSuf')) : T('avgTitleDaily');
             html += '<td class="price-cell num' + negCls(e.avg) + '" title="' + avgTitle + '">' + fmtN(e.avg, 2) + partialMark + '</td>';
             if (showDeltaPt) html += '<td class="num" title="' + T('tdDeltaTitle') + '">' + (e.zone === refKey ? '<span class="delta-zero">—</span>' : fmtDelta(e.deltaPt, e.deltaPtPct)) + '</td>';
+            if (showAcop) {
+                html += (e.zone === refKey) ? '<td class="num"><span class="delta-zero">—</span></td>'
+                    : (e.acop == null ? '<td class="num" title="' + T('tdAcopSem') + '">—</td>'
+                    : '<td class="num" title="' + fmtN(e.acop, 1) + '%' + T('tdAcopMeio') + refZone + ' (' + e.acopIguais + T('tdAcopDe') + e.acopTotal + ')">'
+                        + fmtN(e.acop, 0) + '%</td>');
+            }
             if (showVarDia) html += '<td class="num" title="' + T('tdVarTitle') + '">' + fmtDelta(e.varDia, e.varDiaPct) + '</td>';
             if (showAnoAnt) html += '<td class="num" title="' + T('tdAnoAntPre') + fmtDateBR(anoAnt.a) + (anoAnt.a !== anoAnt.b ? ' → ' + fmtDateBR(anoAnt.b) : '') + '">'
                 + (anoAnt.aCarregar ? '…' : fmtDelta(e.varAno, e.varAnoPct)) + '</td>';
@@ -4198,7 +4277,23 @@ document.addEventListener('DOMContentLoaded', function() {
     var MES_NOMES = (LANG === 'en')
         ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
         : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    // O heatmap anual fica no fundo da página e pede todos os meses do ano: só se desenha quando chega
+    // perto do ecrã (antes, ao abrir a página, pedia logo os meses de janeiro em diante).
+    var _heatmapAnualPerto = !('IntersectionObserver' in window);
+    var _heatmapAnualPendente = false;
+    (function() {
+        var alvo = document.getElementById('heatmap-wrapper');
+        if (_heatmapAnualPerto || !alvo) { _heatmapAnualPerto = true; return; }
+        var io = new IntersectionObserver(function(entradas) {
+            if (!entradas.some(function(e) { return e.isIntersecting; })) return;
+            io.disconnect();
+            _heatmapAnualPerto = true;
+            if (_heatmapAnualPendente) updateHeatmap();
+        }, { rootMargin: '600px 0px' });
+        io.observe(alvo);
+    })();
     async function updateHeatmap() {
+        if (!_heatmapAnualPerto) { _heatmapAnualPendente = true; return; }
         var zoneSel = document.getElementById('global-zone-select');
         var yearSel = document.getElementById('heatmap-year');
         var container = document.getElementById('heatmap-container');
@@ -4654,13 +4749,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.toggle('hidden', !nowVisible);
                 // Persistir prefs das linhas extra
                 var ds2 = chart.data.datasets[idx];
+                var chave = null;
                 if (ds2 && ds2.label) {
-                    if (ds2.label.indexOf('MA7') === 0) savePref('lineMA7', nowVisible);
-                    else if (ds2.label.indexOf('MA30') === 0) savePref('lineMA30', nowVisible);
-                    else if (ds2.label.indexOf(T('legDailyLine')) === 0) savePref('lineAvg', nowVisible);
-                    else if (ds2.label.indexOf(T('legPrevYear')) === 0) savePref('linePrevYear', nowVisible);
-                    else if (ds2.label.indexOf(T('legEuAvg')) === 0) savePref('lineEuAvg', nowVisible);
+                    if (ds2.label.indexOf('MA7') === 0) chave = 'lineMA7';
+                    else if (ds2.label.indexOf('MA30') === 0) chave = 'lineMA30';
+                    else if (ds2.label.indexOf(T('legDailyLine')) === 0) chave = 'lineAvg';
+                    else if (ds2.label.indexOf(T('legPrevYear')) === 0) chave = 'linePrevYear';
+                    else if (ds2.label.indexOf(T('legEuAvg')) === 0) chave = 'lineEuAvg';
+                    else if (ds2.label.indexOf(T('legCapSolar')) === 0) chave = 'lineCapS';
+                    else if (ds2.label.indexOf(T('legCapEolica')) === 0) chave = 'lineCapW';
                 }
+                // Também em 'prefs', que o updateChart lê: antes, a linha ligada voltava a esconder-se
+                // ao mudar de dia ou de zona (só ficava certa depois de recarregar a página).
+                if (chave) { prefs[chave] = nowVisible; savePref(chave, nowVisible); }
+                // O ano anterior e a MA7/MA30 desligados não pediram os seus meses: ao ligar, desenhar de novo com eles
+                if (nowVisible && ds2 && ds2._porCarregar) updateChart();
             });
         }
     }
@@ -4713,7 +4816,9 @@ document.addEventListener('DOMContentLoaded', function() {
         extStartD.setDate(extStartD.getDate() - 29);
         var extStartStr = formatDateStr(extStartD);
         if (extStartStr < DATA_INICIO) extStartStr = DATA_INICIO;
-        await ensureMonthsLoaded(_addAdjacentMonths(monthsInRange(extStartStr, chartStart), extStartStr, chartStart));
+        // Os meses de antes só se pedem com a MA7 ou a MA30 ligada (ver _porCarregar na legenda)
+        var comMA = !!(prefs.lineMA7 || prefs.lineMA30);
+        if (comMA) await ensureMonthsLoaded(_addAdjacentMonths(monthsInRange(extStartStr, chartStart), extStartStr, chartStart));
         var sExt = buildSeriesForZoneRange(zone, extStartStr, chartEnd);
         // Índice no array estendido onde o gráfico realmente começa
         var prefixLen = sExt.avgs.length - s1.avgs.length;
@@ -4785,7 +4890,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var pyEndStr = formatDateStr(prevYearEnd);
         if (pyEndStr >= DATA_INICIO) {
             if (pyStartStr < DATA_INICIO) pyStartStr = DATA_INICIO;
-            await ensureMonthsLoaded(monthsInRange(pyStartStr, pyEndStr));
+            // Os meses do ano anterior só se pedem com a linha ligada (ver _porCarregar na legenda)
+            if (prefs.linePrevYear) await ensureMonthsLoaded(monthsInRange(pyStartStr, pyEndStr));
             var sPY = buildSeriesForZoneRange(zone, pyStartStr, pyEndStr);
             // Alinhar pelo fim: garantir mesmo nº de pontos do gráfico atual.
             // Se o ano anterior estiver mais curto (clamp em DATA_INICIO),
@@ -4818,6 +4924,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointRadius: 0, pointHoverRadius: 4,
                 tension: 0.15, spanGaps: true,
                 hidden: !prefs.lineMA7,
+                _porCarregar: !comMA,
                 order: -10
             });
         }
@@ -4833,6 +4940,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointRadius: 0, pointHoverRadius: 4,
                 tension: 0.2, spanGaps: true,
                 hidden: !prefs.lineMA30,
+                _porCarregar: !comMA,
                 order: -11
             });
         }
@@ -4868,6 +4976,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 pointRadius: 0, pointHoverRadius: 4,
                 tension: 0, spanGaps: true,
                 hidden: !prefs.linePrevYear,
+                _porCarregar: !prefs.linePrevYear,
                 order: -13
             });
         }
@@ -4886,6 +4995,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 tension: 0, spanGaps: true,
                 hidden: prefs.lineEuAvg === false,
                 order: -14
+            });
+        }
+        // Preço capturado solar e eólico de cada dia (só há desde 2026), contra as barras da média da zona.
+        // Desligadas por omissão: os meses da captura só se pedem com uma delas ligada (ver _porCarregar).
+        if (chartEnd >= '2026-01-01') {
+            var comCaptura = !!(prefs.lineCapS || prefs.lineCapW);
+            if (comCaptura) await carregarCaptura(chartStart, chartEnd);
+            var zonaCaptura = ZONE_DATA_MAP[zone] || zone;
+            var capturaDia = function(k) {
+                return datesInRange(chartStart, chartEnd).map(function(ds) {
+                    var c = ((capturaCache[ds.substring(0, 7)] || {})[ds] || {})[zonaCaptura];
+                    return (c && c[k]) ? c[k][0] : null;
+                });
+            };
+            [['s', 'legCapSolar', '#d97706', 'lineCapS'], ['w', 'legCapEolica', '#0284c7', 'lineCapW']].forEach(function(d) {
+                datasets.push({
+                    type: 'line',
+                    label: T(d[1]),
+                    data: capturaDia(d[0]),
+                    _mediaDia: s1.avgs,   // para a % da média do dia no tooltip
+                    borderColor: d[2],
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    borderWidth: 2,
+                    pointRadius: 0, pointHoverRadius: 4,
+                    tension: 0, spanGaps: false,
+                    hidden: !prefs[d[3]],
+                    _porCarregar: !comCaptura,
+                    order: -15
+                });
             });
         }
         // Variáveis legacy para o tooltip afterBody (já não acrescentamos MAs ali)
@@ -4955,7 +5093,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (Array.isArray(ctx.raw)) {
                                     return ctx.dataset.label + ': ' + fmtN(ctx.raw[0], 2) + ' / ' + fmtN(ctx.raw[1], 2) + ' €/MWh';
                                 }
-                                return ctx.dataset.label + ': ' + (v != null ? fmtN(v, 2) + ' €/MWh' : '—');
+                                // Preço capturado: também a % da média do dia da zona
+                                var media = ctx.dataset._mediaDia ? ctx.dataset._mediaDia[ctx.dataIndex] : null;
+                                var pctCap = (v != null && media > 0) ? ' (' + fmtN(v / media * 100, 0) + '%' + T('tipCapPct') + ')' : '';
+                                return ctx.dataset.label + ': ' + (v != null ? fmtN(v, 2) + ' €/MWh' + pctCap : '—');
                             },
                             afterBody: function(items) {
                                 // Min/Max + Amplitude sempre visiveis no tooltip
@@ -5927,6 +6068,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mapMetric === 'max') return T('mapTitleAggMax');
         if (mapMetric === 'neg') return T('mapTitleAggNeg');
         if (mapMetric === 'spread') return T('mapTitleAggSpreadPre') + spreadHoras + T('mapTitleAggSpreadSuf');
+        if (mapMetric === 'capS') return T('mapTitleAggCapS');
+        if (mapMetric === 'capW') return T('mapTitleAggCapW');
         return T('mapTitleAgg');
     }
 
@@ -6071,6 +6214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mapMetric === 'slot') ctxMapa.push(slotLabelFor(mapSlot));
         if (mapMetric === 'neg') ctxMapa.push(T('legNeg'));
         if (mapMetric === 'spread') ctxMapa.push('Spread ' + spreadHoras + ' h');
+        if (ehMetricaCaptura()) ctxMapa.push(T(mapMetric === 'capS' ? 'legCapS' : 'legCapW'));
         setExportCredit('credit-mapa', ctxMapa);
     }
 
@@ -6228,10 +6372,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // data/mapas/captura/AAAA-MM.json (gerar_captura_precos.py): por zona e dia, o preço pesado pela
     // produção solar ("s") e eólica ("w") do país, e essa produção em GWh. Só desde 2026-01.
     var capturaCache = {}, _pedidosCaptura = {};
-    // true se os meses do período já estão carregados; senão pede-os e volta a desenhar a tabela
-    function capturaPronta(p) {
-        var falta = monthsInRange(p.start, p.end).filter(function(ym) { return ym >= '2026-01' && !(ym in capturaCache); });
-        if (!falta.length) return true;
+    function _mesesCapturaEmFalta(inicio, fim) {
+        return monthsInRange(inicio, fim).filter(function(ym) { return ym >= '2026-01' && !(ym in capturaCache); });
+    }
+    // Pede os meses de captura de [inicio, fim] que faltam (uma vez por conjunto) e, quando chegam, volta a
+    // desenhar o que os usa: a tabela e, nas métricas ☀️/💨, o mapa. Devolve a promessa (a Evolução espera-a).
+    function carregarCaptura(inicio, fim) {
+        var falta = _mesesCapturaEmFalta(inicio, fim);
+        if (!falta.length) return Promise.resolve();
         var chave = falta.join(',');
         if (!_pedidosCaptura[chave]) {
             _pedidosCaptura[chave] = Promise.all(falta.map(function(ym) {
@@ -6242,8 +6390,15 @@ document.addEventListener('DOMContentLoaded', function() {
             })).then(function() {
                 delete _pedidosCaptura[chave];
                 updateRankedList(currentMode === 'diario' && seletorData.value === ultimaDataDisponivel);
+                if (ehMetricaCaptura()) renderMapaMetrica();
             });
         }
+        return _pedidosCaptura[chave];
+    }
+    // true se os meses do período já estão carregados; senão pede-os (carregarCaptura volta a desenhar)
+    function capturaPronta(p) {
+        if (!_mesesCapturaEmFalta(p.start, p.end).length) return true;
+        carregarCaptura(p.start, p.end);
         return false;
     }
     // Preço capturado de uma zona no período: Σ(preço × GWh) / Σ GWh, solar e eólico
@@ -6257,6 +6412,52 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         return { solar: o.s[1] > 0 ? o.s[0] / o.s[1] : null, eolica: o.w[1] > 0 ? o.w[0] / o.w[1] : null };
+    }
+
+    // --- ACOPLAMENTO COM A ZONA DE REFERÊNCIA (coluna da tabela) ---
+    // % dos quartos de hora do período em que cada zona teve o mesmo preço que a referência (diferença até
+    // LIMIAR_ACOPLAMENTO, o critério do Spread PT-ES do omie.html). Compara-se o mesmo instante (UTC): cada
+    // zona traz o seu dia local, e PT e as zonas em CET+1 ficam desfasadas uma hora da maior parte da Europa.
+    var LIMIAR_ACOPLAMENTO = 0.01;
+    var _acoplamentoMemo = { chave: null, res: null };
+    function acoplamentoPeriodo(refKey, p, zonas) {
+        var chave = refKey + '|' + p.start + '|' + p.end + '|' + Object.keys(dataCache).length;
+        if (_acoplamentoMemo.chave === chave) return _acoplamentoMemo.res;
+        // Início (ms) e passo de cada posição de um dia local; null se o comprimento não bater com o dia
+        var dia = function(z, ds) {
+            var st = ((dataCache[ds.substring(0, 7)] || {})[ds] || {})[z];
+            if (!st || typeof st === 'number' || !st.values) return null;
+            var slot = _slotMinDe(st), tz = ZONE_TZ[z] || ZONE_TZ[ZONE_DATA_MAP[z]] || 'Europe/Berlin';
+            var ini = _meiaNoite(ds, tz);
+            if (isNaN(ini) || st.values.length * slot !== _minutosDia(ds, tz)) return null;
+            return { ini: ini, passo: slot * 60000, v: st.values };
+        };
+        // Preços da referência por instante, com um dia de margem de cada lado (os fusos deslocam o dia)
+        var ref = {};
+        var antes = parseDateStr(p.start); antes.setDate(antes.getDate() - 1);
+        var depois = parseDateStr(p.end); depois.setDate(depois.getDate() + 1);
+        datesInRange(formatDateStr(antes), formatDateStr(depois)).forEach(function(ds) {
+            var r = dia(refKey, ds);
+            if (!r) return;
+            for (var i = 0; i < r.v.length; i++) if (r.v[i] != null) ref[r.ini + i * r.passo] = r.v[i];
+        });
+        var res = {}, dias = datesInRange(p.start, p.end);
+        zonas.forEach(function(z) {
+            var total = 0, iguais = 0;
+            dias.forEach(function(ds) {
+                var r = dia(z, ds);
+                if (!r) return;
+                for (var i = 0; i < r.v.length; i++) {
+                    var vr = ref[r.ini + i * r.passo];
+                    if (r.v[i] == null || vr === undefined) continue;
+                    total++;
+                    if (Math.abs(r.v[i] - vr) <= LIMIAR_ACOPLAMENTO) iguais++;
+                }
+            });
+            res[z] = { pct: total ? iguais / total * 100 : null, iguais: iguais, total: total };
+        });
+        _acoplamentoMemo = { chave: chave, res: res };
+        return res;
     }
 
     // --- MÉDIA EUROPEIA PESADA PELO CONSUMO ---
@@ -7193,7 +7394,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
             // Variação vs ano anterior e preço capturado: só se carregam dados extra com a caixa ligada
-            [['toggle-ano-ant', 'anoAntCol'], ['toggle-captura', 'capturaCol']].forEach(function(c) {
+            [['toggle-ano-ant', 'anoAntCol'], ['toggle-captura', 'capturaCol'], ['toggle-acop', 'acopCol']].forEach(function(c) {
                 var el = document.getElementById(c[0]);
                 if (!el) return;
                 if (prefs[c[1]]) el.checked = true;
@@ -7234,7 +7435,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
                 var _sort = _qpTab.get('sort');
-                if (_sort && /^-?(name|avg|deltaPt|varDia|min|max|amplitude|horasNeg|spread|varAno|capSolar|capEolica)$/.test(_sort)) {
+                if (_sort && /^-?(name|avg|deltaPt|varDia|min|max|amplitude|horasNeg|spread|varAno|capSolar|capEolica|acop)$/.test(_sort)) {
                     sortState.key = _sort.replace(/^-/, '');
                     sortState.dir = (_sort.charAt(0) === '-') ? 'desc' : 'asc';
                 }

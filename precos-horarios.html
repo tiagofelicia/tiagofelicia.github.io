@@ -217,6 +217,7 @@
                 <label id="sobreporAmanhaContainer" class="sobrepor-amanha" style="display:none;">
                     <input type="checkbox" id="checkboxSobreporAmanha" onchange="desenhaGrafico()"> Sobrepor amanhã
                 </label>
+                <button type="button" id="btnPartilhar" class="btn-partilhar" onclick="partilharDia()" title="Copiar/partilhar o link e um resumo deste dia" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
             </div>
 
             <div id="miniResumo" class="mini-resumo" aria-live="polite"></div>
@@ -236,6 +237,10 @@
             </div>
 
             <div id="container-chart" style="width: 100%;"></div>
+
+            <nav class="ver-tambem" aria-label="Ver também">
+                <a id="verOmieDiario" href="/omie-diario">📊 OMIE deste dia em detalhe: Portugal e Espanha, médias por ciclo e futuros</a>
+            </nav>
 
             <div class="link-section">
                 <p>https://www.tiagofelicia.pt/precos-horarios</p>
@@ -409,6 +414,22 @@
         .mini-resumo-chip strong { color: #2c3e50; margin-left: 4px; }
         .mini-resumo-chip.up strong { color: #c0392b; }
         .mini-resumo-chip.down strong { color: #27ae60; }
+
+        /* Partilhar (o mesmo botão e o mesmo aviso do omie-diario) */
+        .btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 6px 14px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-partilhar:hover { background: #e2e8f0; }
+        [data-theme="dark"] .btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-partilhar:hover { background: #334155; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #15803d; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+
+        /* Ver também: o OMIE Diário no dia escolhido (as mesmas pílulas do omie-diario) */
+        /* O style.css pinta todos os <nav> como o menu (fundo, padding, Arial, ligações a branco e negrito): anulado aqui */
+        .ver-tambem { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; max-width: 95%; margin: 14px auto 0 auto; padding: 0; background: transparent; font-family: inherit; font-size: 0.85em; }
+        .ver-tambem a { display: inline-block; padding: 6px 14px; border: 1px solid #cbd5e1; border-radius: 16px; background: #fff; color: #0066cc; font-weight: 500; text-decoration: none; text-align: center; }
+        .ver-tambem a:hover { background: #e2e8f0; text-decoration: none; }
+        [data-theme="dark"] .ver-tambem { background: transparent; }
+        [data-theme="dark"] .ver-tambem a { background: #1e293b; border-color: #475569; color: #60a5fa; }
+        [data-theme="dark"] .ver-tambem a:hover { background: #334155; }
 
         /* Preços do intervalo em curso (só quando o dia selecionado é hoje) */
         .precos-agora { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin: 0 auto 14px auto; max-width: 95%; }

@@ -661,13 +661,18 @@ document.addEventListener('DOMContentLoaded', function () {
             mediaAmanha = mediaDoDia(getAmanhaStr());
         }
 
-        const decimaisMR = getVistaAtual() === "horaria" ? 4 : 5;
+        const horaria = getVistaAtual() === "horaria";
+        const decimaisMR = horaria ? 4 : 5;
         const fmtPreco = v => v.toFixed(decimaisMR).replace('.', ',') + ' €/kWh';
         const fmtHora = cat => (cat || '').replace('[', '').split('-')[0] + (ehRepetida(cat) ? SUFIXO_REPETIDA : '');
+        // Diz se é um quarto de hora ou uma hora: o omie-diario mostra as horas inteiras mais baratas.
+        // No telemóvel, «Mais barato (15 min)», para o chip caber numa linha.
+        const rotuloMin = horaria ? 'Hora mais barata' : '<span class="so-largo">Quarto de hora mais barato</span><span class="so-estreito">Mais barato (15 min)</span>';
+        const rotuloMax = horaria ? 'Hora mais cara' : '<span class="so-largo">Quarto de hora mais caro</span><span class="so-estreito">Mais caro (15 min)</span>';
 
         let html = '';
-        html += `<div class="mini-resumo-chip">Mais barato: <strong>${fmtHora(dados.categorias[minimo.i])} (${fmtPreco(minimo.v)})</strong></div>`;
-        html += `<div class="mini-resumo-chip">Mais caro: <strong>${fmtHora(dados.categorias[maximo.i])} (${fmtPreco(maximo.v)})</strong></div>`;
+        html += `<div class="mini-resumo-chip">${rotuloMin}: <strong>${fmtHora(dados.categorias[minimo.i])} (${fmtPreco(minimo.v)})</strong></div>`;
+        html += `<div class="mini-resumo-chip">${rotuloMax}: <strong>${fmtHora(dados.categorias[maximo.i])} (${fmtPreco(maximo.v)})</strong></div>`;
         html += `<div class="mini-resumo-chip">Média do dia: <strong>${fmtPreco(media)}</strong></div>`;
 
         if (mediaAnterior !== null && mediaAnterior !== 0) {
@@ -1142,6 +1147,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Mini-resumo do dia (chips acima do gráfico) + preços do intervalo em curso
         atualizarMiniResumo(dados, fonte, dia, tarifario, opcao);
+        // «Ver também»: o OMIE Diário no mesmo dia ("28/10/2026" → ?data=2026-10-28)
+        const ligacaoOmieDiario = document.getElementById('verOmieDiario');
+        if (ligacaoOmieDiario && /^\d{2}\/\d{2}\/\d{4}$/.test(dia)) {
+            const [dd, mm, aaaa] = dia.split('/');
+            ligacaoOmieDiario.href = `/omie-diario?data=${aaaa}-${mm}-${dd}`;
+        }
         // Força o redesenho das linhas "Agora"/"Melhor janela" após mudar dia/tarifário/opção/vista
         chaveAgoraRenderizada = null;
         htmlJanelaRenderizado = null;
@@ -1408,6 +1419,45 @@ document.addEventListener('DOMContentLoaded', function () {
             lastWidth = currentWidth;
         }, 250);
     });
+
+    // «Partilhar» (como no omie e no omie-diario): o link do que se está a ver — dia, tarifário, opção e
+    // janela já vão no URL — e um resumo do dia. No telemóvel abre a partilha do sistema; senão copia.
+    window.partilharDia = async function() {
+        const dia = document.getElementById('dropdownDia').value;
+        const tarifario = document.getElementById('dropdownTarifario').value;
+        const opcaoSel = document.getElementById('dropdownOpcao');
+        const opcao = opcaoSel.options[opcaoSel.selectedIndex]?.text || '';
+        // Texto do chip sem a versão curta do telemóvel (.so-estreito), que também está no HTML
+        const limpo = el => { const c = el.cloneNode(true); c.querySelectorAll('.so-estreito').forEach(s => s.remove()); return (c.textContent || '').replace(/\s+/g, ' ').trim(); };
+        const chips = Array.from(document.querySelectorAll('#miniResumo .mini-resumo-chip'), limpo);
+        // 1.ª linha da janela sem o «· a partir de agora» (relativo ao momento) e 2.ª com o preço médio
+        const janela = (document.getElementById('janelaResultado')?.innerText || '').split('\n').map(s => s.trim()).filter(Boolean);
+        const horas = document.querySelector('input[name="janela"]:checked')?.value;
+        const linhaJanela = janela.length >= 2 && horas ? `Melhor janela de ${horas}h: ${janela[0].split(' · ')[0]} · ${janela[1]}` : '';
+        const resumo = [`⚡ Preços horários — ${tarifario} (${opcao})`, etiquetaDia(dia), ...chips, linhaJanela].filter(Boolean).join('\n');
+        const url = window.location.href;
+        const textoCompleto = `${resumo}\n${url}`;
+        const aviso = msg => {
+            const antigo = document.getElementById('toast-feedback');
+            if (antigo) antigo.remove();
+            const t = document.createElement('div');
+            t.id = 'toast-feedback';
+            t.className = 'toast-feedback';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        };
+        if (navigator.share) {
+            try { await navigator.share({ title: 'Preços horários — Tiago Felícia', text: resumo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try {
+            await navigator.clipboard.writeText(textoCompleto);
+            aviso('✓ Link e resumo copiados');
+        } catch (e) {
+            prompt('Copie este link:', textoCompleto);
+        }
+    };
 
     window.controlarTabela = function() {
         const checkbox = document.getElementById("checkboxSimular");

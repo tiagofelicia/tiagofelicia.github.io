@@ -36,8 +36,8 @@
     <script src="/theme.js"></script>
     <script src="/dados.js"></script>
 
-    <!-- Preload do CSV "atuais" — o browser começa o fetch ainda antes do JS arrancar -->
-    <link rel="preload" as="fetch" href="https://dados.tiagofelicia.pt/data/omie/omie_dados_atuais.csv" type="text/csv" crossorigin="anonymous">
+    <!-- Preload do CSV "recentes" (últimos 100 dias) — o browser começa o fetch ainda antes do JS arrancar -->
+    <link rel="preload" as="fetch" href="https://dados.tiagofelicia.pt/data/omie/omie_recentes.csv" type="text/csv" crossorigin="anonymous">
     
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="cores-graficos.js"></script>
@@ -356,7 +356,8 @@
         [data-theme="dark"] .yoy-flat { color: #94a3b8; }
 
         /* ===== Insight automático (A2) ===== */
-        #insight-periodo { width: 95%; max-width: 1200px; margin: 20px auto 10px auto; padding: 16px 20px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 10px; border-left: 4px solid #2563eb; font-size: 0.95em; line-height: 1.55; color: #1e3a5f; }
+        /* border-box: com os 95% só no conteúdo, o padding e a barra saíam 8 px do ecrã a 375 px */
+        #insight-periodo { width: 95%; max-width: 1200px; box-sizing: border-box; margin: 20px auto 10px auto; padding: 16px 20px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 10px; border-left: 4px solid #2563eb; font-size: 0.95em; line-height: 1.55; color: #1e3a5f; }
         #insight-periodo strong { color: #1e40af; }
         #insight-periodo .insight-titulo { font-size: 0.85em; color: #2563eb; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block; }
         [data-theme="dark"] #insight-periodo { background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%); color: #cbd5e1; border-left-color: #3b82f6; }
@@ -800,6 +801,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Caminhos relativos a data/ — a origem (same-origin vs GitHub raw) e o
     // fallback entre ambas são geridos por fetchDados() (dados.js).
     const URL_DADOS_ATUAIS = "omie/omie_dados_atuais.csv";
+    // Os últimos 100 dias do ano corrente e o resto do mês (~100 KB comprimidos contra ~310 KB): chegam para
+    // os 7 dias, este mês e o mês passado com a MA30. O ano inteiro só se pede quando o período recua mais.
+    const URL_DADOS_RECENTES = "omie/omie_recentes.csv";
     const URL_HISTORICO_BASE = "omie/historico/omie_historico_";
     const ANO_INICIO_HISTORICO = 2010;
     // --- FIM CONFIGURAÇÕES ---
@@ -845,6 +849,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let dadosHistoricos = {}; // { 2010: [...] ou Promise, etc. }
     let dadosAtualizacao = {};
     let anoMinimoAtual = null;
+    // 1.º dia (AAAA-MM-DD) dos dados do ano corrente carregados enquanto só há o ficheiro recente; null com o ano inteiro
+    let primeiroDiaRecentes = null;
+    let promessaAtuaisCompletos = null;
     let defaultDataInicio = '';
     let defaultDataFim = '';
     let dataMaximaValida = null;
@@ -1461,6 +1468,40 @@ document.addEventListener('DOMContentLoaded', function() {
         return await dadosHistoricos[ano];
     }
 
+    // --- FICHEIRO RECENTE vs ANO INTEIRO ---
+    // Arranque: o ficheiro recente; se faltar (404, erro de rede), o do ano, como antes.
+    function carregarDadosIniciais() {
+        const texto = response => { if (!response.ok) throw new Error(`Erro rede: ${response.statusText}`); return response.text(); };
+        return fetchDados(URL_DADOS_RECENTES).then(texto).then(t => ({ texto: t, recente: true }))
+            .catch(() => fetchDados(URL_DADOS_ATUAIS).then(texto).then(t => ({ texto: t, recente: false })));
+    }
+    function primeiroDiaISO(precos) {
+        let min = null;
+        for (const d of precos) { const iso = formatarDataParaInput(d.dia); if (iso && (min === null || iso < min)) min = iso; }
+        return min;
+    }
+    // Parte de [inicio, fim] (AAAA-MM-DD) que cai no ano corrente antes do ficheiro recente → pedir o ano inteiro (uma só vez)
+    async function garantirAtuaisPara(intervalos) {
+        if (!primeiroDiaRecentes) return;
+        const inicioAnoAtual = `${anoMinimoAtual}-01-01`;
+        const precisa = intervalos.some(([inicio, fim]) => fim >= inicioAnoAtual && (inicio > inicioAnoAtual ? inicio : inicioAnoAtual) < primeiroDiaRecentes);
+        if (!precisa) return;
+        if (!promessaAtuaisCompletos) {
+            _loadingState.total += 1;
+            _loadingState.currentLabel = String(anoMinimoAtual);
+            _atualizarLoadingUI();
+            promessaAtuaisCompletos = fetchDados(URL_DADOS_ATUAIS)
+                .then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); })
+                .then(csvText => {
+                    const precos = parseCSVAtual(csvText).precos;
+                    if (precos.length > 0) { dadosAtuais = precos; primeiroDiaRecentes = null; }
+                })
+                .catch(error => console.error('Falha ao carregar o ano corrente:', error))
+                .finally(() => { _loadingState.done += 1; _atualizarLoadingUI(); });
+        }
+        await promessaAtuaisCompletos;
+    }
+
     // --- FUNÇÃO PRINCIPAL ATUALIZADA ---
     async function atualizarDashboardPeriodo() {
         const dataInicioSelecionada = seletorDataInicio.value;
@@ -1528,6 +1569,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const promises = [...anosACarregar].map(ano => carregarDadosHistoricos(ano));
             await Promise.all(promises);
         }
+        // Período com a extensão das MA, o do ano anterior (YoY) e o mês do fim (média do mês com futuros)
+        await garantirAtuaisPara([
+            [dataInicioExtendida, dataFimSelecionada],
+            [dataInicioExtAnterior, dataFimAnterior],
+            [`${dataFimSelecionada.slice(0, 7)}-01`, dataFimSelecionada]
+        ]);
 
         // --- OBTER DADOS DO PERÍODO ---
         let dadosDoPeriodo = [];
@@ -3770,15 +3817,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 // --- PROCESSO DE INICIALIZAÇÃO ---
-    fetchDados(URL_DADOS_ATUAIS) // Carregar apenas dados atuais
-        .then(response => { if (!response.ok) throw new Error(`Erro rede: ${response.statusText}`); return response.text(); })
-        .then(data => {
+    carregarDadosIniciais() // Os dados atuais: o ficheiro recente, ou o do ano se faltar
+        .then(({ texto: data, recente }) => {
             const parsedData = parseCSVAtual(data);
             dadosAtuais = parsedData.precos;
             dadosAtualizacao = parsedData.atualizacoes;
 
             if (dadosAtuais.length === 0) throw new Error("Ficheiro atual vazio.");
             if (!dadosAtualizacao.Data_Valores_OMIE) { throw new Error("Data_Valores_OMIE não encontrada."); }
+            if (recente) primeiroDiaRecentes = primeiroDiaISO(dadosAtuais);
 
             const anosAtuais = dadosAtuais.map(d => d.dia ? parseInt(d.dia.substring(6, 10)) : NaN).filter(ano => !isNaN(ano));
             if (anosAtuais.length > 0) { anoMinimoAtual = Math.min(...anosAtuais); }

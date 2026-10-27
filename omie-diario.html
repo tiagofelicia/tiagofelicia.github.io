@@ -36,8 +36,8 @@
     <script src="/theme.js"></script>
     <script src="/dados.js"></script>
 
-    <!-- Preload do CSV "atuais" — o browser começa o fetch ainda antes do JS arrancar -->
-    <link rel="preload" as="fetch" href="https://dados.tiagofelicia.pt/data/omie/omie_dados_atuais.csv" type="text/csv" crossorigin="anonymous">
+    <!-- Preload do CSV "recentes" (últimos 100 dias) — o browser começa o fetch ainda antes do JS arrancar -->
+    <link rel="preload" as="fetch" href="https://dados.tiagofelicia.pt/data/omie/omie_recentes.csv" type="text/csv" crossorigin="anonymous">
 
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
     <script src="cores-graficos.js"></script>
@@ -61,7 +61,9 @@
     gtag('consent', 'update', { 'analytics_storage': 'granted' });
   }
   gtag('js', new Date());
-  gtag('config', 'G-J4NWP00S4F');
+  // Título fixo para o Analytics: o do separador muda com o dia e o preço («OMIE 28/10/2026 · 199€»),
+  // e cada dia aparecia nos relatórios como uma página diferente. Aqui ainda é o <title> da página.
+  gtag('config', 'G-J4NWP00S4F', { page_title: document.title });
 </script>
 
     <script type="application/ld+json">
@@ -105,6 +107,12 @@
         .card-title-ts { background-color: #C65911; color: white; padding: 5px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
         .data-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
         .data-item:last-child { border-bottom: none; }
+        /* A linha dos preços ≤ 0 só aparece nos dias em que os há: escondida, a linha de cima fica sem risca */
+        .data-item[hidden] { display: none; }
+        .data-item:has(+ .data-item[hidden]:last-child) { border-bottom: none; }
+        /* Linhas ≤ 0 e PT ≠ ES: se o rótulo e o valor não cabem lado a lado, o valor passa inteiro à linha de baixo, à direita */
+        .linha-extra { flex-wrap: wrap; }
+        .linha-extra .valor { margin-left: auto; white-space: nowrap; }
         .label { font-weight: 600; }
         .valor { font-weight: bold; font-size: 0.95em; }
         .card-principal { text-align: center; border-style: solid; }
@@ -138,6 +146,7 @@
         .tabela-precos thead th { background-color: #343a40; color: white; position: sticky; top: 0; z-index: 1; }
         .tabela-precos thead tr:last-child th { top: 30px; }
         .tabela-precos tbody tr:nth-child(even) { background-color: #f9f9f9; }
+        .tabela-precos tbody tr.hora-atual { background-color: #FFF3E0; font-weight: bold; }
         .tabela-precos th:nth-child(1), .tabela-precos td:nth-child(1) { width: 34%; }
         .tabela-precos th:nth-child(2), .tabela-precos td:nth-child(2) { width: 33%; }
         .tabela-precos th:nth-child(3), .tabela-precos td:nth-child(3) { width: 33%; }
@@ -182,6 +191,8 @@
         [data-theme="dark"] .tabela-precos tbody tr:nth-child(odd) { background-color: #1e293b; }
         [data-theme="dark"] .tabela-precos th, [data-theme="dark"] .tabela-precos td { border-bottom-color: #475569; color: #e2e8f0; }
         [data-theme="dark"] .tabela-precos thead th { background-color: #0f172a; }
+        /* Hora atual: o #FFF3E0 do claro ficava com o texto claro do escuro a 1,1:1 */
+        [data-theme="dark"] .tabela-precos tbody tr.hora-atual { background-color: #713f12; }
         [data-theme="dark"] .chart-type-toggle button { background: #1e293b; color: #94a3b8; border-color: #475569; }
         [data-theme="dark"] .chart-type-toggle button:hover { background: #334155; border-color: #64748b; }
         [data-theme="dark"] .chart-type-toggle button.active { background: #e2e8f0; color: #0f172a; border-color: #e2e8f0; }
@@ -228,10 +239,17 @@
         .hora-extremo { font-size: 0.78em; color: #6c757d; margin-left: 6px; font-weight: 500; }
         [data-theme="dark"] .hora-extremo { color: #94a3b8; }
 
+        /* ===== Market splitting (PT ≠ ES) na tabela: verde com PT mais barato, vermelho com PT mais caro (como o Spread PT-ES do omie.html) ===== */
+        .marca-split { font-weight: 700; margin-right: 4px; }
+        .marca-split.pt-barato { color: var(--txt-verde); }
+        .marca-split.pt-caro { color: var(--txt-vermelho); }
+        .nota-split { font-size: 0.75em; color: var(--txt-cinza); text-align: center; margin: 6px 8px; }
+
         /* ===== Variação vs ontem / semana passada ===== */
-        .yoy-deltas { font-size: 0.78em; text-align: center; margin: 4px 0 8px 0; min-height: 1.4em; line-height: 1.5; }
-        .yoy-deltas .yoy-pair { white-space: nowrap; }
-        .yoy-deltas .yoy-sep { color: #aaa; margin: 0 6px; }
+        /* As duas variações ficam lado a lado quando cabem e uma por linha quando não cabem (com nowrap e o «·»
+           sem espaços, o «vs mesmo dia da semana passada» saía do cartão no telemóvel e nos cartões estreitos) */
+        .yoy-deltas { font-size: 0.78em; text-align: center; margin: 4px 0 8px 0; min-height: 1.4em; line-height: 1.5; display: flex; flex-wrap: wrap; justify-content: center; column-gap: 14px; }
+        .yoy-deltas .yoy-pair { min-width: 0; }
         .yoy-deltas .yoy-up { color: #dc3545; font-weight: 600; }
         .yoy-deltas .yoy-down { color: #15803d; font-weight: 600; }
         .yoy-deltas .yoy-flat { color: #888; }
@@ -272,13 +290,28 @@
         [data-theme="dark"] .chart-toggle-extras { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .chart-toggle-extras:hover { background: #334155; }
 
+        /* ===== Ver também: as páginas irmãs, já com o dia escolhido ===== */
+        /* O style.css pinta todos os <nav> como o menu (fundo, padding, Arial, ligações a branco e negrito): anulado aqui */
+        .ver-tambem { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; width: 95%; max-width: 1200px; margin: 18px auto 0 auto; padding: 0; background: transparent; font-family: inherit; font-size: 0.85em; }
+        .ver-tambem a { display: inline-block; padding: 6px 14px; border: 1px solid #cbd5e1; border-radius: 16px; background: #fff; color: #0066cc; font-weight: 500; text-decoration: none; }
+        .ver-tambem a:hover { background: #e2e8f0; text-decoration: none; }
+        .ver-tambem a[hidden] { display: none; }
+        [data-theme="dark"] .ver-tambem { background: transparent; }
+        [data-theme="dark"] .ver-tambem a { background: #1e293b; border-color: #475569; color: #60a5fa; }
+        [data-theme="dark"] .ver-tambem a:hover { background: #334155; }
+        /* Nota das 3 horas: são horas soltas pelo OMIE; a melhor janela pelo preço final está nos Preços Horários */
+        .top-horas-nota { font-size: 0.8em; color: #64748b; text-align: center; margin: 10px auto 0 auto; max-width: 900px; }
+        .top-horas-nota a { color: #0066cc; }
+        [data-theme="dark"] .top-horas-nota { color: #94a3b8; }
+        [data-theme="dark"] .top-horas-nota a { color: #60a5fa; }
+
         /* ===== Modo Impressão ===== */
         @page { size: A4; margin: 12mm; }
         @media print {
             /* Esconder elementos de UI/navegação */
             #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link,
             .date-presets, .date-selector,
-            #btn-partilhar-diario,
+            #btn-partilhar-diario, .ver-tambem, .top-horas-nota,
             .chart-type-toggle, .chart-toggle-extras,
             .highcharts-exporting-group, .highcharts-button {
                 display: none !important;
@@ -414,7 +447,15 @@
           "name": "O que significam as variações vs ontem e vs mesmo dia da semana passada?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Mostram quanto o preço médio do dia subiu ou desceu em comparação com o dia anterior e com o mesmo dia da semana passada (7 dias antes). Passa o rato sobre cada percentagem para ver o valor de referência exato. Quando a referência é muito pequena (perto de 0 €/MWh), em vez de percentagem é mostrada a diferença absoluta em €/MWh."
+            "text": "Mostram quanto o preço médio do dia subiu ou desceu em comparação com o dia anterior e com o mesmo dia da semana passada (7 dias antes). Passa o rato sobre cada percentagem para ver o valor de referência exato. Quando a referência é muito pequena (perto de 0 €/MWh), em vez de percentagem é mostrada a diferença absoluta em €/MWh. No dia mais recente, em que a última hora de Portugal ainda não é conhecida, os dias de comparação também ficam sem essa hora."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que significam PT ≠ ES, o ≠ da tabela e os preços ≤ 0?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Portugal e Espanha partilham o mesmo mercado (MIBEL) e quase sempre têm o mesmo preço. Quando a interligação entre os dois países fica cheia, os preços separam-se: é o market splitting. Quartos-horários com PT ≠ ES (cartão de Espanha): quantos quartos de hora do dia mostrado tiveram preços diferentes (mais de 0,01 €/MWh) e se Portugal ficou mais barato ou mais caro. ≠ na tabela: horas com pelo menos um quarto de hora separado, a verde com Portugal mais barato e a vermelho com Portugal mais caro. Quartos-horários com preço ≤ 0 (cartão de Portugal, só nos dias em que acontece): quantos quartos de hora tiveram preço zero ou negativo, e entre que horas."
           }
         },
         {
@@ -479,8 +520,8 @@
 
     <div class="dashboard-grid">
          <div class="coluna">
-            <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="yoy-deltas" id="yoy-pt-deltas"></div> <div class="futuros-info" id="futuros-container-pt"> Futuro do dia: <strong id="futuros-anterior-pt">--,-- €</strong> em <strong id="futuros-pt-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> </div>
-             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small id="lbl-24h-es">(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="yoy-deltas" id="yoy-es-deltas"></div> <div class="futuros-info" id="futuros-container-es"> Futuro do dia: <strong id="futuros-anterior-es">--,-- €</strong> em <strong id="futuros-es-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
+            <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="yoy-deltas" id="yoy-pt-deltas"></div> <div class="futuros-info" id="futuros-container-pt"> Futuro do dia: <strong id="futuros-anterior-pt">--,-- €</strong> em <strong id="futuros-pt-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> <div class="data-item linha-extra" id="linha-neg-pt" hidden><span class="label">Quartos-horários com preço ≤ 0</span><span class="valor" id="neg-pt">--</span></div> </div>
+             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small id="lbl-24h-es">(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="yoy-deltas" id="yoy-es-deltas"></div> <div class="futuros-info" id="futuros-container-es"> Futuro do dia: <strong id="futuros-anterior-es">--,-- €</strong> em <strong id="futuros-es-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> <div class="data-item linha-extra" title="Market splitting: quartos-horários do dia mostrado em que Portugal e Espanha tiveram preços diferentes"><span class="label">Quartos-horários com PT ≠ ES</span><span class="valor" id="split-es">--</span></div> </div>
              <div class="card card-futuros"> <h3 class="card-title-futuros">Futuros Diários OMIP (PT)</h3> <ul> <li id="futuro-1-item" style="display: none;"> <span id="futuros-1-label"></span> <strong id="futuros-1-valor"></strong> </li> <li id="futuro-2-item" style="display: none;"> <span id="futuros-2-label"></span> <strong id="futuros-2-valor"></strong> </li> <li id="futuro-3-item" style="display: none;"> <span id="futuros-3-label"></span> <strong id="futuros-3-valor"></strong> </li> </ul> </div>
         </div>
         <div class="coluna">
@@ -493,7 +534,12 @@
              <div class="card"> <h3 class="card-title-ts">Tri-horário Semanal</h3> <div class="data-item"><span class="label label-vazio">Vazio</span><span class="valor" id="th-semanal-vazio">--,-- €</span></div> <div class="data-item"><span class="label label-cheias">Cheias</span><span class="valor" id="th-semanal-cheias">--,-- €</span></div> <div class="data-item"><span class="label label-ponta">Ponta</span><span class="valor" id="th-semanal-ponta">--,-- €</span></div> </div>
         </div>
     </div>
-    
+
+    <nav class="ver-tambem" aria-label="Ver também">
+        <a id="ver-precos-horarios" href="/precos-horarios">💶 Preço no seu tarifário indexado e melhor janela</a>
+        <a id="ver-omie-mes" href="/omie">📈 Histórico OMIE</a>
+    </nav>
+
     <div class="link-section"> <p>https://www.tiagofelicia.pt/omie-diario</p> </div>
 
     <section id="top-horas-section" style="display: none;">
@@ -508,6 +554,7 @@
                 <ul class="top-horas-list" id="top-horas-caras-lista"></ul>
             </div>
         </div>
+        <p class="top-horas-nota" id="top-horas-nota" hidden></p>
     </section>
 
     <div class="link-section"> <p>https://www.tiagofelicia.pt/omie-diario</p> </div>
@@ -633,6 +680,20 @@
                     </ul>
                     <p>Passa o rato sobre cada percentagem para ver o <strong>valor de referência exato</strong> usado na comparação.</p>
                     <p>Quando o valor de referência é muito pequeno (perto de 0 €/MWh), em vez de percentagem é mostrada a diferença absoluta em €/MWh.</p>
+                    <p>No dia mais recente, em que a última hora de Portugal ainda não é conhecida, os dias de comparação também ficam sem essa hora, para comparar o mesmo número de horas. A Espanha compara sempre dias espanhóis completos.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que significam "PT ≠ ES", o "≠" da tabela e os preços ≤ 0?</strong></summary>
+                <div class="faq-content">
+                    <p>Portugal e Espanha partilham o mesmo mercado (MIBEL) e quase sempre têm o mesmo preço. Quando a interligação entre os dois países fica cheia, os preços separam-se: é o <strong>market splitting</strong>.</p>
+                    <ul>
+                        <li><strong>Quartos-horários com PT ≠ ES</strong> (cartão de Espanha) — quantos quartos de hora do dia mostrado tiveram preços diferentes (mais de 0,01 €/MWh) e se Portugal ficou mais barato ou mais caro.</li>
+                        <li><strong>≠ na tabela</strong> — horas com pelo menos um quarto de hora separado: a verde, Portugal mais barato; a vermelho, Portugal mais caro. Passe o rato para ver a diferença.</li>
+                        <li><strong>Quartos-horários com preço ≤ 0</strong> (cartão de Portugal, só nos dias em que acontece) — quantos quartos de hora tiveram preço zero ou negativo, e entre que horas.</li>
+                    </ul>
+                    <p>Para períodos mais longos, o <a href="/omie">histórico OMIE</a> tem o gráfico do Spread PT-ES.</p>
                 </div>
             </details>
 
@@ -661,7 +722,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Caminhos relativos a data/ — a origem (same-origin vs GitHub raw) e o
     // fallback entre ambas são geridos por fetchDados() (dados.js).
     const URL_DADOS_ATUAIS = "omie/omie_dados_atuais.csv";
+    // Os últimos 100 dias do ano corrente (~100 KB comprimidos contra ~310 KB): a página arranca com este
+    // e só pede o ano inteiro quando se recua mais (garantirAtuaisDesde).
+    const URL_DADOS_RECENTES = "omie/omie_recentes.csv";
     const URL_HISTORICO_BASE = "omie/historico/omie_historico_";
+    // |PT − ES| acima disto (€/MWh) conta como market splitting — o mesmo critério do Spread PT-ES do omie.html
+    const LIMIAR_SPLIT = 0.01;
     const ANO_INICIO_HISTORICO = 2010;
     // --- FIM CONFIGURAÇÕES ---
 
@@ -675,6 +741,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let dadosFuturosPT = [];
     let dadosFuturosES = [];
     let anoMinimoAtual = null;
+    // 1.º dia (AAAA-MM-DD) dos dados do ano corrente carregados enquanto só há o ficheiro recente; null com o ano inteiro
+    let primeiroDiaRecentes = null;
+    let promessaAtuaisCompletos = null;
     let tipoGrafico = 'line';
     let ultimosArgsGrafico = null;
 
@@ -760,6 +829,35 @@ document.addEventListener('DOMContentLoaded', function() {
         return await dadosHistoricos[ano];
     }
 
+    // --- FICHEIRO RECENTE vs ANO INTEIRO ---
+    // Arranque: o ficheiro recente; se faltar (404, erro de rede), o do ano, como antes.
+    function carregarDadosIniciais() {
+        const texto = response => { if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`); return response.text(); };
+        return fetchDados(URL_DADOS_RECENTES).then(texto).then(t => ({ texto: t, recente: true }))
+            .catch(() => fetchDados(URL_DADOS_ATUAIS).then(texto).then(t => ({ texto: t, recente: false })));
+    }
+    function primeiroDiaISO(precos) {
+        let min = null;
+        for (const d of precos) { const iso = formatarDataParaInput(d.dia); if (iso && (min === null || iso < min)) min = iso; }
+        return min;
+    }
+    // Um dia do ano corrente anterior ao ficheiro recente → pedir o do ano inteiro (uma só vez)
+    async function garantirAtuaisDesde(isoMaisAntigo) {
+        if (!primeiroDiaRecentes || !isoMaisAntigo || isoMaisAntigo >= primeiroDiaRecentes) return;
+        if (!promessaAtuaisCompletos) {
+            loadingIndicator.style.display = 'block';
+            promessaAtuaisCompletos = fetchDados(URL_DADOS_ATUAIS)
+                .then(response => { if (!response.ok) throw new Error(`Erro ${response.status}`); return response.text(); })
+                .then(csvText => {
+                    const precos = parseCSVAtual(csvText).precos;
+                    if (precos.length > 0) { dadosAtuais = precos; primeiroDiaRecentes = null; }
+                })
+                .catch(error => console.error('Falha ao carregar o ano corrente:', error))
+                .finally(() => { loadingIndicator.style.display = 'none'; });
+        }
+        await promessaAtuaisCompletos;
+    }
+
     // --- FUNÇÃO PRINCIPAL ---
     async function atualizarDashboard(dataSelecionada) {
         const cardFuturos = document.querySelector('.card-futuros');
@@ -805,6 +903,11 @@ document.addEventListener('DOMContentLoaded', function() {
         pushAnoSeFalta(anoSemAnterior);
         pushAnoSeFalta(anoSemAnterior2);
         if (anosACarregar.length > 0) { const promises = anosACarregar.map(ano => carregarDadosHistoricos(ano)); await Promise.all(promises); }
+        // O dia e os de comparação (D-1, D-2, D-7, D-8) que caem no ano corrente têm de estar nos dados carregados
+        const inicioAnoAtual = `${anoMinimoAtual}-01-01`;
+        const diasDoAnoAtual = [dataSelecionada].concat([dataAnteriorCSV, dataAnterior2CSV, dataSemAnteriorCSV, dataSemAnterior2CSV].map(formatarDataParaInput))
+            .filter(iso => iso && iso >= inicioAnoAtual);
+        if (diasDoAnoAtual.length > 0) await garantirAtuaisDesde(diasDoAnoAtual.reduce((a, b) => (a < b ? a : b)));
 
         // --- Obter os dados relevantes ---
         let dadosDoDia = [];
@@ -889,8 +992,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (tituloH1) {
             const sufixoFuso = emCET ? ' <small style="font-size:0.65em;color:#0ea5e9;font-weight:600;">[em hora CET / mercado]</small>' : '';
             const sufixoCorte = (isUltimoDiaOMIE && !emCET) ? '(até às 23h de PT)' : '';
-            tituloH1.innerHTML = `Eletricidade - Preços médios Mercado Diário OMIE para <span id="data-titulo-painel">${dataFormatadaCSV}</span> ${sufixoCorte}${sufixoFuso}`;
+            tituloH1.innerHTML = `Eletricidade - Preços médios Mercado Diário OMIE para <span id="data-titulo-painel">${rotuloDiaTitulo(dataSelecionada, hojeEmLisboaYYYYMMDD)}</span> ${sufixoCorte}${sufixoFuso}`;
         }
+        atualizarVerTambem(dataSelecionada, hojeEmLisboaYYYYMMDD);
 
         // Cálculos PT (usam a vista ativa: PT raw ou CET-alinhada)
         const precosReaisPT = dadosViewReais.map(d => d.preco_pt).filter(p => p !== null);
@@ -920,27 +1024,56 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('max-es').innerHTML = formatarValor(maxESVal) + (maxESHora ? ` <small class="hora-extremo">(às ${maxESHora} ${sufixoFusoHoraES})</small>` : '');
         document.getElementById('min-es').innerHTML = formatarValor(minESVal) + (minESHora ? ` <small class="hora-extremo">(às ${minESHora} ${sufixoFusoHoraES})</small>` : '');
 
+        // Quartos-horários PT com preço ≤ 0: quantos e entre que horas (a linha só aparece nos dias em que os há)
+        const negPT = dadosViewReais.filter(d => d.preco_pt !== null && !isNaN(d.preco_pt) && d.preco_pt <= 0);
+        const linhaNegPT = document.getElementById('linha-neg-pt');
+        if (linhaNegPT) {
+            linhaNegPT.hidden = negPT.length === 0;
+            if (negPT.length) document.getElementById('neg-pt').innerHTML = `${negPT.length} <small class="hora-extremo">(entre ${limiteIntervalo(negPT[0], 0)} e ${limiteIntervalo(negPT[negPT.length - 1], 1)}${sufixoFusoHora})</small>`;
+        }
+        // Market splitting no dia mostrado (os mesmos quartos-horários da tabela e do gráfico)
+        const comAmbos = dadosViewReais.filter(d => d.preco_pt !== null && !isNaN(d.preco_pt) && d.preco_es !== null && !isNaN(d.preco_es));
+        const nPTBarato = comAmbos.filter(d => d.preco_pt - d.preco_es < -LIMIAR_SPLIT).length;
+        const nPTCaro = comAmbos.filter(d => d.preco_pt - d.preco_es > LIMIAR_SPLIT).length;
+        const elSplit = document.getElementById('split-es');
+        if (elSplit) {
+            // Nos dias com os dois sentidos, o cartão diz o que domina e o tooltip dá as duas contagens
+            const sentido = !nPTCaro ? 'PT mais barato' : (!nPTBarato ? 'PT mais caro'
+                : (nPTCaro > nPTBarato ? 'sobretudo PT mais caro' : (nPTBarato > nPTCaro ? 'sobretudo PT mais barato' : 'PT mais caro e mais barato')));
+            elSplit.title = (nPTBarato && nPTCaro) ? `PT mais barato em ${nPTBarato} e mais caro em ${nPTCaro} quartos-horários` : '';
+            elSplit.innerHTML = !comAmbos.length ? '--'
+                : (nPTBarato + nPTCaro === 0 ? 'nenhum <small class="hora-extremo">(mesmo preço)</small>'
+                : `${nPTBarato + nPTCaro} <small class="hora-extremo">(${sentido})</small>`);
+        }
+
         // === YoY: variação vs ontem e vs mesmo dia da semana passada ===
         // Em CET mode usamos janelas CET de ontem (vistaCET(D-2, D-1)) e sem-ant (vistaCET(D-8, D-7)).
-        const vistaCETOntem  = emCET ? construirVistaCET(dadosDiaAnterior2, dadosDiaAnterior)  : null;
-        const vistaCETSemAnt = emCET ? construirVistaCET(dadosSemAnterior2, dadosSemAnterior) : null;
+        const vistaCETOntem  = construirVistaCET(dadosDiaAnterior2, dadosDiaAnterior);
+        const vistaCETSemAnt = construirVistaCET(dadosSemAnterior2, dadosSemAnterior);
         const fonteOntem  = emCET ? vistaCETOntem  : dadosDiaAnterior;
         const fonteSemAnt = emCET ? vistaCETSemAnt : dadosSemAnterior;
-        const mediaPTOntem  = calcularMedia(fonteOntem.map(d => d.preco_pt).filter(p => p !== null && !isNaN(p)));
-        const mediaPTSemAnt = calcularMedia(fonteSemAnt.map(d => d.preco_pt).filter(p => p !== null && !isNaN(p)));
-        const mediaESOntem  = calcularMedia(fonteOntem.map(d => d.preco_es).filter(p => p !== null && !isNaN(p)));
-        const mediaESSemAnt = calcularMedia(fonteSemAnt.map(d => d.preco_es).filter(p => p !== null && !isNaN(p)));
-        function renderYoyDeltas(elId, atual, ontem, semAnt) {
+        // No último dia publicado, a média PT deixa de fora a última hora (ainda por leiloar): os dias de
+        // comparação perdem a mesma hora, senão comparava-se um dia de 23 h com dias de 24 h.
+        const qhSemPreco = dadosViewDia.length - dadosViewReais.length;
+        const semUltimaHora = arr => qhSemPreco > 0 ? arr.slice(0, -qhSemPreco) : arr;
+        const notaRefPT = qhSemPreco > 0 ? ' (até às 23h de PT)' : '';
+        const mediaPTOntem  = calcularMedia(semUltimaHora(fonteOntem).map(d => d.preco_pt).filter(p => p !== null && !isNaN(p)));
+        const mediaPTSemAnt = calcularMedia(semUltimaHora(fonteSemAnt).map(d => d.preco_pt).filter(p => p !== null && !isNaN(p)));
+        // A média de Espanha é a do dia espanhol (hora CET) nos dois fusos: compara-se com o dia espanhol
+        // de ontem e da semana passada (em hora PT comparava-se com o dia português, 1 h desfasado).
+        const mediaESOntem  = calcularMedia(vistaCETOntem.map(d => d.preco_es).filter(p => p !== null && !isNaN(p)));
+        const mediaESSemAnt = calcularMedia(vistaCETSemAnt.map(d => d.preco_es).filter(p => p !== null && !isNaN(p)));
+        function renderYoyDeltas(elId, atual, ontem, semAnt, notaRef) {
             const el = document.getElementById(elId);
             if (!el) return;
             const parts = [];
-            const dOntem = fmtDeltaSpan(atual, ontem, 'vs ontem');
-            const dSem   = fmtDeltaSpan(atual, semAnt, 'vs mesmo dia da semana passada');
+            const dOntem = fmtDeltaSpan(atual, ontem, 'vs ontem', notaRef);
+            const dSem   = fmtDeltaSpan(atual, semAnt, 'vs mesmo dia da semana passada', notaRef);
             if (dOntem) parts.push(dOntem);
             if (dSem)   parts.push(dSem);
-            el.innerHTML = parts.length ? parts.join('<span class="yoy-sep">·</span>') : '';
+            el.innerHTML = parts.join('');
         }
-        renderYoyDeltas('yoy-pt-deltas', mediaPTAtual, mediaPTOntem, mediaPTSemAnt);
+        renderYoyDeltas('yoy-pt-deltas', mediaPTAtual, mediaPTOntem, mediaPTSemAnt, notaRefPT);
         renderYoyDeltas('yoy-es-deltas', mediaESAtual, mediaESOntem, mediaESSemAnt);
 
         // === Top 3 horas mais baratas / caras (usa a vista ativa) ===
@@ -972,6 +1105,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- FUNÇÕES DE ATUALIZAÇÃO ---
+    // "amanhã, quarta-feira, 28/10/2026": o dia mais recente é amanhã depois das ~13h, e só a data não o dizia
+    function rotuloDiaTitulo(dataISO, hojeISO) {
+        const d = new Date(dataISO + 'T12:00:00Z');
+        const semana = d.toLocaleDateString('pt-PT', { weekday: 'long', timeZone: 'UTC' });
+        const dif = Math.round((d - new Date(hojeISO + 'T12:00:00Z')) / 86400000);
+        const relativo = { '-1': 'ontem', '0': 'hoje', '1': 'amanhã' }[dif];
+        return (relativo ? relativo + ', ' : '') + semana + ', ' + formatarDataParaCSV(dataISO);
+    }
+    // Ligações para as páginas irmãs, já com o dia escolhido. Os Preços Horários só têm hoje e amanhã.
+    function atualizarVerTambem(dataISO, hojeISO) {
+        const amanha = new Date(hojeISO + 'T12:00:00Z');
+        amanha.setUTCDate(amanha.getUTCDate() + 1);
+        const diaPH = dataISO === hojeISO ? 'hoje' : (dataISO === amanha.toISOString().slice(0, 10) ? 'amanha' : null);
+        const aPH = document.getElementById('ver-precos-horarios');
+        if (aPH) {
+            aPH.hidden = !diaPH;
+            if (diaPH) aPH.href = '/precos-horarios?dia=' + diaPH;
+        }
+        const nota = document.getElementById('top-horas-nota');
+        if (nota) {
+            nota.hidden = !diaPH;
+            if (diaPH) nota.innerHTML = 'São horas soltas, pelo preço OMIE. Para horas seguidas e o preço final de um tarifário indexado, '
+                + `veja a <a href="/precos-horarios?dia=${diaPH}">melhor janela nos Preços Horários</a>.`;
+        }
+        // O mês do dia escolhido no histórico, até ao último dia publicado
+        const aMes = document.getElementById('ver-omie-mes');
+        if (aMes) {
+            const [ano, mes] = dataISO.split('-').map(Number);
+            const ultimoDoMes = new Date(Date.UTC(ano, mes, 0)).toISOString().slice(0, 10);
+            const fim = seletorData.max && ultimoDoMes > seletorData.max ? seletorData.max : ultimoDoMes;
+            const nomeMes = new Date(Date.UTC(ano, mes - 1, 15)).toLocaleDateString('pt-PT', { month: 'long', timeZone: 'UTC' });
+            aMes.href = `/omie?inicio=${ano}-${String(mes).padStart(2, '0')}-01&fim=${fim}`;
+            aMes.textContent = `📈 ${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)} de ${ano} no histórico OMIE`;
+        }
+    }
     function atualizarFuturosProximos() {
         if (!dadosFuturosPT || dadosFuturosPT.length === 0) { return; }
         const futurosDiariosPT = dadosFuturosPT.filter(f => f.Contrato?.includes(" D "))
@@ -1017,13 +1185,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // Lógica de Destaque: Verifica se é hoje E se o 'h' do loop é a hora atual
             const isHoraAtual = (isHoje && h === horaAtualLisboa);
 
-            if(qComp.length > 0){ 
-                dadosHorarios.push({ 
-                    hora: hLbl, 
-                    precoPT: calcularMedia(qReal.map(d => d.preco_pt)), 
+            if(qComp.length > 0){
+                // Market splitting na hora: quartos-horários com PT e ES conhecidos e |PT − ES| > LIMIAR_SPLIT
+                const qAmbos = qReal.filter(d => d && d.preco_pt !== null && !isNaN(d.preco_pt) && d.preco_es !== null && !isNaN(d.preco_es));
+                const nSplit = qAmbos.filter(d => Math.abs(d.preco_pt - d.preco_es) > LIMIAR_SPLIT).length;
+                dadosHorarios.push({
+                    hora: hLbl,
+                    precoPT: calcularMedia(qReal.map(d => d.preco_pt)),
                     precoES: calcularMedia(qComp.map(d => d.preco_es)),
-                    isHoraAtual: isHoraAtual // Guarda a informação de destaque
-                }); 
+                    isHoraAtual: isHoraAtual, // Guarda a informação de destaque
+                    split: nSplit,
+                    nQuartos: qAmbos.length,
+                    spread: nSplit ? calcularMedia(qAmbos.map(d => d.preco_pt - d.preco_es)) : null
+                });
                 qh_idx += nq; 
             } else if (h < 24) { 
                 dadosHorarios.push({ hora: hLbl, precoPT: null, precoES: null, isHoraAtual: false }); 
@@ -1031,13 +1205,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Criar o HTML da Tabela
-        dadosHorarios.forEach(item => { 
-            // Adiciona o estilo inline se 'isHoraAtual' for verdadeiro
-            const estiloLinha = item.isHoraAtual ? ' style="background-color: #FFF3E0; font-weight: bold;"' : '';
-            tableHTML += `<tr${estiloLinha}><th scope="row">${item.hora}</th><td>${formatarValor(item.precoPT)}</td><td>${formatarValor(item.precoES)}</td></tr>`;
-        }); 
-        
-        tableHTML += '</tbody></table>'; 
+        let haSplit = false;
+        dadosHorarios.forEach(item => {
+            // Destaque da hora atual: classe hora-atual (as cores estão no CSS, com versão para o modo escuro)
+            const estiloLinha = item.isHoraAtual ? ' class="hora-atual"' : '';
+            let tdES = `<td>${formatarValor(item.precoES)}</td>`;
+            if (item.split) {
+                haSplit = true;
+                const dif = (item.spread > 0 ? '+' : '') + item.spread.toFixed(2).replace('.', ',');
+                tdES = `<td title="Market splitting: PT ≠ ES em ${item.split} de ${item.nQuartos} quartos-horários · PT − ES: ${dif} €/MWh (média da hora)">`
+                    + `<span class="marca-split ${item.spread < 0 ? 'pt-barato' : 'pt-caro'}" aria-hidden="true">≠</span><span class="sr-only">PT diferente de ES: </span>${formatarValor(item.precoES)}</td>`;
+            }
+            tableHTML += `<tr${estiloLinha}><th scope="row">${item.hora}</th><td>${formatarValor(item.precoPT)}</td>${tdES}</tr>`;
+        });
+
+        tableHTML += '</tbody></table>';
+        if (haSplit) tableHTML += '<p class="nota-split">≠ hora com preço diferente em PT e ES (market splitting): '
+            + '<span class="marca-split pt-barato">≠</span>PT mais barato · <span class="marca-split pt-caro">≠</span>PT mais caro</p>';
         container.innerHTML = tableHTML;
     }
     function atualizarGrafico(dadosDoDiaCompleto, dadosReaisDoDia, dataTitulo, isUltimoDiaOMIE, isHoje, horaAtualLisboa, minutoAtualLisboa, dadosDiaAnterior, emCET) {
@@ -1077,7 +1261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Em modo linhas: plotLines normais no eixo Y
             if (minmaxEl) minmaxEl.style.display = 'none';
-            if (minPT !== null || minES !== null) { const minValPT = minPT ?? Infinity; const minValES = minES ?? Infinity; if (Math.abs(minValPT - minValES) < 0.01 && minPT !== null) { plotLines.push({ value: minValPT, color: 'green', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: 'green', fontWeight: 'bold' } } }); } else { if (minPT !== null) plotLines.push({ value: minValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (minES !== null) plotLines.push({ value: minValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatLabelMinMax(minValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
+            if (minPT !== null || minES !== null) { const minValPT = minPT ?? Infinity; const minValES = minES ?? Infinity; if (Math.abs(minValPT - minValES) < 0.01 && minPT !== null) { plotLines.push({ value: minValPT, color: '#15803d', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#15803d', fontWeight: 'bold' } } }); } else { if (minPT !== null) plotLines.push({ value: minValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo PT: ${formatLabelMinMax(minValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (minES !== null) plotLines.push({ value: minValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Mínimo ES: ${formatLabelMinMax(minValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
             if (maxPT !== null || maxES !== null) { const maxValPT = maxPT ?? -Infinity; const maxValES = maxES ?? -Infinity; if (Math.abs(maxValPT - maxValES) < 0.01 && maxPT !== null) { plotLines.push({ value: maxValPT, color: 'red', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: 'red', fontWeight: 'bold' } } }); } else { if (maxPT !== null) plotLines.push({ value: maxValPT, color: '#007bff', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo PT: ${formatLabelMinMax(maxValPT)}`, align: 'right', style: { color: '#007bff', fontWeight: 'bold' } } }); if (maxES !== null) plotLines.push({ value: maxValES, color: '#28a745', width: 1.5, dashStyle: 'shortdash', zIndex: 4, label: { text: `Máximo ES: ${formatLabelMinMax(maxValES)}`, align: 'right', y: 15, style: { color: '#28a745', fontWeight: 'bold' } } }); } }
         }
 
@@ -1249,10 +1433,10 @@ document.addEventListener('DOMContentLoaded', function() {
             klass: isUp ? 'yoy-up' : (isDown ? 'yoy-down' : 'yoy-flat')
         };
     }
-    function fmtDeltaSpan(atual, anterior, prefixo) {
+    function fmtDeltaSpan(atual, anterior, prefixo, notaRef = '') {
         if (atual === null || anterior === null) return '';
         const deltaPct = _calcDeltaPct(atual, anterior);
-        const tooltip = `Valor de referência: ${anterior.toFixed(2).replace('.', ',')} €/MWh`;
+        const tooltip = `Valor de referência: ${anterior.toFixed(2).replace('.', ',')} €/MWh${notaRef}`;
         if (deltaPct !== null) {
             const abs = Math.abs(deltaPct);
             const { arrow, klass } = _arrowKlass(deltaPct, 0.5);
@@ -1316,6 +1500,12 @@ document.addEventListener('DOMContentLoaded', function() {
         section.style.display = 'block';
     }
     // Hora do quarto-horário do min/max (formato "HH:MM" — início do slot)
+    // "[10:15-10:30[" → "10:15" (lado 0, início) ou "10:30" (lado 1, fim); o fim do último quarto de hora é "24:00"
+    function limiteIntervalo(row, lado) {
+        const m = row && row.intervalo ? row.intervalo.match(/^\[(\d{2}:\d{2})-(\d{2}:\d{2})/) : null;
+        if (!m) return '--';
+        return (lado === 1 && m[2] === '00:00') ? '24:00' : m[lado + 1];
+    }
     function getHoraDoExtremo(arr, valorAlvo) {
         const row = arr.find(d => d.preco_pt === valorAlvo);
         if (!row || !row.intervalo) return null;
@@ -1423,12 +1613,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- PROCESSO DE INICIALIZAÇÃO ---
-    fetchDados(URL_DADOS_ATUAIS)
-        .then(response => { if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`); return response.text(); })
-        .then(data => {
+    carregarDadosIniciais()
+        .then(({ texto: data, recente }) => {
             const parsedData = parseCSVAtual(data);
             dadosAtuais = parsedData.precos; dadosAtualizacao = parsedData.atualizacoes; dadosFuturosPT = parsedData.futurosPT; dadosFuturosES = parsedData.futurosES;
             if (dadosAtuais.length === 0) throw new Error("Ficheiro atual vazio."); if (!dadosAtualizacao.Data_Valores_OMIE) { throw new Error("Data_Valores_OMIE não encontrada."); }
+            if (recente) primeiroDiaRecentes = primeiroDiaISO(dadosAtuais);
             const anosAtuais = dadosAtuais.map(d => d.dia ? parseInt(d.dia.substring(6, 10)) : NaN).filter(ano => !isNaN(ano)); // Adicionado check d.dia
             if (anosAtuais.length > 0) { anoMinimoAtual = Math.min(...anosAtuais); } else { anoMinimoAtual = new Date().getFullYear(); }
             const dataMaximaValida = formatarDataParaInput(dadosAtualizacao.Data_Valores_OMIE); if (!dataMaximaValida) { throw new Error("Data_Valores_OMIE inválida."); }
