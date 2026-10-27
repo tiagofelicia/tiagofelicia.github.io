@@ -98,7 +98,8 @@
         .btn-nav { background: #fff; border: 1px solid #ccc; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center; transition: background 0.2s; color: #2c3e50;}
         .btn-nav:hover { background: #e2e8f0; }        
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 95%; max-width: 1200px; margin: auto; }
+        /* min(300px, 100%): abaixo de ~330 px de ecrã a coluna de 300 px não cabia e a página deslizava 7 px para o lado */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 20px; width: 95%; max-width: 1200px; margin: auto; }
         .coluna { display: flex; flex-direction: column; gap: 20px; }
         .card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .card-title-bd { background-color: #A9D08E; color: black; padding: 5px 10px; margin: -10px -10px 10px -10px; border-radius: 8px 8px 0 0; font-size: 1em; text-align: center; }
@@ -113,6 +114,11 @@
         /* Linhas ≤ 0 e PT ≠ ES: se o rótulo e o valor não cabem lado a lado, o valor passa inteiro à linha de baixo, à direita */
         .linha-extra { flex-wrap: wrap; }
         .linha-extra .valor { margin-left: auto; white-space: nowrap; }
+        /* PT ≠ ES fora dos cartões, logo a seguir ao de Espanha: compara os dois países, não é de nenhum deles.
+           Tracejado para não parecer mais um cartão (fundo branco: no #f8fafc o «(PT mais caro)» ficava a 4,48:1); mais perto do cartão de Espanha (gap 20 − 10) do que dos Futuros */
+        .split-pt-es { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2px 10px; margin-top: -10px; padding: 7px 12px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #fff; }
+        .split-pt-es .valor { margin-left: auto; white-space: nowrap; }
+        [data-theme="dark"] .split-pt-es { background: #0f172a; border-color: #475569; }
         .label { font-weight: 600; }
         .valor { font-weight: bold; font-size: 0.95em; }
         .card-principal { text-align: center; border-style: solid; }
@@ -138,7 +144,9 @@
         .card:has(.card-title-ts) .label-cheias { background-color: #F8CBAD; color: #000000; }
         .card:has(.card-title-ts) .label-ponta { background-color: #FCE4D6; color: #000000; }
 
-        .grafico-tabela-grid { display: grid; grid-template-columns: 3fr 8fr; gap: 20px; width: 95%; max-width: 1200px; margin: 40px auto 20px auto; align-items: flex-start; }
+        /* minmax(min-content, 3fr): entre 901 e ~1180 px a coluna da tabela (3/11) ficava mais estreita do que a tabela e
+           aparecia scroll interno; assim a tabela nunca encolhe abaixo do conteúdo e é o gráfico que cede */
+        .grafico-tabela-grid { display: grid; grid-template-columns: minmax(min-content, 3fr) 8fr; gap: 20px; width: 95%; max-width: 1200px; margin: 40px auto 20px auto; align-items: flex-start; }
         @media (max-width: 900px) { .grafico-tabela-grid { grid-template-columns: 1fr; } }
         .tabela-wrapper { border: 1px solid #ddd; border-radius: 8px; background-color: white; overflow-x: auto; }
         .tabela-precos { width: 100%; border-collapse: collapse; font-size: 0.8em; }
@@ -244,6 +252,14 @@
         .marca-split.pt-barato { color: var(--txt-verde); }
         .marca-split.pt-caro { color: var(--txt-vermelho); }
         .nota-split { font-size: 0.75em; color: var(--txt-cinza); text-align: center; margin: 6px 8px; }
+        /* ===== Tabela: Por hora | 15 min ===== */
+        .tabela-toggle { justify-content: flex-start; }
+        /* 96 linhas: altura parecida com a da tabela horária e scroll dentro da tabela, com o cabeçalho sempre à vista
+           (o thead inteiro fica fixo; as duas linhas fixas em separado sobrepunham-se, porque a primeira tem ~37 px) */
+        .tabela-scroll-qh { max-height: min(75vh, 820px); overflow-y: auto; }
+        .tabela-scroll-qh .tabela-precos thead { position: sticky; top: 0; z-index: 1; }
+        .tabela-scroll-qh .tabela-precos thead th { position: static; }
+        .qh-repetido { font-weight: normal; color: var(--txt-cinza); }
 
         /* ===== Variação vs ontem / semana passada ===== */
         /* As duas variações ficam lado a lado quando cabem e uma por linha quando não cabem (com nowrap e o «·»
@@ -455,7 +471,7 @@
           "name": "O que significam PT ≠ ES, o ≠ da tabela e os preços ≤ 0?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Portugal e Espanha partilham o mesmo mercado (MIBEL) e quase sempre têm o mesmo preço. Quando a interligação entre os dois países fica cheia, os preços separam-se: é o market splitting. Quartos-horários com PT ≠ ES (cartão de Espanha): quantos quartos de hora do dia mostrado tiveram preços diferentes (mais de 0,01 €/MWh) e se Portugal ficou mais barato ou mais caro. ≠ na tabela: horas com pelo menos um quarto de hora separado, a verde com Portugal mais barato e a vermelho com Portugal mais caro. Quartos-horários com preço ≤ 0 (cartão de Portugal, só nos dias em que acontece): quantos quartos de hora tiveram preço zero ou negativo, e entre que horas."
+            "text": "Portugal e Espanha partilham o mesmo mercado (MIBEL) e quase sempre têm o mesmo preço. Quando a interligação entre os dois países fica cheia, os preços separam-se: é o market splitting. Quartos-horários com PT ≠ ES (por baixo do cartão de Espanha): quantos quartos de hora do dia mostrado tiveram preços diferentes (mais de 0,01 €/MWh) e se Portugal ficou mais barato ou mais caro. ≠ na tabela: horas com pelo menos um quarto de hora separado (na vista 15 min, cada quarto de hora separado), a verde com Portugal mais barato e a vermelho com Portugal mais caro. Quartos-horários com preço ≤ 0 (cartão de Portugal, só nos dias em que acontece): quantos quartos de hora tiveram preço zero ou negativo, e entre que horas."
           }
         },
         {
@@ -521,7 +537,8 @@
     <div class="dashboard-grid">
          <div class="coluna">
             <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="yoy-deltas" id="yoy-pt-deltas"></div> <div class="futuros-info" id="futuros-container-pt"> Futuro do dia: <strong id="futuros-anterior-pt">--,-- €</strong> em <strong id="futuros-pt-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> <div class="data-item linha-extra" id="linha-neg-pt" hidden><span class="label">Quartos-horários com preço ≤ 0</span><span class="valor" id="neg-pt">--</span></div> </div>
-             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small id="lbl-24h-es">(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="yoy-deltas" id="yoy-es-deltas"></div> <div class="futuros-info" id="futuros-container-es"> Futuro do dia: <strong id="futuros-anterior-es">--,-- €</strong> em <strong id="futuros-es-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> <div class="data-item linha-extra" title="Market splitting: quartos-horários do dia mostrado em que Portugal e Espanha tiveram preços diferentes"><span class="label">Quartos-horários com PT ≠ ES</span><span class="valor" id="split-es">--</span></div> </div>
+             <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small id="lbl-24h-es">(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="yoy-deltas" id="yoy-es-deltas"></div> <div class="futuros-info" id="futuros-container-es"> Futuro do dia: <strong id="futuros-anterior-es">--,-- €</strong> em <strong id="futuros-es-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
+             <div class="split-pt-es" title="Market splitting: quartos-horários do dia mostrado em que Portugal e Espanha tiveram preços diferentes"><span class="label">Quartos-horários com PT ≠ ES</span><span class="valor" id="split-pt-es">--</span></div>
              <div class="card card-futuros"> <h3 class="card-title-futuros">Futuros Diários OMIP (PT)</h3> <ul> <li id="futuro-1-item" style="display: none;"> <span id="futuros-1-label"></span> <strong id="futuros-1-valor"></strong> </li> <li id="futuro-2-item" style="display: none;"> <span id="futuros-2-label"></span> <strong id="futuros-2-valor"></strong> </li> <li id="futuro-3-item" style="display: none;"> <span id="futuros-3-label"></span> <strong id="futuros-3-valor"></strong> </li> </ul> </div>
         </div>
         <div class="coluna">
@@ -560,7 +577,13 @@
     <div class="link-section"> <p>https://www.tiagofelicia.pt/omie-diario</p> </div>
 
     <div class="grafico-tabela-grid">
-        <div id="tabela-container" class="tabela-wrapper"></div>
+        <div>
+            <div class="chart-type-toggle tabela-toggle" role="group" aria-label="Detalhe da tabela">
+                <button id="btn-tabela-hora" class="active" aria-pressed="true" title="Médias de cada hora">Por hora</button>
+                <button id="btn-tabela-qh" aria-pressed="false" title="Preço de cada quarto de hora">15 min</button>
+            </div>
+            <div id="tabela-container" class="tabela-wrapper"></div>
+        </div>
         <div style="min-width: 0; overflow: hidden;">
             <div class="chart-type-toggle">
                 <button id="btn-tipo-linha" class="active" title="Gráfico de linhas">
@@ -689,8 +712,8 @@
                 <div class="faq-content">
                     <p>Portugal e Espanha partilham o mesmo mercado (MIBEL) e quase sempre têm o mesmo preço. Quando a interligação entre os dois países fica cheia, os preços separam-se: é o <strong>market splitting</strong>.</p>
                     <ul>
-                        <li><strong>Quartos-horários com PT ≠ ES</strong> (cartão de Espanha) — quantos quartos de hora do dia mostrado tiveram preços diferentes (mais de 0,01 €/MWh) e se Portugal ficou mais barato ou mais caro.</li>
-                        <li><strong>≠ na tabela</strong> — horas com pelo menos um quarto de hora separado: a verde, Portugal mais barato; a vermelho, Portugal mais caro. Passe o rato para ver a diferença.</li>
+                        <li><strong>Quartos-horários com PT ≠ ES</strong> (por baixo do cartão de Espanha) — quantos quartos de hora do dia mostrado tiveram preços diferentes (mais de 0,01 €/MWh) e se Portugal ficou mais barato ou mais caro.</li>
+                        <li><strong>≠ na tabela</strong> — horas com pelo menos um quarto de hora separado (na vista <em>15 min</em>, cada quarto de hora separado): a verde, Portugal mais barato; a vermelho, Portugal mais caro. Passe o rato para ver a diferença.</li>
                         <li><strong>Quartos-horários com preço ≤ 0</strong> (cartão de Portugal, só nos dias em que acontece) — quantos quartos de hora tiveram preço zero ou negativo, e entre que horas.</li>
                     </ul>
                     <p>Para períodos mais longos, o <a href="/omie">histórico OMIE</a> tem o gráfico do Spread PT-ES.</p>
@@ -745,6 +768,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let primeiroDiaRecentes = null;
     let promessaAtuaisCompletos = null;
     let tipoGrafico = 'line';
+    // Tabela: 'hora' (médias horárias, por omissão) ou 'qh' (quartos de hora); não fica guardado
+    let modoTabela = 'hora';
+    let ultimosArgsTabela = null;
     let ultimosArgsGrafico = null;
 
     // --- FUNÇÕES AUXILIARES ---
@@ -1035,9 +1061,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const comAmbos = dadosViewReais.filter(d => d.preco_pt !== null && !isNaN(d.preco_pt) && d.preco_es !== null && !isNaN(d.preco_es));
         const nPTBarato = comAmbos.filter(d => d.preco_pt - d.preco_es < -LIMIAR_SPLIT).length;
         const nPTCaro = comAmbos.filter(d => d.preco_pt - d.preco_es > LIMIAR_SPLIT).length;
-        const elSplit = document.getElementById('split-es');
+        const elSplit = document.getElementById('split-pt-es');
         if (elSplit) {
-            // Nos dias com os dois sentidos, o cartão diz o que domina e o tooltip dá as duas contagens
+            // Nos dias com os dois sentidos, a linha diz o que domina e o tooltip dá as duas contagens
             const sentido = !nPTCaro ? 'PT mais barato' : (!nPTBarato ? 'PT mais caro'
                 : (nPTCaro > nPTBarato ? 'sobretudo PT mais caro' : (nPTBarato > nPTCaro ? 'sobretudo PT mais barato' : 'PT mais caro e mais barato')));
             elSplit.title = (nPTBarato && nPTCaro) ? `PT mais barato em ${nPTBarato} e mais caro em ${nPTCaro} quartos-horários` : '';
@@ -1100,7 +1126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Atualizar Tabela e Gráfico (usam a vista ativa)
         // Em CET mode, o overlay "ontem" passa a usar a janela CET de ontem (em vez de PT raw)
         const dadosOntemParaOverlay = emCET ? vistaCETOntem : dadosDiaAnterior;
-        atualizarTabela(dadosViewDia, dadosViewReais, isHojeView, horaAtualView, dataFormatadaCSV, emCET);
+        atualizarTabela(dadosViewDia, dadosViewReais, isHojeView, horaAtualView, dataFormatadaCSV, emCET, minutoAtualLisboa);
         atualizarGrafico(dadosViewDia, dadosViewReais, dataFormatadaCSV, isUltimoDiaOMIE, isHojeView, horaAtualView, minutoAtualLisboa, dadosOntemParaOverlay, emCET);
     }
 
@@ -1148,8 +1174,10 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const f of futurosDiariosPT) { if (!f.Descricao || typeof f.Descricao !== 'string' || !f.Descricao.includes('/')) continue; try { const dataF = formatarDataParaInput(f.Descricao); if (!dataF) continue; if (dataF > dataMaxReal && diasEnc < 3) { diasEnc++; const lbl = document.getElementById(`futuros-${diasEnc}-label`); const val = document.getElementById(`futuros-${diasEnc}-valor`); const itm = document.getElementById(`futuro-${diasEnc}-item`); if (lbl && val && itm) { const dO = new Date(dataF + "T12:00:00Z"); const dS = dO.toLocaleDateString('pt-PT', { weekday: 'short', timeZone: 'UTC' }); lbl.textContent = `Futuros para ${f.Descricao} - ${dS}`; val.innerHTML = formatarValor(f.Valor); itm.style.display = 'flex'; } } if (diasEnc >= 3) break; } catch(e){ console.error("Erro Futuros Próximos:", e, f); continue; } }
         for (let i = diasEnc + 1; i <= 3; i++) { const itm = document.getElementById(`futuro-${i}-item`); if(itm) itm.style.display = 'none'; }
     }
-    function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa, dataFormatadaCSV, emCET) {
+    function atualizarTabela(dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa, dataFormatadaCSV, emCET, minutoAtualLisboa) {
         const container = document.getElementById('tabela-container'); if (!container) return;
+        ultimosArgsTabela = [dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa, dataFormatadaCSV, emCET, minutoAtualLisboa];
+        if (modoTabela === 'qh') return atualizarTabelaQuartos(...ultimosArgsTabela);
         const lblHora = emCET ? 'Hora CET' : 'Hora PT';
         let tableHTML = '<table class="tabela-precos">';
         tableHTML += `<caption class="sr-only">Preços médios horários OMIE para Portugal e Espanha em ${dataFormatadaCSV || '--/--/----'} (€/MWh).</caption>`;
@@ -1223,6 +1251,48 @@ document.addEventListener('DOMContentLoaded', function() {
         if (haSplit) tableHTML += '<p class="nota-split">≠ hora com preço diferente em PT e ES (market splitting): '
             + '<span class="marca-split pt-barato">≠</span>PT mais barato · <span class="marca-split pt-caro">≠</span>PT mais caro</p>';
         container.innerHTML = tableHTML;
+    }
+    // Vista de 15 min: uma linha por quarto de hora, com o ≠ do market splitting em cada quarto
+    function atualizarTabelaQuartos(dadosDoDiaCompleto, dadosReaisDoDia, isHoje, horaAtualLisboa, dataFormatadaCSV, emCET, minutoAtualLisboa) {
+        const container = document.getElementById('tabela-container'); if (!container) return;
+        const lblHora = emCET ? 'Hora CET' : 'Hora PT';
+        const iAtual = isHoje ? indiceQuartoAtual(dadosDoDiaCompleto, horaAtualLisboa, minutoAtualLisboa) : -1;
+        let tableHTML = '<div class="tabela-scroll-qh"><table class="tabela-precos">';
+        tableHTML += `<caption class="sr-only">Preços quarto-horários OMIE para Portugal e Espanha em ${dataFormatadaCSV || '--/--/----'} (€/MWh).</caption>`;
+        tableHTML += `<thead><tr><th scope="col"><span class="data-badge-secao" style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3); color:#ccc; font-size:0.85em;">📅 ${dataFormatadaCSV || '--/--/----'}</span></th><th colspan="2" scope="colgroup">Preço quarto-horário</th></tr><tr><th scope="col">${lblHora}</th><th scope="col">Preço PT</th><th scope="col">Preço ES</th></tr></thead><tbody>`;
+        // Na mudança para a hora de inverno, os quartos da hora repetida aparecem duas vezes: marca-se 1.ª e 2.ª.
+        // Compara-se só o início, porque o fim do último quarto da 1.ª passagem já vem com a hora nova («[01:45-01:00[»).
+        const inicioDe = d => (d.intervalo || '').slice(0, 6);
+        const nInicio = {};
+        dadosDoDiaCompleto.forEach(d => { nInicio[inicioDe(d)] = (nInicio[inicioDe(d)] || 0) + 1; });
+        const vistos = {};
+        let haSplit = false;
+        dadosDoDiaCompleto.forEach((d, i) => {
+            // PT só com preço real (no último dia publicado, a última hora de PT ainda não foi leiloada); ES do dia completo
+            const real = dadosReaisDoDia && i < dadosReaisDoDia.length ? dadosReaisDoDia[i] : null;
+            const pt = real && real.preco_pt !== null && !isNaN(real.preco_pt) ? real.preco_pt : null;
+            const es = d.preco_es !== null && !isNaN(d.preco_es) ? d.preco_es : null;
+            const ini = inicioDe(d);
+            vistos[ini] = (vistos[ini] || 0) + 1;
+            const rotulo = (d.intervalo || '--') + (nInicio[ini] > 1
+                ? ` <small class="qh-repetido" title="Hora repetida na mudança para a hora de inverno">(${vistos[ini]}.ª)</small>` : '');
+            let tdES = `<td>${formatarValor(es)}</td>`;
+            if (pt !== null && es !== null && Math.abs(pt - es) > LIMIAR_SPLIT) {
+                haSplit = true;
+                const dif = pt - es;
+                tdES = `<td title="Market splitting · PT − ES: ${(dif > 0 ? '+' : '') + dif.toFixed(2).replace('.', ',')} €/MWh">`
+                    + `<span class="marca-split ${dif < 0 ? 'pt-barato' : 'pt-caro'}" aria-hidden="true">≠</span><span class="sr-only">PT diferente de ES: </span>${formatarValor(es)}</td>`;
+            }
+            tableHTML += `<tr${i === iAtual ? ' class="hora-atual"' : ''}><th scope="row">${rotulo}</th><td>${formatarValor(pt)}</td>${tdES}</tr>`;
+        });
+        tableHTML += '</tbody></table></div>';
+        if (haSplit) tableHTML += '<p class="nota-split">≠ quarto de hora com preço diferente em PT e ES (market splitting): '
+            + '<span class="marca-split pt-barato">≠</span>PT mais barato · <span class="marca-split pt-caro">≠</span>PT mais caro</p>';
+        container.innerHTML = tableHTML;
+        // Hoje: a tabela abre no quarto de hora atual (scroll só dentro da tabela, a página não mexe)
+        const scroll = container.querySelector('.tabela-scroll-qh');
+        const linhaAtual = scroll && scroll.querySelector('tr.hora-atual');
+        if (linhaAtual) scroll.scrollTop = Math.max(0, linhaAtual.offsetTop - scroll.querySelector('thead').offsetHeight - linhaAtual.offsetHeight * 2);
     }
     function atualizarGrafico(dadosDoDiaCompleto, dadosReaisDoDia, dataTitulo, isUltimoDiaOMIE, isHoje, horaAtualLisboa, minutoAtualLisboa, dadosDiaAnterior, emCET) {
         const container = document.getElementById('grafico-container'); if (!container) return;
@@ -1401,6 +1471,21 @@ document.addEventListener('DOMContentLoaded', function() {
             btnLinha.classList.remove('active');
             if (ultimosArgsGrafico) atualizarGrafico(...ultimosArgsGrafico);
         });
+    }
+
+    // --- TABELA: POR HORA | 15 MIN ---
+    const btnTabelaHora = document.getElementById('btn-tabela-hora');
+    const btnTabelaQH = document.getElementById('btn-tabela-qh');
+    function mudarModoTabela(modo) {
+        if (modo === modoTabela) return;
+        modoTabela = modo;
+        btnTabelaHora.classList.toggle('active', modo === 'hora'); btnTabelaHora.setAttribute('aria-pressed', modo === 'hora');
+        btnTabelaQH.classList.toggle('active', modo === 'qh'); btnTabelaQH.setAttribute('aria-pressed', modo === 'qh');
+        if (ultimosArgsTabela) atualizarTabela(...ultimosArgsTabela);
+    }
+    if (btnTabelaHora && btnTabelaQH) {
+        btnTabelaHora.addEventListener('click', () => mudarModoTabela('hora'));
+        btnTabelaQH.addEventListener('click', () => mudarModoTabela('qh'));
     }
 
     // Reagir a mudanças de tema (dark mode toggle)
