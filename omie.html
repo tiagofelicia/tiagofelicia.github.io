@@ -659,7 +659,8 @@
         .longo-prazo-tabela-scroll { overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; }
         .longo-prazo-tabela-scroll:has(.lp-mensal) { max-height: min(70vh, 640px); }
         .longo-prazo-tabela { --lp-cab1: 30px; width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.82em; background: #fff; }
-        .longo-prazo-tabela th, .longo-prazo-tabela td { padding: 6px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid #f1f5f9; font-variant-numeric: tabular-nums; color: #333; }
+        /* 6 px de lado e os cabeçalhos compridos em 2 linhas: a tabela cabe sem scroll horizontal em janelas a partir de ~1200 px (antes, ~1350) */
+        .longo-prazo-tabela th, .longo-prazo-tabela td { padding: 6px 6px; text-align: right; white-space: nowrap; border-bottom: 1px solid #f1f5f9; font-variant-numeric: tabular-nums; color: #333; }
         .longo-prazo-tabela thead th { position: sticky; top: 0; z-index: 2; background: #f8f9fa; color: #495057; font-weight: 600; text-align: center; border-bottom: 1px solid #dee2e6; }
         .longo-prazo-tabela thead tr + tr th { top: var(--lp-cab1); }
         .longo-prazo-tabela thead th[rowspan] { z-index: 3; }
@@ -4588,17 +4589,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const abrev = { V: 'Vazio', F: 'F. Vazio', C: 'Cheias', P: 'Ponta' };
         const doPeriodo = porAno ? 'do ano' : 'do mês';
         const umPreco = 'num quarto de hora (até 09/2025, numa hora). Passe o rato ou toque no valor para ver quando foi.';
-        const cab = (texto, dica) => `<th${rs} scope="col">${_dicaLongo(texto, [dica], `${texto.replace('&lt;', '<')}: ${dica}`)}</th>`;
+        // Os cabeçalhos compridos vão em 2 linhas (<br>) para a tabela caber na largura
+        const cab = (texto, dica) => `<th${rs} scope="col">${_dicaLongo(texto, [dica], `${texto.replace('<br>', ' ').replace('&lt;', '<')}: ${dica}`)}</th>`;
         let h = '<thead><tr>' +
             `<th${rs} scope="col">${porAno ? 'Ano' : 'Mês'}</th>` +
             `<th${rs} scope="col">Dias</th>` +
             `<th${rs} scope="col">${cfg.sigla}</th>` +
             cab(outro.sigla, pais === 'pt' ? 'Espanha, nas mesmas horas de Portugal' : 'Portugal, nas mesmas horas do dia espanhol') +
-            cab(`${cfg.sigla} − ${outro.sigla}`, `Diferença média entre o preço de ${cfg.nome} e o de ${outro.nome}`) +
-            cab(`Mín. ${cfg.sigla}`, `O preço mais baixo ${doPeriodo} ${umPreco}`) +
-            cab(`Máx. ${cfg.sigla}`, `O preço mais alto ${doPeriodo} ${umPreco}`) +
-            cab(`Desvio ${cfg.sigla}`, `Desvio-padrão dos preços de ${cfg.sigla}: quanto variam à volta da média`) +
-            cab('Horas &lt; 0', `Horas com média horária abaixo de 0 €/MWh em ${cfg.nome}${pais === 'es' ? ' (hora de Espanha)' : ''}`) +
+            cab(`${cfg.sigla} −<br>${outro.sigla}`, `Diferença média entre o preço de ${cfg.nome} e o de ${outro.nome}`) +
+            cab(`Mín.<br>${cfg.sigla}`, `O preço mais baixo ${doPeriodo} ${umPreco}`) +
+            cab(`Máx.<br>${cfg.sigla}`, `O preço mais alto ${doPeriodo} ${umPreco}`) +
+            cab(`Desvio<br>${cfg.sigla}`, `Desvio-padrão dos preços de ${cfg.sigla}: quanto variam à volta da média`) +
+            cab('Horas<br>&lt; 0', `Horas com média horária abaixo de 0 €/MWh em ${cfg.nome}${pais === 'es' ? ' (hora de Espanha)' : ''}`) +
             ciclos.map(([k, c]) => `<th colspan="${c.periodos.length}" scope="colgroup" class="lp-grupo lp-${k}">${c.labelLong}</th>`).join('') +
             '</tr>' +
             (ciclos.length ? '<tr>' + ciclos.map(([k, c]) => c.periodos.map(p => `<th scope="col" class="lp-sub lp-${k}">${abrev[p]}</th>`).join('')).join('') + '</tr>' : '') +
