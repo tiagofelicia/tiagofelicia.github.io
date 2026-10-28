@@ -224,20 +224,38 @@
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE por ano desde 2010 (PT, ES, mín./máx., desvio, horas negativas, períodos BTN)",
+          "name": "Médias OMIE por ano desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_anual.csv"
         },
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE por mês desde 2010 (PT, ES, mín./máx., desvio, horas negativas, períodos BTN)",
+          "name": "Médias OMIE por mês desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_mensal.csv"
         },
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE por dia desde 2010 (PT, ES, mín./máx., desvio, horas negativas, períodos BTN)",
+          "name": "Médias OMIE por dia desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_diario.csv"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Médias OMIE de Espanha por ano desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_es_anual.csv"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Médias OMIE de Espanha por mês desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_es_mensal.csv"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Médias OMIE de Espanha por dia desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_es_diario.csv"
         }
       ]
     }
@@ -627,10 +645,12 @@
         #longo-prazo-section { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; scroll-margin-top: 80px; }
         #longo-prazo-section h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 8px; }
         .longo-prazo-intro { text-align: center; font-size: 0.85em; color: #555; margin: 0 auto 14px auto; max-width: 820px; }
-        .longo-prazo-toggles { display: flex; justify-content: center; margin: 0 0 16px 0; }
+        .longo-prazo-toggles { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 0 0 16px 0; }
+        .longo-prazo-aviso { text-align: center; font-size: 0.85em; color: #9a3412; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 6px; padding: 6px 12px; max-width: 640px; margin: 0 auto 14px auto; }
         #longo-prazo-estado { text-align: center; font-size: 0.9em; color: #555; padding: 20px 0; }
         .grafico-longo { margin: 0 0 28px 0; min-height: 60px; }
         .longo-prazo-ciclos-cab { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 8px 0 12px 0; }
+        .longo-prazo-ciclos-cab[hidden] { display: none; }
         #longo-prazo-ciclos-insight { margin: 0; font-size: 0.88em; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; text-align: center; max-width: 900px; }
         #longo-prazo-ciclos-insight .lp-bloco { white-space: nowrap; }
         .longo-prazo-ressalva { display: block; margin-top: 4px; font-size: 0.92em; color: #555; }
@@ -653,6 +673,11 @@
         .longo-prazo-tabela .lp-grupo.lp-ts, .longo-prazo-tabela .lp-sub.lp-ts { background: #F4B084; }
         .longo-prazo-tabela td.lp-min { font-weight: 700; }
         .lp-abrir { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+        /* Dicas da tabela (quando foram o mínimo e o máximo, e os cabeçalhos): sublinhado como o abbr.glossario */
+        .lp-dica { background: none; border: none; padding: 0; margin: 0; font: inherit; color: inherit; cursor: help; text-decoration: underline dotted; text-decoration-color: #94a3b8; text-underline-offset: 3px; }
+        .lp-dica:hover, .lp-dica:focus-visible { text-decoration-color: #2563eb; }
+        .lp-dica-balao { position: fixed; z-index: 1000; display: flex; flex-direction: column; gap: 2px; max-width: min(300px, calc(100vw - 16px)); padding: 7px 10px; border-radius: 6px; background: #1e293b; color: #f8fafc; font-size: 0.8rem; line-height: 1.4; text-align: left; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); pointer-events: none; }
+        .lp-dica-balao[hidden] { display: none; }
         .longo-prazo-notas { text-align: center; font-size: 0.8em; color: #555; margin: 10px 0 0 0; }
         [data-theme="dark"] #longo-prazo-section h2, [data-theme="dark"] .longo-prazo-tabela-titulo { color: #e2e8f0; }
         [data-theme="dark"] .longo-prazo-intro, [data-theme="dark"] #longo-prazo-estado, [data-theme="dark"] .longo-prazo-notas,
@@ -666,6 +691,10 @@
         [data-theme="dark"] .longo-prazo-tabela tbody tr:hover td, [data-theme="dark"] .longo-prazo-tabela tbody tr:hover th { background: #334155; }
         [data-theme="dark"] .longo-prazo-tabela .lp-grupo, [data-theme="dark"] .longo-prazo-tabela .lp-sub { color: #000; }
         [data-theme="dark"] .lp-abrir { color: #60a5fa; }
+        [data-theme="dark"] .lp-dica { text-decoration-color: #64748b; }
+        [data-theme="dark"] .lp-dica:hover, [data-theme="dark"] .lp-dica:focus-visible { text-decoration-color: #60a5fa; }
+        [data-theme="dark"] .lp-dica-balao { background: #f1f5f9; color: #0f172a; }
+        [data-theme="dark"] .longo-prazo-aviso { background: #1f2937; border-color: #b45309; color: #fed7aa; }
     </style>
     <script type="application/ld+json">
 {
@@ -729,7 +758,7 @@
       "name": "De onde vêm os dados e qual o período disponível?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Os dados são processados através da recolha de informação pública do website do OMIE (para os preços diários \"reais\"). Esta página inclui o histórico de dados desde 01/01/2010. Cada período escolhido no topo da página pode ter até 2 anos (730 dias). Para ver tudo desde 2010, use a secção «Desde 2010», com a média de cada ano e de cada mês, que também se pode descarregar em CSV."
+        "text": "Os dados são processados através da recolha de informação pública do website do OMIE (para os preços diários \"reais\"). Esta página inclui o histórico de dados desde 01/01/2010. Cada período escolhido no topo da página pode ter até 2 anos (730 dias). Para ver tudo desde 2010, use a secção «Desde 2010», com a média de cada ano e de cada mês de Portugal e de Espanha (esta pelo dia espanhol), que também se pode descarregar em CSV."
       }
     },
     {
@@ -930,21 +959,27 @@
         </div>
     </section>
 
-    <!-- Desde 2010: as médias anuais e mensais dos agregados do dados-energia. Não depende do período acima
-         (que vai até 730 dias) nem do fuso; o JS só carrega os dados quando a secção se aproxima do ecrã. -->
+    <!-- Desde 2010: as médias anuais e mensais dos agregados do dados-energia, de Portugal (dia português) ou de Espanha
+         (dia espanhol). Não depende do período acima (que vai até 730 dias) nem do fuso; o JS só carrega os dados quando a
+         secção se aproxima do ecrã, e os de Espanha só quando se escolhe Espanha. -->
     <section id="longo-prazo-section" aria-labelledby="longo-prazo-titulo">
         <h2 id="longo-prazo-titulo">🗓️ Desde 2010: médias anuais e mensais</h2>
         <p class="longo-prazo-intro">
             A média de cada ano e de cada mês desde 01/01/2010, sem o limite de 2 anos do período acima.
-            Não mudam com o período nem com o fuso escolhidos: são médias simples dos preços em hora de Portugal
-            (Espanha nas mesmas horas).<span id="longo-prazo-ate"></span>
+            Não mudam com o período nem com o fuso escolhidos. Em Portugal são médias simples dos preços em hora de Portugal
+            (Espanha nas mesmas horas); em Espanha, pelo dia espanhol, como o OMIE as publica (Portugal nas mesmas horas).<span id="longo-prazo-ate"></span>
         </p>
         <div class="longo-prazo-toggles">
+            <div class="hh-mode-toggle" role="radiogroup" aria-label="País">
+                <button type="button" class="hh-mode-btn active" data-pais-longo="pt">🇵🇹 Portugal</button>
+                <button type="button" class="hh-mode-btn" data-pais-longo="es">🇪🇸 Espanha</button>
+            </div>
             <div class="hh-mode-toggle" role="radiogroup" aria-label="Agrupar as médias">
                 <button type="button" class="hh-mode-btn active" data-gran="ano">Por ano</button>
                 <button type="button" class="hh-mode-btn" data-gran="mes">Por mês</button>
             </div>
         </div>
+        <p id="longo-prazo-aviso-es" class="longo-prazo-aviso" role="status" hidden>Não foi possível carregar as médias de Espanha: mostram-se as de Portugal. Tente mais tarde.</p>
         <p id="longo-prazo-estado" role="status">A carregar as médias desde 2010…</p>
         <div id="longo-prazo-conteudo" hidden>
             <div id="grafico-longo-evolucao" class="grafico-longo"></div>
@@ -959,20 +994,25 @@
             </div>
             <div id="grafico-longo-ciclos" class="grafico-longo"></div>
             <div id="grafico-longo-negativos" class="grafico-longo"></div>
-            <h3 class="longo-prazo-tabela-titulo">Resumo em tabela <small>(€/MWh; clique no ano ou no mês para o ver no painel acima)</small></h3>
+            <h3 class="longo-prazo-tabela-titulo">Resumo em tabela<span id="longo-prazo-tabela-pais"></span> <small>(€/MWh; clique no ano ou no mês para o ver no painel acima)</small></h3>
             <div class="longo-prazo-tabela-scroll" tabindex="0" role="region" aria-label="Tabela das médias desde 2010">
                 <table id="longo-prazo-tabela" class="longo-prazo-tabela"></table>
             </div>
             <p class="longo-prazo-notas">
-                Em cada ciclo, o período mais barato está a <strong>negrito</strong>.
+                <span id="longo-prazo-nota-ciclos">Em cada ciclo, o período mais barato está a <strong>negrito</strong>.</span>
+                <span id="longo-prazo-nota-es" hidden>Sem os ciclos bi e tri-horários, que são da tarifa portuguesa (ERSE).</span>
                 <span id="longo-prazo-nota-parcial" hidden></span>
             </p>
             <p class="longo-prazo-notas">
-                Descarregar em CSV (licença CC BY 4.0):
+                Descarregar em CSV (licença CC BY 4.0). Portugal:
                 <a href="https://dados.tiagofelicia.pt/data/agregados/omie_anual.csv">por ano</a> ·
                 <a href="https://dados.tiagofelicia.pt/data/agregados/omie_mensal.csv">por mês</a> ·
-                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_diario.csv">por dia</a>
-                (mais em <a href="https://dados.tiagofelicia.pt/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>).
+                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_diario.csv">por dia</a>.
+                Espanha (dia espanhol):
+                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_es_anual.csv">por ano</a> ·
+                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_es_mensal.csv">por mês</a> ·
+                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_es_diario.csv">por dia</a>.
+                Mais em <a href="https://dados.tiagofelicia.pt/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>.
             </p>
         </div>
     </section>
@@ -1038,7 +1078,7 @@
                 <div class="faq-content">
                     <p>Os dados são processados através da recolha de informação pública do website do <strong>OMIE</strong> (para os preços diários "reais").</p>
                     <p>Esta página inclui o histórico de dados desde <strong>01/01/2010.</strong></p>
-                    <p>Cada período escolhido no topo da página pode ter até 2 anos (730 dias). Para ver tudo desde 2010, use a secção <a href="#longo-prazo-section">«Desde 2010»</a>, com a média de cada ano e de cada mês, que também se pode descarregar em CSV.</p>
+                    <p>Cada período escolhido no topo da página pode ter até 2 anos (730 dias). Para ver tudo desde 2010, use a secção <a href="#longo-prazo-section">«Desde 2010»</a>, com a média de cada ano e de cada mês de Portugal e de Espanha (esta pelo dia espanhol), que também se pode descarregar em CSV.</p>
                 </div>
             </details>
 
@@ -4145,11 +4185,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- DESDE 2010: MÉDIAS ANUAIS E MENSAIS (agregados do dados-energia) ---
-    // Dão a vista de longo prazo que o período acima não dá (máx. 730 dias). São médias simples em hora de Portugal
-    // e não dependem do período nem do fuso escolhidos. Só se pedem (~25 KB) quando a secção se aproxima do ecrã.
+    // Dão a vista de longo prazo que o período acima não dá (máx. 730 dias) e não dependem do período nem do fuso escolhidos.
+    // Portugal: médias simples em hora de Portugal (Espanha nas mesmas horas). Espanha: pelo dia espanhol (CET/CEST), como o
+    // OMIE publica, com Portugal nas mesmas horas e sem os ciclos, que são da ERSE. Só se pedem (~25 KB) quando a secção se
+    // aproxima do ecrã; os de Espanha (~20 KB), só quando se escolhe Espanha.
     const URL_AGREGADOS_ANUAL = 'agregados/omie_anual.csv';
     const URL_AGREGADOS_MENSAL = 'agregados/omie_mensal.csv';
+    const URL_AGREGADOS_ES_ANUAL = 'agregados/omie_es_anual.csv';
+    const URL_AGREGADOS_ES_MENSAL = 'agregados/omie_es_mensal.csv';
     const URL_AGREGADOS_META = 'agregados/metadata.json';
+    // 01/10/2025 00:00 CET: daqui em diante o mercado diário tem um preço por quarto de hora (antes, um por hora)
+    const INICIO_QUARTOS_UTC = Date.UTC(2025, 8, 30, 22, 0);
+    const PAISES_LONGO = {
+        pt: { nome: 'Portugal', sigla: 'PT', outro: 'es', fuso: 'Europe/Lisbon', hora: 'hora de Portugal' },
+        es: { nome: 'Espanha',  sigla: 'ES', outro: 'pt', fuso: 'Europe/Madrid', hora: 'hora de Espanha' }
+    };
     const CICLOS_LONGO = {
         bd: { labelLong: 'Bi-horário Diário',   periodos: ['V', 'F'] },
         bs: { labelLong: 'Bi-horário Semanal',  periodos: ['V', 'F'] },
@@ -4158,10 +4208,12 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     const NOMES_PERIODO_LONGO = { V: 'Vazio', F: 'Fora Vazio', C: 'Cheias', P: 'Ponta' };
     const MENU_EXPORT_LONGO = ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'];
-    let longoPrazo = null;          // { anual: [...], mensal: [...], ultimaData: 'AAAA-MM-DD' | null }
+    let longoPrazo = null;          // { anual: [...], mensal: [...], es: { anual, mensal } | null, ultimaData: 'AAAA-MM-DD' | null }
     let promessaLongoPrazo = null;
+    let promessaLongoES = null;
     let _longoGran = _lsLerLongo('omie_longo_prazo_gran', ['ano', 'mes'], 'ano');
     let _longoCiclo = _lsLerLongo('omie_longo_prazo_ciclo', Object.keys(CICLOS_LONGO), 'bd');
+    let _longoPais = _lsLerLongo('omie_longo_prazo_pais', Object.keys(PAISES_LONGO), 'pt');
 
     function _lsLerLongo(chave, validos, omissao) {
         try { const v = localStorage.getItem(chave); return validos.includes(v) ? v : omissao; } catch (e) { return omissao; }
@@ -4175,7 +4227,7 @@ document.addEventListener('DOMContentLoaded', function() {
             : { V: '#1d4ed8', F: '#c2410c', C: '#d97706', P: '#be185d', neg: '#6d28d9' };
     }
 
-    // CSV dos agregados: sem aspas nem vírgulas dentro dos campos; vazio = sem valor
+    // CSV dos agregados: sem aspas nem vírgulas dentro dos campos; vazio = sem valor; *_utc = instante 'AAAA-MM-DD HH:MM' em UTC
     function parseAgregados(texto, chave) {
         const linhas = texto.replace(/^﻿/, '').trim().split(/\r?\n/);
         const cab = linhas.shift().split(',').map(c => c.trim());
@@ -4184,7 +4236,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const o = {};
             cab.forEach((c, i) => {
                 const x = (v[i] || '').trim();
-                o[c] = c === chave ? x : (x === '' ? null : Number(x));
+                if (c === chave) o[c] = x;
+                else if (x === '') o[c] = null;
+                else o[c] = c.endsWith('_utc') ? x : Number(x);
             });
             return o;
         });
@@ -4206,21 +4260,27 @@ document.addEventListener('DOMContentLoaded', function() {
                                   parcial: r.dias < ultimoDia, rotulo: r.mes, nome: nome.charAt(0).toUpperCase() + nome.slice(1) });
     }
 
+    function _csvLongo(url) {
+        return fetchDados(url).then(r => { if (!r.ok) throw new Error(url + ': ' + r.status); return r.text(); });
+    }
+
     function carregarLongoPrazo() {
         if (promessaLongoPrazo) return promessaLongoPrazo;
         const estado = document.getElementById('longo-prazo-estado');
-        const csv = url => fetchDados(url).then(r => { if (!r.ok) throw new Error(url + ': ' + r.status); return r.text(); });
         promessaLongoPrazo = Promise.all([
-            csv(URL_AGREGADOS_ANUAL),
-            csv(URL_AGREGADOS_MENSAL),
+            _csvLongo(URL_AGREGADOS_ANUAL),
+            _csvLongo(URL_AGREGADOS_MENSAL),
             fetchDados(URL_AGREGADOS_META).then(r => r.ok ? r.json() : null).catch(() => null)
         ]).then(([anual, mensal, meta]) => {
             longoPrazo = {
                 anual: parseAgregados(anual, 'ano').map(_prepararAnual),
                 mensal: parseAgregados(mensal, 'mes').map(_prepararMensal),
+                es: null,
                 ultimaData: (meta && meta.omie && meta.omie.ultima_data) || null
             };
             if (!longoPrazo.anual.length || !longoPrazo.mensal.length) throw new Error('agregados vazios');
+            return _longoPais === 'es' ? _carregarLongoES() : true;
+        }).then(() => {
             estado.hidden = true;
             document.getElementById('longo-prazo-conteudo').hidden = false;
             const ate = document.getElementById('longo-prazo-ate');
@@ -4235,12 +4295,91 @@ document.addEventListener('DOMContentLoaded', function() {
         return promessaLongoPrazo;
     }
 
-    function _linhasLongo() { return _longoGran === 'ano' ? longoPrazo.anual : longoPrazo.mensal; }
+    // Os de Espanha só se pedem quando se escolhe Espanha. Se falharem, a secção fica em Portugal, com um aviso.
+    function _carregarLongoES() {
+        if (longoPrazo && longoPrazo.es) return Promise.resolve(true);
+        if (!promessaLongoES) {
+            promessaLongoES = Promise.all([_csvLongo(URL_AGREGADOS_ES_ANUAL), _csvLongo(URL_AGREGADOS_ES_MENSAL)]).then(([anual, mensal]) => {
+                const es = { anual: parseAgregados(anual, 'ano').map(_prepararAnual), mensal: parseAgregados(mensal, 'mes').map(_prepararMensal) };
+                if (!es.anual.length || !es.mensal.length) throw new Error('agregados de Espanha vazios');
+                longoPrazo.es = es;
+                return true;
+            }).catch(err => {
+                console.warn('Agregados OMIE de Espanha indisponíveis:', err && err.message);
+                promessaLongoES = null;
+                _longoPais = 'pt';
+                _marcarLongo('[data-pais-longo]', 'paisLongo', _longoPais);
+                document.getElementById('longo-prazo-aviso-es').hidden = false;
+                return false;
+            });
+        }
+        return promessaLongoES;
+    }
+
+    function _marcarLongo(seletor, atributo, valor) {
+        document.querySelectorAll(`#longo-prazo-section ${seletor}`).forEach(b => b.classList.toggle('active', b.dataset[atributo] === valor));
+    }
+    function _paisLongo() { return _longoPais === 'es' && longoPrazo && longoPrazo.es ? 'es' : 'pt'; }
+    function _dadosPaisLongo() { return _paisLongo() === 'es' ? longoPrazo.es : longoPrazo; }
+    function _linhasLongo() { const d = _dadosPaisLongo(); return _longoGran === 'ano' ? d.anual : d.mensal; }
     function _fmtLongo(v, casas = 2) { return (v === null || v === undefined || !isFinite(v)) ? '—' : v.toFixed(casas).replace('.', ','); }
     function _fmtSinalLongo(v) { return (v === null || !isFinite(v)) ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + _fmtLongo(Math.abs(v)); }
     function _tituloLinhaLongo(r) {
         return r.nome + (r.parcial ? ` (incompleto: ${r.dias} ${r.dias === 1 ? 'dia' : 'dias'})` : '');
     }
+
+    // Quando foi o mínimo ou o máximo: o 1.º quarto de hora com esse preço (*_utc) e em quantos se repetiu (*_n)
+    const _fmtHoraLongo = {};
+    function _partesHoraLongo(ts, fuso) {
+        if (!_fmtHoraLongo[fuso]) {
+            _fmtHoraLongo[fuso] = new Intl.DateTimeFormat('pt-PT', { timeZone: fuso, day: '2-digit', month: '2-digit', year: 'numeric',
+                                                                      hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+        }
+        const p = {};
+        _fmtHoraLongo[fuso].formatToParts(new Date(ts)).forEach(x => { p[x.type] = x.value; });
+        return { data: `${p.day}/${p.month}/${p.year}`, hora: `${p.hour}:${p.minute}` };
+    }
+    function _quandoLongo(r, pais, extremo) {
+        const m = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/.exec(r[`${pais}_${extremo}_utc`] || '');
+        if (!m) return null;
+        const ts = Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5]);
+        const porHora = ts < INICIO_QUARTOS_UTC;
+        const fuso = PAISES_LONGO[pais].fuso;
+        const inicio = _partesHoraLongo(ts, fuso);
+        let fim = _partesHoraLongo(ts + (porHora ? 60 : 15) * 60000, fuso).hora;
+        if (fim === '00:00') fim = '24:00';
+        return { data: inicio.data, hora: inicio.hora, fim, porHora, n: r[`${pais}_${extremo}_n`] };
+    }
+    function _linhasDicaExtremoLongo(r, pais, extremo) {
+        const q = _quandoLongo(r, pais, extremo);
+        if (!q) return null;
+        const cfg = PAISES_LONGO[pais];
+        const linhas = [`${extremo === 'min' ? 'Mínimo' : 'Máximo'} ${cfg.sigla}: ${_fmtLongo(r[`${pais}_${extremo}`])} €/MWh`,
+                        `${q.data}, das ${q.hora} às ${q.fim} (${cfg.hora})`];
+        if (q.n) {
+            if (q.porHora && q.n % 4 === 0 && q.n > 4) linhas.push(`A primeira de ${q.n / 4} horas com este preço.`);
+            else if (!(q.porHora && q.n % 4 === 0) && q.n > 1) linhas.push(`O primeiro de ${q.n} quartos de hora com este preço.`);
+        }
+        return linhas;
+    }
+    // Texto curto para o tooltip dos gráficos
+    function _quandoCurtoLongo(r, pais, extremo) {
+        const q = _quandoLongo(r, pais, extremo);
+        return q ? ` (${q.data} ${q.hora})` : '';
+    }
+
+    // Botão com dica (abre ao passar o rato, ao tocar e com o teclado). Com mais de uma linha, a 1.ª vai a negrito.
+    function _escAttrLongo(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function _dicaLongo(conteudoHtml, linhas, rotuloAria) {
+        return `<button type="button" class="lp-dica" data-dica="${_escAttrLongo(linhas.join('\n'))}" ` +
+               `aria-label="${_escAttrLongo(rotuloAria)}">${conteudoHtml}</button>`;
+    }
+    function _celulaExtremoLongo(r, pais, extremo) {
+        const valor = _fmtLongo(r[`${pais}_${extremo}`]);
+        const linhas = _linhasDicaExtremoLongo(r, pais, extremo);
+        return linhas ? _dicaLongo(valor, linhas, `${valor} €/MWh: ${linhas.slice(1).join('. ')}`) : valor;
+    }
+
     // Pontos com a linha do agregado agarrada, para o tooltip e o clique
     function _pontosLongo(linhas, campo) {
         return linhas.map(r => _longoGran === 'ano' ? { y: r[campo], linha: r } : { x: r.ts, y: r[campo], linha: r });
@@ -4272,11 +4411,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function desenharLongoPrazo() {
         if (!longoPrazo) return;
+        const pais = _paisLongo();
         const linhas = _linhasLongo();
-        desenharLongoEvolucao(linhas);
-        desenharLongoCiclos(linhas);
-        desenharLongoNegativos(linhas);
-        desenharLongoTabela(linhas);
+        // Os ciclos bi e tri-horários são da tarifa portuguesa (ERSE): só na vista de Portugal
+        const comCiclos = pais === 'pt';
+        document.querySelector('#longo-prazo-section .longo-prazo-ciclos-cab').hidden = !comCiclos;
+        document.getElementById('grafico-longo-ciclos').hidden = !comCiclos;
+        document.getElementById('longo-prazo-nota-ciclos').hidden = !comCiclos;
+        document.getElementById('longo-prazo-nota-es').hidden = comCiclos;
+        document.getElementById('longo-prazo-tabela-pais').textContent = pais === 'es' ? ' de Espanha, pelo dia espanhol' : '';
+        desenharLongoEvolucao(linhas, pais);
+        if (comCiclos) desenharLongoCiclos(linhas);
+        desenharLongoNegativos(linhas, pais);
+        desenharLongoTabela(linhas, pais);
         const nota = document.getElementById('longo-prazo-nota-parcial');
         const parcial = linhas.some(r => r.parcial);
         nota.hidden = !parcial;
@@ -4286,9 +4433,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function desenharLongoEvolucao(linhas) {
+    function desenharLongoEvolucao(linhas, pais) {
         const d = _hcDark();
         const porAno = _longoGran === 'ano';
+        const sigla = PAISES_LONGO[pais].sigla;
         const eixoX = _eixoXLongo(linhas, d);
         if (!porAno) {
             const anot = gerarAnotacoesEventos(`${ANO_INICIO_HISTORICO}-01-01`, linhas[linhas.length - 1].fim);
@@ -4297,7 +4445,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         Highcharts.chart('grafico-longo-evolucao', {
             chart: { type: porAno ? 'column' : 'line', zoomType: porAno ? undefined : 'x', height: 440, backgroundColor: d.bg, style: { color: d.txt } },
-            title: { text: porAno ? 'Média anual OMIE desde 2010' : 'Média mensal OMIE desde 2010', style: { color: d.txt } },
+            title: { text: (porAno ? 'Média anual OMIE desde 2010' : 'Média mensal OMIE desde 2010') + (pais === 'es' ? ' (dia espanhol)' : ''), style: { color: d.txt } },
             subtitle: {
                 text: porAno ? 'Clique num ano para o ver no painel acima.'
                              : 'Arraste na horizontal para fazer zoom. Clique num mês para o ver no painel acima.',
@@ -4315,8 +4463,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!r) return false;
                     let h = `<b>${_tituloLinhaLongo(r)}</b><br>`;
                     pts.forEach(p => { h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${_fmtLongo(p.y)} €/MWh</b><br>`; });
-                    h += `Mín. / máx. PT: ${_fmtLongo(r.pt_min)} / ${_fmtLongo(r.pt_max)} €/MWh<br>`;
-                    h += `Desvio-padrão PT: ${_fmtLongo(r.pt_desvio)} €/MWh`;
+                    h += `Mín. ${sigla}: ${_fmtLongo(r[`${pais}_min`])} €/MWh${_quandoCurtoLongo(r, pais, 'min')}<br>`;
+                    h += `Máx. ${sigla}: ${_fmtLongo(r[`${pais}_max`])} €/MWh${_quandoCurtoLongo(r, pais, 'max')}<br>`;
+                    h += `Desvio-padrão ${sigla}: ${_fmtLongo(r[`${pais}_desvio`])} €/MWh`;
                     return h;
                 }
             },
@@ -4325,7 +4474,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 column: { borderWidth: 0, pointPadding: 0.05 },
                 line: { marker: { enabled: false }, lineWidth: 2 }
             },
-            exporting: { filename: `omie-media-${porAno ? 'anual' : 'mensal'}-desde-2010`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
+            exporting: { filename: `omie-media-${porAno ? 'anual' : 'mensal'}-desde-2010${pais === 'es' ? '-dia-espanhol' : ''}`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
             series: [
                 { name: 'Portugal', color: '#007bff', data: _pontosLongo(linhas, 'pt_medio') },
                 { name: 'Espanha', color: '#28a745', data: _pontosLongo(linhas, 'es_medio') }
@@ -4392,18 +4541,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function desenharLongoNegativos(linhas) {
+    function desenharLongoNegativos(linhas, pais) {
         const d = _hcDark();
         const porAno = _longoGran === 'ano';
-        const primeiro = longoPrazo.mensal.find(r => r.horas_negativas > 0);
+        const cfg = PAISES_LONGO[pais];
+        const primeiro = _dadosPaisLongo().mensal.find(r => r.horas_negativas > 0);
         // Por mês, só desde o ano antes do 1.º negativo: antes disso são 14 anos de zeros
         const desde = primeiro && !porAno ? primeiro.ano - 1 : null;
         const visiveis = desde ? linhas.filter(r => r.ano >= desde) : linhas;
         Highcharts.chart('grafico-longo-negativos', {
             chart: { type: 'column', height: 340, backgroundColor: d.bg, style: { color: d.txt } },
-            title: { text: `Horas com preço negativo em Portugal, ${porAno ? 'por ano' : 'por mês'}`, style: { color: d.txt } },
+            title: { text: `Horas com preço negativo em ${cfg.nome}, ${porAno ? 'por ano' : 'por mês'}`, style: { color: d.txt } },
             subtitle: {
-                text: (primeiro ? `As primeiras foram em ${primeiro.nome.toLowerCase()}. ` : '') + 'Conta as horas com média horária abaixo de 0 €/MWh.',
+                text: (primeiro ? `As primeiras foram em ${primeiro.nome.toLowerCase()}. ` : '') +
+                      `Conta as horas com média horária abaixo de 0 €/MWh${pais === 'es' ? ' (hora de Espanha)' : ''}.`,
                 style: { color: d.txt }
             },
             xAxis: _eixoXLongo(visiveis, d),
@@ -4414,45 +4565,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 formatter: function () {
                     const r = _pontoDoContexto(this);
                     if (!r) return false;
-                    return `<b>${_tituloLinhaLongo(r)}</b><br>Horas com preço negativo: <b>${r.horas_negativas}</b><br>Mínimo PT: ${_fmtLongo(r.pt_min)} €/MWh`;
+                    return `<b>${_tituloLinhaLongo(r)}</b><br>Horas com preço negativo: <b>${r.horas_negativas}</b><br>` +
+                           `Mínimo ${cfg.sigla}: ${_fmtLongo(r[`${pais}_min`])} €/MWh${_quandoCurtoLongo(r, pais, 'min')}`;
                 }
             },
             plotOptions: {
                 series: { cursor: 'pointer', point: { events: { click: function () { _abrirLinhaLongo(this.options.linha); } } } },
                 column: { borderWidth: 0, pointPadding: 0.05 }
             },
-            exporting: { filename: `omie-horas-negativas-${porAno ? 'anual' : 'mensal'}`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
+            exporting: { filename: `omie-horas-negativas-${pais === 'es' ? 'espanha-' : ''}${porAno ? 'anual' : 'mensal'}`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
             series: [{ name: 'Horas com preço negativo', color: _coresPeriodosLongo().neg, data: _pontosLongo(visiveis, 'horas_negativas') }]
         });
     }
 
-    function desenharLongoTabela(linhas) {
+    function desenharLongoTabela(linhas, pais) {
         const tabela = document.getElementById('longo-prazo-tabela');
         const porAno = _longoGran === 'ano';
-        const ciclos = Object.entries(CICLOS_LONGO);
+        const cfg = PAISES_LONGO[pais], outro = PAISES_LONGO[cfg.outro];
+        const a = pais, b = cfg.outro;
+        const ciclos = pais === 'pt' ? Object.entries(CICLOS_LONGO) : [];
+        const rs = ciclos.length ? ' rowspan="2"' : '';
         const abrev = { V: 'Vazio', F: 'F. Vazio', C: 'Cheias', P: 'Ponta' };
+        const doPeriodo = porAno ? 'do ano' : 'do mês';
+        const umPreco = 'num quarto de hora (até 09/2025, numa hora). Passe o rato ou toque no valor para ver quando foi.';
+        const cab = (texto, dica) => `<th${rs} scope="col">${_dicaLongo(texto, [dica], `${texto.replace('&lt;', '<')}: ${dica}`)}</th>`;
         let h = '<thead><tr>' +
-            `<th rowspan="2" scope="col">${porAno ? 'Ano' : 'Mês'}</th>` +
-            '<th rowspan="2" scope="col">Dias</th>' +
-            '<th rowspan="2" scope="col">PT</th>' +
-            '<th rowspan="2" scope="col"><abbr class="glossario" title="Espanha, nas mesmas horas de Portugal">ES</abbr></th>' +
-            '<th rowspan="2" scope="col"><abbr class="glossario" title="Diferença média entre o preço de Portugal e o de Espanha">PT − ES</abbr></th>' +
-            '<th rowspan="2" scope="col">Mín. PT</th>' +
-            '<th rowspan="2" scope="col">Máx. PT</th>' +
-            '<th rowspan="2" scope="col"><abbr class="glossario" title="Desvio-padrão dos preços de PT: quanto variam à volta da média">Desvio PT</abbr></th>' +
-            '<th rowspan="2" scope="col"><abbr class="glossario" title="Horas com média horária abaixo de 0 €/MWh em Portugal">Horas &lt; 0</abbr></th>' +
+            `<th${rs} scope="col">${porAno ? 'Ano' : 'Mês'}</th>` +
+            `<th${rs} scope="col">Dias</th>` +
+            `<th${rs} scope="col">${cfg.sigla}</th>` +
+            cab(outro.sigla, pais === 'pt' ? 'Espanha, nas mesmas horas de Portugal' : 'Portugal, nas mesmas horas do dia espanhol') +
+            cab(`${cfg.sigla} − ${outro.sigla}`, `Diferença média entre o preço de ${cfg.nome} e o de ${outro.nome}`) +
+            cab(`Mín. ${cfg.sigla}`, `O preço mais baixo ${doPeriodo} ${umPreco}`) +
+            cab(`Máx. ${cfg.sigla}`, `O preço mais alto ${doPeriodo} ${umPreco}`) +
+            cab(`Desvio ${cfg.sigla}`, `Desvio-padrão dos preços de ${cfg.sigla}: quanto variam à volta da média`) +
+            cab('Horas &lt; 0', `Horas com média horária abaixo de 0 €/MWh em ${cfg.nome}${pais === 'es' ? ' (hora de Espanha)' : ''}`) +
             ciclos.map(([k, c]) => `<th colspan="${c.periodos.length}" scope="colgroup" class="lp-grupo lp-${k}">${c.labelLong}</th>`).join('') +
-            '</tr><tr>' +
-            ciclos.map(([k, c]) => c.periodos.map(p => `<th scope="col" class="lp-sub lp-${k}">${abrev[p]}</th>`).join('')).join('') +
-            '</tr></thead><tbody>';
+            '</tr>' +
+            (ciclos.length ? '<tr>' + ciclos.map(([k, c]) => c.periodos.map(p => `<th scope="col" class="lp-sub lp-${k}">${abrev[p]}</th>`).join('')).join('') + '</tr>' : '') +
+            '</thead><tbody>';
         // Mais recente em cima
         for (let i = linhas.length - 1; i >= 0; i--) {
             const r = linhas[i];
             const rotulo = r.rotulo + (r.parcial ? '*' : '');
             h += `<tr><th scope="row"><button type="button" class="lp-abrir" data-i="${i}" title="Ver ${r.nome.toLowerCase()} no painel acima">${rotulo}</button></th>` +
-                 `<td>${r.dias}</td><td><strong>${_fmtLongo(r.pt_medio)}</strong></td><td>${_fmtLongo(r.es_medio)}</td>` +
-                 `<td>${_fmtSinalLongo(r.spread_pt_es)}</td><td>${_fmtLongo(r.pt_min)}</td><td>${_fmtLongo(r.pt_max)}</td>` +
-                 `<td>${_fmtLongo(r.pt_desvio)}</td><td>${r.horas_negativas === null ? '—' : r.horas_negativas}</td>`;
+                 `<td>${r.dias}</td><td><strong>${_fmtLongo(r[`${a}_medio`])}</strong></td><td>${_fmtLongo(r[`${b}_medio`])}</td>` +
+                 `<td>${_fmtSinalLongo(r[`spread_${a}_${b}`])}</td><td>${_celulaExtremoLongo(r, a, 'min')}</td><td>${_celulaExtremoLongo(r, a, 'max')}</td>` +
+                 `<td>${_fmtLongo(r[`${a}_desvio`])}</td><td>${r.horas_negativas === null ? '—' : r.horas_negativas}</td>`;
             ciclos.forEach(([k, c]) => {
                 const vals = c.periodos.map(p => r[`${k}_${p.toLowerCase()}`]);
                 const validos = vals.filter(v => v !== null);
@@ -4472,30 +4630,82 @@ document.addEventListener('DOMContentLoaded', function() {
         if (grupo && grupo.offsetHeight) tabela.style.setProperty('--lp-cab1', grupo.offsetHeight + 'px');
     }
 
+    // Dicas da tabela (quando foram o mínimo e o máximo, e os cabeçalhos): o title não aparece ao tocar no telemóvel,
+    // por isso abrem num balão próprio ao passar o rato, ao tocar e com o teclado. Fecham com Esc, ao tocar fora ou ao deslizar.
+    function _ligarDicasLongo(sec) {
+        const balao = document.createElement('div');
+        balao.className = 'lp-dica-balao';
+        balao.setAttribute('role', 'tooltip');
+        balao.hidden = true;
+        document.body.appendChild(balao);
+        let ativo = null;
+        const mostrar = alvo => {
+            if (ativo === alvo) return;
+            ativo = alvo;
+            const linhas = alvo.dataset.dica.split('\n');
+            balao.replaceChildren(...linhas.map((t, i) => {
+                const el = document.createElement(i === 0 && linhas.length > 1 ? 'strong' : 'span');
+                el.textContent = t;
+                return el;
+            }));
+            balao.hidden = false;
+            const r = alvo.getBoundingClientRect();
+            const largura = document.documentElement.clientWidth, margem = 8;
+            const x = Math.max(margem, Math.min(r.left + r.width / 2 - balao.offsetWidth / 2, largura - balao.offsetWidth - margem));
+            let y = r.top - balao.offsetHeight - 6;
+            if (y < margem) y = r.bottom + 6;
+            balao.style.left = x + 'px';
+            balao.style.top = y + 'px';
+        };
+        const esconder = () => { ativo = null; balao.hidden = true; };
+        sec.addEventListener('pointerover', e => { const a = e.target.closest('.lp-dica'); if (a && e.pointerType === 'mouse') mostrar(a); });
+        sec.addEventListener('pointerout', e => {
+            const a = e.target.closest('.lp-dica');
+            if (a && e.pointerType === 'mouse' && !a.contains(e.relatedTarget)) esconder();
+        });
+        sec.addEventListener('focusin', e => { const a = e.target.closest('.lp-dica'); if (a) mostrar(a); });
+        sec.addEventListener('focusout', e => { if (e.target.closest('.lp-dica')) esconder(); });
+        sec.addEventListener('click', e => { const a = e.target.closest('.lp-dica'); if (a) mostrar(a); });
+        document.addEventListener('pointerdown', e => { if (ativo && !e.target.closest('.lp-dica')) esconder(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && ativo) esconder(); });
+        window.addEventListener('scroll', () => { if (ativo) esconder(); }, { passive: true, capture: true });
+        window.addEventListener('resize', () => { if (ativo) esconder(); });
+    }
+
     (function ligarLongoPrazo() {
         const sec = document.getElementById('longo-prazo-section');
         if (!sec) return;
-        const marcar = (seletor, atributo, valor) => sec.querySelectorAll(seletor).forEach(b => b.classList.toggle('active', b.dataset[atributo] === valor));
-        marcar('[data-gran]', 'gran', _longoGran);
-        marcar('[data-ciclo-longo]', 'cicloLongo', _longoCiclo);
+        _marcarLongo('[data-gran]', 'gran', _longoGran);
+        _marcarLongo('[data-ciclo-longo]', 'cicloLongo', _longoCiclo);
+        _marcarLongo('[data-pais-longo]', 'paisLongo', _longoPais);
+        sec.querySelectorAll('[data-pais-longo]').forEach(b => b.addEventListener('click', () => {
+            if (b.dataset.paisLongo === _longoPais) return;
+            _longoPais = b.dataset.paisLongo;
+            _lsGravarLongo('omie_longo_prazo_pais', _longoPais);
+            _marcarLongo('[data-pais-longo]', 'paisLongo', _longoPais);
+            document.getElementById('longo-prazo-aviso-es').hidden = true;
+            if (!longoPrazo) return; // ainda a carregar: o carregarLongoPrazo já vê o país escolhido
+            (_longoPais === 'es' ? _carregarLongoES() : Promise.resolve(true)).then(desenharLongoPrazo);
+        }));
         sec.querySelectorAll('[data-gran]').forEach(b => b.addEventListener('click', () => {
             if (b.dataset.gran === _longoGran) return;
             _longoGran = b.dataset.gran;
             _lsGravarLongo('omie_longo_prazo_gran', _longoGran);
-            marcar('[data-gran]', 'gran', _longoGran);
+            _marcarLongo('[data-gran]', 'gran', _longoGran);
             desenharLongoPrazo();
         }));
         sec.querySelectorAll('[data-ciclo-longo]').forEach(b => b.addEventListener('click', () => {
             if (b.dataset.cicloLongo === _longoCiclo) return;
             _longoCiclo = b.dataset.cicloLongo;
             _lsGravarLongo('omie_longo_prazo_ciclo', _longoCiclo);
-            marcar('[data-ciclo-longo]', 'cicloLongo', _longoCiclo);
-            if (longoPrazo) desenharLongoCiclos(_linhasLongo());
+            _marcarLongo('[data-ciclo-longo]', 'cicloLongo', _longoCiclo);
+            if (longoPrazo && _paisLongo() === 'pt') desenharLongoCiclos(_linhasLongo());
         }));
         document.getElementById('longo-prazo-tabela').addEventListener('click', e => {
             const b = e.target.closest('.lp-abrir');
             if (b && longoPrazo) _abrirLinhaLongo(_linhasLongo()[Number(b.dataset.i)]);
         });
+        _ligarDicasLongo(sec);
         window.addEventListener('resize', debounce(_alinharCabecalhoLongo, 200));
         document.addEventListener('themeChanged', () => { if (longoPrazo) desenharLongoPrazo(); });
         if (!('IntersectionObserver' in window)) { carregarLongoPrazo(); return; }
