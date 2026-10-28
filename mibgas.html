@@ -172,8 +172,11 @@
         .badge-global strong { color: #2c3e50; }
 
         /* --- Controlos de período (mesma mecânica da omie.html) --- */
-        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; overflow-x: auto; padding: 2px; }
-        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
+        /* Centrado pela margem automática do filho e não por justify-content: com justify-content: center
+           e overflow-x: auto, o que não cabia saía para os dois lados e o lado esquerdo («Ontem», «Hoje», «Amanhã»)
+           ficava fora do alcance do scroll. A margem automática passa a 0 quando não cabe. */
+        .periodo-presets { display: flex; justify-content: flex-start; margin-bottom: 12px; overflow-x: auto; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-shrink: 0; margin: 0 auto; }
         .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
         .periodo-presets .hh-mode-btn:last-child { border-right: none; }
         .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
@@ -193,6 +196,16 @@
         @media (max-width: 700px) {
             .periodo-presets .hh-mode-btn { padding: 5px 10px; font-size: 0.82em; }
             #btn-partilhar { padding: 6px 10px; font-size: 0.85em; }
+        }
+        /* Os 9 períodos só cabem numa linha acima de ~980 px: abaixo disso, em grelha de 3 por linha, todos à vista
+           sem scroll. As linhas entre botões são o fundo da grelha a aparecer pelo gap de 1px. */
+        @media (max-width: 980px) {
+            .periodo-presets .hh-mode-toggle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #cbd5e1; flex-shrink: 1; }
+            .periodo-presets .hh-mode-btn, .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+            [data-theme="dark"] .periodo-presets .hh-mode-toggle { background: #475569; }
+        }
+        @media (max-width: 400px) {
+            .periodo-presets .hh-mode-btn { white-space: normal; }
         }
 
         #nota-series { width: 95%; max-width: 900px; margin: 0 auto 14px auto; background: #eef6ff; border-left: 3px solid #0d6efd; padding: 8px 12px; font-size: 0.85em; color: #334155; border-radius: 0 5px 5px 0; text-align: left; }
