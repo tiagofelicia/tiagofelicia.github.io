@@ -125,6 +125,24 @@
           "encodingFormat": "application/json",
           "name": "Recordes históricos OMIE (dia/hora mais caro e mais barato, agregados)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/omie/records_omie.json"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Médias OMIE por ano desde 2010 (PT, ES, mín./máx., desvio, horas negativas, períodos BTN)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_anual.csv"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Médias OMIE por mês desde 2010 (PT, ES, mín./máx., desvio, horas negativas, períodos BTN)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_mensal.csv"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Médias OMIE por dia desde 2010 (PT, ES, mín./máx., desvio, horas negativas, períodos BTN)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_diario.csv"
         }
       ]
     }
@@ -242,9 +260,25 @@
         [data-theme="dark"] .spread-kpi-value { color: #e2e8f0; }
         [data-theme="dark"] .spread-kpi-sub { color: #94a3b8; }
 
+        /* ===== Botões dos gráficos (ciclos, horas/quartos, extremos, Desde 2010) =====
+           Estavam com o aspeto por omissão do browser. As regras da fila de períodos, abaixo, são mais específicas
+           e continuam a mandar nessa fila. */
+        .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 5px 12px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
+        .hh-mode-btn:last-child { border-right: none; }
+        .hh-mode-btn:hover { background: #f1f5f9; }
+        .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .hh-mode-btn.active { background: #2563eb; color: #fff; }
+
         /* ===== Botões de período pré-definido (estilo europe-prices.html) ===== */
-        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; overflow-x: auto; padding: 2px; }
-        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
+        /* Centrado pela margem automática do filho e não por justify-content: com justify-content: center
+           e overflow-x: auto, o que não cabia saía para os dois lados e o lado esquerdo («Últimos 7 dias»)
+           ficava fora do alcance do scroll. A margem automática passa a 0 quando não cabe. */
+        .periodo-presets { display: flex; justify-content: flex-start; margin-bottom: 12px; overflow-x: auto; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-shrink: 0; margin: 0 auto; }
         .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
         .periodo-presets .hh-mode-btn:last-child { border-right: none; }
         .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
@@ -290,6 +324,16 @@
         @media (max-width: 700px) {
             .periodo-presets .hh-mode-btn { padding: 5px 10px; font-size: 0.82em; }
             #btn-partilhar { padding: 6px 10px; font-size: 0.85em; }
+        }
+        /* Ecrãs estreitos: os 6 períodos em grelha (3 por linha e, no telemóvel, 2), todos à vista sem scroll.
+           As linhas entre botões são o fundo da grelha a aparecer pelo gap de 1px. */
+        @media (max-width: 660px) {
+            .periodo-presets .hh-mode-toggle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #cbd5e1; flex-shrink: 1; }
+            .periodo-presets .hh-mode-btn, .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+            [data-theme="dark"] .periodo-presets .hh-mode-toggle { background: #475569; }
+        }
+        @media (max-width: 460px) {
+            .periodo-presets .hh-mode-toggle { grid-template-columns: repeat(2, 1fr); }
         }
 
         /* ===== Range intra-diário: KPIs reutilizam .spread-kpi-card ===== */
@@ -367,8 +411,10 @@
         /* ===== Secção "Análise do período" (A3 + A4) ===== */
         #analise-periodo { width: 95%; max-width: 1200px; margin: 30px auto 20px auto; }
         #analise-periodo h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 20px; }
-        .analise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
-        @media (max-width: 850px) { .analise-grid { grid-template-columns: 1fr; } }
+        /* minmax(0, 1fr): com 1fr a coluna nunca ficava mais estreita do que o gráfico já desenhado, e ao
+           estreitar a janela (rodar o telemóvel) os 2 gráficos não encolhiam e a página deslizava para o lado */
+        .analise-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+        @media (max-width: 850px) { .analise-grid { grid-template-columns: minmax(0, 1fr); } }
         [data-theme="dark"] #analise-periodo h2 { color: #e2e8f0; }
 
         /* ===== Glossário (D2) ===== */
@@ -482,6 +528,49 @@
         [data-theme="dark"] .top-dia-table tbody tr:hover { background: #334155; }
         [data-theme="dark"] .top-dia-table td { color: #e2e8f0; }
         [data-theme="dark"] .top-dia-table td.rank { color: #94a3b8; }
+        /* ===== Desde 2010: médias anuais e mensais (agregados) ===== */
+        #longo-prazo-section { width: 95%; max-width: 1200px; margin: 40px auto 20px auto; scroll-margin-top: 80px; }
+        #longo-prazo-section h2 { text-align: center; font-size: 1.2em; color: #2c3e50; margin-bottom: 8px; }
+        .longo-prazo-intro { text-align: center; font-size: 0.85em; color: #555; margin: 0 auto 14px auto; max-width: 820px; }
+        .longo-prazo-toggles { display: flex; justify-content: center; margin: 0 0 16px 0; }
+        #longo-prazo-estado { text-align: center; font-size: 0.9em; color: #555; padding: 20px 0; }
+        .grafico-longo { margin: 0 0 28px 0; min-height: 60px; }
+        .longo-prazo-ciclos-cab { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 8px 0 12px 0; }
+        #longo-prazo-ciclos-insight { margin: 0; font-size: 0.88em; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; text-align: center; max-width: 900px; }
+        #longo-prazo-ciclos-insight .lp-bloco { white-space: nowrap; }
+        .longo-prazo-ressalva { display: block; margin-top: 4px; font-size: 0.92em; color: #555; }
+        .longo-prazo-tabela-titulo { text-align: center; font-size: 1em; color: #2c3e50; margin: 0 0 10px 0; }
+        .longo-prazo-tabela-titulo small { font-weight: normal; color: #555; }
+        .longo-prazo-tabela-scroll { overflow: auto; border: 1px solid #dee2e6; border-radius: 6px; }
+        .longo-prazo-tabela-scroll:has(.lp-mensal) { max-height: min(70vh, 640px); }
+        .longo-prazo-tabela { --lp-cab1: 30px; width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.82em; background: #fff; }
+        .longo-prazo-tabela th, .longo-prazo-tabela td { padding: 6px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid #f1f5f9; font-variant-numeric: tabular-nums; color: #333; }
+        .longo-prazo-tabela thead th { position: sticky; top: 0; z-index: 2; background: #f8f9fa; color: #495057; font-weight: 600; text-align: center; border-bottom: 1px solid #dee2e6; }
+        .longo-prazo-tabela thead tr + tr th { top: var(--lp-cab1); }
+        .longo-prazo-tabela thead th[rowspan] { z-index: 3; }
+        .longo-prazo-tabela thead tr:first-child th:first-child { left: 0; z-index: 4; }
+        .longo-prazo-tabela tbody th { position: sticky; left: 0; z-index: 1; background: #fff; text-align: left; font-weight: 600; }
+        .longo-prazo-tabela tbody tr:hover td, .longo-prazo-tabela tbody tr:hover th { background: #f1f5f9; }
+        .longo-prazo-tabela .lp-grupo, .longo-prazo-tabela .lp-sub { color: #000; }
+        .longo-prazo-tabela .lp-grupo.lp-bd, .longo-prazo-tabela .lp-sub.lp-bd { background: #C6E0B4; }
+        .longo-prazo-tabela .lp-grupo.lp-bs, .longo-prazo-tabela .lp-sub.lp-bs { background: #B4C6E7; }
+        .longo-prazo-tabela .lp-grupo.lp-td, .longo-prazo-tabela .lp-sub.lp-td { background: #FFD966; }
+        .longo-prazo-tabela .lp-grupo.lp-ts, .longo-prazo-tabela .lp-sub.lp-ts { background: #F4B084; }
+        .longo-prazo-tabela td.lp-min { font-weight: 700; }
+        .lp-abrir { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+        .longo-prazo-notas { text-align: center; font-size: 0.8em; color: #555; margin: 10px 0 0 0; }
+        [data-theme="dark"] #longo-prazo-section h2, [data-theme="dark"] .longo-prazo-tabela-titulo { color: #e2e8f0; }
+        [data-theme="dark"] .longo-prazo-intro, [data-theme="dark"] #longo-prazo-estado, [data-theme="dark"] .longo-prazo-notas,
+        [data-theme="dark"] .longo-prazo-tabela-titulo small, [data-theme="dark"] .longo-prazo-ressalva { color: #94a3b8; }
+        [data-theme="dark"] #longo-prazo-ciclos-insight { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .longo-prazo-tabela-scroll { border-color: #475569; }
+        [data-theme="dark"] .longo-prazo-tabela { background: #1e293b; }
+        [data-theme="dark"] .longo-prazo-tabela th, [data-theme="dark"] .longo-prazo-tabela td { color: #e2e8f0; border-bottom-color: #334155; }
+        [data-theme="dark"] .longo-prazo-tabela thead th { background: #334155; color: #e2e8f0; border-bottom-color: #475569; }
+        [data-theme="dark"] .longo-prazo-tabela tbody th { background: #1e293b; }
+        [data-theme="dark"] .longo-prazo-tabela tbody tr:hover td, [data-theme="dark"] .longo-prazo-tabela tbody tr:hover th { background: #334155; }
+        [data-theme="dark"] .longo-prazo-tabela .lp-grupo, [data-theme="dark"] .longo-prazo-tabela .lp-sub { color: #000; }
+        [data-theme="dark"] .lp-abrir { color: #60a5fa; }
     </style>
     <script type="application/ld+json">
 {
@@ -499,6 +588,94 @@
       "position": 2,
       "name": "OMIE — Histórico",
       "item": "https://www.tiagofelicia.pt/omie"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "O que é o OMIE e que preços são mostrados aqui?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O OMIE (Operador do Mercado Ibérico de Energia) gere o mercado grossista diário e intradiário de eletricidade para Portugal e Espanha (MIBEL). Os preços resultam de leilões onde a energia é comprada e vendida para o dia seguinte. Esta página mostra esses preços (€/MWh) para cada intervalo de 15 minutos (quarto-horário). Pode escolher entre duas vistas através do toggle Fuso no topo: 🇵🇹 Hora PT (default): os valores são apresentados na hora de Portugal Continental, tal como aparecem nos relógios em Portugal. 🇪🇺 Hora CET (mercado): os valores são alinhados em hora CET — a hora a que decorre o leilão day-ahead europeu e a mesma que Espanha. Útil para comparações entre PT e ES no mesmo instante de mercado. Em CET o dia PT está sempre completo (não há aviso \"(até às 23h)\"). São apresentados em paralelo os preços para Portugal (PT) e Espanha (ES). A escolha é guardada localmente e mantém-se entre visitas (partilhada com a página OMIE Diário)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que significam as médias Simples, Bi-Horária e Tri-Horária?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "São médias dos preços quarto-horários de Portugal (€/MWh) no período selecionado, separadas pelos períodos horários dos ciclos definidos pela ERSE: Simples: Média de todos os preços reais do OMIE no período selecionado (ver a nota abaixo sobre o último dia). Bi-Horário (Diário/Semanal): Média dos preços durante os períodos de Vazio e Fora de Vazio. Tri-Horário (Diário/Semanal): Média dos preços durante os períodos de Ponta, Cheias e Vazio. Pode consultar as horas de cada período nos Períodos horários. Nota Importante: No dia mais recente apresentado, os cálculos de médias, máximo e mínimo para Portugal excluem os últimos quartos de hora (normalmente após as 23h PT), pois os mesmos ainda não são conhecidos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como é calculada a média de Espanha?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A média, máximo e mínimo para Espanha apresentados referem-se aos dias espanhóis do período (24 horas em CET por dia — coincidem com o dia de mercado day-ahead); a média do período é a média das médias de cada dia. Como o dia espanhol começa e acaba uma hora mais cedo que o português, em modo Hora PT cada dia de Espanha inclui: Os preços de Espanha da última hora (23:00-24:00) na hora de Portugal do dia anterior. Os preços de Espanha das primeiras 23 horas (00:00-23:00) na hora de Portugal do próprio dia. Em modo Hora CET, os valores de Portugal são igualmente alinhados ao mesmo dia de mercado, pelo que PT e ES partilham a mesma janela de 24h CET — facilitando a comparação direta sem desfasamento."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Estes preços OMIE são os que pago na fatura?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não diretamente, a menos que tenha uma tarifa indexada ao OMIE. Se tem uma tarifa indexada (ou dinâmica), o preço que paga pela energia varia hora a hora (ou quarto de hora) e está diretamente ligado a estes valores do OMIE, acrescido de uma margem do comercializador e outras taxas. Se tem uma tarifa fixa, o preço por kWh é constante, definido pelo seu comercializador. No entanto, os preços do OMIE influenciam o custo de aquisição de energia para o comercializador e, indiretamente, os preços das tarifas fixas que ele oferece. Lembre-se que a sua fatura final inclui sempre outras componentes como tarifas de acesso às redes, taxas e impostos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "De onde vêm os dados e qual o período disponível?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Os dados são processados através da recolha de informação pública do website do OMIE (para os preços diários \"reais\"). Esta página inclui o histórico de dados desde 01/01/2010. Cada período escolhido no topo da página pode ter até 2 anos (730 dias). Para ver tudo desde 2010, use a secção «Desde 2010», com a média de cada ano e de cada mês, que também se pode descarregar em CSV."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como interpretar o histograma de distribuição?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O histograma agrupa os preços quarto-horários do período em buckets de 10 €/MWh e conta a frequência de cada um. Mostra com que regularidade os preços ficam em cada gama. As linhas verticais marcam: Mediana (vermelho): valor central — metade do tempo o preço esteve abaixo, metade acima. Menos sensível a picos do que a média. Média (laranja): média aritmética simples. Pode ser empurrada para cima por valores extremos. Os indicadores numéricos no topo (Min, P10, P25, Mediana, Média, P75, P90, Máx) resumem a distribuição. Por exemplo, P90 = 150 €/MWh significa que durante 90% do tempo o preço esteve abaixo desse valor. Uma distribuição estreita revela preços estáveis; uma cauda longa à direita indica picos esporádicos. Quando a média é muito superior à mediana, há outliers altos a inflar a média."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que é a \"Curva de Duração de Preços\"?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A curva de duração (Price Duration Curve) ordena todos os preços do período do mais alto (à esquerda, 0%) para o mais baixo (à direita, 100%). É uma ferramenta clássica em análise energética. Lê-se assim: se a linha de Portugal indica 150 €/MWh aos 10%, isso significa que durante 10% do tempo o preço esteve igual ou acima de 150 €/MWh. É útil para: Comparar quão \"extremos\" foram os preços em PT vs ES Avaliar quanto tempo o mercado esteve acima de limiares relevantes (ex: 100 €/MWh) Comparar a forma da curva com o ano anterior (série \"PT (ano anterior)\" — ativável na legenda) Uma curva muito íngreme no início significa picos extremos; uma curva mais achatada indica preços uniformes. Nota: a série Portugal usa o dia português (24h em hora de PT), enquanto a série Espanha usa o dia espanhol (24h em hora de ES) — consistente com os cards e o gráfico de médias diárias."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que é o Spread PT-ES e o \"market splitting\"?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O Spread PT-ES é a diferença Preço PT − Preço ES num dado momento. O gráfico mostra a média diária deste diferencial: Spread positivo (vermelho): Portugal mais caro que Espanha Spread negativo (verde): Portugal mais barato que Espanha Spread zero: mercado unificado (situação habitual) Os preços de PT e ES são definidos no mesmo mercado (MIBEL), mas a capacidade de interligação entre os dois países é limitada. Quando a procura ou oferta num lado não pode ser totalmente satisfeita pelo outro, os preços divergem — chama-se a este fenómeno market splitting. Os indicadores no topo mostram o spread médio, o maior diferencial diário, e a percentagem do tempo (medido nos quartos-horários) com PT mais caro e em situação de splitting (considerado quando |spread| > 0,01 €/MWh)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que são os eventos anotados no gráfico de Médias Diárias?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O gráfico de Médias Diárias inclui marcadores verticais de eventos relevantes que ajudam a contextualizar picos e oscilações nos preços. As cores indicam o tipo: Crise — eventos geopolíticos, sanitários ou de mercado (Invasão da Ucrânia, COVID, Hamas-Israel, Apagão ibérico) Política / Regulação — medidas de mercado (Mecanismo Ibérico, etc.) — mostradas como faixas coloridas se tiverem duração Mercado — mudanças estruturais (entrada do mercado 15-min) Tempo / Clima — fenómenos meteorológicos extremos (Tempestade Filomena) Apenas eventos que caem dentro do período selecionado aparecem no gráfico. Selecione um período mais longo (ex: \"Ano corrente\" ou um intervalo personalizado entre 2020 e 2026) para ver mais eventos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como interagir com os gráficos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Os gráficos de \"Médias Diárias\" e \"Valores Quarto-Horários\" são interativos e permitem zoom. Fazer Zoom: Clique e arraste o rato horizontalmente sobre a área do gráfico que deseja ampliar. Repor Zoom: Após fazer zoom, aparecerá um botão \"Reset zoom\" no canto superior direito do gráfico para voltar à vista inicial."
+      }
     }
   ]
 }
@@ -544,7 +721,7 @@
         </div>
 
         <p style="font-size: 0.70em; color: #555; margin-top: 0; margin-bottom: 15px;">
-            Dados históricos disponíveis desde 01/01/2010 · Última atualização: <strong id="fresh-data-valor">--</strong>
+            Dados históricos disponíveis desde 01/01/2010 · Preços até: <strong id="fresh-data-valor">--</strong>
         </p>
 
         <details id="recordes-section">
@@ -562,9 +739,12 @@
             <a href="#grafico-histograma-wrapper" class="mini-nav-chip" data-target="distribuicao">📊 Distribuição</a>
             <a href="#grafico-volatilidade-container" class="mini-nav-chip" data-target="analise">⚡ Análise</a>
             <a href="#top-dias-section"          class="mini-nav-chip" data-target="top-dias">🔥 Top dias</a>
+            <a href="#longo-prazo-section"       class="mini-nav-chip" data-target="longo-prazo">🗓️ Desde 2010</a>
         </nav>
 
-        <h1>Eletricidade - Preços médios Mercado Diário OMIE para o período de <span id="data-inicio-titulo">Portugal</span> a <span id="data-fim-titulo">hoje</span></h1>
+        <!-- O período entra pelo JS quando há dados para ele; até lá (ou com um período inválido) fica sem datas,
+             em vez do antigo «para o período de Portugal a hoje» -->
+        <h1>Eletricidade - Preços médios Mercado Diário OMIE</h1>
         <p id="painel-subtitulo">Valores OMIE (€/MWh) corrigidos para a hora de Portugal</p>
     </div>
 
@@ -655,6 +835,53 @@
         </div>
     </section>
 
+    <!-- Desde 2010: as médias anuais e mensais dos agregados do dados-energia. Não depende do período acima
+         (que vai até 730 dias) nem do fuso; o JS só carrega os dados quando a secção se aproxima do ecrã. -->
+    <section id="longo-prazo-section" aria-labelledby="longo-prazo-titulo">
+        <h2 id="longo-prazo-titulo">🗓️ Desde 2010: médias anuais e mensais</h2>
+        <p class="longo-prazo-intro">
+            A média de cada ano e de cada mês desde 01/01/2010, sem o limite de 2 anos do período acima.
+            Não mudam com o período nem com o fuso escolhidos: são médias simples dos preços em hora de Portugal
+            (Espanha nas mesmas horas).<span id="longo-prazo-ate"></span>
+        </p>
+        <div class="longo-prazo-toggles">
+            <div class="hh-mode-toggle" role="radiogroup" aria-label="Agrupar as médias">
+                <button type="button" class="hh-mode-btn active" data-gran="ano">Por ano</button>
+                <button type="button" class="hh-mode-btn" data-gran="mes">Por mês</button>
+            </div>
+        </div>
+        <p id="longo-prazo-estado" role="status">A carregar as médias desde 2010…</p>
+        <div id="longo-prazo-conteudo" hidden>
+            <div id="grafico-longo-evolucao" class="grafico-longo"></div>
+            <div class="longo-prazo-ciclos-cab">
+                <div class="hh-mode-toggle" role="radiogroup" aria-label="Ciclo horário">
+                    <button type="button" class="hh-mode-btn active" data-ciclo-longo="bd" title="Bi-horário Diário">Bi Diário</button>
+                    <button type="button" class="hh-mode-btn" data-ciclo-longo="bs" title="Bi-horário Semanal">Bi Semanal</button>
+                    <button type="button" class="hh-mode-btn" data-ciclo-longo="td" title="Tri-horário Diário">Tri Diário</button>
+                    <button type="button" class="hh-mode-btn" data-ciclo-longo="ts" title="Tri-horário Semanal">Tri Semanal</button>
+                </div>
+                <p id="longo-prazo-ciclos-insight"></p>
+            </div>
+            <div id="grafico-longo-ciclos" class="grafico-longo"></div>
+            <div id="grafico-longo-negativos" class="grafico-longo"></div>
+            <h3 class="longo-prazo-tabela-titulo">Resumo em tabela <small>(€/MWh; clique no ano ou no mês para o ver no painel acima)</small></h3>
+            <div class="longo-prazo-tabela-scroll" tabindex="0" role="region" aria-label="Tabela das médias desde 2010">
+                <table id="longo-prazo-tabela" class="longo-prazo-tabela"></table>
+            </div>
+            <p class="longo-prazo-notas">
+                Em cada ciclo, o período mais barato está a <strong>negrito</strong>.
+                <span id="longo-prazo-nota-parcial" hidden></span>
+            </p>
+            <p class="longo-prazo-notas">
+                Descarregar em CSV (licença CC BY 4.0):
+                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_anual.csv">por ano</a> ·
+                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_mensal.csv">por mês</a> ·
+                <a href="https://dados.tiagofelicia.pt/data/agregados/omie_diario.csv">por dia</a>
+                (mais em <a href="https://dados.tiagofelicia.pt/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>).
+            </p>
+        </div>
+    </section>
+
     <article class="content-support">
         <h2>Compreender os Preços do Mercado Diário (Day-Ahead) OMIE</h2>
 
@@ -674,13 +901,13 @@
             <details class="faq-item">
                 <summary><strong>O que significam as médias Simples, Bi-Horária e Tri-Horária?</strong></summary>
                 <div class="faq-content">
-                    <p>São médias dos preços quarto-horários de Portugal (€/MWh) durante diferentes períodos do dia selecionado, calculadas com base nos ciclos standard definidos pela ERSE:</p>
+                    <p>São médias dos preços quarto-horários de Portugal (€/MWh) no período selecionado, separadas pelos períodos horários dos ciclos definidos pela ERSE:</p>
                     <ul>
-                        <li><strong>Simples:</strong> Média de todos os preços *reais* do OMIE no dia selecionado (ver nota abaixo sobre o último dia).</li>
+                        <li><strong>Simples:</strong> Média de todos os preços <em>reais</em> do OMIE no período selecionado (ver a nota abaixo sobre o último dia).</li>
                         <li><strong>Bi-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Vazio</strong> e <strong>Fora de Vazio</strong>.</li>
                         <li><strong>Tri-Horário (Diário/Semanal):</strong> Média dos preços durante os períodos de <strong>Ponta</strong>, <strong>Cheias</strong> e <strong>Vazio</strong>.</li>
                     </ul>
-                    <p>Pode consultar as horas dos períodos em <a href="https://www.tiagofelicia.pt/periodos-horarios" target="_blank" rel="noopener noreferrer">periodos-horarios.html</a></p>
+                    <p>Pode consultar as horas de cada período nos <a href="/periodos-horarios">Períodos horários</a>.</p>
 
                     <p><strong>Nota Importante:</strong> No dia mais recente apresentado, os cálculos de médias, máximo e mínimo para Portugal <strong>excluem</strong> os últimos quartos de hora (normalmente após as 23h PT), pois os mesmos ainda não são conhecidos.</p>
                 </div>
@@ -689,11 +916,11 @@
             <details class="faq-item">
                 <summary><strong>Como é calculada a média de Espanha?</strong></summary>
                 <div class="faq-content">
-                    <p>A média, máximo e mínimo para Espanha apresentados referem-se às <strong>24 horas do dia espanhol</strong> (CET — coincide com o dia de mercado day-ahead).</p>
-                    <p>Como o dia espanhol começa e acaba uma hora mais cedo que o português, em modo <strong>Hora PT</strong> o cálculo inclui:</p>
+                    <p>A média, máximo e mínimo para Espanha apresentados referem-se aos <strong>dias espanhóis</strong> do período (24 horas em CET por dia — coincidem com o dia de mercado day-ahead); a média do período é a média das médias de cada dia.</p>
+                    <p>Como o dia espanhol começa e acaba uma hora mais cedo que o português, em modo <strong>Hora PT</strong> cada dia de Espanha inclui:</p>
                     <ul>
                         <li>Os preços de Espanha da última hora (23:00-24:00) na hora de Portugal do <strong>dia anterior</strong>.</li>
-                        <li>Os preços de Espanha das primeiras 23 horas (00:00-23:00) na hora de Portugal do <strong>dia selecionado</strong>.</li>
+                        <li>Os preços de Espanha das primeiras 23 horas (00:00-23:00) na hora de Portugal do <strong>próprio dia</strong>.</li>
                     </ul>
                     <p>Em modo <strong>Hora CET</strong>, os valores de Portugal são igualmente alinhados ao mesmo dia de mercado, pelo que PT e ES partilham a mesma janela de 24h CET — facilitando a comparação direta sem desfasamento.</p>
                 </div>
@@ -716,6 +943,7 @@
                 <div class="faq-content">
                     <p>Os dados são processados através da recolha de informação pública do website do <strong>OMIE</strong> (para os preços diários "reais").</p>
                     <p>Esta página inclui o histórico de dados desde <strong>01/01/2010.</strong></p>
+                    <p>Cada período escolhido no topo da página pode ter até 2 anos (730 dias). Para ver tudo desde 2010, use a secção <a href="#longo-prazo-section">«Desde 2010»</a>, com a média de cada ano e de cada mês, que também se pode descarregar em CSV.</p>
                 </div>
             </details>
 
@@ -1520,6 +1748,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (diasDiferenca > MAX_DIAS_PERIODO) {
             mostrarErroPeriodo(`⚠️ Por favor selecione um período máximo de ${MAX_DIAS_PERIODO} dias (${Math.floor(MAX_DIAS_PERIODO / 365)} anos). Período selecionado: ${diasDiferenca} dias.`);
+            // Para mais de 2 anos há as médias anuais e mensais da secção «Desde 2010»
+            const ligacaoLongo = document.createElement('a');
+            ligacaoLongo.href = '#longo-prazo-section';
+            ligacaoLongo.textContent = 'Para ver tudo desde 2010, use as médias anuais e mensais.';
+            erroPeriodoEl.append(' ', ligacaoLongo);
             return;
         }
         
@@ -3816,6 +4049,367 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    // --- DESDE 2010: MÉDIAS ANUAIS E MENSAIS (agregados do dados-energia) ---
+    // Dão a vista de longo prazo que o período acima não dá (máx. 730 dias). São médias simples em hora de Portugal
+    // e não dependem do período nem do fuso escolhidos. Só se pedem (~25 KB) quando a secção se aproxima do ecrã.
+    const URL_AGREGADOS_ANUAL = 'agregados/omie_anual.csv';
+    const URL_AGREGADOS_MENSAL = 'agregados/omie_mensal.csv';
+    const URL_AGREGADOS_META = 'agregados/metadata.json';
+    const CICLOS_LONGO = {
+        bd: { labelLong: 'Bi-horário Diário',   periodos: ['V', 'F'] },
+        bs: { labelLong: 'Bi-horário Semanal',  periodos: ['V', 'F'] },
+        td: { labelLong: 'Tri-horário Diário',  periodos: ['V', 'C', 'P'] },
+        ts: { labelLong: 'Tri-horário Semanal', periodos: ['V', 'C', 'P'] }
+    };
+    const NOMES_PERIODO_LONGO = { V: 'Vazio', F: 'Fora Vazio', C: 'Cheias', P: 'Ponta' };
+    const MENU_EXPORT_LONGO = ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'];
+    let longoPrazo = null;          // { anual: [...], mensal: [...], ultimaData: 'AAAA-MM-DD' | null }
+    let promessaLongoPrazo = null;
+    let _longoGran = _lsLerLongo('omie_longo_prazo_gran', ['ano', 'mes'], 'ano');
+    let _longoCiclo = _lsLerLongo('omie_longo_prazo_ciclo', Object.keys(CICLOS_LONGO), 'bd');
+
+    function _lsLerLongo(chave, validos, omissao) {
+        try { const v = localStorage.getItem(chave); return validos.includes(v) ? v : omissao; } catch (e) { return omissao; }
+    }
+    function _lsGravarLongo(chave, v) { try { localStorage.setItem(chave, v); } catch (e) {} }
+
+    // Cores dos períodos (validadas para daltonismo e contraste ≥ 3:1 contra o fundo de cada tema)
+    function _coresPeriodosLongo() {
+        return document.documentElement.getAttribute('data-theme') === 'dark'
+            ? { V: '#3b82f6', F: '#ea580c', C: '#b8860b', P: '#ec4899', neg: '#8b5cf6' }
+            : { V: '#1d4ed8', F: '#c2410c', C: '#d97706', P: '#be185d', neg: '#6d28d9' };
+    }
+
+    // CSV dos agregados: sem aspas nem vírgulas dentro dos campos; vazio = sem valor
+    function parseAgregados(texto, chave) {
+        const linhas = texto.replace(/^﻿/, '').trim().split(/\r?\n/);
+        const cab = linhas.shift().split(',').map(c => c.trim());
+        return linhas.map(l => {
+            const v = l.split(',');
+            const o = {};
+            cab.forEach((c, i) => {
+                const x = (v[i] || '').trim();
+                o[c] = c === chave ? x : (x === '' ? null : Number(x));
+            });
+            return o;
+        });
+    }
+
+    function _prepararAnual(r) {
+        const ano = Number(r.ano);
+        const possiveis = (ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0 ? 366 : 365;
+        return Object.assign(r, { ano, inicio: `${ano}-01-01`, fim: `${ano}-12-31`, ts: Date.UTC(ano, 0, 1),
+                                  parcial: r.dias < possiveis, rotulo: String(ano), nome: `Ano ${ano}` });
+    }
+    function _prepararMensal(r) {
+        const [mm, aaaa] = r.mes.split('/');
+        const ano = Number(aaaa), mes = Number(mm);
+        const ultimoDia = new Date(Date.UTC(ano, mes, 0)).getUTCDate();
+        const ts = Date.UTC(ano, mes - 1, 1);
+        const nome = new Date(ts).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+        return Object.assign(r, { ano, inicio: `${aaaa}-${mm}-01`, fim: `${aaaa}-${mm}-${String(ultimoDia).padStart(2, '0')}`, ts,
+                                  parcial: r.dias < ultimoDia, rotulo: r.mes, nome: nome.charAt(0).toUpperCase() + nome.slice(1) });
+    }
+
+    function carregarLongoPrazo() {
+        if (promessaLongoPrazo) return promessaLongoPrazo;
+        const estado = document.getElementById('longo-prazo-estado');
+        const csv = url => fetchDados(url).then(r => { if (!r.ok) throw new Error(url + ': ' + r.status); return r.text(); });
+        promessaLongoPrazo = Promise.all([
+            csv(URL_AGREGADOS_ANUAL),
+            csv(URL_AGREGADOS_MENSAL),
+            fetchDados(URL_AGREGADOS_META).then(r => r.ok ? r.json() : null).catch(() => null)
+        ]).then(([anual, mensal, meta]) => {
+            longoPrazo = {
+                anual: parseAgregados(anual, 'ano').map(_prepararAnual),
+                mensal: parseAgregados(mensal, 'mes').map(_prepararMensal),
+                ultimaData: (meta && meta.omie && meta.omie.ultima_data) || null
+            };
+            if (!longoPrazo.anual.length || !longoPrazo.mensal.length) throw new Error('agregados vazios');
+            estado.hidden = true;
+            document.getElementById('longo-prazo-conteudo').hidden = false;
+            const ate = document.getElementById('longo-prazo-ate');
+            if (ate && longoPrazo.ultimaData) ate.textContent = ` Dados até ${formatarDataParaCSV(longoPrazo.ultimaData)}.`;
+            desenharLongoPrazo();
+        }).catch(err => {
+            console.warn('Agregados OMIE indisponíveis:', err && err.message);
+            promessaLongoPrazo = null; // volta a tentar quando a secção voltar a aparecer
+            longoPrazo = null;
+            estado.textContent = 'Não foi possível carregar as médias desde 2010. Tente recarregar a página.';
+        });
+        return promessaLongoPrazo;
+    }
+
+    function _linhasLongo() { return _longoGran === 'ano' ? longoPrazo.anual : longoPrazo.mensal; }
+    function _fmtLongo(v, casas = 2) { return (v === null || v === undefined || !isFinite(v)) ? '—' : v.toFixed(casas).replace('.', ','); }
+    function _fmtSinalLongo(v) { return (v === null || !isFinite(v)) ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + _fmtLongo(Math.abs(v)); }
+    function _tituloLinhaLongo(r) {
+        return r.nome + (r.parcial ? ` (incompleto: ${r.dias} ${r.dias === 1 ? 'dia' : 'dias'})` : '');
+    }
+    // Pontos com a linha do agregado agarrada, para o tooltip e o clique
+    function _pontosLongo(linhas, campo) {
+        return linhas.map(r => _longoGran === 'ano' ? { y: r[campo], linha: r } : { x: r.ts, y: r[campo], linha: r });
+    }
+    function _eixoXLongo(linhas, d) {
+        if (_longoGran === 'ano') {
+            return { categories: linhas.map(r => r.rotulo + (r.parcial ? '*' : '')), crosshair: true, labels: { style: { color: d.txt } } };
+        }
+        return { type: 'datetime', crosshair: true, labels: { style: { color: d.txt } }, dateTimeLabelFormats: { month: '%b %Y', year: '%Y' } };
+    }
+    function _pontoDoContexto(p) { const pt = p.point || p; return pt.options ? pt.options.linha : null; }
+
+    // Leva o ano ou o mês para o período do painel acima (até à última data disponível)
+    function _abrirLinhaLongo(r) {
+        if (!r || !dataMaximaValida) return;
+        const min = `${ANO_INICIO_HISTORICO}-01-01`;
+        const inicio = r.inicio < min ? min : r.inicio;
+        const fim = r.fim > dataMaximaValida ? dataMaximaValida : r.fim;
+        seletorDataInicio.value = inicio;
+        seletorDataFim.value = fim;
+        const preset = detectActivePreset(inicio, fim);
+        atualizarBotoesPreset(preset);
+        setDateInputsVisibilidade(preset);
+        atualizarURL();
+        atualizarDashboardPeriodo();
+        const alvo = document.querySelector('.periodo-presets');
+        if (alvo) window.scrollTo({ top: alvo.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+    }
+
+    function desenharLongoPrazo() {
+        if (!longoPrazo) return;
+        const linhas = _linhasLongo();
+        desenharLongoEvolucao(linhas);
+        desenharLongoCiclos(linhas);
+        desenharLongoNegativos(linhas);
+        desenharLongoTabela(linhas);
+        const nota = document.getElementById('longo-prazo-nota-parcial');
+        const parcial = linhas.some(r => r.parcial);
+        nota.hidden = !parcial;
+        if (parcial) {
+            nota.textContent = `* ${_longoGran === 'ano' ? 'Ano' : 'Mês'} ainda incompleto` +
+                (longoPrazo.ultimaData ? ` (dados até ${formatarDataParaCSV(longoPrazo.ultimaData)}).` : '.');
+        }
+    }
+
+    function desenharLongoEvolucao(linhas) {
+        const d = _hcDark();
+        const porAno = _longoGran === 'ano';
+        const eixoX = _eixoXLongo(linhas, d);
+        if (!porAno) {
+            const anot = gerarAnotacoesEventos(`${ANO_INICIO_HISTORICO}-01-01`, linhas[linhas.length - 1].fim);
+            eixoX.plotLines = anot.plotLines;
+            eixoX.plotBands = anot.plotBands;
+        }
+        Highcharts.chart('grafico-longo-evolucao', {
+            chart: { type: porAno ? 'column' : 'line', zoomType: porAno ? undefined : 'x', height: 440, backgroundColor: d.bg, style: { color: d.txt } },
+            title: { text: porAno ? 'Média anual OMIE desde 2010' : 'Média mensal OMIE desde 2010', style: { color: d.txt } },
+            subtitle: {
+                text: porAno ? 'Clique num ano para o ver no painel acima.'
+                             : 'Arraste na horizontal para fazer zoom. Clique num mês para o ver no painel acima.',
+                style: { color: d.txt }
+            },
+            xAxis: eixoX,
+            yAxis: { title: { text: '€/MWh', style: { color: d.txt } }, labels: { format: '{value:,.0f} €', style: { color: d.txt } } },
+            legend: { itemStyle: { color: d.txt } },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                formatter: function () {
+                    const pts = this.points || [this];
+                    const r = _pontoDoContexto(pts[0]);
+                    if (!r) return false;
+                    let h = `<b>${_tituloLinhaLongo(r)}</b><br>`;
+                    pts.forEach(p => { h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${_fmtLongo(p.y)} €/MWh</b><br>`; });
+                    h += `Mín. / máx. PT: ${_fmtLongo(r.pt_min)} / ${_fmtLongo(r.pt_max)} €/MWh<br>`;
+                    h += `Desvio-padrão PT: ${_fmtLongo(r.pt_desvio)} €/MWh`;
+                    return h;
+                }
+            },
+            plotOptions: {
+                series: { cursor: 'pointer', point: { events: { click: function () { _abrirLinhaLongo(this.options.linha); } } } },
+                column: { borderWidth: 0, pointPadding: 0.05 },
+                line: { marker: { enabled: false }, lineWidth: 2 }
+            },
+            exporting: { filename: `omie-media-${porAno ? 'anual' : 'mensal'}-desde-2010`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
+            series: [
+                { name: 'Portugal', color: '#007bff', data: _pontosLongo(linhas, 'pt_medio') },
+                { name: 'Espanha', color: '#28a745', data: _pontosLongo(linhas, 'es_medio') }
+            ]
+        });
+    }
+
+    // Período mais barato de cada ano no ciclo escolhido, em blocos de anos seguidos
+    function _insightCiclosLongo() {
+        const cfg = CICLOS_LONGO[_longoCiclo];
+        const blocos = [];
+        longoPrazo.anual.forEach(r => {
+            let melhor = null;
+            cfg.periodos.forEach(p => {
+                const v = r[`${_longoCiclo}_${p.toLowerCase()}`];
+                if (v !== null && (melhor === null || v < melhor.v)) melhor = { p, v };
+            });
+            if (!melhor) return;
+            const ult = blocos[blocos.length - 1];
+            if (ult && ult.p === melhor.p && ult.fim === r.ano - 1) { ult.fim = r.ano; ult.parcial = r.parcial; }
+            else blocos.push({ p: melhor.p, ini: r.ano, fim: r.ano, parcial: r.parcial });
+        });
+        const partes = blocos.map(b => `<span class="lp-bloco"><strong>${NOMES_PERIODO_LONGO[b.p]}</strong> em ${b.ini === b.fim ? b.ini : b.ini + '–' + b.fim}${b.parcial ? '*' : ''}</span>`);
+        return `Período mais barato de cada ano no OMIE PT (${cfg.labelLong}): ${partes.join(' · ')}. ` +
+               `<span class="longo-prazo-ressalva">Só o preço de mercado: na fatura somam-se as tarifas de acesso (TAR), que são mais baixas no Vazio.</span>`;
+    }
+
+    function desenharLongoCiclos(linhas) {
+        const d = _hcDark();
+        const porAno = _longoGran === 'ano';
+        const cfg = CICLOS_LONGO[_longoCiclo];
+        const cores = _coresPeriodosLongo();
+        document.getElementById('longo-prazo-ciclos-insight').innerHTML = _insightCiclosLongo();
+        const campo = p => `${_longoCiclo}_${p.toLowerCase()}`;
+        const [pBase, pTopo] = cfg.periodos.length === 2 ? ['V', 'F'] : ['V', 'P'];
+        Highcharts.chart('grafico-longo-ciclos', {
+            chart: { type: porAno ? 'column' : 'line', zoomType: porAno ? undefined : 'x', height: 400, backgroundColor: d.bg, style: { color: d.txt } },
+            title: { text: `${cfg.labelLong}: média OMIE PT de cada período, ${porAno ? 'por ano' : 'por mês'}`, style: { color: d.txt } },
+            subtitle: { text: 'Médias simples dos preços de mercado em cada período horário da ERSE (hora de Portugal).', style: { color: d.txt } },
+            xAxis: _eixoXLongo(linhas, d),
+            yAxis: { title: { text: '€/MWh', style: { color: d.txt } }, labels: { format: '{value:,.0f} €', style: { color: d.txt } } },
+            legend: { itemStyle: { color: d.txt } },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                formatter: function () {
+                    const pts = this.points || [this];
+                    const r = _pontoDoContexto(pts[0]);
+                    if (!r) return false;
+                    let h = `<b>${_tituloLinhaLongo(r)}</b><br>`;
+                    pts.forEach(p => { h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${_fmtLongo(p.y)} €/MWh</b><br>`; });
+                    const dif = (r[campo(pTopo)] !== null && r[campo(pBase)] !== null) ? r[campo(pTopo)] - r[campo(pBase)] : null;
+                    h += `${NOMES_PERIODO_LONGO[pTopo]} − ${NOMES_PERIODO_LONGO[pBase]}: <b>${_fmtSinalLongo(dif)} €/MWh</b>`;
+                    return h;
+                }
+            },
+            plotOptions: {
+                series: { cursor: 'pointer', point: { events: { click: function () { _abrirLinhaLongo(this.options.linha); } } } },
+                column: { borderWidth: 0, pointPadding: 0.05, groupPadding: 0.12 },
+                line: { marker: { enabled: false }, lineWidth: 2 }
+            },
+            exporting: { filename: `omie-ciclo-${_longoCiclo}-${porAno ? 'anual' : 'mensal'}-desde-2010`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
+            series: cfg.periodos.map(p => ({ name: NOMES_PERIODO_LONGO[p], color: cores[p], data: _pontosLongo(linhas, campo(p)) }))
+        });
+    }
+
+    function desenharLongoNegativos(linhas) {
+        const d = _hcDark();
+        const porAno = _longoGran === 'ano';
+        const primeiro = longoPrazo.mensal.find(r => r.horas_negativas > 0);
+        // Por mês, só desde o ano antes do 1.º negativo: antes disso são 14 anos de zeros
+        const desde = primeiro && !porAno ? primeiro.ano - 1 : null;
+        const visiveis = desde ? linhas.filter(r => r.ano >= desde) : linhas;
+        Highcharts.chart('grafico-longo-negativos', {
+            chart: { type: 'column', height: 340, backgroundColor: d.bg, style: { color: d.txt } },
+            title: { text: `Horas com preço negativo em Portugal, ${porAno ? 'por ano' : 'por mês'}`, style: { color: d.txt } },
+            subtitle: {
+                text: (primeiro ? `As primeiras foram em ${primeiro.nome.toLowerCase()}. ` : '') + 'Conta as horas com média horária abaixo de 0 €/MWh.',
+                style: { color: d.txt }
+            },
+            xAxis: _eixoXLongo(visiveis, d),
+            yAxis: { title: { text: 'Horas', style: { color: d.txt } }, allowDecimals: false, min: 0, labels: { style: { color: d.txt } } },
+            legend: { enabled: false },
+            tooltip: {
+                useHTML: true,
+                formatter: function () {
+                    const r = _pontoDoContexto(this);
+                    if (!r) return false;
+                    return `<b>${_tituloLinhaLongo(r)}</b><br>Horas com preço negativo: <b>${r.horas_negativas}</b><br>Mínimo PT: ${_fmtLongo(r.pt_min)} €/MWh`;
+                }
+            },
+            plotOptions: {
+                series: { cursor: 'pointer', point: { events: { click: function () { _abrirLinhaLongo(this.options.linha); } } } },
+                column: { borderWidth: 0, pointPadding: 0.05 }
+            },
+            exporting: { filename: `omie-horas-negativas-${porAno ? 'anual' : 'mensal'}`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
+            series: [{ name: 'Horas com preço negativo', color: _coresPeriodosLongo().neg, data: _pontosLongo(visiveis, 'horas_negativas') }]
+        });
+    }
+
+    function desenharLongoTabela(linhas) {
+        const tabela = document.getElementById('longo-prazo-tabela');
+        const porAno = _longoGran === 'ano';
+        const ciclos = Object.entries(CICLOS_LONGO);
+        const abrev = { V: 'Vazio', F: 'F. Vazio', C: 'Cheias', P: 'Ponta' };
+        let h = '<thead><tr>' +
+            `<th rowspan="2" scope="col">${porAno ? 'Ano' : 'Mês'}</th>` +
+            '<th rowspan="2" scope="col">Dias</th>' +
+            '<th rowspan="2" scope="col">PT</th>' +
+            '<th rowspan="2" scope="col"><abbr class="glossario" title="Espanha, nas mesmas horas de Portugal">ES</abbr></th>' +
+            '<th rowspan="2" scope="col"><abbr class="glossario" title="Diferença média entre o preço de Portugal e o de Espanha">PT − ES</abbr></th>' +
+            '<th rowspan="2" scope="col">Mín. PT</th>' +
+            '<th rowspan="2" scope="col">Máx. PT</th>' +
+            '<th rowspan="2" scope="col"><abbr class="glossario" title="Desvio-padrão dos preços de PT: quanto variam à volta da média">Desvio PT</abbr></th>' +
+            '<th rowspan="2" scope="col"><abbr class="glossario" title="Horas com média horária abaixo de 0 €/MWh em Portugal">Horas &lt; 0</abbr></th>' +
+            ciclos.map(([k, c]) => `<th colspan="${c.periodos.length}" scope="colgroup" class="lp-grupo lp-${k}">${c.labelLong}</th>`).join('') +
+            '</tr><tr>' +
+            ciclos.map(([k, c]) => c.periodos.map(p => `<th scope="col" class="lp-sub lp-${k}">${abrev[p]}</th>`).join('')).join('') +
+            '</tr></thead><tbody>';
+        // Mais recente em cima
+        for (let i = linhas.length - 1; i >= 0; i--) {
+            const r = linhas[i];
+            const rotulo = r.rotulo + (r.parcial ? '*' : '');
+            h += `<tr><th scope="row"><button type="button" class="lp-abrir" data-i="${i}" title="Ver ${r.nome.toLowerCase()} no painel acima">${rotulo}</button></th>` +
+                 `<td>${r.dias}</td><td><strong>${_fmtLongo(r.pt_medio)}</strong></td><td>${_fmtLongo(r.es_medio)}</td>` +
+                 `<td>${_fmtSinalLongo(r.spread_pt_es)}</td><td>${_fmtLongo(r.pt_min)}</td><td>${_fmtLongo(r.pt_max)}</td>` +
+                 `<td>${_fmtLongo(r.pt_desvio)}</td><td>${r.horas_negativas === null ? '—' : r.horas_negativas}</td>`;
+            ciclos.forEach(([k, c]) => {
+                const vals = c.periodos.map(p => r[`${k}_${p.toLowerCase()}`]);
+                const validos = vals.filter(v => v !== null);
+                const min = validos.length ? Math.min(...validos) : null;
+                vals.forEach(v => { h += v !== null && v === min ? `<td class="lp-min">${_fmtLongo(v)}</td>` : `<td>${_fmtLongo(v)}</td>`; });
+            });
+            h += '</tr>';
+        }
+        tabela.innerHTML = h + '</tbody>';
+        tabela.classList.toggle('lp-mensal', !porAno);
+        _alinharCabecalhoLongo();
+    }
+    // A 2.ª linha do cabeçalho fixo fica por baixo da 1.ª: a altura desta só se sabe depois de desenhada
+    function _alinharCabecalhoLongo() {
+        const tabela = document.getElementById('longo-prazo-tabela');
+        const grupo = tabela && tabela.querySelector('thead tr:first-child .lp-grupo');
+        if (grupo && grupo.offsetHeight) tabela.style.setProperty('--lp-cab1', grupo.offsetHeight + 'px');
+    }
+
+    (function ligarLongoPrazo() {
+        const sec = document.getElementById('longo-prazo-section');
+        if (!sec) return;
+        const marcar = (seletor, atributo, valor) => sec.querySelectorAll(seletor).forEach(b => b.classList.toggle('active', b.dataset[atributo] === valor));
+        marcar('[data-gran]', 'gran', _longoGran);
+        marcar('[data-ciclo-longo]', 'cicloLongo', _longoCiclo);
+        sec.querySelectorAll('[data-gran]').forEach(b => b.addEventListener('click', () => {
+            if (b.dataset.gran === _longoGran) return;
+            _longoGran = b.dataset.gran;
+            _lsGravarLongo('omie_longo_prazo_gran', _longoGran);
+            marcar('[data-gran]', 'gran', _longoGran);
+            desenharLongoPrazo();
+        }));
+        sec.querySelectorAll('[data-ciclo-longo]').forEach(b => b.addEventListener('click', () => {
+            if (b.dataset.cicloLongo === _longoCiclo) return;
+            _longoCiclo = b.dataset.cicloLongo;
+            _lsGravarLongo('omie_longo_prazo_ciclo', _longoCiclo);
+            marcar('[data-ciclo-longo]', 'cicloLongo', _longoCiclo);
+            if (longoPrazo) desenharLongoCiclos(_linhasLongo());
+        }));
+        document.getElementById('longo-prazo-tabela').addEventListener('click', e => {
+            const b = e.target.closest('.lp-abrir');
+            if (b && longoPrazo) _abrirLinhaLongo(_linhasLongo()[Number(b.dataset.i)]);
+        });
+        window.addEventListener('resize', debounce(_alinharCabecalhoLongo, 200));
+        document.addEventListener('themeChanged', () => { if (longoPrazo) desenharLongoPrazo(); });
+        if (!('IntersectionObserver' in window)) { carregarLongoPrazo(); return; }
+        const io = new IntersectionObserver(entradas => {
+            if (entradas.some(e => e.isIntersecting)) carregarLongoPrazo().then(() => { if (longoPrazo) io.disconnect(); });
+        }, { rootMargin: '600px 0px' });
+        io.observe(sec);
+    })();
+
 // --- PROCESSO DE INICIALIZAÇÃO ---
     carregarDadosIniciais() // Os dados atuais: o ficheiro recente, ou o do ano se faltar
         .then(({ texto: data, recente }) => {
@@ -3989,7 +4583,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { id: 'grafico-diario-container',      target: 'evolucao' },
             { id: 'grafico-histograma-wrapper',    target: 'distribuicao' },
             { id: 'grafico-volatilidade-container',target: 'analise' },
-            { id: 'top-dias-section',              target: 'top-dias' }
+            { id: 'top-dias-section',              target: 'top-dias' },
+            { id: 'longo-prazo-section',           target: 'longo-prazo' }
         ];
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
