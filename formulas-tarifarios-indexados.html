@@ -430,12 +430,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "G9 Energia",
                 url: "https://g9.pt/energia/",
                 notaLimitacao: null,
-                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR + TSE`,
+                expr: `PE<sub>(15m)</sub> = (OMIE<sub>(15m)</sub> + K) × (1 + Perdas<sub>(15m)</sub>) × Fadeq + ERS × (1 + Perdas<sub>(15m)</sub>) + TAR + TSE`,
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh). Se for negativo, conta como 0"],
-                    ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
-                    ["K2", () => `Custos de gestão geral do sistema (ERS), já com as perdas: K2 = ERC × (1 + Perdas). ${ERC_QH('G9_K2')}`],
-                    ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
+                    ["K", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
+                    ["Perdas", PERDAS_QH],
+                    ["Fadeq", () => `Fator de Adequação publicado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
+                    ["ERS", () => `Custos de regulação, que a G9 cobra numa linha à parte da fatura, com IVA a 23% em todo o consumo. `
+                        + `Corresponde aos Encargos de Regulação imputados ao Consumo (ERC) publicados pela REN, que variam a cada quarto de hora. `
+                        + `Os <a href="/precos-horarios">Preços Horários</a> e os simuladores usam o ERC de cada quarto de hora: o real, quando já foi publicado, e ${ERC_PREVISAO}. `
+                        + `Sem dados da REN, usa-se o valor médio já com as perdas: ${c('G9_K2', '€/kWh', 5)}.`],
                     ["TAR", TAR],
                     ["TSE", TSE],
                 ]

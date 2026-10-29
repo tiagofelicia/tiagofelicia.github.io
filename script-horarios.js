@@ -525,13 +525,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 ]
             },
             "G9 Smart Dynamic SPOT 8!": {
-                expr: `PE<sub>(15m)</sub> = OMIE<sub>(15m)</sub> × (1 + Perdas<sub>(15m)</sub>) × K1  + K2 + K3 + TAR + TSE`,
+                expr: `PE<sub>(15m)</sub> = (OMIE<sub>(15m)</sub> + K) × (1 + Perdas<sub>(15m)</sub>) × Fadeq + ERS × (1 + Perdas<sub>(15m)</sub>) + TAR + TSE`,
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh). Se for negativo, conta como 0"],
-                    ["K1", () => `Fator de Adequação apresentado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
+                    ["K", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["Perdas", "Perdas nas redes de transporte e distribuição (variável)"],
-                    ["K2", () => `Custos de gestão geral do sistema (ERS), já com as perdas. ${ercTexto('G9_K2', true)}`],
-                    ["K3", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
+                    ["Fadeq", () => `Fator de Adequação publicado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
+                    ["ERS", () => `Custos de regulação, que a G9 cobra numa linha à parte da fatura. ${ercTexto('G9_K2')}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
