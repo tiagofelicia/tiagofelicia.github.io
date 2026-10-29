@@ -482,23 +482,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formulas = {
             "Alfa Power Index BTN": {
-                expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k + TAR + TSE`,
+                expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
                     ["CGS", () => `Custos de gestão geral do sistema. ${ercTexto('Alfa_CGS')}`],
                     ["Perdas", "Perdas da rede fixadas pela ERSE (variável)"],
                     ["k", () => `Gastos operacionais Alfa Energia: ${c('Alfa_K', '€/kWh', 3)}`],
+                ],
+                legendaExtras: [
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
             "Coopérnico Único": {
-                expr: `P<sub>Energia</sub> = OMIE × (1 + FP) + k + CS × (1 + FP) + TAR + TSE`,
+                expr: `P<sub>Energia</sub> = OMIE × (1 + FP) + k`,
+                extras: [`CS × (1 + FP)`, `TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
                     ["FP", "Perfil de Perda (variável)"],
                     ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
-                    ["CS", () => `Custos de Sistema, com Fator de Perda aplicado. ${ercTexto('Coop_CS')}`],
+                ],
+                legendaExtras: [
+                    ["CS", () => `Custos de Sistema, que a Coopérnico cobra numa linha à parte da fatura, com o Fator de Perda aplicado. ${ercTexto('Coop_CS')}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
@@ -514,23 +520,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 ]
             },
             "EZU Tarifa Indexada": {
-                expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>) + TAR + TSE`,
+                expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>)`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
                     ["CGS", () => `Custos de gestão geral do sistema. ${ercTexto('EZU_CGS')}`],
                     ["Perda<sub>ERSE</sub>", "Perdas da rede fixadas pela ERSE (variável)"],
                     ["k", () => { const mwh = constantes['EZU_K'] !== undefined ? ` (${(constantes['EZU_K']*1000).toFixed(2).replace('.',',')} €/MWh)` : ''; return `Gastos operacionais EZU Energia: ${c('EZU_K')}${mwh}`; }],
+                ],
+                legendaExtras: [
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
             "G9 Smart Dynamic SPOT 8!": {
-                expr: `PE<sub>(15m)</sub> = (OMIE<sub>(15m)</sub> + K) × (1 + Perdas<sub>(15m)</sub>) × Fadeq + ERS × (1 + Perdas<sub>(15m)</sub>) + TAR + TSE`,
+                expr: `PE<sub>(15m)</sub> = (OMIE<sub>(15m)</sub> + K) × (1 + Perdas<sub>(15m)</sub>) × Fadeq`,
+                extras: [`ERS × (1 + Perdas<sub>(15m)</sub>)`, `TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh). Se for negativo, conta como 0"],
                     ["K", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["Perdas", "Perdas nas redes de transporte e distribuição (variável)"],
                     ["Fadeq", () => `Fator de Adequação publicado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
+                ],
+                legendaExtras: [
                     ["ERS", () => `Custos de regulação, que a G9 cobra numa linha à parte da fatura. ${ercTexto('G9_K2')}`],
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
@@ -546,24 +558,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 ]
             },
             "Iberdrola - Simples Indexado Dinâmico": {
-                expr: `Preço Energia <sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TAR + TSE`,
+                expr: `Preço Energia <sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["POMIE<sub>P</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
                     ["Perdas", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
                     ["Q", () => `Custo de operação e gestão do sistema + componente de comercialização da Iberdrola: ${c('Iberdrola_Dinamico_Q', '€/kWh', 3)}`],
                     ["Banda mFRR", () => `Sobrecusto associado ao leilão da Banda de Reserva de Restabelecimento de Frequência com Ativação Manual: ${c('Iberdrola_mFRR', '€/kWh', 5)}`],
+                ],
+                legendaExtras: [
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): tarifa única, aplicável apenas à opção Simples."],
                     ["TSE", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
                 ]
             },
             "MeoEnergia Tarifa Dinâmica": {
-                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + CG) × (1 + FP) + K + TAR`,
+                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + CG) × (1 + FP) + K`,
+                extras: [`TAR`],
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
                     ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. ${ercTexto('Meo_CG')}`],
                     ["K", () => `Margem comercial da MeoEnergia: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
                     ["Piso", "Se (P<sub>OMIE</sub> + CG) × (1 + FP) + K der negativo num quarto de hora, conta como 0 (a TAR soma-se depois)"],
+                ],
+                legendaExtras: [
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
@@ -579,13 +597,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 ]
             },
             "Repsol Leve Sem Mais": {
-                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS) + TAR`,
+                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS)`,
+                extras: [`TAR`],
                 legenda: [
                     ["P<sub>OMIE 15min</sub>", "Preço marginal no sistema Português por quarto de hora, publicado pelo OMIE (€/MWh)"],
                     ["Perdas<sub>15min</sub>", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
                     ["FA", () => `Fator de adequação: ${c('Repsol_FA', '(adimensional)', 2)}`],
                     ["QTarifa", () => `Serviços Complementares, Encargos, Desvios e Margem Repsol: ${c('Repsol_Q_Tarifa', '€/kWh', 5)}`],
                     ["FinTS", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                ],
+                legendaExtras: [
                     ["TAR", "Tarifas de Acesso às Redes (ERSE): o valor quarto-horário varia consoante o ciclo (Diário ou Semanal) e a opção horária. A opção Simples tem uma tarifa única; a Bi-horária distingue Vazio e Fora de Vazio; e a Tri-horária divide-se em Vazio, Cheias e Ponta."],
                 ]
             },
@@ -597,16 +618,29 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const legendaHTML = def.legenda
+        const legendaDe = (itens) => (itens || [])
             .map(([sigla, desc]) => {
                 const texto = typeof desc === 'function' ? desc() : desc;
                 return `<span>${sigla}</span> — ${texto}`;
             })
             .join('<br>');
+        const legendaHTML = legendaDe(def.legenda);
+        const legendaExtrasHTML = legendaDe(def.legendaExtras);
+        // O preço do gráfico: a fórmula publicada mais o que o comercializador cobra noutras linhas da fatura
+        // (def.extras: TAR, TSE, custos de regulação), como no simulador, para comparar todos da mesma maneira
+        const extras = def.extras || [];
+        const compararHTML = extras.length
+            ? `<div class="formula-rotulo">Preço no gráfico <small>(e no simulador)</small></div>
+               <div class="formula-expr">Fórmula acima ${extras.map(x => `+ <span class="formula-extra" title="Cobrado noutra linha da fatura">${x}</span>`).join(' ')}</div>`
+            : `<div class="formula-sem-extras">Nada à parte: o gráfico usa esta fórmula tal como está.</div>`;
 
         container.innerHTML = `
+            <div class="formula-rotulo">Fórmula publicada pelo comercializador</div>
             <div class="formula-expr">${def.expr}</div>
+            ${compararHTML}
             ${legendaHTML ? `<div class="formula-legenda">${legendaHTML}</div>` : ''}
+            ${legendaExtrasHTML ? `<div class="formula-rotulo" style="margin-top: 10px;">Cobrados à parte na fatura <small>(no contorno tracejado)</small></div>
+            <div class="formula-legenda">${legendaExtrasHTML}</div>` : ''}
         `;
         details.style.display = 'block';
     }

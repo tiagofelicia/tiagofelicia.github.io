@@ -154,6 +154,12 @@
         .formula-legenda { font-size: 0.87em; color: #444; line-height: 2; }
         .formula-legenda span { display: inline-block; min-width: 90px; font-weight: bold; color: #222; }
         .formula-sem-dados { color: #888; font-style: italic; padding: 6px 0; font-size: 0.9em; }
+        /* A fórmula publicada pelo comercializador e, à parte, o que ele cobra noutras linhas da fatura (TAR, TSE,
+           custos de regulação), que o simulador soma para comparar: esses termos vão num contorno tracejado */
+        .formula-rotulo { font-size: 0.76em; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #64748b; margin: 2px 0 4px 0; }
+        .formula-rotulo small { font-weight: normal; text-transform: none; letter-spacing: 0; font-size: 1em; }
+        .formula-extra { display: inline-block; border: 1px dashed #94a3b8; border-radius: 4px; padding: 0 5px; line-height: 1.6; background: #fff; }
+        .formula-sem-extras { font-size: 0.85em; color: #64748b; margin: -4px 0 10px 0; }
 
         @media (max-width: 520px) {
             .formula-legenda span { display: block; min-width: unset; margin-bottom: 0; }
@@ -219,6 +225,8 @@
         [data-theme="dark"] .formula-meta a { color: #60a5fa; }
         [data-theme="dark"] .formula-nota { background: #3a3010; border-color: #665600; color: #fde68a; }
         [data-theme="dark"] .formula-sem-dados { color: #64748b; }
+        [data-theme="dark"] .formula-rotulo, [data-theme="dark"] .formula-sem-extras { color: #94a3b8; }
+        [data-theme="dark"] .formula-extra { border-color: #64748b; background: #0f172a; }
         [data-theme="dark"] .tipo-box { background: #1e293b; color: #cbd5e1; }
         [data-theme="dark"] .tipo-box p { color: #94a3b8; }
         [data-theme="dark"] .tag.qh { background: #1e3a5c; color: #93c5fd; }
@@ -367,12 +375,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Alfa Energia",
                 url: "https://www.alfaenergia.pt",
                 notaLimitacao: null,
-                expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k + TAR + TSE`,
+                expr: `Preço = (OMIE + CGS) × (1 + Perdas) + k`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
                     ["CGS", () => `Custos de gestão geral do sistema. ${ERC_QH('Alfa_CGS')}`],
                     ["Perdas", PERDAS_QH],
                     ["k", () => `Gastos operacionais Alfa Energia: ${c('Alfa_K', '€/kWh', 3)}`],
+                ],
+                legendaExtras: [
                     ["TAR", TAR],
                     ["TSE", TSE],
                 ]
@@ -383,12 +394,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Coopérnico",
                 url: "https://www.coopernico.org",
                 notaLimitacao: null,
-                expr: `P<sub>Energia</sub> = OMIE × (1 + FP) + k + CS × (1 + FP) + TAR + TSE`,
+                expr: `P<sub>Energia</sub> = OMIE × (1 + FP) + k`,
+                extras: [`CS × (1 + FP)`, `TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh)"],
                     ["FP", "Perfil de Perda (variável)"],
                     ["k", () => `Margem Coopérnico: ${c('Coop_K', '€/kWh', 3)}`],
-                    ["CS", () => `Custos de Sistema, com Fator de Perda aplicado. ${ERC_QH('Coop_CS')}`],
+                ],
+                legendaExtras: [
+                    ["CS", () => `Custos de Sistema, que a Coopérnico cobra numa linha à parte da fatura, com o Fator de Perda aplicado. ${ERC_QH('Coop_CS')}`],
                     ["TAR", TAR],
                     ["TSE", TSE],
                 ]
@@ -414,12 +428,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "EZU Energia",
                 url: "https://ezu.pt/tarifas",
                 notaLimitacao: null,
-                expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>) + TAR + TSE`,
+                expr: `P<sub>p</sub> = Σ (OMIE<sub>h</sub> + CGS<sub>h</sub> + k<sub>p</sub>) × (1 + Perda<sub>ERSE</sub>)`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de energia por hora no mercado OMIE (€/kWh)"],
                     ["CGS", () => `Custos de gestão geral do sistema. ${ERC_QH('EZU_CGS')}`],
                     ["Perda<sub>ERSE</sub>", PERDAS_QH],
                     ["k", () => { const mwh = constantes['EZU_K'] !== undefined ? ` (${(constantes['EZU_K']*1000).toFixed(2).replace('.',',')} €/MWh)` : ''; return `Gastos operacionais EZU Energia: ${c('EZU_K')}${mwh}`; }],
+                ],
+                legendaExtras: [
                     ["TAR", TAR],
                     ["TSE", TSE],
                 ]
@@ -430,12 +447,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "G9 Energia",
                 url: "https://g9.pt/energia/",
                 notaLimitacao: null,
-                expr: `PE<sub>(15m)</sub> = (OMIE<sub>(15m)</sub> + K) × (1 + Perdas<sub>(15m)</sub>) × Fadeq + ERS × (1 + Perdas<sub>(15m)</sub>) + TAR + TSE`,
+                expr: `PE<sub>(15m)</sub> = (OMIE<sub>(15m)</sub> + K) × (1 + Perdas<sub>(15m)</sub>) × Fadeq`,
+                extras: [`ERS × (1 + Perdas<sub>(15m)</sub>)`, `TAR`, `TSE`],
                 legenda: [
                     ["OMIE", "Preço de mercado grossista para cada quarto de hora (€/kWh). Se for negativo, conta como 0"],
                     ["K", () => `Custos fixos da operação retalhista - Margem comercial da G9: ${c('G9_K3')}`],
                     ["Perdas", PERDAS_QH],
                     ["Fadeq", () => `Fator de Adequação publicado pelo operador da rede de distribuição (E-REDES): ${c('G9_K1', '(adimensional)', 2)}`],
+                ],
+                legendaExtras: [
                     ["ERS", () => `Custos de regulação, que a G9 cobra numa linha à parte da fatura, com IVA a 23% em todo o consumo. `
                         + `Corresponde aos Encargos de Regulação imputados ao Consumo (ERC) publicados pela REN, que variam a cada quarto de hora. `
                         + `Os <a href="/precos-horarios">Preços Horários</a> e os simuladores usam o ERC de cada quarto de hora: o real, quando já foi publicado, e ${ERC_PREVISAO}. `
@@ -464,12 +484,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Iberdrola",
                 url: "https://www.iberdrola.pt/casa/energia/plano-indexado-simples-dinamico",
                 notaLimitacao: "Disponível apenas na opção tarifária Simples.",
-                expr: `Preço Energia<sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TAR + TSE`,
+                expr: `Preço Energia<sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["POMIE<sub>P</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
                     ["Perdas", PERDAS_QH],
                     ["Q", () => `Custo de operação e gestão do sistema + componente de comercialização da Iberdrola: ${c('Iberdrola_Dinamico_Q', '€/kWh', 3)}`],
                     ["Banda mFRR", () => `Sobrecusto associado ao leilão da Banda de Reserva de Restabelecimento de Frequência com Ativação Manual: ${c('Iberdrola_mFRR', '€/kWh', 5)}`],
+                ],
+                legendaExtras: [
                     ["TAR", TAR_S],
                     ["TSE", TSE],
                 ]
@@ -480,13 +503,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "MeoEnergia",
                 url: "https://www.meoenergia.pt/eletricidade/tarifa-dinamica",
                 notaLimitacao: null,
-                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + CG) × (1 + FP) + K + TAR`,
+                expr: `P<sub>ENERGIA</sub> = (P<sub>OMIE</sub> + CG) × (1 + FP) + K`,
+                extras: [`TAR`],
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da eletricidade no mercado ibérico em Portugal (€/kWh), em intervalos de 15 minutos"],
                     ["CG", () => `Custo de gestão: Engloba os custos de gestão do operacional do sistema, bem como os custos relativos aos desvios de programação do comercializador, apurados em períodos de 15 minutos. ${ERC_QH('Meo_CG')}`],
                     ["K", () => `Margem comercial da MeoEnergia: ${c('Meo_K')}`],
                     ["FP", "Fator de Perdas — ajustamento para perdas na rede de Baixa Tensão (variável, ERSE)"],
                     ["Piso", "Se (P<sub>OMIE</sub> + CG) × (1 + FP) + K der negativo num quarto de hora, conta como 0 (a TAR soma-se depois)"],
+                ],
+                legendaExtras: [
                     ["TAR", TAR],
                 ]
             },
@@ -512,13 +538,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Repsol",
                 url: "https://www.repsol.pt/particulares/casa/eletricidade-gas/planos-eletricidade-e-gas/plano-leve-sem-mais/",
                 notaLimitacao: null,
-                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS) + TAR`,
+                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS)`,
+                extras: [`TAR`],
                 legenda: [
                     ["P<sub>OMIE 15min</sub>", "Preço marginal no sistema Português por quarto de hora, publicado pelo OMIE (€/MWh)"],
                     ["Perdas<sub>15min</sub>", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
                     ["FA", () => `Fator de adequação: ${c('Repsol_FA', '(adimensional)', 2)}`],
                     ["QTarifa", () => `Serviços Complementares, Encargos, Desvios e Margem Repsol: ${c('Repsol_Q_Tarifa', '€/kWh', 5)}`],
                     ["FinTS", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                ],
+                legendaExtras: [
                     ["TAR", TAR],
                 ]
             },
@@ -529,13 +558,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Repsol",
                 url: "https://www.repsol.pt/formulario-online/inicio/?canal=2&producto=plano-leve-sem-mais-pro",
                 notaLimitacao: null,
-                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS) + TAR`,
+                expr: `Preço = Σ (P<sub>OMIE</sub> × (1 + Perdas) × FA + QTarifa + FinTS)`,
+                extras: [`TAR`],
                 legenda: [
                     ["P<sub>OMIE 15min</sub>", "Preço marginal no sistema Português por quarto de hora, publicado pelo OMIE (€/MWh)"],
                     ["Perdas<sub>15min</sub>", "Coeficientes de perdas por quarto de hora, conforme legislação em vigor (%)"],
                     ["FA", () => `Fator de adequação: ${c('Repsol_FA', '(adimensional)', 2)}`],
                     ["QTarifa", () => `Serviços Complementares, Encargos, Desvios e Margem Repsol (oferta PRO): ${c('Repsol_Q_Tarifa_Pro', '€/kWh', 5)}`],
                     ["FinTS", () => `Financiamento Tarifa Social de Eletricidade: ${c('Financiamento_TSE', '€/kWh', 7)}`],
+                ],
+                legendaExtras: [
                     ["TAR", TAR],
                 ]
             },
@@ -577,13 +609,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 url: "https://www.goldenergy.pt",
                 notaLimitacao: null,
                 expr: `CE = (P<sub>OMIE</sub> × (1 + Perdas) + QTarifa + CG) + TEPA<sub>i</sub>`,
+                extras: [`TSE`],
                 legenda: [
                     ["CE", "Custo da energia (€)"],
                     ["P<sub>OMIE</sub>", "Valor médio do período de faturação, do mercado diário publicado pelo Operador do Mercado Ibérico de Energia (€/kWh)"],
                     ["Perdas", "Coeficientes de perdas correspondentes ao consumo (%)"],
                     ["QTarifa", () => `Serviços complementares, encargos desvios, garantias de origem e riscos: ${c('GE_Q_Tarifa', '€/kWh', 5)}`],
                     ["CG", () => `Custo de gestão por cada kWh consumido: ${c('GE_CG', '€/kWh', 3)}`],
-                    ["TEPA<sub>i</sub>", "Custo de acesso às redes (Energia) regulado pela ERSE (€/kWh)"],
+                    ["TEPA<sub>i</sub>", "Custo de acesso às redes (Energia) regulado pela ERSE (€/kWh): as TAR, com o nome que a Goldenergy lhes dá"],
+                ],
+                legendaExtras: [
+                    ["TSE", TSE],
                 ]
             },
             {
@@ -592,12 +628,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Ibelectra",
                 url: "https://www.ibelectra.pt",
                 notaLimitacao: null,
-                expr: `Preço = (PM<sub>OMIE</sub> + CS) × (1 + Perd) + K + TAR + TSE`,
+                expr: `Preço = (PM<sub>OMIE</sub> + CS) × (1 + Perd) + K`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["PM<sub>OMIE</sub>", "Preço médio do mercado OMIE para o período de faturação (€/kWh)"],
                     ["CS", () => `Custos de Sistema (gestão, desvios): ${c('Ibelectra_CS', '€/kWh', 5)}`],
                     ["Perd", PERDAS_MED],
                     ["K", () => `Margem comercial Ibelectra: ${c('Ibelectra_K_a', '€/kWh', 4)}`],
+                ],
+                legendaExtras: [
                     ["TAR", TAR],
                     ["TSE", TSE],
                 ]
@@ -608,12 +647,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Ibelectra",
                 url: "https://www.ibelectra.pt",
                 notaLimitacao: null,
-                expr: `Preço = (PM<sub>OMIE</sub> + CS) × (1 + Perd) + K + TAR + TSE`,
+                expr: `Preço = (PM<sub>OMIE</sub> + CS) × (1 + Perd) + K`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["PM<sub>OMIE</sub>", "Preço médio do mercado OMIE para o período de faturação (€/kWh)"],
                     ["CS", () => `Custos de Sistema (gestão, desvios): ${c('Ibelectra_CS', '€/kWh', 5)}`],
                     ["Perd", PERDAS_MED],
                     ["K", () => `Margem comercial Ibelectra: ${c('Ibelectra_K', '€/kWh', 4)}`],
+                ],
+                legendaExtras: [
                     ["TAR", TAR],
                     ["TSE", TSE],
                 ]
@@ -624,12 +666,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 comercializador: "Iberdrola",
                 url: "https://www.iberdrola.pt/casa/energia/plano-indexado-simples",
                 notaLimitacao: "Disponível apenas na opção tarifária Simples.",
-                expr: `Preço Energia<sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR + TAR + TSE`,
+                expr: `Preço Energia<sub>IBERDROLA</sub> = POMIE<sub>P</sub> × (1 + Perdas) + Q + Banda mFRR`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["POMIE<sub>P</sub>", "Preço médio do mercado ibérico em Portugal para o período de faturação (€/kWh)"],
                     ["Perdas", PERDAS_MED],
                     ["Q", () => `Custo de operação e gestão do sistema + componente de comercialização da Iberdrola: ${c('Iberdrola_Media_Q', '€/kWh', 3)}`],
                     ["Banda mFRR", () => `Sobrecusto associado ao leilão da Banda de Reserva de Restabelecimento de Frequência com Ativação Manual: ${c('Iberdrola_mFRR', '€/kWh', 5)}`],
+                ],
+                legendaExtras: [
                     ["TAR", TAR_S],
                     ["TSE", TSE],
                 ]
@@ -641,11 +686,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 url: "https://www.luzigas.pt/luzifix-campanhas-novos-clientes/",
                 notaLimitacao: null,
                 expr: `PE = (P<sub>OMIE</sub> + K + CGS) × (1 + Perdas)`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["P<sub>OMIE</sub>", "Custo da energia horária no Mercado Diário OMIE — Portugal (€/kWh)"],
                     ["K", () => `Margem fixa LUZiGÁS: ${c('Luzigas_K', '€/kWh', 3)}`],
                     ["CGS", () => `Custos do Gestor do Sistema. ${ERC_MEDIA('Luzigas_CGS')}`],
                     ["Perdas", PERDAS_MED],
+                ],
+                legendaExtras: [
+                    ["TAR", TAR],
+                    ["TSE", TSE],
                 ]
             },
             {
@@ -655,6 +705,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 url: "https://www.luzboa.pt/tarifas/domestico/1",
                 notaLimitacao: null,
                 expr: `P<sub>p</sub> = (OMIE<sub>h</sub> + CGS<sub>h</sub>) × (1 + Perdas<sub>ERSE</sub>) × FA + K<sub>p</sub>`,
+                extras: [`TAR`, `TSE`],
                 legenda: [
                     ["P<sub>p</sub>", "Preço de energia ativa a pagar (€/kWh)"],
                     ["OMIE<sub>h</sub>", "Preço horário médio mensal, no período faturado, no mercado OMIE (€/kWh)"],
@@ -662,6 +713,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     ["Perdas<sub>ERSE</sub>", "Perdas da rede fixadas pela ERSE — Entidade Reguladora dos Serviços Energéticos (%)"],
                     ["FA", () => `Fator de adequação: ${c('Luzboa_FA', '(adimensional)', 2)}`],
                     ["K<sub>p</sub>", () => `Gastos operacionais da Luzboa: ${c('Luzboa_Kp', '€/kWh', 3)}`],
+                ],
+                legendaExtras: [
+                    ["TAR", TAR],
+                    ["TSE", TSE],
                 ]
             },
         ];
@@ -720,15 +775,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tarifarios.filter(t => t.tipo === tipo).forEach(t => {
                 const id = slug(t.nome);
-                const legendaHTML = t.legenda.map(([sigla, desc]) => {
+                const legendaDe = (itens) => (itens || []).map(([sigla, desc]) => {
                     const texto = typeof desc === 'function' ? desc() : desc;
                     return `<span>${sigla}</span> — ${texto}`;
                 }).join('<br>');
+                const legendaHTML = legendaDe(t.legenda);
+                const legendaExtrasHTML = legendaDe(t.legendaExtras);
+                // Preço para comparar: a fórmula publicada mais o que o comercializador cobra noutras linhas da
+                // fatura (t.extras), como o simulador faz para comparar todos da mesma maneira
+                const extras = t.extras || [];
+                const compararHTML = extras.length
+                    ? `<div class="formula-rotulo">Preço para comparar <small>(o que o simulador usa)</small></div>
+                       <div class="formula-expr">Fórmula acima ${extras.map(x => `+ <span class="formula-extra" title="Cobrado noutra linha da fatura">${x}</span>`).join(' ')}</div>`
+                    : `<div class="formula-sem-extras">Nada à parte: o simulador usa esta fórmula tal como está.</div>`;
 
                 const bodyHTML = (!t.expr)
                     ? `<div class="formula-sem-dados">Fórmula ainda não disponível.</div>`
-                    : `<div class="formula-expr">${t.expr}</div>
-                       ${legendaHTML ? `<div class="formula-legenda">${legendaHTML}</div>` : ''}`;
+                    : `<div class="formula-rotulo">Fórmula publicada pelo comercializador</div>
+                       <div class="formula-expr">${t.expr}</div>
+                       ${compararHTML}
+                       ${legendaHTML ? `<div class="formula-legenda">${legendaHTML}</div>` : ''}
+                       ${legendaExtrasHTML ? `<div class="formula-rotulo" style="margin-top: 10px;">Cobrados à parte na fatura <small>(no contorno tracejado)</small></div>
+                       <div class="formula-legenda">${legendaExtrasHTML}</div>` : ''}`;
 
                 html += `
                 <details class="tarifario-item ${tipo}" id="${id}" data-grupo="${grupoId}">
