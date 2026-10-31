@@ -210,6 +210,13 @@
         [data-theme="dark"] .rec-fonte-data { color: #93c5fd; }
         [data-theme="dark"] .rec-novo { color: #fbbf24; }
 
+        /* ===== O que se previa na véspera ===== */
+        #previsao-real-section { width: 95%; max-width: 1200px; margin: 10px auto 30px auto; }
+        #previsao-real-section h2 { text-align: center; font-size: 1.15em; color: #2c3e50; margin-bottom: 10px; }
+        .previsao-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; max-width: 900px; margin: 0 auto 12px auto; }
+        .previsao-graficos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+        [data-theme="dark"] #previsao-real-section h2 { color: #e2e8f0; }
+
         /* ===== Donut do mix diário ===== */
         #donut-section { width: 95%; max-width: 1200px; margin: 10px auto 20px auto; }
         #donut-section h2 { text-align: center; font-size: 1.15em; color: #2c3e50; margin-bottom: 10px; }
@@ -368,6 +375,17 @@
     <div class="grafico-wrapper">
         <div id="grafico-container"></div>
         <p class="export-credit" id="credito-grafico"></p>
+    </div>
+
+    <div id="previsao-real-section" style="display: none;">
+        <h2>O que se previa na véspera</h2>
+        <div class="section-sub" id="previsao-real-sub"></div>
+        <div class="previsao-kpis" id="previsao-real-kpis"></div>
+        <div class="previsao-graficos">
+            <div id="grafico-previsao-consumo"></div>
+            <div id="grafico-previsao-fontes"></div>
+        </div>
+        <p class="rec-fontes-nota">Previsão da véspera e valores reais publicados pela REN na plataforma ENTSO-E, hora a hora (desde 2026). Os valores reais podem diferir ligeiramente dos da REN usados no resto da página.</p>
     </div>
 
     <div id="balanco-section" style="display: none;">
@@ -760,6 +778,163 @@ document.addEventListener('DOMContentLoaded', function() {
             partes.push(s + '. Para a ver no gráfico, ative «Procura residual» na legenda.');
         }
         return partes.join(' ');
+    }
+
+    // --- Ficheiros semanais da ENTSO-E para Portugal (producao/producao-entsoe/pt/AAAA-Wss.json) ---
+    // Hora a hora, desde 2026, atualizados pelo dados-energia de 4 em 4 horas. Trazem a previsão da véspera
+    // (consumo, eólica e solar, que a REN publica na ENTSO-E) e os valores reais. A previsão do vento e do sol
+    // para o dia seguinte só chega ao fim da tarde.
+    const _semanasEntsoe = new Map();
+    const _fmtLisboa = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' });
+    function partesLisboa(unix) {
+        const p = {};
+        _fmtLisboa.formatToParts(new Date(unix * 1000)).forEach(x => { p[x.type] = x.value; });
+        return { iso: `${p.year}-${p.month}-${p.day}`, hora: parseInt(p.hour, 10) };
+    }
+    function semanaIso(iso) {
+        const d = new Date(iso + 'T12:00:00Z');
+        d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) + 3);   // a quinta-feira da mesma semana
+        const ano = d.getUTCFullYear();
+        const jan4 = new Date(Date.UTC(ano, 0, 4));
+        return [ano, 1 + Math.round(((d - jan4) / 86400000 - 3 + ((jan4.getUTCDay() + 6) % 7)) / 7)];
+    }
+    function carregarSemanaEntsoe(iso) {
+        const [ano, sem] = semanaIso(iso);
+        const chave = `${ano}-W${String(sem).padStart(2, '0')}`;
+        if (!_semanasEntsoe.has(chave)) {
+            _semanasEntsoe.set(chave, fetchDados(`producao/producao-entsoe/pt/${chave}.json`)
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null));
+        }
+        return _semanasEntsoe.get(chave);
+    }
+    // Soma de séries que podem faltar (null): só é null se faltarem todas
+    function somaSeries(...v) {
+        const ok = v.filter(x => x !== null && x !== undefined);
+        return ok.length ? ok.reduce((s, x) => s + x, 0) : null;
+    }
+    // Por hora do dia de Lisboa: previsão e real do consumo, da eólica e da solar
+    function horasEntsoeDoDia(semana, iso) {
+        if (!semana) return null;
+        const porInstante = new Map();
+        const hora = (t) => {
+            const p = partesLisboa(t);
+            if (p.iso !== iso) return null;
+            let x = porInstante.get(t);
+            if (!x) { x = { t, hora: p.hora }; porInstante.set(t, x); }
+            return x;
+        };
+        const val = (arr, i) => (arr && arr[i] !== undefined) ? arr[i] : null;
+        const fc = semana.forecast || {}, prev = fc.by_name || {};
+        (fc.unix_seconds || []).forEach((t, i) => {
+            const x = hora(t);
+            if (!x) return;
+            x.consumoPrev = val(prev['Load'], i);
+            x.solarPrev = val(prev['Solar'], i);
+            x.eolicaPrev = somaSeries(val(prev['Wind onshore'], i), val(prev['Wind offshore'], i));
+        });
+        const real = {};
+        (semana.production_types || []).forEach(p => { real[p.name] = p.data; });
+        (semana.unix_seconds || []).forEach((t, i) => {
+            const x = hora(t);
+            if (!x) return;
+            x.consumoReal = val(real['Load'], i);
+            x.solarReal = val(real['Solar'], i);
+            x.eolicaReal = somaSeries(val(real['Wind onshore'], i), val(real['Wind offshore'], i));
+        });
+        const horas = [...porInstante.values()].sort((a, b) => a.t - b.t);
+        return horas.length ? { horas, h: (semana.interval_minutes || 60) / 60 } : null;
+    }
+
+    // «O que se previa na véspera»: consumo, eólica e solar, previsto vs real. O erro médio por hora é a média
+    // de |previsto − real| a dividir pela média do real, nas horas com os dois valores.
+    function renderPrevisaoReal(dataTitulo, isProvisorio, horaLimite) {
+        const sec = document.getElementById('previsao-real-section');
+        if (!sec) return;
+        const iso = formatarDataParaInput(dataTitulo);
+        if (!iso || iso < '2026-01-01') { sec.style.display = 'none'; return; }   // a série começa em 2026
+        carregarSemanaEntsoe(iso).then(semana => {
+            if (_diaAnalise !== dataTitulo) return;   // mudou-se de dia entretanto
+            const d = horasEntsoeDoDia(semana, iso);
+            const ok = (v) => v !== null && v !== undefined;
+            const pares = (kp, kr) => d ? d.horas.filter(x => ok(x[kp]) && ok(x[kr])) : [];
+            const consumo = pares('consumoPrev', 'consumoReal');
+            // Eólica e solar: as horas com a eólica prevista e real. A solar vem vazia à noite (zero)
+            const fontes = d ? d.horas.filter(x => ok(x.eolicaPrev) && ok(x.eolicaReal))
+                .map(x => Object.assign({}, x, { solarP: x.solarPrev || 0, solarR: x.solarReal || 0 })) : [];
+            // A previsão da eólica tem de cobrir o dia (em alguns dias não chega a ser publicada); os valores reais
+            // do consumo, do vento e do sol chegam à ENTSO-E com atrasos diferentes e às vezes faltam
+            const temPrevVS = !!d && d.horas.filter(x => ok(x.eolicaPrev)).length >= d.horas.length - 2;
+            const comConsumo = consumo.length >= 3;
+            const comVentoSol = temPrevVS && fontes.length >= 3;
+            // A solar só conta com valores de dia nos dois lados (à noite vêm vazios)
+            const comSolar = comVentoSol && fontes.filter(x => ok(x.solarPrev)).length >= 3 && fontes.filter(x => ok(x.solarReal)).length >= 3;
+            if (!comConsumo && !comVentoSol) { sec.style.display = 'none'; return; }
+            const comReal = Math.max(consumo.length, fontes.length);
+            const gwh = (arr, k) => arr.reduce((s, x) => s + x[k], 0) * d.h / 1000;
+            const erroMedio = (arr, kp, kr) => {
+                const real = arr.reduce((s, x) => s + x[kr], 0);
+                return real > 0 ? arr.reduce((s, x) => s + Math.abs(x[kp] - x[kr]), 0) / real * 100 : null;
+            };
+            const f1 = (v) => v.toFixed(1).replace('.', ',');
+            const desvio = (prev, real) => real > 0 ? ` (${prev >= real ? '+' : '−'}${f1(Math.abs(prev / real - 1) * 100)}%)` : '';
+            const card = (rotulo, arr, kp, kr) => {
+                const prev = gwh(arr, kp), real = gwh(arr, kr), erro = erroMedio(arr, kp, kr);
+                const nota = arr.length < comReal ? ` (${arr.length} de ${comReal} horas)` : '';
+                return `<div class="prod-kpi-card"><div class="prod-kpi-label">${rotulo}${nota}</div>`
+                    + `<div class="prod-kpi-value">${f1(real)} GWh</div>`
+                    + `<div class="prod-kpi-sub">previsto ${f1(prev)} GWh${desvio(prev, real)}`
+                    + (erro !== null ? `<br>erro médio por hora: ${f1(erro)}%` : '') + `</div></div>`;
+            };
+            document.getElementById('previsao-real-kpis').innerHTML = (comConsumo ? card('🔌 Consumo', consumo, 'consumoPrev', 'consumoReal') : '')
+                + (comVentoSol ? card('💨 Eólica', fontes, 'eolicaPrev', 'eolicaReal') : '')
+                + (comSolar ? card('☀️ Solar', fontes, 'solarP', 'solarR') : '');
+            const ultimaHora = (consumo.length >= fontes.length ? consumo : fontes)[comReal - 1].hora;
+            document.getElementById('previsao-real-sub').textContent = dataTitulo
+                + (comReal < d.horas.length ? ` · ${comReal} horas com valor real (até às ${ultimaHora + 1}h)` : '')
+                + (comConsumo ? '' : (isProvisorio ? ' · o consumo real ainda não chegou à ENTSO-E' : ' · sem o consumo real na ENTSO-E'))
+                + (!temPrevVS ? ' · sem a previsão da véspera do vento e do sol (não publicada na ENTSO-E)'
+                    : (comVentoSol ? '' : ' · sem os valores reais do vento e do sol na ENTSO-E'));
+
+            const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+            const txtC = dk ? '#e2e8f0' : '#333', grade = dk ? '#334155' : '#e6e6e6';
+            // As cores do site para a eólica e a solar, mais escuras no tema claro para as linhas se verem no branco
+            const corConsumo = dk ? '#e2e8f0' : '#000000', corEolica = dk ? '#86C564' : '#4E8A2E', corSolar = dk ? '#FFC000' : '#B8860B';
+            const horas = d.horas;
+            const serie = (k) => horas.map(x => ok(x[k]) ? Math.round(x[k]) : null);
+            // A solar vazia à noite desenha-se a zero nas horas em que a eólica existe
+            const solar = (kSol, kEol) => horas.map(x => ok(x[kEol]) ? Math.round(x[kSol] || 0) : null);
+            // Dois gráficos: o consumo anda nos 5–8 GW e a eólica e a solar abaixo, cada um com a sua escala
+            const grafico = (id, titulo, series) => {
+                const el = document.getElementById(id);
+                series = series.filter(x => x.data.some(v => v !== null));   // sem séries vazias (ou de uma hora só)
+                el.style.display = series.length ? '' : 'none';
+                if (!series.length) return;
+                Highcharts.chart(id, {
+                    chart: { type: 'line', height: 320, backgroundColor: 'transparent', style: { color: txtC } },
+                    title: { text: titulo, style: { color: txtC, fontSize: '0.95em', fontWeight: '600' } },
+                    credits: { enabled: false },
+                    xAxis: { categories: horas.map(x => x.hora + 'h'), labels: { style: { color: txtC } }, lineColor: grade, tickColor: grade },
+                    yAxis: { title: { text: 'MW', style: { color: txtC } }, labels: { style: { color: txtC } }, gridLineColor: grade, min: 0 },
+                    tooltip: { shared: true, valueSuffix: ' MW' },
+                    plotOptions: { line: { marker: { enabled: false }, lineWidth: 2 } },
+                    legend: { itemStyle: { color: txtC } },
+                    exporting: { enabled: true, filename: 'previsto-vs-real-' + id.replace('grafico-previsao-', '') + '-' + iso },
+                    series
+                });
+            };
+            grafico('grafico-previsao-consumo', 'Consumo', [
+                { name: 'Real', data: comConsumo ? serie('consumoReal') : [], color: corConsumo },
+                { name: 'Previsão', data: serie('consumoPrev'), color: corConsumo, dashStyle: 'ShortDash' }
+            ]);
+            grafico('grafico-previsao-fontes', 'Eólica e solar', [
+                { name: 'Eólica (real)', data: comVentoSol ? serie('eolicaReal') : [], color: corEolica },
+                { name: 'Eólica (previsão)', data: temPrevVS ? serie('eolicaPrev') : [], color: corEolica, dashStyle: 'ShortDash' },
+                { name: 'Solar (real)', data: comSolar ? solar('solarReal', 'eolicaReal') : [], color: corSolar },
+                { name: 'Solar (previsão)', data: temPrevVS ? solar('solarPrev', 'eolicaPrev') : [], color: corSolar, dashStyle: 'ShortDash' }
+            ]);
+            sec.style.display = 'block';
+        });
     }
 
     // --- O mesmo dia do calendário nos outros anos, e os recordes diários por fonte ---
@@ -1559,6 +1734,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setCreditoFonte(dataTitulo, isProvisorio);
         // O mesmo dia nos outros anos e os recordes por fonte precisam dos agregados diários, pedidos à parte
         _diaAnalise = dataTitulo;
+        renderPrevisaoReal(dataTitulo, isProvisorio, horaLimite);
         carregarAgregadosDiarios().then(linhas => {
             if (_diaAnalise !== dataTitulo) return;   // mudou-se de dia entretanto
             renderHistoriaDia(a, dataTitulo, isProvisorio, linhas);

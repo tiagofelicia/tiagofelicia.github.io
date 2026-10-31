@@ -293,6 +293,12 @@
         .top-horas-caras .preco { color: #dc2626; }
         .top-horas-list .rank-badge { font-size: 0.75em; color: var(--txt-cinza); margin-right: 8px; }
         [data-theme="dark"] #top-horas-section h2 { color: #e2e8f0; }
+        /* Previsão da véspera: consumo, vento e sol */
+        #previsao-section { width: 95%; max-width: 1200px; margin: 10px auto 30px auto; }
+        #previsao-section h2 { text-align: center; font-size: 1.05em; color: #2c3e50; margin: 0 0 10px 0; font-weight: 600; }
+        .previsao-resumo { text-align: center; font-size: 0.92em; line-height: 1.5; max-width: 900px; margin: 0 auto 10px auto; }
+        .previsao-nota { text-align: center; font-size: 0.75em; color: var(--txt-cinza); margin: 6px 0 0 0; }
+        [data-theme="dark"] #previsao-section h2 { color: #e2e8f0; }
         [data-theme="dark"] .top-horas-card { background: #1e293b; border-color: #475569; }
         [data-theme="dark"] .top-horas-list li { border-bottom-color: #334155; }
         [data-theme="dark"] .top-horas-baratas .top-horas-card-title { color: #4ade80; }
@@ -602,6 +608,13 @@
             <div id="grafico-container"></div>
         </div>
     </div>
+
+    <section id="previsao-section" hidden>
+        <h2>🌬️ Previsão da véspera: consumo, vento e sol</h2>
+        <p class="previsao-resumo" id="previsao-resumo"></p>
+        <div id="grafico-previsao"></div>
+        <p class="previsao-nota">Previsões da véspera publicadas pela REN na plataforma ENTSO-E. O que fica por cobrir tem de vir das barragens, do gás, da bombagem, da biomassa ou de Espanha.</p>
+    </section>
 
     <article class="content-support">
         <h2>Compreender os Preços do Mercado Diário (Day-Ahead) OMIE</h2>
@@ -1104,6 +1117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderYoyDeltas('yoy-pt-deltas', mediaPTAtual, mediaPTOntem, mediaPTSemAnt, notaRefPT);
         renderYoyDeltas('yoy-es-deltas', mediaESAtual, mediaESOntem, mediaESSemAnt);
         renderHistoriaPreco(dataSelecionada, mediaPTAtual, emCET);
+        renderPrevisao(dataSelecionada);
 
         // === Top 3 horas mais baratas / caras (usa a vista ativa) ===
         const topHoras = calcularTopHoras(dadosViewReais, 3);
@@ -1547,6 +1561,147 @@ document.addEventListener('DOMContentLoaded', function() {
             el.hidden = false;
         });
     }
+
+    // --- Ficheiros semanais da ENTSO-E para Portugal (producao/producao-entsoe/pt/AAAA-Wss.json) ---
+    // Hora a hora, desde 2026, atualizados pelo dados-energia de 4 em 4 horas. Trazem a previsão da véspera
+    // (consumo, eólica e solar, que a REN publica na ENTSO-E) e os valores reais. A previsão do vento e do sol
+    // para o dia seguinte só chega ao fim da tarde.
+    const _semanasEntsoe = new Map();
+    const _fmtLisboa = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' });
+    function partesLisboa(unix) {
+        const p = {};
+        _fmtLisboa.formatToParts(new Date(unix * 1000)).forEach(x => { p[x.type] = x.value; });
+        return { iso: `${p.year}-${p.month}-${p.day}`, hora: parseInt(p.hour, 10) };
+    }
+    function semanaIso(iso) {
+        const d = new Date(iso + 'T12:00:00Z');
+        d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) + 3);   // a quinta-feira da mesma semana
+        const ano = d.getUTCFullYear();
+        const jan4 = new Date(Date.UTC(ano, 0, 4));
+        return [ano, 1 + Math.round(((d - jan4) / 86400000 - 3 + ((jan4.getUTCDay() + 6) % 7)) / 7)];
+    }
+    function carregarSemanaEntsoe(iso) {
+        const [ano, sem] = semanaIso(iso);
+        const chave = `${ano}-W${String(sem).padStart(2, '0')}`;
+        if (!_semanasEntsoe.has(chave)) {
+            _semanasEntsoe.set(chave, fetchDados(`producao/producao-entsoe/pt/${chave}.json`)
+                .then(r => r.ok ? r.json() : null)
+                .catch(() => null));
+        }
+        return _semanasEntsoe.get(chave);
+    }
+    // Soma de séries que podem faltar (null): só é null se faltarem todas
+    function somaSeries(...v) {
+        const ok = v.filter(x => x !== null && x !== undefined);
+        return ok.length ? ok.reduce((s, x) => s + x, 0) : null;
+    }
+    // Por hora do dia de Lisboa: previsão e real do consumo, da eólica e da solar
+    function horasEntsoeDoDia(semana, iso) {
+        if (!semana) return null;
+        const porInstante = new Map();
+        const hora = (t) => {
+            const p = partesLisboa(t);
+            if (p.iso !== iso) return null;
+            let x = porInstante.get(t);
+            if (!x) { x = { t, hora: p.hora }; porInstante.set(t, x); }
+            return x;
+        };
+        const val = (arr, i) => (arr && arr[i] !== undefined) ? arr[i] : null;
+        const fc = semana.forecast || {}, prev = fc.by_name || {};
+        (fc.unix_seconds || []).forEach((t, i) => {
+            const x = hora(t);
+            if (!x) return;
+            x.consumoPrev = val(prev['Load'], i);
+            x.solarPrev = val(prev['Solar'], i);
+            x.eolicaPrev = somaSeries(val(prev['Wind onshore'], i), val(prev['Wind offshore'], i));
+        });
+        const real = {};
+        (semana.production_types || []).forEach(p => { real[p.name] = p.data; });
+        (semana.unix_seconds || []).forEach((t, i) => {
+            const x = hora(t);
+            if (!x) return;
+            x.consumoReal = val(real['Load'], i);
+            x.solarReal = val(real['Solar'], i);
+            x.eolicaReal = somaSeries(val(real['Wind onshore'], i), val(real['Wind offshore'], i));
+        });
+        const horas = [...porInstante.values()].sort((a, b) => a.t - b.t);
+        return horas.length ? { horas, h: (semana.interval_minutes || 60) / 60 } : null;
+    }
+
+    // Secção «Previsão da véspera» do dia escolhido (amanhã incluído, quando já há previsão)
+    let _isoPrevisao = null, _ultimaPrevisao = null;
+    function renderPrevisao(iso) {
+        const sec = document.getElementById('previsao-section');
+        if (!sec) return;
+        _isoPrevisao = iso;
+        if (iso < '2026-01-01') { sec.hidden = true; _ultimaPrevisao = null; return; }   // a série começa em 2026
+        carregarSemanaEntsoe(iso).then(semana => {
+            if (_isoPrevisao !== iso) return;   // mudou-se de dia entretanto
+            const d = horasEntsoeDoDia(semana, iso);
+            const comConsumo = d ? d.horas.filter(x => x.consumoPrev !== null && x.consumoPrev !== undefined) : [];
+            if (comConsumo.length < 20) { sec.hidden = true; _ultimaPrevisao = null; return; }
+            _ultimaPrevisao = { iso, horas: comConsumo, h: d.h };
+            desenharPrevisao();
+        });
+    }
+    function desenharPrevisao() {
+        const sec = document.getElementById('previsao-section');
+        if (!sec || !_ultimaPrevisao) return;
+        const { iso, horas, h } = _ultimaPrevisao;
+        const gwh = (k) => horas.reduce((s, x) => s + (x[k] || 0), 0) * h / 1000;
+        const f1 = (v) => v.toFixed(1).replace('.', ',');
+        // Vento e sol só contam se a previsão da eólica existe para quase todas as horas (sai ao fim da tarde da
+        // véspera; em alguns dias a ENTSO-E não a chega a ter). A solar vem vazia à noite, o que quer dizer zero.
+        const semEolica = (x) => x.eolicaPrev === null || x.eolicaPrev === undefined;
+        const horasVento = horas.filter(x => !semEolica(x));
+        const temVentoSol = horasVento.length >= horas.length - 2;
+        const hoje = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Lisbon' });
+        const futuro = iso >= hoje;
+        const consumo = gwh('consumoPrev');
+        let txt = `Para <strong>${iso.split('-').reverse().join('/')}</strong>, a previsão da véspera ${futuro ? 'aponta' : 'apontava'} para um consumo de <strong>${f1(consumo)} GWh</strong>`;
+        if (temVentoSol) {
+            const eol = gwh('eolicaPrev'), sol = gwh('solarPrev');
+            // A percentagem conta só as horas com previsão da eólica (pode faltar uma ou duas)
+            const consumoVento = horasVento.reduce((s, x) => s + x.consumoPrev, 0) * h / 1000;
+            const pct = consumoVento > 0 ? Math.round((eol + sol) / consumoVento * 100) : 0;
+            const nota = horasVento.length < horas.length ? ` nas ${horasVento.length} horas com previsão do vento` : '';
+            txt += `, com o vento e o sol a cobrir <strong>${pct}%</strong>${nota} (eólica ${f1(eol)} GWh, solar ${f1(sol)} GWh). O resto ${futuro ? 'terá' : 'teria'} de vir das barragens, do gás, da bombagem, da biomassa ou de Espanha.`;
+        } else if (futuro) {
+            txt += '. A previsão do vento e do sol para este dia ainda não foi publicada: costuma chegar ao fim da tarde da véspera.';
+        } else {
+            txt += '. A previsão da véspera do vento e do sol não chegou a ser publicada na ENTSO-E para este dia.';
+        }
+        if (!futuro) txt += ` <a href="/balanco-omie?data=${iso}">O que aconteceu, no Balanço do dia →</a>`;
+        document.getElementById('previsao-resumo').innerHTML = txt;
+
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        const txtC = dk ? '#e2e8f0' : '#333', grade = dk ? '#334155' : '#e6e6e6';
+        const serie = (k) => horas.map(x => (x[k] === null || x[k] === undefined) ? null : Math.round(x[k]));
+        const porCobrir = horas.map(x => (!temVentoSol || semEolica(x)) ? null
+            : Math.max(0, Math.round(x.consumoPrev - x.eolicaPrev - (x.solarPrev || 0))));
+        const solarPrev = horas.map(x => semEolica(x) ? null : Math.round(x.solarPrev || 0));
+        Highcharts.chart('grafico-previsao', {
+            chart: { type: 'area', height: 340, backgroundColor: 'transparent', style: { color: txtC } },
+            title: { text: null },
+            credits: { enabled: false },
+            xAxis: { categories: horas.map(x => x.hora + 'h'), labels: { style: { color: txtC } }, lineColor: grade, tickColor: grade },
+            yAxis: { title: { text: 'MW', style: { color: txtC } }, labels: { style: { color: txtC } }, gridLineColor: grade, min: 0 },
+            tooltip: { shared: true, valueSuffix: ' MW' },
+            plotOptions: { area: { stacking: 'normal', lineWidth: 1, marker: { enabled: false } }, line: { marker: { enabled: false } } },
+            legend: { itemStyle: { color: txtC } },
+            exporting: { enabled: true, filename: 'previsao-vespera-' + iso },
+            // Empilhadas de cima para baixo: o que fica por cobrir, a solar e a eólica
+            series: (temVentoSol ? [
+                { name: 'Por cobrir', data: porCobrir, color: dk ? '#64748b' : '#cbd5e1' },
+                { name: 'Solar (previsão)', data: solarPrev, color: '#FFC000' },
+                { name: 'Eólica (previsão)', data: serie('eolicaPrev'), color: '#70AD47' }
+            ] : []).concat([
+                { name: 'Consumo (previsão)', type: 'line', data: serie('consumoPrev'), color: dk ? '#e2e8f0' : '#000000', lineWidth: 2 }
+            ])
+        });
+        sec.hidden = false;
+    }
+    document.addEventListener('themeChanged', desenharPrevisao);
 
     // --- HELPERS: YoY deltas e Top horas ---
     function getDataNDiasAntesCSV(dataStrYYYYMMDD, n) {
