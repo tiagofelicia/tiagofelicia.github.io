@@ -39,7 +39,7 @@ RULES = [
     ({"omie.html", "omip.html", "balanco-omie.html", "balanco-historico.html",
       "europe-balance.html", "mibgas.html", "mibgas-futuros.html",
       "precos-horarios.html", "formulas-tarifarios-indexados.html", "erc.html",
-      "servicos-sistema.html", "quotas-agentes.html"}, "daily", "0.8"),
+      "servicos-sistema.html", "quotas-agentes.html", "albufeiras.html"}, "daily", "0.8"),
     # Regulação eletricidade/gás
     ({"periodos-horarios.html", "tarifas-acesso-redes.html", "tarifa-social.html",
       "tarifa-regulada-eletricidade.html", "perfil-perdas.html",
