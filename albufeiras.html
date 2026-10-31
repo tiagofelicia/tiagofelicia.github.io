@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Albufeiras hoje: quanta água há nas barragens portuguesas | Tiago Felícia</title>
+    <meta name="description" content="Quanta água há nas 40 albufeiras das centrais hidroelétricas portuguesas, dia a dia: volume e percentagem de cada barragem e de cada bacia, comparação com o ano passado e com a média desde 2011, e a energia guardada. Dados do SNIRH (Agência Portuguesa do Ambiente) e da ENTSO-E." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/albufeiras" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/albufeiras" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/albufeiras" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Albufeiras hoje — a água guardada nas barragens" />
+    <meta property="og:description" content="O volume e a percentagem de cada uma das 40 albufeiras das centrais hidroelétricas portuguesas, dia a dia, comparados com o ano passado e com a média desde 2011." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/albufeiras" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Albufeiras — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Água guardada nas albufeiras das centrais hidroelétricas de Portugal",
+      "description": "Por dia, desde 2001: o volume de água armazenado em cada uma das 40 albufeiras das centrais hidroelétricas portuguesas, a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), sem os valores impossíveis; a capacidade de cada albufeira; e, por semana desde 2015, a energia guardada nas albufeiras portuguesas, publicada na plataforma de transparência da ENTSO-E.",
+      "url": "https://www.tiagofelicia.pt/albufeiras",
+      "inLanguage": "pt-PT",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "spatialCoverage": { "@type": "Place", "name": "Portugal" },
+      "temporalCoverage": "2001-01-01/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Volume armazenado em cada albufeira", "unitText": "hm3" },
+        { "@type": "PropertyValue", "name": "Percentagem da capacidade", "unitText": "%" },
+        { "@type": "PropertyValue", "name": "Energia guardada nas albufeiras", "unitText": "GWh" }
+      ],
+      "isBasedOn": [
+        {
+          "@type": "CreativeWork",
+          "name": "SNIRH — Sistema Nacional de Informação de Recursos Hídricos: dados de base da rede hidrométrica",
+          "url": "https://snirh.apambiente.pt",
+          "creator": { "@type": "Organization", "name": "Agência Portuguesa do Ambiente", "url": "https://apambiente.pt" }
+        },
+        {
+          "@type": "CreativeWork",
+          "name": "ENTSO-E Transparency Platform — Aggregated Filling Rate of Water Reservoirs and Hydro Storage Plants",
+          "url": "https://transparency.entsoe.eu",
+          "creator": { "@type": "Organization", "name": "ENTSO-E", "url": "https://www.entsoe.eu/" }
+        }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Albufeiras", "item": "https://www.tiagofelicia.pt/albufeiras" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "De onde vêm estes dados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O volume de cada albufeira vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia. É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte. A energia guardada vem da plataforma de transparência da ENTSO-E, onde é publicada todas as semanas."
+        }
+      },{
+        "@type": "Question",
+        "name": "Que albufeiras entram?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "As 40 albufeiras das centrais hidroelétricas com dados diários no SNIRH, incluindo as que não entram no boletim mensal de armazenamento da APA: o Baixo Sabor, a Foz Tua, as três do Tâmega (Alto Tâmega, Daivões e Gouvães), a cadeia do Douro, o Ribeiradio, o Alto Ceira, Belver e Fratel. Também entram o Alqueva e o Pedrógão. Ficam de fora as albufeiras só de rega ou de abastecimento."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que quer dizer a percentagem?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "É o volume guardado a dividir pela capacidade total da albufeira indicada pelo SNIRH, que inclui o volume morto, a água abaixo das tomadas que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil. Nas albufeiras sem capacidade no SNIRH (as mais recentes, como o Baixo Sabor e as do Tâmega) e nas que andaram o último ano acima dela, como Belver, os 100% são o máximo registado."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que os números são diferentes dos do boletim da APA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O boletim mensal de armazenamento da APA junta 58 albufeiras, incluindo as de rega e de abastecimento, e mostra o último dia de cada mês. Aqui entram as albufeiras das centrais hidroelétricas, dia a dia. Nas albufeiras que estão nos dois, o volume é o mesmo."
+        }
+      },{
+        "@type": "Question",
+        "name": "A água guardada é o mesmo que energia guardada?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Não. A mesma água produz mais eletricidade numa barragem alta, ou com várias centrais a jusante, do que numa barragem baixa. Somando o volume das albufeiras hidroelétricas no fim de cada mês desde 2015, cada hm³ correspondeu a entre 0,13 e 0,30 GWh da energia guardada publicada na ENTSO-E. Por isso esta página mostra as duas coisas: a água em cada albufeira e a energia guardada no conjunto."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como se compara com os outros anos?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a soma dos volumes a dividir pela soma das capacidades das albufeiras com valor nesse dia."
+        }
+      },{
+        "@type": "Question",
+        "name": "Os dados do SNIRH têm erros?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis, acima de 125% da capacidade ou muito longe dos dias à volta, são retirados (cerca de 0,2% do total). Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador, .metodo-box { box-sizing: border-box; }
+        .cta-simulador, .metodo-box { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #666; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 0 0 14px 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e, abaixo de 768px,
+           position: sticky !important); um <nav> dentro do <main> apanha-as — por isso são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        #alb-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 12px auto; }
+        @media (max-width: 1000px) { #alb-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #alb-kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.25em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .kpi-sub { font-size: 0.76em; color: #5c636a; margin-top: 5px; }
+        .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; }
+        .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0 0 4px 0; }
+        .kpi-cabecalho p { font-size: 0.85em; color: #6c757d; margin: 0; }
+        #resumo-texto { width: 95%; max-width: 1200px; margin: 0 auto 10px auto; font-size: 0.9em; color: #444; line-height: 1.6; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #666; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 440px; }
+        .resumo-bloco { width: 100%; margin: 12px 0 0; font-size: 0.9em; color: #444; line-height: 1.6; }
+        .nota-bloco { font-size: 0.8em; color: #666; margin: 6px 0 0; }
+
+        .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
+        .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        #sel-albufeira { font-size: 0.88em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #334155; max-width: 100%; }
+
+        .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
+        .tabela-alb { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-alb th, .tabela-alb td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-alb th[scope="col"] { background: #f1f3f5; font-weight: 600; }
+        .tabela-alb td.esq, .tabela-alb th.esq { text-align: left; }
+        .tabela-alb tbody tr[data-sel] { cursor: pointer; }
+        .tabela-alb tbody tr[data-sel]:hover td, .tabela-alb tbody tr[data-sel]:focus td { background: #eef6ff; outline: none; }
+        .tabela-alb tr.bacia td { background: #f1f5f9; font-weight: 600; }
+        .tabela-alb tr.total td { background: #e2e8f0; font-weight: 700; }
+        .tabela-alb tr.membro td.esq { padding-left: 22px; }
+        .tabela-alb .mini { display: block; font-size: 0.78em; color: #64748b; font-weight: normal; }
+        .tabela-alb .velho { font-size: 0.78em; color: #b45309; margin-left: 4px; }
+        .tabela-alb .sobe { color: #15803d; }
+        .tabela-alb .desce { color: #b91c1c; }
+        .barra-cel { min-width: 150px; }
+        .barra { display: inline-block; width: 80px; height: 10px; background: #dbeafe; border-radius: 3px; vertical-align: middle; margin-right: 8px; overflow: hidden; }
+        .barra > span { display: block; height: 100%; background: #2563eb; border-radius: 3px 0 0 3px; }
+
+        .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 380px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.8em; }
+            .tabela-alb th, .tabela-alb td { padding: 5px 7px; }
+            .barra { width: 50px; }
+            .barra-cel { min-width: 110px; }
+        }
+        /* No telemóvel: sem a barra nem a coluna da capacidade, e os nomes partem-se */
+        @media (max-width: 520px) {
+            .tabela-alb .col-ref, .barra { display: none; }
+            .barra-cel { min-width: 0; }
+            .tabela-alb td.esq { white-space: normal; min-width: 100px; }
+            .tabela-alb th, .tabela-alb td { padding: 5px 5px; }
+        }
+
+        /* --- Dark mode --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-cabecalho h2,
+        [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub,
+        [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
+        [data-theme="dark"] .nota-bloco { color: #94a3b8; }
+        [data-theme="dark"] .resumo-bloco, [data-theme="dark"] #resumo-texto, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] #sel-albufeira { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-alb { background: #1e293b; }
+        [data-theme="dark"] .tabela-alb th, [data-theme="dark"] .tabela-alb td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-alb th[scope="col"] { background: #0f172a; }
+        [data-theme="dark"] .tabela-alb tr.bacia td { background: #16202e; }
+        [data-theme="dark"] .tabela-alb tr.total td { background: #0f172a; }
+        [data-theme="dark"] .tabela-alb tbody tr[data-sel]:hover td, [data-theme="dark"] .tabela-alb tbody tr[data-sel]:focus td { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-alb .mini { color: #94a3b8; }
+        [data-theme="dark"] .tabela-alb .velho { color: #fbbf24; }
+        [data-theme="dark"] .tabela-alb .sobe { color: #4ade80; }
+        [data-theme="dark"] .tabela-alb .desce { color: #f87171; }
+        [data-theme="dark"] .barra { background: #1e3a5f; }
+        [data-theme="dark"] .barra > span { background: #60a5fa; }
+
+        @page { size: A4 portrait; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav,
+            .bloco-controls, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li aria-current="page">Albufeiras</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <p class="badge-global">Dados diários desde <strong>01/01/2001</strong> · Último dia: <strong id="badge-ultima">--/--/----</strong></p>
+        <h1>Albufeiras: quanta água há nas barragens</h1>
+        <p>As 40 albufeiras das centrais hidroelétricas portuguesas, dia a dia, a partir dos dados do SNIRH (Agência Portuguesa do Ambiente)</p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-kpis" class="mini-nav-chip">📋 Resumo</a>
+        <a href="#bloco-evol" class="mini-nav-chip">📈 Ao longo do ano</a>
+        <a href="#bloco-tabela" class="mini-nav-chip">🏞️ Albufeiras</a>
+        <a href="#bloco-bacias" class="mini-nav-chip">🗺️ Por bacia</a>
+        <a href="#bloco-energia" class="mini-nav-chip">⚡ Energia guardada</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados…</div>
+
+    <div id="conteudo" hidden>
+        <section id="bloco-kpis">
+            <div class="kpi-cabecalho">
+                <h2>📋 Resumo</h2>
+                <p id="kpi-sub"></p>
+            </div>
+            <div id="alb-kpis"></div>
+            <p id="resumo-texto"></p>
+        </section>
+
+        <section id="bloco-evol" class="grafico-box">
+            <h2>📈 Ao longo do ano</h2>
+            <p class="grafico-intro">A percentagem de água guardada, dia a dia, comparada com o ano passado e com os anos completos desde 2011 (a média e a faixa entre o mínimo e o máximo de cada dia). Escolha uma bacia ou uma albufeira, ou clique numa linha da tabela.</p>
+            <div class="bloco-controls">
+                <span class="ctrl-label">Mostrar</span>
+                <select id="sel-albufeira" aria-label="Albufeira ou bacia"></select>
+                <span class="ctrl-label">Ano</span>
+                <div class="btn-toggle" id="ctrl-ano" role="group" aria-label="Ano">
+                    <button type="button" data-v="civil" class="active">Civil</button>
+                    <button type="button" data-v="hidro" title="De 1 de outubro a 30 de setembro">Hidrológico</button>
+                </div>
+            </div>
+            <div id="grafico-evol" class="grafico"></div>
+            <p class="resumo-bloco" id="evol-resumo"></p>
+        </section>
+
+        <section id="bloco-tabela" class="grafico-box">
+            <h2>🏞️ As 40 albufeiras</h2>
+            <p class="grafico-intro">O último valor de cada albufeira, a percentagem da capacidade, a variação numa semana e a percentagem no mesmo dia do ano passado. Clique numa linha para ver a evolução.</p>
+            <div class="bloco-controls">
+                <span class="ctrl-label">Ordenar</span>
+                <div class="btn-toggle" id="ctrl-ordem" role="group" aria-label="Ordenar">
+                    <button type="button" data-v="bacia" class="active">Por bacia</button>
+                    <button type="button" data-v="cheia">Mais cheias</button>
+                    <button type="button" data-v="vazia">Mais vazias</button>
+                </div>
+            </div>
+            <div class="tabela-box"><table class="tabela-alb" id="tabela-alb"></table></div>
+            <p class="nota-bloco">* Sem capacidade no SNIRH, ou o último ano acima dela: os 100% são o maior volume registado. A data a laranja indica que a albufeira ainda não tem o valor do último dia.</p>
+        </section>
+
+        <section id="bloco-bacias" class="grafico-box">
+            <h2>🗺️ Por bacia</h2>
+            <p class="grafico-intro">A percentagem de água guardada nas albufeiras hidroelétricas de cada bacia hidrográfica, comparada com o mesmo dia do ano passado e com a média desde 2011.</p>
+            <div id="grafico-bacias" class="grafico"></div>
+        </section>
+
+        <section id="bloco-energia" class="grafico-box">
+            <h2>⚡ Energia guardada</h2>
+            <p class="grafico-intro">A eletricidade que a água de todas as albufeiras e centrais de bombagem portuguesas pode produzir, semana a semana, como é publicada na plataforma de transparência da ENTSO-E. A mesma água vale mais numa barragem alta, ou com várias centrais a jusante, do que numa barragem baixa: por isso a energia e o volume não sobem nem descem sempre na mesma proporção.</p>
+            <div id="grafico-energia" class="grafico"></div>
+            <p class="resumo-bloco" id="energia-resumo"></p>
+        </section>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>Quanto produziram as barragens?</h2>
+        <p>A produção hídrica de cada dia e de cada período, ao lado das outras fontes e do preço do mercado.</p>
+        <div class="botoes">
+            <a href="balanco-omie" class="button-link">Balanço Energético Diário</a>
+            <a href="balanco-historico" class="button-link">Balanço Histórico (desde 2010)</a>
+        </div>
+    </div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>De onde vêm estes dados?</strong></summary>
+            <div class="faq-content">
+                <p>O volume de cada albufeira vem do <a href="https://snirh.apambiente.pt" target="_blank" rel="noopener">SNIRH</a>, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia. É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte.</p>
+                <p>A energia guardada vem da plataforma de transparência da <a href="https://transparency.entsoe.eu" target="_blank" rel="noopener">ENTSO-E</a>, onde é publicada todas as semanas.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Que albufeiras entram?</strong></summary>
+            <div class="faq-content">
+                <p>As <strong>40 albufeiras das centrais hidroelétricas</strong> com dados diários no SNIRH, incluindo as que não entram no boletim mensal de armazenamento da APA: o Baixo Sabor, a Foz Tua, as três do Tâmega (Alto Tâmega, Daivões e Gouvães), a cadeia do Douro, o Ribeiradio, o Alto Ceira, Belver e Fratel. Também entram o Alqueva e o Pedrógão.</p>
+                <p>Ficam de fora as albufeiras só de rega ou de abastecimento.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que quer dizer a percentagem?</strong></summary>
+            <div class="faq-content">
+                <p>É o volume guardado a dividir pela <strong>capacidade total</strong> da albufeira indicada pelo SNIRH, que inclui o volume morto — a água abaixo das tomadas, que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil.</p>
+                <p>Nas albufeiras sem capacidade no SNIRH (as mais recentes, como o Baixo Sabor e as do Tâmega) e nas que andaram o último ano acima dela, como Belver, os 100% são o <strong>máximo registado</strong> (marcado com *).</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que os números são diferentes dos do boletim da APA?</strong></summary>
+            <div class="faq-content">
+                <p>O boletim mensal de armazenamento da APA junta 58 albufeiras, incluindo as de rega e de abastecimento, e mostra o último dia de cada mês. Aqui entram as albufeiras das centrais hidroelétricas, dia a dia. Nas albufeiras que estão nos dois, o volume é o mesmo.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>A água guardada é o mesmo que energia guardada?</strong></summary>
+            <div class="faq-content">
+                <p>Não. A mesma água produz mais eletricidade numa barragem alta, ou com várias centrais a jusante, do que numa barragem baixa. Somando o volume das albufeiras hidroelétricas no fim de cada mês desde 2015, cada hm³ correspondeu a entre 0,13 e 0,30 GWh da energia guardada publicada na ENTSO-E.</p>
+                <p>Por isso esta página mostra as duas coisas: a água em cada albufeira e, no fim, a energia guardada no conjunto.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como se compara com os outros anos?</strong></summary>
+            <div class="faq-content">
+                <p>A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a <strong>soma dos volumes a dividir pela soma das capacidades</strong> das albufeiras com valor nesse dia.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Os dados do SNIRH têm erros?</strong></summary>
+            <div class="faq-content">
+                <p>Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis — acima de 125% da capacidade ou muito longe dos dias à volta — são retirados (cerca de 0,2% do total).</p>
+                <p>Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Posso usar estes dados?</strong></summary>
+            <div class="faq-content">
+                <p>Sim. As séries estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: o volume de cada albufeira por dia (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv">albufeiras_snirh_diario.csv</a>), a lista com as capacidades (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv">albufeiras_snirh.csv</a>) e a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv">albufeiras_semanal.csv</a>). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+Highcharts.setOptions({
+    lang: {
+        decimalPoint: ',', thousandsSep: ' ',
+        months: ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],
+        shortMonths: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],
+        weekdays: ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],
+        shortWeekdays: ['dom','seg','ter','qua','qui','sex','sáb']
+    },
+    exporting: {
+        // Exportação local (client-side): o fallback ao servidor da Highcharts seria
+        // bloqueado pela CSP (form-action 'self'). PDF fora do menu: o export local
+        // de PDF precisa de libs externas (jsPDF) que o script-src também bloqueia.
+        fallbackToExportServer: false,
+        buttons: { contextButton: { menuItems: [
+            'viewFullscreen', 'printChart', 'separator',
+            'downloadPNG', 'downloadSVG', 'separator',
+            'downloadCSV', 'downloadXLS'
+        ] } }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    // producao/albufeiras_snirh.csv: as 40 albufeiras (bacia, capacidade e o volume que conta como 100%);
+    // producao/albufeiras_snirh_diario.csv: o volume de cada uma (hm3), dia a dia, desde 2001 (SNIRH);
+    // producao/albufeiras_semanal.csv: a energia guardada em todas as albufeiras, por semana (ENTSO-E).
+    const URL_LISTA = 'producao/albufeiras_snirh.csv';
+    const URL_DIARIO = 'producao/albufeiras_snirh_diario.csv';
+    const URL_ENTSOE = 'producao/albufeiras_semanal.csv';
+    const ANO_COMP = 2011;      // comparação com os anos completos desde 2011 (o Alqueva encheu pela primeira vez em 2010)
+    const ANO_COMP_ENTSOE = 2015;
+    const ARRASTO = 31;         // nos gráficos, um valor conta até 31 dias para a frente (até 2017 há albufeiras com um valor por mês)
+    const ATUAL_MAX = 7;        // no resumo e na tabela, um valor com mais de 7 dias já não conta
+    const GRANDE = 100;         // hm3: as albufeiras «grandes» do resumo
+    const ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Guadiana'];
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const fmt0 = v => vazio(v) ? '--' : _nf0.format(v);
+    const fmt1 = v => vazio(v) ? '--' : _nf1.format(v);
+    const fmtPct = v => vazio(v) ? '--' : fmt1(v) + '%';
+    const sinal = v => v > 0.05 ? '+' : v < -0.05 ? '−' : '';
+    const fmtPp = v => vazio(v) ? '--' : sinal(v) + fmt1(Math.abs(v)) + ' p.p.';
+    const fmtHm3 = v => vazio(v) ? '--' : (Math.abs(v) >= 100 ? fmt0(v) : fmt1(v)) + ' hm³';
+    const fmtDHm3 = v => vazio(v) ? '--' : (v > 0.5 ? '+' : v < -0.5 ? '−' : '') + fmtHm3(Math.abs(v));
+    const fmtData = iso => iso ? iso.split('-').reverse().join('/') : '--/--/----';
+    const fmtDiaMes = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) : '--/--';
+    const classe = v => vazio(v) ? '' : v > 0.05 ? 'sobe' : v < -0.05 ? 'desce' : '';
+    const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6',
+                 atual: dk ? '#60a5fa' : '#2563eb', passado: dk ? '#94a3b8' : '#64748b',
+                 media: dk ? '#cbd5e1' : '#334155', faixa: dk ? 'rgba(148,163,184,0.22)' : 'rgba(100,116,139,0.16)' };
+    }
+    function base(c, nome) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: false },
+            exporting: { enabled: true, filename: nome },
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    function ativarToggle(id, v) {
+        document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+    }
+
+    // ==================================================================
+    // DADOS
+    // ==================================================================
+    const DIA_MS = 86400000;
+    const tsDia = iso => { const [a, m, d] = iso.split('-').map(Number); return Date.UTC(a, m - 1, d); };
+    let T0 = 0, N = 0, ULT = -1;     // dia 0 (UTC), número de dias e índice do último dia
+    const idxDe = iso => Math.round((tsDia(iso) - T0) / DIA_MS);
+    const isoDe = i => new Date(T0 + i * DIA_MS).toISOString().slice(0, 10);
+    // O mesmo dia, um ano antes (29/02 → 28/02)
+    function menosUmAno(i) {
+        const iso = isoDe(i);
+        const md = iso.slice(5) === '02-29' ? '02-28' : iso.slice(5);
+        return idxDe((+iso.slice(0, 4) - 1) + '-' + md);
+    }
+
+    let ALB = [];                    // { col, nome, bacia, ref, refMax, ultIdx }
+    const POR_COL = new Map();
+    const BRUTO = {}, CHEIO = {};    // col → Float64Array(N): o valor do dia e o valor arrastado até 31 dias (NaN sem valor)
+    let ENTSOE = null;               // [{ iso, ano, sem, gwh }]
+    let SEL = 'todas', ANO = 'civil', ORDEM = 'bacia';
+
+    function lerCSV(t) {
+        const linhas = t.replace(/^﻿/, '').trim().split(/\r?\n/);
+        return { cab: linhas[0].split(','), linhas: linhas.slice(1).map(l => l.split(',')) };
+    }
+    function prepararLista(t) {
+        const { cab, linhas } = lerCSV(t);
+        const k = n => cab.indexOf(n);
+        ALB = linhas.map(l => ({
+            col: l[k('coluna')], nome: l[k('nome')], bacia: l[k('bacia')],
+            ref: parseFloat(l[k('referencia_hm3')]), refMax: l[k('referencia')] === 'maximo_registado'
+        })).filter(a => a.col && a.ref > 0);
+        ALB.forEach(a => POR_COL.set(a.col, a));
+    }
+    function prepararDiario(t) {
+        const { cab, linhas } = lerCSV(t);
+        T0 = tsDia(linhas[0][0]);
+        N = idxDe(linhas[linhas.length - 1][0]) + 1;
+        ULT = N - 1;
+        const pos = ALB.map(a => cab.indexOf(a.col));
+        ALB.forEach(a => { BRUTO[a.col] = new Float64Array(N).fill(NaN); });
+        linhas.forEach(l => {
+            const i = idxDe(l[0]);
+            ALB.forEach((a, j) => {
+                const p = pos[j];
+                if (p > 0 && l[p] !== '' && l[p] !== undefined) { const v = parseFloat(l[p]); if (isFinite(v)) BRUTO[a.col][i] = v; }
+            });
+        });
+        ALB.forEach(a => {
+            const b = BRUTO[a.col], c = new Float64Array(N).fill(NaN);
+            let ult = -Infinity, v = NaN;
+            for (let i = 0; i < N; i++) {
+                if (!isNaN(b[i])) { ult = i; v = b[i]; }
+                if (i - ult <= ARRASTO) c[i] = v;
+            }
+            CHEIO[a.col] = c;
+            a.ultIdx = isFinite(ult) ? ult : -1;
+        });
+    }
+    function prepararEntsoe(t) {
+        const { cab, linhas } = lerCSV(t);
+        const k = n => cab.indexOf(n);
+        ENTSOE = linhas.map(l => ({ iso: l[k('semana_inicio')], ano: +l[k('ano_iso')], sem: +l[k('semana_iso')], gwh: parseFloat(l[k('energia_gwh')]) }))
+            .filter(x => x.iso && isFinite(x.gwh));
+    }
+
+    // ==================================================================
+    // CONTAS
+    // ==================================================================
+    function membros(sel) {
+        if (sel === 'todas') return ALB;
+        if (sel.startsWith('bacia-')) return ALB.filter(a => a.bacia === sel.slice(6));
+        const a = POR_COL.get(sel);
+        return a ? [a] : ALB;
+    }
+    // Sem artigo: o género muda de albufeira para albufeira (o Alqueva, a Aguieira)
+    function nomeSel(sel) {
+        if (sel === 'todas') return 'Todas as albufeiras';
+        if (sel.startsWith('bacia-')) return 'Bacia do ' + sel.slice(6);
+        const a = POR_COL.get(sel);
+        return a ? a.nome : 'Todas as albufeiras';
+    }
+    // Volume e referência das albufeiras com valor (arrastado até 31 dias) no dia i
+    function somaDia(lista, i) {
+        if (i < 0 || i >= N) return null;
+        let v = 0, r = 0, n = 0;
+        for (const a of lista) { const x = CHEIO[a.col][i]; if (!isNaN(x)) { v += x; r += a.ref; n++; } }
+        return n ? { hm3: v, ref: r, pct: v / r * 100, n } : null;
+    }
+    // O último valor de uma albufeira, se tiver até 7 dias
+    const atual = a => (a.ultIdx >= 0 && ULT - a.ultIdx <= ATUAL_MAX) ? { v: BRUTO[a.col][a.ultIdx], i: a.ultIdx } : null;
+    // Agora e há `dias` dias (ou há um ano), nas albufeiras com os dois valores; cada uma a partir do seu último dia
+    function comparar(lista, dias) {
+        let v1 = 0, v0 = 0, r = 0, n = 0;
+        lista.forEach(a => {
+            const x = atual(a);
+            if (!x) return;
+            const y = CHEIO[a.col][dias === 'ano' ? menosUmAno(x.i) : x.i - dias];
+            if (y === undefined || isNaN(y)) return;
+            v1 += x.v; v0 += y; r += a.ref; n++;
+        });
+        return n ? { agora: v1 / r * 100, antes: v0 / r * 100, dHm3: v1 - v0, n } : null;
+    }
+    function estadoAtual(lista) {
+        let v = 0, r = 0, n = 0;
+        lista.forEach(a => { const x = atual(a); if (x) { v += x.v; r += a.ref; n++; } });
+        return n ? { hm3: v, ref: r, pct: v / r * 100, n } : null;
+    }
+    // O mesmo dia do calendário nos anos completos desde 2011
+    function historicoDoDia(lista, i) {
+        const iso = isoDe(i), ano = +iso.slice(0, 4), md = iso.slice(5) === '02-29' ? '02-28' : iso.slice(5);
+        const anos = [];
+        for (let y = ANO_COMP; y < ano; y++) {
+            const s = somaDia(lista, idxDe(y + '-' + md));
+            if (s) anos.push({ ano: y, pct: s.pct });
+        }
+        if (anos.length < 3) return null;
+        const media = anos.reduce((t, x) => t + x.pct, 0) / anos.length;
+        const min = anos.reduce((m, x) => x.pct < m.pct ? x : m), max = anos.reduce((m, x) => x.pct > m.pct ? x : m);
+        return { media, min, max, de: anos[0].ano, ate: anos[anos.length - 1].ano };
+    }
+
+    // ==================================================================
+    // RESUMO
+    // ==================================================================
+    function card(rotulo, valor, sub) {
+        return `<div class="kpi-card"><div class="kpi-label">${rotulo}</div><div class="kpi-value">${valor}</div><div class="kpi-sub">${sub}</div></div>`;
+    }
+    function renderResumo() {
+        const ult = isoDe(ULT);
+        const agora = estadoAtual(ALB), sem = comparar(ALB, 7), ano = comparar(ALB, 'ano'), hist = historicoDoDia(ALB, ULT);
+        document.getElementById('kpi-sub').textContent = `${fmtData(ult)} · ${agora.n} albufeiras com valor nos últimos 7 dias`;
+        document.getElementById('alb-kpis').innerHTML =
+            card('💧 Água guardada', fmtHm3(agora.hm3), `${fmtPct(agora.pct)} da capacidade`)
+            + card('📅 Numa semana', sem ? fmtPp(sem.agora - sem.antes) : '--', sem ? `${fmtDHm3(sem.dHm3)} desde ${fmtData(isoDe(ULT - 7))}` : '')
+            + card('↩️ Há um ano', ano ? fmtPct(ano.antes) : '--', ano ? `agora ${fmtPct(ano.agora)} (${fmtPp(ano.agora - ano.antes)})` : '')
+            + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para ${fmtDiaMes(ult)}`, hist ? fmtPct(hist.media) : '--',
+                   hist ? `mín. ${fmtPct(hist.min.pct)} (${hist.min.ano}) · máx. ${fmtPct(hist.max.pct)} (${hist.max.ano})` : '');
+
+        // Das grandes, a que está mais acima e a mais abaixo da sua média para este dia (as albufeiras a fio de água
+        // andam sempre perto de cheias: comparadas consigo mesmas, contam como as outras)
+        const grandes = ALB.filter(a => a.ref >= GRANDE).map(a => {
+            const x = atual(a), h = x ? historicoDoDia([a], x.i) : null;
+            return h ? { a, pct: x.v / a.ref * 100, d: x.v / a.ref * 100 - h.media } : null;
+        }).filter(Boolean);
+        grandes.sort((p, q) => q.d - p.d);
+        const comp = (d, txt) => vazio(d) || Math.abs(d) < 0.05 ? `igual ${txt}` : `${fmt1(Math.abs(d))} p.p. ${d > 0 ? 'acima' : 'abaixo'} ${txt}`;
+        let t = `As albufeiras das centrais hidroelétricas tinham <strong>${fmtHm3(agora.hm3)}</strong> de água a ${fmtData(ult)}, <strong>${fmtPct(agora.pct)}</strong> da capacidade`;
+        const partes = [];
+        if (ano) partes.push(comp(ano.agora - ano.antes, 'do mesmo dia do ano passado'));
+        if (hist) partes.push(comp(agora.pct - hist.media, `da média de ${hist.de} a ${hist.ate} para este dia`));
+        if (partes.length) t += ': ' + partes.join(' e ');
+        t += '.';
+        if (grandes.length >= 2) {
+            const c = grandes[0], v = grandes[grandes.length - 1];
+            t += ` Das que guardam mais de ${GRANDE} hm³, comparadas com a sua média para este dia, a que está mais acima é ${esc(c.a.nome)}`
+               + ` (${fmtPct(c.pct)}, ${fmtPp(c.d)}) e a mais abaixo é ${esc(v.a.nome)} (${fmtPct(v.pct)}, ${fmtPp(v.d)}).`;
+        }
+        document.getElementById('resumo-texto').innerHTML = t;
+    }
+
+    // ==================================================================
+    // AO LONGO DO ANO
+    // ==================================================================
+    // Eixo comum a todos os anos: um ano bissexto fixo (o hidrológico começa a 1 de outubro do ano antes)
+    const chaveX = (m, d, hidro) => (hidro && m >= 9) ? Date.UTC(1999, m, d) : Date.UTC(2000, m, d);
+    function inicioPeriodo(i, hidro) {
+        const iso = isoDe(i), y = +iso.slice(0, 4), m = +iso.slice(5, 7);
+        return hidro ? (m >= 10 ? y : y - 1) : y;
+    }
+    const rotPeriodo = (p, hidro) => hidro ? `${p}/${String(p + 1).slice(2)}` : String(p);
+    function seriePeriodo(lista, p, hidro, ate) {
+        const i0 = idxDe(hidro ? `${p}-10-01` : `${p}-01-01`), i1 = idxDe(hidro ? `${p + 1}-09-30` : `${p}-12-31`);
+        const out = [];
+        for (let i = Math.max(0, i0); i <= Math.min(i1, ate); i++) {
+            const s = somaDia(lista, i);
+            if (!s) continue;
+            const d = new Date(T0 + i * DIA_MS);
+            out.push({ x: chaveX(d.getUTCMonth(), d.getUTCDate(), hidro), y: Math.round(s.pct * 10) / 10, hm3: s.hm3 });
+        }
+        return out;
+    }
+    function renderEvol() {
+        const c = _hcDark(), hidro = ANO === 'hidro', lista = membros(SEL);
+        const pAtual = inicioPeriodo(ULT, hidro);
+        const atualS = seriePeriodo(lista, pAtual, hidro, ULT);
+        const passadoS = seriePeriodo(lista, pAtual - 1, hidro, N - 1);
+        // Faixa e média: os períodos completos desde 2011 com valor em pelo menos 300 dias
+        const porX = new Map(), usados = [];
+        for (let p = ANO_COMP; p < pAtual; p++) {
+            const s = seriePeriodo(lista, p, hidro, N - 1);
+            if (s.length < 300) continue;
+            usados.push(p);
+            s.forEach(pt => { if (!porX.has(pt.x)) porX.set(pt.x, []); porX.get(pt.x).push(pt.y); });
+        }
+        // Só os dias com pelo menos 60% dos anos (o 29 de fevereiro só existe nos bissextos)
+        const chaves = [...porX.keys()].filter(x => porX.get(x).length >= Math.max(3, usados.length * 0.6)).sort((a, b) => a - b);
+        const comFaixa = usados.length >= 3;
+        const faixa = comFaixa ? chaves.map(x => { const v = porX.get(x); return [x, Math.min(...v), Math.max(...v)]; }) : [];
+        const media = comFaixa ? chaves.map(x => { const v = porX.get(x); return [x, Math.round(v.reduce((t, y) => t + y, 0) / v.length * 10) / 10]; }) : [];
+        const rotComp = comFaixa ? `${rotPeriodo(usados[0], hidro)}–${rotPeriodo(usados[usados.length - 1], hidro)}` : '';
+
+        Highcharts.chart('grafico-evol', Object.assign(base(c, 'albufeiras-' + SEL + '-' + ANO), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
+            xAxis: { type: 'datetime', min: hidro ? Date.UTC(1999, 9, 1) : Date.UTC(2000, 0, 1), max: hidro ? Date.UTC(2000, 8, 30) : Date.UTC(2000, 11, 31),
+                     tickInterval: 30 * DIA_MS, labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: { title: { text: '% da capacidade', style: { color: c.txt } }, labels: { format: '{value}%', style: { color: c.txt } }, gridLineColor: c.grelha, softMax: 100 },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt }, xDateFormat: '%e de %B',
+                       pointFormatter: function () {
+                           const v = this.series.type === 'arearange' ? `${fmtPct(this.low)} – ${fmtPct(this.high)}` : fmtPct(this.y) + (this.hm3 !== undefined ? ` · ${fmtHm3(this.hm3)}` : '');
+                           return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${v}</b><br>`;
+                       } },
+            plotOptions: { series: { marker: { enabled: false }, states: { inactive: { opacity: 1 } } } },
+            series: [
+                { type: 'arearange', name: `Mín.–máx. ${rotComp}`, data: faixa, color: c.faixa, fillColor: c.faixa, lineWidth: 0, zIndex: 0, visible: comFaixa, showInLegend: comFaixa },
+                { name: `Média ${rotComp}`, data: media, color: c.media, dashStyle: 'ShortDot', lineWidth: 1.5, zIndex: 1, visible: comFaixa, showInLegend: comFaixa },
+                { name: rotPeriodo(pAtual - 1, hidro), data: passadoS, color: c.passado, dashStyle: 'ShortDash', lineWidth: 1.5, zIndex: 2 },
+                { name: rotPeriodo(pAtual, hidro), data: atualS, color: c.atual, lineWidth: 2.5, zIndex: 3 }
+            ]
+        }));
+
+        // Frase: o último dia contra o mesmo dia do ano passado e da média
+        const fim = atualS[atualS.length - 1];
+        const el = document.getElementById('evol-resumo');
+        if (!fim) { el.textContent = ''; return; }
+        const ant = passadoS.find(p => p.x === fim.x), med = media.find(p => p[0] === fim.x);
+        let t = `${esc(nomeSel(SEL))}, a ${fmtData(isoDe(ULT))}: <strong>${fmtPct(fim.y)}</strong> (${fmtHm3(fim.hm3)})`;
+        const partes = [];
+        if (ant) partes.push(`${fmtPct(ant.y)} no mesmo dia de ${rotPeriodo(pAtual - 1, hidro)}`);
+        if (med) partes.push(`${fmtPct(med[1])} na média de ${rotPeriodo(usados[0], hidro)} a ${rotPeriodo(usados[usados.length - 1], hidro)}`);
+        if (partes.length) t += '; ' + partes.join(' e ');
+        el.innerHTML = t + '.';
+    }
+
+    // ==================================================================
+    // TABELA
+    // ==================================================================
+    function linhaTabela(nome, lista, tipo, sel, extra) {
+        const ag = estadoAtual(lista);
+        if (!ag) return `<tr class="${tipo}"><td class="esq">${nome}</td><td colspan="5">sem dados recentes</td></tr>`;
+        const sem = comparar(lista, 7), ano = comparar(lista, 'ano');
+        const ref = lista.reduce((t, a) => t + (atual(a) ? a.ref : 0), 0);
+        const d7 = sem ? sem.agora - sem.antes : null;
+        const largura = Math.max(0, Math.min(100, ag.pct)).toFixed(1);
+        return `<tr class="${tipo}" data-sel="${sel}" tabindex="0" title="Ver a evolução">`
+            + `<td class="esq">${nome}${extra || ''}</td>`
+            + `<td>${fmtHm3(ag.hm3)}</td>`
+            + `<td class="barra-cel"><span class="barra"><span style="width:${largura}%"></span></span>${fmtPct(ag.pct)}</td>`
+            + `<td class="${classe(d7)}">${fmtPp(d7)}</td>`
+            + `<td>${ano ? fmtPct(ano.antes) : '--'}</td>`
+            + `<td class="col-ref">${fmtHm3(ref)}${tipo === 'membro' && lista[0].refMax ? '*' : ''}</td></tr>`;
+    }
+    function nomeAlb(a, comBacia) {
+        const x = atual(a);
+        const velho = x && x.i < ULT ? `<span class="velho" title="Último valor">${fmtDiaMes(isoDe(x.i))}</span>` : '';
+        return `${esc(a.nome)}${velho}${comBacia ? `<span class="mini">${esc(a.bacia)}</span>` : ''}`;
+    }
+    function renderTabela() {
+        let h = '<thead><tr><th scope="col" class="esq">Albufeira</th><th scope="col">Volume</th><th scope="col">Cheia</th>'
+              + '<th scope="col">Numa semana</th><th scope="col">Há um ano</th><th scope="col" class="col-ref">100% =</th></tr></thead><tbody>';
+        if (ORDEM === 'bacia') {
+            ORDEM_BACIAS.forEach(b => {
+                const lista = ALB.filter(a => a.bacia === b);
+                if (!lista.length) return;
+                h += linhaTabela(`Bacia do ${esc(b)}`, lista, 'bacia', 'bacia-' + b);
+                lista.forEach(a => { h += linhaTabela(nomeAlb(a, false), [a], 'membro', a.col); });
+            });
+        } else {
+            const ord = ALB.map(a => { const x = atual(a); return { a, pct: x ? x.v / a.ref * 100 : null }; })
+                .sort((p, q) => vazio(p.pct) ? 1 : vazio(q.pct) ? -1 : (ORDEM === 'cheia' ? q.pct - p.pct : p.pct - q.pct));
+            ord.forEach(o => { h += linhaTabela(nomeAlb(o.a, true), [o.a], 'membro', o.a.col); });
+        }
+        h += linhaTabela('Todas', ALB, 'total', 'todas') + '</tbody>';
+        document.getElementById('tabela-alb').innerHTML = h;
+    }
+
+    // ==================================================================
+    // POR BACIA
+    // ==================================================================
+    function renderBacias() {
+        const c = _hcDark();
+        const bacias = ORDEM_BACIAS.filter(b => ALB.some(a => a.bacia === b));
+        const hoje = [], ano = [], med = [];
+        let rotComp = '';
+        bacias.forEach(b => {
+            const lista = ALB.filter(a => a.bacia === b);
+            const ag = estadoAtual(lista), cmp = comparar(lista, 'ano'), hist = historicoDoDia(lista, ULT);
+            hoje.push(ag ? Math.round(ag.pct * 10) / 10 : null);
+            ano.push(cmp ? Math.round(cmp.antes * 10) / 10 : null);
+            med.push(hist ? Math.round(hist.media * 10) / 10 : null);
+            if (hist && !rotComp) rotComp = `${hist.de}–${hist.ate}`;
+        });
+        Highcharts.chart('grafico-bacias', Object.assign(base(c, 'albufeiras-por-bacia'), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: { categories: bacias, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha },
+            yAxis: { title: { text: '% da capacidade', style: { color: c.txt } }, labels: { format: '{value}%', style: { color: c.txt } }, gridLineColor: c.grelha, softMax: 100, min: 0 },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                       pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmtPct(this.y)}</b><br>`; } },
+            plotOptions: { column: { borderWidth: 0, borderRadius: 3, groupPadding: 0.12, pointPadding: 0.04 },
+                           series: { cursor: 'pointer', point: { events: { click: function () { escolher('bacia-' + this.category); } } } } },
+            series: [
+                { name: 'Hoje', data: hoje, color: c.atual },
+                { name: 'Há um ano', data: ano, color: c.passado },
+                { name: `Média ${rotComp} para este dia`, data: med, color: c.dk ? '#475569' : '#cbd5e1' }
+            ]
+        }));
+    }
+
+    // ==================================================================
+    // ENERGIA GUARDADA (ENTSO-E)
+    // ==================================================================
+    function renderEnergia() {
+        const bloco = document.getElementById('bloco-energia');
+        if (!ENTSOE || !ENTSOE.length) { bloco.hidden = true; return; }
+        bloco.hidden = false;
+        const c = _hcDark();
+        const ultima = ENTSOE[ENTSOE.length - 1], anoAtual = ultima.ano;
+        const porAno = new Map();
+        ENTSOE.forEach(x => { if (!porAno.has(x.ano)) porAno.set(x.ano, new Map()); porAno.get(x.ano).set(x.sem, x.gwh); });
+        const serieAno = y => [...(porAno.get(y) || new Map()).entries()].sort((a, b) => a[0] - b[0]).map(([s, g]) => [s, g]);
+        const anosComp = [...porAno.keys()].filter(y => y >= ANO_COMP_ENTSOE && y < anoAtual && porAno.get(y).size >= 50);
+        const faixa = [], media = [];
+        for (let s = 1; s <= 53; s++) {
+            const v = anosComp.map(y => porAno.get(y).get(s)).filter(x => x !== undefined);
+            if (v.length < 3) continue;
+            faixa.push([s, Math.min(...v), Math.max(...v)]);
+            media.push([s, Math.round(v.reduce((t, x) => t + x, 0) / v.length)]);
+        }
+        const rotComp = anosComp.length ? `${anosComp[0]}–${anosComp[anosComp.length - 1]}` : '';
+        Highcharts.chart('grafico-energia', Object.assign(base(c, 'albufeiras-energia-entsoe'), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: { min: 1, max: 53, tickInterval: 4, title: { text: 'Semana do ano', style: { color: c.txt } }, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: { title: { text: 'GWh', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha, min: 0 },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                       headerFormat: '<b>Semana {point.key}</b><br>',
+                       pointFormatter: function () {
+                           const v = this.series.type === 'arearange' ? `${fmt0(this.low)} – ${fmt0(this.high)} GWh` : `${fmt0(this.y)} GWh`;
+                           return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${v}</b><br>`;
+                       } },
+            plotOptions: { series: { marker: { enabled: false }, states: { inactive: { opacity: 1 } } } },
+            series: [
+                { type: 'arearange', name: `Mín.–máx. ${rotComp}`, data: faixa, color: c.faixa, fillColor: c.faixa, lineWidth: 0, zIndex: 0 },
+                { name: `Média ${rotComp}`, data: media, color: c.media, dashStyle: 'ShortDot', lineWidth: 1.5, zIndex: 1 },
+                { name: String(anoAtual - 1), data: serieAno(anoAtual - 1), color: c.passado, dashStyle: 'ShortDash', lineWidth: 1.5, zIndex: 2 },
+                { name: String(anoAtual), data: serieAno(anoAtual), color: c.atual, lineWidth: 2.5, zIndex: 3 }
+            ]
+        }));
+        const antes = (porAno.get(anoAtual - 1) || new Map()).get(ultima.sem);
+        const med = media.find(m => m[0] === ultima.sem);
+        const var_ = (a, b) => `${fmt1(Math.abs(a / b - 1) * 100)}% ${a >= b ? 'acima' : 'abaixo'}`;
+        let t = `Na semana de ${fmtData(ultima.iso)} (semana ${ultima.sem}), a energia guardada nas albufeiras portuguesas era de <strong>${fmt0(ultima.gwh)} GWh</strong>`;
+        const partes = [];
+        if (antes) partes.push(`${var_(ultima.gwh, antes)} da mesma semana de ${anoAtual - 1}`);
+        if (med) partes.push(`${var_(ultima.gwh, med[1])} da média de ${anosComp[0]} a ${anosComp[anosComp.length - 1]}`);
+        if (partes.length) t += ': ' + partes.join(' e ');
+        document.getElementById('energia-resumo').innerHTML = t + '. A ENTSO-E publica cada semana com alguns dias de atraso.';
+    }
+
+    // ==================================================================
+    // ESCOLHA, URL E ARRANQUE
+    // ==================================================================
+    function preencherSelect() {
+        let h = '<option value="todas">Todas as albufeiras</option><optgroup label="Bacias">';
+        ORDEM_BACIAS.forEach(b => { if (ALB.some(a => a.bacia === b)) h += `<option value="bacia-${b}">Bacia do ${esc(b)}</option>`; });
+        h += '</optgroup>';
+        ORDEM_BACIAS.forEach(b => {
+            const lista = ALB.filter(a => a.bacia === b);
+            if (!lista.length) return;
+            h += `<optgroup label="${esc(b)}">` + lista.map(a => `<option value="${a.col}">${esc(a.nome)}</option>`).join('') + '</optgroup>';
+        });
+        const sel = document.getElementById('sel-albufeira');
+        sel.innerHTML = h;
+        sel.value = SEL;
+    }
+    function atualizarURL() {
+        const p = new URLSearchParams();
+        if (SEL !== 'todas') p.set('albufeira', SEL);
+        if (ANO !== 'civil') p.set('ano', ANO);
+        const q = p.toString();
+        history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+    }
+    function escolher(sel, rolar) {
+        SEL = sel === 'todas' || sel.startsWith('bacia-') || POR_COL.has(sel) ? sel : 'todas';
+        document.getElementById('sel-albufeira').value = SEL;
+        renderEvol();
+        atualizarURL();
+        if (rolar) document.getElementById('bloco-evol').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    document.getElementById('sel-albufeira').addEventListener('change', e => escolher(e.target.value));
+    ligarToggle('ctrl-ano', v => { ANO = v; renderEvol(); atualizarURL(); });
+    ligarToggle('ctrl-ordem', v => { ORDEM = v; renderTabela(); });
+    const tabela = document.getElementById('tabela-alb');
+    tabela.addEventListener('click', e => { const tr = e.target.closest('tr[data-sel]'); if (tr) escolher(tr.dataset.sel, true); });
+    tabela.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const tr = e.target.closest('tr[data-sel]');
+        if (tr) { e.preventDefault(); escolher(tr.dataset.sel, true); }
+    });
+    document.addEventListener('themeChanged', () => { if (ULT >= 0) { renderEvol(); renderBacias(); renderEnergia(); } });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.addEventListener('beforeprint', () => document.querySelectorAll('details.faq-item').forEach(d => {
+        if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+    }));
+    window.addEventListener('afterprint', () => document.querySelectorAll('details.faq-item[data-opened-for-print]').forEach(d => {
+        d.removeAttribute('open'); delete d.dataset.openedForPrint;
+    }));
+
+    const params = new URLSearchParams(location.search);
+    const texto = caminho => fetchDados(caminho).then(r => { if (!r.ok) throw new Error(caminho + ': HTTP ' + r.status); return r.text(); });
+    const pEntsoe = texto(URL_ENTSOE).then(prepararEntsoe).catch(err => { console.warn('Energia guardada (ENTSO-E):', err); });
+    Promise.all([texto(URL_LISTA), texto(URL_DIARIO)])
+        .then(([lista, diario]) => {
+            prepararLista(lista);
+            prepararDiario(diario);
+            if (!ALB.length || ULT < 0) throw new Error('sem albufeiras');
+            const s = params.get('albufeira');
+            if (s && (s.startsWith('bacia-') || POR_COL.has(s))) SEL = s;
+            if (params.get('ano') === 'hidro') { ANO = 'hidro'; ativarToggle('ctrl-ano', 'hidro'); }
+            document.getElementById('badge-ultima').textContent = fmtData(isoDe(ULT));
+            document.getElementById('estado').hidden = true;
+            document.getElementById('conteudo').hidden = false;
+            preencherSelect();
+            renderResumo();
+            renderEvol();
+            renderTabela();
+            renderBacias();
+            return pEntsoe.then(renderEnergia);
+        })
+        .catch(err => {
+            console.error('Albufeiras:', err);
+            const el = document.getElementById('estado');
+            el.className = 'estado-erro';
+            el.textContent = 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.';
+        });
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
