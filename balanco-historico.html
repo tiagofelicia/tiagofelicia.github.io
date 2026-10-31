@@ -218,6 +218,11 @@
         .kpi-card.kpi-importador .kpi-value { color: #c2410c; }
         .kpi-card.kpi-exportador .kpi-value { color: #8E44AD; }
         .kpi-card.kpi-dominante .kpi-value { color: #2563eb; }
+        /* Dependência de Espanha e procura residual */
+        .dep-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 0 0 14px 0; }
+        .secao-sub { text-align: center; font-size: 0.85em; color: #6c757d; margin: -4px 0 12px 0; }
+        .residual-resumo { text-align: center; font-size: 0.9em; margin: 0 0 8px 0; }
+        [data-theme="dark"] .secao-sub { color: #94a3b8; }
         [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
         [data-theme="dark"] .kpi-label { color: #94a3b8; }
         [data-theme="dark"] .kpi-value { color: #e2e8f0; }
@@ -501,6 +506,8 @@
             <a href="#renovaveis-section" class="mini-nav-chip">🌱 Renováveis</a>
             <a href="#heatmap-section" class="mini-nav-chip" id="chip-heatmap" hidden>📅 Calendário</a>
             <a href="#saldo-section" class="mini-nav-chip">🔄 Saldo</a>
+            <a href="#dependencia-section" class="mini-nav-chip">📥 Dependência</a>
+            <a href="#residual-section" class="mini-nav-chip">📉 Procura residual</a>
             <a href="#diasemana-section" class="mini-nav-chip" id="chip-diasemana" hidden>📊 Semana</a>
             <a href="#balanco-section" class="mini-nav-chip">⚖️ Balanço</a>
             <a href="#donut-section" class="mini-nav-chip">🥧 Mix</a>
@@ -551,6 +558,22 @@
         <h2>Saldo c/ Espanha — importação líquida diária</h2>
         <div id="grafico-saldo" class="grafico-container"></div>
         <p class="export-credit" id="credito-saldo"></p>
+    </div>
+
+    <div class="grafico-wrapper" id="dependencia-section">
+        <h2>Dependência de Espanha — horas com 30% ou mais do consumo importado</h2>
+        <p class="secao-sub">Horas em que a importação líquida de Espanha (importação − exportação) chegou a 30% do consumo dessa hora, e o preço OMIE PT nessas horas e nas restantes.</p>
+        <div id="dependencia-kpis" class="dep-kpis"></div>
+        <div id="grafico-dependencia" class="grafico-container"></div>
+        <p class="export-credit" id="credito-dependencia"></p>
+    </div>
+
+    <div class="grafico-wrapper" id="residual-section">
+        <h2>Preço OMIE PT vs procura residual</h2>
+        <p class="secao-sub">A procura residual é o consumo menos a produção eólica e solar: o que as outras centrais e a importação têm de cobrir. <span id="residual-unidade"></span></p>
+        <p class="residual-resumo" id="residual-resumo"></p>
+        <div id="grafico-residual" class="grafico-container"></div>
+        <p class="export-credit" id="credito-residual"></p>
     </div>
 
     <div class="grafico-wrapper" id="diasemana-section" style="display: none;">
@@ -872,8 +895,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctx = 'Período ' + fmt(dataInicio) + ' a ' + fmt(dataFim);
         const url = '<a href="https://www.tiagofelicia.pt/balanco-historico" rel="noopener">tiagofelicia.pt/balanco-historico</a>';
         const linha = ['🔗 ' + url, _nowDateBR(), ctx].join(' · ');
-        ['credito-evolucao', 'credito-renovaveis', 'credito-heatmap', 'credito-saldo',
-         'credito-diasemana', 'credito-balanco', 'credito-mix', 'credito-topdias'].forEach(function (id) {
+        ['credito-evolucao', 'credito-renovaveis', 'credito-heatmap', 'credito-saldo', 'credito-dependencia',
+         'credito-residual', 'credito-diasemana', 'credito-balanco', 'credito-mix', 'credito-topdias'].forEach(function (id) {
             const el = document.getElementById(id);
             if (el) el.innerHTML = linha;
         });
@@ -945,6 +968,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     // Cada linha do CSV é a média (MW) de um intervalo de 15min. Energia = MW * 0.25 h = MWh.
     // Daily aggregate em MWh por fonte (depois mostrado em GWh).
+    // Uma hora conta como dependente de Espanha quando a importação líquida (importação − exportação, média dos
+    // quartos de hora) chega a 30% do consumo dessa hora. As contas por hora fazem-se em agregarDia e ficam no
+    // cache diário (sem LRU), para servirem qualquer período.
+    const LIMIAR_DEPENDENCIA = 0.30;
     const CAMPOS_PICO = ['Hídrica','Eólica','Solar','Biomassa','Ondas','Gás Natural','Carvão','Outra Térmica',
                          'Importação','Exportação','Bombagem','Injeção de Baterias','Consumo Baterias','Consumo'];
 
@@ -969,6 +996,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let _omieSomaPt = 0, _omieCount = 0;
         // VWAP Consumo: preço PT ponderado pela procura (load-weighted average price)
         let _consSomaPreco = 0, _consSomaPot = 0;
+        // Por hora (pelo data_utc, que distingue as duas 01h do último domingo de outubro; sem ele, pela hora
+        // de início do intervalo): dependência de Espanha e procura residual
+        const _horas = new Map();
         for (const r of linhas) {
             const num = (k) => parseFloat((r[k] || '0').replace(',', '.')) || 0;
             const hidrica  = num('Hídrica');
@@ -1003,6 +1033,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Preços OMIE juntados por intervalo em carregarAno (r._es / r._pt, decimal '.')
             const _pEs = parseFloat(r._es);
             const _pPt = parseFloat(r._pt);
+            const _utc = (r['data_utc'] || '').trim();
+            const _ini = (r['intervalo'] || '').slice(1, 3);
+            const _chaveH = _utc ? _utc.slice(0, 13) : _ini;
+            let _h = _horas.get(_chaveH);
+            if (!_h) {
+                _h = { rotulo: (parseInt(_ini, 10) || 0) + 'h', n: 0, imp: 0, exp: 0, cons: 0, eol: 0, sol: 0, pSoma: 0, pN: 0 };
+                _horas.set(_chaveH, _h);
+            }
+            _h.n++; _h.imp += importa; _h.exp += exporta; _h.cons += consumo; _h.eol += eolica; _h.sol += solar;
+            if (!isNaN(_pPt)) { _h.pSoma += _pPt; _h.pN++; }
             if (importa > 0 && !isNaN(_pEs)) { _impSomaPreco += importa * _pEs; _impSomaPot += importa; }
             if (exporta > 0 && !isNaN(_pPt)) { _expSomaPreco += exporta * _pPt; _expSomaPot += exporta; }
             if (!isNaN(_pPt)) { _omieSomaPt += _pPt; _omieCount++; }
@@ -1032,6 +1072,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const prodInst = renovInst + gas + carvao + outraT + injBat;
             if (prodInst > acc.picoProducaoMW) acc.picoProducaoMW = prodInst;
         }
+        // Dependência de Espanha e procura residual, hora a hora (só as horas com consumo publicado)
+        const dep = { horas: 0, validas: 0, precoDepSoma: 0, precoDepN: 0, precoRestSoma: 0, precoRestN: 0,
+                      maxQuota: 0, maxHora: '', seq: [], rotulos: [] };
+        const resid = [], precoH = [];
+        for (const h of _horas.values()) {
+            if (!(h.cons > 0)) continue;
+            // Pode passar 100% quando a importação também alimenta a bombagem e as baterias: conta como 100%
+            const quota = Math.min(1, Math.max(0, h.imp - h.exp) / h.cons);
+            const preco = h.pN ? h.pSoma / h.pN : NaN;
+            const e = quota >= LIMIAR_DEPENDENCIA;
+            dep.validas++;
+            dep.seq.push(e ? 1 : 0);
+            dep.rotulos.push(h.rotulo);
+            if (e) { dep.horas++; if (!isNaN(preco)) { dep.precoDepSoma += preco; dep.precoDepN++; } }
+            else if (!isNaN(preco)) { dep.precoRestSoma += preco; dep.precoRestN++; }
+            if (quota > dep.maxQuota) { dep.maxQuota = quota; dep.maxHora = h.rotulo; }
+            resid.push((h.cons - h.eol - h.sol) / h.n);
+            precoH.push(preco);
+        }
+        acc._dep = dep;
+        acc._resid = Float32Array.from(resid);
+        acc._precoH = Float32Array.from(precoH);
         // Converter de MW × intervalos para MWh (× 0.25h)
         const chaves = ['Hídrica','Eólica','Solar','Biomassa','Ondas','Gás Natural','Carvão','Outra Térmica',
                         'Importação','Exportação','Bombagem','Injeção de Baterias','Consumo Baterias','Consumo'];
@@ -2207,6 +2269,214 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- Dependência de Espanha (horas com 30% ou mais do consumo vindo de Espanha) ---
+    function dependenciaPeriodo(dataInicio, dataFim) {
+        const r = { dep: 0, validas: 0, precoDepSoma: 0, precoDepN: 0, precoRestSoma: 0, precoRestN: 0,
+                    maxQuota: 0, maxIso: null, maxHora: '', seqMax: 0, seqIni: null, seqFim: null, porDia: [] };
+        let seq = 0, seqIni = null;
+        const media = (soma, n) => n ? soma / n : null;
+        const cur = new Date(dataInicio + 'T00:00:00');
+        const fim = new Date(dataFim + 'T00:00:00');
+        while (cur <= fim) {
+            const iso = fmtISO(cur);
+            const ts = dataInputParaTimestampUTC(iso);
+            const d = obterDiaAgregado(iso);
+            const dp = d && d._dep;
+            if (dp && dp.validas) {
+                r.dep += dp.horas; r.validas += dp.validas;
+                r.precoDepSoma += dp.precoDepSoma; r.precoDepN += dp.precoDepN;
+                r.precoRestSoma += dp.precoRestSoma; r.precoRestN += dp.precoRestN;
+                if (dp.maxQuota > r.maxQuota) { r.maxQuota = dp.maxQuota; r.maxIso = iso; r.maxHora = dp.maxHora; }
+                // Maior sequência de horas seguidas, a atravessar a meia-noite
+                dp.seq.forEach((b, i) => {
+                    if (!b) { seq = 0; return; }
+                    if (!seq) seqIni = { iso, hora: dp.rotulos[i] };
+                    seq++;
+                    if (seq > r.seqMax) { r.seqMax = seq; r.seqIni = seqIni; r.seqFim = { iso, hora: dp.rotulos[i] }; }
+                });
+                r.porDia.push({ ts, iso, dep: dp.horas, validas: dp.validas,
+                                precoDep: media(dp.precoDepSoma, dp.precoDepN), precoRest: media(dp.precoRestSoma, dp.precoRestN),
+                                _pd: [dp.precoDepSoma, dp.precoDepN, dp.precoRestSoma, dp.precoRestN] });
+            } else {
+                seq = 0;   // dia sem dados: a sequência não atravessa a falha
+            }
+            cur.setDate(cur.getDate() + 1);
+        }
+        return r;
+    }
+
+    function renderDependencia(dataInicio, dataFim) {
+        const sec = document.getElementById('dependencia-section');
+        const r = dependenciaPeriodo(dataInicio, dataFim);
+        if (!r.validas) { sec.style.display = 'none'; return; }
+        sec.style.display = '';
+        const fmtEur = (v) => v === null ? '—' : formatarPT(v, 2) + ' €/MWh';
+        const fmtD = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('pt-PT');
+        const precoDep = r.precoDepN ? r.precoDepSoma / r.precoDepN : null;
+        const precoRest = r.precoRestN ? r.precoRestSoma / r.precoRestN : null;
+        const card = (cls, label, valor, sub) => `<div class="kpi-card${cls ? ' ' + cls : ''}"><div class="kpi-label">${label}</div><div class="kpi-value">${valor}</div><div class="kpi-sub">${sub}</div></div>`;
+        document.getElementById('dependencia-kpis').innerHTML =
+            card('kpi-importador', '📥 Horas com ≥ 30% de Espanha', r.dep.toLocaleString('pt-PT') + ' h',
+                 `${formatarPT(r.dep / r.validas * 100, 1)}% das ${r.validas.toLocaleString('pt-PT')} horas`) +
+            card('', '💶 OMIE PT nessas horas', fmtEur(precoDep), 'média simples das horas') +
+            card('', '💶 OMIE PT nas restantes', fmtEur(precoRest), 'média simples das horas') +
+            card('', '⏱️ Maior sequência seguida', r.seqMax ? r.seqMax.toLocaleString('pt-PT') + ' h' : '—',
+                 r.seqMax ? `${fmtD(r.seqIni.iso)}, ${r.seqIni.hora} → ${fmtD(r.seqFim.iso)}, ${r.seqFim.hora}` : 'nenhuma hora') +
+            card('kpi-importador', '🔝 Maior quota numa hora', formatarPT(r.maxQuota * 100, 1) + '%',
+                 r.maxIso ? `${fmtD(r.maxIso)}, ${r.maxHora}` : '—');
+
+        // Gráfico: horas por dia (até 92 dias) ou por mês
+        const t = temaCores();
+        const porMes = r.porDia.length > 92;
+        let dados;
+        if (porMes) {
+            const meses = new Map();
+            r.porDia.forEach(d => {
+                const k = d.iso.slice(0, 7);
+                const m = meses.get(k) || { dep: 0, validas: 0, pd: [0, 0, 0, 0] };
+                m.dep += d.dep; m.validas += d.validas;
+                d._pd.forEach((v, i) => { m.pd[i] += v; });
+                meses.set(k, m);
+            });
+            dados = [...meses].map(([k, m]) => ({
+                x: Date.UTC(parseInt(k, 10), parseInt(k.slice(5, 7), 10) - 1, 1), y: m.dep, validas: m.validas,
+                precoDep: m.pd[1] ? m.pd[0] / m.pd[1] : null, precoRest: m.pd[3] ? m.pd[2] / m.pd[3] : null
+            }));
+        } else {
+            dados = r.porDia.map(d => ({ x: d.ts, y: d.dep, validas: d.validas, precoDep: d.precoDep, precoRest: d.precoRest, iso: d.iso }));
+        }
+        Highcharts.chart('grafico-dependencia', {
+            chart: { type: 'column', backgroundColor: 'transparent', height: 300, zooming: { type: 'x' } },
+            title: { text: null },
+            subtitle: { text: _periodoTxt, style: { color: t.sub, fontSize: '0.8em' } },
+            credits: { enabled: false },
+            xAxis: { type: 'datetime', labels: { style: { color: t.sub } }, lineColor: t.grid, tickColor: t.grid },
+            yAxis: {
+                title: { text: porMes ? 'Horas no mês' : 'Horas no dia', style: { color: t.sub } },
+                labels: { style: { color: t.sub } }, gridLineColor: t.grid,
+                min: 0, max: porMes ? null : 24, tickInterval: porMes ? null : 6
+            },
+            tooltip: {
+                formatter: function () {
+                    const p = this.point || this;
+                    const quando = porMes ? Highcharts.dateFormat('%B %Y', p.x) : Highcharts.dateFormat('%A, %d %B %Y', p.x);
+                    let s = '<b>' + quando + '</b><br/>Horas com 30% ou mais de Espanha: <b>' + p.y + ' de ' + p.validas + '</b>';
+                    if (p.precoDep !== null) s += '<br/>OMIE PT nessas horas: <b>' + formatarPT(p.precoDep, 2) + ' €/MWh</b>';
+                    if (p.precoRest !== null) s += '<br/>OMIE PT nas restantes: <b>' + formatarPT(p.precoRest, 2) + ' €/MWh</b>';
+                    return s;
+                }
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0, color: '#ED7D31', turboThreshold: 0,
+                    cursor: porMes ? undefined : 'pointer',
+                    point: {
+                        events: {
+                            click: function () { if (this.iso) window.location.href = 'balanco-omie?data=' + this.iso; }
+                        }
+                    }
+                }
+            },
+            legend: { enabled: false },
+            exporting: { enabled: true },
+            series: [{ name: 'Horas com 30% ou mais do consumo vindo de Espanha', data: dados }]
+        });
+    }
+
+    // --- Preço OMIE PT vs procura residual (consumo − eólica − solar) ---
+    // Com mais de um ano, um ponto por hora seriam dezenas de milhares: passa a um ponto por dia (médias das horas)
+    const MAX_DIAS_RESIDUAL_HORA = 366;
+    function residualPeriodo(dataInicio, dataFim) {
+        const porHora = diasNoPeriodo(dataInicio, dataFim) <= MAX_DIAS_RESIDUAL_HORA;
+        const x = [], y = [], meta = [];
+        const cur = new Date(dataInicio + 'T00:00:00');
+        const fim = new Date(dataFim + 'T00:00:00');
+        while (cur <= fim) {
+            const iso = fmtISO(cur);
+            const d = obterDiaAgregado(iso);
+            if (d && d._resid) {
+                if (porHora) {
+                    for (let i = 0; i < d._resid.length; i++) {
+                        if (isNaN(d._precoH[i])) continue;
+                        x.push(d._resid[i] / 1000); y.push(d._precoH[i]); meta.push([iso, d._dep.rotulos[i]]);
+                    }
+                } else {
+                    let sr = 0, sp = 0, n = 0;
+                    for (let i = 0; i < d._resid.length; i++) {
+                        if (isNaN(d._precoH[i])) continue;
+                        sr += d._resid[i]; sp += d._precoH[i]; n++;
+                    }
+                    if (n) { x.push(sr / n / 1000); y.push(sp / n); meta.push([iso, null]); }
+                }
+            }
+            cur.setDate(cur.getDate() + 1);
+        }
+        return { x, y, meta, porHora };
+    }
+    function regressaoLinear(x, y) {
+        const n = x.length;
+        if (n < 3) return null;
+        let mx = 0, my = 0;
+        for (let i = 0; i < n; i++) { mx += x[i]; my += y[i]; }
+        mx /= n; my /= n;
+        let sxy = 0, sxx = 0, syy = 0;
+        for (let i = 0; i < n; i++) { const dx = x[i] - mx, dy = y[i] - my; sxy += dx * dy; sxx += dx * dx; syy += dy * dy; }
+        if (!(sxx > 0) || !(syy > 0)) return null;
+        const declive = sxy / sxx;
+        return { declive, ordenada: my - declive * mx, r: sxy / Math.sqrt(sxx * syy) };
+    }
+    function renderResidual(dataInicio, dataFim) {
+        const sec = document.getElementById('residual-section');
+        const { x, y, meta, porHora } = residualPeriodo(dataInicio, dataFim);
+        const reg = regressaoLinear(x, y);
+        if (!reg) { sec.style.display = 'none'; return; }
+        sec.style.display = '';
+        document.getElementById('residual-unidade').textContent = porHora
+            ? 'Cada ponto é uma hora do período.'
+            : 'Período longo: cada ponto é um dia (média das horas).';
+        const rTxt = formatarPT(reg.r, 2);
+        document.getElementById('residual-resumo').innerHTML = reg.r >= 0.4
+            ? `Correlação de <strong>${rTxt}</strong>: em média, cada GW a mais de procura residual subiu o OMIE PT <strong>${formatarPT(reg.declive, 1)} €/MWh</strong>.`
+            : `Correlação de <strong>${rTxt}</strong>: neste período, o OMIE PT quase não acompanhou a procura residual.`;
+        const t = temaCores();
+        const dk = darkActivo();
+        let xmin = Infinity, xmax = -Infinity;
+        x.forEach(v => { if (v < xmin) xmin = v; if (v > xmax) xmax = v; });
+        Highcharts.chart('grafico-residual', {
+            chart: { type: 'scatter', backgroundColor: 'transparent', height: 380, zooming: { type: 'xy' } },
+            title: { text: null },
+            subtitle: { text: _periodoTxt, style: { color: t.sub, fontSize: '0.8em' } },
+            credits: { enabled: false },
+            xAxis: {
+                title: { text: 'Procura residual (GW)', style: { color: t.sub } },
+                labels: { style: { color: t.sub } }, gridLineWidth: 1, gridLineColor: t.grid, lineColor: t.grid, tickColor: t.grid
+            },
+            yAxis: {
+                title: { text: 'OMIE PT (€/MWh)', style: { color: t.sub } },
+                labels: { style: { color: t.sub } }, gridLineColor: t.grid
+            },
+            tooltip: {
+                formatter: function () {
+                    const p = this.point || this;
+                    if (p.series.index !== 0) return false;
+                    const m = meta[p.index];
+                    const quando = new Date(m[0] + 'T00:00:00').toLocaleDateString('pt-PT') + (m[1] ? ', ' + m[1] : '');
+                    return '<b>' + quando + '</b><br/>Procura residual: <b>' + formatarPT(p.x, 2) + ' GW</b><br/>OMIE PT: <b>' + formatarPT(p.y, 2) + ' €/MWh</b>';
+                }
+            },
+            legend: { itemStyle: { color: t.txt } },
+            plotOptions: { scatter: { marker: { radius: porHora ? 2 : 3, symbol: 'circle' } } },
+            exporting: { enabled: true },
+            series: [
+                { name: porHora ? 'Horas' : 'Dias', data: x.map((v, i) => [v, y[i]]),
+                  color: dk ? 'rgba(196,181,253,0.5)' : 'rgba(109,40,217,0.45)' },
+                { name: 'Tendência', type: 'line', color: dk ? '#c4b5fd' : '#6d28d9', dashStyle: 'Dash', lineWidth: 2,
+                  marker: { enabled: false }, enableMouseTracking: false,
+                  data: [[xmin, reg.ordenada + reg.declive * xmin], [xmax, reg.ordenada + reg.declive * xmax]] }
+            ]
+        });
+    }
+
     async function renderInsight(totais, dataInicio, dataFim, kpisAtual, series, seq) {
         const el = document.getElementById('insight-periodo');
         if (!el) return;
@@ -3135,6 +3405,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('grafico-heatmap').innerHTML = '';
                 document.getElementById('heatmap-section').style.display = 'none';
                 document.getElementById('grafico-saldo').innerHTML = '';
+                document.getElementById('dependencia-kpis').innerHTML = '';
+                document.getElementById('grafico-dependencia').innerHTML = '';
+                document.getElementById('residual-resumo').innerHTML = '';
+                document.getElementById('grafico-residual').innerHTML = '';
                 document.getElementById('grafico-diasemana').innerHTML = '';
                 document.getElementById('diasemana-section').style.display = 'none';
                 document.getElementById('grafico-donut').innerHTML = '';
@@ -3156,6 +3430,12 @@ document.addEventListener('DOMContentLoaded', function() {
             renderGraficoRenovaveis(series);
             renderHeatmapCalendario(series);
             renderGraficoSaldo(series);
+            // As secções por hora (até ~8 800 pontos num ano) desenham-se depois de o browser pintar o resto
+            requestAnimationFrame(() => setTimeout(() => {
+                if (seq !== _aplicarSeq) return;
+                renderDependencia(dataInicio, dataFim);
+                renderResidual(dataInicio, dataFim);
+            }, 0));
             renderDiaSemana(series);
             // Mix: contexto + render (Produção/Consumo respeitando _mixView)
             const periodoLabel = new Date(dataInicio + 'T00:00:00').toLocaleDateString('pt-PT') + ' a ' +

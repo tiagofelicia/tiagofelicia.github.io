@@ -272,6 +272,8 @@
         [data-theme="dark"] .yoy-deltas .yoy-up { color: #f87171; }
         [data-theme="dark"] .yoy-deltas .yoy-down { color: #4ade80; }
         [data-theme="dark"] .yoy-deltas .yoy-flat { color: #94a3b8; }
+        .historia-dia { font-size: 0.78em; text-align: center; margin: -4px 0 8px 0; color: #475569; }
+        [data-theme="dark"] .historia-dia { color: #cbd5e1; }
 
         /* ===== Top Horas (mais baratas / mais caras) ===== */
         #top-horas-section { width: 95%; max-width: 1200px; margin: 20px auto; }
@@ -536,7 +538,7 @@
 
     <div class="dashboard-grid">
          <div class="coluna">
-            <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="yoy-deltas" id="yoy-pt-deltas"></div> <div class="futuros-info" id="futuros-container-pt"> Futuro do dia: <strong id="futuros-anterior-pt">--,-- €</strong> em <strong id="futuros-pt-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> <div class="data-item linha-extra" id="linha-neg-pt" hidden><span class="label">Quartos-horários com preço ≤ 0</span><span class="valor" id="neg-pt">--</span></div> </div>
+            <div class="card card-principal card-portugal"> <h3 class="card-title-media-pt">Portugal - Simples</h3> <div class="valor-principal" id="media-pt" aria-label="Preço médio Portugal">--,-- €</div> <div class="yoy-deltas" id="yoy-pt-deltas"></div> <div class="historia-dia" id="historia-pt" hidden></div> <div class="futuros-info" id="futuros-container-pt"> Futuro do dia: <strong id="futuros-anterior-pt">--,-- €</strong> em <strong id="futuros-pt-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário PT</span><span class="valor" id="max-pt">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário PT</span><span class="valor" id="min-pt">--,-- €</span></div> <div class="data-item linha-extra" id="linha-neg-pt" hidden><span class="label">Quartos-horários com preço ≤ 0</span><span class="valor" id="neg-pt">--</span></div> </div>
              <div class="card card-principal card-espanha"> <h3 class="card-title-media-es">Espanha <small id="lbl-24h-es">(às 24h de ES)</small></h3> <div class="valor-principal" id="media-es" aria-label="Preço médio Espanha">--,-- €</div> <div class="yoy-deltas" id="yoy-es-deltas"></div> <div class="futuros-info" id="futuros-container-es"> Futuro do dia: <strong id="futuros-anterior-es">--,-- €</strong> em <strong id="futuros-es-data">--/--/----</strong> </div> <div class="data-item"><span class="label">Máximo quarto-horário ES</span><span class="valor" id="max-es">--,-- €</span></div> <div class="data-item"><span class="label">Mínimo quarto-horário ES</span><span class="valor" id="min-es">--,-- €</span></div> </div>
              <div class="split-pt-es" title="Market splitting: quartos-horários do dia mostrado em que Portugal e Espanha tiveram preços diferentes"><span class="label">Quartos-horários com PT ≠ ES</span><span class="valor" id="split-pt-es">--</span></div>
              <div class="card card-futuros"> <h3 class="card-title-futuros">Futuros Diários OMIP (PT)</h3> <ul> <li id="futuro-1-item" style="display: none;"> <span id="futuros-1-label"></span> <strong id="futuros-1-valor"></strong> </li> <li id="futuro-2-item" style="display: none;"> <span id="futuros-2-label"></span> <strong id="futuros-2-valor"></strong> </li> <li id="futuro-3-item" style="display: none;"> <span id="futuros-3-label"></span> <strong id="futuros-3-valor"></strong> </li> </ul> </div>
@@ -1101,6 +1103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         renderYoyDeltas('yoy-pt-deltas', mediaPTAtual, mediaPTOntem, mediaPTSemAnt, notaRefPT);
         renderYoyDeltas('yoy-es-deltas', mediaESAtual, mediaESOntem, mediaESSemAnt);
+        renderHistoriaPreco(dataSelecionada, mediaPTAtual, emCET);
 
         // === Top 3 horas mais baratas / caras (usa a vista ativa) ===
         const topHoras = calcularTopHoras(dadosViewReais, 3);
@@ -1492,6 +1495,58 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('themeChanged', function() {
         if (ultimosArgsGrafico) atualizarGrafico(...ultimosArgsGrafico);
     });
+
+    // --- O preço médio do dia face ao mesmo dia do calendário nos outros anos ---
+    // As médias diárias de todos os anos estão em agregados/omie_diario.csv (~290 KB comprimidos), pedido uma
+    // vez, depois de a página estar desenhada. Só se mostra quando o dia fica entre os 3 preços mais altos ou os
+    // 3 mais baixos para essa data (com pelo menos 5 anos). Em hora CET a média é a de outra janela de 24 h,
+    // por isso não se compara.
+    let _mediasDiariasPT = null;
+    let _isoHistoria = null;   // dia pedido por último: as respostas de outro dia são ignoradas
+    function carregarMediasDiariasPT() {
+        if (!_mediasDiariasPT) {
+            _mediasDiariasPT = fetchDados('agregados/omie_diario.csv')
+                .then(r => r.ok ? r.text() : Promise.reject(new Error('omie_diario.csv: ' + r.status)))
+                .then(t => {
+                    const linhas = t.replace(/^\uFEFF/, '').trim().split('\n');
+                    const cab = linhas.shift().split(',').map(c => c.trim());
+                    const iIso = cab.indexOf('data_iso'), iMedia = cab.indexOf('pt_medio');
+                    const m = new Map();
+                    for (const l of linhas) {
+                        const c = l.split(',');
+                        const v = parseFloat(c[iMedia]);
+                        if (c[iIso] && !isNaN(v)) m.set(c[iIso].trim(), v);
+                    }
+                    return m;
+                })
+                .catch(e => { console.warn('Médias diárias indisponíveis:', e); _mediasDiariasPT = null; return null; });
+        }
+        return _mediasDiariasPT;
+    }
+    function renderHistoriaPreco(iso, media, emCET) {
+        const el = document.getElementById('historia-pt');
+        if (!el) return;
+        el.hidden = true;
+        el.textContent = '';
+        _isoHistoria = iso;
+        if (emCET || media === null || isNaN(media)) return;
+        carregarMediasDiariasPT().then(m => {
+            if (!m || _isoHistoria !== iso) return;
+            const outros = [];
+            m.forEach((v, k) => { if (k.slice(5) === iso.slice(5) && k !== iso) outros.push({ ano: parseInt(k, 10), v }); });
+            if (outros.length < 4) return;
+            const posAlto = 1 + outros.filter(o => o.v > media).length;
+            const posBaixo = 1 + outros.filter(o => o.v < media).length;
+            let txt = null;
+            if (posAlto <= 3) txt = posAlto === 1 ? 'O preço médio mais alto' : `O ${posAlto}.º preço médio mais alto`;
+            else if (posBaixo <= 3) txt = posBaixo === 1 ? 'O preço médio mais baixo' : `O ${posBaixo}.º preço médio mais baixo`;
+            if (!txt) return;
+            const anoMin = Math.min(parseInt(iso, 10), ...outros.map(o => o.ano));
+            const diaMes = new Date(iso + 'T00:00:00').toLocaleDateString('pt-PT', { day: 'numeric', month: 'long' });
+            el.textContent = `📅 ${txt} para um ${diaMes} desde ${anoMin} (${outros.length + 1} anos)`;
+            el.hidden = false;
+        });
+    }
 
     // --- HELPERS: YoY deltas e Top horas ---
     function getDataNDiasAntesCSV(dataStrYYYYMMDD, n) {
