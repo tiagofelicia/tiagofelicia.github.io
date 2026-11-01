@@ -42,6 +42,14 @@
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    <!-- Fundo do mapa (Portugal, países vizinhos, rios e lagos) — sem tiles externos -->
+    <script src="portugal_background.js" defer></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="" defer></script>
 
     <!-- Google Analytics (GA4) + Consent Mode v2 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
@@ -215,6 +223,14 @@
         },
         {
           "@type": "Question",
+          "name": "Onde fica cada albufeira no mapa?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No sítio da barragem, com as coordenadas da lista de características de albufeiras do SNIRH e, nas que lá não estão (as três do Tâmega, Baixo Sabor, Foz Tua, Ribeiradio, Alto Ceira, Lagoacho e Pedrógão), do mapa de barragens da CNPGB. O fundo — Portugal continental, os países vizinhos, os rios principais e os lagos — é do Natural Earth, sem mapas de serviços externos."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Posso usar estes dados?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -276,6 +292,19 @@
         .tabela-centrais caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
         .tabela-centrais tbody tr td { cursor: default; }
         #evol-centrais[hidden] { display: none; }
+        /* O fundo do contentor é o mar (o país, os rios e os lagos vêm de portugal_background.js) */
+        #mapa-alb { width: 100%; height: 600px; border-radius: 8px; border: 1px solid #ddd; background: #dce9f2; }
+        @media (max-width: 700px) { #mapa-alb { height: 480px; } }
+        /* O clique num círculo não deixa o retângulo de foco do browser (os círculos não se alcançam pelo teclado) */
+        #mapa-alb path.leaflet-interactive:focus { outline: none; }
+        .mapa-legenda { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 8px 0 0; font-size: 0.82em; color: #475569; }
+        .mapa-legenda .leg-item { display: inline-flex; align-items: center; gap: 5px; }
+        .mapa-legenda .leg-cor { width: 13px; height: 13px; border-radius: 50%; border: 1px solid #334155; display: inline-block; }
+        .mapa-legenda .leg-vazia { border-style: dashed; background: transparent; }
+        .mapa-legenda .leg-nota { color: #64748b; }
+        .mapa-dica, .mapa-popup .leaflet-popup-content { font-size: 0.85em; line-height: 1.45; }
+        .btn-ver-alb { margin-top: 6px; background: #2563eb; color: #fff; border: none; border-radius: 5px; padding: 5px 10px; font-size: 0.95em; cursor: pointer; }
+        .btn-ver-alb:hover { background: #1d4ed8; }
 
         .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
         .tabela-alb { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
@@ -291,6 +320,14 @@
         .tabela-alb .velho { font-size: 0.78em; color: #b45309; margin-left: 4px; }
         .tabela-alb .sobe { color: #15803d; }
         .tabela-alb .desce { color: #b91c1c; }
+        /* Títulos das colunas: clicar (ou Enter) ordena; as setas como na tabela dos Preços Horários */
+        .tabela-alb th.ord { position: relative; cursor: pointer; user-select: none; padding-right: 22px; }
+        .tabela-alb th.ord:hover { background: #e2e8f0; }
+        .tabela-alb th.ord:focus-visible { outline: 2px solid #2563eb; outline-offset: -2px; }
+        .tabela-alb th.ord::after { content: '▲\A▼'; white-space: pre; font-size: 8px; line-height: 9px; color: #94a3b8;
+                                    position: absolute; right: 7px; top: 50%; transform: translateY(-50%); }
+        .tabela-alb th.ord.sort-asc::after { content: '▲'; color: #1e293b; font-size: 10px; white-space: normal; }
+        .tabela-alb th.ord.sort-desc::after { content: '▼'; color: #1e293b; font-size: 10px; white-space: normal; }
         .barra-cel { min-width: 150px; }
         .barra { display: inline-block; width: 80px; height: 10px; background: #dbeafe; border-radius: 3px; vertical-align: middle; margin-right: 8px; overflow: hidden; }
         .barra > span { display: block; height: 100%; background: #2563eb; border-radius: 3px 0 0 3px; }
@@ -320,6 +357,8 @@
             .barra-cel { min-width: 0; }
             .tabela-alb td.esq { white-space: normal; min-width: 100px; }
             .tabela-alb th, .tabela-alb td { padding: 5px 5px; }
+            .tabela-alb th.ord { padding-right: 14px; }
+            .tabela-alb th.ord::after { right: 3px; }
         }
 
         /* --- Dark mode --- */
@@ -343,6 +382,15 @@
         [data-theme="dark"] #sel-albufeira, [data-theme="dark"] .vista-bar select { background: #1e293b; border-color: #475569; color: #e2e8f0; }
         [data-theme="dark"] .tabela-alb .mini-tag { color: #cbd5e1; background: #0f172a; border-color: #475569; }
         [data-theme="dark"] .tabela-centrais caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #mapa-alb { background: #0f2238; border-color: #475569; }
+        [data-theme="dark"] .mapa-legenda { color: #cbd5e1; }
+        [data-theme="dark"] .mapa-legenda .leg-cor { border-color: #cbd5e1; }
+        [data-theme="dark"] .mapa-legenda .leg-nota { color: #94a3b8; }
+        [data-theme="dark"] .leaflet-control-zoom a { background: #1e293b !important; color: #e2e8f0 !important; border-color: #475569 !important; }
+        [data-theme="dark"] .leaflet-control-attribution { background: rgba(30,41,59,0.8) !important; color: #94a3b8 !important; }
+        [data-theme="dark"] .leaflet-control-attribution a { color: #60a5fa !important; }
+        [data-theme="dark"] .leaflet-tooltip, [data-theme="dark"] .leaflet-popup-content-wrapper, [data-theme="dark"] .leaflet-popup-tip { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .leaflet-tooltip-top:before { border-top-color: #0f172a; }
         [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
         [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
         [data-theme="dark"] .tabela-alb { background: #1e293b; }
@@ -355,6 +403,10 @@
         [data-theme="dark"] .tabela-alb .velho { color: #fbbf24; }
         [data-theme="dark"] .tabela-alb .sobe { color: #4ade80; }
         [data-theme="dark"] .tabela-alb .desce { color: #f87171; }
+        [data-theme="dark"] .tabela-alb th.ord:hover { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-alb th.ord:focus-visible { outline-color: #60a5fa; }
+        [data-theme="dark"] .tabela-alb th.ord::after { color: #64748b; }
+        [data-theme="dark"] .tabela-alb th.ord.sort-asc::after, [data-theme="dark"] .tabela-alb th.ord.sort-desc::after { color: #e2e8f0; }
         [data-theme="dark"] .barra { background: #1e3a5f; }
         [data-theme="dark"] .barra > span { background: #60a5fa; }
 
@@ -391,6 +443,7 @@
 
     <nav class="mini-nav" aria-label="Navegação rápida da página">
         <a href="#bloco-kpis" class="mini-nav-chip">📋 Resumo</a>
+        <a href="#bloco-mapa" class="mini-nav-chip">📍 Mapa</a>
         <a href="#bloco-evol" class="mini-nav-chip">📈 Ao longo do ano</a>
         <a href="#bloco-tabela" class="mini-nav-chip">🏞️ Albufeiras</a>
         <a href="#bloco-bacias" class="mini-nav-chip">🗺️ Por bacia</a>
@@ -423,6 +476,14 @@
             <p id="resumo-texto"></p>
         </section>
 
+        <section id="bloco-mapa" class="grafico-box">
+            <h2>📍 Mapa</h2>
+            <p class="grafico-intro">Cada albufeira no sítio da barragem: o tamanho do círculo é a capacidade e a cor a percentagem de água guardada no período escolhido. Passe o rato por cima para ver os valores; clique (ou toque) para os fixar e para ver a evolução e as centrais. Num ecrã tátil, o mapa só se arrasta depois de aproximar no «+».</p>
+            <div id="mapa-alb" role="region" aria-label="Mapa das albufeiras"></div>
+            <div class="mapa-legenda" id="mapa-legenda"></div>
+            <p class="nota-bloco">Fundo: Natural Earth. Localização das barragens: lista de características de albufeiras do SNIRH (APA) e, nas que lá não estão, mapa de barragens da CNPGB.</p>
+        </section>
+
         <section id="bloco-evol" class="grafico-box">
             <h2>📈 Ao longo do ano</h2>
             <p class="grafico-intro">A percentagem de água guardada, dia a dia, comparada com o ano anterior e com os anos completos desde 2011 (a média e a faixa entre o mínimo e o máximo de cada dia). Escolha uma bacia ou uma albufeira, ou clique numa linha da tabela: com uma albufeira escolhida, aparecem por baixo as suas centrais.</p>
@@ -442,7 +503,7 @@
 
         <section id="bloco-tabela" class="grafico-box">
             <h2 id="tabela-titulo">🏞️ As albufeiras</h2>
-            <p class="grafico-intro">O valor de cada albufeira no período escolhido, a percentagem da capacidade, a variação face ao período anterior, a percentagem um ano antes e a potência das centrais que tiram água de cada uma. Clique numa linha para ver a evolução e as centrais.</p>
+            <p class="grafico-intro">O valor de cada albufeira no período escolhido, a percentagem da capacidade, a variação face ao período anterior, a percentagem um ano antes e a potência das centrais que tiram água de cada uma. Clique numa linha para ver a evolução e as centrais, ou no título de uma coluna para ordenar por ela.</p>
             <div class="bloco-controls">
                 <span class="ctrl-label">Ordenar</span>
                 <div class="btn-toggle" id="ctrl-ordem" role="group" aria-label="Ordenar">
@@ -546,6 +607,12 @@
             <div class="faq-content">
                 <p>Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis — acima de 125% da capacidade ou muito longe dos dias à volta — são retirados (cerca de 0,2% do total).</p>
                 <p>Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Onde fica cada albufeira no mapa?</strong></summary>
+            <div class="faq-content">
+                <p>No sítio da barragem, com as coordenadas da lista de características de albufeiras do SNIRH e, nas que lá não estão (as três do Tâmega, Baixo Sabor, Foz Tua, Ribeiradio, Alto Ceira, Lagoacho e Pedrógão), do mapa de barragens da CNPGB. O fundo — Portugal continental, os países vizinhos, os rios principais e os lagos — é do Natural Earth, sem mapas de serviços externos.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -691,7 +758,8 @@ document.addEventListener('DOMContentLoaded', function () {
         ALB = linhas.map(l => ({
             col: l[k('coluna')], nome: l[k('nome')], bacia: l[k('bacia')],
             ref: parseFloat(l[k('referencia_hm3')]), refMax: l[k('referencia')] === 'maximo_registado',
-            semanal: k('frequencia') >= 0 && l[k('frequencia')] === 'semanal'
+            semanal: k('frequencia') >= 0 && l[k('frequencia')] === 'semanal',
+            lat: k('latitude') >= 0 ? parseFloat(l[k('latitude')]) : NaN, lon: k('longitude') >= 0 ? parseFloat(l[k('longitude')]) : NaN
         })).filter(a => a.col && a.ref > 0);
         ALB.forEach(a => POR_COL.set(a.col, a));
     }
@@ -1021,10 +1089,37 @@ document.addEventListener('DOMContentLoaded', function () {
         const sem = a.semanal ? '<span class="mini-tag" title="Só tem um valor por semana, à segunda-feira">semanal</span>' : '';
         return `${esc(a.nome)}${velho}${sem}${comBacia ? `<span class="mini">${esc(a.bacia)}</span>` : ''}`;
     }
+    // Ordenação: «Por bacia» agrupa; o título de uma coluna passa à lista corrida, ordenada por ela (o primeiro clique
+    // põe os maiores primeiro, e a Albufeira de A a Z; o segundo inverte). Sem valor neste período fica sempre no fim.
+    let ORD = { col: 'cheia', dir: -1 };
+    function chaveOrd(a, col, t_) {
+        if (col === 'nome') return a.nome;
+        const x = valor(a, REF, t_);
+        if (!x) return null;
+        if (col === 'volume') return x.v;
+        if (col === 'cheia') return x.v / a.ref * 100;
+        if (col === 'comp') { const c = comparar([a], COMP, REF, t_); return c ? c.agora - c.antes : null; }
+        if (col === 'ano') { const c = comparar([a], menosUmAno(REF), REF, t_); return c ? c.antes : null; }
+        if (col === 'potencia') { const p = potencia([a]); return p.n ? p.mw : null; }
+        return a.ref;
+    }
+    function ordenarPor(col) {
+        if (ORDEM !== 'bacia' && ORD.col === col) ORD.dir = -ORD.dir;
+        else ORD = { col, dir: col === 'nome' ? 1 : -1 };
+        ORDEM = 'lista';
+        renderTabela();
+    }
     function renderTabela() {
-        let h = '<thead><tr><th scope="col" class="esq">Albufeira</th><th scope="col">Volume</th><th scope="col">Cheia</th>'
-              + `<th scope="col">${rotuloComp()}</th><th scope="col">Há um ano</th><th scope="col" class="col-ref" title="Potência das centrais que tiram água da albufeira">Potência</th>`
-              + '<th scope="col" class="col-ref">100% =</th></tr></thead><tbody>';
+        const th = (col, rot, cls, titulo) => {
+            const ativo = ORDEM !== 'bacia' && ORD.col === col;
+            return `<th scope="col" class="ord${cls ? ' ' + cls : ''}${ativo ? (ORD.dir > 0 ? ' sort-asc' : ' sort-desc') : ''}" data-ord="${col}" tabindex="0"`
+                + ` aria-sort="${ativo ? (ORD.dir > 0 ? 'ascending' : 'descending') : 'none'}"`
+                + ` title="${titulo ? titulo + '. ' : ''}Clique (ou Enter) para ordenar por esta coluna">${rot}</th>`;
+        };
+        let h = '<thead><tr>' + th('nome', 'Albufeira', 'esq') + th('volume', 'Volume') + th('cheia', 'Cheia')
+              + th('comp', rotuloComp()) + th('ano', 'Há um ano')
+              + th('potencia', 'Potência', 'col-ref', 'Potência das centrais que tiram água da albufeira') + th('ref', '100% =', 'col-ref')
+              + '</tr></thead><tbody>';
         if (ORDEM === 'bacia') {
             ORDEM_BACIAS.forEach(b => {
                 const lista = ALB.filter(a => a.bacia === b);
@@ -1033,13 +1128,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 lista.forEach(a => { h += linhaTabela(nomeAlb(a, false), [a], 'membro', a.col); });
             });
         } else {
-            const ord = ALB.map(a => { const x = valor(a, REF, tol()); return { a, pct: x ? x.v / a.ref * 100 : null }; })
-                .sort((p, q) => vazio(p.pct) ? 1 : vazio(q.pct) ? -1 : (ORDEM === 'cheia' ? q.pct - p.pct : p.pct - q.pct));
+            const t_ = tol(), falta = k => k === null || (typeof k === 'number' && !isFinite(k));
+            const ord = ALB.map(a => ({ a, k: chaveOrd(a, ORD.col, t_) }))
+                .sort((p, q) => {
+                    const fp = falta(p.k), fq = falta(q.k);
+                    const d = fp || fq ? fp - fq : (typeof p.k === 'string' ? p.k.localeCompare(q.k, 'pt') : p.k - q.k) * ORD.dir;
+                    return d || p.a.nome.localeCompare(q.a.nome, 'pt');
+                });
             ord.forEach(o => { h += linhaTabela(nomeAlb(o.a, true), [o.a], 'membro', o.a.col); });
         }
         h += linhaTabela('Todas', ALB, 'total', 'todas') + '</tbody>';
         document.getElementById('tabela-alb').innerHTML = h;
         document.getElementById('tabela-titulo').textContent = `🏞️ As ${ALB.length} albufeiras`;
+        // Os botões de cima acompanham: «Mais cheias» = Cheia ▼, «Mais vazias» = Cheia ▲; noutra coluna, nenhum
+        ativarToggle('ctrl-ordem', ORDEM === 'bacia' ? 'bacia' : ORD.col === 'cheia' ? (ORD.dir < 0 ? 'cheia' : 'vazia') : '');
     }
 
     // ==================================================================
@@ -1126,6 +1228,95 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==================================================================
+    // MAPA
+    // ==================================================================
+    // Fundo próprio (portugal_background.js, Natural Earth) sem tiles externos, como nos mapas da Europa. Um círculo
+    // por albufeira, no sítio da barragem: o raio pela capacidade (área proporcional) e a cor pela percentagem.
+    const ESCALA_MAPA = [[20, '#deebf7'], [40, '#9ecae1'], [60, '#6baed6'], [80, '#3182bd'], [Infinity, '#08519c']];
+    const ROT_ESCALA = ['até 20%', '20–40%', '40–60%', '60–80%', '80% ou mais'];
+    const corPct = p => ESCALA_MAPA.find(([lim]) => p < lim)[1];
+    let MAPA = null, FUNDO = null, CIRCULOS = null;
+    function estiloFundo(f) {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        const agua = dk ? '#1d4e89' : '#9ec9e8';
+        const t = f.properties.t;
+        if (t === 'rio') return { color: agua, weight: 1.2, opacity: 0.9, fill: false };
+        if (t === 'lago') return { color: agua, weight: 0.5, fillColor: agua, fillOpacity: 1 };
+        return { color: dk ? '#475569' : '#b8c0c6', weight: t === 'pt' ? 1.2 : 0.7, opacity: 1,
+                 fillColor: t === 'pt' ? (dk ? '#1e293b' : '#f4f4f1') : (dk ? '#172131' : '#e7e8e3'), fillOpacity: 1 };
+    }
+    function iniciarMapa() {
+        if (MAPA || typeof L === 'undefined' || typeof PORTUGAL_BG_GEOJSON === 'undefined') return !!MAPA;
+        const [lon0, lat0, lon1, lat1] = PORTUGAL_BG_JANELA;
+        MAPA = L.map('mapa-alb', { minZoom: 6, maxZoom: 11, zoomSnap: 0.5, maxBounds: L.latLngBounds([lat0, lon0], [lat1, lon1]),
+                                   maxBoundsViscosity: 1.0, attributionControl: true, scrollWheelZoom: false });
+        MAPA.createPane('fundo');
+        MAPA.getPane('fundo').style.zIndex = 250;
+        MAPA.getPane('fundo').style.pointerEvents = 'none';
+        FUNDO = L.geoJson(PORTUGAL_BG_GEOJSON, { pane: 'fundo', renderer: L.canvas({ pane: 'fundo', padding: 0.5 }), interactive: false,
+                                                 style: estiloFundo,
+                                                 attribution: '&copy; <a href="https://www.naturalearthdata.com/" rel="noopener">Natural Earth</a> · SNIRH (APA), CNPGB' }).addTo(MAPA);
+        MAPA.fitBounds([[36.95, -9.55], [42.15, -6.18]], { padding: [6, 6] });
+        // Não deixa afastar mais do que a vista inicial (o fundo só cobre o que ela mostra no ecrã mais largo)
+        MAPA.setMinZoom(MAPA.getZoom());
+        // A roda do rato só faz zoom depois de clicar no mapa, para não prender o scroll da página
+        MAPA.on('click', () => MAPA.scrollWheelZoom.enable());
+        MAPA.on('mouseout', () => MAPA.scrollWheelZoom.disable());
+        // Num ecrã tátil o dedo só arrasta o mapa depois de aproximar (no «+»): na vista inicial, que já mostra o país
+        // todo, desliza a página
+        if (window.matchMedia && matchMedia('(pointer: coarse)').matches) {
+            const toque = () => {
+                const perto = MAPA.getZoom() > MAPA.getMinZoom();
+                ['dragging', 'touchZoom'].forEach(h => perto ? MAPA[h].enable() : MAPA[h].disable());
+            };
+            toque();
+            MAPA.on('zoomend', toque);
+        }
+        // Botão «Ver a evolução» dentro do popup (na fase de captura: o Leaflet não deixa o clique sair do popup)
+        document.getElementById('mapa-alb').addEventListener('click', e => {
+            const b = e.target.closest('[data-ver-alb]');
+            if (b) { MAPA.closePopup(); escolher(b.dataset.verAlb, true); }
+        }, true);
+        return true;
+    }
+    function renderMapa() {
+        // Sem as coordenadas (colunas latitude e longitude da lista), sem o Leaflet ou sem o fundo, não há mapa
+        if (!ALB.some(a => isFinite(a.lat) && isFinite(a.lon)) || !iniciarMapa()) { document.getElementById('bloco-mapa').hidden = true; return; }
+        FUNDO.setStyle(estiloFundo);
+        if (CIRCULOS) CIRCULOS.remove();
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark', t_ = tol();
+        const maxRef = Math.max(...ALB.map(a => a.ref));
+        // Os maiores primeiro, para os pequenos ficarem por cima e se poderem escolher
+        const lista = ALB.filter(a => isFinite(a.lat) && isFinite(a.lon)).sort((p, q) => q.ref - p.ref);
+        CIRCULOS = L.layerGroup(lista.map(a => {
+            const x = valor(a, REF, t_), pct = x ? x.v / a.ref * 100 : null;
+            const sem = comparar([a], COMP, REF, t_), p = potencia([a]);
+            const raio = 4 + 20 * Math.sqrt(a.ref / maxRef);
+            const marca = L.circleMarker([a.lat, a.lon], {
+                radius: raio, weight: 1, color: dk ? '#cbd5e1' : '#334155', opacity: 0.9,
+                fillColor: x ? corPct(pct) : 'transparent', fillOpacity: x ? 0.92 : 0, dashArray: x ? null : '3 3'
+            });
+            const data = x && x.i !== REF ? ` (valor de ${fmtDiaMes(isoDe(x.i))})` : '';
+            const texto = `<b>${esc(a.nome)}</b> · ${esc(nomeBacia(a.bacia))}<br>`
+                + (x ? `<b>${fmtPct(pct)}</b> · ${fmtHm3(x.v)}${data}<br>${rotuloComp()}: ${sem ? fmtPp(sem.agora - sem.antes) : '--'}`
+                     : 'sem valor neste período')
+                + `<br>Capacidade: ${fmtHm3(a.ref)}${a.refMax ? '*' : ''}${p.n ? ` · Potência: ${fmtMW(p.mw)}` : ''}`;
+            marca.bindTooltip(texto, { direction: 'top', offset: [0, -raio], className: 'mapa-dica' });
+            marca.bindPopup(texto + `<br><button type="button" class="btn-ver-alb" data-ver-alb="${a.col}">Ver a evolução e as centrais</button>`,
+                            { className: 'mapa-popup' });
+            // Com a caixa aberta a dica (o mesmo texto) fica invisível. Não se tira com unbindTooltip: o Leaflet 1.9.4
+            // deixa no círculo o «focus» que a procura, e dá erro quando o círculo volta a ter o foco
+            marca.on('popupopen', () => marca.getTooltip().setOpacity(0));
+            marca.on('popupclose', () => marca.getTooltip().setOpacity(0.9));
+            return marca;
+        })).addTo(MAPA);
+        document.getElementById('mapa-legenda').innerHTML =
+            ESCALA_MAPA.map(([, c], i) => `<span class="leg-item"><span class="leg-cor" style="background:${c}"></span>${ROT_ESCALA[i]}</span>`).join('')
+            + '<span class="leg-item"><span class="leg-cor leg-vazia"></span>sem valor</span>'
+            + '<span class="leg-item leg-nota">círculo maior = mais capacidade</span>';
+    }
+
+    // ==================================================================
     // ESCOLHA DO PERÍODO
     // ==================================================================
     const anoMin = () => +isoDe(0).slice(0, 4), anoMax = () => +isoDe(ULT).slice(0, 4);
@@ -1193,6 +1384,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderEvol();
         renderTabela();
         renderBacias();
+        renderMapa();
         atualizarURL();
     }
 
@@ -1230,7 +1422,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     document.getElementById('sel-albufeira').addEventListener('change', e => escolher(e.target.value));
     ligarToggle('ctrl-ano', v => { ANO = v; renderEvol(); atualizarURL(); });
-    ligarToggle('ctrl-ordem', v => { ORDEM = v; renderTabela(); });
+    ligarToggle('ctrl-ordem', v => {
+        if (v === 'bacia') ORDEM = 'bacia';
+        else { ORDEM = 'lista'; ORD = { col: 'cheia', dir: v === 'cheia' ? -1 : 1 }; }
+        renderTabela();
+    });
     ligarToggle('ctrl-vista', v => mudarVista(v, PER));
     // Ao mudar de ano, a mesma semana do ano (a mais próxima) ou o mesmo mês
     document.getElementById('sel-ano-per').addEventListener('change', e => {
@@ -1248,13 +1444,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.getElementById('sel-per').addEventListener('change', e => mudarVista(VISTA, e.target.value));
     const tabela = document.getElementById('tabela-alb');
-    tabela.addEventListener('click', e => { const tr = e.target.closest('tr[data-sel]'); if (tr) escolher(tr.dataset.sel, true); });
+    tabela.addEventListener('click', e => {
+        const th = e.target.closest('th[data-ord]');
+        if (th) { ordenarPor(th.dataset.ord); return; }
+        const tr = e.target.closest('tr[data-sel]');
+        if (tr) escolher(tr.dataset.sel, true);
+    });
     tabela.addEventListener('keydown', e => {
         if (e.key !== 'Enter' && e.key !== ' ') return;
+        const th = e.target.closest('th[data-ord]');
+        if (th) {
+            // A tabela é refeita: o foco volta ao mesmo título
+            e.preventDefault(); ordenarPor(th.dataset.ord);
+            tabela.querySelector(`th[data-ord="${th.dataset.ord}"]`).focus();
+            return;
+        }
         const tr = e.target.closest('tr[data-sel]');
         if (tr) { e.preventDefault(); escolher(tr.dataset.sel, true); }
     });
-    document.addEventListener('themeChanged', () => { if (ULT >= 0) { renderEvol(); renderBacias(); renderEnergia(); } });
+    document.addEventListener('themeChanged', () => { if (ULT >= 0) { renderEvol(); renderBacias(); renderEnergia(); renderMapa(); } });
 
     const btnTopo = document.getElementById('btn-voltar-topo');
     window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
