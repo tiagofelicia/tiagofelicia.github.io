@@ -45,7 +45,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" />
-    <!-- Fundo do mapa (Portugal, países vizinhos, rios e lagos) — sem tiles externos -->
+    <!-- Fundo do mapa (Portugal, países vizinhos, rios e albufeiras) — sem tiles externos -->
     <script src="portugal_background.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -226,7 +226,7 @@
           "name": "Onde fica cada albufeira no mapa?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No sítio da barragem, com as coordenadas da lista de características de albufeiras do SNIRH e, nas que lá não estão (as três do Tâmega, Baixo Sabor, Foz Tua, Ribeiradio, Alto Ceira, Lagoacho e Pedrógão), do mapa de barragens da CNPGB. O fundo — Portugal continental, os países vizinhos, os rios principais e os lagos — é do Natural Earth, sem mapas de serviços externos."
+            "text": "No sítio da barragem: as coordenadas vêm da lista de características de albufeiras do SNIRH e, nas que lá não estão (as três do Tâmega, Foz Tua, Ribeiradio, Alto Ceira, Lagoacho e Pedrógão), do mapa de barragens da CNPGB; a do Baixo Sabor, do OpenStreetMap. Foram todas conferidas com os paredões desenhados no OpenStreetMap e ficam a menos de 200 m. O fundo não usa mapas de serviços externos: a costa e os países vizinhos são do Natural Earth; a fronteira, os rios e os espelhos de água são do OpenStreetMap (© colaboradores do OpenStreetMap, licença ODbL). O espelho de água desenhado é o da albufeira cheia, não o do dia."
           }
         },
         {
@@ -481,7 +481,7 @@
             <p class="grafico-intro">Cada albufeira no sítio da barragem: o tamanho do círculo é a capacidade e a cor a percentagem de água guardada no período escolhido. Passe o rato por cima para ver os valores; clique (ou toque) para os fixar e para ver a evolução e as centrais. Num ecrã tátil, o mapa só se arrasta depois de aproximar no «+».</p>
             <div id="mapa-alb" role="region" aria-label="Mapa das albufeiras"></div>
             <div class="mapa-legenda" id="mapa-legenda"></div>
-            <p class="nota-bloco">Fundo: Natural Earth. Localização das barragens: lista de características de albufeiras do SNIRH (APA) e, nas que lá não estão, mapa de barragens da CNPGB.</p>
+            <p class="nota-bloco">Fundo: Natural Earth (a costa e os países vizinhos) e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (a fronteira, os rios e os espelhos de água, com as albufeiras cheias; licença ODbL). Localização das barragens: lista de características de albufeiras do SNIRH (APA) e, nas que lá não estão, mapa de barragens da CNPGB; o Baixo Sabor, OpenStreetMap.</p>
         </section>
 
         <section id="bloco-evol" class="grafico-box">
@@ -612,7 +612,7 @@
         <details class="faq-item">
             <summary><strong>Onde fica cada albufeira no mapa?</strong></summary>
             <div class="faq-content">
-                <p>No sítio da barragem, com as coordenadas da lista de características de albufeiras do SNIRH e, nas que lá não estão (as três do Tâmega, Baixo Sabor, Foz Tua, Ribeiradio, Alto Ceira, Lagoacho e Pedrógão), do mapa de barragens da CNPGB. O fundo — Portugal continental, os países vizinhos, os rios principais e os lagos — é do Natural Earth, sem mapas de serviços externos.</p>
+                <p>No sítio da barragem: as coordenadas vêm da lista de características de albufeiras do SNIRH e, nas que lá não estão (as três do Tâmega, Foz Tua, Ribeiradio, Alto Ceira, Lagoacho e Pedrógão), do mapa de barragens da CNPGB; a do Baixo Sabor, do OpenStreetMap. Foram todas conferidas com os paredões desenhados no OpenStreetMap e ficam a menos de 200 m. O fundo não usa mapas de serviços externos: a costa e os países vizinhos são do Natural Earth; a fronteira, os rios e os espelhos de água são do OpenStreetMap (<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a>, licença ODbL). O espelho de água desenhado é o da albufeira cheia, não o do dia.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -1230,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     // MAPA
     // ==================================================================
-    // Fundo próprio (portugal_background.js, Natural Earth) sem tiles externos, como nos mapas da Europa. Um círculo
+    // Fundo próprio (portugal_background.js: Natural Earth e OpenStreetMap) sem tiles externos. Um círculo
     // por albufeira, no sítio da barragem: o raio pela capacidade (área proporcional) e a cor pela percentagem.
     const ESCALA_MAPA = [[20, '#deebf7'], [40, '#9ecae1'], [60, '#6baed6'], [80, '#3182bd'], [Infinity, '#08519c']];
     const ROT_ESCALA = ['até 20%', '20–40%', '40–60%', '60–80%', '80% ou mais'];
@@ -1238,7 +1238,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let MAPA = null, FUNDO = null, CIRCULOS = null;
     function estiloFundo(f) {
         const dk = document.documentElement.getAttribute('data-theme') === 'dark';
-        const agua = dk ? '#1d4e89' : '#9ec9e8';
+        const agua = dk ? '#3a78bd' : '#9ec9e8';   // no escuro, claro q.b. para as albufeiras se verem na terra
         const t = f.properties.t;
         if (t === 'rio') return { color: agua, weight: 1.2, opacity: 0.9, fill: false };
         if (t === 'lago') return { color: agua, weight: 0.5, fillColor: agua, fillOpacity: 1 };
@@ -1255,7 +1255,7 @@ document.addEventListener('DOMContentLoaded', function () {
         MAPA.getPane('fundo').style.pointerEvents = 'none';
         FUNDO = L.geoJson(PORTUGAL_BG_GEOJSON, { pane: 'fundo', renderer: L.canvas({ pane: 'fundo', padding: 0.5 }), interactive: false,
                                                  style: estiloFundo,
-                                                 attribution: '&copy; <a href="https://www.naturalearthdata.com/" rel="noopener">Natural Earth</a> · SNIRH (APA), CNPGB' }).addTo(MAPA);
+                                                 attribution: '&copy; <a href="https://www.naturalearthdata.com/" rel="noopener">Natural Earth</a> · &copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">colaboradores do OpenStreetMap</a> · SNIRH (APA), CNPGB' }).addTo(MAPA);
         MAPA.fitBounds([[36.95, -9.55], [42.15, -6.18]], { padding: [6, 6] });
         // Não deixa afastar mais do que a vista inicial (o fundo só cobre o que ela mostra no ecrã mais largo)
         MAPA.setMinZoom(MAPA.getZoom());
