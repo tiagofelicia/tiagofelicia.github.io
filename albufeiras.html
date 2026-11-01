@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
 
     <title>Albufeiras hoje: quanta água há nas barragens portuguesas | Tiago Felícia</title>
-    <meta name="description" content="Quanta água há nas 40 albufeiras das centrais hidroelétricas portuguesas, dia a dia: volume e percentagem de cada barragem e de cada bacia, comparação com o ano passado e com a média desde 2011, e a energia guardada. Dados do SNIRH (Agência Portuguesa do Ambiente) e da ENTSO-E." />
+    <meta name="description" content="Quanta água há nas albufeiras com uso para energia em Portugal: volume e percentagem de cada barragem e de cada bacia, por dia, semana ou mês, comparação com o ano anterior e com a média desde 2011, potência das centrais e energia guardada. Dados do SNIRH (Agência Portuguesa do Ambiente), da APREN e da ENTSO-E." />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/albufeiras" />
     <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/albufeiras" />
@@ -16,7 +16,7 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Albufeiras hoje — a água guardada nas barragens" />
-    <meta property="og:description" content="O volume e a percentagem de cada uma das 40 albufeiras das centrais hidroelétricas portuguesas, dia a dia, comparados com o ano passado e com a média desde 2011." />
+    <meta property="og:description" content="O volume e a percentagem de cada albufeira com uso para energia em Portugal, por dia, semana ou mês, comparados com o ano anterior e com a média desde 2011, e a potência das centrais." />
     <meta property="og:url" content="https://www.tiagofelicia.pt/albufeiras" />
     <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -70,7 +70,7 @@
       "@context": "https://schema.org",
       "@type": "Dataset",
       "name": "Água guardada nas albufeiras das centrais hidroelétricas de Portugal",
-      "description": "Por dia, desde 2001: o volume de água armazenado em cada uma das 40 albufeiras das centrais hidroelétricas portuguesas, a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), sem os valores impossíveis; a capacidade de cada albufeira; e, por semana desde 2015, a energia guardada nas albufeiras portuguesas, publicada na plataforma de transparência da ENTSO-E.",
+      "description": "Desde 2001: o volume de água armazenado em cada uma das 56 albufeiras com uso para energia em Portugal (as das centrais hidroelétricas, com um valor por dia, e as de rega que também têm central, com um valor por semana), a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), sem os valores impossíveis; a capacidade de cada albufeira (boletim semanal da APA); a potência e a produção das centrais que tiram água de cada uma (APREN; CNPGB); e, por semana desde 2015, a energia guardada nas albufeiras portuguesas, publicada na plataforma de transparência da ENTSO-E.",
       "url": "https://www.tiagofelicia.pt/albufeiras",
       "inLanguage": "pt-PT",
       "isAccessibleForFree": true,
@@ -80,7 +80,8 @@
       "variableMeasured": [
         { "@type": "PropertyValue", "name": "Volume armazenado em cada albufeira", "unitText": "hm3" },
         { "@type": "PropertyValue", "name": "Percentagem da capacidade", "unitText": "%" },
-        { "@type": "PropertyValue", "name": "Energia guardada nas albufeiras", "unitText": "GWh" }
+        { "@type": "PropertyValue", "name": "Energia guardada nas albufeiras", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Potência das centrais de cada albufeira", "unitText": "MW" }
       ],
       "isBasedOn": [
         {
@@ -94,6 +95,12 @@
           "name": "ENTSO-E Transparency Platform — Aggregated Filling Rate of Water Reservoirs and Hydro Storage Plants",
           "url": "https://transparency.entsoe.eu",
           "creator": { "@type": "Organization", "name": "ENTSO-E", "url": "https://www.entsoe.eu/" }
+        },
+        {
+          "@type": "CreativeWork",
+          "name": "APREN — Anuário 2026: fichas técnicas das grandes e pequenas centrais hídricas",
+          "url": "https://www.apren.pt",
+          "creator": { "@type": "Organization", "name": "APREN — Associação Portuguesa de Energias Renováveis", "url": "https://www.apren.pt" }
         }
       ],
       "creator": {
@@ -104,6 +111,7 @@
       "distribution": [
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv" }
       ]
     }
@@ -124,56 +132,96 @@
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      "mainEntity": [{
-        "@type": "Question",
-        "name": "De onde vêm estes dados?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "O volume de cada albufeira vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia. É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte. A energia guardada vem da plataforma de transparência da ENTSO-E, onde é publicada todas as semanas."
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "De onde vêm estes dados?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O volume de cada albufeira vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte. A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA; a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da ENTSO-E, onde é publicada todas as semanas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Que albufeiras entram?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "As 56 albufeiras com uso para energia: as do boletim semanal de albufeiras da APA que têm «energia» no uso — as das centrais hidroelétricas e as de rega ou de abastecimento que também têm uma central, como o Maranhão, Montargil ou o Alvito — e outras do sistema hidroelétrico que não entram nesse boletim: as três do Tâmega (Alto Tâmega, Daivões e Gouvães), o Alto Ceira e o Pedrógão. Ficam de fora as albufeiras só de rega ou de abastecimento."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que algumas albufeiras só têm um valor por semana?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "As de rega (Maranhão, Montargil, Alvito, Odivelas e outras, marcadas como «semanal» na tabela) passaram a ter no SNIRH um valor por semana, à segunda-feira, o dia dos boletins semanais da APA. Na vista do último dia, estas albufeiras aparecem com o valor da última segunda-feira, com a data a laranja. Na vista por semana, todas as albufeiras ficam na mesma segunda-feira."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como funcionam as vistas por semana e por mês?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Na vista por semana, os valores são os da segunda-feira escolhida, como no boletim semanal da APA, comparados com a segunda-feira anterior. Na vista por mês, são os do último dia do mês, como no boletim mensal, comparados com o fim do mês anterior; o mês em curso vai até ao último dia com dados. Em todas as vistas, se faltar o valor do dia, conta o último dos 6 ou 7 dias anteriores, e há a comparação com o mesmo dia do ano anterior e com a média desde 2011. O link da página guarda o período escolhido."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que quer dizer a percentagem?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "É o volume guardado a dividir pela capacidade total da albufeira, a do boletim semanal da APA, que inclui o volume morto — a água abaixo das tomadas, que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil. Nas albufeiras que não estão no boletim (as três do Tâmega, o Alto Ceira e o Pedrógão), os 100% são o máximo registado (marcado com *)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "De onde vem a potência das centrais?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Das fichas técnicas do Anuário 2026 da APREN, com a potência de turbinamento e de bombagem e a produção de 2024 e 2025 de cada central, já com os reforços (Alqueva II, Picote II, Bemposta II, Salamonde II, Frades e Venda Nova III). Uma albufeira pode alimentar várias centrais: a da Venda Nova alimenta a Vila Nova, Frades e Venda Nova III. Na Serra Serrada, na Póvoa e no Caia, que não estão no anuário, a potência é a da CNPGB. Ficam sem potência as albufeiras de rega cujas centrais não a publicam, as de derivação, como Fronhas, e as de sistemas em que a água passa por várias centrais sem uma ligação direta a uma delas, como o Vale do Rossim, o Lagoacho e o Alto Ceira."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que os números são diferentes dos do boletim da APA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O boletim mensal da APA junta 58 albufeiras e o semanal 80, incluindo as só de rega e de abastecimento. Aqui entram as que têm uso para energia. Nas albufeiras que estão nos dois, o volume e a capacidade são os mesmos e, na vista por semana, também o dia."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "A água guardada é o mesmo que energia guardada?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não. A mesma água produz mais eletricidade numa barragem alta, ou com várias centrais a jusante, do que numa barragem baixa. Somando o volume das albufeiras hidroelétricas no fim de cada mês desde 2015, cada hm³ correspondeu a entre 0,13 e 0,30 GWh da energia guardada publicada na ENTSO-E. Por isso esta página mostra as duas coisas: a água em cada albufeira e, no fim, a energia guardada no conjunto."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como se compara com os outros anos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a soma dos volumes a dividir pela soma das capacidades das albufeiras com valor nesse dia."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Os dados do SNIRH têm erros?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis — acima de 125% da capacidade ou muito longe dos dias à volta — são retirados (cerca de 0,2% do total). Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Posso usar estes dados?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. As séries estão em dados.tiagofelicia.pt, sob licença CC BY 4.0: o volume de cada albufeira (albufeiras_snirh_diario.csv), a lista com as capacidades (albufeiras_snirh.csv), as centrais (centrais_hidricas.csv) e a energia guardada por semana (albufeiras_semanal.csv). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB."
+          }
         }
-      },{
-        "@type": "Question",
-        "name": "Que albufeiras entram?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "As 40 albufeiras das centrais hidroelétricas com dados diários no SNIRH, incluindo as que não entram no boletim mensal de armazenamento da APA: o Baixo Sabor, a Foz Tua, as três do Tâmega (Alto Tâmega, Daivões e Gouvães), a cadeia do Douro, o Ribeiradio, o Alto Ceira, Belver e Fratel. Também entram o Alqueva e o Pedrógão. Ficam de fora as albufeiras só de rega ou de abastecimento."
-        }
-      },{
-        "@type": "Question",
-        "name": "O que quer dizer a percentagem?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "É o volume guardado a dividir pela capacidade total da albufeira indicada pelo SNIRH, que inclui o volume morto, a água abaixo das tomadas que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil. Nas albufeiras sem capacidade no SNIRH (as mais recentes, como o Baixo Sabor e as do Tâmega) e nas que andaram o último ano acima dela, como Belver, os 100% são o máximo registado."
-        }
-      },{
-        "@type": "Question",
-        "name": "Porque é que os números são diferentes dos do boletim da APA?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "O boletim mensal de armazenamento da APA junta 58 albufeiras, incluindo as de rega e de abastecimento, e mostra o último dia de cada mês. Aqui entram as albufeiras das centrais hidroelétricas, dia a dia. Nas albufeiras que estão nos dois, o volume é o mesmo."
-        }
-      },{
-        "@type": "Question",
-        "name": "A água guardada é o mesmo que energia guardada?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Não. A mesma água produz mais eletricidade numa barragem alta, ou com várias centrais a jusante, do que numa barragem baixa. Somando o volume das albufeiras hidroelétricas no fim de cada mês desde 2015, cada hm³ correspondeu a entre 0,13 e 0,30 GWh da energia guardada publicada na ENTSO-E. Por isso esta página mostra as duas coisas: a água em cada albufeira e a energia guardada no conjunto."
-        }
-      },{
-        "@type": "Question",
-        "name": "Como se compara com os outros anos?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a soma dos volumes a dividir pela soma das capacidades das albufeiras com valor nesse dia."
-        }
-      },{
-        "@type": "Question",
-        "name": "Os dados do SNIRH têm erros?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis, acima de 125% da capacidade ou muito longe dos dias à volta, são retirados (cerca de 0,2% do total). Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias."
-        }
-      }]
+      ]
     }
     </script>
 
@@ -219,7 +267,15 @@
         .btn-toggle button:last-child { border-right: none; }
         .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
         .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
-        #sel-albufeira { font-size: 0.88em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #334155; max-width: 100%; }
+        #sel-albufeira, .vista-bar select { font-size: 0.88em; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #334155; max-width: 100%; }
+        .vista-bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 12px; width: 95%; max-width: 1200px; margin: 4px auto 6px auto; }
+        .vista-bar #vista-escolha { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+        .vista-bar #vista-escolha[hidden] { display: none; }
+        .tabela-alb .mini-tag { font-size: 0.72em; color: #475569; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0 6px; margin-left: 6px; vertical-align: 1px; }
+        .tabela-centrais { margin-top: 12px; }
+        .tabela-centrais caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-centrais tbody tr td { cursor: default; }
+        #evol-centrais[hidden] { display: none; }
 
         .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
         .tabela-alb { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
@@ -284,7 +340,9 @@
         [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
         [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
         [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
-        [data-theme="dark"] #sel-albufeira { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] #sel-albufeira, [data-theme="dark"] .vista-bar select { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-alb .mini-tag { color: #cbd5e1; background: #0f172a; border-color: #475569; }
+        [data-theme="dark"] .tabela-centrais caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
         [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
         [data-theme="dark"] .tabela-alb { background: #1e293b; }
@@ -328,7 +386,7 @@
     <div class="painel-header">
         <p class="badge-global">Dados diários desde <strong>01/01/2001</strong> · Último dia: <strong id="badge-ultima">--/--/----</strong></p>
         <h1>Albufeiras: quanta água há nas barragens</h1>
-        <p>As 40 albufeiras das centrais hidroelétricas portuguesas, dia a dia, a partir dos dados do SNIRH (Agência Portuguesa do Ambiente)</p>
+        <p>As albufeiras com uso para energia — as das centrais hidroelétricas e as de rega que também têm central —, por dia, semana ou mês, a partir dos dados do SNIRH (Agência Portuguesa do Ambiente)</p>
     </div>
 
     <nav class="mini-nav" aria-label="Navegação rápida da página">
@@ -343,6 +401,19 @@
     <div id="estado" class="estado-carregamento">A carregar os dados…</div>
 
     <div id="conteudo" hidden>
+        <div class="vista-bar">
+            <span class="ctrl-label">Ver</span>
+            <div class="btn-toggle" id="ctrl-vista" role="group" aria-label="Período">
+                <button type="button" data-v="dia" class="active">Último dia</button>
+                <button type="button" data-v="semana" title="A segunda-feira de cada semana, como no boletim semanal da APA">Semana</button>
+                <button type="button" data-v="mes" title="O último dia de cada mês, como no boletim mensal da APA">Mês</button>
+            </div>
+            <span id="vista-escolha" hidden>
+                <select id="sel-ano-per" aria-label="Ano"></select>
+                <select id="sel-per" aria-label="Semana ou mês"></select>
+            </span>
+        </div>
+
         <section id="bloco-kpis">
             <div class="kpi-cabecalho">
                 <h2>📋 Resumo</h2>
@@ -354,7 +425,7 @@
 
         <section id="bloco-evol" class="grafico-box">
             <h2>📈 Ao longo do ano</h2>
-            <p class="grafico-intro">A percentagem de água guardada, dia a dia, comparada com o ano passado e com os anos completos desde 2011 (a média e a faixa entre o mínimo e o máximo de cada dia). Escolha uma bacia ou uma albufeira, ou clique numa linha da tabela.</p>
+            <p class="grafico-intro">A percentagem de água guardada, dia a dia, comparada com o ano anterior e com os anos completos desde 2011 (a média e a faixa entre o mínimo e o máximo de cada dia). Escolha uma bacia ou uma albufeira, ou clique numa linha da tabela: com uma albufeira escolhida, aparecem por baixo as suas centrais.</p>
             <div class="bloco-controls">
                 <span class="ctrl-label">Mostrar</span>
                 <select id="sel-albufeira" aria-label="Albufeira ou bacia"></select>
@@ -366,11 +437,12 @@
             </div>
             <div id="grafico-evol" class="grafico"></div>
             <p class="resumo-bloco" id="evol-resumo"></p>
+            <div id="evol-centrais" hidden></div>
         </section>
 
         <section id="bloco-tabela" class="grafico-box">
-            <h2>🏞️ As 40 albufeiras</h2>
-            <p class="grafico-intro">O último valor de cada albufeira, a percentagem da capacidade, a variação numa semana e a percentagem no mesmo dia do ano passado. Clique numa linha para ver a evolução.</p>
+            <h2 id="tabela-titulo">🏞️ As albufeiras</h2>
+            <p class="grafico-intro">O valor de cada albufeira no período escolhido, a percentagem da capacidade, a variação face ao período anterior, a percentagem um ano antes e a potência das centrais que tiram água de cada uma. Clique numa linha para ver a evolução e as centrais.</p>
             <div class="bloco-controls">
                 <span class="ctrl-label">Ordenar</span>
                 <div class="btn-toggle" id="ctrl-ordem" role="group" aria-label="Ordenar">
@@ -380,12 +452,12 @@
                 </div>
             </div>
             <div class="tabela-box"><table class="tabela-alb" id="tabela-alb"></table></div>
-            <p class="nota-bloco">* Sem capacidade no SNIRH, ou o último ano acima dela: os 100% são o maior volume registado. A data a laranja indica que a albufeira ainda não tem o valor do último dia.</p>
+            <p class="nota-bloco">* Não está no boletim semanal da APA: os 100% são o maior volume registado. A data a laranja é a do último valor, quando não é do dia de referência; «semanal»: só tem um valor por semana, à segunda-feira. Potência: APREN (Anuário 2026); Serra Serrada, Póvoa e Caia, CNPGB.</p>
         </section>
 
         <section id="bloco-bacias" class="grafico-box">
             <h2>🗺️ Por bacia</h2>
-            <p class="grafico-intro">A percentagem de água guardada nas albufeiras hidroelétricas de cada bacia hidrográfica, comparada com o mesmo dia do ano passado e com a média desde 2011.</p>
+            <p class="grafico-intro">A percentagem de água guardada nas albufeiras de cada bacia hidrográfica no período escolhido, comparada com o mesmo dia do ano anterior e com a média desde 2011. Clique numa bacia para ver a evolução.</p>
             <div id="grafico-bacias" class="grafico"></div>
         </section>
 
@@ -411,28 +483,49 @@
         <details class="faq-item">
             <summary><strong>De onde vêm estes dados?</strong></summary>
             <div class="faq-content">
-                <p>O volume de cada albufeira vem do <a href="https://snirh.apambiente.pt" target="_blank" rel="noopener">SNIRH</a>, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia. É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte.</p>
-                <p>A energia guardada vem da plataforma de transparência da <a href="https://transparency.entsoe.eu" target="_blank" rel="noopener">ENTSO-E</a>, onde é publicada todas as semanas.</p>
+                <p>O volume de cada albufeira vem do <a href="https://snirh.apambiente.pt" target="_blank" rel="noopener">SNIRH</a>, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte.</p>
+                <p>A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA; a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da <a href="https://transparency.entsoe.eu" target="_blank" rel="noopener">ENTSO-E</a>, onde é publicada todas as semanas.</p>
             </div>
         </details>
         <details class="faq-item">
             <summary><strong>Que albufeiras entram?</strong></summary>
             <div class="faq-content">
-                <p>As <strong>40 albufeiras das centrais hidroelétricas</strong> com dados diários no SNIRH, incluindo as que não entram no boletim mensal de armazenamento da APA: o Baixo Sabor, a Foz Tua, as três do Tâmega (Alto Tâmega, Daivões e Gouvães), a cadeia do Douro, o Ribeiradio, o Alto Ceira, Belver e Fratel. Também entram o Alqueva e o Pedrógão.</p>
+                <p>As <strong>56 albufeiras com uso para energia</strong>: as do boletim semanal de albufeiras da APA que têm «energia» no uso — as das centrais hidroelétricas e as de rega ou de abastecimento que também têm uma central, como o Maranhão, Montargil ou o Alvito — e outras do sistema hidroelétrico que não entram nesse boletim: as três do Tâmega (Alto Tâmega, Daivões e Gouvães), o Alto Ceira e o Pedrógão.</p>
                 <p>Ficam de fora as albufeiras só de rega ou de abastecimento.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que algumas albufeiras só têm um valor por semana?</strong></summary>
+            <div class="faq-content">
+                <p>As de rega (Maranhão, Montargil, Alvito, Odivelas e outras, marcadas como «semanal» na tabela) passaram a ter no SNIRH um valor por semana, à segunda-feira, o dia dos boletins semanais da APA.</p>
+                <p>Na vista do último dia, estas albufeiras aparecem com o valor da última segunda-feira, com a data a laranja. Na vista por semana, todas as albufeiras ficam na mesma segunda-feira.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como funcionam as vistas por semana e por mês?</strong></summary>
+            <div class="faq-content">
+                <p>Na vista por <strong>semana</strong>, os valores são os da segunda-feira escolhida, como no boletim semanal da APA, comparados com a segunda-feira anterior. Na vista por <strong>mês</strong>, são os do último dia do mês, como no boletim mensal, comparados com o fim do mês anterior; o mês em curso vai até ao último dia com dados.</p>
+                <p>Em todas as vistas, se faltar o valor do dia, conta o último dos 6 ou 7 dias anteriores, e há a comparação com o mesmo dia do ano anterior e com a média desde 2011. O link da página guarda o período escolhido.</p>
             </div>
         </details>
         <details class="faq-item">
             <summary><strong>O que quer dizer a percentagem?</strong></summary>
             <div class="faq-content">
-                <p>É o volume guardado a dividir pela <strong>capacidade total</strong> da albufeira indicada pelo SNIRH, que inclui o volume morto — a água abaixo das tomadas, que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil.</p>
-                <p>Nas albufeiras sem capacidade no SNIRH (as mais recentes, como o Baixo Sabor e as do Tâmega) e nas que andaram o último ano acima dela, como Belver, os 100% são o <strong>máximo registado</strong> (marcado com *).</p>
+                <p>É o volume guardado a dividir pela <strong>capacidade total</strong> da albufeira, a do boletim semanal da APA, que inclui o volume morto — a água abaixo das tomadas, que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil.</p>
+                <p>Nas albufeiras que não estão no boletim (as três do Tâmega, o Alto Ceira e o Pedrógão), os 100% são o <strong>máximo registado</strong> (marcado com *).</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vem a potência das centrais?</strong></summary>
+            <div class="faq-content">
+                <p>Das fichas técnicas do <strong>Anuário 2026 da APREN</strong>, com a potência de turbinamento e de bombagem e a produção de 2024 e 2025 de cada central, já com os reforços (Alqueva II, Picote II, Bemposta II, Salamonde II, Frades e Venda Nova III). Uma albufeira pode alimentar várias centrais: a da Venda Nova alimenta a Vila Nova, Frades e Venda Nova III. Na Serra Serrada, na Póvoa e no Caia, que não estão no anuário, a potência é a da CNPGB.</p>
+                <p>Ficam sem potência as albufeiras de rega cujas centrais não a publicam, as de derivação, como Fronhas, e as de sistemas em que a água passa por várias centrais sem uma ligação direta a uma delas, como o Vale do Rossim, o Lagoacho e o Alto Ceira.</p>
             </div>
         </details>
         <details class="faq-item">
             <summary><strong>Porque é que os números são diferentes dos do boletim da APA?</strong></summary>
             <div class="faq-content">
-                <p>O boletim mensal de armazenamento da APA junta 58 albufeiras, incluindo as de rega e de abastecimento, e mostra o último dia de cada mês. Aqui entram as albufeiras das centrais hidroelétricas, dia a dia. Nas albufeiras que estão nos dois, o volume é o mesmo.</p>
+                <p>O boletim mensal da APA junta 58 albufeiras e o semanal 80, incluindo as só de rega e de abastecimento. Aqui entram as que têm uso para energia. Nas albufeiras que estão nos dois, o volume e a capacidade são os mesmos e, na vista por semana, também o dia.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -458,7 +551,7 @@
         <details class="faq-item">
             <summary><strong>Posso usar estes dados?</strong></summary>
             <div class="faq-content">
-                <p>Sim. As séries estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: o volume de cada albufeira por dia (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv">albufeiras_snirh_diario.csv</a>), a lista com as capacidades (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv">albufeiras_snirh.csv</a>) e a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv">albufeiras_semanal.csv</a>). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados.</p>
+                <p>Sim. As séries estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: o volume de cada albufeira (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv">albufeiras_snirh_diario.csv</a>), a lista com as capacidades (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv">albufeiras_snirh.csv</a>), as centrais (<a href="https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv">centrais_hidricas.csv</a>) e a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv">albufeiras_semanal.csv</a>). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB.</p>
             </div>
         </details>
     </div>
@@ -494,18 +587,23 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     // CONFIGURAÇÃO
     // ==================================================================
-    // producao/albufeiras_snirh.csv: as 40 albufeiras (bacia, capacidade e o volume que conta como 100%);
-    // producao/albufeiras_snirh_diario.csv: o volume de cada uma (hm3), dia a dia, desde 2001 (SNIRH);
+    // producao/albufeiras_snirh.csv: as albufeiras (bacia, capacidade, o volume que conta como 100% e se os valores
+    //   são diários ou semanais);
+    // producao/albufeiras_snirh_diario.csv: o volume de cada uma (hm3), desde 2001 (SNIRH);
+    // producao/centrais_hidricas.csv: as centrais de cada albufeira, com a potência e a produção (APREN; CNPGB);
     // producao/albufeiras_semanal.csv: a energia guardada em todas as albufeiras, por semana (ENTSO-E).
     const URL_LISTA = 'producao/albufeiras_snirh.csv';
     const URL_DIARIO = 'producao/albufeiras_snirh_diario.csv';
+    const URL_CENTRAIS = 'producao/centrais_hidricas.csv';
     const URL_ENTSOE = 'producao/albufeiras_semanal.csv';
     const ANO_COMP = 2011;      // comparação com os anos completos desde 2011 (o Alqueva encheu pela primeira vez em 2010)
     const ANO_COMP_ENTSOE = 2015;
     const ARRASTO = 31;         // nos gráficos, um valor conta até 31 dias para a frente (até 2017 há albufeiras com um valor por mês)
-    const ATUAL_MAX = 7;        // no resumo e na tabela, um valor com mais de 7 dias já não conta
     const GRANDE = 100;         // hm3: as albufeiras «grandes» do resumo
-    const ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Guadiana'];
+    const ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Sado', 'Guadiana', 'Arade', 'Ribeiras do Algarve'];
+    // Quantos dias para trás pode estar o valor de cada albufeira: as de rega só têm um valor por semana, à segunda-feira
+    const TOL = { dia: 7, semana: 6, mes: 7 };
+    const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
     // ==================================================================
     // FORMATAÇÃO
@@ -520,10 +618,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const fmtPp = v => vazio(v) ? '--' : sinal(v) + fmt1(Math.abs(v)) + ' p.p.';
     const fmtHm3 = v => vazio(v) ? '--' : (Math.abs(v) >= 100 ? fmt0(v) : fmt1(v)) + ' hm³';
     const fmtDHm3 = v => vazio(v) ? '--' : (v > 0.5 ? '+' : v < -0.5 ? '−' : '') + fmtHm3(Math.abs(v));
+    const fmtMW = v => vazio(v) ? '—' : (v >= 10 ? fmt0(v) : fmt1(v).replace(/,0$/, '')) + ' MW';
     const fmtData = iso => iso ? iso.split('-').reverse().join('/') : '--/--/----';
     const fmtDiaMes = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) : '--/--';
     const classe = v => vazio(v) ? '' : v > 0.05 ? 'sobe' : v < -0.05 ? 'desce' : '';
     const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+    const nomeBacia = b => (b.startsWith('Ribeiras') ? 'Bacia das ' : 'Bacia do ') + b;
 
     function _hcDark() {
         const dk = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -562,6 +662,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let T0 = 0, N = 0, ULT = -1;     // dia 0 (UTC), número de dias e índice do último dia
     const idxDe = iso => Math.round((tsDia(iso) - T0) / DIA_MS);
     const isoDe = i => new Date(T0 + i * DIA_MS).toISOString().slice(0, 10);
+    const diaSemana = i => (new Date(T0 + i * DIA_MS).getUTCDay() + 6) % 7;   // 0 = segunda-feira
+    const fimMes = (a, m) => new Date(Date.UTC(a, m, 0)).toISOString().slice(0, 10);   // m de 1 a 12
     // O mesmo dia, um ano antes (29/02 → 28/02)
     function menosUmAno(i) {
         const iso = isoDe(i);
@@ -569,11 +671,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return idxDe((+iso.slice(0, 4) - 1) + '-' + md);
     }
 
-    let ALB = [];                    // { col, nome, bacia, ref, refMax, ultIdx }
+    let ALB = [];                    // { col, nome, bacia, ref, refMax, semanal, ultIdx }
     const POR_COL = new Map();
     const BRUTO = {}, CHEIO = {};    // col → Float64Array(N): o valor do dia e o valor arrastado até 31 dias (NaN sem valor)
+    const CENTRAIS = new Map();      // col → [{ central, inicio, turbinas, mw, bomb, p2024, p2025, fonte }]
     let ENTSOE = null;               // [{ iso, ano, sem, gwh }]
     let SEL = 'todas', ANO = 'civil', ORDEM = 'bacia';
+    // Período: o último dia, uma semana (a segunda-feira, o dia dos boletins semanais da APA) ou um mês (o último
+    // dia, como nos boletins mensais). REF é o dia de referência e COMP o de comparação.
+    let VISTA = 'dia', PER = null, REF = -1, COMP = -1;
 
     function lerCSV(t) {
         const linhas = t.replace(/^﻿/, '').trim().split(/\r?\n/);
@@ -584,7 +690,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const k = n => cab.indexOf(n);
         ALB = linhas.map(l => ({
             col: l[k('coluna')], nome: l[k('nome')], bacia: l[k('bacia')],
-            ref: parseFloat(l[k('referencia_hm3')]), refMax: l[k('referencia')] === 'maximo_registado'
+            ref: parseFloat(l[k('referencia_hm3')]), refMax: l[k('referencia')] === 'maximo_registado',
+            semanal: k('frequencia') >= 0 && l[k('frequencia')] === 'semanal'
         })).filter(a => a.col && a.ref > 0);
         ALB.forEach(a => POR_COL.set(a.col, a));
     }
@@ -613,12 +720,57 @@ document.addEventListener('DOMContentLoaded', function () {
             a.ultIdx = isFinite(ult) ? ult : -1;
         });
     }
+    function prepararCentrais(t) {
+        const { cab, linhas } = lerCSV(t);
+        const k = n => cab.indexOf(n);
+        const num = v => (v === undefined || v === '') ? null : parseFloat(v);
+        linhas.forEach(l => {
+            const col = l[k('albufeira')];
+            if (!col) return;
+            if (!CENTRAIS.has(col)) CENTRAIS.set(col, []);
+            CENTRAIS.get(col).push({ central: l[k('central')], inicio: l[k('inicio')], turbinas: l[k('turbinas')],
+                                     mw: num(l[k('potencia_mw')]), bomb: num(l[k('bombagem_mw')]),
+                                     p2024: num(l[k('producao_2024_gwh')]), p2025: num(l[k('producao_2025_gwh')]), fonte: l[k('fonte')] });
+        });
+    }
     function prepararEntsoe(t) {
         const { cab, linhas } = lerCSV(t);
         const k = n => cab.indexOf(n);
         ENTSOE = linhas.map(l => ({ iso: l[k('semana_inicio')], ano: +l[k('ano_iso')], sem: +l[k('semana_iso')], gwh: parseFloat(l[k('energia_gwh')]) }))
             .filter(x => x.iso && isFinite(x.gwh));
     }
+
+    // ==================================================================
+    // PERÍODO
+    // ==================================================================
+    const ultimaSegunda = () => isoDe(ULT - diaSemana(ULT));
+    // O último mês completo (o mês do último dia, se esse dia for o último do mês)
+    function ultimoMesCompleto() {
+        const iso = isoDe(ULT), a = +iso.slice(0, 4), m = +iso.slice(5, 7);
+        if (iso === fimMes(a, m)) return iso.slice(0, 7);
+        return m === 1 ? `${a - 1}-12` : `${a}-${String(m - 1).padStart(2, '0')}`;
+    }
+    function definirPeriodo() {
+        if (VISTA === 'semana') {
+            REF = idxDe(PER); COMP = REF - 7;
+        } else if (VISTA === 'mes') {
+            const a = +PER.slice(0, 4), m = +PER.slice(5, 7);
+            REF = Math.min(idxDe(fimMes(a, m)), ULT);
+            COMP = idxDe(m === 1 ? fimMes(a - 1, 12) : fimMes(a, m - 1));
+        } else {
+            REF = ULT; COMP = ULT - 7;
+        }
+    }
+    const tol = () => TOL[VISTA];
+    function rotuloPeriodo() {
+        if (VISTA === 'semana') return `semana de ${fmtData(PER)} (segunda-feira)`;
+        if (VISTA === 'mes') {
+            const nome = `${MESES[+PER.slice(5, 7) - 1]} de ${PER.slice(0, 4)}`;
+            return REF === ULT && isoDe(ULT) !== fimMes(+PER.slice(0, 4), +PER.slice(5, 7)) ? `${nome}, até ${fmtData(isoDe(ULT))}` : `fim de ${nome}`;
+        }
+        return `último dia, ${fmtData(isoDe(ULT))}`;
+    }
+    const rotuloComp = () => VISTA === 'semana' ? 'Na semana' : VISTA === 'mes' ? 'No mês' : 'Numa semana';
 
     // ==================================================================
     // CONTAS
@@ -632,7 +784,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Sem artigo: o género muda de albufeira para albufeira (o Alqueva, a Aguieira)
     function nomeSel(sel) {
         if (sel === 'todas') return 'Todas as albufeiras';
-        if (sel.startsWith('bacia-')) return 'Bacia do ' + sel.slice(6);
+        if (sel.startsWith('bacia-')) return nomeBacia(sel.slice(6));
         const a = POR_COL.get(sel);
         return a ? a.nome : 'Todas as albufeiras';
     }
@@ -643,26 +795,29 @@ document.addEventListener('DOMContentLoaded', function () {
         for (const a of lista) { const x = CHEIO[a.col][i]; if (!isNaN(x)) { v += x; r += a.ref; n++; } }
         return n ? { hm3: v, ref: r, pct: v / r * 100, n } : null;
     }
-    // O último valor de uma albufeira, se tiver até 7 dias
-    const atual = a => (a.ultIdx >= 0 && ULT - a.ultIdx <= ATUAL_MAX) ? { v: BRUTO[a.col][a.ultIdx], i: a.ultIdx } : null;
-    // Agora e há `dias` dias (ou há um ano), nas albufeiras com os dois valores; cada uma a partir do seu último dia
-    function comparar(lista, dias) {
+    // O valor de uma albufeira no dia i ou, se não houver, o último dos `t` dias anteriores
+    function valor(a, i, t) {
+        if (i < 0) return null;
+        const b = BRUTO[a.col];
+        for (let j = Math.min(i, N - 1); j >= Math.max(0, i - t); j--) if (!isNaN(b[j])) return { v: b[j], i: j };
+        return null;
+    }
+    function estado(lista, i, t) {
+        let v = 0, r = 0, n = 0;
+        lista.forEach(a => { const x = valor(a, i, t); if (x) { v += x.v; r += a.ref; n++; } });
+        return n ? { hm3: v, ref: r, pct: v / r * 100, n } : null;
+    }
+    // No dia i1 e no dia i0, só com as albufeiras que têm os dois valores
+    function comparar(lista, i0, i1, t) {
         let v1 = 0, v0 = 0, r = 0, n = 0;
         lista.forEach(a => {
-            const x = atual(a);
-            if (!x) return;
-            const y = CHEIO[a.col][dias === 'ano' ? menosUmAno(x.i) : x.i - dias];
-            if (y === undefined || isNaN(y)) return;
-            v1 += x.v; v0 += y; r += a.ref; n++;
+            const x = valor(a, i1, t), y = valor(a, i0, t);
+            if (!x || !y) return;
+            v1 += x.v; v0 += y.v; r += a.ref; n++;
         });
         return n ? { agora: v1 / r * 100, antes: v0 / r * 100, dHm3: v1 - v0, n } : null;
     }
-    function estadoAtual(lista) {
-        let v = 0, r = 0, n = 0;
-        lista.forEach(a => { const x = atual(a); if (x) { v += x.v; r += a.ref; n++; } });
-        return n ? { hm3: v, ref: r, pct: v / r * 100, n } : null;
-    }
-    // O mesmo dia do calendário nos anos completos desde 2011
+    // O mesmo dia do calendário nos anos completos desde 2011, antes do ano do dia i
     function historicoDoDia(lista, i) {
         const iso = isoDe(i), ano = +iso.slice(0, 4), md = iso.slice(5) === '02-29' ? '02-28' : iso.slice(5);
         const anos = [];
@@ -675,6 +830,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const min = anos.reduce((m, x) => x.pct < m.pct ? x : m), max = anos.reduce((m, x) => x.pct > m.pct ? x : m);
         return { media, min, max, de: anos[0].ano, ate: anos[anos.length - 1].ano };
     }
+    // Potência das centrais de um conjunto de albufeiras
+    function potencia(lista) {
+        let mw = 0, bomb = 0, n = 0, p2025 = 0, comP = 0;
+        lista.forEach(a => (CENTRAIS.get(a.col) || []).forEach(c => {
+            if (!vazio(c.mw)) mw += c.mw;
+            if (!vazio(c.bomb)) bomb += c.bomb;
+            if (!vazio(c.p2025)) { p2025 += c.p2025; comP++; }
+            n++;
+        }));
+        return { mw, bomb, n, p2025, comP };
+    }
 
     // ==================================================================
     // RESUMO
@@ -683,27 +849,32 @@ document.addEventListener('DOMContentLoaded', function () {
         return `<div class="kpi-card"><div class="kpi-label">${rotulo}</div><div class="kpi-value">${valor}</div><div class="kpi-sub">${sub}</div></div>`;
     }
     function renderResumo() {
-        const ult = isoDe(ULT);
-        const agora = estadoAtual(ALB), sem = comparar(ALB, 7), ano = comparar(ALB, 'ano'), hist = historicoDoDia(ALB, ULT);
-        document.getElementById('kpi-sub').textContent = `${fmtData(ult)} · ${agora.n} albufeiras com valor nos últimos 7 dias`;
+        const t_ = tol(), iso = isoDe(REF);
+        const agora = estado(ALB, REF, t_), sem = comparar(ALB, COMP, REF, t_), ano = comparar(ALB, menosUmAno(REF), REF, t_);
+        const hist = historicoDoDia(ALB, REF);
+        const rotComp = VISTA === 'semana' ? '📅 Face à semana anterior' : VISTA === 'mes' ? '📅 Face ao mês anterior' : '📅 Numa semana';
+        document.getElementById('kpi-sub').textContent = `${rotuloPeriodo().replace(/^./, c => c.toUpperCase())} · ${agora ? agora.n : 0} albufeiras com valor`;
         document.getElementById('alb-kpis').innerHTML =
-            card('💧 Água guardada', fmtHm3(agora.hm3), `${fmtPct(agora.pct)} da capacidade`)
-            + card('📅 Numa semana', sem ? fmtPp(sem.agora - sem.antes) : '--', sem ? `${fmtDHm3(sem.dHm3)} desde ${fmtData(isoDe(ULT - 7))}` : '')
+            card('💧 Água guardada', agora ? fmtHm3(agora.hm3) : '--', agora ? `${fmtPct(agora.pct)} da capacidade` : '')
+            + card(rotComp, sem ? fmtPp(sem.agora - sem.antes) : '--', sem ? `${fmtDHm3(sem.dHm3)} desde ${fmtData(isoDe(COMP))}` : '')
             + card('↩️ Há um ano', ano ? fmtPct(ano.antes) : '--', ano ? `agora ${fmtPct(ano.agora)} (${fmtPp(ano.agora - ano.antes)})` : '')
-            + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para ${fmtDiaMes(ult)}`, hist ? fmtPct(hist.media) : '--',
+            + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para ${fmtDiaMes(iso)}`, hist ? fmtPct(hist.media) : '--',
                    hist ? `mín. ${fmtPct(hist.min.pct)} (${hist.min.ano}) · máx. ${fmtPct(hist.max.pct)} (${hist.max.ano})` : '');
+        if (!agora) { document.getElementById('resumo-texto').innerHTML = ''; return; }
 
         // Das grandes, a que está mais acima e a mais abaixo da sua média para este dia (as albufeiras a fio de água
         // andam sempre perto de cheias: comparadas consigo mesmas, contam como as outras)
         const grandes = ALB.filter(a => a.ref >= GRANDE).map(a => {
-            const x = atual(a), h = x ? historicoDoDia([a], x.i) : null;
+            const x = valor(a, REF, t_), h = x ? historicoDoDia([a], x.i) : null;
             return h ? { a, pct: x.v / a.ref * 100, d: x.v / a.ref * 100 - h.media } : null;
         }).filter(Boolean);
         grandes.sort((p, q) => q.d - p.d);
         const comp = (d, txt) => vazio(d) || Math.abs(d) < 0.05 ? `igual ${txt}` : `${fmt1(Math.abs(d))} p.p. ${d > 0 ? 'acima' : 'abaixo'} ${txt}`;
-        let t = `As albufeiras das centrais hidroelétricas tinham <strong>${fmtHm3(agora.hm3)}</strong> de água a ${fmtData(ult)}, <strong>${fmtPct(agora.pct)}</strong> da capacidade`;
+        const fimDoMes = VISTA === 'mes' && iso === fimMes(+PER.slice(0, 4), +PER.slice(5, 7));
+        const quando = fimDoMes ? `no fim de ${MESES[+PER.slice(5, 7) - 1]} de ${PER.slice(0, 4)}` : `a ${fmtData(iso)}`;
+        let t = `As albufeiras com uso para energia tinham <strong>${fmtHm3(agora.hm3)}</strong> de água ${quando}, <strong>${fmtPct(agora.pct)}</strong> da capacidade`;
         const partes = [];
-        if (ano) partes.push(comp(ano.agora - ano.antes, 'do mesmo dia do ano passado'));
+        if (ano) partes.push(comp(ano.agora - ano.antes, 'do mesmo dia do ano anterior'));
         if (hist) partes.push(comp(agora.pct - hist.media, `da média de ${hist.de} a ${hist.ate} para este dia`));
         if (partes.length) t += ': ' + partes.join(' e ');
         t += '.';
@@ -738,10 +909,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function renderEvol() {
         const c = _hcDark(), hidro = ANO === 'hidro', lista = membros(SEL);
-        const pAtual = inicioPeriodo(ULT, hidro);
+        // O ano (civil ou hidrológico) do dia de referência, comparado com o anterior e com os completos desde 2011
+        const pAtual = inicioPeriodo(REF, hidro);
         const atualS = seriePeriodo(lista, pAtual, hidro, ULT);
         const passadoS = seriePeriodo(lista, pAtual - 1, hidro, N - 1);
-        // Faixa e média: os períodos completos desde 2011 com valor em pelo menos 300 dias
         const porX = new Map(), usados = [];
         for (let p = ANO_COMP; p < pAtual; p++) {
             const s = seriePeriodo(lista, p, hidro, N - 1);
@@ -755,11 +926,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const faixa = comFaixa ? chaves.map(x => { const v = porX.get(x); return [x, Math.min(...v), Math.max(...v)]; }) : [];
         const media = comFaixa ? chaves.map(x => { const v = porX.get(x); return [x, Math.round(v.reduce((t, y) => t + y, 0) / v.length * 10) / 10]; }) : [];
         const rotComp = comFaixa ? `${rotPeriodo(usados[0], hidro)}–${rotPeriodo(usados[usados.length - 1], hidro)}` : '';
+        const dRef = new Date(T0 + REF * DIA_MS), xRef = chaveX(dRef.getUTCMonth(), dRef.getUTCDate(), hidro);
 
         Highcharts.chart('grafico-evol', Object.assign(base(c, 'albufeiras-' + SEL + '-' + ANO), {
             chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
             xAxis: { type: 'datetime', min: hidro ? Date.UTC(1999, 9, 1) : Date.UTC(2000, 0, 1), max: hidro ? Date.UTC(2000, 8, 30) : Date.UTC(2000, 11, 31),
-                     tickInterval: 30 * DIA_MS, labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+                     tickInterval: 30 * DIA_MS, labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true,
+                     plotLines: VISTA === 'dia' ? [] : [{ value: xRef, color: c.passado, width: 1, dashStyle: 'Dash', zIndex: 4,
+                                                          label: { text: fmtDiaMes(isoDe(REF)), rotation: 0, y: 12, style: { color: c.txt, fontSize: '11px' } } }] },
             yAxis: { title: { text: '% da capacidade', style: { color: c.txt } }, labels: { format: '{value}%', style: { color: c.txt } }, gridLineColor: c.grelha, softMax: 100 },
             tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt }, xDateFormat: '%e de %B',
                        pointFormatter: function () {
@@ -775,77 +949,116 @@ document.addEventListener('DOMContentLoaded', function () {
             ]
         }));
 
-        // Frase: o último dia contra o mesmo dia do ano passado e da média
-        const fim = atualS[atualS.length - 1];
+        // Frase: o dia de referência contra o mesmo dia do ano anterior e da média
+        const fim = atualS.filter(p => p.x <= xRef).pop();
         const el = document.getElementById('evol-resumo');
-        if (!fim) { el.textContent = ''; return; }
-        const ant = passadoS.find(p => p.x === fim.x), med = media.find(p => p[0] === fim.x);
-        let t = `${esc(nomeSel(SEL))}, a ${fmtData(isoDe(ULT))}: <strong>${fmtPct(fim.y)}</strong> (${fmtHm3(fim.hm3)})`;
-        const partes = [];
-        if (ant) partes.push(`${fmtPct(ant.y)} no mesmo dia de ${rotPeriodo(pAtual - 1, hidro)}`);
-        if (med) partes.push(`${fmtPct(med[1])} na média de ${rotPeriodo(usados[0], hidro)} a ${rotPeriodo(usados[usados.length - 1], hidro)}`);
-        if (partes.length) t += '; ' + partes.join(' e ');
-        el.innerHTML = t + '.';
+        if (!fim) { el.textContent = ''; } else {
+            const ant = passadoS.find(p => p.x === fim.x), med = media.find(p => p[0] === fim.x);
+            const d = new Date(fim.x), dia = `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+            const anoFim = hidro && d.getUTCMonth() >= 9 ? pAtual : (hidro ? pAtual + 1 : pAtual);
+            let t = `${esc(nomeSel(SEL))}, a ${dia}/${anoFim}: <strong>${fmtPct(fim.y)}</strong> (${fmtHm3(fim.hm3)})`;
+            const partes = [];
+            if (ant) partes.push(`${fmtPct(ant.y)} no mesmo dia de ${rotPeriodo(pAtual - 1, hidro)}`);
+            if (med) partes.push(`${fmtPct(med[1])} na média de ${rotPeriodo(usados[0], hidro)} a ${rotPeriodo(usados[usados.length - 1], hidro)}`);
+            if (partes.length) t += '; ' + partes.join(' e ');
+            el.innerHTML = t + '.';
+        }
+        renderCentrais();
+    }
+
+    // As centrais da escolha: uma tabela para uma albufeira, um resumo para uma bacia ou para todas
+    function renderCentrais() {
+        const el = document.getElementById('evol-centrais');
+        if (!CENTRAIS.size) { el.hidden = true; return; }
+        el.hidden = false;
+        const lista = membros(SEL), p = potencia(lista);
+        if (lista.length === 1) {
+            const cs = CENTRAIS.get(lista[0].col) || [];
+            if (!cs.length) {
+                el.innerHTML = `<p class="nota-bloco">${esc(lista[0].nome)}: sem central com potência publicada (albufeira de rega, de derivação ou de um sistema em cascata; ver as perguntas).</p>`;
+                return;
+            }
+            const fontes = [...new Set(cs.map(c => c.fonte))].join('; ');
+            el.innerHTML = `<div class="tabela-box"><table class="tabela-alb tabela-centrais"><caption>${esc(lista[0].nome)}: centrais que tiram água da albufeira</caption>`
+                + '<thead><tr><th scope="col" class="esq">Central</th><th scope="col">Desde</th><th scope="col" class="esq">Turbinas</th>'
+                + '<th scope="col">Potência</th><th scope="col">Bombagem</th><th scope="col">Produção 2024</th><th scope="col">Produção 2025</th></tr></thead><tbody>'
+                + cs.map(c => `<tr><td class="esq">${esc(c.central)}</td><td>${esc(c.inicio || '—')}</td><td class="esq">${esc(c.turbinas || '—')}</td>`
+                    + `<td>${fmtMW(c.mw)}</td><td>${vazio(c.bomb) ? '—' : c.bomb ? fmtMW(c.bomb) : 'não'}</td>`
+                    + `<td>${vazio(c.p2024) ? '—' : fmt1(c.p2024).replace(/,0$/, '') + ' GWh'}</td><td>${vazio(c.p2025) ? '—' : fmt1(c.p2025).replace(/,0$/, '') + ' GWh'}</td></tr>`).join('')
+                + `</tbody></table></div><p class="nota-bloco">Fonte: ${esc(fontes)}.</p>`;
+            return;
+        }
+        const sem = lista.filter(a => !(CENTRAIS.get(a.col) || []).length).length;
+        el.innerHTML = `<p class="resumo-bloco">${esc(nomeSel(SEL))}: <strong>${p.n} centrais</strong> com <strong>${fmtMW(p.mw)}</strong> de potência`
+            + (p.bomb ? ` e ${fmtMW(p.bomb)} de bombagem` : '') + (p.comP ? `; produziram ${fmt0(p.p2025)} GWh em 2025 (as ${p.comP} com produção publicada)` : '')
+            + `.${sem ? ` ${sem} ${sem === 1 ? 'albufeira não tem' : 'albufeiras não têm'} central com potência publicada.` : ''} Escolha uma albufeira para ver as suas centrais.</p>`;
     }
 
     // ==================================================================
     // TABELA
     // ==================================================================
-    function linhaTabela(nome, lista, tipo, sel, extra) {
-        const ag = estadoAtual(lista);
-        if (!ag) return `<tr class="${tipo}"><td class="esq">${nome}</td><td colspan="5">sem dados recentes</td></tr>`;
-        const sem = comparar(lista, 7), ano = comparar(lista, 'ano');
-        const ref = lista.reduce((t, a) => t + (atual(a) ? a.ref : 0), 0);
+    function linhaTabela(nome, lista, tipo, sel) {
+        const t_ = tol();
+        const ag = estado(lista, REF, t_);
+        if (!ag) return `<tr class="${tipo}"><td class="esq">${nome}</td><td colspan="6">sem valor neste período</td></tr>`;
+        const sem = comparar(lista, COMP, REF, t_), ano = comparar(lista, menosUmAno(REF), REF, t_);
+        const ref = lista.reduce((t, a) => t + (valor(a, REF, t_) ? a.ref : 0), 0);
         const d7 = sem ? sem.agora - sem.antes : null;
         const largura = Math.max(0, Math.min(100, ag.pct)).toFixed(1);
+        const p = potencia(lista);
         return `<tr class="${tipo}" data-sel="${sel}" tabindex="0" title="Ver a evolução">`
-            + `<td class="esq">${nome}${extra || ''}</td>`
+            + `<td class="esq">${nome}</td>`
             + `<td>${fmtHm3(ag.hm3)}</td>`
             + `<td class="barra-cel"><span class="barra"><span style="width:${largura}%"></span></span>${fmtPct(ag.pct)}</td>`
             + `<td class="${classe(d7)}">${fmtPp(d7)}</td>`
             + `<td>${ano ? fmtPct(ano.antes) : '--'}</td>`
+            + `<td class="col-ref">${p.n ? fmtMW(p.mw) : '—'}</td>`
             + `<td class="col-ref">${fmtHm3(ref)}${tipo === 'membro' && lista[0].refMax ? '*' : ''}</td></tr>`;
     }
     function nomeAlb(a, comBacia) {
-        const x = atual(a);
-        const velho = x && x.i < ULT ? `<span class="velho" title="Último valor">${fmtDiaMes(isoDe(x.i))}</span>` : '';
-        return `${esc(a.nome)}${velho}${comBacia ? `<span class="mini">${esc(a.bacia)}</span>` : ''}`;
+        const x = valor(a, REF, tol());
+        const velho = x && x.i < REF ? `<span class="velho" title="Valor de ${fmtData(isoDe(x.i))}">${fmtDiaMes(isoDe(x.i))}</span>` : '';
+        const sem = a.semanal ? '<span class="mini-tag" title="Só tem um valor por semana, à segunda-feira">semanal</span>' : '';
+        return `${esc(a.nome)}${velho}${sem}${comBacia ? `<span class="mini">${esc(a.bacia)}</span>` : ''}`;
     }
     function renderTabela() {
         let h = '<thead><tr><th scope="col" class="esq">Albufeira</th><th scope="col">Volume</th><th scope="col">Cheia</th>'
-              + '<th scope="col">Numa semana</th><th scope="col">Há um ano</th><th scope="col" class="col-ref">100% =</th></tr></thead><tbody>';
+              + `<th scope="col">${rotuloComp()}</th><th scope="col">Há um ano</th><th scope="col" class="col-ref" title="Potência das centrais que tiram água da albufeira">Potência</th>`
+              + '<th scope="col" class="col-ref">100% =</th></tr></thead><tbody>';
         if (ORDEM === 'bacia') {
             ORDEM_BACIAS.forEach(b => {
                 const lista = ALB.filter(a => a.bacia === b);
                 if (!lista.length) return;
-                h += linhaTabela(`Bacia do ${esc(b)}`, lista, 'bacia', 'bacia-' + b);
+                h += linhaTabela(esc(nomeBacia(b)), lista, 'bacia', 'bacia-' + b);
                 lista.forEach(a => { h += linhaTabela(nomeAlb(a, false), [a], 'membro', a.col); });
             });
         } else {
-            const ord = ALB.map(a => { const x = atual(a); return { a, pct: x ? x.v / a.ref * 100 : null }; })
+            const ord = ALB.map(a => { const x = valor(a, REF, tol()); return { a, pct: x ? x.v / a.ref * 100 : null }; })
                 .sort((p, q) => vazio(p.pct) ? 1 : vazio(q.pct) ? -1 : (ORDEM === 'cheia' ? q.pct - p.pct : p.pct - q.pct));
             ord.forEach(o => { h += linhaTabela(nomeAlb(o.a, true), [o.a], 'membro', o.a.col); });
         }
         h += linhaTabela('Todas', ALB, 'total', 'todas') + '</tbody>';
         document.getElementById('tabela-alb').innerHTML = h;
+        document.getElementById('tabela-titulo').textContent = `🏞️ As ${ALB.length} albufeiras`;
     }
 
     // ==================================================================
     // POR BACIA
     // ==================================================================
     function renderBacias() {
-        const c = _hcDark();
+        const c = _hcDark(), t_ = tol();
         const bacias = ORDEM_BACIAS.filter(b => ALB.some(a => a.bacia === b));
         const hoje = [], ano = [], med = [];
         let rotComp = '';
         bacias.forEach(b => {
             const lista = ALB.filter(a => a.bacia === b);
-            const ag = estadoAtual(lista), cmp = comparar(lista, 'ano'), hist = historicoDoDia(lista, ULT);
+            const ag = estado(lista, REF, t_), cmp = comparar(lista, menosUmAno(REF), REF, t_), hist = historicoDoDia(lista, REF);
             hoje.push(ag ? Math.round(ag.pct * 10) / 10 : null);
             ano.push(cmp ? Math.round(cmp.antes * 10) / 10 : null);
             med.push(hist ? Math.round(hist.media * 10) / 10 : null);
             if (hist && !rotComp) rotComp = `${hist.de}–${hist.ate}`;
         });
+        const rotHoje = VISTA === 'dia' ? 'Último dia' : VISTA === 'semana' ? `Semana de ${fmtDiaMes(PER)}` : fmtData(isoDe(REF));
         Highcharts.chart('grafico-bacias', Object.assign(base(c, 'albufeiras-por-bacia'), {
             chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
             xAxis: { categories: bacias, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha },
@@ -853,10 +1066,10 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
                        pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmtPct(this.y)}</b><br>`; } },
             plotOptions: { column: { borderWidth: 0, borderRadius: 3, groupPadding: 0.12, pointPadding: 0.04 },
-                           series: { cursor: 'pointer', point: { events: { click: function () { escolher('bacia-' + this.category); } } } } },
+                           series: { cursor: 'pointer', point: { events: { click: function () { escolher('bacia-' + this.category, true); } } } } },
             series: [
-                { name: 'Hoje', data: hoje, color: c.atual },
-                { name: 'Há um ano', data: ano, color: c.passado },
+                { name: rotHoje, data: hoje, color: c.atual },
+                { name: 'Um ano antes', data: ano, color: c.passado },
                 { name: `Média ${rotComp} para este dia`, data: med, color: c.dk ? '#475569' : '#cbd5e1' }
             ]
         }));
@@ -913,11 +1126,82 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==================================================================
-    // ESCOLHA, URL E ARRANQUE
+    // ESCOLHA DO PERÍODO
+    // ==================================================================
+    const anoMin = () => +isoDe(0).slice(0, 4), anoMax = () => +isoDe(ULT).slice(0, 4);
+    // As segundas-feiras de um ano (até ao último dia), com o número da semana ISO
+    function segundasDoAno(a) {
+        const out = [];
+        let i = idxDe(`${a}-01-01`);
+        i += (7 - diaSemana(i)) % 7;
+        for (; i <= ULT && isoDe(i).startsWith(String(a)); i += 7) {
+            const d = new Date(T0 + i * DIA_MS);
+            d.setUTCDate(d.getUTCDate() + 3);   // a quinta-feira da semana dá o ano e o número ISO
+            const jan4 = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+            const semana = 1 + Math.round(((d - jan4) / DIA_MS - 3 + ((jan4.getUTCDay() + 6) % 7)) / 7);
+            out.push({ iso: isoDe(i), semana });
+        }
+        return out;
+    }
+    function preencherPeriodo() {
+        const caixa = document.getElementById('vista-escolha');
+        caixa.hidden = VISTA === 'dia';
+        if (VISTA === 'dia') return;
+        const selAno = document.getElementById('sel-ano-per'), selPer = document.getElementById('sel-per');
+        const ano = +PER.slice(0, 4);
+        let h = '';
+        for (let a = anoMax(); a >= anoMin(); a--) h += `<option value="${a}">${a}</option>`;
+        selAno.innerHTML = h;
+        selAno.value = String(ano);
+        if (VISTA === 'semana') {
+            selPer.innerHTML = segundasDoAno(ano).reverse().map(s => `<option value="${s.iso}">Semana ${s.semana} · ${fmtDiaMes(s.iso)}</option>`).join('');
+        } else {
+            const ultMes = ano === anoMax() ? +isoDe(ULT).slice(5, 7) : 12;
+            h = '';
+            for (let m = ultMes; m >= 1; m--) {
+                const v = `${ano}-${String(m).padStart(2, '0')}`;
+                const parcial = ano === anoMax() && m === ultMes && isoDe(ULT) !== fimMes(ano, m);
+                h += `<option value="${v}">${MESES[m - 1]}${parcial ? ` (até ${fmtDiaMes(isoDe(ULT))})` : ''}</option>`;
+            }
+            selPer.innerHTML = h;
+        }
+        selPer.value = PER;
+    }
+    function periodoValido(v, p) {
+        if (v === 'semana') {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(p || '')) return null;
+            let i = idxDe(p);
+            if (!(i >= 0)) return null;
+            i = Math.min(i, ULT);
+            return isoDe(i - diaSemana(i));
+        }
+        if (v === 'mes') {
+            if (!/^\d{4}-\d{2}$/.test(p || '')) return null;
+            if (idxDe(p + '-01') > ULT || idxDe(fimMes(+p.slice(0, 4), +p.slice(5, 7))) < 0) return null;
+            return p;
+        }
+        return null;
+    }
+    function mudarVista(v, per) {
+        VISTA = v;
+        PER = v === 'semana' ? (periodoValido('semana', per) || ultimaSegunda())
+            : v === 'mes' ? (periodoValido('mes', per) || ultimoMesCompleto()) : null;
+        ativarToggle('ctrl-vista', VISTA);
+        definirPeriodo();
+        preencherPeriodo();
+        renderResumo();
+        renderEvol();
+        renderTabela();
+        renderBacias();
+        atualizarURL();
+    }
+
+    // ==================================================================
+    // ESCOLHA DA ALBUFEIRA, URL E ARRANQUE
     // ==================================================================
     function preencherSelect() {
         let h = '<option value="todas">Todas as albufeiras</option><optgroup label="Bacias">';
-        ORDEM_BACIAS.forEach(b => { if (ALB.some(a => a.bacia === b)) h += `<option value="bacia-${b}">Bacia do ${esc(b)}</option>`; });
+        ORDEM_BACIAS.forEach(b => { if (ALB.some(a => a.bacia === b)) h += `<option value="bacia-${b}">${esc(nomeBacia(b))}</option>`; });
         h += '</optgroup>';
         ORDEM_BACIAS.forEach(b => {
             const lista = ALB.filter(a => a.bacia === b);
@@ -930,6 +1214,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function atualizarURL() {
         const p = new URLSearchParams();
+        if (VISTA === 'semana') { p.set('vista', 'semana'); p.set('data', PER); }
+        if (VISTA === 'mes') { p.set('vista', 'mes'); p.set('mes', PER); }
         if (SEL !== 'todas') p.set('albufeira', SEL);
         if (ANO !== 'civil') p.set('ano', ANO);
         const q = p.toString();
@@ -945,6 +1231,22 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('sel-albufeira').addEventListener('change', e => escolher(e.target.value));
     ligarToggle('ctrl-ano', v => { ANO = v; renderEvol(); atualizarURL(); });
     ligarToggle('ctrl-ordem', v => { ORDEM = v; renderTabela(); });
+    ligarToggle('ctrl-vista', v => mudarVista(v, PER));
+    // Ao mudar de ano, a mesma semana do ano (a mais próxima) ou o mesmo mês
+    document.getElementById('sel-ano-per').addEventListener('change', e => {
+        const a = e.target.value;
+        if (VISTA === 'semana') {
+            const alvo = `${a}${PER.slice(4)}`;
+            const lista = segundasDoAno(+a);
+            const melhor = lista.reduce((m, s) => Math.abs(idxDe(s.iso) - idxDe(alvo)) < Math.abs(idxDe(m.iso) - idxDe(alvo)) ? s : m, lista[0]);
+            mudarVista('semana', melhor ? melhor.iso : null);
+        } else {
+            const m = PER.slice(5, 7);
+            const v = `${a}-${m}`;
+            mudarVista('mes', periodoValido('mes', v) ? v : `${a}-01`);
+        }
+    });
+    document.getElementById('sel-per').addEventListener('change', e => mudarVista(VISTA, e.target.value));
     const tabela = document.getElementById('tabela-alb');
     tabela.addEventListener('click', e => { const tr = e.target.closest('tr[data-sel]'); if (tr) escolher(tr.dataset.sel, true); });
     tabela.addEventListener('keydown', e => {
@@ -967,7 +1269,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(location.search);
     const texto = caminho => fetchDados(caminho).then(r => { if (!r.ok) throw new Error(caminho + ': HTTP ' + r.status); return r.text(); });
     const pEntsoe = texto(URL_ENTSOE).then(prepararEntsoe).catch(err => { console.warn('Energia guardada (ENTSO-E):', err); });
-    Promise.all([texto(URL_LISTA), texto(URL_DIARIO)])
+    // Sem as centrais, a página funciona na mesma, só sem a potência
+    const pCentrais = texto(URL_CENTRAIS).then(prepararCentrais).catch(err => { console.warn('Centrais hídricas:', err); });
+    Promise.all([texto(URL_LISTA), texto(URL_DIARIO), pCentrais])
         .then(([lista, diario]) => {
             prepararLista(lista);
             prepararDiario(diario);
@@ -979,10 +1283,8 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('estado').hidden = true;
             document.getElementById('conteudo').hidden = false;
             preencherSelect();
-            renderResumo();
-            renderEvol();
-            renderTabela();
-            renderBacias();
+            const v = params.get('vista');
+            mudarVista(v === 'semana' || v === 'mes' ? v : 'dia', v === 'semana' ? params.get('data') : params.get('mes'));
             return pEntsoe.then(renderEnergia);
         })
         .catch(err => {
