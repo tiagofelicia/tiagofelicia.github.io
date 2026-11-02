@@ -257,9 +257,9 @@
         .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
         .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
 
-        #alb-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 12px auto; }
-        @media (max-width: 1000px) { #alb-kpis { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 520px) { #alb-kpis { grid-template-columns: 1fr; } }
+        #alb-kpis, #alb-kpis-energia { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 12px auto; }
+        @media (max-width: 1000px) { #alb-kpis, #alb-kpis-energia { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #alb-kpis, #alb-kpis-energia { grid-template-columns: 1fr; } }
         .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
         .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; }
         .kpi-value { font-size: 1.25em; font-weight: 700; color: #212529; line-height: 1.2; }
@@ -267,7 +267,10 @@
         .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; }
         .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0 0 4px 0; }
         .kpi-cabecalho p { font-size: 0.85em; color: #6c757d; margin: 0; }
-        #resumo-texto { width: 95%; max-width: 1200px; margin: 0 auto 10px auto; font-size: 0.9em; color: #444; line-height: 1.6; }
+        .kpi-cabecalho h3 { font-size: 0.98em; color: #2c3e50; margin: 0 0 4px 0; }
+        #kpi-energia-cab { margin-top: 22px; }
+        #kpi-energia-cab[hidden] { display: none; }
+        #resumo-texto, #resumo-energia { width: 95%; max-width: 1200px; margin: 0 auto 10px auto; font-size: 0.9em; color: #444; line-height: 1.6; }
 
         .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
         .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
@@ -365,14 +368,14 @@
         /* --- Dark mode --- */
         [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
         [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
-        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-cabecalho h2,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-cabecalho h2, [data-theme="dark"] .kpi-cabecalho h3,
         [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
         [data-theme="dark"] .painel-header p, [data-theme="dark"] .badge-global,
         [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
         [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub,
         [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
         [data-theme="dark"] .nota-bloco { color: #94a3b8; }
-        [data-theme="dark"] .resumo-bloco, [data-theme="dark"] #resumo-texto, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .resumo-bloco, [data-theme="dark"] #resumo-texto, [data-theme="dark"] #resumo-energia, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
         [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
         [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
@@ -476,6 +479,12 @@
             </div>
             <div id="alb-kpis"></div>
             <p id="resumo-texto"></p>
+            <div class="kpi-cabecalho" id="kpi-energia-cab" hidden>
+                <h3>⚡ Energia guardada (ENTSO-E)</h3>
+                <p id="kpi-energia-sub"></p>
+            </div>
+            <div id="alb-kpis-energia"></div>
+            <p id="resumo-energia"></p>
         </section>
 
         <section id="bloco-mapa" class="grafico-box">
@@ -748,6 +757,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const CENTRAIS = new Map();      // col → [{ central, inicio, turbinas, mw, bomb, p2024, p2025, fonte }]
     const OUTRAS = [];               // as grandes centrais sem albufeira com dados no SNIRH (albufeira vazia no CSV)
     let ENTSOE = null;               // [{ iso, ano, sem, gwh }]
+    const ENTSOE_ANO = new Map();    // ano ISO → Map(semana → GWh)
     let SEL = 'todas', ANO = 'civil', ORDEM = 'bacia';
     // Período: o último dia, uma semana (a segunda-feira, o dia dos boletins semanais da APA) ou um mês (o último
     // dia, como nos boletins mensais). REF é o dia de referência e COMP o de comparação.
@@ -812,6 +822,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const k = n => cab.indexOf(n);
         ENTSOE = linhas.map(l => ({ iso: l[k('semana_inicio')], ano: +l[k('ano_iso')], sem: +l[k('semana_iso')], gwh: parseFloat(l[k('energia_gwh')]) }))
             .filter(x => x.iso && isFinite(x.gwh));
+        ENTSOE.forEach(x => { if (!ENTSOE_ANO.has(x.ano)) ENTSOE_ANO.set(x.ano, new Map()); ENTSOE_ANO.get(x.ano).set(x.sem, x.gwh); });
     }
 
     // ==================================================================
@@ -934,7 +945,7 @@ document.addEventListener('DOMContentLoaded', function () {
             + card('↩️ Há um ano', ano ? fmtPct(ano.antes) : '--', ano ? `agora ${fmtPct(ano.agora)} (${fmtPp(ano.agora - ano.antes)})` : '')
             + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para ${fmtDiaMes(iso)}`, hist ? fmtPct(hist.media) : '--',
                    hist ? `mín. ${fmtPct(hist.min.pct)} (${hist.min.ano}) · máx. ${fmtPct(hist.max.pct)} (${hist.max.ano})` : '');
-        if (!agora) { document.getElementById('resumo-texto').innerHTML = ''; return; }
+        if (!agora) { document.getElementById('resumo-texto').innerHTML = ''; renderResumoEnergia(); return; }
 
         // Das grandes, a que está mais acima e a mais abaixo da sua média para este dia (as albufeiras a fio de água
         // andam sempre perto de cheias: comparadas consigo mesmas, contam como as outras)
@@ -958,6 +969,7 @@ document.addEventListener('DOMContentLoaded', function () {
                + ` (${fmtPct(c.pct)}, ${fmtPp(c.d)}) e a mais abaixo é ${esc(v.a.nome)} (${fmtPct(v.pct)}, ${fmtPp(v.d)}).`;
         }
         document.getElementById('resumo-texto').innerHTML = t;
+        renderResumoEnergia();
     }
 
     // ==================================================================
@@ -1212,14 +1224,52 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     // ENERGIA GUARDADA (ENTSO-E)
     // ==================================================================
+    // A semana k da ENTSO-E com a anterior, a mesma semana do ano antes e a média, o mínimo e o máximo dessa semana nos
+    // anos completos desde 2015 antes do dela (como no gráfico)
+    function estatSemana(k) {
+        const e = ENTSOE[k], ant = k > 0 ? ENTSOE[k - 1] : null;
+        const seguida = ant && (Date.parse(e.iso) - Date.parse(ant.iso)) / DIA_MS === 7;
+        const anos = [...ENTSOE_ANO.keys()].filter(y => y >= ANO_COMP_ENTSOE && y < e.ano && ENTSOE_ANO.get(y).size >= 50).sort((a, b) => a - b);
+        const v = anos.map(y => ({ ano: y, gwh: ENTSOE_ANO.get(y).get(e.sem) })).filter(x => x.gwh !== undefined);
+        const hist = v.length >= 3 ? { media: v.reduce((t, x) => t + x.gwh, 0) / v.length, de: anos[0], ate: anos[anos.length - 1],
+                                       min: v.reduce((m, x) => x.gwh < m.gwh ? x : m), max: v.reduce((m, x) => x.gwh > m.gwh ? x : m) } : null;
+        return { e, ant: seguida ? ant : null, antes: (ENTSOE_ANO.get(e.ano - 1) || new Map()).get(e.sem), hist };
+    }
+    function fraseEnergia({ e, antes, hist }) {
+        const var_ = (a, b) => `${fmt1(Math.abs(a / b - 1) * 100)}% ${a >= b ? 'acima' : 'abaixo'}`;
+        const partes = [];
+        if (antes) partes.push(`${var_(e.gwh, antes)} da mesma semana de ${e.ano - 1}`);
+        if (hist) partes.push(`${var_(e.gwh, hist.media)} da média de ${hist.de} a ${hist.ate}`);
+        return `Na semana de ${fmtData(e.iso)} (semana ${e.sem}), a energia guardada nas albufeiras portuguesas era de <strong>${fmt0(e.gwh)} GWh</strong>`
+            + (partes.length ? ': ' + partes.join(' e ') : '') + '.';
+    }
+    // No Resumo, a semana do período escolhido: a última publicada que começa até ao dia de referência
+    function renderResumoEnergia() {
+        const cab = document.getElementById('kpi-energia-cab'), kp = document.getElementById('alb-kpis-energia'), tx = document.getElementById('resumo-energia');
+        const iso = ULT >= 0 ? isoDe(REF) : '';
+        let k = ENTSOE ? ENTSOE.length - 1 : -1;
+        while (k >= 0 && ENTSOE[k].iso > iso) k--;
+        if (k < 0) { cab.hidden = true; kp.innerHTML = ''; tx.innerHTML = ''; return; }
+        const r = estatSemana(k), { e, ant, antes, hist } = r;
+        const varPct = (a, b) => { const p = (a / b - 1) * 100; return sinal(p) + fmt1(Math.abs(p)) + '%'; };
+        cab.hidden = false;
+        document.getElementById('kpi-energia-sub').textContent = `Semana de ${fmtData(e.iso)} (semana ${e.sem} de ${e.ano}) · `
+            + 'nas albufeiras e centrais de bombagem portuguesas; a ENTSO-E publica cada semana com alguns dias de atraso';
+        kp.innerHTML = card('⚡ Energia guardada', `${fmt0(e.gwh)} GWh`, 'a eletricidade que a água guardada pode produzir')
+            + card('📅 Face à semana anterior', ant ? varPct(e.gwh, ant.gwh) : '--',
+                   ant ? `${sinal(e.gwh - ant.gwh)}${fmt0(Math.abs(e.gwh - ant.gwh))} GWh desde ${fmtData(ant.iso)}` : '')
+            + card('↩️ Há um ano', antes ? `${fmt0(antes)} GWh` : '--', antes ? `agora ${varPct(e.gwh, antes)}` : '')
+            + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para a semana ${e.sem}`, hist ? `${fmt0(hist.media)} GWh` : '--',
+                   hist ? `mín. ${fmt0(hist.min.gwh)} GWh (${hist.min.ano}) · máx. ${fmt0(hist.max.gwh)} GWh (${hist.max.ano})` : '');
+        tx.innerHTML = fraseEnergia(r);
+    }
     function renderEnergia() {
         const bloco = document.getElementById('bloco-energia');
         if (!ENTSOE || !ENTSOE.length) { bloco.hidden = true; return; }
         bloco.hidden = false;
         const c = _hcDark();
         const ultima = ENTSOE[ENTSOE.length - 1], anoAtual = ultima.ano;
-        const porAno = new Map();
-        ENTSOE.forEach(x => { if (!porAno.has(x.ano)) porAno.set(x.ano, new Map()); porAno.get(x.ano).set(x.sem, x.gwh); });
+        const porAno = ENTSOE_ANO;
         const serieAno = y => [...(porAno.get(y) || new Map()).entries()].sort((a, b) => a[0] - b[0]).map(([s, g]) => [s, g]);
         const anosComp = [...porAno.keys()].filter(y => y >= ANO_COMP_ENTSOE && y < anoAtual && porAno.get(y).size >= 50);
         const faixa = [], media = [];
@@ -1248,15 +1298,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 { name: String(anoAtual), data: serieAno(anoAtual), color: c.atual, lineWidth: 2.5, zIndex: 3 }
             ]
         }));
-        const antes = (porAno.get(anoAtual - 1) || new Map()).get(ultima.sem);
-        const med = media.find(m => m[0] === ultima.sem);
-        const var_ = (a, b) => `${fmt1(Math.abs(a / b - 1) * 100)}% ${a >= b ? 'acima' : 'abaixo'}`;
-        let t = `Na semana de ${fmtData(ultima.iso)} (semana ${ultima.sem}), a energia guardada nas albufeiras portuguesas era de <strong>${fmt0(ultima.gwh)} GWh</strong>`;
-        const partes = [];
-        if (antes) partes.push(`${var_(ultima.gwh, antes)} da mesma semana de ${anoAtual - 1}`);
-        if (med) partes.push(`${var_(ultima.gwh, med[1])} da média de ${anosComp[0]} a ${anosComp[anosComp.length - 1]}`);
-        if (partes.length) t += ': ' + partes.join(' e ');
-        document.getElementById('energia-resumo').innerHTML = t + '. A ENTSO-E publica cada semana com alguns dias de atraso.';
+        document.getElementById('energia-resumo').innerHTML = fraseEnergia(estatSemana(ENTSOE.length - 1))
+            + ' A ENTSO-E publica cada semana com alguns dias de atraso.';
     }
 
     // ==================================================================
@@ -1526,7 +1569,7 @@ document.addEventListener('DOMContentLoaded', function () {
             renderOutras();
             const v = params.get('vista');
             mudarVista(v === 'semana' || v === 'mes' ? v : 'dia', v === 'semana' ? params.get('data') : params.get('mes'));
-            return pEntsoe.then(renderEnergia);
+            return pEntsoe.then(() => { renderEnergia(); renderResumoEnergia(); });
         })
         .catch(err => {
             console.error('Albufeiras:', err);
