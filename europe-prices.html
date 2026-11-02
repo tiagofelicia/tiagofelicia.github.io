@@ -235,7 +235,6 @@
         .range-wrapper label { font-size: 0.9em; color: #2c3e50; }
         .range-wrapper input { padding: 6px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9em; }
         .range-wrapper input.invalid { border-color: #dc2626; background: #fef2f2; }
-        .range-wrapper button:disabled { opacity: 0.45; cursor: not-allowed; }
         .range-error { color: #b91c1c; font-size: 0.85em; flex-basis: 100%; text-align: center; min-height: 1.1em; }
         [data-theme="dark"] .range-wrapper input.invalid { background: #450a0a; border-color: #f87171; color: #fecaca; }
         [data-theme="dark"] .range-error { color: #f87171; }
@@ -809,7 +808,6 @@
             <input type="date" id="data-inicio" aria-describedby="range-error">
             <label for="data-fim" data-i18n="lblFim">Fim:</label>
             <input type="date" id="data-fim" aria-describedby="range-error">
-            <button type="button" id="btn-aplicar-range" class="share-btn" data-i18n="btnAplicar">Aplicar</button>
             <span id="range-error" class="range-error" role="alert"></span>
         </div>
         <div class="date-selector" id="date-selector-wrapper">
@@ -1156,7 +1154,7 @@
                     <li><strong>Comparação multi-zona:</strong> chips com até 4 zonas adicionais comparadas no gráfico de evolução e no perfil diário de preços — cada uma com cor própria e linha distinta sobre as barras da zona principal. Cada chip mostra também o desfasamento de fuso horário face à zona principal (ex: <kbd>+1h</kbd> para ES quando a principal é PT). Os valores são apresentados em <em>hora local de cada zona</em>.</li>
                     <li><strong>Pesquisa de zona:</strong> campo "🔍 Procurar zona" filtra a tabela, destaca a zona no mapa e faz auto-zoom se for um único resultado. Procura por código e nome (PT e EN), e ignora acentos.</li>
                     <li><strong>Toque no mapa (mobile):</strong> tap único mostra o info-control (com o perfil diário de preços); segundo tap na mesma zona seleciona-a em todas as visualizações. Toque no fundo do mapa fecha o info-control.</li>
-                    <li><strong>Validação do intervalo personalizado:</strong> datas inválidas (início > fim, fora do intervalo de dados, &gt;366 dias) ficam com borda vermelha e mensagem inline; o botão "Aplicar" desativa-se até o erro ser resolvido.</li>
+                    <li><strong>Validação do intervalo personalizado:</strong> o período aplica-se sozinho ao mudar uma data (ou ao carregar em Enter); datas inválidas (início > fim, fora do intervalo de dados, &gt;366 dias) ficam com borda vermelha e mensagem inline e não mudam o período.</li>
                     <li><strong>Δ vs a zona de referência:</strong> coluna opcional na tabela (€/MWh e %) com a diferença de cada zona face à zona escolhida em "🌍 A minha zona". Útil para avaliar o custo de importar/exportar.</li>
                     <li><strong>Variação vs ontem:</strong> opcional na tabela em modo Diário, mostra como cada zona evoluiu face ao dia anterior.</li>
                     <li><strong>Indicador de dados parciais:</strong> zonas cujos últimos slots não foram ainda publicados (ex: PT antes do leilão CET de amanhã) ficam com asterisco no mapa e badge "parcial" na tabela/tooltip. Média/mín/máx usam só os slots conhecidos.</li>
@@ -1171,7 +1169,7 @@
                     <li><strong>Multi-zone comparison:</strong> chips with up to 4 additional zones compared on the evolution chart and the daily price profile — each with its own colour and a distinct line over the main zone's bars. Each chip also shows the time-zone offset relative to the main zone (e.g. <kbd>+1h</kbd> for ES when the main one is PT). Values are shown in <em>each zone's local time</em>.</li>
                     <li><strong>Zone search:</strong> the "🔍 Search zone" field filters the table, highlights the zone on the map and auto-zooms if there is a single result. Searches by code and name (PT and EN), ignoring accents.</li>
                     <li><strong>Map tap (mobile):</strong> a single tap shows the info-control (with the daily price profile); a second tap on the same zone selects it across all visualizations. Tapping the map background closes the info-control.</li>
-                    <li><strong>Custom range validation:</strong> invalid dates (start > end, outside the data range, &gt;366 days) get a red border and an inline message; the "Apply" button is disabled until the error is resolved.</li>
+                    <li><strong>Custom range validation:</strong> the period is applied as soon as a date changes (or on Enter); invalid dates (start > end, outside the data range, &gt;366 days) get a red border and an inline message and leave the period unchanged.</li>
                     <li><strong>Δ vs the reference zone:</strong> optional table column (€/MWh and %) with each zone's difference against the zone chosen in "🌍 My zone". Useful to assess the cost of importing/exporting.</li>
                     <li><strong>Change vs yesterday:</strong> optional in the table in Daily mode, shows how each zone moved compared with the previous day.</li>
                     <li><strong>Partial-data indicator:</strong> zones whose last slots have not been published yet (e.g. PT before tomorrow's CET auction) get an asterisk on the map and a "partial" badge in the table/tooltip. Average/min/max use only the known slots.</li>
@@ -1338,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tipFusoMenos: 'CET−1 (1h atrás): ', tipFusoMais: 'CET+1 (1h à frente): ',
             tipFusoIguaisPre: 'Nas outras ', tipFusoIguaisSuf: ' zonas (já em CET) as duas opções mostram exatamente os mesmos valores.',
             ariaFuso: 'Fuso horário de visualização',
-            lblInicio: 'Início:', lblFim: 'Fim:', btnAplicar: 'Aplicar',
+            lblInicio: 'Início:', lblFim: 'Fim:',
             lblSelDia: 'Selecione o dia:', btnPrevTitle: 'Dia anterior', btnNextTitle: 'Dia seguinte',
             dadosDesde: 'Dados disponíveis desde 01/01/2018 —',
             linkProducao: '📊 Ver produção de eletricidade',
@@ -1531,7 +1529,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tipFusoMenos: 'CET−1 (1h behind): ', tipFusoMais: 'CET+1 (1h ahead): ',
             tipFusoIguaisPre: 'For the other ', tipFusoIguaisSuf: ' zones (already on CET) both options show exactly the same values.',
             ariaFuso: 'Display time zone',
-            lblInicio: 'Start:', lblFim: 'End:', btnAplicar: 'Apply',
+            lblInicio: 'Start:', lblFim: 'End:',
             lblSelDia: 'Select the day:', btnPrevTitle: 'Previous day', btnNextTitle: 'Next day',
             dadosDesde: 'Data available since 01/01/2018 —',
             linkProducao: '📊 View electricity generation',
@@ -6222,7 +6220,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- CARREGAR DADOS DE PRECOS ---
+    var _cargaPrecos = 0;
     async function loadPriceData() {
+        var carga = ++_cargaPrecos;
         loadingIndicator.style.display = 'block';
         var period = computePeriod();
         var dateStr = seletorData.value;
@@ -6239,6 +6239,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var inicioCarga = formatDateStr(prevDay) < period.start ? formatDateStr(prevDay) : period.start;
         allMonths = _addAdjacentMonths(allMonths, inicioCarga, period.end);
         await ensureMonthsLoaded(allMonths);
+        if (carga !== _cargaPrecos) return;
 
         // Construir currentData
         if (currentMode === 'diario') {
@@ -6928,7 +6929,6 @@ document.addEventListener('DOMContentLoaded', function() {
             var dateSelectorWrapper = document.getElementById('date-selector-wrapper');
             var dataInicio = document.getElementById('data-inicio');
             var dataFim = document.getElementById('data-fim');
-            var btnAplicarRange = document.getElementById('btn-aplicar-range');
 
             function setModo(modo, opts) {
                 opts = opts || {};
@@ -7105,16 +7105,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 dataInicio.classList.toggle('invalid', inv1);
                 dataFim.classList.toggle('invalid', inv2);
                 if (rangeError) rangeError.textContent = err;
-                btnAplicarRange.disabled = !!err;
                 return !err;
             }
             dataInicio.addEventListener('input', validateCustomRange);
             dataFim.addEventListener('input', validateCustomRange);
 
-            btnAplicarRange.addEventListener('click', function() {
-                if (!validateCustomRange()) return;
+            // O período aplica-se sozinho quando as duas datas formam um intervalo válido. Ao escrever, o browser
+            // muda o valor a cada algarismo (o ano passa por 0002, 0020, 0202...): daí a espera; Enter aplica já.
+            var _esperaRange = null;
+            function aplicarRange() {
+                clearTimeout(_esperaRange);
+                if (currentMode !== 'custom' || !validateCustomRange()) return;
+                if (currentPeriod && currentPeriod.start === dataInicio.value && currentPeriod.end === dataFim.value) return;
                 currentPeriod = { start: dataInicio.value, end: dataFim.value };
                 loadPriceData();
+            }
+            [dataInicio, dataFim].forEach(function(el) {
+                el.addEventListener('change', function() {
+                    clearTimeout(_esperaRange);
+                    _esperaRange = setTimeout(aplicarRange, 500);
+                });
+                el.addEventListener('keydown', function(ev) {
+                    if (ev.key === 'Enter') aplicarRange();
+                });
             });
 
             // Aplicar modo inicial (URL > localStorage)
