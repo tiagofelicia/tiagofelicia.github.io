@@ -542,9 +542,9 @@
         <div class="tabela-box"><table class="tabela" id="tabela-escaloes"></table></div>
         <p class="nota">
             <span class="pill ok">Folgado</span> a média de 15 minutos nunca passou o contratado ·
-            <span class="pill risco">Arriscado</span> passou o contratado, mas ficou abaixo do limite de corte: pelas médias o contador não teria cortado, mas picos curtos dentro desses quartos de hora podem ter passado o limite — pode ser o recomendado, com um aviso ·
-            <span class="pill margem">Na margem</span> ficou dentro da margem de segurança escolhida, abaixo do limite de corte ·
-            <span class="pill corta">Cortaria</span> a média passou o limite de corte.
+            <span class="pill risco">Arriscado</span> passou o contratado, mas pelas médias o contador não teria cortado (mesmo que tenha chegado a contar); picos curtos dentro desses quartos de hora podem ter passado o limite — pode ser o recomendado, com um aviso ·
+            <span class="pill margem">Na margem</span> entrou na margem de segurança escolhida (ou passou o limite sem chegar a cortar) ·
+            <span class="pill corta">Cortaria</span> pela curva de corte do contador, com a potência constante em cada quarto de hora, teria cortado.
             Os custos são o total da fatura de um ano (com os consumos do ficheiro, ou com o consumo anual indicado), sem descontos de código amigo nem ofertas condicionadas; a diferença entre escalões inclui os degraus de IVA e da tarifa social.
         </p>
         <div class="botoes-final"><button type="button" class="btn sec" id="btn-todos">Mostrar todos os escalões (até 41,4 kVA)</button></div>
@@ -1126,7 +1126,11 @@ function analisar(dias) {
     if (_analises.has(dias)) return _analises.get(dias);
     let max = 0, tMax = null, n = 0;
     const picoDia = [], todos = [], heat = new Map();
-    dias.forEach(d => {
+    // seq: os quartos de hora por ordem (kVA; NaN numa lacuna, também entre dias que não são seguidos)
+    const seq = [], seqDia = [];
+    dias.forEach((d, j) => {
+        if (j && d.t - dias[j - 1].t > 864e5) { seq.push(NaN); seqDia.push(-1); }
+        for (let i = 0; i < 96; i++) { seq.push(d.qh[i] / COS_PHI); seqDia.push(j); }
         let m = -1, im = 0;
         const dt = new Date(d.t), chaveMes = dt.getUTCFullYear() * 100 + dt.getUTCMonth();
         for (let i = 0; i < 96; i++) {
@@ -1144,21 +1148,41 @@ function analisar(dias) {
         }
     });
     todos.sort((a, b) => b - a);           // descendente: as contagens por escalão param cedo
-    const A = { max, tMax, picoDia, todos, heat, n };
+    const A = { max, tMax, picoDia, todos, heat, n, seq, seqDia, cortes: new Map() };
     _analises.set(dias, A);
     return A;
 }
 function contarAcima(A, lim) { let i = 0; while (i < A.todos.length && A.todos[i] > lim) i++; return i; }
-// Classificação de um escalão com as médias de 15 min. Acima do contratado mas abaixo do limite de corte (menos a
-// margem) ainda serve, com um aviso: pelas médias o contador não teria cortado. Na margem ou acima do limite, não.
+// O contador sobre as médias de 15 min, como na curva da E-Redes (anexo B1): o tempo acima de k × S soma-se de
+// quarto de hora em quarto de hora (volta a 0 quando a média desce ou falta um valor) e corta quando passa
+// Tdisp = 50 ÷ (potência ÷ contratada − k), com a potência constante dentro de cada quarto de hora. Depois de um
+// corte (rearme), a contagem recomeça.
+function simularCortes(A, s) {
+    const k = kRegra(), chave = s + '|' + k;
+    if (A.cortes.has(chave)) return A.cortes.get(chave);
+    const lim = k * s, diasC = new Set();
+    let ti = 0, n = 0;
+    for (let i = 0; i < A.seq.length; i++) {
+        const v = A.seq[i];
+        if (!(v > lim)) { ti = 0; continue; }          // abaixo do limite ou lacuna (NaN)
+        if (ti + 900 > Q_DISPARO / (v / s - k)) { n++; diasC.add(A.seqDia[i]); ti = 0; continue; }
+        ti += 900;
+    }
+    const r = { n, dias: diasC.size };
+    A.cortes.set(chave, r);
+    return r;
+}
+// Classificação de um escalão com as médias de 15 min. Acima do contratado — e até acima do limite, se pela curva
+// o contador não chegar a cortar — ainda serve, com um aviso. Na margem de segurança, ou se cortaria, não.
 function avaliarEscalao(A, s) {
     const lim = kRegra() * s, limMargem = lim * (1 - E.margem);
-    const nCorte = contarAcima(A, lim);
-    const nMargem = contarAcima(A, limMargem) - nCorte;
+    const nLimite = contarAcima(A, lim);
+    const nMargem = contarAcima(A, limMargem) - nLimite;
     const nAcima = contarAcima(A, s) - contarAcima(A, Math.max(s, limMargem));
-    const diasAcima = A.picoDia.filter(p => p.kva > s).length, diasCorte = A.picoDia.filter(p => p.kva > lim).length;
-    const estado = nCorte ? 'corta' : nMargem ? 'margem' : nAcima ? 'risco' : 'ok';
-    return { s, nAcima, nMargem, nCorte, diasAcima, diasCorte, estado };
+    const diasAcima = A.picoDia.filter(p => p.kva > s).length;
+    const cortes = simularCortes(A, s);
+    const estado = cortes.n ? 'corta' : (E.margem && (nMargem || nLimite)) ? 'margem' : (nAcima || nLimite) ? 'risco' : 'ok';
+    return { s, nAcima, nMargem, nLimite, nCortes: cortes.n, diasCorte: cortes.dias, diasAcima, estado };
 }
 const ROTULO = { ok: 'Folgado', risco: 'Arriscado', margem: 'Na margem', corta: 'Cortaria' };
 const serve = estado => estado === 'ok' || estado === 'risco';
@@ -1592,7 +1616,7 @@ function desenharResultado() {
     if (evR && evR.estado === 'risco') {
         const folgado = escaloesPossiveis().find(x => x > rec && avaliarEscalao(A, x).estado === 'ok');
         const pl = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
-        extra.unshift(`⚠️ <strong>Atenção:</strong> com ${nomeEsc(rec)}, em ${pl(evR.nAcima, 'quarto de hora', 'quartos de hora')} (${pl(evR.diasAcima, 'dia', 'dias')}) a média de 15 minutos passou os ${nomeEsc(rec)} contratados — o maior foi ${fmtKva(A.max)}, a ${dataHora(A.tMax)}. O contador só começa a contar acima de ${fmtKva(rec * k)}, por isso pelas médias não teria cortado, mas dentro desses quartos de hora pode ter havido picos curtos acima desse limite. Se o quadro for abaixo, pode voltar a subir${folgado ? ` para ${nomeEsc(folgado)}` : ''}: a mudança é gratuita. <button type="button" class="btn-link" data-ver-dia="${new Date(A.tMax).toISOString().slice(0, 10)}">Ver esse dia</button>`);
+        extra.unshift(`⚠️ <strong>Atenção:</strong> com ${nomeEsc(rec)}, em ${pl(evR.nAcima + evR.nMargem + evR.nLimite, 'quarto de hora', 'quartos de hora')} (${pl(evR.diasAcima, 'dia', 'dias')}) a média de 15 minutos passou os ${nomeEsc(rec)} contratados — o maior foi ${fmtKva(A.max)}, a ${dataHora(A.tMax)}. ${evR.nLimite ? `Em ${pl(evR.nLimite, 'deles', 'deles')} a média passou mesmo o limite de ${fmtKva(rec * k)} e o contador teria começado a contar, mas, pela curva de corte e com a potência constante, não chegaria a cortar antes de a média voltar abaixo — dentro desses quartos de hora, picos mais altos podem ter feito cortar.` : `O contador só começa a contar acima de ${fmtKva(rec * k)}, por isso pelas médias não teria cortado, mas dentro desses quartos de hora pode ter havido picos curtos acima desse limite.`} Se o quadro for abaixo, pode voltar a subir${folgado ? ` para ${nomeEsc(folgado)}` : ''}: a mudança é gratuita. <button type="button" class="btn-link" data-ver-dia="${new Date(A.tMax).toISOString().slice(0, 10)}">Ver esse dia</button>`);
     }
     const degrau = rec > 6.9 && E.atual <= 6.9 ? ` Atenção: acima de 6,9 kVA perde o IVA a 6 % nos primeiros ${E.numerosa ? 300 : 200} kWh por mês${E.social ? ' e a tarifa social' : ''}.` : '';
     let txt;
@@ -1639,8 +1663,8 @@ function desenharEscaloes() {
         const cls = [s === E.atual ? 'atual' : '', s === rec ? 'recomendado' : '', !E.tri && s > MAX_MONO ? 'so-tri' : ''].join(' ').trim();
         h += `<tr class="${cls}"><td class="esq">${nomeEsc(s)}${s === E.atual ? ' (hoje)' : ''}${s === rec ? ' ✅' : ''}</td>
             <td>${fmtKva(s * k)}</td>
-            <td>${ev ? `${ev.nAcima} / ${ev.nMargem} / ${ev.nCorte}` : '—'}</td>
-            <td class="esq">${ev ? `<span class="pill ${ev.estado}">${ROTULO[ev.estado]}</span>${ev.estado === 'corta' ? ` em ${ev.diasCorte} dia${ev.diasCorte > 1 ? 's' : ''}` : ev.estado === 'risco' ? ` em ${ev.diasAcima} dia${ev.diasAcima > 1 ? 's' : ''}` : ''}` : '—'}</td>
+            <td>${ev ? `${ev.nAcima} / ${ev.nMargem} / ${ev.nLimite}` : '—'}</td>
+            <td class="esq">${ev ? `<span class="pill ${ev.estado}">${ROTULO[ev.estado]}</span>${ev.estado === 'corta' ? ` ${ev.nCortes} ${ev.nCortes > 1 ? 'vezes' : 'vez'} em ${ev.diasCorte} dia${ev.diasCorte > 1 ? 's' : ''}` : ev.estado === 'risco' ? ` em ${ev.diasAcima} dia${ev.diasAcima > 1 ? 's' : ''}` : ''}` : '—'}</td>
             <td>${t == null ? '—' : isFinite(t) ? 'corta em ' + fmtTempo(t) : 'nunca corta'}</td>
             <td>${celSeu}</td>
             <td style="color:${dif != null && dif < -0.005 ? 'var(--txt-verde)' : dif != null && dif > 0.005 ? 'var(--txt-vermelho)' : ''}">${s === E.atual || dif == null ? '—' : (dif > 0 ? '+' : '−') + fmtEur(Math.abs(dif))}</td>
@@ -1963,10 +1987,10 @@ async function exportarExcel() {
         ['Escalão recomendado (kVA)', rec || '']
     ];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumo), 'Resumo');
-    const linhas = [['Escalão (kVA)', 'Começa a contar acima de (kVA)', 'QH acima do contratado', 'QH na margem', 'QH acima do limite', 'Com os consumos', 'Equipamentos', 'O seu tarifário (€/ano)', 'Mais barato (€/ano)', 'Mais barato (tarifário)']];
+    const linhas = [['Escalão (kVA)', 'Começa a contar acima de (kVA)', 'QH acima do contratado', 'QH na margem', 'QH acima do limite', 'Cortes (curva do contador)', 'Com os consumos', 'Equipamentos', 'O seu tarifário (€/ano)', 'Mais barato (€/ano)', 'Mais barato (tarifário)']];
     ESCALOES.forEach(s => {
         const ev = A ? avaliarEscalao(A, s) : null, t = S.kva ? tempoEquip(S, s) : null, c = C.porEscalao ? C.porEscalao[s] : null;
-        linhas.push([s, +(s * k).toFixed(3), ev ? ev.nAcima : '', ev ? ev.nMargem : '', ev ? ev.nCorte : '', ev ? ROTULO[ev.estado] : '',
+        linhas.push([s, +(s * k).toFixed(3), ev ? ev.nAcima : '', ev ? ev.nMargem : '', ev ? ev.nLimite : '', ev ? ev.nCortes : '', ev ? ROTULO[ev.estado] : '',
             t == null ? '' : isFinite(t) ? 'corta em ' + fmtTempo(t) : 'nunca corta',
             custoSeu(s) != null ? +custoSeu(s).toFixed(2) : '', c && c.barato ? +c.barato.total.toFixed(2) : '', c && c.barato ? `${c.barato.com} — ${c.barato.nome}` : '']);
     });
