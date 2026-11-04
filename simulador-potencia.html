@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://raw.githubusercontent.com https://huggingface.co https://*.hf.co https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Simulador de Potência Contratada | Tiago Felícia</title>
+    <meta name="description" content="Que potência contratada precisa? Com o ficheiro da E-Redes ou com os equipamentos que liga ao mesmo tempo: o escalão certo, quanto poupa a baixar com todos os tarifários, quando o contador corta e o que muda com um carro elétrico." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/simulador-potencia" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/simulador-potencia" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/simulador-potencia" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Simulador de Potência Contratada: que escalão precisa?" />
+    <meta property="og:description" content="O escalão certo pelos seus consumos reais da E-Redes ou pelos equipamentos que liga ao mesmo tempo, quanto poupa a baixar e quando o contador corta." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/simulador-potencia" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Simulador de Potência Contratada — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/heatmap.js" integrity="sha384-94RV9ftoFgFfiWlmX6qrQCyytOkqVfqCXFfZ/Vgeol/pshdBeYEKLG63jJeOI+kD" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+    <script src="motor_elet.js"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Simulador de Potência Contratada",
+        "operatingSystem": "Web",
+        "applicationCategory": "UtilitiesApplication",
+        "url": "https://www.tiagofelicia.pt/simulador-potencia",
+        "description": "Escolha da potência contratada de eletricidade em Portugal (BTN, até 41,4 kVA): pelos consumos a cada 15 minutos da E-Redes e pelos equipamentos usados ao mesmo tempo, com a curva de corte do contador inteligente, o custo de cada escalão com todos os tarifários e cenários como o carregamento de um carro elétrico.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "author": { "@id": "https://www.tiagofelicia.pt/#person" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+            { "@type": "ListItem", "position": 2, "name": "Simulador de Potência Contratada", "item": "https://www.tiagofelicia.pt/simulador-potencia" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            { "@type": "Question", "name": "O que é a potência contratada?", "acceptedAnswer": { "@type": "Answer", "text": "É o máximo que a instalação pode pedir à rede ao mesmo tempo, em kVA. Paga-se todos os dias no termo de potência, haja ou não consumo. Nas casas, os escalões vão de 1,15 a 41,4 kVA; os mais comuns são 3,45, 4,6, 5,75 e 6,9 kVA." } },
+            { "@type": "Question", "name": "Que potência devo contratar?", "acceptedAnswer": { "@type": "Answer", "text": "A mais baixa que aguenta os seus picos com folga. O simulador junta os consumos a cada 15 minutos da E-Redes, que mostram os picos reais, e os equipamentos que liga ao mesmo tempo, que mostram os picos curtos que as médias escondem, e compara-os com o limite a partir do qual o contador inteligente começa a contar para cortar, com uma margem de segurança à escolha." } },
+            { "@type": "Question", "name": "Quando é que o contador inteligente corta a luz?", "acceptedAnswer": { "@type": "Answer", "text": "Pelos valores de fábrica da especificação da E-Redes, o contador nunca corta até 1,2 vezes a potência contratada (1,3 vezes nas instalações trifásicas). Acima disso conta o tempo e corta ao fim de 50 ÷ (potência pedida ÷ contratada − 1,2) segundos: com o dobro da potência contratada, ao fim de cerca de um minuto. A E-Redes pode configurar outros valores." } },
+            { "@type": "Question", "name": "Porque é que os dados da E-Redes não chegam sozinhos?", "acceptedAnswer": { "@type": "Answer", "text": "São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa, porque se a média passou um valor o pico também passou, mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança." } },
+            { "@type": "Question", "name": "kW ou kVA?", "acceptedAnswer": { "@type": "Answer", "text": "Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98." } },
+            { "@type": "Question", "name": "Monofásica ou trifásica?", "acceptedAnswer": { "@type": "Answer", "text": "Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador também controla cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar." } },
+            { "@type": "Question", "name": "Quanto poupo a baixar um escalão?", "acceptedAnswer": { "@type": "Answer", "text": "Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato." } },
+            { "@type": "Question", "name": "Os painéis solares deixam-me baixar a potência?", "acceptedAnswer": { "@type": "Answer", "text": "Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos." } },
+            { "@type": "Question", "name": "Como obtenho o ficheiro da E-Redes?", "acceptedAnswer": { "@type": "Answer", "text": "No Balcão Digital da E-Redes (balcaodigital.e-redes.pt), em Consumos, Consultar consumos detalhados: escolha o período, de preferência os últimos 12 meses, e exporte para Excel. É preciso ter contador inteligente ligado à rede." } },
+            { "@type": "Question", "name": "Os meus dados saem do computador?", "acceptedAnswer": { "@type": "Answer", "text": "Não. O ficheiro é lido no seu browser e não é enviado para nenhum servidor. O link de partilha leva só as escolhas da página, nunca os consumos." } }
+        ]
+    }
+    </script>
+
+    <style>
+        .bloco, .painel-header, .mini-nav { box-sizing: border-box; }
+
+        .painel-header { text-align: center; margin: 0 auto 12px auto; width: 95%; max-width: 1200px; }
+        .painel-header h1 { margin: 6px 0 8px 0; font-size: 1.45em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.92em; color: #555; }
+        .privacidade { font-size: 0.8em !important; color: #64748b !important; }
+        .estado-bd { font-size: 0.8em !important; color: #64748b !important; }
+
+        /* O style.css dá ao <nav> do site, abaixo de 768px, position: sticky !important; dentro do
+           <main> a barra de atalhos ficava colada ao topo */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        .bloco { width: 95%; max-width: 1200px; margin: 0 auto 26px auto; }
+        .bloco > h2 { font-size: 1.15em; color: #2c3e50; margin: 26px 0 6px 0; }
+        .bloco-intro { font-size: 0.88em; color: #555; margin: 0 0 12px 0; line-height: 1.5; }
+        .nota { font-size: 0.8em; color: #666; margin: 6px 0 0; line-height: 1.45; }
+        .passo { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 0.8em; font-weight: 700; margin-right: 6px; vertical-align: 2px; }
+        .vazio { padding: 22px 14px; text-align: center; color: #5f6870; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+
+        .ctrl-label { font-size: 0.75em; color: #5f6870; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .campos { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-end; }
+        .campo { display: flex; flex-direction: column; gap: 6px; max-width: 100%; }
+        .campo select, .campo input[type=number] { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.92em; background: #fff; color: #1e293b; max-width: 100%; }
+        .campo select#sel-tarifario { min-width: 260px; }
+        .campo .chk { display: flex; align-items: center; gap: 6px; font-size: 0.9em; color: #334155; }
+        .campo[hidden] { display: none; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+
+        /* O meu tarifário (preços escritos à mão) */
+        .painel-manual { margin-top: 14px; background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 0.88em; color: #334155; }
+        .painel-manual[hidden] { display: none; }
+        .painel-manual h3 { margin: 0 0 4px 0; font-size: 1em; color: #2c3e50; }
+        .painel-manual .campo input[type=number] { width: 110px; }
+        .painel-manual details summary { cursor: pointer; font-weight: 600; color: #2563eb; margin-top: 12px; }
+        .painel-manual .outros { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px 12px; margin-top: 8px; }
+        .painel-manual .outros label { display: flex; flex-direction: column; gap: 3px; font-size: 0.92em; font-weight: 600; color: #334155; }
+        .painel-manual .outros input { width: 100%; box-sizing: border-box; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; background: #fff; color: #1e293b; }
+        .tabela small.estimado { display: block; color: #556070; font-weight: normal; }
+
+        /* Fontes de dados */
+        .fontes { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+        @media (max-width: 900px) { .fontes { grid-template-columns: 1fr; } }
+        .fonte { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 14px; font-size: 0.88em; color: #334155; line-height: 1.5; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .fonte h3 { margin: 0; font-size: 1em; color: #2c3e50; }
+        .fonte .etiqueta { display: inline-block; font-size: 0.75em; font-weight: 700; padding: 1px 8px; border-radius: 10px; background: #dcfce7; color: #166534; margin-left: 6px; vertical-align: 1px; }
+        .fonte.ativa { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+        .fonte .acoes { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .fonte ol { margin: 0; padding-left: 20px; font-size: 0.95em; }
+        .fonte details summary { cursor: pointer; font-weight: 600; color: #2563eb; }
+        .btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; padding: 7px 12px; font-size: 0.88em; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn:hover { background: #1d4ed8; }
+        .btn.sec { background: #fff; color: #2c3e50; border: 1px solid #cbd5e1; }
+        .btn.sec:hover { background: #e2e8f0; }
+        .btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+        .btn-link { background: none; border: none; color: #2563eb; text-decoration: underline; cursor: pointer; font-size: 0.95em; padding: 0; }
+        .estado-dados { font-size: 0.88em; line-height: 1.45; }
+        .estado-dados .ok { color: #166534; font-weight: 600; }
+        .estado-dados .erro { color: #b91c1c; font-weight: 600; }
+        .estado-dados .aviso { color: #a16207; }
+        input[type=file] { display: none; }
+
+        /* Equipamentos */
+        .presets { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 14px; }
+        @media (max-width: 1000px) { .presets { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 520px) { .presets { grid-template-columns: repeat(2, 1fr); } }
+        .preset { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 10px; text-align: left; cursor: pointer; font-size: 0.82em; color: #334155; line-height: 1.35; }
+        .preset strong { display: block; font-size: 1.05em; color: #2c3e50; }
+        .preset .kva { color: #2563eb; font-weight: 700; }
+        .preset:hover { background: #f1f5f9; }
+        .preset.active { border-color: #2563eb; background: #eef6ff; }
+        .cats { margin-bottom: 10px; }
+        .grelha-equip { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+        .equip { border: 1px solid #dee2e6; border-radius: 8px; padding: 8px 10px; background: #fff; display: flex; flex-direction: column; gap: 6px; font-size: 0.85em; }
+        .equip.ligado { border-color: #2563eb; background: #eef6ff; }
+        .equip .topo { display: flex; align-items: center; gap: 8px; }
+        .equip .icone { font-size: 1.4em; }
+        .equip .nome { font-weight: 600; color: #2c3e50; line-height: 1.2; }
+        .equip .linha { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+        .equip input.w { width: 70px; padding: 3px 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; text-align: right; }
+        .stepper { display: inline-flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .stepper button { border: none; background: #f1f5f9; width: 28px; height: 28px; cursor: pointer; font-size: 1em; color: #334155; }
+        .stepper span { min-width: 24px; text-align: center; font-weight: 700; }
+        .equip select.fase { font-size: 0.9em; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .equip .obs { font-size: 0.85em; color: #52606d; }
+        .acoes-equip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .soma-box { position: sticky; bottom: 0; z-index: 5; margin-top: 12px; background: #1e293b; color: #e2e8f0; border-radius: 8px; padding: 10px 14px; font-size: 0.9em; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+        .soma-box strong { color: #fff; }
+        .escala { position: relative; height: 34px; margin: 6px 0 2px 0; flex: 1 1 100%; }
+        .escala .barra { position: absolute; left: 0; top: 10px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #22c55e, #eab308 70%, #ef4444); opacity: 0.35; width: 100%; }
+        .escala .enchido { position: absolute; left: 0; top: 10px; height: 10px; border-radius: 5px; background: #60a5fa; }
+        /* o traço é um ::before: a etiqueta fica sobre o fundo da caixa (e não sobre o traço) */
+        .escala .tick { position: absolute; top: 4px; height: 22px; }
+        .escala .tick::before { content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 22px; background: #94a3b8; }
+        .escala .tick.rec::before { background: #4ade80; width: 3px; }
+        .escala .tick span { position: absolute; top: 22px; left: -14px; font-size: 0.7em; color: #cbd5e1; white-space: nowrap; }
+        .fases { display: none; flex: 1 1 100%; gap: 12px; flex-wrap: wrap; }
+        .fases.ver { display: flex; }
+        .fases div { font-size: 0.85em; }
+        .fases .obs { color: #cbd5e1; }
+
+        /* Resultado */
+        .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 6px 0 14px 0; }
+        @media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 420px) { .kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-card.destaque { background: #ecfdf5; border-color: #86efac; }
+        .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.45em; font-weight: 700; color: #212529; line-height: 1.2; }
+        .kpi-sub { font-size: 0.76em; color: #5c636a; margin-top: 5px; }
+        .veredito { border-left: 4px solid #16a34a; background: #f0fdf4; padding: 12px 16px; border-radius: 0 6px 6px 0; font-size: 0.92em; line-height: 1.55; color: #14532d; }
+        .veredito.subir { border-left-color: #dc2626; background: #fef2f2; color: #7f1d1d; }
+        .veredito.manter { border-left-color: #2563eb; background: #eff6ff; color: #1e3a8a; }
+        .veredito p { margin: 0 0 6px 0; }
+        .veredito p:last-child { margin: 0; }
+        .margem { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0 0 0; font-size: 0.88em; color: #334155; }
+        .margem input[type=range] { width: 180px; }
+
+        /* Tabelas */
+        .tabela-box { width: 100%; overflow-x: auto; margin-top: 8px; }
+        .tabela { border-collapse: collapse; width: 100%; font-size: 0.85em; background: #fff; }
+        .tabela caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela th, .tabela td { border: 1px solid #dee2e6; padding: 6px 9px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela th { background: #f1f3f5; font-weight: 600; }
+        .tabela .esq { text-align: left; }
+        .tabela td.nota-celula { text-align: left; white-space: normal; min-width: 200px; font-size: 0.92em; color: #475569; }
+        .tabela td.barato { text-align: left; white-space: normal; min-width: 180px; }
+        .tabela td.barato small { display: block; color: #556070; }
+        .tabela tr.atual td { background: #f1f5f9; }
+        .tabela tr.recomendado td { background: #ecfdf5; font-weight: 600; }
+        .tabela tr.so-tri td { color: #6b7280; }
+        .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.85em; font-weight: 700; }
+        .pill.ok { background: #dcfce7; color: #166534; }
+        .pill.justo { background: #fef9c3; color: #854d0e; }
+        .pill.risco { background: #ffedd5; color: #9a3412; }
+        .pill.corta { background: #fee2e2; color: #991b1b; }
+        .grafico { width: 100%; height: 400px; }
+        #grafico-horas { height: 420px; }
+        #grafico-disparo { height: 300px; }
+        .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .duas > * { min-width: 0; }   /* sem isto, a tabela larga alarga a grelha no telemóvel */
+        @media (max-width: 900px) { .duas { grid-template-columns: 1fr; } }
+        .h3-bloco { font-size: 1em; margin: 18px 0 6px 0; color: #2c3e50; }
+
+        /* Cenários */
+        .cenarios { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (max-width: 900px) { .cenarios { grid-template-columns: 1fr; } }
+        .cenario { border: 1px solid #dee2e6; border-radius: 8px; padding: 10px 12px; background: #fff; font-size: 0.88em; color: #334155; display: flex; flex-direction: column; gap: 8px; }
+        .cenario.ligado { border-color: #2563eb; background: #eef6ff; }
+        .cenario .cab { display: flex; align-items: center; gap: 8px; font-weight: 600; color: #2c3e50; }
+        .cenario .params { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+        .cenario select, .cenario input[type=number] { padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; background: #fff; color: #1e293b; }
+        .cenario-res { margin-top: 12px; }
+        .dica { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 0.9em; line-height: 1.5; color: #713f12; margin-top: 10px; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box ul, .metodo-box ol { margin: 4px 0 8px 0; padding-left: 20px; }
+        .metodo-box li { margin: 3px 0; }
+        .formula { font-family: ui-monospace, Consolas, monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; }
+        .disparo-res { font-size: 0.95em; margin: 10px 0; }
+
+        .botoes-final { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 14px 0 0 0; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; box-sizing: border-box; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+
+        /* --- Modo escuro --- */
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .bloco > h2, [data-theme="dark"] .fonte h3,
+        [data-theme="dark"] .preset strong, [data-theme="dark"] .equip .nome, [data-theme="dark"] .kpi-value,
+        [data-theme="dark"] .cenario .cab, [data-theme="dark"] .h3-bloco, [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .bloco-intro, [data-theme="dark"] .nota,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub, [data-theme="dark"] .ctrl-label,
+        [data-theme="dark"] .privacidade, [data-theme="dark"] .estado-bd { color: #94a3b8 !important; }
+        [data-theme="dark"] .equip .obs { color: #a8b5c8; }
+        [data-theme="dark"] label.btn { color: #fff; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .fonte, [data-theme="dark"] .kpi-card, [data-theme="dark"] .metodo-box, [data-theme="dark"] .vazio { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .fonte.ativa { border-color: #3b82f6; }
+        [data-theme="dark"] .painel-manual { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .painel-manual h3, [data-theme="dark"] .painel-manual .outros label { color: #e2e8f0; }
+        [data-theme="dark"] .painel-manual details summary { color: #93c5fd; }
+        [data-theme="dark"] .painel-manual .outros input { background: #0f172a; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela small.estimado { color: #94a3b8; }
+        [data-theme="dark"] .fonte details summary { color: #93c5fd; }
+        [data-theme="dark"] .kpi-card.destaque { background: #14301f; border-color: #166534; }
+        [data-theme="dark"] .preset, [data-theme="dark"] .equip, [data-theme="dark"] .cenario { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .preset.active, [data-theme="dark"] .equip.ligado, [data-theme="dark"] .cenario.ligado { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .preset .kva { color: #93c5fd; }
+        [data-theme="dark"] .campo select, [data-theme="dark"] .campo input, [data-theme="dark"] .equip input.w, [data-theme="dark"] .equip select.fase,
+        [data-theme="dark"] .cenario select, [data-theme="dark"] .cenario input { background: #0f172a; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .campo .chk, [data-theme="dark"] .margem { color: #cbd5e1; }
+        [data-theme="dark"] .stepper { border-color: #475569; }
+        [data-theme="dark"] .stepper button { background: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .btn.sec { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn.sec:hover { background: #334155; }
+        [data-theme="dark"] .btn-link { color: #93c5fd; }
+        [data-theme="dark"] .estado-dados .ok { color: #4ade80; }
+        [data-theme="dark"] .estado-dados .erro { color: #f87171; }
+        [data-theme="dark"] .estado-dados .aviso { color: #fbbf24; }
+        [data-theme="dark"] .veredito { background: #14301f; color: #bbf7d0; }
+        [data-theme="dark"] .veredito.subir { background: #3b1414; color: #fecaca; }
+        [data-theme="dark"] .veredito.manter { background: #172554; color: #bfdbfe; }
+        [data-theme="dark"] .tabela { background: #1e293b; }
+        [data-theme="dark"] .tabela caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela th, [data-theme="dark"] .tabela td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela th { background: #0f172a; }
+        [data-theme="dark"] .tabela td.nota-celula, [data-theme="dark"] .tabela td.barato small { color: #94a3b8; }
+        [data-theme="dark"] .tabela tr.atual td { background: #273449; }
+        [data-theme="dark"] .tabela tr.recomendado td { background: #14301f; }
+        [data-theme="dark"] .tabela tr.so-tri td { color: #94a3b8; }
+        [data-theme="dark"] .pill.ok { background: #14532d; color: #bbf7d0; }
+        [data-theme="dark"] .pill.justo { background: #713f12; color: #fef08a; }
+        [data-theme="dark"] .pill.risco { background: #7c2d12; color: #fed7aa; }
+        [data-theme="dark"] .pill.corta { background: #7f1d1d; color: #fecaca; }
+        [data-theme="dark"] .dica { background: #3b2a10; color: #fde68a; }
+        [data-theme="dark"] .formula { background: #334155; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip):not(.btn) { color: #93c5fd; }
+
+        @page { size: A4 portrait; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav, .botoes-final, .cta-simulador,
+            #bloco-dados .acoes, .presets, .cats, .grelha-equip, .acoes-equip, .margem, #btn-todos,
+            .highcharts-exporting-group, .toast-feedback { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .soma-box { position: static; }
+            .bloco, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li aria-current="page">Simulador de Potência</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <h1>Simulador de Potência Contratada <span class="badge-beta">Beta</span></h1>
+        <p>Que potência precisa? Quanto poupa a baixar? E se comprar um carro elétrico? — com os seus consumos reais da E-Redes ou com os equipamentos que liga ao mesmo tempo.</p>
+        <p class="privacidade">🔒 O ficheiro é lido no seu browser: não sai do seu computador.</p>
+        <p class="privacidade">🧪 Em versão beta: confirme os resultados antes de mudar de potência e <a href="/contacto">diga-me</a> o que falhar ou faltar.</p>
+        <p class="estado-bd" id="estado-bd" role="status">A carregar os tarifários…</p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-instalacao" class="mini-nav-chip">🏠 Instalação</a>
+        <a href="#bloco-dados" class="mini-nav-chip">📂 Consumos</a>
+        <a href="#bloco-equip" class="mini-nav-chip">🔌 Equipamentos</a>
+        <a href="#bloco-resultado" class="mini-nav-chip">✅ Resultado</a>
+        <a href="#bloco-escaloes" class="mini-nav-chip">📋 Escalão a escalão</a>
+        <a href="#bloco-picos" class="mini-nav-chip">📈 Os seus picos</a>
+        <a href="#bloco-cenarios" class="mini-nav-chip">🚗 E se…?</a>
+        <a href="#bloco-corte" class="mini-nav-chip">⏱️ Quando o contador corta</a>
+        <a href="#bloco-mudar" class="mini-nav-chip">🔁 Como mudar</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <!-- 1. Instalação -->
+    <section class="bloco" id="bloco-instalacao">
+        <h2><span class="passo">1</span>A sua instalação</h2>
+        <div class="campos">
+            <div class="campo">
+                <label class="ctrl-label" for="sel-atual">Potência contratada hoje</label>
+                <select id="sel-atual"></select>
+            </div>
+            <div class="campo">
+                <span class="ctrl-label" id="lbl-fases">Instalação</span>
+                <div class="btn-toggle" id="tg-fases" role="group" aria-labelledby="lbl-fases">
+                    <button type="button" data-v="mono" class="active">Monofásica</button>
+                    <button type="button" data-v="tri">Trifásica</button>
+                </div>
+            </div>
+            <div class="campo">
+                <label class="ctrl-label" for="sel-ciclo">Opção horária</label>
+                <select id="sel-ciclo">
+                    <option value="s">Simples</option>
+                    <option value="bd">Bi-horário, ciclo diário</option>
+                    <option value="bs">Bi-horário, ciclo semanal</option>
+                    <option value="td">Tri-horário, ciclo diário</option>
+                    <option value="ts">Tri-horário, ciclo semanal</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label class="ctrl-label" for="sel-tarifario">Tarifário atual</label>
+                <select id="sel-tarifario"><option value="">A carregar…</option></select>
+            </div>
+            <div class="campo">
+                <label class="chk"><input type="checkbox" id="chk-social"> Tem tarifa social</label>
+                <label class="chk"><input type="checkbox" id="chk-numerosa"> Família numerosa</label>
+            </div>
+        </div>
+        <div class="painel-manual" id="painel-manual" hidden>
+            <h3>✍️ O meu tarifário</h3>
+            <p class="nota" style="margin:0 0 10px 0">Os preços da sua fatura, sem IVA. Começam com os da tarifa regulada. Se a fatura mostra a tarifa de acesso às redes (TAR) ou o financiamento da tarifa social (TSE) à parte, desmarque a opção correspondente e escreva só o preço do comercializador.</p>
+            <div class="campos">
+                <div class="campo"><label class="ctrl-label" for="man-pot" id="lbl-man-pot">Termo de potência (€/dia)</label><input type="number" id="man-pot" min="0" step="0.0001"></div>
+                <div class="campo" data-per="S"><label class="ctrl-label" for="man-S">Energia (€/kWh)</label><input type="number" id="man-S" min="0" step="0.0001"></div>
+                <div class="campo" data-per="V"><label class="ctrl-label" for="man-V">Vazio (€/kWh)</label><input type="number" id="man-V" min="0" step="0.0001"></div>
+                <div class="campo" data-per="F"><label class="ctrl-label" for="man-F">Fora de vazio (€/kWh)</label><input type="number" id="man-F" min="0" step="0.0001"></div>
+                <div class="campo" data-per="C"><label class="ctrl-label" for="man-C">Cheias (€/kWh)</label><input type="number" id="man-C" min="0" step="0.0001"></div>
+                <div class="campo" data-per="P"><label class="ctrl-label" for="man-P">Ponta (€/kWh)</label><input type="number" id="man-P" min="0" step="0.0001"></div>
+                <div class="campo"><label class="ctrl-label" for="man-desc-pot">Desc. potência (%)</label><input type="number" id="man-desc-pot" min="0" max="100" step="0.1" value="0"></div>
+                <div class="campo"><label class="ctrl-label" for="man-desc-en">Desc. energia (%)</label><input type="number" id="man-desc-en" min="0" max="100" step="0.1" value="0"></div>
+                <div class="campo">
+                    <label class="chk"><input type="checkbox" id="man-tar-pot" checked> TAR incluída na potência</label>
+                    <label class="chk"><input type="checkbox" id="man-tar-en" checked> TAR incluída na energia</label>
+                    <label class="chk"><input type="checkbox" id="man-tse" checked> Inclui financiamento TSE</label>
+                    <label class="chk"><input type="checkbox" id="man-cav" checked> CAV cobrada por mês inteiro</label>
+                </div>
+            </div>
+            <details id="man-outros-det">
+                <summary>Termo de potência nos outros escalões</summary>
+                <p class="nota">Sem valor, estima-se pela proporção entre escalões da tarifa regulada. Num teste com todos os tarifários da base de dados, a um ou dois escalões de distância, a estimativa errou tipicamente cerca de 11 € por ano (com IVA) — da ordem da poupança de um escalão. Para uma comparação exata, escreva os preços do seu comercializador.</p>
+                <div class="outros" id="man-outros"></div>
+            </details>
+        </div>
+    </section>
+
+    <!-- 2. Consumos -->
+    <section class="bloco" id="bloco-dados">
+        <h2><span class="passo">2</span>Os seus consumos</h2>
+        <p class="bloco-intro">O ficheiro da E-Redes diz quanto a casa pediu de facto, a cada 15 minutos; os equipamentos dizem o que pode acontecer num pico curto, que as médias de 15 minutos escondem. O melhor é usar os dois.</p>
+        <div class="fontes">
+            <div class="fonte" id="fonte-eredes">
+                <h3>📂 Ficheiro da E-Redes <span class="etiqueta">recomendado</span></h3>
+                <div>O consumo a cada 15 minutos, em Excel. Pode juntar vários ficheiros (por exemplo, um por ano).</div>
+                <div class="acoes">
+                    <label class="btn" for="inp-ficheiro">📁 Escolher ficheiro(s)…</label>
+                    <input type="file" id="inp-ficheiro" accept=".xlsx,.xls" multiple>
+                    <button type="button" class="btn sec" id="btn-limpar" hidden>Limpar</button>
+                    <button type="button" class="btn-link" id="btn-exemplo">ou experimentar com uma casa de exemplo</button>
+                </div>
+                <div class="estado-dados" id="estado-dados" role="status"></div>
+                <details>
+                    <summary>Como obter o ficheiro?</summary>
+                    <ol>
+                        <li>Aceda a <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">balcaodigital.e-redes.pt</a> (é preciso ter contador inteligente).</li>
+                        <li>Vá a «Consumos» → «Consultar consumos detalhados».</li>
+                        <li>Escolha o período — de preferência os últimos 12 meses, para apanhar o inverno — e exporte para Excel.</li>
+                    </ol>
+                </details>
+            </div>
+            <div class="fonte" id="fonte-sem">
+                <h3>✍️ Sem ficheiro</h3>
+                <div>Escolha os equipamentos que liga ao mesmo tempo (passo 3) e indique o consumo anual, para o simulador calcular o custo de cada escalão.</div>
+                <div class="campos">
+                    <div class="campo" id="campo-kwh">
+                        <label class="ctrl-label" for="inp-kwh">Consumo anual (kWh)</label>
+                        <input type="number" id="inp-kwh" min="100" max="100000" step="100" value="2500" style="width:120px">
+                    </div>
+                </div>
+                <div class="nota" id="nota-kwh" style="margin:0">Repartido pelos períodos horários com o perfil de consumo da ERSE.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Equipamentos -->
+    <section class="bloco" id="bloco-equip">
+        <h2><span class="passo">3</span>Equipamentos que liga ao mesmo tempo</h2>
+        <p class="bloco-intro">Comece por um exemplo e ajuste: quantidades, potência máxima de cada equipamento (veja a chapa ou o manual) e, numa instalação trifásica, a fase a que está ligado. Os equipamentos que aquecem por ciclos (forno, máquinas de lavar…) contam 75 % da potência máxima, e as placas uma zona a 75 % — cada «+» é mais uma zona ligada. Se usa algum sempre no máximo, marque «uso-o à potência máxima».</p>
+        <div class="presets" id="presets"></div>
+        <div class="btn-toggle cats" id="tg-cats" role="group" aria-label="Categoria de equipamentos"></div>
+        <div class="grelha-equip" id="grelha-equip"></div>
+        <div class="acoes-equip"><button type="button" class="btn sec" id="btn-equip-limpar">Desligar todos</button></div>
+        <div class="soma-box" id="soma-box" aria-live="polite">
+            <span>Ligados ao mesmo tempo: <strong id="soma-w">0 W</strong> → <strong id="soma-kva">0 kVA</strong></span>
+            <span id="soma-rec"></span>
+            <div class="escala" id="escala" aria-hidden="true"></div>
+            <div class="fases" id="fases"></div>
+        </div>
+    </section>
+
+    <!-- 4. Resultado -->
+    <section class="bloco" id="bloco-resultado">
+        <h2><span class="passo">4</span>Resultado</h2>
+        <div class="kpis" id="kpis"></div>
+        <div class="veredito manter" id="veredito"></div>
+        <div class="margem">
+            <label for="rng-margem"><strong>Margem de segurança:</strong></label>
+            <input type="range" id="rng-margem" min="0" max="30" step="5" value="10">
+            <span id="txt-margem">10 %</span>
+            <span class="nota" style="margin:0">— a folga que quer manter abaixo do limite (os contadores podem ter outros valores configurados).</span>
+        </div>
+        <div class="margem">
+            <span class="ctrl-label" id="lbl-criterio">Critério para os equipamentos</span>
+            <div class="btn-toggle" id="tg-criterio" role="group" aria-labelledby="lbl-criterio">
+                <button type="button" data-v="contador" class="active">Com a tolerância do contador</button>
+                <button type="button" data-v="sem">Sem tolerância</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Escalão a escalão -->
+    <section class="bloco" id="bloco-escaloes">
+        <h2>📋 Escalão a escalão</h2>
+        <p class="bloco-intro">O que teria acontecido com cada escalão e quanto custa por ano, com IVA, com o seu tarifário e com o mais barato da base de dados de tarifários para os seus consumos. Os quartos de hora são médias de 15 minutos da E-Redes, convertidas para kVA com um fator de potência de 0,98.</p>
+        <div class="tabela-box"><table class="tabela" id="tabela-escaloes"></table></div>
+        <p class="nota">
+            <span class="pill ok">Folgado</span> nenhum quarto de hora perto do limite ·
+            <span class="pill justo">Justo</span> perto do contratado (dentro da margem de segurança) ·
+            <span class="pill risco">Arriscado</span> a média de 15 minutos passou o contratado: os picos curtos desses quartos de hora quase de certeza passaram o limite de corte ·
+            <span class="pill corta">Cortaria</span> a média passou o limite de corte.
+            Os custos são o total da fatura de um ano (com os consumos do ficheiro, ou com o consumo anual indicado), sem descontos de código amigo nem ofertas condicionadas; a diferença entre escalões inclui os degraus de IVA e da tarifa social.
+        </p>
+        <div class="botoes-final"><button type="button" class="btn sec" id="btn-todos">Mostrar todos os escalões (até 41,4 kVA)</button></div>
+    </section>
+
+    <!-- 6. Picos -->
+    <section class="bloco" id="bloco-picos">
+        <h2>📈 Os seus picos</h2>
+        <p class="bloco-intro">O maior quarto de hora de cada dia, contra a potência contratada hoje e a recomendada. A linha tracejada é o limite a partir do qual o contador começa a contar para cortar.</p>
+        <div id="picos-conteudo">
+            <div id="grafico-picos" class="grafico"></div>
+            <div class="duas">
+                <div>
+                    <h3 class="h3-bloco">A que horas e em que meses</h3>
+                    <div id="grafico-horas" class="grafico"></div>
+                    <p class="nota">O maior quarto de hora de cada hora do dia, mês a mês.</p>
+                </div>
+                <div>
+                    <h3 class="h3-bloco">Os 10 momentos com mais potência</h3>
+                    <div class="tabela-box"><table class="tabela" id="tabela-top"></table></div>
+                    <p class="nota">No máximo um por dia. A hora é a do início do quarto de hora.</p>
+                </div>
+            </div>
+        </div>
+        <div class="vazio" id="picos-vazio">Carregue o ficheiro da E-Redes (passo 2) para ver os seus picos.</div>
+    </section>
+
+    <!-- 7. Cenários -->
+    <section class="bloco" id="bloco-cenarios">
+        <h2>🚗 E se…?</h2>
+        <p class="bloco-intro">Junte um equipamento novo ao <strong>seu consumo real</strong> e veja o novo pico e o escalão de que precisa — antes de o comprar.</p>
+        <div class="cenarios" id="cenarios"></div>
+        <div class="cenario-res" id="cenario-res"></div>
+    </section>
+
+    <!-- 8. Quando o contador corta -->
+    <section class="bloco" id="bloco-corte">
+        <h2>⏱️ Quando o contador corta</h2>
+        <div class="metodo-box">
+            <p>O contador inteligente compara a <strong>potência aparente</strong> (kVA) com a contratada. <strong>Até 1,2 × a contratada nunca corta</strong> (1,3 × nas trifásicas), dure o tempo que durar. Acima disso começa a contar e corta tanto mais depressa quanto maior o excesso, ao fim de <span class="formula">50 ÷ (potência pedida ÷ contratada − 1,2)</span> segundos. Se a potência voltar abaixo do limite, a contagem recomeça do zero.</p>
+            <p>Nas trifásicas acima de 6,9 kVA o contador controla também cada fase: cada uma aguenta um terço da contratada (× 1,3). Até 6,9 kVA conta só a soma das três.</p>
+            <p class="nota" style="margin:0">Fonte: E-Redes, especificação funcional do equipamento de medição inteligente (DEF-C44-506/N, edição 3, julho de 2020, anexo B1), com os valores por omissão; a E-Redes pode configurar outros em cada contador — por isso a margem de segurança. Os contadores antigos têm um disjuntor, com outra curva.</p>
+        </div>
+        <div class="campos" style="margin-top:14px">
+            <div class="campo"><label class="ctrl-label" for="sel-corte">Potência contratada</label><select id="sel-corte"></select></div>
+            <div class="campo"><label class="ctrl-label" for="inp-corte">Potência ligada (kVA)</label><input type="number" id="inp-corte" min="0" step="0.1" value="5"></div>
+            <div class="campo"><button type="button" class="btn sec" id="btn-corte-equip">Usar a soma dos equipamentos</button></div>
+        </div>
+        <div class="disparo-res" id="disparo-res" aria-live="polite"></div>
+        <div class="duas">
+            <div class="tabela-box"><table class="tabela" id="tabela-corte"></table></div>
+            <div id="grafico-disparo" class="grafico"></div>
+        </div>
+    </section>
+
+    <!-- 9. Como mudar -->
+    <section class="bloco" id="bloco-mudar">
+        <h2>🔁 Como mudar de potência</h2>
+        <div class="metodo-box">
+            <ol>
+                <li><strong>Peça ao seu comercializador.</strong> A mudança é gratuita e não há limite de mudanças: se o contador começar a cortar, pode voltar a subir.</li>
+                <li><strong>Com contador inteligente</strong>, a mudança é feita à distância, sem visita. Se for preciso um técnico da E-Redes, a visita é marcada e a mudança demora poucos minutos.</li>
+                <li><strong>Não pode passar a potência requisitada</strong> da instalação (está na ficha eletrotécnica). Acima disso é preciso pedir um aumento à E-Redes, que pode ter custos e obras.</li>
+                <li><strong>Acima de 10,35 kVA</strong> a instalação tem de ser trifásica, e <strong>acima de 20,7 kVA</strong> só há tarifas tri-horárias.</li>
+                <li><strong>Atenção aos degraus:</strong> a tarifa social e o IVA a 6 % nos primeiros 200 kWh por mês (300 em família numerosa) só existem até 6,9 kVA; o IVA a 6 % no termo de potência da tarifa de acesso às redes, só até 3,45 kVA.</li>
+                <li>Algumas ofertas só existem em certos escalões: a tabela «Escalão a escalão» diz se o seu tarifário continua disponível na potência nova.</li>
+            </ol>
+        </div>
+        <div class="botoes-final">
+            <button type="button" class="btn sec" id="btn-partilhar">📤 Partilhar</button>
+            <button type="button" class="btn sec" id="btn-pdf">📄 PDF</button>
+            <button type="button" class="btn sec" id="btn-excel">📊 Excel</button>
+        </div>
+        <p class="nota" style="text-align:center">O link de partilha leva as suas escolhas (potência, tarifário, equipamentos, cenários), nunca os consumos do ficheiro.</p>
+    </section>
+
+    <div class="cta-simulador">
+        <h2>⚡ Já sabe a potência? Encontre o tarifário mais barato</h2>
+        <p>No simulador de eletricidade compara todos os tarifários na potência nova, com o mesmo ficheiro da E-Redes.</p>
+        <a class="button-link" id="link-simulador" href="eletricidade-tiagofelicia">Abrir o Simulador de Eletricidade</a>
+    </div>
+
+    <!-- FAQ -->
+    <section class="bloco">
+        <h2 id="faq">❔ Perguntas frequentes</h2>
+        <details class="faq-item"><summary><strong>O que é a potência contratada?</strong></summary><div class="faq-content"><p>É o máximo que a instalação pode pedir à rede ao mesmo tempo, em kVA. Paga-se todos os dias no termo de potência, haja ou não consumo. Nas casas, os escalões vão de 1,15 a 41,4 kVA; os mais comuns são 3,45, 4,6, 5,75 e 6,9 kVA.</p></div></details>
+        <details class="faq-item"><summary><strong>Que potência devo contratar?</strong></summary><div class="faq-content"><p>A mais baixa que aguenta os seus picos com folga. O simulador junta os consumos a cada 15 minutos da E-Redes, que mostram os picos reais, e os equipamentos que liga ao mesmo tempo, que mostram os picos curtos que as médias escondem, e compara-os com o limite a partir do qual o contador inteligente começa a contar para cortar, com uma margem de segurança à escolha.</p></div></details>
+        <details class="faq-item"><summary><strong>Quando é que o contador inteligente corta a luz?</strong></summary><div class="faq-content"><p>Pelos valores de fábrica da especificação da E-Redes, o contador nunca corta até 1,2 vezes a potência contratada (1,3 vezes nas instalações trifásicas). Acima disso conta o tempo e corta ao fim de 50 ÷ (potência pedida ÷ contratada − 1,2) segundos: com o dobro da potência contratada, ao fim de cerca de um minuto. A E-Redes pode configurar outros valores. Veja a <a href="#bloco-corte">calculadora</a>.</p></div></details>
+        <details class="faq-item"><summary><strong>Porque é que os dados da E-Redes não chegam sozinhos?</strong></summary><div class="faq-content"><p>São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa — se a média passou um valor, o pico também passou — mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança.</p></div></details>
+        <details class="faq-item"><summary><strong>kW ou kVA?</strong></summary><div class="faq-content"><p>Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98.</p></div></details>
+        <details class="faq-item"><summary><strong>Monofásica ou trifásica?</strong></summary><div class="faq-content"><p>Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador também controla cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar.</p></div></details>
+        <details class="faq-item"><summary><strong>Quanto poupo a baixar um escalão?</strong></summary><div class="faq-content"><p>Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato.</p></div></details>
+        <details class="faq-item"><summary><strong>Os painéis solares deixam-me baixar a potência?</strong></summary><div class="faq-content"><p>Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos.</p></div></details>
+        <details class="faq-item"><summary><strong>Como obtenho o ficheiro da E-Redes?</strong></summary><div class="faq-content"><p>No <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">Balcão Digital da E-Redes</a>, em «Consumos» → «Consultar consumos detalhados»: escolha o período, de preferência os últimos 12 meses, e exporte para Excel. É preciso ter contador inteligente ligado à rede.</p></div></details>
+        <details class="faq-item"><summary><strong>Os meus dados saem do computador?</strong></summary><div class="faq-content"><p>Não. O ficheiro é lido no seu browser e não é enviado para nenhum servidor. O link de partilha leva só as escolhas da página, nunca os consumos.</p></div></details>
+    </section>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+'use strict';
+// ====================================================================
+// Simulador de Potência Contratada
+// Escalões BTN, curva de corte do contador inteligente (E-Redes DEF-C44-506/N, anexo B1),
+// picos das médias de 15 min da E-Redes, equipamentos, cenários e custo de cada escalão
+// com o motor_elet.js e a base de dados de tarifários.
+// ====================================================================
+const ESCALOES = [1.15, 2.3, 3.45, 4.6, 5.75, 6.9, 10.35, 13.8, 17.25, 20.7, 27.6, 34.5, 41.4];
+const MAX_MONO = 10.35;
+const COS_PHI = 0.98;                                   // kW → kVA
+const K_MONO = 1.2, K_TRI = 1.3, Q_DISPARO = 50;        // curva de disparo (valores por omissão)
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const DIAS_SEMANA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+const TARIFARIO_OMISSAO = 'CUR - SU Eletricidade e outros||SU Eletricidade | Tarifa Regulada';
+const MANUAL = '__meu__';                               // «O meu tarifário»: preços escritos à mão
+const CAMPO_ENERGIA = { S: 'preco_energia_simples', V: null, F: 'preco_energia_fora_vazio', C: 'preco_energia_cheias', P: 'preco_energia_ponta' };
+
+// Opções horárias: código do URL → texto da base de dados e coluna dos períodos na OMIE_PERDAS_CICLOS
+const CICLOS = {
+    s:  { bd: 'Simples', col: null, acima: null },
+    bd: { bd: 'Bi-horário - Ciclo Diário', col: 'BD', acima: null },
+    bs: { bd: 'Bi-horário - Ciclo Semanal', col: 'BS', acima: null },
+    td: { bd: 'Tri-horário - Ciclo Diário', col: 'TD', acima: 'Tri-horário > 20.7 kVA - Ciclo Diário' },
+    ts: { bd: 'Tri-horário - Ciclo Semanal', col: 'TS', acima: 'Tri-horário > 20.7 kVA - Ciclo Semanal' }
+};
+
+const CATEGORIAS = [
+    ['cozinha', '🍳 Cozinha'], ['lavagem', '🧺 Lavagem e secagem'], ['clima', '🌡️ Aquecimento e arrefecimento'],
+    ['sala', '🛋️ Sala e escritório'], ['luz', '💡 Iluminação'], ['mobilidade', '🚗 Mobilidade elétrica'], ['outros', '🔧 Outros']
+];
+// Potência máxima de cada equipamento (W). f: fração que conta nos que aquecem por ciclos (termóstato), 75 % da
+// potência máxima. zonas: placas e fogões contam por zona, também a 75 % (cada unidade = 1 zona ligada).
+// «À potência máxima» passa-os a 100 %.
+const EQUIP = [
+    { id: 'frig', cat: 'cozinha', nome: 'Frigorífico combinado', w: 150, ic: '🧊' },
+    { id: 'arca', cat: 'cozinha', nome: 'Arca congeladora', w: 250, ic: '❄️' },
+    { id: 'micro', cat: 'cozinha', nome: 'Micro-ondas', w: 750, ic: '📡' },
+    { id: 'forno', cat: 'cozinha', nome: 'Forno elétrico', w: 1500, f: 0.75, ic: '🔥' },
+    { id: 'placa', cat: 'cozinha', nome: 'Placa de indução (4 zonas)', w: 7200, zonas: 4, ic: '🍳' },
+    { id: 'vitro', cat: 'cozinha', nome: 'Placa vitrocerâmica (4 zonas)', w: 6000, zonas: 4, ic: '♨️' },
+    { id: 'chaleira', cat: 'cozinha', nome: 'Chaleira', w: 2200, ic: '🫖' },
+    { id: 'cafe', cat: 'cozinha', nome: 'Máquina de café', w: 1200, ic: '☕' },
+    { id: 'torradeira', cat: 'cozinha', nome: 'Torradeira', w: 900, ic: '🍞' },
+    { id: 'robot', cat: 'cozinha', nome: 'Robot de cozinha', w: 1500, f: 0.75, ic: '🥣' },
+    { id: 'airfryer', cat: 'cozinha', nome: 'Fritadeira de ar', w: 1500, f: 0.75, ic: '🍟' },
+    { id: 'loica', cat: 'lavagem', nome: 'Máquina de lavar loiça', w: 1500, f: 0.75, ic: '🍽️' },
+    { id: 'roupa', cat: 'lavagem', nome: 'Máquina de lavar roupa (5 kg)', w: 1850, f: 0.75, ic: '🧺' },
+    { id: 'secar', cat: 'lavagem', nome: 'Máquina de secar (resistência)', w: 2000, f: 0.75, ic: '🌀' },
+    { id: 'secarbc', cat: 'lavagem', nome: 'Máquina de secar (bomba de calor)', w: 900, ic: '🌀' },
+    { id: 'ferro', cat: 'lavagem', nome: 'Ferro de engomar', w: 2200, f: 0.75, ic: '👕' },
+    { id: 'oleo', cat: 'clima', nome: 'Aquecedor a óleo', w: 2000, ic: '♨️' },
+    { id: 'termov', cat: 'clima', nome: 'Termoventilador', w: 2000, ic: '💨' },
+    { id: 'ac', cat: 'clima', nome: 'Ar condicionado', w: 1200, ic: '❄️' },
+    { id: 'termo', cat: 'clima', nome: 'Termoacumulador', w: 1500, ic: '🚿' },
+    { id: 'bcaqs', cat: 'clima', nome: 'Bomba de calor (águas quentes)', w: 500, ic: '♨️' },
+    { id: 'tv', cat: 'sala', nome: 'TV LCD pequena (até 30")', w: 60, ic: '📺' },
+    { id: 'tvg', cat: 'sala', nome: 'TV grande', w: 120, ic: '📺' },
+    { id: 'pc', cat: 'sala', nome: 'Computador', w: 300, ic: '💻' },
+    { id: 'aspir', cat: 'sala', nome: 'Aspirador', w: 1000, ic: '🧹' },
+    { id: 'lampfl', cat: 'luz', nome: 'Lâmpada fluorescente', w: 36, ic: '💡' },
+    { id: 'lampled', cat: 'luz', nome: 'Lâmpada LED', w: 10, ic: '💡' },
+    { id: 'ev23', cat: 'mobilidade', nome: 'Carregador em tomada (2,3 kW)', w: 2300, ic: '🔌' },
+    { id: 'ev37', cat: 'mobilidade', nome: 'Wallbox 3,7 kW', w: 3700, ic: '🚗' },
+    { id: 'ev74', cat: 'mobilidade', nome: 'Wallbox 7,4 kW', w: 7400, ic: '🚙' },
+    { id: 'secador', cat: 'outros', nome: 'Secador de cabelo', w: 2000, ic: '💇' },
+    { id: 'bomba', cat: 'outros', nome: 'Bomba de piscina ou de água', w: 750, ic: '💧' },
+    { id: 'desum', cat: 'outros', nome: 'Desumidificador', w: 300, ic: '💧' }
+];
+// Exemplos de equipamentos usados ao mesmo tempo, do mais simples ao mais completo
+const PRESETS = [
+    { nome: 'Exemplo 1', desc: 'frigorífico, máquina de roupa, micro-ondas, TV e uma lâmpada', ids: { frig: 1, roupa: 1, micro: 1, tv: 1, lampfl: 1 } },
+    { nome: 'Exemplo 2', desc: '+ aquecedor a óleo', ids: { frig: 1, roupa: 1, micro: 1, tv: 1, lampfl: 1, oleo: 1 } },
+    { nome: 'Exemplo 3', desc: '+ forno elétrico', ids: { frig: 1, roupa: 1, micro: 1, tv: 1, lampfl: 1, oleo: 1, forno: 1 } },
+    { nome: 'Exemplo 4', desc: '+ máquina de loiça', ids: { frig: 1, roupa: 1, micro: 1, tv: 1, lampfl: 1, oleo: 1, forno: 1, loica: 1 } },
+    { nome: 'Exemplo 5', desc: '+ robot de cozinha', ids: { frig: 1, roupa: 1, micro: 1, tv: 1, lampfl: 1, oleo: 1, forno: 1, loica: 1, robot: 1 } },
+    { nome: 'Personalizado', desc: 'começar com a lista vazia', ids: {} }
+];
+
+// ====================================================================
+// Estado
+// ====================================================================
+const E = {
+    atual: 6.9, tri: false, ciclo: 's', tarifario: TARIFARIO_OMISSAO, social: false, numerosa: false,
+    kwhAno: 2500, margem: 0.10, criterio: 'contador',
+    cat: 'cozinha', qtd: {}, w: {}, max: {}, fase: {}, preset: -1, todos: false,
+    // consumos: { registos (por quarto de hora), dias (para os picos), d1, d2, origem: 'ficheiro'|'exemplo', nomes }
+    consumos: null,
+    custos: null,          // { chave, porEscalao: {s: {totais, barato, ctx, cicloBD, semCiclo}}, fator }
+    // O meu tarifário: pot = termo de potência do escalão de hoje; outros = os escritos para outros escalões;
+    // en = energia por período; *Ed = escrito pelo utilizador (senão segue a tarifa regulada)
+    manual: { pot: null, potEd: false, en: {}, enEd: false, outros: {}, descPot: 0, descEn: 0, tarPot: true, tarEn: true, tse: true, cavMensal: true },
+    cen: {
+        ev: { on: false, kw: 3.7, ini: 20, horas: 4, dias: 'uteis' },
+        bc: { on: false, kw: 1.5, ini: 13, horas: 2 },
+        ac: { on: false, kw: 1.2 },
+        placa: { on: false, kw: 3.6 }
+    }
+};
+EQUIP.forEach((q, i) => { E.w[q.id] = q.w; E.fase[q.id] = (i % 3) + 1; });
+
+// ====================================================================
+// Utilitários
+// ====================================================================
+const fmt = (v, c = 2) => v == null || isNaN(v) ? '--' : v.toLocaleString('pt-PT', { minimumFractionDigits: c, maximumFractionDigits: c });
+const fmtKva = v => fmt(v, 2) + ' kVA';
+const fmtEur = v => v == null || isNaN(v) ? '--' : fmt(v, 2) + ' €';
+const nomeEsc = s => s.toLocaleString('pt-PT', { maximumFractionDigits: 2 }) + ' kVA';
+const kRegra = () => E.tri ? K_TRI : K_MONO;
+const escaloesPossiveis = () => ESCALOES.filter(s => E.tri || s <= MAX_MONO);
+const textoAcima = () => E.tri ? 'acima de 41,4 kVA' : 'acima de 10,35 kVA: só trifásica';
+const isoDe = (a, m, d) => `${a}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+const dataPT = iso => iso ? iso.split('-').reverse().join('/') : '';
+const pausa = () => new Promise(r => setTimeout(r, 0));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function somarDias(iso, n) { const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+function diasEntre(a, b) { return Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 864e5); }
+const hojeISO = () => { const d = new Date(); return isoDe(d.getFullYear(), d.getMonth() + 1, d.getDate()); };
+function mostrarToast(msg) {
+    const t = document.createElement('div'); t.className = 'toast-feedback'; t.textContent = msg; t.setAttribute('role', 'status');
+    document.body.appendChild(t); setTimeout(() => t.remove(), 2600);
+}
+
+// ====================================================================
+// Base de dados de tarifários (os mesmos CSV dos simuladores; manifest e ficheiros da mesma origem)
+// ====================================================================
+const ORIGENS = [
+    { id: 'dados', base: 'https://dados.tiagofelicia.pt/data/simuladores/simulador-tarifarios-eletricidade/csv' },
+    { id: 'raw', base: 'https://raw.githubusercontent.com/tiagofelicia/dados-energia/main/data/simuladores/simulador-tarifarios-eletricidade/csv' },
+    { id: 'hf', base: 'https://huggingface.co/spaces/tiagofelicia/simulador-tarifarios-eletricidade/resolve/main/data/csv' }
+];
+const CSV_BASE = ['Constantes', 'Tarifarios_fixos', 'Indexados'];
+const BD = { constantes: {}, fixos: [], indexados: [], manifest: null, origem: null, omieAnos: {}, omieRaw: [], omieMap: null, pronta: false, erro: null };
+let _bdPromessa = null;
+
+async function garantirPapa() {
+    if (typeof Papa !== 'undefined') return;
+    await carregarScript('https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js');
+    if (typeof Papa === 'undefined') throw new Error('PapaParse indisponível');
+}
+function carregarScript(src, integrity) {
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src; s.crossOrigin = 'anonymous';
+        if (integrity) s.integrity = integrity;
+        s.onload = resolve; s.onerror = () => reject(new Error('Não foi possível carregar ' + src));
+        document.head.appendChild(s);
+    });
+}
+function origens() {
+    let fixa = null;
+    try { fixa = new URLSearchParams(location.search).get('source'); } catch (e) { /* sem URL */ }
+    const so = ORIGENS.filter(o => o.id === fixa);
+    return so.length ? so : ORIGENS;
+}
+async function fetchComTimeout(url, opts = {}) {
+    if (typeof AbortController === 'undefined') return fetch(url, opts);
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 8000);
+    try { return await fetch(url, Object.assign({}, opts, { signal: ctrl.signal })); }
+    finally { clearTimeout(t); }
+}
+const ehOmie = nome => nome.startsWith('OMIE_PERDAS_CICLOS');
+async function fetchManifest(origem) {
+    const r = await fetchComTimeout(`${origem.base}/manifest.json`, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`Manifest (${origem.id}): ${r.status}`);
+    const m = await r.json();
+    const falta = CSV_BASE.filter(n => !(m && typeof m[n] === 'string' && m[n]));
+    if (falta.length) throw new Error(`Manifest (${origem.id}) sem hash de: ${falta.join(', ')}`);
+    return m;
+}
+// Como nos simuladores: dynamicTyping em tudo menos no OMIE (as datas e horas ficam texto)
+async function fetchCSV(origem, nome, hash) {
+    const r = await fetchComTimeout(`${origem.base}/${nome}.csv?v=${encodeURIComponent(hash)}`);
+    if (!r.ok) throw new Error(`CSV ${nome} (${origem.id}): ${r.status}`);
+    const res = Papa.parse(await r.text(), { header: true, skipEmptyLines: 'greedy', dynamicTyping: !ehOmie(nome) });
+    const chave = nome === 'Constantes' ? 'constante' : (ehOmie(nome) ? 'Data' : 'nome');
+    const dados = res.data.filter(x => x && x[chave] !== null && x[chave] !== undefined && String(x[chave]).trim() !== '');
+    if (!(res.meta.fields || []).includes(chave) || !dados.length) throw new Error(`CSV ${nome} (${origem.id}): conteúdo inesperado`);
+    return dados;
+}
+const anosNoManifest = m => Object.keys(m || {}).map(k => /^OMIE_PERDAS_CICLOS_(\d{4})$/.exec(k)).filter(Boolean).map(x => +x[1]).sort((a, b) => a - b);
+
+// Datas de adesão (oferta_desde/ate e campanha_desde/ate), como nos simuladores: oferta fora das datas sai;
+// campanha fora das datas → a oferta fica, sem o desconto da campanha
+const CAMPOS_CAMPANHA = ['desconto_fatura_mes', 'desconto_meses_limite', 'desconto_mes_inicio', 'condicoes_campanha', 'campanha_desde', 'campanha_ate'];
+function dataBD(v) {
+    if (v === undefined || v === null || v === '') return null;
+    if (typeof v === 'number') return v > 30000 && v < 80000 ? new Date(Math.round((v - 25569) * 864e5)).toISOString().slice(0, 10) : null;
+    const s = String(v).trim();
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+    m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+    return m && +m[2] >= 1 && +m[2] <= 12 && +m[1] >= 1 && +m[1] <= 31 ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : null;
+}
+const dentroDasDatas = (hoje, desde, ate) => !(desde && hoje < desde) && !(ate && hoje > ate);
+function aplicarVigencia(linhas) {
+    const hoje = hojeISO(), out = [];
+    for (const r of linhas || []) {
+        if (!dentroDasDatas(hoje, dataBD(r.oferta_desde), dataBD(r.oferta_ate))) continue;
+        if (dentroDasDatas(hoje, dataBD(r.campanha_desde), dataBD(r.campanha_ate))) { out.push(r); continue; }
+        const c = Object.assign({}, r);
+        CAMPOS_CAMPANHA.forEach(k => { c[k] = null; });
+        out.push(c);
+    }
+    return out;
+}
+
+function carregarBD() {
+    if (!_bdPromessa) _bdPromessa = (async () => {
+        await garantirPapa();
+        let ultimoErro = null;
+        for (const origem of origens()) {
+            try {
+                const manifest = await fetchManifest(origem);
+                const [cons, fixos, index] = await Promise.all(CSV_BASE.map(n => fetchCSV(origem, n, manifest[n])));
+                cons.forEach(r => { if (r.constante) BD.constantes[r.constante] = r['valor_unitário']; });
+                BD.fixos = aplicarVigencia(fixos);
+                BD.indexados = aplicarVigencia(index);
+                BD.manifest = manifest; BD.origem = origem.id; BD.pronta = true;
+                return;
+            } catch (e) { console.warn(`Tarifários: a origem "${origem.id}" falhou`, e); ultimoErro = e; }
+        }
+        BD.erro = ultimoErro || new Error('nenhuma origem disponível');
+        _bdPromessa = null;
+        throw BD.erro;
+    })();
+    return _bdPromessa;
+}
+// Um ano da OMIE_PERDAS_CICLOS (períodos horários, perfis e OMIE PT), da origem do manifest ou das outras
+async function obterAno(ano) {
+    const nome = `OMIE_PERDAS_CICLOS_${ano}`;
+    const ordem = origens(), primeira = ordem.find(o => o.id === BD.origem);
+    let ultimoErro = null;
+    if (primeira && BD.manifest && BD.manifest[nome]) {
+        try { return await fetchCSV(primeira, nome, BD.manifest[nome]); } catch (e) { ultimoErro = e; }
+    }
+    for (const origem of ordem) {
+        if (origem === primeira) continue;
+        try { const m = await fetchManifest(origem); if (!m[nome]) throw new Error('sem ' + nome); return await fetchCSV(origem, nome, m[nome]); }
+        catch (e) { ultimoErro = e; }
+    }
+    throw ultimoErro || new Error(nome + ': nenhuma origem disponível');
+}
+const _pedidosAnos = new Map();
+async function carregarAnos(anos) {
+    const disp = anosNoManifest(BD.manifest);
+    const faltam = anos.filter(a => disp.includes(a) && !BD.omieAnos[a]);
+    if (!faltam.length) return;
+    const obtidos = await Promise.all(faltam.map(a => {
+        if (!_pedidosAnos.has(a)) _pedidosAnos.set(a, obterAno(a).finally(() => _pedidosAnos.delete(a)));
+        return _pedidosAnos.get(a);
+    }));
+    faltam.forEach((a, i) => { BD.omieAnos[a] = obtidos[i]; });
+    BD.omieRaw = [].concat(...Object.keys(BD.omieAnos).sort().map(k => BD.omieAnos[k]));
+    BD.omieMap = null;
+}
+// "MM/DD/AAAA" (a folha do simulador) → "AAAA-MM-DD"
+function parseDateStr(val) {
+    if (typeof val === 'string') {
+        const cache = parseDateStr._c || (parseDateStr._c = new Map());
+        let r = cache.get(val);
+        if (r === undefined) { r = converterData(val); cache.set(val, r); }
+        return r;
+    }
+    return converterData(val);
+}
+function converterData(val) {
+    if (!val) return null;
+    const str = String(val).trim().split(' ')[0];
+    if (str.includes('/')) {
+        const p = str.split('/');
+        if (p.length === 3 && p[2].length === 4) return `${p[2]}-${p[0].padStart(2, '0')}-${p[1].padStart(2, '0')}`;
+        if (p.length === 3 && p[0].length === 4) return `${p[0]}-${p[1].padStart(2, '0')}-${p[2].padStart(2, '0')}`;
+    }
+    if (str.includes('-') && str.length >= 10) return str.substring(0, 10);
+    return null;
+}
+// Chave "AAAA-MM-DD_HH:MM" pelo fim do quarto de hora, como a folha (o último do dia é "23:59")
+function mapaOmie() {
+    if (BD.omieMap) return BD.omieMap;
+    const m = new Map();
+    BD.omieRaw.forEach(r => {
+        const d = parseDateStr(r.Data);
+        const h = String(r.Hora || '').trim().slice(0, 5);
+        const k = `${d}_${h.length === 4 ? '0' + h : h}`;
+        if (d && !m.has(k)) m.set(k, r);
+    });
+    return (BD.omieMap = m);
+}
+// Perdas médias do período por ciclo e período horário (como no Dual)
+function calcularPerdas(d1, d2) {
+    const perdas = {}, linhas = BD.omieRaw.filter(r => { const d = parseDateStr(r.Data); return d && d >= d1 && d <= d2; });
+    const anoI = +d1.slice(0, 4), anoF = +d2.slice(0, 4);
+    const anuais = BD.omieRaw.filter(r => { const d = parseDateStr(r.Data); return d && +d.slice(0, 4) >= anoI && +d.slice(0, 4) <= anoF; });
+    const media = (lista, filtro) => { let s = 0, n = 0; lista.forEach(r => { if (filtro && !filtro(r)) return; const v = parseFloat(String(r.Perdas || '0').replace(',', '.')); if (v > 0) { s += v; n++; } }); return n ? s / n : null; };
+    perdas.Perdas_M_S = media(linhas) || 1.16;
+    perdas.Perdas_Anual_S = media(anuais) || 1.0;
+    ['BD', 'BS', 'TD', 'TS'].forEach(c => (c[0] === 'B' ? ['V', 'F'] : ['V', 'C', 'P']).forEach(p => {
+        perdas[`Perdas_M_${c}_${p}`] = media(linhas, r => r[c] === p) || perdas.Perdas_M_S;
+        perdas[`Perdas_Anual_${c}_${p}`] = media(anuais, r => r[c] === p) || perdas.Perdas_Anual_S;
+    }));
+    return perdas;
+}
+
+// ====================================================================
+// Ficheiro da E-Redes (o mesmo formato do simulador de eletricidade)
+// ====================================================================
+const COLUNAS_CONSUMO = ['Consumo Simulado (kW)', 'Consumo medido na IC, Ativa (kW)', 'Consumo registado (kW)', 'Consumo registado, Ativa (kW)'];
+async function garantirXLSX() {
+    if (typeof XLSX !== 'undefined') return;
+    await carregarScript('https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js', 'sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT');
+}
+// Uma folha → registos { dia (início, hora de Portugal), ini (minuto do início), fim ("AAAA-MM-DD_HH:MM" da folha
+// de períodos), kw (média do quarto de hora), est (estimado) }. A E-Redes etiqueta pelo FIM do quarto de hora.
+function lerFolhaERedes(rows) {
+    let cab = -1, col = null;
+    for (let i = 0; i < Math.min(20, rows.length) && cab < 0; i++) {
+        const r = rows[i]; if (!r) continue;
+        for (const nome of COLUNAS_CONSUMO) if (r.indexOf(nome) !== -1) { cab = i; col = nome; break; }
+    }
+    if (cab < 0) return { erro: 'não tem uma coluna de consumo da E-Redes (por exemplo «Consumo registado, Ativa (kW)»)' };
+    const h = rows[cab].map(x => x ? String(x).trim() : '');
+    const iC = h.indexOf(col), iD = h.indexOf('Data'), iH = h.indexOf('Hora'), iE = h.indexOf('Estado');
+    if (iD < 0 || iH < 0) return { erro: 'faltam as colunas Data ou Hora' };
+    const regs = [];
+    for (let i = cab + 1; i < rows.length; i++) {
+        const r = rows[i]; if (!r || !r.length) continue;
+        const kw = parseFloat(String(r[iC]).replace(',', '.'));
+        if (isNaN(kw)) continue;
+        let a, m, d, hh = 0, mi = 0;
+        const vd = r[iD];
+        if (typeof vd === 'number') { const x = XLSX.SSF.parse_date_code(vd); a = x.y; m = x.m; d = x.d; }
+        else {
+            const s = String(vd || '').trim(), p = s.split(/[\/-]/);
+            if (p.length === 3) { if (p[0].length === 4) { a = +p[0]; m = +p[1]; d = +p[2]; } else { d = +p[0]; m = +p[1]; a = +p[2]; } }
+        }
+        const vh = r[iH];
+        if (typeof vh === 'number') { const t = Math.round((vh % 1) * 1440); hh = Math.floor(t / 60); mi = t % 60; }
+        else if (vh != null) { const p = String(vh).trim().split(':'); hh = +p[0] || 0; mi = +p[1] || 0; }
+        if (!a || !m || !d) continue;
+        const fimDia = isoDe(a, m, d);
+        let fimMin = hh * 60 + mi;
+        // 00:00 (ou 24:00) fecha o dia anterior: na folha é "23:59" desse dia
+        let chaveDia = fimDia, chaveHora = `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')}`;
+        if (fimMin === 0 || fimMin === 1440) { chaveDia = fimMin === 0 ? somarDias(fimDia, -1) : fimDia; chaveHora = '23:59'; fimMin = 1440; }
+        let ini = fimMin - 15, dia = chaveDia;
+        if (ini < 0) { ini += 1440; dia = somarDias(chaveDia, -1); }
+        const est = iE >= 0 && r[iE] != null && /^e/i.test(String(r[iE]).trim());
+        regs.push({ dia, ini, fim: `${chaveDia}_${chaveHora}`, kw, est });
+    }
+    if (!regs.length) return { erro: 'não tem valores de consumo' };
+    return { registos: regs, coluna: col };
+}
+async function lerFicheiros(ficheiros) {
+    await garantirXLSX();
+    const todos = [], nomes = [];
+    for (const f of ficheiros) {
+        const buf = f.buf || await f.arrayBuffer();
+        const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+        const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: null });
+        const r = lerFolhaERedes(rows);
+        if (r.erro) throw new Error(`${f.name}: ${r.erro}`);
+        todos.push(...r.registos); nomes.push(f.name);
+    }
+    // Ordenar e tirar repetidos (ficheiros sobrepostos); no dia de 25 horas os dois 01:xx ficam (chaves diferentes não há: fica o 1.º)
+    todos.sort((x, y) => x.dia < y.dia ? -1 : x.dia > y.dia ? 1 : x.ini - y.ini);
+    const vistos = new Set(), unicos = [];
+    let ant = null;
+    for (const r of todos) {
+        const k = r.dia + '_' + r.ini;
+        if (vistos.has(k) && !(ant && ant.dia === r.dia && r.ini >= 60 && r.ini < 120)) continue;
+        vistos.add(k); unicos.push(r); ant = r;
+    }
+    return { registos: unicos, nomes };
+}
+// Registos → dias com 96 quartos de hora (NaN onde não há valor; no dia de 25 h, o maior dos dois)
+function diasDeRegistos(regs) {
+    const m = new Map();
+    regs.forEach(r => {
+        let d = m.get(r.dia);
+        if (!d) { d = new Float64Array(96).fill(NaN); m.set(r.dia, d); }
+        const i = Math.floor(r.ini / 15);
+        if (i >= 0 && i < 96) d[i] = isNaN(d[i]) ? r.kw : Math.max(d[i], r.kw);
+    });
+    return [...m.keys()].sort().map(iso => ({ iso, t: Date.parse(iso + 'T00:00:00Z'), qh: m.get(iso) }));
+}
+
+// Casa de exemplo: 12 meses gerados no browser (sempre iguais: gerador com semente)
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function registosExemplo() {
+    const r = mulberry32(20261103);
+    const hoje = new Date();
+    const fim = isoDe(hoje.getFullYear(), hoje.getMonth() + 1, 1);       // 1.º dia do mês atual
+    const ini = somarDias(isoDe(hoje.getFullYear() - 1, hoje.getMonth() + 1, 1), 0);
+    const n = diasEntre(ini, fim), regs = [];
+    const festas = new Set(['12-24', '12-25', '12-31', '01-01']);
+    for (let k = 0; k < n; k++) {
+        const dia = somarDias(ini, k), dt = new Date(dia + 'T12:00:00Z'), mes = dt.getUTCMonth(), dow = dt.getUTCDay();
+        const fds = dow === 0 || dow === 6;
+        const inverno = [11, 0, 1].includes(mes) ? 1 : ([10, 2].includes(mes) ? 0.45 : 0);
+        const verao = [6, 7].includes(mes) ? 1 : ([5, 8].includes(mes) ? 0.5 : 0);
+        const qh = new Array(96);
+        for (let i = 0; i < 96; i++) {
+            const h = i / 4;
+            let p = 0.15 + 0.06 * r();                                            // consumo base
+            if (h >= 7 && h < 8.5) p += 0.25 + 0.9 * r() * r();                    // pequeno-almoço
+            if (fds && h >= 12.5 && h < 14) p += 0.4 + 1.1 * r() * r();            // almoço ao fim de semana
+            if (h >= 19 && h < 21.5) p += 0.45 + 1.0 * r() * r();                  // jantar
+            if (h >= 18.5 && h < 23 && r() < 0.65 * inverno) p += 0.9 + 0.5 * r(); // aquecedor
+            if (h >= 14 && h < 19 && r() < 0.55 * verao) p += 0.7 + 0.5 * r();     // ar condicionado
+            qh[i] = p;
+        }
+        if (r() < 0.5) { const s = 34 + Math.floor(r() * 50); qh[s] += 1.5; qh[s + 1] += 1.0; }          // máquina de roupa
+        if (r() < 0.6) { const s = 84 + Math.floor(r() * 6); qh[s] += 1.3; qh[s + 1] += 0.6; }            // máquina de loiça
+        if (fds && r() < 0.55) { const s = 75 + Math.floor(r() * 6); for (let j = 0; j < 4; j++) qh[s + j] += 0.9 + 0.4 * r(); }  // forno
+        if (festas.has(dia.slice(5))) for (let j = 77; j < 82; j++) qh[j] += 0.8 + 0.2 * (j % 2);
+        for (let i = 0; i < 96; i++) {
+            const fimMin = (i + 1) * 15, ultimo = fimMin === 1440;
+            const hh = Math.floor(fimMin / 60), mi = fimMin % 60;
+            regs.push({ dia, ini: i * 15, fim: `${dia}_${ultimo ? '23:59' : String(hh).padStart(2, '0') + ':' + String(mi).padStart(2, '0')}`, kw: +qh[i].toFixed(3), est: false });
+        }
+    }
+    return regs;
+}
+
+function usarConsumos(regs, origem, nomes) {
+    const dias = diasDeRegistos(regs);
+    E.consumos = { registos: regs, dias, d1: dias[0].iso, d2: dias[dias.length - 1].iso, origem, nomes: nomes || [] };
+    E.custos = null;
+    desenharEstadoDados();
+    renderTudo();
+    agendarCustos();
+}
+
+// ====================================================================
+// Cenários «e se»: somam carga às médias de 15 min (o que passa da meia-noite entra no dia seguinte)
+// ====================================================================
+function cenarioAtivo(c) { c = c || E.cen; return c.ev.on || c.bc.on || c.ac.on || c.placa.on; }
+function aplicarCenarios(dias, cen, evKw) {
+    const c = cen || E.cen;
+    if (!cenarioAtivo(c)) return dias;
+    const novos = dias.map(d => ({ iso: d.iso, t: d.t, qh: Float64Array.from(d.qh) }));
+    novos.forEach((d, idx) => {
+        const dt = new Date(d.t), mes = dt.getUTCMonth(), dow = dt.getUTCDay();
+        const somar = (iniH, horas, kw) => {
+            for (let i = Math.round(iniH * 4); i < Math.round((iniH + horas) * 4); i++) {
+                const alvo = novos[idx + Math.floor(i / 96)];
+                if (alvo && !isNaN(alvo.qh[i % 96])) alvo.qh[i % 96] += kw;
+            }
+        };
+        if (c.ev.on) {
+            const carrega = c.ev.dias === 'todos' || (c.ev.dias === 'uteis' && dow >= 1 && dow <= 5) || (c.ev.dias === '3x' && [1, 3, 5].includes(dow));
+            if (carrega) somar(c.ev.ini, c.ev.horas, evKw != null ? evKw : c.ev.kw);
+        }
+        if (c.bc.on) somar(c.bc.ini, c.bc.horas, c.bc.kw);
+        if (c.ac.on && [5, 6, 7, 8].includes(mes)) somar(14, 5, c.ac.kw);
+        if (c.placa.on) somar(19.5, 1, c.placa.kw);
+    });
+    return novos;
+}
+
+// ====================================================================
+// Análise das médias de 15 min
+// ====================================================================
+const _analises = new WeakMap();
+function analisar(dias) {
+    if (_analises.has(dias)) return _analises.get(dias);
+    let max = 0, tMax = null, n = 0;
+    const picoDia = [], todos = [], heat = new Map();
+    dias.forEach(d => {
+        let m = -1, im = 0;
+        const dt = new Date(d.t), chaveMes = dt.getUTCFullYear() * 100 + dt.getUTCMonth();
+        for (let i = 0; i < 96; i++) {
+            const kw = d.qh[i];
+            if (isNaN(kw)) continue;
+            const kva = kw / COS_PHI;
+            todos.push(kva); n++;
+            if (kva > m) { m = kva; im = i; }
+            const k = chaveMes + '-' + Math.floor(i / 4);
+            if (!heat.has(k) || kva > heat.get(k)) heat.set(k, kva);
+        }
+        if (m >= 0) {
+            picoDia.push({ t: d.t + im * 9e5, kva: m });
+            if (m > max) { max = m; tMax = d.t + im * 9e5; }
+        }
+    });
+    todos.sort((a, b) => b - a);           // descendente: as contagens por escalão param cedo
+    const A = { max, tMax, picoDia, todos, heat, n };
+    _analises.set(dias, A);
+    return A;
+}
+function contarAcima(A, lim) { let i = 0; while (i < A.todos.length && A.todos[i] > lim) i++; return i; }
+// Classificação de um escalão com as médias de 15 min
+function avaliarEscalao(A, s) {
+    const k = kRegra();
+    const nCorte = contarAcima(A, k * s), nAcima = contarAcima(A, s) - nCorte, nPerto = contarAcima(A, s * (1 - E.margem)) - nCorte - nAcima;
+    const diasCorte = A.picoDia.filter(p => p.kva > k * s).length;
+    const estado = nCorte ? 'corta' : nAcima ? 'risco' : nPerto ? 'justo' : 'ok';
+    return { s, nPerto, nAcima, nCorte, diasCorte, estado };
+}
+const ROTULO = { ok: 'Folgado', justo: 'Justo', risco: 'Arriscado', corta: 'Cortaria' };
+function recomendadoDados(A) { return A ? (escaloesPossiveis().find(s => avaliarEscalao(A, s).estado === 'ok') || null) : null; }
+function analiseBase() { return E.consumos ? analisar(E.consumos.dias) : null; }
+
+// ====================================================================
+// Equipamentos
+// ====================================================================
+// W que conta uma unidade: 75 % nos que aquecem por ciclos e por zona nas placas, salvo
+// «à potência máxima»
+function wEfetivo(q) {
+    const base = q.zonas ? E.w[q.id] / q.zonas : E.w[q.id];
+    const f = q.zonas ? 0.75 : (q.f || 1);
+    return E.max[q.id] ? base : base * f;
+}
+function somaEquip() {
+    let w = 0; const f = [0, 0, 0, 0];
+    EQUIP.forEach(q => { const n = E.qtd[q.id] || 0; if (n) { const x = n * wEfetivo(q); w += x; f[E.fase[q.id]] += x; } });
+    return { w, kva: w / 1000 / COS_PHI, fases: f.map(x => x / 1000 / COS_PHI) };
+}
+function recomendadoEquip(kva) {
+    if (!kva) return null;
+    const fator = E.criterio === 'sem' ? 1 : kRegra() * (1 - E.margem);
+    return escaloesPossiveis().find(s => kva <= s * fator) || null;
+}
+const tempoDisparo = (kva, s, k) => { const r = kva / s; return r <= k ? Infinity : Q_DISPARO / (r - k); };
+const fmtTempo = seg => !isFinite(seg) ? 'nunca corta' : seg < 60 ? `${Math.round(seg)} s`
+    : seg < 3600 ? `${Math.floor(seg / 60)} min ${String(Math.round(seg % 60)).padStart(2, '0')} s`
+    : `${Math.floor(seg / 3600)} h ${String(Math.round(seg % 3600 / 60)).padStart(2, '0')} min`;
+
+function recomendacao() {
+    const A = analiseBase(), S = somaEquip();
+    const rD = recomendadoDados(A), rE = recomendadoEquip(S.kva);
+    const passaDados = A && !rD, passaEquip = S.kva > 0 && !rE;
+    const rec = passaDados || passaEquip ? null : ([rD, rE].filter(Boolean).reduce((a, b) => Math.max(a, b), 0) || null);
+    return { A, S, rD, rE, rec, passa: passaDados || passaEquip };
+}
+
+// ====================================================================
+// Custos de cada escalão (motor_elet.js, a mesma conta dos simuladores)
+// ====================================================================
+// Período e consumos por período horário: do ficheiro (12 meses ou o que tiver) ou do consumo anual
+// pelo perfil da ERSE nos últimos 12 meses completos
+function periodoCustos() {
+    if (E.consumos) return { d1: E.consumos.d1, d2: E.consumos.d2, fonte: 'ficheiro' };
+    const h = new Date(), d2 = somarDias(isoDe(h.getFullYear(), h.getMonth() + 1, 1), -1);
+    return { d1: isoDe(h.getFullYear() - 1, h.getMonth() + 1, 1), d2, fonte: 'anual' };
+}
+function kwhPorPeriodo(per, pot) {
+    const col = CICLOS[E.ciclo].col, k = { S: 0, V: 0, F: 0, P: 0, C: 0 };
+    const mapa = mapaOmie();
+    if (per.fonte === 'ficheiro') {
+        let total = 0, semPer = 0;
+        const porPer = { V: 0, F: 0, P: 0, C: 0 };
+        E.consumos.registos.forEach(r => {
+            if (r.dia < per.d1 || r.dia > per.d2) return;
+            const kwh = r.kw / 4; total += kwh;
+            if (!col) return;
+            const linha = mapa.get(r.fim) || mapa.get(r.fim.slice(0, 14) + '00');
+            const p = linha && linha[col];
+            if (p && p in porPer) porPer[p] += kwh; else semPer += kwh;
+        });
+        if (!col) { k.S = total; return { kwh: k, total }; }
+        // os poucos quartos de hora sem período conhecido repartem-se como os outros
+        const soma = porPer.V + porPer.F + porPer.P + porPer.C || 1;
+        Object.keys(porPer).forEach(p => { k[p] = porPer[p] + semPer * porPer[p] / soma; });
+        return { kwh: k, total };
+    }
+    const dias = diasEntre(per.d1, per.d2) + 1, total = E.kwhAno * dias / 365;
+    if (!col) { k.S = total; return { kwh: k, total }; }
+    // o perfil da ERSE como nos simuladores: BTN A acima de 13,8 kVA; abaixo, BTN B acima de 7140 kWh por ano, senão BTN C
+    const perfil = MotorElet.obter_perfil(total, dias, pot), pesos = { V: 0, F: 0, P: 0, C: 0 };
+    BD.omieRaw.forEach(r => {
+        const d = parseDateStr(r.Data);
+        if (!d || d < per.d1 || d > per.d2) return;
+        const p = r[col], w = parseFloat(r[perfil]) || 0;
+        if (p in pesos) pesos[p] += w;
+    });
+    const soma = pesos.V + pesos.F + pesos.P + pesos.C || 1;
+    Object.keys(pesos).forEach(p => { k[p] = total * pesos[p] / soma; });
+    return { kwh: k, total };
+}
+const chaveTarifario = r => `${String(r.com || r.comercializador || '').trim()}||${String(r.nomeOriginal || r.nome || '').trim()}`;
+let _custosSeq = 0, _custosTimer = null;
+function agendarCustos() { clearTimeout(_custosTimer); _custosTimer = setTimeout(calcularCustos, 120); }
+async function calcularCustos() {
+    const seq = ++_custosSeq;
+    const per = periodoCustos();
+    const chave = [per.d1, per.d2, per.fonte, E.ciclo, E.social, E.numerosa, per.fonte === 'anual' ? E.kwhAno : (E.consumos && E.consumos.registos.length)].join('|');
+    if (E.custos && E.custos.chave === chave) { desenharEscaloes(); desenharResultado(); return; }
+    E.custos = { chave, aCalcular: true, porEscalao: {} };
+    desenharEscaloes();
+    try {
+        await carregarBD();
+        const a1 = +per.d1.slice(0, 4), a2 = +per.d2.slice(0, 4), anos = [];
+        for (let a = a1; a <= a2; a++) anos.push(a);
+        await carregarAnos(anos);
+        if (seq !== _custosSeq) return;
+        const disp = anosNoManifest(BD.manifest);
+        if (!anos.some(a => disp.includes(a))) throw new Error('sem os períodos horários dessas datas');
+        const dias = diasEntre(per.d1, per.d2) + 1, fator = 365 / dias;
+        // repartição pelos períodos: a do ficheiro (igual em todos os escalões) ou a do perfil ERSE de cada escalão
+        const reparticoes = {};
+        const repartir = pot => {
+            const chaveP = per.fonte === 'ficheiro' ? 'ficheiro' : MotorElet.obter_perfil(E.kwhAno * dias / 365, dias, pot);
+            return reparticoes[chaveP] || (reparticoes[chaveP] = kwhPorPeriodo(per, pot));
+        };
+        const total = repartir(E.atual).total;
+        const base = {
+            dias, mesesJanela: 0, constantes: BD.constantes, perdas: calcularPerdas(per.d1, per.d2),
+            omieData: BD.omieRaw, d1Str: per.d1, d2Str: per.d2, parseDateFn: parseDateStr,
+            cavUser: 2.85, dgegUser: 0.07, famNum: E.numerosa, tarifaSocial: E.social,
+            incluirACP: false, incluirPack: true, incluirAmigo: false,
+            filtros: { segmento: 'Doméstico', semCondicionadas: true }
+        };
+        const porEscalao = {}, medias = {};   // médias do OMIE PT por opção horária (no máximo duas)
+        for (const s of ESCALOES) {
+            const cfg = CICLOS[E.ciclo];
+            const cicloBD = s > 20.7 ? cfg.acima : cfg.bd;
+            if (!cicloBD) { porEscalao[s] = { semCiclo: true }; continue; }
+            const omieValues = medias[cicloBD] || (medias[cicloBD] = MotorElet.calcularMediasOMIE(BD.omieRaw, per.d1, per.d2, cicloBD, BD.constantes, parseDateStr));
+            const res = MotorElet.calcularTodos(BD.fixos, BD.indexados, Object.assign({}, base, { pot: s, ciclo: cicloBD, omieValues, kwh: repartir(s).kwh }));
+            // o total de cada tarifário (o 1.º de cada um é o mais barato: o motor devolve-os por ordem), para
+            // a troca de tarifário não refazer as contas
+            const totais = new Map();
+            res.forEach(r => { const k = chaveTarifario(r); if (!totais.has(k)) totais.set(k, r.total * fator); });
+            const barato = res[0];
+            porEscalao[s] = {
+                totais,
+                barato: barato ? { com: barato.com, nome: barato.nomeOriginal || barato.nome, total: barato.total * fator } : null,
+                // o contexto do motor, para «O meu tarifário» se calcular na hora sem refazer tudo
+                ctx: MotorElet.prepararContexto(Object.assign({}, base, { pot: s, ciclo: cicloBD, omieValues, kwh: repartir(s).kwh, incluirPack: false })),
+                cicloBD
+            };
+            await pausa();
+            if (seq !== _custosSeq) return;
+        }
+        E.custos = { chave, porEscalao, fator, kwhTotal: total * fator, dias, per };
+    } catch (e) {
+        console.error('Custos:', e);
+        if (seq !== _custosSeq) return;
+        E.custos = { chave: null, erro: e.message || String(e), porEscalao: {} };
+    }
+    desenharEscaloes(); desenharResultado(); desenharResCenario();
+}
+function custoSeu(s) {
+    const c = E.custos && E.custos.porEscalao && E.custos.porEscalao[s];
+    if (!c || !c.totais) return null;
+    if (E.tarifario === MANUAL) return custoManual(s);
+    const v = c.totais.get(E.tarifario);
+    return v === undefined ? null : v;
+}
+
+// ====================================================================
+// O meu tarifário (preços escritos à mão, como o «O Meu Tarifário» dos simuladores)
+// ====================================================================
+const numBD = v => { const x = parseFloat(v); return isFinite(x) ? x : null; };
+const tarPotencia = s => numBD(BD.constantes['TAR_Potencia ' + s]) || 0;
+const cicloBDde = s => s > 20.7 ? CICLOS[E.ciclo].acima : CICLOS[E.ciclo].bd;
+const periodosDoCiclo = () => E.ciclo === 's' ? ['S'] : (E.ciclo[0] === 'b' ? ['V', 'F'] : ['V', 'C', 'P']);
+// A linha da tarifa regulada de um escalão, na opção horária escolhida
+function linhaRegulada(s) {
+    const ciclo = cicloBDde(s);
+    if (!ciclo) return null;
+    const [com, nome] = TARIFARIO_OMISSAO.split('||');
+    return BD.fixos.find(r => String(r.comercializador).trim() === com && String(r.nome).trim() === nome
+        && Math.abs((numBD(r.potencia_kva) || 0) - s) < 0.01 && MotorElet.linhaTemCiclo(r.opcao_horaria_e_ciclo, ciclo)) || null;
+}
+// Os campos que ainda não foram escritos seguem a tarifa regulada do escalão de hoje e da opção horária
+function manualPorOmissao() {
+    const m = E.manual, r = BD.pronta ? linhaRegulada(E.atual) : null;
+    if (!r) return;
+    if (!m.potEd) m.pot = numBD(r.preco_potencia_dia);
+    if (!m.enEd) {
+        m.en = {};
+        periodosDoCiclo().forEach(p => {
+            const col = p === 'V' ? (E.ciclo[0] === 'b' ? 'preco_energia_vazio_bi' : 'preco_energia_vazio_tri') : CAMPO_ENERGIA[p];
+            m.en[p] = numBD(r[col]);
+        });
+    }
+}
+// Termo de potência de um escalão, com a TAR (antes do desconto): o escrito ou a estimativa pela proporção da regulada
+function potManual(s) {
+    const m = E.manual;
+    const comTar = (v, esc) => m.tarPot ? v : v + tarPotencia(esc);
+    if (s === E.atual && m.pot != null) return { v: comTar(m.pot, s), estimado: false };
+    if (m.outros[s] != null) return { v: comTar(m.outros[s], s), estimado: false };
+    if (m.pot == null) return null;
+    const base = comTar(m.pot, E.atual);
+    const rA = linhaRegulada(E.atual), rS = linhaRegulada(s);
+    const pA = rA && numBD(rA.preco_potencia_dia), pS = rS && numBD(rS.preco_potencia_dia);
+    const fatorEsc = pA && pS ? pS / pA : (tarPotencia(E.atual) ? tarPotencia(s) / tarPotencia(E.atual) : 1);
+    return { v: base * fatorEsc, estimado: true };
+}
+// A linha do tarifário do utilizador para o motor (como o construirLinhaElec do Dual: os preços vão já com a TAR)
+function linhaManual(s, cicloBD, ctx) {
+    const m = E.manual, pot = potManual(s);
+    if (!pot) return null;
+    const descEn = 1 - (m.descEn || 0) / 100, descPot = 1 - (m.descPot || 0) / 100;
+    const tarE = (ctx && ctx.tarEnBase) || {};
+    const pEn = p => ((m.tarEn ? (m.en[p] || 0) : (m.en[p] || 0) + (tarE[p] || 0)) * descEn);
+    const linha = {
+        comercializador: 'O meu tarifário', nome: 'O meu tarifário', tipo: 'Fixo',
+        segmento: 'Doméstico e Não Doméstico', faturacao: '', pagamento: '',
+        potencia_kva: s, opcao_horaria_e_ciclo: cicloBD,
+        preco_potencia_dia: pot.v * descPot,
+        tar_incluida_energia: 'TRUE', tar_incluida_potencia: 'TRUE',
+        financiamento_tse_incluido: m.tse ? 'TRUE' : 'FALSE',
+        custo_regulacao_kwh: 0, regulacao_fixo: 'TRUE', regulacao_iva_23: 'FALSE', perdas_autonomas: 'FALSE',
+        desconto_fatura_mes: 0, desconto_meses_limite: 0, desconto_mes_inicio: '',
+        desconto_amigo_inicial: 0, desconto_amigo_mes: 0, desconto_amigo_meses: 0,
+        custo_pack_mes: 0, site_adesao: '', notas: '',
+        // contribuição audiovisual por mês inteiro (como alguns comercializadores) ou pelos dias
+        _cav_mensal: !!m.cavMensal
+    };
+    if (E.ciclo === 's') linha.preco_energia_simples = pEn('S');
+    else if (E.ciclo[0] === 'b') { linha.preco_energia_vazio_bi = pEn('V'); linha.preco_energia_fora_vazio = pEn('F'); }
+    else { linha.preco_energia_vazio_tri = pEn('V'); linha.preco_energia_cheias = pEn('C'); linha.preco_energia_ponta = pEn('P'); }
+    return linha;
+}
+function custoManual(s) {
+    const c = E.custos && E.custos.porEscalao && E.custos.porEscalao[s];
+    if (!c || !c.ctx) return null;
+    const linha = linhaManual(s, c.cicloBD, c.ctx);
+    if (!linha) return null;
+    const r = MotorElet.calcularTarifa(linha, false, MotorElet.COLS_FIXO, c.ctx);
+    return r ? r.total * E.custos.fator : null;
+}
+function desenharManual() {
+    const m = E.manual, painel = document.getElementById('painel-manual');
+    painel.hidden = E.tarifario !== MANUAL;
+    if (painel.hidden) return;
+    manualPorOmissao();
+    const val = (id, v) => { const el = document.getElementById(id); if (document.activeElement !== el) el.value = v == null ? '' : +(+v).toFixed(4); };
+    document.getElementById('lbl-man-pot').textContent = `Termo de potência com ${nomeEsc(E.atual)} (€/dia)`;
+    val('man-pot', m.pot);
+    const pers = periodosDoCiclo();
+    painel.querySelectorAll('[data-per]').forEach(el => { el.hidden = !pers.includes(el.dataset.per); });
+    pers.forEach(p => val('man-' + p, m.en[p]));
+    val('man-desc-pot', m.descPot); val('man-desc-en', m.descEn);
+    document.getElementById('man-tar-pot').checked = m.tarPot;
+    document.getElementById('man-tar-en').checked = m.tarEn;
+    document.getElementById('man-tse').checked = m.tse;
+    document.getElementById('man-cav').checked = m.cavMensal;
+    // os outros escalões: o escrito, ou a estimativa como sugestão (na mesma convenção da TAR)
+    const outros = ESCALOES.filter(x => x !== E.atual && (E.tri || x <= MAX_MONO) && (x <= 20.7 || E.todos || E.ciclo[0] === 't'));
+    const caixa = document.getElementById('man-outros');
+    const foco = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.outro : null;
+    if (foco && caixa.contains(document.activeElement)) return;   // a escrever: não refazer
+    caixa.innerHTML = outros.map(x => {
+        const p = potManual(x);
+        const sugestao = p ? (m.tarPot ? p.v : p.v - tarPotencia(x)) : null;
+        return `<label>${nomeEsc(x)}<input type="number" min="0" step="0.0001" data-outro="${x}" value="${m.outros[x] != null ? +m.outros[x].toFixed(4) : ''}" placeholder="${sugestao != null ? sugestao.toFixed(4) + ' (est.)' : ''}" aria-label="Termo de potência com ${nomeEsc(x)}, em €/dia"></label>`;
+    }).join('');
+}
+
+// ====================================================================
+// Desenho
+// ====================================================================
+function _hcDark() {
+    const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+    return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6', suave: dk ? '#94a3b8' : '#888', verde: dk ? '#4ade80' : '#16a34a' };
+}
+function exportacao(nome) {
+    return { enabled: true, filename: nome, buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS'] } } };
+}
+function base(c, nome) {
+    return {
+        chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } }, title: { text: null }, credits: { enabled: false },
+        exporting: exportacao(nome),
+        legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+        tooltip: { useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+    };
+}
+function limpar(id) { const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id); if (g) g.destroy(); }
+const dataHora = t => { const d = new Date(t); return `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}/${d.getUTCFullYear()} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`; };
+
+function preencherSelects() {
+    const opcoes = ESCALOES.map(s => `<option value="${s}">${nomeEsc(s)}</option>`).join('');
+    ['sel-atual', 'sel-corte'].forEach(id => { const el = document.getElementById(id); el.innerHTML = opcoes; el.value = String(E.atual); });
+    document.getElementById('sel-ciclo').value = E.ciclo;
+}
+// Tarifários disponíveis na opção horária escolhida (em qualquer escalão), por comercializador
+function preencherTarifarios() {
+    const sel = document.getElementById('sel-tarifario');
+    if (!BD.pronta) return;
+    const ciclo = CICLOS[E.ciclo].bd, grupos = new Map();
+    const juntar = (lista) => lista.forEach(r => {
+        if (!MotorElet.linhaTemCiclo(r.opcao_horaria_e_ciclo, ciclo)) return;
+        const seg = String(r.segmento || '').trim();
+        if (seg && seg !== 'Doméstico' && seg !== 'Doméstico e Não Doméstico') return;
+        if (String(r.condicao_adesao == null ? '' : r.condicao_adesao).trim()) return;
+        const com = String(r.comercializador || '').trim(), nome = String(r.nome || '').trim();
+        if (!com || !nome) return;
+        if (!grupos.has(com)) grupos.set(com, new Set());
+        grupos.get(com).add(nome);
+    });
+    juntar(BD.fixos); juntar(BD.indexados);
+    // a tarifa regulada vai para o topo (sai do grupo do comercializador, para não aparecer duas vezes)
+    const [comReg, nomeReg] = TARIFARIO_OMISSAO.split('||');
+    const temReg = grupos.has(comReg) && grupos.get(comReg).delete(nomeReg);
+    if (grupos.has(comReg) && !grupos.get(comReg).size) grupos.delete(comReg);
+    const coms = [...grupos.keys()].sort((a, b) => a.localeCompare(b, 'pt'));
+    let html = '';
+    coms.forEach(com => {
+        html += `<optgroup label="${esc(com)}">` + [...grupos.get(com)].sort((a, b) => a.localeCompare(b, 'pt'))
+            .map(n => `<option value="${esc(com + '||' + n)}">${esc(n)}</option>`).join('') + '</optgroup>';
+    });
+    sel.innerHTML = (temReg ? `<option value="${esc(TARIFARIO_OMISSAO)}">★ ${esc(nomeReg)}</option>` : '')
+        + `<option value="${MANUAL}">✍️ O meu tarifário (preços da fatura)</option>` + html;
+    const existe = [...sel.options].some(o => o.value === E.tarifario);
+    if (!existe) E.tarifario = [...sel.options].some(o => o.value === TARIFARIO_OMISSAO) ? TARIFARIO_OMISSAO : (sel.options[0] ? sel.options[0].value : '');
+    sel.value = E.tarifario;
+}
+const nomeTarifario = () => E.tarifario === MANUAL ? 'O meu tarifário' : (E.tarifario.split('||')[1] || '').trim();
+
+function desenharEstadoDados() {
+    const el = document.getElementById('estado-dados'), c = E.consumos;
+    document.getElementById('btn-limpar').hidden = !c;
+    document.getElementById('fonte-eredes').classList.toggle('ativa', !!c);
+    document.getElementById('fonte-sem').classList.toggle('ativa', !c);
+    document.getElementById('campo-kwh').hidden = !!c;
+    document.getElementById('nota-kwh').textContent = c ? 'Com o ficheiro, o custo usa os consumos dele.' : 'Repartido pelos períodos horários com o perfil de consumo da ERSE.';
+    if (!c) { el.innerHTML = ''; return; }
+    const dias = diasEntre(c.d1, c.d2) + 1, est = c.registos.filter(r => r.est).length;
+    const kwhAno = c.registos.reduce((s, r) => s + r.kw / 4, 0) * 365 / dias;
+    el.innerHTML = `<span class="ok">✓ ${c.origem === 'exemplo' ? 'Casa de exemplo (fictícia)' : esc(c.nomes.join(', '))}</span>: ${dataPT(c.d1)} a ${dataPT(c.d2)} (${dias} dias, cerca de ${fmt(kwhAno, 0)} kWh por ano)`
+        + (est ? `<br><span class="aviso">⚠️ ${fmt(est / c.registos.length * 100, 1)} % dos valores são estimados pela E-Redes: os picos desses dias podem estar suavizados.</span>` : '')
+        + (dias < 90 ? `<br><span class="aviso">⚠️ Só ${dias} dias: os picos do inverno (ou do verão) podem ficar de fora. O ideal são 12 meses.</span>` : '');
+}
+
+function desenharPresets() {
+    document.getElementById('presets').innerHTML = PRESETS.map((p, i) => {
+        let w = 0; Object.entries(p.ids).forEach(([id, n]) => { w += n * wEfetivo(EQUIP.find(x => x.id === id)); });
+        const kva = w / 1000 / COS_PHI, rec = recomendadoEquip(kva);
+        return `<button type="button" class="preset ${i === E.preset ? 'active' : ''}" data-i="${i}" aria-pressed="${i === E.preset}"><strong>${p.nome}</strong>${p.desc}${w ? `<br><span class="kva">${fmt(kva)} kVA → ${rec ? nomeEsc(rec) : textoAcima()}</span>` : ''}</button>`;
+    }).join('');
+}
+function desenharCats() {
+    document.getElementById('tg-cats').innerHTML = CATEGORIAS.map(([id, nome]) => {
+        const n = EQUIP.filter(q => q.cat === id).reduce((s, q) => s + (E.qtd[q.id] || 0), 0);
+        return `<button type="button" data-v="${id}" class="${id === E.cat ? 'active' : ''}">${nome}${n ? ` (${n})` : ''}</button>`;
+    }).join('');
+}
+function desenharEquip() {
+    document.getElementById('grelha-equip').innerHTML = EQUIP.filter(q => q.cat === E.cat).map(q => {
+        const n = E.qtd[q.id] || 0;
+        return `<div class="equip ${n ? 'ligado' : ''}">
+            <div class="topo"><span class="icone" aria-hidden="true">${q.ic}</span><span class="nome">${q.nome}</span></div>
+            <div class="linha"><label><input class="w" type="number" min="0" step="10" value="${E.w[q.id]}" data-w="${q.id}" aria-label="Potência máxima de ${q.nome}, em W"> W máx.</label>
+                <span class="stepper"><button type="button" data-menos="${q.id}" aria-label="Menos ${q.nome}">−</button><span aria-label="Quantidade">${n}</span><button type="button" data-mais="${q.id}" aria-label="Mais ${q.nome}">+</button></span></div>
+            ${q.zonas || q.f ? `<div class="obs">conta ${fmt(wEfetivo(q), 0)} W${q.zonas ? ' por zona ligada' : ''}${E.max[q.id] ? ' (à potência máxima)' : ` (75 % da potência máxima${q.zonas ? ' de uma zona' : ''})`}</div>
+                <label class="obs"><input type="checkbox" data-max="${q.id}" ${E.max[q.id] ? 'checked' : ''}> uso-o à potência máxima</label>` : ''}
+            ${E.tri ? `<div class="linha"><span class="obs">Fase</span><select class="fase" data-fase="${q.id}" aria-label="Fase de ${q.nome}">${[1, 2, 3].map(f => `<option value="${f}" ${E.fase[q.id] === f ? 'selected' : ''}>L${f}</option>`).join('')}</select></div>` : ''}
+        </div>`;
+    }).join('');
+}
+function desenharSoma() {
+    const S = somaEquip(), rec = recomendadoEquip(S.kva), k = kRegra();
+    document.getElementById('soma-w').textContent = fmt(S.w, 0) + ' W';
+    document.getElementById('soma-kva').textContent = fmtKva(S.kva);
+    document.getElementById('soma-rec').innerHTML = rec
+        ? `Chega <strong>${nomeEsc(rec)}</strong>${E.criterio === 'contador' ? ` — o contador só começa a contar acima de ${fmtKva(rec * k)}` : ''}`
+        : (S.kva ? `Passa o maior escalão possível (${textoAcima()})` : 'Escolha os equipamentos que liga ao mesmo tempo');
+    const prox = rec ? (ESCALOES[ESCALOES.indexOf(rec) + 1] || rec) : 6.9;
+    const topo = Math.max(prox * (E.criterio === 'contador' ? k : 1), S.kva * 1.1, 4.6);
+    const ticks = ESCALOES.filter(s => s <= topo).map(s => `<div class="tick ${s === rec ? 'rec' : ''}" style="left:${s / topo * 100}%"><span>${nomeEsc(s).replace(' kVA', '')}</span></div>`).join('');
+    document.getElementById('escala').innerHTML = `<div class="barra"></div><div class="enchido" style="width:${Math.min(100, S.kva / topo * 100)}%"></div>${ticks}`;
+    const fz = document.getElementById('fases');
+    fz.classList.toggle('ver', E.tri);
+    if (E.tri) {
+        const lim = E.atual / 3 * K_TRI, porFase = E.atual > 6.9;
+        fz.innerHTML = [1, 2, 3].map(f => `<div>L${f}: <strong>${fmtKva(S.fases[f])}</strong>${porFase && S.fases[f] > lim ? ` ⚠️ passa o limite da fase com ${nomeEsc(E.atual)}` : ''}</div>`).join('')
+            + `<div class="obs">${porFase ? `Com ${nomeEsc(E.atual)} cada fase aguenta ${fmtKva(lim)} antes de o contador começar a contar.` : 'Até 6,9 kVA o contador só olha para a soma das fases.'}</div>`;
+    }
+}
+
+function desenharResultado() {
+    const { A, S, rD, rE, rec, passa } = recomendacao();
+    const k = kRegra();
+    const cA = custoSeu(E.atual), cR = rec ? custoSeu(rec) : null;
+    const poup = cA != null && cR != null ? cA - cR : null;
+    const aCalcular = E.custos && E.custos.aCalcular;
+    const kpis = [];
+    kpis.push(`<div class="kpi-card destaque"><div class="kpi-label">Escalão recomendado</div><div class="kpi-value">${rec ? nomeEsc(rec) : passa ? '—' : '--'}</div><div class="kpi-sub">${passa ? textoAcima() : `hoje tem ${nomeEsc(E.atual)}`}</div></div>`);
+    kpis.push(`<div class="kpi-card"><div class="kpi-label">Maior média de 15 min (E-Redes)</div><div class="kpi-value">${A ? fmtKva(A.max) : '--'}</div><div class="kpi-sub">${A ? dataHora(A.tMax) + (rD ? ` · sozinha pede ${nomeEsc(rD)}` : '') : 'sem ficheiro'}</div></div>`);
+    kpis.push(`<div class="kpi-card"><div class="kpi-label">Equipamentos ao mesmo tempo</div><div class="kpi-value">${S.kva ? fmtKva(S.kva) : '--'}</div><div class="kpi-sub">${rE ? `sozinhos pedem ${nomeEsc(rE)}` : S.kva ? textoAcima() : 'nenhum escolhido'}</div></div>`);
+    kpis.push(`<div class="kpi-card"><div class="kpi-label">${poup != null && poup < 0 ? 'Custa a mais por ano' : 'Poupa por ano'}</div><div class="kpi-value" style="color:${poup > 0.005 ? 'var(--txt-verde)' : poup < -0.005 ? 'var(--txt-vermelho)' : ''}">${poup != null ? fmtEur(Math.abs(poup)) : aCalcular ? '…' : '--'}</div><div class="kpi-sub">${poup != null ? 'com o seu tarifário, com IVA' : aCalcular ? 'a calcular' : (rec && cA != null && cR == null ? 'o seu tarifário não existe nessa potência' : 'com o seu tarifário')}</div></div>`);
+    document.getElementById('kpis').innerHTML = kpis.join('');
+
+    const v = document.getElementById('veredito');
+    if (!A && !S.kva) {
+        v.className = 'veredito manter';
+        v.innerHTML = 'Carregue o ficheiro da E-Redes (passo 2) ou escolha os equipamentos que liga ao mesmo tempo (passo 3) para ver a recomendação.';
+        return;
+    }
+    if (passa) {
+        v.className = 'veredito subir';
+        v.innerHTML = `<p><strong>Precisa de mais do que o maior escalão possível (${textoAcima()}).</strong> ${!E.tri ? 'Uma instalação trifásica permite ir até 41,4 kVA.' : 'Fale com um eletricista.'}</p>`;
+        return;
+    }
+    const porque = [];
+    if (A) porque.push(`nos ${fmt(diasEntre(E.consumos.d1, E.consumos.d2) + 1, 0)} dias ${E.consumos.origem === 'exemplo' ? 'da casa de exemplo' : 'do ficheiro'} o maior quarto de hora foi ${fmtKva(A.max)} (${dataHora(A.tMax)})`);
+    if (S.kva) porque.push(`os equipamentos que indicou somam ${fmtKva(S.kva)}${E.criterio === 'contador' ? `, abaixo dos ${fmtKva(rec * k)} a partir dos quais o contador começaria a contar` : ''}`);
+    const extra = [];
+    if (!A) extra.push('Sem o ficheiro da E-Redes, a recomendação vem só dos equipamentos: confirme que não se esqueceu de nenhum que possa estar ligado ao mesmo tempo.');
+    if (!S.kva) extra.push('Os dados da E-Redes são médias de 15 minutos: indique também os equipamentos que liga ao mesmo tempo para ter em conta os picos curtos.');
+    const barato = E.custos && E.custos.porEscalao && E.custos.porEscalao[rec] && E.custos.porEscalao[rec].barato;
+    if (barato && cA != null && barato.total < (cR != null ? cR : Infinity) - 1) {
+        extra.push(`Se além disso mudar para <strong>${esc(barato.nome)}</strong>, o custo com ${nomeEsc(rec)} desce para ${fmtEur(barato.total)} por ano: ${fmtEur(cA - barato.total)} a menos do que hoje.`);
+    }
+    const degrau = rec > 6.9 && E.atual <= 6.9 ? ` Atenção: acima de 6,9 kVA perde o IVA a 6 % nos primeiros ${E.numerosa ? 300 : 200} kWh por mês${E.social ? ' e a tarifa social' : ''}.` : '';
+    let txt;
+    if (rec < E.atual) txt = `<strong>Pode baixar de ${nomeEsc(E.atual)} para ${nomeEsc(rec)}</strong>${poup != null ? ` e poupar cerca de <strong>${fmtEur(poup)}</strong> por ano` : ''}: ${porque.join('; ')}. Com ${fmt(E.margem * 100, 0)} % de margem de segurança.`;
+    else if (rec > E.atual) txt = `<strong>A potência de ${nomeEsc(E.atual)} é curta: precisa de ${nomeEsc(rec)}</strong>${poup != null ? ` (mais ${fmtEur(-poup)} por ano)` : ''}: ${porque.join('; ')}.${degrau}`;
+    else txt = `<strong>${nomeEsc(E.atual)} é o escalão certo</strong>: ${porque.join('; ')}.`;
+    v.className = 'veredito' + (rec === E.atual ? ' manter' : rec > E.atual ? ' subir' : '');
+    v.innerHTML = `<p>${txt}</p>` + extra.map(x => `<p>${x}</p>`).join('');
+}
+
+function desenharEscaloes() {
+    const { A, S, rec } = recomendacao();
+    const k = kRegra(), C = E.custos || {};
+    const lista = E.todos ? ESCALOES : ESCALOES.filter(s => s <= 20.7 || s === E.atual);
+    const cAtual = custoSeu(E.atual);
+    const nomeT = nomeTarifario();
+    let titulo = A ? `Com ${E.consumos.origem === 'exemplo' ? 'a casa de exemplo' : 'o seu ficheiro'}` : 'Sem ficheiro';
+    titulo += `, ${fmt(E.margem * 100, 0)} % de margem e o tarifário «${esc(nomeT)}»`;
+    if (C.per) titulo += ` · custos de ${fmt(C.kwhTotal, 0)} kWh por ano (${C.per.fonte === 'ficheiro' ? 'do ficheiro' : 'indicado'})`;
+    let h = `<caption>${titulo}</caption><thead><tr><th class="esq">Escalão</th><th>Começa a contar acima de</th><th>Quartos de hora perto / acima / a cortar</th><th class="esq">Com os seus consumos</th><th>Equipamentos (${S.kva ? fmtKva(S.kva) : '—'})</th><th>O seu tarifário / ano</th><th>Diferença face a hoje</th><th class="esq">O mais barato nesta potência</th><th class="esq">Degraus</th></tr></thead><tbody>`;
+    lista.forEach(s => {
+        const ev = A ? avaliarEscalao(A, s) : null;
+        const t = S.kva ? tempoDisparo(S.kva, s, k) : null;
+        const c = C.porEscalao ? C.porEscalao[s] : null;
+        const seu = custoSeu(s);
+        const dif = seu != null && cAtual != null ? seu - cAtual : null;
+        let celSeu, celBarato;
+        if (C.aCalcular) { celSeu = '…'; celBarato = 'a calcular…'; }
+        else if (C.erro) { celSeu = '—'; celBarato = '—'; }
+        else if (!c) { celSeu = '—'; celBarato = '—'; }
+        else if (c.semCiclo) { celSeu = '—'; celBarato = '<small>só tri-horário</small>'; }
+        else {
+            celSeu = seu != null ? fmtEur(seu) : '<small>não existe</small>';
+            if (seu != null && E.tarifario === MANUAL && s !== E.atual && (potManual(s) || {}).estimado) celSeu += '<small class="estimado">potência estimada</small>';
+            celBarato = c.barato ? `${fmtEur(c.barato.total)}<small>${esc(c.barato.nome)}</small>` : '—';
+        }
+        const notas = [];
+        if (s <= 3.45) notas.push('IVA 6 % na tarifa de acesso do termo de potência');
+        if (s <= 6.9) notas.push(`IVA 6 % nos primeiros ${E.numerosa ? 300 : 200} kWh/mês`);
+        else notas.push('sem IVA reduzido na energia');
+        if (E.social) notas.push(s <= 6.9 ? 'mantém a tarifa social' : '<strong>perde a tarifa social</strong>');
+        if (s > MAX_MONO) notas.push('só trifásica');
+        if (s > 20.7) notas.push('só tri-horário');
+        const cls = [s === E.atual ? 'atual' : '', s === rec ? 'recomendado' : '', !E.tri && s > MAX_MONO ? 'so-tri' : ''].join(' ').trim();
+        h += `<tr class="${cls}"><td class="esq">${nomeEsc(s)}${s === E.atual ? ' (hoje)' : ''}${s === rec ? ' ✅' : ''}</td>
+            <td>${fmtKva(s * k)}</td>
+            <td>${ev ? `${ev.nPerto} / ${ev.nAcima} / ${ev.nCorte}` : '—'}</td>
+            <td class="esq">${ev ? `<span class="pill ${ev.estado}">${ROTULO[ev.estado]}</span>${ev.diasCorte ? ` em ${ev.diasCorte} dia${ev.diasCorte > 1 ? 's' : ''}` : ''}` : '—'}</td>
+            <td>${t == null ? '—' : isFinite(t) ? 'corta em ' + fmtTempo(t) : 'nunca corta'}</td>
+            <td>${celSeu}</td>
+            <td style="color:${dif != null && dif < -0.005 ? 'var(--txt-verde)' : dif != null && dif > 0.005 ? 'var(--txt-vermelho)' : ''}">${s === E.atual || dif == null ? '—' : (dif > 0 ? '+' : '−') + fmtEur(Math.abs(dif))}</td>
+            <td class="barato">${celBarato}</td>
+            <td class="nota-celula">${notas.join(' · ')}</td></tr>`;
+    });
+    h += '</tbody>';
+    document.getElementById('tabela-escaloes').innerHTML = h;
+    document.getElementById('btn-todos').textContent = E.todos ? 'Mostrar só até 20,7 kVA' : 'Mostrar todos os escalões (até 41,4 kVA)';
+    const eb = document.getElementById('estado-bd');
+    if (C.erro) eb.innerHTML = `⚠️ Não foi possível calcular os custos (${esc(C.erro)}). <button type="button" class="btn-link" id="btn-repetir">Tentar novamente</button>`;
+    else if (C.aCalcular) eb.textContent = 'A calcular o custo de cada escalão com todos os tarifários…';
+    else if (BD.pronta) eb.textContent = `Tarifários: ${BD.fixos.length + BD.indexados.length} linhas da base de dados dos simuladores.`;
+    const br = document.getElementById('btn-repetir');
+    if (br) br.onclick = () => { E.custos = null; calcularCustos(); };
+}
+
+function desenharPicos() {
+    const tem = !!E.consumos;
+    document.getElementById('picos-conteudo').hidden = !tem;
+    document.getElementById('picos-vazio').hidden = tem;
+    ['grafico-picos', 'grafico-horas'].forEach(id => limpar(id));
+    if (!tem) return;
+    const c = _hcDark(), A = analiseBase(), { rec } = recomendacao(), k = kRegra(), alvo = rec || E.atual;
+    const serieCen = cenarioAtivo() ? analisar(aplicarCenarios(E.consumos.dias)).picoDia.map(p => [p.t, +p.kva.toFixed(2)]) : null;
+    const linhas = [
+        { value: E.atual, color: c.suave, width: 2, zIndex: 4, label: { text: `hoje: ${nomeEsc(E.atual)}`, align: 'right', x: -6, style: { color: c.txt } } },
+        { value: E.atual * k, color: c.suave, width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `com ${nomeEsc(E.atual)} começa a contar: ${fmtKva(E.atual * k)}`, align: 'right', x: -6, style: { color: c.suave } } }
+    ];
+    if (alvo !== E.atual) linhas.push(
+        { value: alvo, color: c.verde, width: 2, zIndex: 4, label: { text: `recomendado: ${nomeEsc(alvo)}`, style: { color: c.verde } } },
+        { value: alvo * k, color: c.verde, width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `com ${nomeEsc(alvo)} começa a contar: ${fmtKva(alvo * k)}`, style: { color: c.verde } } });
+    const series = [{ name: 'Maior quarto de hora do dia', type: 'column', data: A.picoDia.map(p => [p.t, +p.kva.toFixed(2)]), color: '#60a5fa', borderWidth: 0, pointPadding: 0, groupPadding: 0 }];
+    if (serieCen) series.push({ name: 'Com o cenário «e se»', type: 'line', data: serieCen, color: c.dk ? '#fb923c' : '#ea580c', lineWidth: 1.5, marker: { enabled: false } });
+    const maxY = Math.max(E.atual * k, alvo * k, A.max, ...(serieCen || []).map(p => p[1])) * 1.08;
+    Highcharts.chart('grafico-picos', Object.assign(base(c, 'picos-diarios'), {
+        xAxis: { type: 'datetime', labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha },
+        yAxis: { title: { text: 'kVA', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha, plotLines: linhas, min: 0, max: maxY },
+        tooltip: Object.assign(base(c).tooltip, { shared: true, formatter: function () {
+            const d = new Date(this.x);
+            return `<b>${DIAS_SEMANA[d.getUTCDay()]}, ${dataHora(this.x).slice(0, 10)}</b><br>` + this.points.map(p => `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtKva(p.y)}</b>${p.series.index === 0 ? ` às ${dataHora(A.picoDia[p.point.index].t).slice(11)}` : ''}`).join('<br>');
+        } }),
+        series
+    }));
+    // mapa mês × hora
+    const meses = [...new Set([...A.heat.keys()].map(x => x.split('-')[0]))].sort();
+    const data = [];
+    A.heat.forEach((v, chave) => { const [m, hh] = chave.split('-'); data.push([+hh, meses.indexOf(m), +v.toFixed(2)]); });
+    Highcharts.chart('grafico-horas', Object.assign(base(c, 'picos-mes-hora'), {
+        chart: { type: 'heatmap', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+        xAxis: { categories: Array.from({ length: 24 }, (_, hh) => hh + 'h'), labels: { style: { color: c.txt } } },
+        yAxis: { categories: meses.map(m => MESES[+m.slice(4)] + '/' + m.slice(2, 4)), title: null, reversed: true, labels: { style: { color: c.txt } } },
+        colorAxis: { min: 0, minColor: c.dk ? '#1e293b' : '#f1f5f9', maxColor: '#dc2626', labels: { style: { color: c.txt } } },
+        legend: { align: 'right', layout: 'vertical', verticalAlign: 'middle', itemStyle: { color: c.txt } },
+        tooltip: Object.assign(base(c).tooltip, { formatter: function () { return `${this.series.yAxis.categories[this.point.y]}, ${this.point.x}h–${this.point.x + 1}h: <b>${fmtKva(this.point.value)}</b>`; } }),
+        series: [{ name: 'Maior quarto de hora', data, borderWidth: 0.5, borderColor: c.bg }]
+    }));
+    const top = A.picoDia.slice().sort((a, b) => b.kva - a.kva).slice(0, 10);
+    document.getElementById('tabela-top').innerHTML = `<thead><tr><th class="esq">Quarto de hora</th><th>Média</th><th>Da potência de hoje</th><th>Da recomendada</th></tr></thead><tbody>` +
+        top.map(p => `<tr><td class="esq">${DIAS_SEMANA[new Date(p.t).getUTCDay()].slice(0, 3)}, ${dataHora(p.t)}</td><td>${fmtKva(p.kva)}</td><td>${fmt(p.kva / E.atual * 100, 0)} %</td><td>${fmt(p.kva / alvo * 100, 0)} %</td></tr>`).join('') + '</tbody>';
+}
+
+function desenharCenarios() {
+    const c = E.cen, horas = sel => Array.from({ length: 24 }, (_, hh) => `<option value="${hh}" ${hh === sel ? 'selected' : ''}>${String(hh).padStart(2, '0')}:00</option>`).join('');
+    document.getElementById('cenarios').innerHTML = `
+        <div class="cenario ${c.ev.on ? 'ligado' : ''}"><label class="cab"><input type="checkbox" data-cen="ev" ${c.ev.on ? 'checked' : ''}> 🚗 Carro elétrico</label>
+            <div class="params"><span class="btn-toggle" data-evkw role="group" aria-label="Potência do carregador">${[2.3, 3.7, 7.4].map(kw => `<button type="button" data-v="${kw}" class="${c.ev.kw === kw ? 'active' : ''}">${fmt(kw, 1)} kW</button>`).join('')}</span>
+            <label>começa às <select data-p="ev.ini">${horas(c.ev.ini)}</select></label>
+            <label>durante <input type="number" min="1" max="12" value="${c.ev.horas}" data-p="ev.horas" style="width:52px"> h</label>
+            <label><select data-p="ev.dias" aria-label="Dias de carregamento"><option value="todos" ${c.ev.dias === 'todos' ? 'selected' : ''}>todos os dias</option><option value="uteis" ${c.ev.dias === 'uteis' ? 'selected' : ''}>dias úteis</option><option value="3x" ${c.ev.dias === '3x' ? 'selected' : ''}>3 dias por semana</option></select></label></div></div>
+        <div class="cenario ${c.bc.on ? 'ligado' : ''}"><label class="cab"><input type="checkbox" data-cen="bc" ${c.bc.on ? 'checked' : ''}> ♨️ Bomba de calor ou termoacumulador para águas quentes</label>
+            <div class="params"><label><input type="number" min="0.3" max="5" step="0.1" value="${c.bc.kw}" data-p="bc.kw" style="width:60px"> kW</label>
+            <label>começa às <select data-p="bc.ini">${horas(c.bc.ini)}</select></label>
+            <label>durante <input type="number" min="1" max="8" value="${c.bc.horas}" data-p="bc.horas" style="width:52px"> h</label></div></div>
+        <div class="cenario ${c.ac.on ? 'ligado' : ''}"><label class="cab"><input type="checkbox" data-cen="ac" ${c.ac.on ? 'checked' : ''}> ❄️ Ar condicionado (tardes de junho a setembro)</label>
+            <div class="params"><label><input type="number" min="0.5" max="6" step="0.1" value="${c.ac.kw}" data-p="ac.kw" style="width:60px"> kW das 14h às 19h</label></div></div>
+        <div class="cenario ${c.placa.on ? 'ligado' : ''}"><label class="cab"><input type="checkbox" data-cen="placa" ${c.placa.on ? 'checked' : ''}> 🍳 Trocar o fogão a gás por placa de indução</label>
+            <div class="params"><label><input type="number" min="1" max="7.4" step="0.1" value="${c.placa.kw}" data-p="placa.kw" style="width:60px"> kW ao jantar (19:30–20:30)</label></div></div>`;
+    desenharResCenario();
+}
+function desenharResCenario() {
+    const el = document.getElementById('cenario-res'), c = E.cen;
+    if (!E.consumos) { el.innerHTML = '<div class="vazio">Os cenários juntam o equipamento novo aos seus consumos reais: carregue o ficheiro da E-Redes (passo 2) ou experimente com a casa de exemplo.</div>'; return; }
+    if (!cenarioAtivo()) { el.innerHTML = '<p class="nota">Ligue um dos cenários acima.</p>'; return; }
+    const A0 = analiseBase(), A1 = analisar(aplicarCenarios(E.consumos.dias));
+    const r0 = recomendadoDados(A0), r1 = recomendadoDados(A1);
+    const c0 = r0 ? custoSeu(r0) : null, c1 = r1 ? custoSeu(r1) : null;
+    const dif = c0 != null && c1 != null ? c1 - c0 : null;
+    let h = `<div class="veredito ${r1 && r0 && r1 > r0 ? 'subir' : 'manter'}"><p>Sem o cenário: maior quarto de hora <strong>${fmtKva(A0.max)}</strong> → ${r0 ? nomeEsc(r0) : textoAcima()}. Com o cenário: <strong>${fmtKva(A1.max)}</strong> → <strong>${r1 ? nomeEsc(r1) : textoAcima()}</strong>${dif ? ` (${dif > 0 ? 'mais' : 'menos'} ${fmtEur(Math.abs(dif))} por ano com o seu tarifário, só pela potência; a energia do equipamento novo é à parte)` : ''}.</p>`
+        + `<p class="nota" style="margin:0">Só com as médias de 15 minutos: some-lhe os picos curtos dos equipamentos que liga ao mesmo tempo (passo 3).</p></div>`;
+    if (c.ev.on && r0 && (!r1 || r1 > r0)) {
+        // o carregador mais forte que cabe no escalão de hoje, e a melhor hora para começar
+        let melhorKw = 0;
+        for (let kw = c.ev.kw; kw >= 1.4; kw = +(kw - 0.1).toFixed(1)) {
+            const r = recomendadoDados(analisar(aplicarCenarios(E.consumos.dias, null, kw)));
+            if (r && r <= r0) { melhorKw = kw; break; }
+        }
+        let melhorHora = c.ev.ini, melhorPico = Infinity;
+        for (let hIni = 0; hIni < 24; hIni++) {
+            const cc = { ev: Object.assign({}, c.ev, { ini: hIni }), bc: c.bc, ac: c.ac, placa: c.placa };
+            const p = analisar(aplicarCenarios(E.consumos.dias, cc)).max;
+            if (p < melhorPico - 1e-9) { melhorPico = p; melhorHora = hIni; }
+        }
+        const ccMelhor = { ev: Object.assign({}, c.ev, { ini: melhorHora }), bc: c.bc, ac: c.ac, placa: c.placa };
+        const rMelhor = recomendadoDados(analisar(aplicarCenarios(E.consumos.dias, ccMelhor)));
+        const dicas = [];
+        if (melhorKw) dicas.push(`limitar o carregador a <strong>${fmt(melhorKw, 1)} kW</strong> (a maioria das wallboxes deixa escolher, ou ajusta-se sozinha com gestão dinâmica de carga)`);
+        if (melhorHora !== c.ev.ini && rMelhor && rMelhor <= r0) dicas.push(`começar a carregar às <strong>${String(melhorHora).padStart(2, '0')}:00</strong> (maior quarto de hora ${fmtKva(melhorPico)})`);
+        if (dicas.length) h += `<div class="dica">💡 Para ficar em ${nomeEsc(r0)}: ${dicas.join(' ou ')}.</div>`;
+    }
+    el.innerHTML = h;
+}
+
+function desenharCorte() {
+    const s = +document.getElementById('sel-corte').value, kva = Math.max(0, +document.getElementById('inp-corte').value || 0), k = kRegra();
+    const t = tempoDisparo(kva, s, k);
+    document.getElementById('disparo-res').innerHTML = `Com <strong>${nomeEsc(s)}</strong>${E.tri ? ' (trifásica)' : ''}, o contador nunca corta até <strong>${fmtKva(s * k)}</strong>. Com <strong>${fmtKva(kva)}</strong> ligados: <strong>${isFinite(t) ? 'corta ao fim de ' + fmtTempo(t) : 'nunca corta'}</strong>.`;
+    const mult = [k, 1.3, 1.5, 2, 3].filter((m, i, a) => a.indexOf(m) === i).sort((a, b) => a - b);
+    document.getElementById('tabela-corte').innerHTML = `<caption>Com ${nomeEsc(s)}</caption><thead><tr><th class="esq">Potência pedida</th><th>Corta ao fim de</th></tr></thead><tbody>` +
+        mult.map(m => `<tr><td class="esq">${fmtKva(s * m)} (${fmt(m, 1)} ×)</td><td>${m <= k ? 'nunca corta' : fmtTempo(Q_DISPARO / (m - k))}</td></tr>`).join('') + '</tbody>';
+    const c = _hcDark();
+    limpar('grafico-disparo');
+    const pts = [];
+    for (let m = k + 0.02; m <= 3.001; m += 0.02) pts.push([+(s * m).toFixed(2), +(Q_DISPARO / (m - k)).toFixed(1)]);
+    const series = [{ name: 'Tempo até cortar', data: pts, color: '#dc2626', marker: { enabled: false } }];
+    if (kva > s * k && kva <= s * 3) series.push({ type: 'scatter', name: 'A sua potência', data: [[+kva.toFixed(2), +(Q_DISPARO / (kva / s - k)).toFixed(1)]], color: '#2563eb', marker: { radius: 6 } });
+    Highcharts.chart('grafico-disparo', Object.assign(base(c, 'curva-corte'), {
+        xAxis: { title: { text: 'Potência pedida (kVA)', style: { color: c.txt } }, labels: { style: { color: c.txt } }, lineColor: c.grelha },
+        yAxis: { type: 'logarithmic', title: { text: 'Corta ao fim de (s)', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha },
+        legend: { enabled: false },
+        tooltip: Object.assign(base(c).tooltip, { formatter: function () { return `${fmtKva(this.x)}: corta ao fim de <b>${fmtTempo(this.y)}</b>`; } }),
+        series
+    }));
+}
+
+function renderTudo() {
+    desenharManual();
+    desenharPresets(); desenharCats(); desenharEquip(); desenharSoma();
+    desenharResultado(); desenharEscaloes(); desenharPicos(); desenharResCenario(); desenharCorte();
+    atualizarURL();
+}
+
+// ====================================================================
+// Link de partilha (só as escolhas; nunca os consumos)
+// ====================================================================
+const CICLO_DE_URL = Object.keys(CICLOS);
+function estadoParaURL() {
+    const p = new URLSearchParams();
+    if (E.atual !== 6.9) p.set('p', String(E.atual));
+    if (E.tri) p.set('f', 'tri');
+    if (E.ciclo !== 's') p.set('c', E.ciclo);
+    if (E.tarifario && E.tarifario !== TARIFARIO_OMISSAO) p.set('t', E.tarifario);
+    if (E.tarifario === MANUAL) {
+        const m = E.manual;
+        if (m.potEd && m.pot != null) p.set('mp', String(m.pot));
+        if (m.enEd) p.set('me', periodosDoCiclo().map(x => m.en[x] == null ? '' : m.en[x]).join(','));
+        const outros = Object.keys(m.outros).map(x => `${x}:${m.outros[x]}`);
+        if (outros.length) p.set('mo', outros.join(','));
+        if (m.descPot || m.descEn) p.set('md', `${m.descPot || 0},${m.descEn || 0}`);
+        if (!m.tarPot || !m.tarEn || !m.tse || !m.cavMensal) p.set('mf', [m.tarPot, m.tarEn, m.tse, m.cavMensal].map(b => b ? 1 : 0).join(''));
+    }
+    if (E.social) p.set('ts', '1');
+    if (E.numerosa) p.set('fn', '1');
+    if (E.kwhAno !== 2500) p.set('kwh', String(E.kwhAno));
+    if (E.margem !== 0.10) p.set('m', String(Math.round(E.margem * 100)));
+    if (E.criterio !== 'contador') p.set('cr', E.criterio);
+    const eq = EQUIP.filter(q => E.qtd[q.id]).map(q => `${q.id}:${E.qtd[q.id]}`);
+    if (eq.length) p.set('eq', eq.join(','));
+    const w = EQUIP.filter(q => E.w[q.id] !== q.w).map(q => `${q.id}:${E.w[q.id]}`);
+    if (w.length) p.set('w', w.join(','));
+    const mx = EQUIP.filter(q => E.max[q.id]).map(q => q.id);
+    if (mx.length) p.set('mx', mx.join(','));
+    if (E.tri) { const fz = EQUIP.filter(q => E.qtd[q.id]).map(q => `${q.id}:${E.fase[q.id]}`); if (fz.length) p.set('fz', fz.join(',')); }
+    const c = E.cen;
+    if (c.ev.on) p.set('ev', [c.ev.kw, c.ev.ini, c.ev.horas, c.ev.dias].join(','));
+    if (c.bc.on) p.set('bc', [c.bc.kw, c.bc.ini, c.bc.horas].join(','));
+    if (c.ac.on) p.set('ac', String(c.ac.kw));
+    if (c.placa.on) p.set('pl', String(c.placa.kw));
+    return p;
+}
+function atualizarURL() {
+    try {
+        const p = estadoParaURL(), s = p.toString();
+        history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash);
+    } catch (e) { /* sem history */ }
+}
+function lerURL() {
+    let p;
+    try { p = new URLSearchParams(location.search); } catch (e) { return; }
+    const num = (v, d) => { const x = parseFloat(v); return isFinite(x) ? x : d; };
+    if (p.has('p') && ESCALOES.includes(num(p.get('p')))) E.atual = num(p.get('p'));
+    if (p.get('f') === 'tri') E.tri = true;
+    if (CICLO_DE_URL.includes(p.get('c'))) E.ciclo = p.get('c');
+    if (p.get('t')) E.tarifario = p.get('t');
+    {
+        const m = E.manual;
+        if (p.has('mp')) { const v = num(p.get('mp'), null); if (v != null && v >= 0) { m.pot = v; m.potEd = true; } }
+        if (p.has('me')) {
+            const per = CICLO_DE_URL.includes(p.get('c')) ? (p.get('c') === 's' ? ['S'] : (p.get('c')[0] === 'b' ? ['V', 'F'] : ['V', 'C', 'P'])) : ['S'];
+            const vals = p.get('me').split(',');
+            m.en = {}; per.forEach((x, i) => { const v = num(vals[i], null); if (v != null && v >= 0) m.en[x] = v; });
+            m.enEd = true;
+        }
+        (p.get('mo') || '').split(',').map(x => x.split(':')).forEach(([esc, v]) => {
+            const sx = num(esc, null), vx = num(v, null);
+            if (ESCALOES.includes(sx) && vx != null && vx >= 0) m.outros[sx] = vx;
+        });
+        if (p.has('md')) { const [a, b] = p.get('md').split(','); m.descPot = Math.min(100, Math.max(0, num(a, 0))); m.descEn = Math.min(100, Math.max(0, num(b, 0))); }
+        if (/^[01]{3,4}$/.test(p.get('mf') || '')) { const f = p.get('mf'); m.tarPot = f[0] === '1'; m.tarEn = f[1] === '1'; m.tse = f[2] === '1'; m.cavMensal = f.length < 4 || f[3] === '1'; }
+    }
+    E.social = p.get('ts') === '1';
+    E.numerosa = p.get('fn') === '1';
+    if (p.has('kwh')) E.kwhAno = Math.min(100000, Math.max(100, num(p.get('kwh'), 2500)));
+    if (p.has('m')) E.margem = Math.min(30, Math.max(0, num(p.get('m'), 10))) / 100;
+    if (p.get('cr') === 'sem') E.criterio = 'sem';
+    const pares = s => (s || '').split(',').map(x => x.split(':')).filter(x => x.length === 2 && EQUIP.some(q => q.id === x[0]));
+    pares(p.get('eq')).forEach(([id, n]) => { const q = EQUIP.find(x => x.id === id); E.qtd[id] = Math.max(0, Math.min(q.zonas || 9, Math.round(num(n, 0)))); });
+    pares(p.get('w')).forEach(([id, w]) => { E.w[id] = Math.max(0, num(w, E.w[id])); });
+    (p.get('mx') || '').split(',').forEach(id => { if (EQUIP.some(q => q.id === id && (q.f || q.zonas))) E.max[id] = true; });
+    pares(p.get('fz')).forEach(([id, f]) => { if ([1, 2, 3].includes(+f)) E.fase[id] = +f; });
+    if (p.has('eq')) E.preset = 5;
+    const c = E.cen;
+    if (p.get('ev')) { const [kw, ini, hh, d] = p.get('ev').split(','); c.ev = { on: true, kw: [2.3, 3.7, 7.4].includes(num(kw)) ? num(kw) : 3.7, ini: Math.min(23, Math.max(0, Math.round(num(ini, 20)))), horas: Math.min(12, Math.max(1, Math.round(num(hh, 4)))), dias: ['todos', 'uteis', '3x'].includes(d) ? d : 'uteis' }; }
+    if (p.get('bc')) { const [kw, ini, hh] = p.get('bc').split(','); c.bc = { on: true, kw: Math.min(5, Math.max(0.3, num(kw, 1.5))), ini: Math.min(23, Math.max(0, Math.round(num(ini, 13)))), horas: Math.min(8, Math.max(1, Math.round(num(hh, 2)))) }; }
+    if (p.get('ac')) c.ac = { on: true, kw: Math.min(6, Math.max(0.5, num(p.get('ac'), 1.2))) };
+    if (p.get('pl')) c.placa = { on: true, kw: Math.min(7.4, Math.max(1, num(p.get('pl'), 3.6))) };
+}
+async function partilhar() {
+    const url = location.origin + location.pathname + (estadoParaURL().toString() ? '?' + estadoParaURL().toString() : '');
+    try {
+        if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) { await navigator.share({ title: document.title, url }); return; }
+        await navigator.clipboard.writeText(url);
+        mostrarToast('✓ Link copiado (sem os consumos do ficheiro)');
+    } catch (e) { window.prompt('Copie o link:', url); }
+}
+
+// ====================================================================
+// Excel
+// ====================================================================
+async function exportarExcel() {
+    try { await garantirXLSX(); } catch (e) { mostrarToast('Não foi possível preparar o Excel'); return; }
+    const { A, S, rec } = recomendacao(), k = kRegra(), C = E.custos || {};
+    const wb = XLSX.utils.book_new();
+    const resumo = [
+        ['Simulador de Potência Contratada — www.tiagofelicia.pt/simulador-potencia'],
+        ['Gerado em', new Date().toLocaleString('pt-PT')],
+        [],
+        ['Potência contratada hoje (kVA)', E.atual], ['Instalação', E.tri ? 'Trifásica' : 'Monofásica'], ['Opção horária', CICLOS[E.ciclo].bd],
+        ['Tarifário', nomeTarifario()],
+        ...(E.tarifario === MANUAL ? [
+            [`Termo de potência com ${nomeEsc(E.atual)} (€/dia, sem IVA)`, E.manual.pot],
+            ...periodosDoCiclo().map(x => [`Energia ${({ S: 'simples', V: 'vazio', F: 'fora de vazio', C: 'cheias', P: 'ponta' })[x]} (€/kWh, sem IVA)`, E.manual.en[x]]),
+            ['TAR incluída na potência / na energia; inclui TSE; CAV por mês inteiro', [E.manual.tarPot, E.manual.tarEn, E.manual.tse, E.manual.cavMensal].map(b => b ? 'Sim' : 'Não').join(' / ')],
+            ['Desconto potência / energia (%)', `${E.manual.descPot || 0} / ${E.manual.descEn || 0}`],
+            ...Object.keys(E.manual.outros).map(x => [`Termo de potência com ${nomeEsc(+x)} (€/dia, escrito)`, E.manual.outros[x]])
+        ] : []),
+        ['Tarifa social', E.social ? 'Sim' : 'Não'], ['Família numerosa', E.numerosa ? 'Sim' : 'Não'],
+        ['Margem de segurança (%)', Math.round(E.margem * 100)], ['Critério dos equipamentos', E.criterio === 'sem' ? 'Sem tolerância' : 'Com a tolerância do contador'],
+        ['Consumos', E.consumos ? `${E.consumos.origem === 'exemplo' ? 'Casa de exemplo' : 'Ficheiro da E-Redes'}: ${dataPT(E.consumos.d1)} a ${dataPT(E.consumos.d2)}` : `Sem ficheiro: ${E.kwhAno} kWh por ano`],
+        ['Maior média de 15 min (kVA)', A ? +A.max.toFixed(3) : ''], ['Equipamentos ao mesmo tempo (kVA)', S.kva ? +S.kva.toFixed(3) : ''],
+        ['Escalão recomendado (kVA)', rec || '']
+    ];
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumo), 'Resumo');
+    const linhas = [['Escalão (kVA)', 'Começa a contar acima de (kVA)', 'QH perto', 'QH acima do contratado', 'QH acima do limite', 'Com os consumos', 'Equipamentos', 'O seu tarifário (€/ano)', 'Mais barato (€/ano)', 'Mais barato (tarifário)']];
+    ESCALOES.forEach(s => {
+        const ev = A ? avaliarEscalao(A, s) : null, t = S.kva ? tempoDisparo(S.kva, s, k) : null, c = C.porEscalao ? C.porEscalao[s] : null;
+        linhas.push([s, +(s * k).toFixed(3), ev ? ev.nPerto : '', ev ? ev.nAcima : '', ev ? ev.nCorte : '', ev ? ROTULO[ev.estado] : '',
+            t == null ? '' : isFinite(t) ? 'corta em ' + fmtTempo(t) : 'nunca corta',
+            custoSeu(s) != null ? +custoSeu(s).toFixed(2) : '', c && c.barato ? +c.barato.total.toFixed(2) : '', c && c.barato ? `${c.barato.com} — ${c.barato.nome}` : '']);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(linhas), 'Escalões');
+    if (A) {
+        const dias = [['Dia', 'Hora do maior quarto de hora', 'Maior média de 15 min (kVA)']].concat(A.picoDia.map(p => [dataHora(p.t).slice(0, 10), dataHora(p.t).slice(11), +p.kva.toFixed(3)]));
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(dias), 'Picos por dia');
+    }
+    const eq = [['Equipamento', 'Quantidade', 'Potência máxima (W)', 'Conta (W)', 'Fase']].concat(EQUIP.filter(q => E.qtd[q.id]).map(q => [q.nome, E.qtd[q.id], E.w[q.id], +(E.qtd[q.id] * wEfetivo(q)).toFixed(0), E.tri ? 'L' + E.fase[q.id] : '']));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(eq), 'Equipamentos');
+    XLSX.writeFile(wb, 'simulador-potencia.xlsx');
+}
+
+// ====================================================================
+// Eventos
+// ====================================================================
+function ligarToggle(id, aoMudar) {
+    document.getElementById(id).addEventListener('click', e => {
+        const b = e.target.closest('button'); if (!b || b.classList.contains('active')) return;
+        e.currentTarget.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+        aoMudar(b.dataset.v);
+    });
+}
+function marcarToggle(id, v) { document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v)); }
+
+document.addEventListener('DOMContentLoaded', () => {
+    lerURL();
+    preencherSelects();
+    marcarToggle('tg-fases', E.tri ? 'tri' : 'mono');
+    marcarToggle('tg-criterio', E.criterio);
+    document.getElementById('chk-social').checked = E.social;
+    document.getElementById('chk-numerosa').checked = E.numerosa;
+    document.getElementById('inp-kwh').value = E.kwhAno;
+    document.getElementById('rng-margem').value = Math.round(E.margem * 100);
+    document.getElementById('txt-margem').textContent = Math.round(E.margem * 100) + ' %';
+
+    document.getElementById('sel-atual').addEventListener('change', e => { E.atual = +e.target.value; document.getElementById('sel-corte').value = e.target.value; renderTudo(); });
+    document.getElementById('sel-ciclo').addEventListener('change', e => { E.ciclo = e.target.value; E.manual.enEd = false; preencherTarifarios(); E.custos = null; renderTudo(); agendarCustos(); });
+    // os totais de todos os tarifários já estão calculados: a troca só redesenha
+    document.getElementById('sel-tarifario').addEventListener('change', e => { E.tarifario = e.target.value; renderTudo(); });
+    // O meu tarifário: muda só a linha do utilizador (o motor recalcula-a na hora); redesenho com uma pequena espera
+    let _esperaManual = null;
+    const redesenharManual = () => { clearTimeout(_esperaManual); _esperaManual = setTimeout(renderTudo, 250); };
+    const painel = document.getElementById('painel-manual');
+    painel.addEventListener('input', e => {
+        const t = e.target, m = E.manual, v = t.value === '' ? null : Math.max(0, +t.value);
+        if (t.id === 'man-pot') { m.pot = v; m.potEd = v != null; }
+        else if (/^man-[SVFCP]$/.test(t.id)) { m.en[t.id.slice(4)] = v; m.enEd = true; }
+        else if (t.id === 'man-desc-pot') m.descPot = Math.min(100, v || 0);
+        else if (t.id === 'man-desc-en') m.descEn = Math.min(100, v || 0);
+        else if (t.dataset.outro) { if (v == null) delete m.outros[+t.dataset.outro]; else m.outros[+t.dataset.outro] = v; }
+        else return;
+        redesenharManual();
+    });
+    painel.addEventListener('change', e => {
+        const t = e.target, m = E.manual;
+        if (t.id === 'man-tar-pot') m.tarPot = t.checked;
+        else if (t.id === 'man-tar-en') m.tarEn = t.checked;
+        else if (t.id === 'man-tse') m.tse = t.checked;
+        else if (t.id === 'man-cav') m.cavMensal = t.checked;
+        else return;
+        renderTudo();
+    });
+    ligarToggle('tg-fases', v => { E.tri = v === 'tri'; renderTudo(); });
+    ligarToggle('tg-criterio', v => { E.criterio = v; renderTudo(); });
+    ligarToggle('tg-cats', v => { E.cat = v; desenharEquip(); });
+    document.getElementById('chk-social').addEventListener('change', e => { E.social = e.target.checked; renderTudo(); agendarCustos(); });
+    document.getElementById('chk-numerosa').addEventListener('change', e => { E.numerosa = e.target.checked; renderTudo(); agendarCustos(); });
+    document.getElementById('inp-kwh').addEventListener('change', e => { E.kwhAno = Math.min(100000, Math.max(100, +e.target.value || 2500)); e.target.value = E.kwhAno; renderTudo(); agendarCustos(); });
+    document.getElementById('rng-margem').addEventListener('input', e => { E.margem = +e.target.value / 100; document.getElementById('txt-margem').textContent = e.target.value + ' %'; renderTudo(); });
+    document.getElementById('btn-todos').addEventListener('click', () => { E.todos = !E.todos; desenharEscaloes(); });
+    document.getElementById('presets').addEventListener('click', e => {
+        const b = e.target.closest('.preset'); if (!b) return;
+        E.preset = +b.dataset.i; E.qtd = Object.assign({}, PRESETS[E.preset].ids); renderTudo();
+    });
+    document.getElementById('btn-equip-limpar').addEventListener('click', () => { E.qtd = {}; E.preset = 5; renderTudo(); });
+    const grelha = document.getElementById('grelha-equip');
+    grelha.addEventListener('click', e => {
+        const mais = e.target.closest('[data-mais]'), menos = e.target.closest('[data-menos]');
+        if (!mais && !menos) return;
+        const id = mais ? mais.dataset.mais : menos.dataset.menos, q = EQUIP.find(x => x.id === id);
+        E.qtd[id] = Math.max(0, Math.min(q.zonas || 9, (E.qtd[id] || 0) + (mais ? 1 : -1)));
+        if (!E.qtd[id]) delete E.qtd[id];
+        E.preset = 5;
+        renderTudo();
+    });
+    grelha.addEventListener('change', e => {
+        if (e.target.dataset.w) { E.w[e.target.dataset.w] = Math.max(0, +e.target.value || 0); renderTudo(); }
+        if (e.target.dataset.max) { if (e.target.checked) E.max[e.target.dataset.max] = true; else delete E.max[e.target.dataset.max]; renderTudo(); }
+        if (e.target.dataset.fase) { E.fase[e.target.dataset.fase] = +e.target.value; desenharSoma(); atualizarURL(); }
+    });
+
+    const inp = document.getElementById('inp-ficheiro'), estado = document.getElementById('estado-dados');
+    inp.addEventListener('change', async () => {
+        if (!inp.files || !inp.files.length) return;
+        estado.innerHTML = 'A ler o ficheiro…';
+        try {
+            const { registos, nomes } = await lerFicheiros([...inp.files]);
+            usarConsumos(registos, 'ficheiro', nomes);
+        } catch (err) {
+            console.error(err);
+            estado.innerHTML = `<span class="erro">❌ ${esc(err.message || err)}</span>`;
+        } finally { inp.value = ''; }
+    });
+    document.getElementById('btn-exemplo').addEventListener('click', () => usarConsumos(registosExemplo(), 'exemplo'));
+    document.getElementById('btn-limpar').addEventListener('click', () => { E.consumos = null; E.custos = null; desenharEstadoDados(); renderTudo(); agendarCustos(); });
+
+    const cen = document.getElementById('cenarios');
+    cen.addEventListener('change', e => {
+        const t = e.target;
+        if (t.dataset.cen) E.cen[t.dataset.cen].on = t.checked;
+        if (t.dataset.p) {
+            const [a, b] = t.dataset.p.split('.');
+            E.cen[a][b] = b === 'dias' ? t.value : Math.max(0, +t.value || 0);
+        }
+        desenharCenarios(); desenharPicos(); atualizarURL();
+    });
+    cen.addEventListener('click', e => {
+        const b = e.target.closest('[data-evkw] button'); if (!b) return;
+        E.cen.ev.kw = +b.dataset.v; desenharCenarios(); desenharPicos(); atualizarURL();
+    });
+    document.getElementById('sel-corte').addEventListener('change', desenharCorte);
+    document.getElementById('inp-corte').addEventListener('input', desenharCorte);
+    document.getElementById('btn-corte-equip').addEventListener('click', () => { document.getElementById('inp-corte').value = somaEquip().kva.toFixed(2); desenharCorte(); });
+    document.getElementById('btn-partilhar').addEventListener('click', partilhar);
+    document.getElementById('btn-pdf').addEventListener('click', () => window.print());
+    document.getElementById('btn-excel').addEventListener('click', exportarExcel);
+    document.addEventListener('themeChanged', () => { desenharPicos(); desenharCorte(); });
+
+    desenharEstadoDados();
+    desenharCenarios();
+    renderTudo();
+    carregarBD().then(() => { preencherTarifarios(); renderTudo(); agendarCustos(); }, () => {
+        document.getElementById('estado-bd').textContent = '⚠️ Não foi possível carregar os tarifários: os custos ficam por calcular. Recarregue a página para tentar de novo.';
+        document.getElementById('sel-tarifario').innerHTML = '<option value="">Indisponível</option>';
+    });
+});
+</script>
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
