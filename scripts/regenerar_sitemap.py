@@ -33,6 +33,8 @@ RULES = [
       "autoconsumo-tiagofelicia.html"}, "daily", "1.0"),
     # Página principal
     ({"index.html"}, "weekly", "1.0"),
+    # Simulador de potência (a página muda pouco; os custos vêm da base de dados de tarifários)
+    ({"simulador-potencia.html"}, "monthly", "0.9"),
     # Dashboards e dados de mercado (atualizam todos os dias)
     ({"omie-diario.html", "europe-prices.html", "europe-generation.html"},
      "daily", "0.9"),
