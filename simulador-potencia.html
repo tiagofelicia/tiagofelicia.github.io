@@ -97,7 +97,7 @@
             { "@type": "Question", "name": "Quando é que o contador inteligente corta a luz?", "acceptedAnswer": { "@type": "Answer", "text": "Pelos valores de fábrica da especificação da E-Redes, o contador nunca corta até 1,2 vezes a potência contratada (1,3 vezes nas instalações trifásicas). Acima disso conta o tempo e corta ao fim de 50 ÷ (potência pedida ÷ contratada − 1,2) segundos: com o dobro da potência contratada, ao fim de cerca de um minuto. A E-Redes pode configurar outros valores." } },
             { "@type": "Question", "name": "Porque é que os dados da E-Redes não chegam sozinhos?", "acceptedAnswer": { "@type": "Answer", "text": "São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa, porque se a média passou um valor o pico também passou, mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança." } },
             { "@type": "Question", "name": "kW ou kVA?", "acceptedAnswer": { "@type": "Answer", "text": "Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98." } },
-            { "@type": "Question", "name": "Monofásica ou trifásica?", "acceptedAnswer": { "@type": "Answer", "text": "Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador também controla cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar." } },
+            { "@type": "Question", "name": "Monofásica ou trifásica?", "acceptedAnswer": { "@type": "Answer", "text": "Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada." } },
             { "@type": "Question", "name": "Quanto poupo a baixar um escalão?", "acceptedAnswer": { "@type": "Answer", "text": "Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato." } },
             { "@type": "Question", "name": "Os painéis solares deixam-me baixar a potência?", "acceptedAnswer": { "@type": "Answer", "text": "Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos." } },
             { "@type": "Question", "name": "Como obtenho o ficheiro da E-Redes?", "acceptedAnswer": { "@type": "Answer", "text": "No Balcão Digital da E-Redes (balcaodigital.e-redes.pt), em Consumos, Consultar consumos detalhados: escolha o período, de preferência os últimos 12 meses, e exporte para Excel. É preciso ter contador inteligente ligado à rede." } },
@@ -245,8 +245,8 @@
         .tabela tr.so-tri td { color: #6b7280; }
         .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.85em; font-weight: 700; }
         .pill.ok { background: #dcfce7; color: #166534; }
-        .pill.justo { background: #fef9c3; color: #854d0e; }
-        .pill.risco { background: #ffedd5; color: #9a3412; }
+        .pill.risco { background: #fef9c3; color: #854d0e; }
+        .pill.margem { background: #ffedd5; color: #9a3412; }
         .pill.corta { background: #fee2e2; color: #991b1b; }
         .grafico { width: 100%; height: 400px; }
         #grafico-horas { height: 420px; }
@@ -255,6 +255,9 @@
         .duas > * { min-width: 0; }   /* sem isto, a tabela larga alarga a grelha no telemóvel */
         @media (max-width: 900px) { .duas { grid-template-columns: 1fr; } }
         .h3-bloco { font-size: 1em; margin: 18px 0 6px 0; color: #2c3e50; }
+        .dia-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 4px 0 8px 0; }
+        .dia-controls input[type=date] { padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.9em; background: #fff; color: #1e293b; }
+        .tabela .btn-link { font-size: 0.95em; }
 
         /* Cenários */
         .cenarios { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -331,11 +334,13 @@
         [data-theme="dark"] .tabela tr.recomendado td { background: #14301f; }
         [data-theme="dark"] .tabela tr.so-tri td { color: #94a3b8; }
         [data-theme="dark"] .pill.ok { background: #14532d; color: #bbf7d0; }
-        [data-theme="dark"] .pill.justo { background: #713f12; color: #fef08a; }
-        [data-theme="dark"] .pill.risco { background: #7c2d12; color: #fed7aa; }
+        [data-theme="dark"] .pill.risco { background: #713f12; color: #fef08a; }
+        [data-theme="dark"] .pill.margem { background: #7c2d12; color: #fed7aa; }
         [data-theme="dark"] .pill.corta { background: #7f1d1d; color: #fecaca; }
         [data-theme="dark"] .dica { background: #3b2a10; color: #fde68a; }
         [data-theme="dark"] .formula { background: #334155; }
+        [data-theme="dark"] .dia-controls input[type=date] { background: #0f172a; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .dia-controls input[type=date]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
         [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
         [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
         [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip):not(.btn) { color: #93c5fd; }
@@ -402,6 +407,13 @@
                     <button type="button" data-v="tri">Trifásica</button>
                 </div>
             </div>
+            <div class="campo" id="campo-ctrl" hidden>
+                <span class="ctrl-label" id="lbl-ctrl">Controlo até 6,9 kVA</span>
+                <div class="btn-toggle" id="tg-ctrl" role="group" aria-labelledby="lbl-ctrl">
+                    <button type="button" data-v="soma" class="active">Pela soma das fases</button>
+                    <button type="button" data-v="fase">Por fase</button>
+                </div>
+            </div>
             <div class="campo">
                 <label class="ctrl-label" for="sel-ciclo">Opção horária</label>
                 <select id="sel-ciclo">
@@ -421,6 +433,7 @@
                 <label class="chk"><input type="checkbox" id="chk-numerosa"> Família numerosa</label>
             </div>
         </div>
+        <p class="nota" id="nota-ctrl" hidden>Nas trifásicas até 6,9 kVA, o contador deve controlar a potência pela soma das três fases (<a href="https://diariodarepublica.pt/dr/detalhe/regulamento/817-2023-216251913" target="_blank" rel="noopener noreferrer">Regulamento n.º 817/2023 da ERSE</a>, art. 19.º), o que deixa uma fase ir acima de um terço da potência contratada sem cortar — mas só com a instalação conforme: numa entrada trifásica que entrou em exploração antes de 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade de um técnico ou entidade instaladora (<a href="https://diariodarepublica.pt/dr/detalhe/edito/235-2020-146924532" target="_blank" rel="noopener noreferrer">Édito n.º 235/2020 da DGEG</a>). Sem isso, cada fase continua limitada a um terço da potência contratada: escolha «Por fase». Acima de 6,9 kVA, o contador controla sempre a soma e cada fase.</p>
         <div class="painel-manual" id="painel-manual" hidden>
             <h3>✍️ O meu tarifário</h3>
             <p class="nota" style="margin:0 0 10px 0">Os preços da sua fatura, sem IVA. Começam com os da tarifa regulada. Se a fatura mostra a tarifa de acesso às redes (TAR) ou o financiamento da tarifa social (TSE) à parte, desmarque a opção correspondente e escreva só o preço do comercializador.</p>
@@ -509,8 +522,8 @@
         <div class="veredito manter" id="veredito"></div>
         <div class="margem">
             <label for="rng-margem"><strong>Margem de segurança:</strong></label>
-            <input type="range" id="rng-margem" min="0" max="30" step="5" value="10">
-            <span id="txt-margem">10 %</span>
+            <input type="range" id="rng-margem" min="0" max="30" step="5" value="0">
+            <span id="txt-margem">0 %</span>
             <span class="nota" style="margin:0">— a folga que quer manter abaixo do limite (os contadores podem ter outros valores configurados).</span>
         </div>
         <div class="margem">
@@ -528,9 +541,9 @@
         <p class="bloco-intro">O que teria acontecido com cada escalão e quanto custa por ano, com IVA, com o seu tarifário e com o mais barato da base de dados de tarifários para os seus consumos. Os quartos de hora são médias de 15 minutos da E-Redes, convertidas para kVA com um fator de potência de 0,98.</p>
         <div class="tabela-box"><table class="tabela" id="tabela-escaloes"></table></div>
         <p class="nota">
-            <span class="pill ok">Folgado</span> nenhum quarto de hora perto do limite ·
-            <span class="pill justo">Justo</span> perto do contratado (dentro da margem de segurança) ·
-            <span class="pill risco">Arriscado</span> a média de 15 minutos passou o contratado: os picos curtos desses quartos de hora quase de certeza passaram o limite de corte ·
+            <span class="pill ok">Folgado</span> a média de 15 minutos nunca passou o contratado ·
+            <span class="pill risco">Arriscado</span> passou o contratado, mas ficou abaixo do limite de corte: pelas médias o contador não teria cortado, mas picos curtos dentro desses quartos de hora podem ter passado o limite — pode ser o recomendado, com um aviso ·
+            <span class="pill margem">Na margem</span> ficou dentro da margem de segurança escolhida, abaixo do limite de corte ·
             <span class="pill corta">Cortaria</span> a média passou o limite de corte.
             Os custos são o total da fatura de um ano (com os consumos do ficheiro, ou com o consumo anual indicado), sem descontos de código amigo nem ofertas condicionadas; a diferença entre escalões inclui os degraus de IVA e da tarifa social.
         </p>
@@ -543,6 +556,16 @@
         <p class="bloco-intro">O maior quarto de hora de cada dia, contra a potência contratada hoje e a recomendada. A linha tracejada é o limite a partir do qual o contador começa a contar para cortar.</p>
         <div id="picos-conteudo">
             <div id="grafico-picos" class="grafico"></div>
+            <p class="nota">Arraste sobre o gráfico para ampliar um período; clique numa barra para ver esse dia em detalhe, logo abaixo.</p>
+            <h3 class="h3-bloco" id="dia-titulo">O dia em detalhe</h3>
+            <div class="dia-controls">
+                <button type="button" class="btn sec" id="dia-ant" aria-label="Dia anterior">◀</button>
+                <input type="date" id="dia-sel" aria-label="Dia">
+                <button type="button" class="btn sec" id="dia-seg" aria-label="Dia seguinte">▶</button>
+                <button type="button" class="btn-link" id="dia-maior">ir para o dia do maior pico</button>
+            </div>
+            <div id="grafico-dia" class="grafico" style="height:340px"></div>
+            <p class="nota">Os quartos de hora do dia, em kVA, contra a potência de hoje e a recomendada (na hora que se repete na mudança de hora de outubro, fica o maior dos dois).</p>
             <div class="duas">
                 <div>
                     <h3 class="h3-bloco">A que horas e em que meses</h3>
@@ -552,7 +575,7 @@
                 <div>
                     <h3 class="h3-bloco">Os 10 momentos com mais potência</h3>
                     <div class="tabela-box"><table class="tabela" id="tabela-top"></table></div>
-                    <p class="nota">No máximo um por dia. A hora é a do início do quarto de hora.</p>
+                    <p class="nota">No máximo um por dia. A hora é a do início do quarto de hora; «ver» abre o dia em detalhe.</p>
                 </div>
             </div>
         </div>
@@ -572,7 +595,7 @@
         <h2>⏱️ Quando o contador corta</h2>
         <div class="metodo-box">
             <p>O contador inteligente compara a <strong>potência aparente</strong> (kVA) com a contratada. <strong>Até 1,2 × a contratada nunca corta</strong> (1,3 × nas trifásicas), dure o tempo que durar. Acima disso começa a contar e corta tanto mais depressa quanto maior o excesso, ao fim de <span class="formula">50 ÷ (potência pedida ÷ contratada − 1,2)</span> segundos. Se a potência voltar abaixo do limite, a contagem recomeça do zero.</p>
-            <p>Nas trifásicas acima de 6,9 kVA o contador controla também cada fase: cada uma aguenta um terço da contratada (× 1,3). Até 6,9 kVA conta só a soma das três.</p>
+            <p>Nas trifásicas o contador controla a soma das três fases e, acima de 6,9 kVA, também cada fase, que aguenta um terço da contratada (× 1,3). Até 6,9 kVA, o controlo deve ser feito só pela soma das três fases (<a href="https://diariodarepublica.pt/dr/detalhe/regulamento/817-2023-216251913" target="_blank" rel="noopener noreferrer">Regulamento n.º 817/2023 da ERSE</a>, art. 19.º), mas só com a instalação conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (<a href="https://diariodarepublica.pt/dr/detalhe/edito/235-2020-146924532" target="_blank" rel="noopener noreferrer">Édito n.º 235/2020 da DGEG</a>). Sem isso, cada fase continua limitada a um terço da potência contratada.</p>
             <p class="nota" style="margin:0">Fonte: E-Redes, especificação funcional do equipamento de medição inteligente (DEF-C44-506/N, edição 3, julho de 2020, anexo B1), com os valores por omissão; a E-Redes pode configurar outros em cada contador — por isso a margem de segurança. Os contadores antigos têm um disjuntor, com outra curva.</p>
         </div>
         <div class="campos" style="margin-top:14px">
@@ -622,7 +645,7 @@
         <details class="faq-item"><summary><strong>Quando é que o contador inteligente corta a luz?</strong></summary><div class="faq-content"><p>Pelos valores de fábrica da especificação da E-Redes, o contador nunca corta até 1,2 vezes a potência contratada (1,3 vezes nas instalações trifásicas). Acima disso conta o tempo e corta ao fim de 50 ÷ (potência pedida ÷ contratada − 1,2) segundos: com o dobro da potência contratada, ao fim de cerca de um minuto. A E-Redes pode configurar outros valores. Veja a <a href="#bloco-corte">calculadora</a>.</p></div></details>
         <details class="faq-item"><summary><strong>Porque é que os dados da E-Redes não chegam sozinhos?</strong></summary><div class="faq-content"><p>São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa — se a média passou um valor, o pico também passou — mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança.</p></div></details>
         <details class="faq-item"><summary><strong>kW ou kVA?</strong></summary><div class="faq-content"><p>Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98.</p></div></details>
-        <details class="faq-item"><summary><strong>Monofásica ou trifásica?</strong></summary><div class="faq-content"><p>Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador também controla cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar.</p></div></details>
+        <details class="faq-item"><summary><strong>Monofásica ou trifásica?</strong></summary><div class="faq-content"><p>Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada.</p></div></details>
         <details class="faq-item"><summary><strong>Quanto poupo a baixar um escalão?</strong></summary><div class="faq-content"><p>Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato.</p></div></details>
         <details class="faq-item"><summary><strong>Os painéis solares deixam-me baixar a potência?</strong></summary><div class="faq-content"><p>Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos.</p></div></details>
         <details class="faq-item"><summary><strong>Como obtenho o ficheiro da E-Redes?</strong></summary><div class="faq-content"><p>No <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">Balcão Digital da E-Redes</a>, em «Consumos» → «Consultar consumos detalhados»: escolha o período, de preferência os últimos 12 meses, e exporte para Excel. É preciso ter contador inteligente ligado à rede.</p></div></details>
@@ -716,7 +739,7 @@ const PRESETS = [
 // ====================================================================
 const E = {
     atual: 6.9, tri: false, ciclo: 's', tarifario: TARIFARIO_OMISSAO, social: false, numerosa: false,
-    kwhAno: 2500, margem: 0.10, criterio: 'contador',
+    kwhAno: 2500, margem: 0, criterio: 'contador', ctrlFase: 'soma',
     cat: 'cozinha', qtd: {}, w: {}, max: {}, fase: {}, preset: -1, todos: false,
     // consumos: { registos (por quarto de hora), dias (para os picos), d1, d2, origem: 'ficheiro'|'exemplo', nomes }
     consumos: null,
@@ -1061,6 +1084,7 @@ function registosExemplo() {
 function usarConsumos(regs, origem, nomes) {
     const dias = diasDeRegistos(regs);
     E.consumos = { registos: regs, dias, d1: dias[0].iso, d2: dias[dias.length - 1].iso, origem, nomes: nomes || [] };
+    E.diaSel = null;                       // o dia em detalhe volta ao do maior pico
     E.custos = null;
     desenharEstadoDados();
     renderTudo();
@@ -1125,16 +1149,20 @@ function analisar(dias) {
     return A;
 }
 function contarAcima(A, lim) { let i = 0; while (i < A.todos.length && A.todos[i] > lim) i++; return i; }
-// Classificação de um escalão com as médias de 15 min
+// Classificação de um escalão com as médias de 15 min. Acima do contratado mas abaixo do limite de corte (menos a
+// margem) ainda serve, com um aviso: pelas médias o contador não teria cortado. Na margem ou acima do limite, não.
 function avaliarEscalao(A, s) {
-    const k = kRegra();
-    const nCorte = contarAcima(A, k * s), nAcima = contarAcima(A, s) - nCorte, nPerto = contarAcima(A, s * (1 - E.margem)) - nCorte - nAcima;
-    const diasCorte = A.picoDia.filter(p => p.kva > k * s).length;
-    const estado = nCorte ? 'corta' : nAcima ? 'risco' : nPerto ? 'justo' : 'ok';
-    return { s, nPerto, nAcima, nCorte, diasCorte, estado };
+    const lim = kRegra() * s, limMargem = lim * (1 - E.margem);
+    const nCorte = contarAcima(A, lim);
+    const nMargem = contarAcima(A, limMargem) - nCorte;
+    const nAcima = contarAcima(A, s) - contarAcima(A, Math.max(s, limMargem));
+    const diasAcima = A.picoDia.filter(p => p.kva > s).length, diasCorte = A.picoDia.filter(p => p.kva > lim).length;
+    const estado = nCorte ? 'corta' : nMargem ? 'margem' : nAcima ? 'risco' : 'ok';
+    return { s, nAcima, nMargem, nCorte, diasAcima, diasCorte, estado };
 }
-const ROTULO = { ok: 'Folgado', justo: 'Justo', risco: 'Arriscado', corta: 'Cortaria' };
-function recomendadoDados(A) { return A ? (escaloesPossiveis().find(s => avaliarEscalao(A, s).estado === 'ok') || null) : null; }
+const ROTULO = { ok: 'Folgado', risco: 'Arriscado', margem: 'Na margem', corta: 'Cortaria' };
+const serve = estado => estado === 'ok' || estado === 'risco';
+function recomendadoDados(A) { return A ? (escaloesPossiveis().find(s => serve(avaliarEscalao(A, s).estado)) || null) : null; }
 function analiseBase() { return E.consumos ? analisar(E.consumos.dias) : null; }
 
 // ====================================================================
@@ -1147,24 +1175,39 @@ function wEfetivo(q) {
     const f = q.zonas ? 0.75 : (q.f || 1);
     return E.max[q.id] ? base : base * f;
 }
-function somaEquip() {
+function somaDe(qtd) {
     let w = 0; const f = [0, 0, 0, 0];
-    EQUIP.forEach(q => { const n = E.qtd[q.id] || 0; if (n) { const x = n * wEfetivo(q); w += x; f[E.fase[q.id]] += x; } });
+    EQUIP.forEach(q => { const n = qtd[q.id] || 0; if (n) { const x = n * wEfetivo(q); w += x; f[E.fase[q.id]] += x; } });
     return { w, kva: w / 1000 / COS_PHI, fases: f.map(x => x / 1000 / COS_PHI) };
 }
-function recomendadoEquip(kva) {
-    if (!kva) return null;
+const somaEquip = () => somaDe(E.qtd);
+// O contador controla cada fase (um terço da contratada) nas trifásicas acima de 6,9 kVA e, até 6,9 kVA, quando a
+// instalação não está no controlo pela soma (RSRI, art. 19.º; Édito n.º 235/2020)
+const controlaFase = s => E.tri && (s > 6.9 || E.ctrlFase === 'fase');
+function serveEquip(sm, s) {
     const fator = E.criterio === 'sem' ? 1 : kRegra() * (1 - E.margem);
-    return escaloesPossiveis().find(s => kva <= s * fator) || null;
+    if (sm.kva > s * fator) return false;
+    return !(controlaFase(s) && Math.max(sm.fases[1], sm.fases[2], sm.fases[3]) > s / 3 * fator);
+}
+function recomendadoEquip(sm) {
+    if (!sm || !sm.kva) return null;
+    return escaloesPossiveis().find(s => serveEquip(sm, s)) || null;
 }
 const tempoDisparo = (kva, s, k) => { const r = kva / s; return r <= k ? Infinity : Q_DISPARO / (r - k); };
+// Tempo até cortar com os equipamentos: o menor entre a soma e cada fase (se o contador a controlar)
+function tempoEquip(sm, s) {
+    const k = kRegra();
+    let t = tempoDisparo(sm.kva, s, k);
+    if (controlaFase(s)) [1, 2, 3].forEach(f => { t = Math.min(t, tempoDisparo(sm.fases[f], s / 3, k)); });
+    return t;
+}
 const fmtTempo = seg => !isFinite(seg) ? 'nunca corta' : seg < 60 ? `${Math.round(seg)} s`
     : seg < 3600 ? `${Math.floor(seg / 60)} min ${String(Math.round(seg % 60)).padStart(2, '0')} s`
     : `${Math.floor(seg / 3600)} h ${String(Math.round(seg % 3600 / 60)).padStart(2, '0')} min`;
 
 function recomendacao() {
     const A = analiseBase(), S = somaEquip();
-    const rD = recomendadoDados(A), rE = recomendadoEquip(S.kva);
+    const rD = recomendadoDados(A), rE = recomendadoEquip(S);
     const passaDados = A && !rD, passaEquip = S.kva > 0 && !rE;
     const rec = passaDados || passaEquip ? null : ([rD, rE].filter(Boolean).reduce((a, b) => Math.max(a, b), 0) || null);
     return { A, S, rD, rE, rec, passa: passaDados || passaEquip };
@@ -1465,8 +1508,7 @@ function desenharEstadoDados() {
 
 function desenharPresets() {
     document.getElementById('presets').innerHTML = PRESETS.map((p, i) => {
-        let w = 0; Object.entries(p.ids).forEach(([id, n]) => { w += n * wEfetivo(EQUIP.find(x => x.id === id)); });
-        const kva = w / 1000 / COS_PHI, rec = recomendadoEquip(kva);
+        const sm = somaDe(p.ids), w = sm.w, kva = sm.kva, rec = recomendadoEquip(sm);
         return `<button type="button" class="preset ${i === E.preset ? 'active' : ''}" data-i="${i}" aria-pressed="${i === E.preset}"><strong>${p.nome}</strong>${p.desc}${w ? `<br><span class="kva">${fmt(kva)} kVA → ${rec ? nomeEsc(rec) : textoAcima()}</span>` : ''}</button>`;
     }).join('');
 }
@@ -1490,7 +1532,7 @@ function desenharEquip() {
     }).join('');
 }
 function desenharSoma() {
-    const S = somaEquip(), rec = recomendadoEquip(S.kva), k = kRegra();
+    const S = somaEquip(), rec = recomendadoEquip(S), k = kRegra();
     document.getElementById('soma-w').textContent = fmt(S.w, 0) + ' W';
     document.getElementById('soma-kva').textContent = fmtKva(S.kva);
     document.getElementById('soma-rec').innerHTML = rec
@@ -1502,10 +1544,12 @@ function desenharSoma() {
     document.getElementById('escala').innerHTML = `<div class="barra"></div><div class="enchido" style="width:${Math.min(100, S.kva / topo * 100)}%"></div>${ticks}`;
     const fz = document.getElementById('fases');
     fz.classList.toggle('ver', E.tri);
+    document.getElementById('campo-ctrl').hidden = !E.tri;
+    document.getElementById('nota-ctrl').hidden = !E.tri;
     if (E.tri) {
-        const lim = E.atual / 3 * K_TRI, porFase = E.atual > 6.9;
+        const lim = E.atual / 3 * K_TRI, porFase = controlaFase(E.atual);
         fz.innerHTML = [1, 2, 3].map(f => `<div>L${f}: <strong>${fmtKva(S.fases[f])}</strong>${porFase && S.fases[f] > lim ? ` ⚠️ passa o limite da fase com ${nomeEsc(E.atual)}` : ''}</div>`).join('')
-            + `<div class="obs">${porFase ? `Com ${nomeEsc(E.atual)} cada fase aguenta ${fmtKva(lim)} antes de o contador começar a contar.` : 'Até 6,9 kVA o contador só olha para a soma das fases.'}</div>`;
+            + `<div class="obs">${porFase ? `Com ${nomeEsc(E.atual)} cada fase aguenta ${fmtKva(lim)} antes de o contador começar a contar.` : `Com ${nomeEsc(E.atual)} e o controlo pela soma das fases, uma fase pode passar um terço da contratada: conta a soma.`}</div>`;
     }
 }
 
@@ -1543,9 +1587,16 @@ function desenharResultado() {
     if (barato && cA != null && barato.total < (cR != null ? cR : Infinity) - 1) {
         extra.push(`Se além disso mudar para <strong>${esc(barato.nome)}</strong>, o custo com ${nomeEsc(rec)} desce para ${fmtEur(barato.total)} por ano: ${fmtEur(cA - barato.total)} a menos do que hoje.`);
     }
+    // Recomendado «Arriscado»: aviso, com o dia do maior pico e o escalão seguinte que fica folgado
+    const evR = A ? avaliarEscalao(A, rec) : null;
+    if (evR && evR.estado === 'risco') {
+        const folgado = escaloesPossiveis().find(x => x > rec && avaliarEscalao(A, x).estado === 'ok');
+        const pl = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+        extra.unshift(`⚠️ <strong>Atenção:</strong> com ${nomeEsc(rec)}, em ${pl(evR.nAcima, 'quarto de hora', 'quartos de hora')} (${pl(evR.diasAcima, 'dia', 'dias')}) a média de 15 minutos passou os ${nomeEsc(rec)} contratados — o maior foi ${fmtKva(A.max)}, a ${dataHora(A.tMax)}. O contador só começa a contar acima de ${fmtKva(rec * k)}, por isso pelas médias não teria cortado, mas dentro desses quartos de hora pode ter havido picos curtos acima desse limite. Se o quadro for abaixo, pode voltar a subir${folgado ? ` para ${nomeEsc(folgado)}` : ''}: a mudança é gratuita. <button type="button" class="btn-link" data-ver-dia="${new Date(A.tMax).toISOString().slice(0, 10)}">Ver esse dia</button>`);
+    }
     const degrau = rec > 6.9 && E.atual <= 6.9 ? ` Atenção: acima de 6,9 kVA perde o IVA a 6 % nos primeiros ${E.numerosa ? 300 : 200} kWh por mês${E.social ? ' e a tarifa social' : ''}.` : '';
     let txt;
-    if (rec < E.atual) txt = `<strong>Pode baixar de ${nomeEsc(E.atual)} para ${nomeEsc(rec)}</strong>${poup != null ? ` e poupar cerca de <strong>${fmtEur(poup)}</strong> por ano` : ''}: ${porque.join('; ')}. Com ${fmt(E.margem * 100, 0)} % de margem de segurança.`;
+    if (rec < E.atual) txt = `<strong>Pode baixar de ${nomeEsc(E.atual)} para ${nomeEsc(rec)}</strong>${poup != null ? ` e poupar cerca de <strong>${fmtEur(poup)}</strong> por ano` : ''}: ${porque.join('; ')}.${E.margem ? ` Com ${fmt(E.margem * 100, 0)} % de margem de segurança.` : ''}`;
     else if (rec > E.atual) txt = `<strong>A potência de ${nomeEsc(E.atual)} é curta: precisa de ${nomeEsc(rec)}</strong>${poup != null ? ` (mais ${fmtEur(-poup)} por ano)` : ''}: ${porque.join('; ')}.${degrau}`;
     else txt = `<strong>${nomeEsc(E.atual)} é o escalão certo</strong>: ${porque.join('; ')}.`;
     v.className = 'veredito' + (rec === E.atual ? ' manter' : rec > E.atual ? ' subir' : '');
@@ -1561,10 +1612,10 @@ function desenharEscaloes() {
     let titulo = A ? `Com ${E.consumos.origem === 'exemplo' ? 'a casa de exemplo' : 'o seu ficheiro'}` : 'Sem ficheiro';
     titulo += `, ${fmt(E.margem * 100, 0)} % de margem e o tarifário «${esc(nomeT)}»`;
     if (C.per) titulo += ` · custos de ${fmt(C.kwhTotal, 0)} kWh por ano (${C.per.fonte === 'ficheiro' ? 'do ficheiro' : 'indicado'})`;
-    let h = `<caption>${titulo}</caption><thead><tr><th class="esq">Escalão</th><th>Começa a contar acima de</th><th>Quartos de hora perto / acima / a cortar</th><th class="esq">Com os seus consumos</th><th>Equipamentos (${S.kva ? fmtKva(S.kva) : '—'})</th><th>O seu tarifário / ano</th><th>Diferença face a hoje</th><th class="esq">O mais barato nesta potência</th><th class="esq">Degraus</th></tr></thead><tbody>`;
+    let h = `<caption>${titulo}</caption><thead><tr><th class="esq">Escalão</th><th>Começa a contar acima de</th><th>Quartos de hora acima do contratado / na margem / acima do limite</th><th class="esq">Com os seus consumos</th><th>Equipamentos (${S.kva ? fmtKva(S.kva) : '—'})</th><th>O seu tarifário / ano</th><th>Diferença face a hoje</th><th class="esq">O mais barato nesta potência</th><th class="esq">Degraus</th></tr></thead><tbody>`;
     lista.forEach(s => {
         const ev = A ? avaliarEscalao(A, s) : null;
-        const t = S.kva ? tempoDisparo(S.kva, s, k) : null;
+        const t = S.kva ? tempoEquip(S, s) : null;
         const c = C.porEscalao ? C.porEscalao[s] : null;
         const seu = custoSeu(s);
         const dif = seu != null && cAtual != null ? seu - cAtual : null;
@@ -1588,8 +1639,8 @@ function desenharEscaloes() {
         const cls = [s === E.atual ? 'atual' : '', s === rec ? 'recomendado' : '', !E.tri && s > MAX_MONO ? 'so-tri' : ''].join(' ').trim();
         h += `<tr class="${cls}"><td class="esq">${nomeEsc(s)}${s === E.atual ? ' (hoje)' : ''}${s === rec ? ' ✅' : ''}</td>
             <td>${fmtKva(s * k)}</td>
-            <td>${ev ? `${ev.nPerto} / ${ev.nAcima} / ${ev.nCorte}` : '—'}</td>
-            <td class="esq">${ev ? `<span class="pill ${ev.estado}">${ROTULO[ev.estado]}</span>${ev.diasCorte ? ` em ${ev.diasCorte} dia${ev.diasCorte > 1 ? 's' : ''}` : ''}` : '—'}</td>
+            <td>${ev ? `${ev.nAcima} / ${ev.nMargem} / ${ev.nCorte}` : '—'}</td>
+            <td class="esq">${ev ? `<span class="pill ${ev.estado}">${ROTULO[ev.estado]}</span>${ev.estado === 'corta' ? ` em ${ev.diasCorte} dia${ev.diasCorte > 1 ? 's' : ''}` : ev.estado === 'risco' ? ` em ${ev.diasAcima} dia${ev.diasAcima > 1 ? 's' : ''}` : ''}` : '—'}</td>
             <td>${t == null ? '—' : isFinite(t) ? 'corta em ' + fmtTempo(t) : 'nunca corta'}</td>
             <td>${celSeu}</td>
             <td style="color:${dif != null && dif < -0.005 ? 'var(--txt-verde)' : dif != null && dif > 0.005 ? 'var(--txt-vermelho)' : ''}">${s === E.atual || dif == null ? '—' : (dif > 0 ? '+' : '−') + fmtEur(Math.abs(dif))}</td>
@@ -1611,7 +1662,7 @@ function desenharPicos() {
     const tem = !!E.consumos;
     document.getElementById('picos-conteudo').hidden = !tem;
     document.getElementById('picos-vazio').hidden = tem;
-    ['grafico-picos', 'grafico-horas'].forEach(id => limpar(id));
+    ['grafico-picos', 'grafico-horas', 'grafico-dia'].forEach(id => limpar(id));
     if (!tem) return;
     const c = _hcDark(), A = analiseBase(), { rec } = recomendacao(), k = kRegra(), alvo = rec || E.atual;
     const serieCen = cenarioAtivo() ? analisar(aplicarCenarios(E.consumos.dias)).picoDia.map(p => [p.t, +p.kva.toFixed(2)]) : null;
@@ -1626,6 +1677,9 @@ function desenharPicos() {
     if (serieCen) series.push({ name: 'Com o cenário «e se»', type: 'line', data: serieCen, color: c.dk ? '#fb923c' : '#ea580c', lineWidth: 1.5, marker: { enabled: false } });
     const maxY = Math.max(E.atual * k, alvo * k, A.max, ...(serieCen || []).map(p => p[1])) * 1.08;
     Highcharts.chart('grafico-picos', Object.assign(base(c, 'picos-diarios'), {
+        // zoom como nos outros simuladores: arrastar amplia; clicar numa barra abre o dia em detalhe
+        chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
+        plotOptions: { series: { cursor: 'pointer', point: { events: { click: function () { selecionarDia(new Date(this.x).toISOString().slice(0, 10), true); } } } } },
         xAxis: { type: 'datetime', labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha },
         yAxis: { title: { text: 'kVA', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha, plotLines: linhas, min: 0, max: maxY },
         tooltip: Object.assign(base(c).tooltip, { shared: true, formatter: function () {
@@ -1648,8 +1702,62 @@ function desenharPicos() {
         series: [{ name: 'Maior quarto de hora', data, borderWidth: 0.5, borderColor: c.bg }]
     }));
     const top = A.picoDia.slice().sort((a, b) => b.kva - a.kva).slice(0, 10);
-    document.getElementById('tabela-top').innerHTML = `<thead><tr><th class="esq">Quarto de hora</th><th>Média</th><th>Da potência de hoje</th><th>Da recomendada</th></tr></thead><tbody>` +
-        top.map(p => `<tr><td class="esq">${DIAS_SEMANA[new Date(p.t).getUTCDay()].slice(0, 3)}, ${dataHora(p.t)}</td><td>${fmtKva(p.kva)}</td><td>${fmt(p.kva / E.atual * 100, 0)} %</td><td>${fmt(p.kva / alvo * 100, 0)} %</td></tr>`).join('') + '</tbody>';
+    document.getElementById('tabela-top').innerHTML = `<thead><tr><th class="esq">Quarto de hora</th><th>Média</th><th>Da potência de hoje</th><th>Da recomendada</th><th></th></tr></thead><tbody>` +
+        top.map(p => `<tr><td class="esq">${DIAS_SEMANA[new Date(p.t).getUTCDay()].slice(0, 3)}, ${dataHora(p.t)}</td><td>${fmtKva(p.kva)}</td><td>${fmt(p.kva / E.atual * 100, 0)} %</td><td>${fmt(p.kva / alvo * 100, 0)} %</td><td><button type="button" class="btn-link" data-ver-dia="${new Date(p.t).toISOString().slice(0, 10)}">ver</button></td></tr>`).join('') + '</tbody>';
+    desenharDia();
+}
+
+// O dia em detalhe: os quartos de hora de um dia, com as mesmas linhas do gráfico dos picos
+function selecionarDia(iso, mostrar) {
+    if (!E.consumos) return;
+    E.diaSel = iso;
+    desenharDia();
+    if (mostrar) document.getElementById('dia-titulo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function desenharDia() {
+    limpar('grafico-dia');
+    if (!E.consumos) return;
+    const dias = E.consumos.dias, A = analiseBase();
+    let i = E.diaSel ? dias.findIndex(d => d.iso >= E.diaSel) : -1;
+    if (i < 0) i = dias.findIndex(d => d.t === Date.parse(new Date(A.tMax).toISOString().slice(0, 10) + 'T00:00:00Z'));
+    if (i < 0) i = 0;
+    const d = dias[i];
+    E.diaSel = d.iso;
+    const sel = document.getElementById('dia-sel');
+    sel.min = E.consumos.d1; sel.max = E.consumos.d2; sel.value = d.iso;
+    document.getElementById('dia-ant').disabled = i === 0;
+    document.getElementById('dia-seg').disabled = i === dias.length - 1;
+    const c = _hcDark(), { rec } = recomendacao(), k = kRegra(), alvo = rec || E.atual;
+    const pontos = [];
+    for (let q = 0; q < 96; q++) if (!isNaN(d.qh[q])) pontos.push([d.t + q * 9e5, +(d.qh[q] / COS_PHI).toFixed(3)]);
+    const maior = pontos.reduce((m, p) => p[1] > m[1] ? p : m, [0, -1]);
+    document.getElementById('dia-titulo').textContent = `O dia em detalhe: ${DIAS_SEMANA[new Date(d.t).getUTCDay()]}, ${dataPT(d.iso)}${maior[1] >= 0 ? ` — maior quarto de hora ${fmtKva(maior[1])} às ${dataHora(maior[0]).slice(11)}` : ''}`;
+    const series = [{ name: 'Média do quarto de hora', type: 'column', data: pontos, color: '#60a5fa', borderWidth: 0, pointPadding: 0.05, groupPadding: 0, pointRange: 9e5, pointPlacement: 'between' }];
+    if (cenarioAtivo()) {
+        const dc = aplicarCenarios(dias)[i];
+        const pc = [];
+        for (let q = 0; q < 96; q++) if (!isNaN(dc.qh[q])) pc.push([dc.t + q * 9e5 + 4.5e5, +(dc.qh[q] / COS_PHI).toFixed(3)]);
+        series.push({ name: 'Com o cenário «e se»', type: 'line', data: pc, color: c.dk ? '#fb923c' : '#ea580c', lineWidth: 1.5, marker: { enabled: false } });
+    }
+    const linhas = [
+        { value: E.atual, color: c.suave, width: 2, zIndex: 4, label: { text: `hoje: ${nomeEsc(E.atual)}`, align: 'right', x: -6, style: { color: c.txt } } },
+        { value: E.atual * k, color: c.suave, width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `começa a contar: ${fmtKva(E.atual * k)}`, align: 'right', x: -6, style: { color: c.suave } } }
+    ];
+    if (alvo !== E.atual) linhas.push(
+        { value: alvo, color: c.verde, width: 2, zIndex: 4, label: { text: `recomendado: ${nomeEsc(alvo)}`, style: { color: c.verde } } },
+        { value: alvo * k, color: c.verde, width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `começa a contar: ${fmtKva(alvo * k)}`, style: { color: c.verde } } });
+    const maxY = Math.max(E.atual * k, alvo * k, ...series.flatMap(sr => sr.data.map(p => p[1]))) * 1.08;
+    Highcharts.chart('grafico-dia', Object.assign(base(c, 'dia-' + d.iso), {
+        chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
+        xAxis: { type: 'datetime', min: d.t, max: d.t + 864e5, labels: { style: { color: c.txt }, format: '{value:%H:%M}' }, lineColor: c.grelha, tickColor: c.grelha },
+        yAxis: { title: { text: 'kVA', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha, plotLines: linhas, min: 0, max: maxY },
+        legend: { enabled: series.length > 1, itemStyle: { color: c.txt, fontWeight: 'normal' } },
+        tooltip: Object.assign(base(c).tooltip, { shared: true, formatter: function () {
+            const ini = Math.floor(this.x / 9e5) * 9e5, h = t => dataHora(t).slice(11);
+            return `<b>${h(ini)}–${h(ini + 9e5)}</b><br>` + this.points.map(p => `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtKva(p.y)}</b> (${fmt(p.y * COS_PHI, 2)} kW)`).join('<br>');
+        } }),
+        series
+    }));
 }
 
 function desenharCenarios() {
@@ -1740,6 +1848,7 @@ function estadoParaURL() {
     const p = new URLSearchParams();
     if (E.atual !== 6.9) p.set('p', String(E.atual));
     if (E.tri) p.set('f', 'tri');
+    if (E.tri && E.ctrlFase === 'fase') p.set('cf', 'fase');
     if (E.ciclo !== 's') p.set('c', E.ciclo);
     if (E.tarifario && E.tarifario !== TARIFARIO_OMISSAO) p.set('t', E.tarifario);
     if (E.tarifario === MANUAL) {
@@ -1754,7 +1863,7 @@ function estadoParaURL() {
     if (E.social) p.set('ts', '1');
     if (E.numerosa) p.set('fn', '1');
     if (E.kwhAno !== 2500) p.set('kwh', String(E.kwhAno));
-    if (E.margem !== 0.10) p.set('m', String(Math.round(E.margem * 100)));
+    if (E.margem) p.set('m', String(Math.round(E.margem * 100)));
     if (E.criterio !== 'contador') p.set('cr', E.criterio);
     const eq = EQUIP.filter(q => E.qtd[q.id]).map(q => `${q.id}:${E.qtd[q.id]}`);
     if (eq.length) p.set('eq', eq.join(','));
@@ -1782,6 +1891,7 @@ function lerURL() {
     const num = (v, d) => { const x = parseFloat(v); return isFinite(x) ? x : d; };
     if (p.has('p') && ESCALOES.includes(num(p.get('p')))) E.atual = num(p.get('p'));
     if (p.get('f') === 'tri') E.tri = true;
+    if (p.get('cf') === 'fase') E.ctrlFase = 'fase';
     if (CICLO_DE_URL.includes(p.get('c'))) E.ciclo = p.get('c');
     if (p.get('t')) E.tarifario = p.get('t');
     {
@@ -1803,7 +1913,7 @@ function lerURL() {
     E.social = p.get('ts') === '1';
     E.numerosa = p.get('fn') === '1';
     if (p.has('kwh')) E.kwhAno = Math.min(100000, Math.max(100, num(p.get('kwh'), 2500)));
-    if (p.has('m')) E.margem = Math.min(30, Math.max(0, num(p.get('m'), 10))) / 100;
+    if (p.has('m')) E.margem = Math.min(30, Math.max(0, num(p.get('m'), 0))) / 100;
     if (p.get('cr') === 'sem') E.criterio = 'sem';
     const pares = s => (s || '').split(',').map(x => x.split(':')).filter(x => x.length === 2 && EQUIP.some(q => q.id === x[0]));
     pares(p.get('eq')).forEach(([id, n]) => { const q = EQUIP.find(x => x.id === id); E.qtd[id] = Math.max(0, Math.min(q.zonas || 9, Math.round(num(n, 0)))); });
@@ -1853,10 +1963,10 @@ async function exportarExcel() {
         ['Escalão recomendado (kVA)', rec || '']
     ];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumo), 'Resumo');
-    const linhas = [['Escalão (kVA)', 'Começa a contar acima de (kVA)', 'QH perto', 'QH acima do contratado', 'QH acima do limite', 'Com os consumos', 'Equipamentos', 'O seu tarifário (€/ano)', 'Mais barato (€/ano)', 'Mais barato (tarifário)']];
+    const linhas = [['Escalão (kVA)', 'Começa a contar acima de (kVA)', 'QH acima do contratado', 'QH na margem', 'QH acima do limite', 'Com os consumos', 'Equipamentos', 'O seu tarifário (€/ano)', 'Mais barato (€/ano)', 'Mais barato (tarifário)']];
     ESCALOES.forEach(s => {
-        const ev = A ? avaliarEscalao(A, s) : null, t = S.kva ? tempoDisparo(S.kva, s, k) : null, c = C.porEscalao ? C.porEscalao[s] : null;
-        linhas.push([s, +(s * k).toFixed(3), ev ? ev.nPerto : '', ev ? ev.nAcima : '', ev ? ev.nCorte : '', ev ? ROTULO[ev.estado] : '',
+        const ev = A ? avaliarEscalao(A, s) : null, t = S.kva ? tempoEquip(S, s) : null, c = C.porEscalao ? C.porEscalao[s] : null;
+        linhas.push([s, +(s * k).toFixed(3), ev ? ev.nAcima : '', ev ? ev.nMargem : '', ev ? ev.nCorte : '', ev ? ROTULO[ev.estado] : '',
             t == null ? '' : isFinite(t) ? 'corta em ' + fmtTempo(t) : 'nunca corta',
             custoSeu(s) != null ? +custoSeu(s).toFixed(2) : '', c && c.barato ? +c.barato.total.toFixed(2) : '', c && c.barato ? `${c.barato.com} — ${c.barato.nome}` : '']);
     });
@@ -1921,6 +2031,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTudo();
     });
     ligarToggle('tg-fases', v => { E.tri = v === 'tri'; renderTudo(); });
+    ligarToggle('tg-ctrl', v => { E.ctrlFase = v; renderTudo(); });
+    marcarToggle('tg-ctrl', E.ctrlFase);
     ligarToggle('tg-criterio', v => { E.criterio = v; renderTudo(); });
     ligarToggle('tg-cats', v => { E.cat = v; desenharEquip(); });
     document.getElementById('chk-social').addEventListener('change', e => { E.social = e.target.checked; renderTudo(); agendarCustos(); });
@@ -1985,6 +2097,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-pdf').addEventListener('click', () => window.print());
     document.getElementById('btn-excel').addEventListener('click', exportarExcel);
     document.addEventListener('themeChanged', () => { desenharPicos(); desenharCorte(); });
+    // o dia em detalhe: setas, data, maior pico; «ver» na tabela dos 10 momentos e no aviso do resultado
+    const passoDia = n => { if (!E.consumos) return; const ds = E.consumos.dias, i = ds.findIndex(d => d.iso === E.diaSel); const j = Math.min(ds.length - 1, Math.max(0, i + n)); selecionarDia(ds[j].iso); };
+    document.getElementById('dia-ant').addEventListener('click', () => passoDia(-1));
+    document.getElementById('dia-seg').addEventListener('click', () => passoDia(1));
+    document.getElementById('dia-sel').addEventListener('change', e => { if (e.target.value) selecionarDia(e.target.value); });
+    document.getElementById('dia-maior').addEventListener('click', () => { const A = analiseBase(); if (A) selecionarDia(new Date(A.tMax).toISOString().slice(0, 10)); });
+    document.addEventListener('click', e => { const b = e.target.closest('[data-ver-dia]'); if (b) selecionarDia(b.dataset.verDia, true); });
 
     desenharEstadoDados();
     desenharCenarios();
