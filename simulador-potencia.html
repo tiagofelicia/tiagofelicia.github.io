@@ -94,7 +94,7 @@
         "mainEntity": [
             { "@type": "Question", "name": "O que é a potência contratada?", "acceptedAnswer": { "@type": "Answer", "text": "É o máximo que a instalação pode pedir à rede ao mesmo tempo, em kVA. Paga-se todos os dias no termo de potência, haja ou não consumo. Nas casas, os escalões vão de 1,15 a 41,4 kVA; os mais comuns são 3,45, 4,6, 5,75 e 6,9 kVA." } },
             { "@type": "Question", "name": "Que potência devo contratar?", "acceptedAnswer": { "@type": "Answer", "text": "A mais baixa que aguenta os seus picos com folga. O simulador junta os consumos a cada 15 minutos da E-Redes, que mostram os picos reais, e os equipamentos que liga ao mesmo tempo, que mostram os picos curtos que as médias escondem, e compara-os com o limite a partir do qual o contador inteligente começa a contar para cortar, com uma margem de segurança à escolha." } },
-            { "@type": "Question", "name": "Quando é que o contador inteligente corta a luz?", "acceptedAnswer": { "@type": "Answer", "text": "Pelos valores de fábrica da especificação da E-Redes, o contador nunca corta até 1,2 vezes a potência contratada (1,3 vezes nas instalações trifásicas). Acima disso conta o tempo e corta ao fim de 50 ÷ (potência pedida ÷ contratada − 1,2) segundos: com o dobro da potência contratada, ao fim de cerca de um minuto. A E-Redes pode configurar outros valores." } },
+            { "@type": "Question", "name": "Quando é que o contador inteligente corta a luz?", "acceptedAnswer": { "@type": "Answer", "text": "Há uma folga: com os parâmetros de fábrica da E-Redes, a potência pedida pode chegar a 1,2 vezes a contratada (1,3 nas trifásicas) sem a luz ir abaixo, por mais tempo que dure. Acima disso o contador dá um prazo, que encurta com o excesso: 50 ÷ (r − 1,2) segundos, sendo r a potência pedida a dividir pela contratada — numa monofásica, cerca de um minuto com o dobro e menos de meio minuto com o triplo. A E-Redes pode alterar estes parâmetros." } },
             { "@type": "Question", "name": "Porque é que os dados da E-Redes não chegam sozinhos?", "acceptedAnswer": { "@type": "Answer", "text": "São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa, porque se a média passou um valor o pico também passou, mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança." } },
             { "@type": "Question", "name": "kW ou kVA?", "acceptedAnswer": { "@type": "Answer", "text": "Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98." } },
             { "@type": "Question", "name": "Monofásica ou trifásica?", "acceptedAnswer": { "@type": "Answer", "text": "Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada." } },
@@ -556,7 +556,7 @@
         <p class="bloco-intro">O maior quarto de hora de cada dia, contra a potência contratada hoje e a recomendada. A linha tracejada é o limite a partir do qual o contador começa a contar para cortar.</p>
         <div id="picos-conteudo">
             <div id="grafico-picos" class="grafico"></div>
-            <p class="nota">Arraste sobre o gráfico para ampliar um período; clique numa barra para ver esse dia em detalhe, logo abaixo.</p>
+            <p class="nota">Para ampliar, selecione um período com o rato ou com o dedo; um clique numa barra abre esse dia em detalhe, logo abaixo.</p>
             <h3 class="h3-bloco" id="dia-titulo">O dia em detalhe</h3>
             <div class="dia-controls">
                 <button type="button" class="btn sec" id="dia-ant" aria-label="Dia anterior">◀</button>
@@ -573,7 +573,7 @@
                     <p class="nota">O maior quarto de hora de cada hora do dia, mês a mês.</p>
                 </div>
                 <div>
-                    <h3 class="h3-bloco">Os 10 momentos com mais potência</h3>
+                    <h3 class="h3-bloco">Os 10 quartos de hora mais altos</h3>
                     <div class="tabela-box"><table class="tabela" id="tabela-top"></table></div>
                     <p class="nota">No máximo um por dia. A hora é a do início do quarto de hora; «ver» abre o dia em detalhe.</p>
                 </div>
@@ -594,9 +594,10 @@
     <section class="bloco" id="bloco-corte">
         <h2>⏱️ Quando o contador corta</h2>
         <div class="metodo-box">
-            <p>O contador inteligente compara a <strong>potência aparente</strong> (kVA) com a contratada. <strong>Até 1,2 × a contratada nunca corta</strong> (1,3 × nas trifásicas), dure o tempo que durar. Acima disso começa a contar e corta tanto mais depressa quanto maior o excesso, ao fim de <span class="formula">50 ÷ (potência pedida ÷ contratada − 1,2)</span> segundos. Se a potência voltar abaixo do limite, a contagem recomeça do zero.</p>
+            <p><strong>Há uma folga.</strong> Enquanto a potência pedida não passar 1,2 vezes a contratada (1,3 vezes nas trifásicas), a luz não vai abaixo, por mais tempo que isso dure — é essa folga que aguenta, por exemplo, uma chaleira ligada numa casa já perto do limite.</p>
+            <p><strong>Acima da folga, há um prazo.</strong> O contador mede a potência aparente, em kVA, e cronometra o excesso. O prazo, em segundos, é <span class="formula">50 ÷ (r − 1,2)</span> (nas trifásicas, <span class="formula">50 ÷ (r − 1,3)</span>), em que <em>r</em> é a potência pedida a dividir pela contratada: numa monofásica, com o dobro da contratada são cerca de 60 segundos; com o triplo, menos de 30. Se a potência descer abaixo da folga antes de o prazo acabar, o cronómetro volta a zero.</p>
             <p>Nas trifásicas o contador controla a soma das três fases e, acima de 6,9 kVA, também cada fase, que aguenta um terço da contratada (× 1,3). Até 6,9 kVA, o controlo deve ser feito só pela soma das três fases (<a href="https://diariodarepublica.pt/dr/detalhe/regulamento/817-2023-216251913" target="_blank" rel="noopener noreferrer">Regulamento n.º 817/2023 da ERSE</a>, art. 19.º), mas só com a instalação conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (<a href="https://diariodarepublica.pt/dr/detalhe/edito/235-2020-146924532" target="_blank" rel="noopener noreferrer">Édito n.º 235/2020 da DGEG</a>). Sem isso, cada fase continua limitada a um terço da potência contratada.</p>
-            <p class="nota" style="margin:0">Fonte: E-Redes, especificação funcional do equipamento de medição inteligente (DEF-C44-506/N, edição 3, julho de 2020, anexo B1), com os valores por omissão; a E-Redes pode configurar outros em cada contador — por isso a margem de segurança. Os contadores antigos têm um disjuntor, com outra curva.</p>
+            <p class="nota" style="margin:0">Regra tirada da especificação técnica do contador inteligente da E-Redes (DEF-C44-506/N, edição 3 de julho de 2020, anexo B1), com os parâmetros que vêm de fábrica — os 50 segundos e o 1,2 ou 1,3 —, que a E-Redes pode alterar contador a contador; a margem de segurança serve para isso. Nos contadores antigos, quem corta é um disjuntor no quadro, que se comporta de outra forma.</p>
         </div>
         <div class="campos" style="margin-top:14px">
             <div class="campo"><label class="ctrl-label" for="sel-corte">Potência contratada</label><select id="sel-corte"></select></div>
@@ -614,14 +615,12 @@
     <section class="bloco" id="bloco-mudar">
         <h2>🔁 Como mudar de potência</h2>
         <div class="metodo-box">
-            <ol>
-                <li><strong>Peça ao seu comercializador.</strong> A mudança é gratuita e não há limite de mudanças: se o contador começar a cortar, pode voltar a subir.</li>
-                <li><strong>Com contador inteligente</strong>, a mudança é feita à distância, sem visita. Se for preciso um técnico da E-Redes, a visita é marcada e a mudança demora poucos minutos.</li>
-                <li><strong>Não pode passar a potência requisitada</strong> da instalação (está na ficha eletrotécnica). Acima disso é preciso pedir um aumento à E-Redes, que pode ter custos e obras.</li>
-                <li><strong>Acima de 10,35 kVA</strong> a instalação tem de ser trifásica, e <strong>acima de 20,7 kVA</strong> só há tarifas tri-horárias.</li>
-                <li><strong>Atenção aos degraus:</strong> a tarifa social e o IVA a 6 % nos primeiros 200 kWh por mês (300 em família numerosa) só existem até 6,9 kVA; o IVA a 6 % no termo de potência da tarifa de acesso às redes, só até 3,45 kVA.</li>
-                <li>Algumas ofertas só existem em certos escalões: a tabela «Escalão a escalão» diz se o seu tarifário continua disponível na potência nova.</li>
-            </ol>
+            <p><strong>A quem peço?</strong> Ao comercializador com quem tem contrato: é ele que trata do pedido junto da E-Redes.</p>
+            <p><strong>Quanto custa?</strong> Nada. Pode subir ou descer as vezes que precisar — se a potência nova se revelar curta, volta-se atrás da mesma maneira.</p>
+            <p><strong>Tem de ir alguém a casa?</strong> Num contador inteligente, a potência nova é programada à distância. Sem contador inteligente, um técnico da E-Redes tem de ir ao local.</p>
+            <p><strong>Há um teto?</strong> Sim: a potência requisitada da instalação, que consta da ficha eletrotécnica. Para ir além dela, o aumento pede-se à E-Redes e pode implicar custos e obras. Acima de 10,35 kVA a instalação tem de ser trifásica, e acima de 20,7 kVA só há tarifas tri-horárias.</p>
+            <p><strong>O que muda na fatura além do termo de potência?</strong> A tarifa social e o IVA a 6 % nos primeiros 200 kWh por mês (300 em família numerosa) só existem até 6,9 kVA; o IVA a 6 % no termo de potência da tarifa de acesso às redes, só até 3,45 kVA.</p>
+            <p><strong>O meu tarifário continua a dar?</strong> Nem todas as ofertas cobrem todos os escalões: na tabela «Escalão a escalão», «não existe» quer dizer que o seu tarifário não tem a potência nova.</p>
         </div>
         <div class="botoes-final">
             <button type="button" class="btn sec" id="btn-partilhar">📤 Partilhar</button>
@@ -642,7 +641,7 @@
         <h2 id="faq">❔ Perguntas frequentes</h2>
         <details class="faq-item"><summary><strong>O que é a potência contratada?</strong></summary><div class="faq-content"><p>É o máximo que a instalação pode pedir à rede ao mesmo tempo, em kVA. Paga-se todos os dias no termo de potência, haja ou não consumo. Nas casas, os escalões vão de 1,15 a 41,4 kVA; os mais comuns são 3,45, 4,6, 5,75 e 6,9 kVA.</p></div></details>
         <details class="faq-item"><summary><strong>Que potência devo contratar?</strong></summary><div class="faq-content"><p>A mais baixa que aguenta os seus picos com folga. O simulador junta os consumos a cada 15 minutos da E-Redes, que mostram os picos reais, e os equipamentos que liga ao mesmo tempo, que mostram os picos curtos que as médias escondem, e compara-os com o limite a partir do qual o contador inteligente começa a contar para cortar, com uma margem de segurança à escolha.</p></div></details>
-        <details class="faq-item"><summary><strong>Quando é que o contador inteligente corta a luz?</strong></summary><div class="faq-content"><p>Pelos valores de fábrica da especificação da E-Redes, o contador nunca corta até 1,2 vezes a potência contratada (1,3 vezes nas instalações trifásicas). Acima disso conta o tempo e corta ao fim de 50 ÷ (potência pedida ÷ contratada − 1,2) segundos: com o dobro da potência contratada, ao fim de cerca de um minuto. A E-Redes pode configurar outros valores. Veja a <a href="#bloco-corte">calculadora</a>.</p></div></details>
+        <details class="faq-item"><summary><strong>Quando é que o contador inteligente corta a luz?</strong></summary><div class="faq-content"><p>Há uma folga: com os parâmetros de fábrica da E-Redes, a potência pedida pode chegar a 1,2 vezes a contratada (1,3 nas trifásicas) sem a luz ir abaixo, por mais tempo que dure. Acima disso o contador dá um prazo, que encurta com o excesso: 50 ÷ (r − 1,2) segundos, sendo r a potência pedida a dividir pela contratada — numa monofásica, cerca de um minuto com o dobro e menos de meio minuto com o triplo. A E-Redes pode alterar estes parâmetros. Veja a <a href="#bloco-corte">calculadora</a>.</p></div></details>
         <details class="faq-item"><summary><strong>Porque é que os dados da E-Redes não chegam sozinhos?</strong></summary><div class="faq-content"><p>São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa — se a média passou um valor, o pico também passou — mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança.</p></div></details>
         <details class="faq-item"><summary><strong>kW ou kVA?</strong></summary><div class="faq-content"><p>Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98.</p></div></details>
         <details class="faq-item"><summary><strong>Monofásica ou trifásica?</strong></summary><div class="faq-content"><p>Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada.</p></div></details>
@@ -1664,7 +1663,7 @@ function desenharEscaloes() {
         h += `<tr class="${cls}"><td class="esq">${nomeEsc(s)}${s === E.atual ? ' (hoje)' : ''}${s === rec ? ' ✅' : ''}</td>
             <td>${fmtKva(s * k)}</td>
             <td>${ev ? `${ev.nAcima} / ${ev.nMargem} / ${ev.nLimite}` : '—'}</td>
-            <td class="esq">${ev ? `<span class="pill ${ev.estado}">${ROTULO[ev.estado]}</span>${ev.estado === 'corta' ? ` ${ev.nCortes} ${ev.nCortes > 1 ? 'vezes' : 'vez'} em ${ev.diasCorte} dia${ev.diasCorte > 1 ? 's' : ''}` : ev.estado === 'risco' ? ` em ${ev.diasAcima} dia${ev.diasAcima > 1 ? 's' : ''}` : ''}` : '—'}</td>
+            <td class="esq">${ev ? `<span class="pill ${ev.estado}">${ROTULO[ev.estado]}</span>${ev.estado === 'corta' ? ` — ${ev.nCortes} corte${ev.nCortes > 1 ? 's' : ''} em ${ev.diasCorte} dia${ev.diasCorte > 1 ? 's' : ''}` : ev.estado === 'risco' ? ` em ${ev.diasAcima} dia${ev.diasAcima > 1 ? 's' : ''}` : ''}` : '—'}</td>
             <td>${t == null ? '—' : isFinite(t) ? 'corta em ' + fmtTempo(t) : 'nunca corta'}</td>
             <td>${celSeu}</td>
             <td style="color:${dif != null && dif < -0.005 ? 'var(--txt-verde)' : dif != null && dif > 0.005 ? 'var(--txt-vermelho)' : ''}">${s === E.atual || dif == null ? '—' : (dif > 0 ? '+' : '−') + fmtEur(Math.abs(dif))}</td>
@@ -1838,10 +1837,10 @@ function desenharResCenario() {
 function desenharCorte() {
     const s = +document.getElementById('sel-corte').value, kva = Math.max(0, +document.getElementById('inp-corte').value || 0), k = kRegra();
     const t = tempoDisparo(kva, s, k);
-    document.getElementById('disparo-res').innerHTML = `Com <strong>${nomeEsc(s)}</strong>${E.tri ? ' (trifásica)' : ''}, o contador nunca corta até <strong>${fmtKva(s * k)}</strong>. Com <strong>${fmtKva(kva)}</strong> ligados: <strong>${isFinite(t) ? 'corta ao fim de ' + fmtTempo(t) : 'nunca corta'}</strong>.`;
-    const mult = [k, 1.3, 1.5, 2, 3].filter((m, i, a) => a.indexOf(m) === i).sort((a, b) => a - b);
-    document.getElementById('tabela-corte').innerHTML = `<caption>Com ${nomeEsc(s)}</caption><thead><tr><th class="esq">Potência pedida</th><th>Corta ao fim de</th></tr></thead><tbody>` +
-        mult.map(m => `<tr><td class="esq">${fmtKva(s * m)} (${fmt(m, 1)} ×)</td><td>${m <= k ? 'nunca corta' : fmtTempo(Q_DISPARO / (m - k))}</td></tr>`).join('') + '</tbody>';
+    document.getElementById('disparo-res').innerHTML = `Com <strong>${nomeEsc(s)}</strong>${E.tri ? ' (trifásica)' : ''} contratados, a folga vai até <strong>${fmtKva(s * k)}</strong>. Com <strong>${fmtKva(kva)}</strong> ligados: <strong>${isFinite(t) ? 'a luz vai abaixo ao fim de ' + fmtTempo(t) : 'a luz não vai abaixo'}</strong>.`;
+    const mult = [k, 1.4, 1.6, 2, 2.5, 3].filter((m, i, a) => a.indexOf(m) === i).sort((a, b) => a - b);
+    document.getElementById('tabela-corte').innerHTML = `<caption>Prazos com ${nomeEsc(s)}</caption><thead><tr><th class="esq">Ligado</th><th>Vezes a contratada</th><th>Prazo até cortar</th></tr></thead><tbody>` +
+        mult.map(m => `<tr><td class="esq">${fmtKva(s * m)}</td><td>${fmt(m, 1)} ×</td><td>${m <= k ? 'sem corte (dentro da folga)' : fmtTempo(Q_DISPARO / (m - k))}</td></tr>`).join('') + '</tbody>';
     const c = _hcDark();
     limpar('grafico-disparo');
     const pts = [];
