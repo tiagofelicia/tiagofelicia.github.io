@@ -1,0 +1,58 @@
+# Páginas de cada albufeira (/albufeira/<nome>), com o último valor do SNIRH.
+#
+# scripts/gerar_paginas_albufeiras.py
+#   -> albufeira/*.html e a lista das páginas na albufeiras.html
+# scripts/regenerar_sitemap.py
+#   -> sitemap.xml, no mesmo commit: um push feito com o GITHUB_TOKEN não dispara
+#      outros workflows, por isso o atualizar_sitemap.yml não correria depois deste.
+#
+# Os dados chegam ao dados-energia pela tarefa agendada num PC em Portugal (o SNIRH só
+# aceita ligações de Portugal), às 10:50 e às 18:50 de Lisboa. Este workflow corre depois
+# de cada uma: 12:30 e 20:30 UTC (o GitHub atrasa as corridas agendadas, às vezes horas).
+# Lê os CSV de https://dados.tiagofelicia.pt.
+#
+# Sem disparo no push de propósito: um envio pela web corre também o atualizar_sitemap.yml
+# e os dois commits do sitemap.xml chocavam. Depois de subir alterações ao gerador, correr
+# à mão (Run workflow).
+
+name: Gerar paginas das albufeiras
+
+on:
+  schedule:
+    - cron: '30 12,20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paginas-albufeiras
+  cancel-in-progress: false
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # O regenerar_sitemap.py lê a data do último commit de cada página
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Gerar as páginas
+        run: python scripts/gerar_paginas_albufeiras.py
+
+      - name: Regenerar sitemap.xml
+        run: python scripts/regenerar_sitemap.py
+
+      - name: Commit se houver alterações
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "BOT: Atualizar páginas das albufeiras"
+          file_pattern: "albufeira/*.html albufeiras.html sitemap.xml"

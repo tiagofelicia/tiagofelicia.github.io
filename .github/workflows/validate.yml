@@ -77,7 +77,7 @@ jobs:
           import re, json, glob, sys
           fail = 0
           total = 0
-          for f in sorted(glob.glob('*.html')):
+          for f in sorted(glob.glob('*.html') + glob.glob('albufeira/*.html')):
               try:
                   with open(f, encoding='utf-8') as fh: c = fh.read()
               except Exception as e:
@@ -100,7 +100,7 @@ jobs:
           python -c "
           import re, glob, sys
           issues = 0
-          for f in sorted(glob.glob('*.html')):
+          for f in sorted(glob.glob('*.html') + glob.glob('albufeira/*.html')):
               with open(f, encoding='utf-8') as fh: c = fh.read()
               # 1. <html lang=>
               if not re.search(r'<html [^>]*lang=', c[:300]):
@@ -124,7 +124,7 @@ jobs:
           python -c "
           import re, glob, sys, os
           missing = []
-          for f in sorted(glob.glob('*.html')):
+          for f in sorted(glob.glob('*.html') + glob.glob('albufeira/*.html')):
               with open(f, encoding='utf-8') as fh: c = fh.read()
               # href ou src para ficheiros locais (.html, .css, .js, .png, .svg, .webp, .ico, .csv, .json, .webmanifest)
               for m in re.finditer(r'(?:href|src|srcset)=[\"\']((?!https?://|//|mailto:|tel:|data:|javascript:|#)[^\"\']+)[\"\']', c):
