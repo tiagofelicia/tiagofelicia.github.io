@@ -2,6 +2,7 @@
 Regenera sitemap.xml automaticamente com base nos ficheiros HTML do repositório.
 
 - Inclui todas as páginas HTML exceto: redirects, partials (footer/menu), 404.
+- E as páginas de cada albufeira, na pasta albufeira/ (geradas por scripts/gerar_paginas_albufeiras.py).
 - 'lastmod' = data do último commit que modificou cada ficheiro (via git log).
 - Priority/changefreq são definidos por categoria.
 
@@ -91,8 +92,15 @@ LANG_ALTERNATES = {
 
 
 def get_last_commit_date(filepath):
-    """Devolve a data do último commit (YYYY-MM-DD) que modificou o ficheiro."""
+    """Devolve a data do último commit (YYYY-MM-DD) que modificou o ficheiro.
+
+    Um ficheiro com alterações ainda sem commit conta com a data de hoje: o workflow das páginas das albufeiras
+    refaz-as e só depois o sitemap, no mesmo commit.
+    """
     try:
+        if subprocess.check_output(["git", "status", "--porcelain", "--", filepath],
+                                   stderr=subprocess.DEVNULL).strip():
+            return date.today().isoformat()
         out = subprocess.check_output(
             ["git", "log", "-1", "--format=%cs", "--", filepath],
             stderr=subprocess.DEVNULL,
@@ -102,8 +110,14 @@ def get_last_commit_date(filepath):
         return date.today().isoformat()
 
 
+# Páginas de cada albufeira (o texto muda todos os dias, com o último valor do SNIRH)
+PASTA_ALBUFEIRAS = "albufeira"
+
+
 def get_priority_freq(filename):
     """Devolve (changefreq, priority) consoante regras."""
+    if filename.startswith(PASTA_ALBUFEIRAS + "/"):
+        return "daily", "0.7"
     for fset, freq, prio in RULES:
         if filename in fset:
             return freq, prio
@@ -112,6 +126,8 @@ def get_priority_freq(filename):
 
 def main():
     files = sorted(f for f in os.listdir(".") if f.endswith(".html") and f not in EXCLUDE)
+    if os.path.isdir(PASTA_ALBUFEIRAS):
+        files += sorted(f"{PASTA_ALBUFEIRAS}/{f}" for f in os.listdir(PASTA_ALBUFEIRAS) if f.endswith(".html"))
 
     def alts_for(filename):
         a = LANG_ALTERNATES.get(filename)
