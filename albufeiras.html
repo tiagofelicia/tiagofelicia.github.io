@@ -78,17 +78,18 @@
       "@context": "https://schema.org",
       "@type": "Dataset",
       "name": "Água guardada nas albufeiras das centrais hidroelétricas de Portugal",
-      "description": "Desde 2001: o volume de água armazenado em cada uma das 57 albufeiras com uso para energia em Portugal (as das centrais hidroelétricas, com um valor por dia, e as de rega que também têm central, com um valor por semana), a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), sem os valores impossíveis; a capacidade de cada albufeira (boletim semanal da APA; CNPGB nas que lá não estão); a potência e a produção das centrais que tiram água de cada uma (APREN; CNPGB); e, por semana desde 2015, a energia guardada nas albufeiras portuguesas, publicada na plataforma de transparência da ENTSO-E.",
+      "description": "Desde 2001: o volume de água armazenado em cada uma das 57 albufeiras com uso para energia em Portugal (as das centrais hidroelétricas, com um valor por dia, e as de rega que também têm central, com um valor por semana), a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), sem os valores impossíveis; a capacidade de cada albufeira (boletim semanal da APA; CNPGB nas que lá não estão); a potência e a produção das centrais que tiram água de cada uma (APREN; CNPGB); e, por semana desde 2015, a energia guardada nas albufeiras portuguesas, publicada na plataforma de transparência da ENTSO-E. Para comparação, à parte: a energia guardada nas albufeiras de Espanha, por semana desde 2015 (ENTSO-E), e o enchimento das albufeiras espanholas no fim de cada mês, desde 1990 (Red Eléctrica).",
       "url": "https://www.tiagofelicia.pt/albufeiras",
       "inLanguage": "pt-PT",
       "isAccessibleForFree": true,
       "license": "https://creativecommons.org/licenses/by/4.0/",
-      "spatialCoverage": { "@type": "Place", "name": "Portugal" },
+      "spatialCoverage": [{ "@type": "Place", "name": "Portugal" }, { "@type": "Place", "name": "Espanha" }],
       "temporalCoverage": "2001-01-01/..",
       "variableMeasured": [
         { "@type": "PropertyValue", "name": "Volume armazenado em cada albufeira", "unitText": "hm3" },
         { "@type": "PropertyValue", "name": "Percentagem da capacidade", "unitText": "%" },
         { "@type": "PropertyValue", "name": "Energia guardada nas albufeiras", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Enchimento das albufeiras de Espanha no fim de cada mês", "unitText": "%" },
         { "@type": "PropertyValue", "name": "Potência de turbinamento e de bombagem das centrais de cada albufeira", "unitText": "MW" }
       ],
       "isBasedOn": [
@@ -106,6 +107,12 @@
         },
         {
           "@type": "CreativeWork",
+          "name": "Red Eléctrica — REData: reservas hidroeléctricas",
+          "url": "https://www.ree.es/es/datos",
+          "creator": { "@type": "Organization", "name": "Red Eléctrica", "url": "https://www.ree.es" }
+        },
+        {
+          "@type": "CreativeWork",
           "name": "APREN — Anuário 2026: fichas técnicas das grandes e pequenas centrais hídricas",
           "url": "https://www.apren.pt",
           "creator": { "@type": "Organization", "name": "APREN — Associação Portuguesa de Energias Renováveis", "url": "https://www.apren.pt" }
@@ -120,7 +127,9 @@
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv" },
-        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv" }
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal_es.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_mensal_es.csv" }
       ]
     }
     </script>
@@ -146,7 +155,7 @@
           "name": "De onde vêm estes dados?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "O volume de cada albufeira vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte. A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da ENTSO-E, onde é publicada todas as semanas."
+            "text": "O volume de cada albufeira vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte. A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da ENTSO-E, onde é publicada todas as semanas, para Portugal e para Espanha; o enchimento das albufeiras espanholas no fim de cada mês, da Red Eléctrica."
           }
         },
         {
@@ -207,6 +216,14 @@
         },
         {
           "@type": "Question",
+          "name": "E as albufeiras de Espanha?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ficam à parte, no bloco «E em Espanha?», sem se somarem às portuguesas: a energia guardada nas albufeiras e centrais de bombagem espanholas, semana a semana desde 2015, publicada na plataforma de transparência da ENTSO-E como a portuguesa; e o enchimento das albufeiras hidroelétricas da Espanha peninsular no fim de cada mês, desde 1990, publicado pela Red Eléctrica, com a energia guardada e a percentagem da capacidade. A Red Eléctrica separa as albufeiras anuais, que se enchem e esvaziam dentro do ano, das hiperanuais, que guardam água de um ano para o outro. No fim de cada mês, a energia guardada da Red Eléctrica e a da ENTSO-E são praticamente a mesma (diferem, em média, menos de 1%); a percentagem é a da Red Eléctrica, porque a ENTSO-E não publica a capacidade."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Como se compara com os outros anos?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -234,7 +251,7 @@
           "name": "Posso usar estes dados?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Sim. As séries estão em dados.tiagofelicia.pt, sob licença CC BY 4.0: o volume de cada albufeira (albufeiras_snirh_diario.csv), a lista com as capacidades (albufeiras_snirh.csv), as centrais (centrais_hidricas.csv) e a energia guardada por semana (albufeiras_semanal.csv). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB."
+            "text": "Sim. As séries estão em dados.tiagofelicia.pt, sob licença CC BY 4.0: o volume de cada albufeira (albufeiras_snirh_diario.csv), a lista com as capacidades (albufeiras_snirh.csv), as centrais (centrais_hidricas.csv), a energia guardada por semana (albufeiras_semanal.csv) e, para Espanha, a energia guardada por semana (albufeiras_semanal_es.csv) e o enchimento por mês (albufeiras_mensal_es.csv). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB."
           }
         }
       ]
@@ -278,6 +295,12 @@
         .grafico { width: 100%; height: 440px; }
         .resumo-bloco { width: 100%; margin: 12px 0 0; font-size: 0.9em; color: #444; line-height: 1.6; }
         .nota-bloco { font-size: 0.8em; color: #666; margin: 6px 0 0; }
+        #alb-kpis-es { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 8px 0 4px 0; }
+        @media (max-width: 1000px) { #alb-kpis-es { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #alb-kpis-es { grid-template-columns: 1fr; } }
+        #kpi-es-sub { font-size: 0.85em; color: #6c757d; margin: 0; }
+        .grafico-box h3.h3-bloco { font-size: 1em; color: #2c3e50; margin: 24px 0 8px 0; }
+        #es-ench[hidden] { display: none; }
 
         .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
         .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
@@ -374,7 +397,8 @@
         [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
         [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub,
         [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
-        [data-theme="dark"] .nota-bloco { color: #94a3b8; }
+        [data-theme="dark"] .nota-bloco, [data-theme="dark"] #kpi-es-sub { color: #94a3b8; }
+        [data-theme="dark"] .grafico-box h3.h3-bloco { color: #e2e8f0; }
         [data-theme="dark"] .resumo-bloco, [data-theme="dark"] #resumo-texto, [data-theme="dark"] #resumo-energia, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
         [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
@@ -453,6 +477,7 @@
         <a href="#bloco-tabela" class="mini-nav-chip">🏞️ Albufeiras</a>
         <a href="#bloco-bacias" class="mini-nav-chip">🗺️ Por bacia</a>
         <a href="#bloco-energia" class="mini-nav-chip">⚡ Energia guardada</a>
+        <a href="#bloco-espanha" class="mini-nav-chip">🇪🇸 Espanha</a>
         <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
     </nav>
 
@@ -540,6 +565,28 @@
             <div id="grafico-energia" class="grafico"></div>
             <p class="resumo-bloco" id="energia-resumo"></p>
         </section>
+
+        <section id="bloco-espanha" class="grafico-box" hidden>
+            <h2>🇪🇸 E em Espanha?</h2>
+            <p class="grafico-intro">A energia guardada nas albufeiras e centrais de bombagem de Espanha, semana a semana, publicada na ENTSO-E como a portuguesa, e o enchimento das albufeiras espanholas no fim de cada mês, em percentagem da capacidade, publicado pela Red Eléctrica. Ficam à parte: não entram nos valores de Portugal desta página. Os cartões e a frase seguem o período escolhido no topo.</p>
+            <p id="kpi-es-sub"></p>
+            <div id="alb-kpis-es"></div>
+            <p class="resumo-bloco" id="es-resumo"></p>
+            <h3 class="h3-bloco">⚡ Energia guardada, semana a semana</h3>
+            <div id="grafico-es-energia" class="grafico"></div>
+            <div id="es-ench">
+                <h3 class="h3-bloco">💧 Enchimento no fim de cada mês</h3>
+                <div class="bloco-controls">
+                    <span class="ctrl-label">Ver</span>
+                    <div class="btn-toggle" id="ctrl-es-vista" role="group" aria-label="Enchimento das albufeiras de Espanha">
+                        <button type="button" data-v="ano" class="active">Ao longo do ano</button>
+                        <button type="button" data-v="serie">Desde 1990</button>
+                    </div>
+                </div>
+                <div id="grafico-es-ench" class="grafico"></div>
+            </div>
+            <p class="nota-bloco">Energia guardada: plataforma de transparência da ENTSO-E (zona de Espanha). Enchimento: Red Eléctrica (REData), reservas hidroelétricas da Espanha peninsular — as albufeiras anuais enchem-se e esvaziam-se dentro do ano, as hiperanuais guardam água de um ano para o outro. A Red Eléctrica publica cada mês algumas semanas depois de ele acabar.</p>
+        </section>
     </div>
 
     <div class="cta-simulador">
@@ -557,7 +604,7 @@
             <summary><strong>De onde vêm estes dados?</strong></summary>
             <div class="faq-content">
                 <p>O volume de cada albufeira vem do <a href="https://snirh.apambiente.pt" target="_blank" rel="noopener">SNIRH</a>, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte.</p>
-                <p>A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da <a href="https://transparency.entsoe.eu" target="_blank" rel="noopener">ENTSO-E</a>, onde é publicada todas as semanas.</p>
+                <p>A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da <a href="https://transparency.entsoe.eu" target="_blank" rel="noopener">ENTSO-E</a>, onde é publicada todas as semanas, para Portugal e para Espanha; o enchimento das albufeiras espanholas no fim de cada mês, da <a href="https://www.ree.es/es/datos" target="_blank" rel="noopener">Red Eléctrica</a>.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -610,6 +657,13 @@
             </div>
         </details>
         <details class="faq-item">
+            <summary><strong>E as albufeiras de Espanha?</strong></summary>
+            <div class="faq-content">
+                <p>Ficam à parte, no bloco «E em Espanha?», sem se somarem às portuguesas: a energia guardada nas albufeiras e centrais de bombagem espanholas, semana a semana desde 2015, publicada na plataforma de transparência da ENTSO-E como a portuguesa; e o enchimento das albufeiras hidroelétricas da Espanha peninsular no fim de cada mês, desde 1990, publicado pela Red Eléctrica, com a energia guardada e a percentagem da capacidade.</p>
+                <p>A Red Eléctrica separa as albufeiras anuais, que se enchem e esvaziam dentro do ano, das hiperanuais, que guardam água de um ano para o outro. No fim de cada mês, a energia guardada da Red Eléctrica e a da ENTSO-E são praticamente a mesma (diferem, em média, menos de 1%); a percentagem é a da Red Eléctrica, porque a ENTSO-E não publica a capacidade.</p>
+            </div>
+        </details>
+        <details class="faq-item">
             <summary><strong>Como se compara com os outros anos?</strong></summary>
             <div class="faq-content">
                 <p>A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a <strong>soma dos volumes a dividir pela soma das capacidades</strong> das albufeiras com valor nesse dia.</p>
@@ -631,7 +685,7 @@
         <details class="faq-item">
             <summary><strong>Posso usar estes dados?</strong></summary>
             <div class="faq-content">
-                <p>Sim. As séries estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: o volume de cada albufeira (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv">albufeiras_snirh_diario.csv</a>), a lista com as capacidades (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv">albufeiras_snirh.csv</a>), as centrais (<a href="https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv">centrais_hidricas.csv</a>) e a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv">albufeiras_semanal.csv</a>). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB.</p>
+                <p>Sim. As séries estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: o volume de cada albufeira (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv">albufeiras_snirh_diario.csv</a>), a lista com as capacidades (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv">albufeiras_snirh.csv</a>), as centrais (<a href="https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv">centrais_hidricas.csv</a>), a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv">albufeiras_semanal.csv</a>) e, para Espanha, a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal_es.csv">albufeiras_semanal_es.csv</a>) e o enchimento por mês (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_mensal_es.csv">albufeiras_mensal_es.csv</a>). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB.</p>
             </div>
         </details>
     </div>
@@ -671,13 +725,18 @@ document.addEventListener('DOMContentLoaded', function () {
     //   são diários ou semanais);
     // producao/albufeiras_snirh_diario.csv: o volume de cada uma (hm3), desde 2001 (SNIRH);
     // producao/centrais_hidricas.csv: as centrais de cada albufeira, com a potência e a produção (APREN; CNPGB);
-    // producao/albufeiras_semanal.csv: a energia guardada em todas as albufeiras, por semana (ENTSO-E).
+    // producao/albufeiras_semanal.csv: a energia guardada em todas as albufeiras, por semana (ENTSO-E);
+    // producao/albufeiras_semanal_es.csv: o mesmo, em Espanha (ENTSO-E);
+    // producao/albufeiras_mensal_es.csv: as reservas de Espanha no fim de cada mês, com o enchimento, desde 1990 (Red Eléctrica).
     const URL_LISTA = 'producao/albufeiras_snirh.csv';
     const URL_DIARIO = 'producao/albufeiras_snirh_diario.csv';
     const URL_CENTRAIS = 'producao/centrais_hidricas.csv';
     const URL_ENTSOE = 'producao/albufeiras_semanal.csv';
+    const URL_ENTSOE_ES = 'producao/albufeiras_semanal_es.csv';
+    const URL_REE = 'producao/albufeiras_mensal_es.csv';
     const ANO_COMP = 2011;      // comparação com os anos completos desde 2011 (o Alqueva encheu pela primeira vez em 2010)
     const ANO_COMP_ENTSOE = 2015;
+    const ANO_COMP_REE = 1990;
     const ARRASTO = 31;         // nos gráficos, um valor conta até 31 dias para a frente (até 2017 há albufeiras com um valor por mês)
     const GRANDE = 100;         // hm3: as albufeiras «grandes» do resumo
     const ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Sado', 'Guadiana', 'Arade', 'Ribeiras do Algarve'];
@@ -758,6 +817,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const OUTRAS = [];               // as grandes centrais sem albufeira com dados no SNIRH (albufeira vazia no CSV)
     let ENTSOE = null;               // [{ iso, ano, sem, gwh }]
     const ENTSOE_ANO = new Map();    // ano ISO → Map(semana → GWh)
+    let ENTSOE_ES = null;            // o mesmo, em Espanha
+    const ENTSOE_ES_ANO = new Map();
+    let REE = null;                  // [{ mes, ano, m, total, totalPct, anuaisPct, hiperPct }]: Espanha, no fim de cada mês
+    let ES_VISTA = 'ano';
     let SEL = 'todas', ANO = 'civil', ORDEM = 'bacia';
     // Período: o último dia, uma semana (a segunda-feira, o dia dos boletins semanais da APA) ou um mês (o último
     // dia, como nos boletins mensais). REF é o dia de referência e COMP o de comparação.
@@ -817,12 +880,24 @@ document.addEventListener('DOMContentLoaded', function () {
             CENTRAIS.get(col).push(c);
         });
     }
-    function prepararEntsoe(t) {
+    function lerEntsoe(t, porAno) {
         const { cab, linhas } = lerCSV(t);
         const k = n => cab.indexOf(n);
-        ENTSOE = linhas.map(l => ({ iso: l[k('semana_inicio')], ano: +l[k('ano_iso')], sem: +l[k('semana_iso')], gwh: parseFloat(l[k('energia_gwh')]) }))
+        const serie = linhas.map(l => ({ iso: l[k('semana_inicio')], ano: +l[k('ano_iso')], sem: +l[k('semana_iso')], gwh: parseFloat(l[k('energia_gwh')]) }))
             .filter(x => x.iso && isFinite(x.gwh));
-        ENTSOE.forEach(x => { if (!ENTSOE_ANO.has(x.ano)) ENTSOE_ANO.set(x.ano, new Map()); ENTSOE_ANO.get(x.ano).set(x.sem, x.gwh); });
+        serie.forEach(x => { if (!porAno.has(x.ano)) porAno.set(x.ano, new Map()); porAno.get(x.ano).set(x.sem, x.gwh); });
+        return serie;
+    }
+    function prepararEntsoe(t) { ENTSOE = lerEntsoe(t, ENTSOE_ANO); }
+    function prepararEntsoeEs(t) { ENTSOE_ES = lerEntsoe(t, ENTSOE_ES_ANO); }
+    function prepararRee(t) {
+        const { cab, linhas } = lerCSV(t);
+        const k = n => cab.indexOf(n);
+        REE = linhas.map(l => {
+            const v = c => parseFloat(l[k(c)]), mes = l[k('mes')] || '';
+            return { mes, ano: +mes.slice(0, 4), m: +mes.slice(5, 7), total: v('total_gwh'), totalPct: v('total_pct'),
+                     anuaisPct: v('anuais_pct'), hiperPct: v('hiperanuais_pct') };
+        }).filter(x => x.mes && isFinite(x.total) && isFinite(x.totalPct) && x.totalPct > 0);
     }
 
     // ==================================================================
@@ -945,7 +1020,7 @@ document.addEventListener('DOMContentLoaded', function () {
             + card('↩️ Há um ano', ano ? fmtPct(ano.antes) : '--', ano ? `agora ${fmtPct(ano.agora)} (${fmtPp(ano.agora - ano.antes)})` : '')
             + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para ${fmtDiaMes(iso)}`, hist ? fmtPct(hist.media) : '--',
                    hist ? `mín. ${fmtPct(hist.min.pct)} (${hist.min.ano}) · máx. ${fmtPct(hist.max.pct)} (${hist.max.ano})` : '');
-        if (!agora) { document.getElementById('resumo-texto').innerHTML = ''; renderResumoEnergia(); return; }
+        if (!agora) { document.getElementById('resumo-texto').innerHTML = ''; renderResumoEnergia(); renderResumoEspanha(); return; }
 
         // Das grandes, a que está mais acima e a mais abaixo da sua média para este dia (as albufeiras a fio de água
         // andam sempre perto de cheias: comparadas consigo mesmas, contam como as outras)
@@ -970,6 +1045,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         document.getElementById('resumo-texto').innerHTML = t;
         renderResumoEnergia();
+        renderResumoEspanha();
     }
 
     // ==================================================================
@@ -1225,22 +1301,22 @@ document.addEventListener('DOMContentLoaded', function () {
     // ENERGIA GUARDADA (ENTSO-E)
     // ==================================================================
     // A semana k da ENTSO-E com a anterior, a mesma semana do ano antes e a média, o mínimo e o máximo dessa semana nos
-    // anos completos desde 2015 antes do dela (como no gráfico)
-    function estatSemana(k) {
-        const e = ENTSOE[k], ant = k > 0 ? ENTSOE[k - 1] : null;
+    // anos completos desde 2015 antes do dela (como no gráfico). Portugal por omissão; Espanha com ENTSOE_ES.
+    function estatSemana(k, serie = ENTSOE, porAno = ENTSOE_ANO) {
+        const e = serie[k], ant = k > 0 ? serie[k - 1] : null;
         const seguida = ant && (Date.parse(e.iso) - Date.parse(ant.iso)) / DIA_MS === 7;
-        const anos = [...ENTSOE_ANO.keys()].filter(y => y >= ANO_COMP_ENTSOE && y < e.ano && ENTSOE_ANO.get(y).size >= 50).sort((a, b) => a - b);
-        const v = anos.map(y => ({ ano: y, gwh: ENTSOE_ANO.get(y).get(e.sem) })).filter(x => x.gwh !== undefined);
+        const anos = [...porAno.keys()].filter(y => y >= ANO_COMP_ENTSOE && y < e.ano && porAno.get(y).size >= 50).sort((a, b) => a - b);
+        const v = anos.map(y => ({ ano: y, gwh: porAno.get(y).get(e.sem) })).filter(x => x.gwh !== undefined);
         const hist = v.length >= 3 ? { media: v.reduce((t, x) => t + x.gwh, 0) / v.length, de: anos[0], ate: anos[anos.length - 1],
                                        min: v.reduce((m, x) => x.gwh < m.gwh ? x : m), max: v.reduce((m, x) => x.gwh > m.gwh ? x : m) } : null;
-        return { e, ant: seguida ? ant : null, antes: (ENTSOE_ANO.get(e.ano - 1) || new Map()).get(e.sem), hist };
+        return { e, ant: seguida ? ant : null, antes: (porAno.get(e.ano - 1) || new Map()).get(e.sem), hist };
     }
-    function fraseEnergia({ e, antes, hist }) {
+    function fraseEnergia({ e, antes, hist }, onde = 'portuguesas') {
         const var_ = (a, b) => `${fmt1(Math.abs(a / b - 1) * 100)}% ${a >= b ? 'acima' : 'abaixo'}`;
         const partes = [];
         if (antes) partes.push(`${var_(e.gwh, antes)} da mesma semana de ${e.ano - 1}`);
         if (hist) partes.push(`${var_(e.gwh, hist.media)} da média de ${hist.de} a ${hist.ate}`);
-        return `Na semana de ${fmtData(e.iso)} (semana ${e.sem}), a energia guardada nas albufeiras portuguesas era de <strong>${fmt0(e.gwh)} GWh</strong>`
+        return `Na semana de ${fmtData(e.iso)} (semana ${e.sem}), a energia guardada nas albufeiras ${onde} era de <strong>${fmt0(e.gwh)} GWh</strong>`
             + (partes.length ? ': ' + partes.join(' e ') : '') + '.';
     }
     // No Resumo, a semana do período escolhido: a última publicada que começa até ao dia de referência
@@ -1263,13 +1339,10 @@ document.addEventListener('DOMContentLoaded', function () {
                    hist ? `mín. ${fmt0(hist.min.gwh)} GWh (${hist.min.ano}) · máx. ${fmt0(hist.max.gwh)} GWh (${hist.max.ano})` : '');
         tx.innerHTML = fraseEnergia(r);
     }
-    function renderEnergia() {
-        const bloco = document.getElementById('bloco-energia');
-        if (!ENTSOE || !ENTSOE.length) { bloco.hidden = true; return; }
-        bloco.hidden = false;
+    // Semana a semana: a faixa entre o mínimo e o máximo e a média dos anos completos desde 2015, o ano anterior e o atual
+    function graficoEnergia(id, serie, porAno, ficheiro) {
         const c = _hcDark();
-        const ultima = ENTSOE[ENTSOE.length - 1], anoAtual = ultima.ano;
-        const porAno = ENTSOE_ANO;
+        const ultima = serie[serie.length - 1], anoAtual = ultima.ano;
         const serieAno = y => [...(porAno.get(y) || new Map()).entries()].sort((a, b) => a[0] - b[0]).map(([s, g]) => [s, g]);
         const anosComp = [...porAno.keys()].filter(y => y >= ANO_COMP_ENTSOE && y < anoAtual && porAno.get(y).size >= 50);
         const faixa = [], media = [];
@@ -1280,7 +1353,7 @@ document.addEventListener('DOMContentLoaded', function () {
             media.push([s, Math.round(v.reduce((t, x) => t + x, 0) / v.length)]);
         }
         const rotComp = anosComp.length ? `${anosComp[0]}–${anosComp[anosComp.length - 1]}` : '';
-        Highcharts.chart('grafico-energia', Object.assign(base(c, 'albufeiras-energia-entsoe'), {
+        Highcharts.chart(id, Object.assign(base(c, ficheiro), {
             chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
             xAxis: { min: 1, max: 53, tickInterval: 4, title: { text: 'Semana do ano', style: { color: c.txt } }, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
             yAxis: { title: { text: 'GWh', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha, min: 0 },
@@ -1298,8 +1371,133 @@ document.addEventListener('DOMContentLoaded', function () {
                 { name: String(anoAtual), data: serieAno(anoAtual), color: c.atual, lineWidth: 2.5, zIndex: 3 }
             ]
         }));
+    }
+    function renderEnergia() {
+        const bloco = document.getElementById('bloco-energia');
+        if (!ENTSOE || !ENTSOE.length) { bloco.hidden = true; return; }
+        bloco.hidden = false;
+        graficoEnergia('grafico-energia', ENTSOE, ENTSOE_ANO, 'albufeiras-energia-entsoe');
         document.getElementById('energia-resumo').innerHTML = fraseEnergia(estatSemana(ENTSOE.length - 1))
             + ' A ENTSO-E publica cada semana com alguns dias de atraso.';
+    }
+
+    // ==================================================================
+    // ESPANHA (ENTSO-E E RED ELÉCTRICA)
+    // ==================================================================
+    const nomeMes = x => `${MESES[x.m - 1]} de ${x.ano}`;
+    // O último mês da Red Eléctrica que acaba até ao dia de referência, com a média, o mínimo e o máximo do mesmo mês
+    // nos anos desde 1990 antes do dele
+    function estatMesRee() {
+        const iso = ULT >= 0 ? isoDe(REF) : '';
+        let j = REE ? REE.length - 1 : -1;
+        while (j >= 0 && fimMes(REE[j].ano, REE[j].m) > iso) j--;
+        if (j < 0) return null;
+        const r = REE[j], v = REE.filter(x => x.m === r.m && x.ano >= ANO_COMP_REE && x.ano < r.ano);
+        const hist = v.length >= 3 ? { media: v.reduce((t, x) => t + x.totalPct, 0) / v.length, de: v[0].ano, ate: v[v.length - 1].ano } : null;
+        return { r, hist };
+    }
+    // Os cartões e a frase, para o período escolhido (como no Resumo): a última semana publicada que começa até ao dia
+    // de referência e o último mês que acaba até ele
+    function renderResumoEspanha() {
+        const bloco = document.getElementById('bloco-espanha');
+        if (!ENTSOE_ES || !ENTSOE_ES.length) { bloco.hidden = true; return; }
+        bloco.hidden = false;
+        const kp = document.getElementById('alb-kpis-es'), tx = document.getElementById('es-resumo'), sub = document.getElementById('kpi-es-sub');
+        const iso = ULT >= 0 ? isoDe(REF) : '';
+        let k = ENTSOE_ES.length - 1;
+        while (k >= 0 && ENTSOE_ES[k].iso > iso) k--;
+        if (k < 0) { kp.innerHTML = ''; tx.innerHTML = ''; sub.textContent = ''; return; }
+        const r = estatSemana(k, ENTSOE_ES, ENTSOE_ES_ANO), { e, ant, antes, hist } = r;
+        const mr = estatMesRee();
+        const varPct = (a, b) => { const p = (a / b - 1) * 100; return sinal(p) + fmt1(Math.abs(p)) + '%'; };
+        sub.textContent = `Semana de ${fmtData(e.iso)} (semana ${e.sem} de ${e.ano})` + (mr ? ` · enchimento no fim de ${nomeMes(mr.r)}` : '');
+        kp.innerHTML = card('⚡ Energia guardada', `${fmt0(e.gwh)} GWh`,
+                            ant ? `${varPct(e.gwh, ant.gwh)} face à semana anterior` : 'a eletricidade que a água guardada pode produzir')
+            + card('💧 Enchimento (Red Eléctrica)', mr ? fmtPct(mr.r.totalPct) : '--',
+                   mr ? `fim de ${nomeMes(mr.r)} · ${fmt0(mr.r.total)} de ${fmt0(mr.r.total / mr.r.totalPct * 100)} GWh` : '')
+            + card('↩️ Há um ano', antes ? `${fmt0(antes)} GWh` : '--', antes ? `agora ${varPct(e.gwh, antes)}` : '')
+            + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para a semana ${e.sem}`, hist ? `${fmt0(hist.media)} GWh` : '--',
+                   hist ? `mín. ${fmt0(hist.min.gwh)} GWh (${hist.min.ano}) · máx. ${fmt0(hist.max.gwh)} GWh (${hist.max.ano})` : '');
+        let t = fraseEnergia(r, 'espanholas');
+        // Portugal na mesma semana (a mesma segunda-feira)
+        const pk = ENTSOE ? ENTSOE.findIndex(x => x.iso === e.iso) : -1;
+        if (pk >= 0) {
+            const p = estatSemana(pk);
+            const face = p.hist ? `, ${fmt1(Math.abs(p.e.gwh / p.hist.media - 1) * 100)}% ${p.e.gwh >= p.hist.media ? 'acima' : 'abaixo'} da média` : '';
+            t += ` Em Portugal, na mesma semana, eram ${fmt0(p.e.gwh)} GWh${face}: Espanha guardava ${fmt1(e.gwh / p.e.gwh)} vezes mais.`;
+        }
+        if (mr) {
+            const { r: x, hist: h } = mr;
+            t += ` No fim de ${nomeMes(x)}, segundo a Red Eléctrica, as albufeiras espanholas estavam a <strong>${fmtPct(x.totalPct)}</strong> da capacidade`
+               + ` (as anuais a ${fmtPct(x.anuaisPct)} e as hiperanuais a ${fmtPct(x.hiperPct)})`
+               + (h ? `; a média dos fins de ${MESES[x.m - 1]} de ${h.de} a ${h.ate} é de ${fmtPct(h.media)}` : '') + '.';
+        }
+        tx.innerHTML = t;
+    }
+    // O enchimento no fim de cada mês: ao longo do ano (o total, com a faixa e a média dos anos completos desde 1990, o
+    // ano anterior e o atual) ou a série inteira (o total, as anuais e as hiperanuais)
+    function renderEnchimento() {
+        const box = document.getElementById('es-ench');
+        if (!REE || !REE.length) { box.hidden = true; return; }
+        box.hidden = false;
+        const c = _hcDark();
+        const eixo = { labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true };
+        const eixoY = { title: { text: '% da capacidade', style: { color: c.txt } }, labels: { style: { color: c.txt }, format: '{value}%' },
+                        gridLineColor: c.grelha, min: 0, max: 100, tickInterval: 20 };
+        const linha = function () {
+            const v = this.series.type === 'arearange' ? `${fmtPct(this.low)} – ${fmtPct(this.high)}` : fmtPct(this.y);
+            return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${v}</b><br>`;
+        };
+        const plot = { series: { marker: { enabled: false }, states: { inactive: { opacity: 1 } } } };
+        if (ES_VISTA === 'serie') {
+            const pts = campo => REE.map(x => [Date.UTC(x.ano, x.m, 0), x[campo]]);
+            Highcharts.chart('grafico-es-ench', Object.assign(base(c, 'albufeiras-espanha-enchimento'), {
+                chart: { type: 'line', zooming: { type: 'x' }, backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+                xAxis: Object.assign({ type: 'datetime' }, eixo),
+                yAxis: eixoY,
+                tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                           xDateFormat: '%B de %Y', headerFormat: '<b>Fim de {point.key}</b><br>', pointFormatter: linha },
+                plotOptions: plot,
+                series: [
+                    { name: 'Total', data: pts('totalPct'), color: c.atual, lineWidth: 2.2, zIndex: 3 },
+                    { name: 'Anuais', data: pts('anuaisPct'), color: c.dk ? '#fb923c' : '#c2410c', lineWidth: 1.2, zIndex: 2 },
+                    { name: 'Hiperanuais', data: pts('hiperPct'), color: c.dk ? '#a78bfa' : '#7c3aed', lineWidth: 1.2, zIndex: 1 }
+                ]
+            }));
+            return;
+        }
+        const porAno = new Map();
+        REE.forEach(x => { if (!porAno.has(x.ano)) porAno.set(x.ano, new Map()); porAno.get(x.ano).set(x.m, x.totalPct); });
+        const anoAtual = REE[REE.length - 1].ano;
+        const anosComp = [...porAno.keys()].filter(y => y >= ANO_COMP_REE && y < anoAtual && porAno.get(y).size === 12).sort((a, b) => a - b);
+        const faixa = [], media = [];
+        if (anosComp.length >= 3) for (let m = 1; m <= 12; m++) {
+            const v = anosComp.map(y => porAno.get(y).get(m));
+            faixa.push([m - 1, Math.min(...v), Math.max(...v)]);
+            media.push([m - 1, v.reduce((t, x) => t + x, 0) / v.length]);
+        }
+        const serieAno = y => [...(porAno.get(y) || new Map()).entries()].sort((a, b) => a[0] - b[0]).map(([m, p]) => [m - 1, p]);
+        const rotComp = anosComp.length ? `${anosComp[0]}–${anosComp[anosComp.length - 1]}` : '';
+        Highcharts.chart('grafico-es-ench', Object.assign(base(c, 'albufeiras-espanha-enchimento'), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: { categories: MESES, labels: { style: { color: c.txt }, formatter: function () { return String(this.value).slice(0, 3); } },
+                     lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: eixoY,
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                       headerFormat: '<b>Fim de {point.key}</b><br>', pointFormatter: linha },
+            plotOptions: plot,
+            series: [
+                { type: 'arearange', name: `Mín.–máx. ${rotComp}`, data: faixa, color: c.faixa, fillColor: c.faixa, lineWidth: 0, zIndex: 0 },
+                { name: `Média ${rotComp}`, data: media, color: c.media, dashStyle: 'ShortDot', lineWidth: 1.5, zIndex: 1 },
+                { name: String(anoAtual - 1), data: serieAno(anoAtual - 1), color: c.passado, dashStyle: 'ShortDash', lineWidth: 1.5, zIndex: 2 },
+                { name: String(anoAtual), data: serieAno(anoAtual), color: c.atual, lineWidth: 2.5, zIndex: 3 }
+            ]
+        }));
+    }
+    function renderEspanha() {
+        if (!ENTSOE_ES || !ENTSOE_ES.length) return;
+        graficoEnergia('grafico-es-energia', ENTSOE_ES, ENTSOE_ES_ANO, 'albufeiras-espanha-energia-entsoe');
+        renderEnchimento();
     }
 
     // ==================================================================
@@ -1503,6 +1701,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderTabela();
     });
     ligarToggle('ctrl-vista', v => mudarVista(v, PER));
+    ligarToggle('ctrl-es-vista', v => { ES_VISTA = v; renderEnchimento(); });
     // Ao mudar de ano, a mesma semana do ano (a mais próxima) ou o mesmo mês
     document.getElementById('sel-ano-per').addEventListener('change', e => {
         const a = e.target.value;
@@ -1537,7 +1736,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const tr = e.target.closest('tr[data-sel]');
         if (tr) { e.preventDefault(); escolher(tr.dataset.sel, true); }
     });
-    document.addEventListener('themeChanged', () => { if (ULT >= 0) { renderEvol(); renderBacias(); renderEnergia(); renderMapa(); } });
+    document.addEventListener('themeChanged', () => { if (ULT >= 0) { renderEvol(); renderBacias(); renderEnergia(); renderEspanha(); renderMapa(); } });
 
     const btnTopo = document.getElementById('btn-voltar-topo');
     window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
@@ -1552,6 +1751,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(location.search);
     const texto = caminho => fetchDados(caminho).then(r => { if (!r.ok) throw new Error(caminho + ': HTTP ' + r.status); return r.text(); });
     const pEntsoe = texto(URL_ENTSOE).then(prepararEntsoe).catch(err => { console.warn('Energia guardada (ENTSO-E):', err); });
+    // Espanha: sem estes dois, a página funciona na mesma, só sem o bloco «E em Espanha?» (ou sem o enchimento)
+    const pEntsoeEs = texto(URL_ENTSOE_ES).then(prepararEntsoeEs).catch(err => { console.warn('Energia guardada em Espanha (ENTSO-E):', err); });
+    const pRee = texto(URL_REE).then(prepararRee).catch(err => { console.warn('Enchimento em Espanha (Red Eléctrica):', err); });
     // Sem as centrais, a página funciona na mesma, só sem a potência
     const pCentrais = texto(URL_CENTRAIS).then(prepararCentrais).catch(err => { console.warn('Centrais hídricas:', err); });
     Promise.all([texto(URL_LISTA), texto(URL_DIARIO), pCentrais])
@@ -1569,7 +1771,11 @@ document.addEventListener('DOMContentLoaded', function () {
             renderOutras();
             const v = params.get('vista');
             mudarVista(v === 'semana' || v === 'mes' ? v : 'dia', v === 'semana' ? params.get('data') : params.get('mes'));
-            return pEntsoe.then(() => { renderEnergia(); renderResumoEnergia(); });
+            return Promise.all([
+                pEntsoe.then(() => { renderEnergia(); renderResumoEnergia(); }),
+                // A frase de Espanha compara com Portugal na mesma semana: espera também pelos dados de Portugal
+                Promise.all([pEntsoe, pEntsoeEs, pRee]).then(() => { renderEspanha(); renderResumoEspanha(); })
+            ]);
         })
         .catch(err => {
             console.error('Albufeiras:', err);
