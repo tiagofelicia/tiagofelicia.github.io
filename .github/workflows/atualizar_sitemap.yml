@@ -20,16 +20,16 @@ permissions:
 
 jobs:
   regenerate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Precisa do histórico para ler datas dos commits
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -37,7 +37,7 @@ jobs:
         run: python scripts/regenerar_sitemap.py
 
       - name: Commit se houver alterações
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "BOT: Atualizar sitemap.xml (lastmod automático)"
           file_pattern: "sitemap.xml"
