@@ -29,6 +29,8 @@ USO
 
 Os artigos dos nomes («o Alqueva», «a Aguieira», «Montargil») estão em scripts/albufeiras_artigos.csv; uma
 albufeira nova sem linha lá fica sem artigo («albufeira de …») e o script avisa.
+As fotografias (Wikimedia Commons, cada uma com o autor e a licença) estão em scripts/albufeiras_fotos.csv e os
+ficheiros em images/albufeiras/<nome>.webp; uma albufeira sem linha fica sem fotografia.
 """
 import argparse
 import csv
@@ -55,6 +57,7 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(AQUI)
 DADOS = 'https://dados.tiagofelicia.pt/data/producao/'
 ARTIGOS_CSV = os.path.join(AQUI, 'albufeiras_artigos.csv')
+FOTOS_CSV = os.path.join(AQUI, 'albufeiras_fotos.csv')
 ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Sado', 'Guadiana', 'Arade', 'Ribeiras do Algarve']
 INICIO_IDX = '<!-- PAGINAS-ALBUFEIRAS: gerado por scripts/gerar_paginas_albufeiras.py, não editar à mão -->'
 FIM_IDX = '<!-- /PAGINAS-ALBUFEIRAS -->'
@@ -216,7 +219,7 @@ def card(rot, val, sub):
     return f'<div class="kpi-card"><div class="kpi-label">{rot}</div><div class="kpi-value">{val}</div><div class="kpi-sub">{sub}</div></div>'
 
 
-def pagina(a, todas, centrais, artigos, C, ULT, cab, base):
+def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
     nome, col = a['nome'], a['coluna']
     art = artigos.get(col, '')
     do_ = {'o': 'do ', 'a': 'da ', 'os': 'dos ', 'as': 'das '}.get(art, 'de ') + nome     # «do Alqueva», «de Montargil»
@@ -379,6 +382,44 @@ def pagina(a, todas, centrais, artigos, C, ULT, cab, base):
                                'contentUrl': 'https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv'}]}
     ld = lambda o: '<script type="application/ld+json">\n' + json.dumps(o, ensure_ascii=False, indent=2) + '\n    </script>'
 
+    # ---- a fotografia (Wikimedia Commons): o crédito pede o autor, a fonte e a licença, e que se diga que foi alterada
+    foto = fotos.get(col)
+    foto_html, ld_foto = '', None
+    if foto:
+        src = f'/images/albufeiras/{slug(col)}.webp'
+        quem = esc(foto['autor']) if foto['autor'] else f'carregada por {esc(foto["carregada_por"])}'
+        lic = foto['licenca']
+        url_lic = foto['url_licenca'] or foto['pagina_commons']
+        rot_lic = {'Public domain': 'domínio público', 'Attribution': 'licença de atribuição'}.get(lic, lic)
+        foto_html = (f'<figure class="foto-alb"><img src="{src}" width="{foto["largura"]}" height="{foto["altura"]}" '
+                     f'alt="Fotografia da barragem e da albufeira {esc(do_)}" loading="lazy" decoding="async" />'
+                     f'<figcaption>Fotografia: {quem} · <a href="{esc(foto["pagina_commons"])}" target="_blank" rel="noopener">Wikimedia Commons</a>'
+                     f' · <a href="{esc(url_lic)}" target="_blank" rel="noopener">{esc(rot_lic)}</a> · redimensionada. '
+                     f'Não mostra o nível de hoje.</figcaption></figure>')
+        ld_foto = {'@context': 'https://schema.org', '@type': 'ImageObject', 'contentUrl': SITE + src,
+                   'name': f'Barragem e albufeira {do_}', 'license': url_lic, 'acquireLicensePage': foto['pagina_commons'],
+                   'creditText': (foto['autor'] or foto['carregada_por']) + ', Wikimedia Commons',
+                   'creator': {'@type': 'Person', 'name': foto['autor'] or foto['carregada_por']}}
+
+    # ---- as limitações desta albufeira
+    limites = ['A percentagem conta o volume morto, a água abaixo das tomadas que não se pode usar.']
+    if semanal:
+        limites.append('O SNIRH só tem um valor por semana: a comparação «numa semana» e os gráficos são feitos com esses valores.')
+    if refmax:
+        limites.append('Sem capacidade publicada: os 100% são o maior volume registado na série.')
+    if hist and hist['de'] > ANO_COMP:
+        limites.append(f'A série só tem anos completos desde {hist["de"]}: a média, o mínimo e o máximo para o dia só contam esses anos.')
+    elif not hist:
+        limites.append(f'A série começa a {fmt_data(date.fromisoformat(a["inicio_serie"]))}: ainda não há anos completos que cheguem para a média, o mínimo e o máximo para o dia.')
+    if not semanal:
+        falta = sum(1 for i in range(max(0, iv - 364), iv + 1) if math.isnan(a['bruto'][i]))
+        if falta > 7:
+            limites.append(f'{falta} dias sem valor nos últimos 12 meses: no gráfico, um dia sem valor usa o último dos 31 dias anteriores.')
+    if not cs:
+        limites.append('Não há centrais com potência publicada (APREN; CNPGB) associadas a esta albufeira.')
+    limites.append('Os valores impossíveis do SNIRH (erros de leitura) são retirados antes das contas.')
+    limites_html = ''.join(f'<li>{esc(x)}</li>' for x in limites)
+
     # ---- série para o gráfico: um valor por dia desde o primeiro (null sem valor)
     i0 = next(i for i, x in enumerate(a['bruto']) if not math.isnan(x))
     serie = [None if math.isnan(x) else round(x, 2) for x in a['bruto'][i0:iv + 1]]
@@ -428,7 +469,7 @@ def pagina(a, todas, centrais, artigos, C, ULT, cab, base):
 
     {ld(ld_bc)}
     {ld(ld_ds)}
-    {ld(ld_faq)}
+    {ld(ld_faq)}{chr(10) + '    ' + ld(ld_foto) if ld_foto else ''}
 </head>
 <body>
 <a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
@@ -502,18 +543,27 @@ def pagina(a, todas, centrais, artigos, C, ULT, cab, base):
 
     {f"""<section class="grafico-box" id="bloco-mapa">
         <h2>📍 Onde fica</h2>
-        <div id="mapa-alb" role="region" aria-label="Mapa com a localização da barragem"></div>
-        <p class="nota-bloco">A barragem: {str(a['lat']).replace('.', ',')}, {str(a['lon']).replace('.', ',')} (SNIRH; CNPGB nas que lá não estão). Fundo: Natural Earth e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (licença ODbL).</p>
+        <div class="onde-fica{' com-foto' if foto_html else ''}">
+            <div>
+                <div id="mapa-alb" role="region" aria-label="Mapa com a localização da barragem"></div>
+                <p class="nota-bloco">A barragem: {str(a['lat']).replace('.', ',')}, {str(a['lon']).replace('.', ',')} (SNIRH; CNPGB nas que lá não estão). Fundo: Natural Earth e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (licença ODbL).</p>
+            </div>
+            {foto_html}
+        </div>
     </section>""" if a['lat'] else ''}
 
     <section class="grafico-box" id="bloco-ficha">
-        <h2>🧾 Ficha</h2>
+        <h2>🧾 Ficha e limitações</h2>
         <table class="tabela-alb tabela-ficha"><tbody>
             <tr><th scope="row" class="esq">Bacia</th><td class="esq">{esc(a['bacia'])}</td></tr>
             <tr><th scope="row" class="esq">Capacidade total</th><td class="esq">{fmt_hm3(a['cap']) + ' (boletim semanal de albufeiras da APA; inclui o volume morto)' if a['cap'] else 'sem capacidade publicada: os 100% são o máximo registado'}</td></tr>
             <tr><th scope="row" class="esq">Código SNIRH</th><td class="esq">{esc(a['codigo_snirh'])}</td></tr>
             <tr><th scope="row" class="esq">Série</th><td class="esq">{"semanal (à segunda-feira)" if semanal else "diária"}, desde {fmt_data(date.fromisoformat(a['inicio_serie']))}</td></tr>
+            <tr><th scope="row" class="esq">Fonte</th><td class="esq">SNIRH (Agência Portuguesa do Ambiente), dados de base: {"o volume de cada segunda-feira" if semanal else "o volume no fim de cada dia"}</td></tr>
+            <tr><th scope="row" class="esq">Atualização</th><td class="esq">{"Todos os dias; o SNIRH publica um valor por semana" if semanal else "Todos os dias; o SNIRH publica o valor de cada dia na manhã seguinte"}</td></tr>
+            <tr><th scope="row" class="esq">Limitações</th><td class="esq"><ul class="lista-limites">{limites_html}</ul></td></tr>
         </tbody></table>
+        <p class="nota-bloco"><a href="/albufeiras#bloco-fontes">As fontes e as limitações de todos os números</a>{' · a fotografia tem a sua própria licença, indicada por baixo dela' if foto_html else ''}.</p>
     </section>
 
     <div class="cta-simulador">
@@ -557,6 +607,13 @@ def escrever(caminho, conteudo):
     return True
 
 
+def ler_fotos():
+    if not os.path.exists(FOTOS_CSV):
+        return {}
+    with open(FOTOS_CSV, encoding='utf-8-sig', newline='') as f:
+        return {r['coluna']: r for r in csv.DictReader(f)}
+
+
 def ler_artigos():
     with open(ARTIGOS_CSV, encoding='utf-8-sig', newline='') as f:
         return {r['coluna']: r['artigo'].strip() for r in csv.DictReader(f)}
@@ -582,6 +639,7 @@ def main():
     cab['versao'] = hashlib.sha1(b''.join(open(os.path.join(pasta, f), 'rb').read() if os.path.exists(os.path.join(pasta, f)) else b''
                                           for f in (CSS_PAGINA, JS_PAGINA))).hexdigest()[:8]
     artigos = ler_artigos()
+    fotos = ler_fotos()
     so = set(filter(None, args.so.split(',')))
     feitas, mudadas = [], 0
     for a in todas:
@@ -589,7 +647,7 @@ def main():
             continue
         if a['coluna'] not in artigos:
             print(f'  aviso: {a["coluna"]} sem linha em {os.path.basename(ARTIGOS_CSV)} (fica «albufeira de {a["nome"]}»)')
-        h = pagina(a, todas, centrais, artigos, C, ULT, cab, args.base)
+        h = pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, args.base)
         if h is None:
             print('  sem nenhum valor:', a['coluna'])
             continue
