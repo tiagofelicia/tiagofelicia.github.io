@@ -304,6 +304,16 @@
         .lista-paginas { font-size: 0.88em; line-height: 1.75; margin: 4px 0; color: #444; }
         .tabela-alb .link-pag { margin-left: 6px; text-decoration: none; font-size: 0.9em; }
         .btn-pag-alb { display: inline-block; margin: 6px 0 0 8px; font-size: 0.95em; }
+        .tabela-fontes th, .tabela-fontes td { white-space: normal; vertical-align: top; }
+        .tabela-fontes th[scope="row"] { min-width: 150px; }
+        .lista-fora { margin: 6px 0 0; padding-left: 20px; font-size: 0.9em; color: #444; line-height: 1.6; }
+        /* No telemóvel, cada linha da tabela passa a um bloco, com o nome de cada coluna */
+        @media (max-width: 700px) {
+            .tabela-fontes thead { display: none; }
+            .tabela-fontes tr { display: block; border: 1px solid #dee2e6; border-radius: 6px; margin-bottom: 10px; }
+            .tabela-fontes th[scope="row"], .tabela-fontes td { display: block; border: none; min-width: 0; }
+            .tabela-fontes td::before { content: attr(data-rot); display: block; font-size: 0.78em; font-weight: 600; color: #5c636a; text-transform: uppercase; letter-spacing: 0.03em; }
+        }
 
         .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
         .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
@@ -402,7 +412,9 @@
         [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
         [data-theme="dark"] .nota-bloco, [data-theme="dark"] #kpi-es-sub { color: #94a3b8; }
         [data-theme="dark"] .grafico-box h3.h3-bloco { color: #e2e8f0; }
-        [data-theme="dark"] .lista-paginas { color: #cbd5e1; }
+        [data-theme="dark"] .lista-paginas, [data-theme="dark"] .lista-fora { color: #cbd5e1; }
+        [data-theme="dark"] .tabela-fontes tr { border-color: #475569; }
+        [data-theme="dark"] .tabela-fontes td::before { color: #94a3b8; }
         [data-theme="dark"] .resumo-bloco, [data-theme="dark"] #resumo-texto, [data-theme="dark"] #resumo-energia, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
         [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
         [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
@@ -483,6 +495,7 @@
         <a href="#bloco-energia" class="mini-nav-chip">⚡ Energia guardada</a>
         <a href="#bloco-espanha" class="mini-nav-chip">🇪🇸 Espanha</a>
         <a href="#bloco-paginas" class="mini-nav-chip">📄 Cada albufeira</a>
+        <a href="#bloco-fontes" class="mini-nav-chip">📚 Fontes</a>
         <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
     </nav>
 
@@ -610,6 +623,31 @@
         <p class="lista-paginas"><strong>Arade:</strong> <a href="/albufeira/arade">Arade</a></p>
         <p class="lista-paginas"><strong>Ribeiras do Algarve:</strong> <a href="/albufeira/bravura">Bravura</a></p>
         <!-- /PAGINAS-ALBUFEIRAS -->
+    </section>
+
+    <section class="grafico-box" id="bloco-fontes">
+        <h2>📚 Fontes, atualização e limitações</h2>
+        <p class="grafico-intro">De onde vem cada número desta página e das páginas de cada albufeira, quando se atualiza e o que não diz.</p>
+        <div class="tabela-box"><table class="tabela-alb tabela-fontes">
+            <thead><tr><th scope="col" class="esq">O quê</th><th scope="col" class="esq">Fonte</th><th scope="col" class="esq">Atualização</th><th scope="col" class="esq">Limitações</th></tr></thead>
+            <tbody>
+                <tr><th scope="row" class="esq">Volume e percentagem de cada albufeira</th><td class="esq" data-rot="Fonte">SNIRH (Agência Portuguesa do Ambiente), dados de base: o volume no fim de cada dia</td><td class="esq" data-rot="Atualização">Duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte</td><td class="esq" data-rot="Limitações">As albufeiras de rega só têm um valor por semana. As mais recentes (Foz Tua, as três do Tâmega) só têm alguns anos de série. Os valores impossíveis (zeros, algarismos a mais) são retirados: cerca de 0,2%.</td></tr>
+                <tr><th scope="row" class="esq">Capacidade (os 100%)</th><td class="esq" data-rot="Fonte">Boletim semanal de albufeiras da APA; nas que lá não estão, CNPGB</td><td class="esq" data-rot="Atualização">Fixa</td><td class="esq" data-rot="Limitações">Inclui o volume morto: 100% não é toda água que se pode usar. O Alto Ceira não tem capacidade publicada: os 100% são o máximo registado.</td></tr>
+                <tr><th scope="row" class="esq">Médias, mínimos e máximos</th><td class="esq" data-rot="Fonte">Contas desta página, a partir dos volumes do SNIRH</td><td class="esq" data-rot="Atualização">Todos os dias</td><td class="esq" data-rot="Limitações">Anos completos desde 2011; as albufeiras mais recentes só contam nos anos em que já existiam. Um dia sem valor usa o último dos 31 dias anteriores (no resumo e na tabela, só até 7 dias).</td></tr>
+                <tr><th scope="row" class="esq">Centrais (potência e produção)</th><td class="esq" data-rot="Fonte">APREN, Anuário 2026; Serra Serrada, Póvoa e Caia, CNPGB</td><td class="esq" data-rot="Atualização">Uma vez por ano, com o anuário</td><td class="esq" data-rot="Limitações">Produção de 2024 e 2025. Algumas centrais de rega e de derivação não têm potência publicada.</td></tr>
+                <tr><th scope="row" class="esq">Energia guardada, Portugal e Espanha</th><td class="esq" data-rot="Fonte">Plataforma de transparência da ENTSO-E</td><td class="esq" data-rot="Atualização">Três vezes por semana; cada semana sai com alguns dias de atraso</td><td class="esq" data-rot="Limitações">Só o total de cada país, não de cada albufeira. A ENTSO-E pode rever semanas já publicadas. A mesma água vale mais energia numa barragem alta.</td></tr>
+                <tr><th scope="row" class="esq">Enchimento das albufeiras de Espanha</th><td class="esq" data-rot="Fonte">Red Eléctrica (REData)</td><td class="esq" data-rot="Atualização">Uma vez por mês, semanas depois de o mês acabar</td><td class="esq" data-rot="Limitações">Só Espanha peninsular e só o total, as anuais e as hiperanuais. Não se soma a Portugal.</td></tr>
+                <tr><th scope="row" class="esq">Mapa e localização</th><td class="esq" data-rot="Fonte">SNIRH e CNPGB (as barragens); Natural Earth e OpenStreetMap (o fundo)</td><td class="esq" data-rot="Atualização">Fixo</td><td class="esq" data-rot="Limitações">O espelho de água desenhado é o da albufeira cheia, não o do dia.</td></tr>
+                <tr><th scope="row" class="esq">Fotografias das páginas de cada albufeira</th><td class="esq" data-rot="Fonte">Wikimedia Commons: o autor e a licença estão por baixo de cada uma</td><td class="esq" data-rot="Atualização">Fixas</td><td class="esq" data-rot="Limitações">Não têm a licença dos dados (CC BY 4.0): cada uma tem a sua. Podem ser de há anos e não mostram o nível de hoje. Cinco albufeiras ainda não têm fotografia.</td></tr>
+            </tbody>
+        </table></div>
+        <h3 class="h3-bloco">O que fica de fora</h3>
+        <ul class="lista-fora">
+            <li>As albufeiras só de rega ou de abastecimento, que não têm uso para energia.</li>
+            <li>A chuva e a seca: os dados abertos do IPMA não estão atualizados.</li>
+            <li>Os caudais que entram e saem de cada albufeira (afluente, turbinado, descarregado), que o SNIRH publica para algumas.</li>
+            <li>As albufeiras de Espanha uma a uma: só há o total do país.</li>
+        </ul>
     </section>
 
     <div class="cta-simulador">
