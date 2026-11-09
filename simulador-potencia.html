@@ -982,7 +982,8 @@ function lerFolhaERedes(rows) {
     const regs = [];
     for (let i = cab + 1; i < rows.length; i++) {
         const r = rows[i]; if (!r || !r.length) continue;
-        const kw = parseFloat(String(r[iC]).replace(',', '.'));
+        // A E-Redes passou a escrever os quartos de hora sem consumo como «-» (antes 0): contam como 0, não são lacunas
+        const vc = String(r[iC]).trim(), kw = vc === '-' ? 0 : parseFloat(vc.replace(',', '.'));
         if (isNaN(kw)) continue;
         let a, m, d, hh = 0, mi = 0;
         const vd = r[iD];
