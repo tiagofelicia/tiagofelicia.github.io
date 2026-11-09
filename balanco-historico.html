@@ -128,7 +128,8 @@
         {"@type": "PropertyValue", "name": "Preço médio ponderado de importação (OMIE Espanha)", "unitText": "EUR/MWh"},
         {"@type": "PropertyValue", "name": "Preço médio ponderado de exportação (OMIE Portugal)", "unitText": "EUR/MWh"},
         {"@type": "PropertyValue", "name": "Custo e receita do intercâmbio com Espanha", "unitText": "EUR"},
-        {"@type": "PropertyValue", "name": "Preço do consumo ponderado pela procura (VWAP)", "unitText": "EUR/MWh"}
+        {"@type": "PropertyValue", "name": "Preço do consumo ponderado pela procura (VWAP)", "unitText": "EUR/MWh"},
+        {"@type": "PropertyValue", "name": "Intensidade carbónica da produção nacional (ciclo de vida)", "unitText": "gCO2eq/kWh"}
       ],
       "distribution": [
         {
@@ -154,6 +155,12 @@
           "encodingFormat": "text/csv",
           "name": "Preços OMIE (15 min) — ano atual",
           "contentUrl": "https://dados.tiagofelicia.pt/data/omie/omie_dados_atuais.csv"
+        },
+        {
+          "@type": "DataDownload",
+          "encodingFormat": "text/csv",
+          "name": "Intensidade carbónica da produção nacional (diária, desde 2010)",
+          "contentUrl": "https://dados.tiagofelicia.pt/data/emissoes/intensidade_diaria.csv"
         }
       ]
     }
@@ -511,6 +518,7 @@
             <a href="#saldo-section" class="mini-nav-chip">🔄 Saldo</a>
             <a href="#dependencia-section" class="mini-nav-chip">📥 Dependência</a>
             <a href="#residual-section" class="mini-nav-chip">📉 Procura residual</a>
+            <a href="#intensidade-section" class="mini-nav-chip">🌍 CO₂</a>
             <a href="#diasemana-section" class="mini-nav-chip" id="chip-diasemana" hidden>📊 Semana</a>
             <a href="#balanco-section" class="mini-nav-chip">⚖️ Balanço</a>
             <a href="#donut-section" class="mini-nav-chip">🥧 Mix</a>
@@ -577,6 +585,14 @@
         <p class="residual-resumo" id="residual-resumo"></p>
         <div id="grafico-residual" class="grafico-container"></div>
         <p class="export-credit" id="credito-residual"></p>
+    </div>
+
+    <div class="grafico-wrapper" id="intensidade-section">
+        <h2>Intensidade carbónica da produção</h2>
+        <p class="secao-sub">Gramas de CO₂ equivalente por kWh produzido em Portugal, em ciclo de vida: contam a construção, o combustível, a operação e o desmantelamento das centrais (fatores medianos do IPCC, 5.º relatório). Só a produção nacional: a eletricidade importada não entra. Por isso não se compara com os inventários de emissões diretas. A média de um período é pesada pela produção. <span id="intensidade-ate"></span></p>
+        <div id="intensidade-kpis" class="dep-kpis"></div>
+        <div id="grafico-intensidade" class="grafico-container"></div>
+        <p class="export-credit" id="credito-intensidade"></p>
     </div>
 
     <div class="grafico-wrapper" id="diasemana-section" style="display: none;">
@@ -908,7 +924,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const url = '<a href="https://www.tiagofelicia.pt/balanco-historico" rel="noopener">tiagofelicia.pt/balanco-historico</a>';
         const linha = ['🔗 ' + url, _nowDateBR(), ctx].join(' · ');
         ['credito-evolucao', 'credito-renovaveis', 'credito-heatmap', 'credito-saldo', 'credito-dependencia',
-         'credito-residual', 'credito-diasemana', 'credito-balanco', 'credito-mix', 'credito-topdias'].forEach(function (id) {
+         'credito-residual', 'credito-intensidade', 'credito-diasemana', 'credito-balanco', 'credito-mix', 'credito-topdias'].forEach(function (id) {
             const el = document.getElementById(id);
             if (el) el.innerHTML = linha;
         });
@@ -2395,6 +2411,131 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- Intensidade carbónica da produção nacional (ciclo de vida) ---
+    // Do intensidade_diaria.csv do dados-energia: por dia desde 2010, a intensidade (g CO₂eq/kWh), as emissões (kt) e a
+    // produção (GWh), com os fatores medianos de ciclo de vida do IPCC (AR5) para cada fonte nacional. A média de um período
+    // é pesada pela produção (Σ emissões ÷ Σ produção). Pedido uma vez (~165 KB comprimidos), quando a secção se desenha.
+    let _intensidadeDiaria = null;
+    function carregarIntensidadeDiaria() {
+        if (!_intensidadeDiaria) {
+            _intensidadeDiaria = fetchDados('emissoes/intensidade_diaria.csv')
+                .then(r => r.ok ? r.text() : Promise.reject(new Error('intensidade_diaria.csv: ' + r.status)))
+                .then(t => {
+                    const m = new Map();
+                    parseCSV(t).forEach(d => {
+                        const v = parseFloat(d.intensidade_gco2_kwh), e = parseFloat(d.emissoes_kt), p = parseFloat(d.producao_gwh);
+                        if (d.data_iso && !isNaN(v) && !isNaN(e) && p > 0) {
+                            m.set(d.data_iso, { v, e, p, min: parseFloat(d.intensidade_min), max: parseFloat(d.intensidade_max) });
+                        }
+                    });
+                    if (!m.size) throw new Error('intensidade_diaria.csv sem dias');
+                    return m;
+                })
+                .catch(e => { console.warn('Intensidade carbónica indisponível:', e); _intensidadeDiaria = null; return null; });
+        }
+        return _intensidadeDiaria;
+    }
+    // O mesmo dia um ano antes (o 29/02 passa a 28/02)
+    function _isoAnoAnterior(iso) {
+        const md = iso.slice(5) === '02-29' ? '02-28' : iso.slice(5);
+        return (parseInt(iso, 10) - 1) + '-' + md;
+    }
+    function intensidadePeriodo(mapa, dataInicio, dataFim) {
+        const r = { e: 0, p: 0, dias: [], ultimo: null };
+        const cur = new Date(dataInicio + 'T00:00:00');
+        const fim = new Date(dataFim + 'T00:00:00');
+        while (cur <= fim) {
+            const iso = fmtISO(cur);
+            const d = mapa.get(iso);
+            if (d) { r.e += d.e; r.p += d.p; r.dias.push(Object.assign({ iso, ts: dataInputParaTimestampUTC(iso) }, d)); r.ultimo = iso; }
+            cur.setDate(cur.getDate() + 1);
+        }
+        return r;
+    }
+    function renderIntensidade(dataInicio, dataFim, seq) {
+        const sec = document.getElementById('intensidade-section');
+        carregarIntensidadeDiaria().then(mapa => {
+            if (seq !== _aplicarSeq) return;   // entretanto escolheu-se outro período
+            const r = mapa ? intensidadePeriodo(mapa, dataInicio, dataFim) : null;
+            if (!r || !r.dias.length) { sec.style.display = 'none'; return; }
+            sec.style.display = '';
+            const f0 = (v) => Math.round(v).toLocaleString('pt-PT');
+            const fmtD = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('pt-PT');
+            const media = r.e / r.p * 1000;   // kt ÷ GWh × 1000 = g/kWh
+            const limpo = r.dias.reduce((m, d) => (d.v < m.v ? d : m), r.dias[0]);
+            const intenso = r.dias.reduce((m, d) => (d.v > m.v ? d : m), r.dias[0]);
+            const emissoes = r.e >= 1000 ? formatarPT(r.e / 1000, 2) + ' Mt' : formatarPT(r.e, r.e >= 100 ? 0 : 1) + ' kt';
+            const card = (label, valor, sub) => `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value">${valor}</div><div class="kpi-sub">${sub}</div></div>`;
+            let html = card('🌍 Intensidade média', f0(media) + ' g/kWh', `pesada pela produção · ${r.dias.length.toLocaleString('pt-PT')} dias`)
+                + card('🏭 Emissões estimadas', emissoes + ' CO₂eq', 'ciclo de vida da produção nacional')
+                + card('🟢 Dia mais limpo', f0(limpo.v) + ' g/kWh', fmtD(limpo.iso))
+                + card('🔴 Dia mais intenso', f0(intenso.v) + ' g/kWh', fmtD(intenso.iso));
+            // Os mesmos dias um ano antes (os que têm valor neste período; com pelo menos 90% deles)
+            const ant = { e: 0, p: 0, n: 0 }, vistos = new Set();
+            r.dias.forEach(d => {
+                const iso = _isoAnoAnterior(d.iso), x = mapa.get(iso);
+                if (x && !vistos.has(iso)) { vistos.add(iso); ant.e += x.e; ant.p += x.p; ant.n++; }
+            });
+            if (ant.p > 0 && ant.n >= 0.9 * r.dias.length) {
+                const mAnt = ant.e / ant.p * 1000;
+                const dif = media - mAnt;
+                html += card('↔️ Face ao ano anterior', (dif > 0 ? '+' : dif < 0 ? '−' : '') + f0(Math.abs(dif)) + ' g/kWh',
+                             `${f0(mAnt)} g/kWh de ${fmtD(_isoAnoAnterior(r.dias[0].iso))} a ${fmtD(_isoAnoAnterior(r.ultimo))}`);
+            }
+            document.getElementById('intensidade-kpis').innerHTML = html;
+            const ate = document.getElementById('intensidade-ate');
+            ate.textContent = r.ultimo < dataFim ? `Dados por dia até ${fmtD(r.ultimo)}.` : '';
+
+            // Gráfico: por dia (até 92 dias) ou por mês, pesado pela produção
+            const t = temaCores();
+            const cor = darkActivo() ? '#2dd4bf' : '#0f766e';
+            const porMes = r.dias.length > 92;
+            let dados;
+            if (porMes) {
+                const meses = new Map();
+                r.dias.forEach(d => {
+                    const k = d.iso.slice(0, 7);
+                    const m = meses.get(k) || { e: 0, p: 0, n: 0 };
+                    m.e += d.e; m.p += d.p; m.n++;
+                    meses.set(k, m);
+                });
+                dados = [...meses].map(([k, m]) => ({ x: Date.UTC(parseInt(k, 10), parseInt(k.slice(5, 7), 10) - 1, 1),
+                                                      y: Math.round(m.e / m.p * 10000) / 10, e: m.e, p: m.p, n: m.n }));
+            } else {
+                dados = r.dias.map(d => ({ x: d.ts, y: d.v, e: d.e, p: d.p, min: d.min, max: d.max, iso: d.iso }));
+            }
+            Highcharts.chart('grafico-intensidade', {
+                chart: { type: 'column', backgroundColor: 'transparent', height: 300, zooming: { type: 'x' } },
+                title: { text: null },
+                subtitle: { text: _periodoTxt, style: { color: t.sub, fontSize: '0.8em' } },
+                credits: { enabled: false },
+                xAxis: { type: 'datetime', labels: { style: { color: t.sub } }, lineColor: t.grid, tickColor: t.grid },
+                yAxis: { title: { text: 'g CO₂eq/kWh', style: { color: t.sub } }, labels: { style: { color: t.sub } }, gridLineColor: t.grid, min: 0 },
+                tooltip: {
+                    formatter: function () {
+                        const p = this.point || this;
+                        const quando = porMes ? Highcharts.dateFormat('%B %Y', p.x) : Highcharts.dateFormat('%A, %d %B %Y', p.x);
+                        let s = '<b>' + quando + '</b><br/>Intensidade carbónica: <b>' + formatarPT(p.y, 1) + ' g/kWh</b>';
+                        if (!porMes && isFinite(p.min) && isFinite(p.max)) s += '<br/>Num quarto de hora: de ' + formatarPT(p.min, 0) + ' a ' + formatarPT(p.max, 0) + ' g/kWh';
+                        s += '<br/>Emissões: ' + formatarPT(p.e, 1) + ' kt CO₂eq · produção: ' + formatarPT(p.p, 1) + ' GWh';
+                        if (porMes) s += '<br/>' + p.n + ' dias';
+                        return s;
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        borderWidth: 0, color: cor, turboThreshold: 0,
+                        cursor: porMes ? undefined : 'pointer',
+                        point: { events: { click: function () { if (this.iso) window.location.href = 'balanco-omie?data=' + this.iso; } } }
+                    }
+                },
+                legend: { enabled: false },
+                exporting: { enabled: true },
+                series: [{ name: 'Intensidade carbónica da produção', data: dados }]
+            });
+        });
+    }
+
     // --- Preço OMIE PT vs procura residual (consumo − eólica − solar) ---
     // Com mais de um ano, um ponto por hora seriam dezenas de milhares: passa a um ponto por dia (médias das horas)
     const MAX_DIAS_RESIDUAL_HORA = 366;
@@ -3447,6 +3588,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (seq !== _aplicarSeq) return;
                 renderDependencia(dataInicio, dataFim);
                 renderResidual(dataInicio, dataFim);
+                renderIntensidade(dataInicio, dataFim, seq);
             }, 0));
             renderDiaSemana(series);
             // Mix: contexto + render (Produção/Consumo respeitando _mixView)

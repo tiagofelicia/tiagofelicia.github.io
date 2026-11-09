@@ -196,6 +196,10 @@
         /* ===== Cada fonte face ao seu recorde diário ===== */
         #recordes-fontes-section { width: 95%; max-width: 900px; margin: 10px auto 30px auto; }
         #recordes-fontes-section h2 { text-align: center; font-size: 1.15em; color: #2c3e50; margin-bottom: 10px; }
+        #intensidade-section { width: 95%; max-width: 1200px; margin: 10px auto 30px auto; }
+        #intensidade-section h2 { text-align: center; font-size: 1.15em; color: #2c3e50; margin-bottom: 10px; }
+        #intensidade-kpis { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); max-width: 1000px; }
+        [data-theme="dark"] #intensidade-section h2 { color: #e2e8f0; }
         .rec-fonte { display: grid; grid-template-columns: 200px 1fr 220px; gap: 4px 14px; align-items: center; padding: 7px 0; border-bottom: 1px solid #eef0f2; }
         .rec-fonte-nome { font-size: 0.9em; font-weight: 600; color: #2c3e50; }
         .rec-fonte-barra { height: 14px; background: #e9ecef; border-radius: 7px; overflow: hidden; }
@@ -417,6 +421,14 @@
         <div class="section-sub" id="recordes-fontes-sub"></div>
         <div id="recordes-fontes"></div>
         <p class="rec-fontes-nota">Barra cheia: o maior valor diário registado desde 01/01/2010 (dados da REN). Clique na data de um recorde para abrir esse dia.</p>
+    </div>
+
+    <div id="intensidade-section" style="display: none;">
+        <h2>🌍 Intensidade carbónica da produção</h2>
+        <div class="section-sub" id="intensidade-sub"></div>
+        <div class="previsao-kpis" id="intensidade-kpis"></div>
+        <div id="grafico-intensidade"></div>
+        <p class="rec-fontes-nota">Gramas de CO₂ equivalente por kWh produzido em Portugal, em ciclo de vida: contam a construção, o combustível, a operação e o desmantelamento das centrais (fatores medianos do IPCC, 5.º relatório). Só a produção nacional: a eletricidade importada não entra. Por isso não se compara com os inventários de emissões diretas. Por dia desde 2010: <a href="https://dados.tiagofelicia.pt/data/emissoes/intensidade_diaria.csv">intensidade_diaria.csv</a>.</p>
     </div>
 
     <p class="ver-albufeiras">💧 <strong>E a água nas barragens?</strong> A página <a href="albufeiras">Albufeiras</a> mostra, por dia, semana ou mês, quanta água há em cada albufeira com uso para energia, comparada com o ano anterior e com a média, e a potência das centrais.</p>
@@ -1084,6 +1096,103 @@ document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
+    // --- Intensidade carbónica da produção nacional (ciclo de vida) ---
+    // Em cada quarto de hora, Σ(MW × fator) ÷ Σ(MW) das fontes nacionais, com os fatores de data/emissoes/fatores_emissao.csv
+    // (IPCC AR5, medianas de ciclo de vida); no dia, pesada pela produção. É a conta do dados-energia, que publica o mesmo por
+    // dia desde 2010 (intensidade_diaria.csv, para o mesmo dia nos outros anos) e a média de cada hora em cada ano
+    // (intensidade_perfil_horario.csv). Pedidos uma vez (~170 KB comprimidos), depois de a página estar desenhada.
+    let _emissoes = null;
+    function carregarEmissoes() {
+        if (!_emissoes) {
+            const texto = (caminho) => fetchDados(caminho).then(r => r.ok ? r.text() : Promise.reject(new Error(caminho + ': ' + r.status)));
+            _emissoes = Promise.all([texto('emissoes/fatores_emissao.csv'), texto('emissoes/intensidade_diaria.csv'), texto('emissoes/intensidade_perfil_horario.csv')])
+                .then(([tFat, tDia, tPerfil]) => {
+                    const fatores = {};
+                    parseCSV(tFat).forEach(f => { const v = parseFloat(f.gco2eq_kwh); if (f.fonte_csv && !isNaN(v)) fatores[f.fonte_csv] = v; });
+                    if (!Object.keys(fatores).length) throw new Error('fatores_emissao.csv sem fatores');
+                    const dias = [];
+                    parseCSV(tDia).forEach(d => { const v = parseFloat(d.intensidade_gco2_kwh); if (d.data_iso && !isNaN(v)) dias.push({ iso: d.data_iso, v }); });
+                    const perfil = {};
+                    parseCSV(tPerfil).forEach(p => { const v = parseFloat(p.intensidade_gco2_kwh); if (p.ano && !isNaN(v)) (perfil[p.ano] = perfil[p.ano] || {})[parseInt(p.hora, 10)] = v; });
+                    return { fatores, dias, perfil };
+                })
+                .catch(e => { console.warn('Intensidade carbónica indisponível:', e); _emissoes = null; return null; });
+        }
+        return _emissoes;
+    }
+
+    function renderIntensidade(dados, firstNullIndex, dataTitulo, isProvisorio, horaLimite) {
+        const sec = document.getElementById('intensidade-section');
+        if (!sec) return;
+        carregarEmissoes().then(em => {
+            if (_diaAnalise !== dataTitulo) return;   // mudou-se de dia entretanto
+            if (!em) { sec.style.display = 'none'; return; }
+            const iso = formatarDataParaInput(dataTitulo);
+            const colunas = Object.keys(em.fatores);
+            const pontos = [];
+            let emis = 0, prod = 0, min = null, max = null;
+            for (let i = 0; i < dados.length; i++) {
+                const d = dados[i];
+                const hora = _horaInicioDoIntervalo(d['intervalo']);
+                let p = 0, e = 0;
+                if (i < firstNullIndex) colunas.forEach(c => { const mw = Math.max(0, parseFloat(d[c]) || 0); p += mw; e += mw * em.fatores[c]; });
+                if (!(p > 0)) { pontos.push({ hora, v: null }); continue; }
+                const v = e / p;
+                emis += e; prod += p;
+                pontos.push({ hora, v });
+                if (!min || v < min.v) min = { v, hora };
+                if (!max || v > max.v) max = { v, hora };
+            }
+            if (!(prod > 0)) { sec.style.display = 'none'; return; }
+            const media = emis / prod;
+            const f0 = (v) => Math.round(v).toLocaleString('pt-PT');
+            const card = (rotulo, valor, sub) => `<div class="prod-kpi-card"><div class="prod-kpi-label">${rotulo}</div>`
+                + `<div class="prod-kpi-value">${valor}</div><div class="prod-kpi-sub">${sub}</div></div>`;
+            let html = card('🌍 Média do dia' + (isProvisorio ? ' (prov.)' : ''), `${f0(media)} g/kWh`,
+                            (isProvisorio ? `até ${horaLimite || '--:--'} · ` : '') + 'pesada pela produção')
+                + card('🟢 Mais baixa', `${f0(min.v)} g/kWh`, `às ${min.hora}`)
+                + card('🔴 Mais alta', `${f0(max.v)} g/kWh`, `às ${max.hora}`);
+            // O mesmo dia do calendário nos outros anos (só com o dia completo e pelo menos 5 anos)
+            if (!isProvisorio && iso) {
+                const outros = em.dias.filter(x => x.iso.slice(5) === iso.slice(5) && x.iso !== iso);
+                if (outros.length >= 4) {
+                    const pos = 1 + outros.filter(x => x.v < media).length;
+                    const melhor = outros.reduce((m, x) => (x.v < m.v ? x : m), outros[0]);
+                    const anoMin = Math.min(parseInt(iso, 10), ...outros.map(x => parseInt(x.iso, 10)));
+                    const diaMes = new Date(iso + 'T00:00:00').toLocaleDateString('pt-PT', { day: 'numeric', month: 'long' });
+                    html += card(`📅 Face aos ${diaMes} desde ${anoMin}`, pos === 1 ? 'a mais baixa' : `a ${pos}.ª mais baixa`,
+                                 `de ${outros.length + 1} anos` + (pos === 1 ? '' : ` · a mais baixa: ${f0(melhor.v)} g/kWh em ${parseInt(melhor.iso, 10)}`));
+                }
+            }
+            document.getElementById('intensidade-kpis').innerHTML = html;
+            document.getElementById('intensidade-sub').textContent = dataTitulo
+                + (isProvisorio ? ` · provisório (até ${horaLimite || '--:--'})` : '') + ' · produção nacional, em ciclo de vida';
+
+            const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+            const txtC = dk ? '#e2e8f0' : '#333', grade = dk ? '#334155' : '#e6e6e6';
+            const cor = dk ? '#2dd4bf' : '#0f766e', corPerfil = dk ? '#94a3b8' : '#64748b';
+            const ano = iso ? iso.slice(0, 4) : null;
+            const perfil = ano ? em.perfil[ano] : null;
+            const series = [{ name: 'Intensidade carbónica', data: pontos.map(x => x.v === null ? null : Math.round(x.v * 10) / 10), color: cor }];
+            // A média de cada hora no ano do dia (no ano em curso, até ao último dia completo): as horas do sol saem mais limpas
+            if (perfil) series.push({ name: `Média de ${ano} a cada hora`, color: corPerfil, dashStyle: 'ShortDash', lineWidth: 1.5,
+                                      data: pontos.map(x => { const h = perfil[parseInt(x.hora, 10)]; return h === undefined ? null : h; }) });
+            Highcharts.chart('grafico-intensidade', {
+                chart: { type: 'line', height: 320, backgroundColor: 'transparent', style: { color: txtC } },
+                title: { text: 'Ao longo do dia, a cada quarto de hora', style: { color: txtC, fontSize: '0.95em', fontWeight: '600' } },
+                credits: { enabled: false },
+                xAxis: { categories: pontos.map(x => x.hora), tickInterval: 8, labels: { style: { color: txtC } }, lineColor: grade, tickColor: grade },
+                yAxis: { title: { text: 'g CO₂eq/kWh', style: { color: txtC } }, labels: { style: { color: txtC } }, gridLineColor: grade, min: 0 },
+                tooltip: { shared: true, valueSuffix: ' g/kWh', valueDecimals: 0 },
+                plotOptions: { line: { marker: { enabled: false }, lineWidth: 2 } },
+                legend: { itemStyle: { color: txtC } },
+                exporting: { enabled: true, filename: 'intensidade-carbonica-' + iso },
+                series
+            });
+            sec.style.display = 'block';
+        });
+    }
+
     function calcularAnaliseProducao(dados, firstNullIndex) {
         const totais = {};
         _FONTES_DONUT.forEach(f => totais[f.nome] = 0);
@@ -1747,6 +1856,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // O mesmo dia nos outros anos e os recordes por fonte precisam dos agregados diários, pedidos à parte
         _diaAnalise = dataTitulo;
         renderPrevisaoReal(dataTitulo, isProvisorio, horaLimite);
+        renderIntensidade(dadosConjugados, firstNullIndex, dataTitulo, isProvisorio, horaLimite);
         carregarAgregadosDiarios().then(linhas => {
             if (_diaAnalise !== dataTitulo) return;   // mudou-se de dia entretanto
             renderHistoriaDia(a, dataTitulo, isProvisorio, linhas);

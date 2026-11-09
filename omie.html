@@ -224,37 +224,37 @@
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE por ano desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN)",
+          "name": "Médias OMIE por ano desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN, meio-dia vs fim da tarde)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_anual.csv"
         },
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE por mês desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN)",
+          "name": "Médias OMIE por mês desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN, meio-dia vs fim da tarde)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_mensal.csv"
         },
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE por dia desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN)",
+          "name": "Médias OMIE por dia desde 2010, dia português (PT, ES nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, períodos BTN, meio-dia vs fim da tarde)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_diario.csv"
         },
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE de Espanha por ano desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas)",
+          "name": "Médias OMIE de Espanha por ano desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, meio-dia vs fim da tarde)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_es_anual.csv"
         },
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE de Espanha por mês desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas)",
+          "name": "Médias OMIE de Espanha por mês desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, meio-dia vs fim da tarde)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_es_mensal.csv"
         },
         {
           "@type": "DataDownload",
           "encodingFormat": "text/csv",
-          "name": "Médias OMIE de Espanha por dia desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas)",
+          "name": "Médias OMIE de Espanha por dia desde 2010, dia espanhol (ES, PT nas mesmas horas, mín./máx. com data e hora, desvio, horas negativas, meio-dia vs fim da tarde)",
           "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/omie_es_diario.csv"
         }
       ]
@@ -653,6 +653,7 @@
         .longo-prazo-ciclos-cab[hidden] { display: none; }
         #longo-prazo-ciclos-insight { margin: 0; font-size: 0.88em; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; text-align: center; max-width: 900px; }
         #longo-prazo-ciclos-insight .lp-bloco { white-space: nowrap; }
+        #longo-prazo-rampa-insight { margin: 0 auto 12px auto; font-size: 0.88em; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; text-align: center; max-width: 900px; }
         .longo-prazo-ressalva { display: block; margin-top: 4px; font-size: 0.92em; color: #555; }
         .longo-prazo-tabela-titulo { text-align: center; font-size: 1em; color: #2c3e50; margin: 0 0 10px 0; }
         .longo-prazo-tabela-titulo small { font-weight: normal; color: #555; }
@@ -683,7 +684,7 @@
         [data-theme="dark"] #longo-prazo-section h2, [data-theme="dark"] .longo-prazo-tabela-titulo { color: #e2e8f0; }
         [data-theme="dark"] .longo-prazo-intro, [data-theme="dark"] #longo-prazo-estado, [data-theme="dark"] .longo-prazo-notas,
         [data-theme="dark"] .longo-prazo-tabela-titulo small, [data-theme="dark"] .longo-prazo-ressalva { color: #94a3b8; }
-        [data-theme="dark"] #longo-prazo-ciclos-insight { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] #longo-prazo-ciclos-insight, [data-theme="dark"] #longo-prazo-rampa-insight { background: #1e293b; border-color: #475569; color: #e2e8f0; }
         [data-theme="dark"] .longo-prazo-tabela-scroll { border-color: #475569; }
         [data-theme="dark"] .longo-prazo-tabela { background: #1e293b; }
         [data-theme="dark"] .longo-prazo-tabela th, [data-theme="dark"] .longo-prazo-tabela td { color: #e2e8f0; border-bottom-color: #334155; }
@@ -995,6 +996,8 @@
             </div>
             <div id="grafico-longo-ciclos" class="grafico-longo"></div>
             <div id="grafico-longo-negativos" class="grafico-longo"></div>
+            <p id="longo-prazo-rampa-insight"></p>
+            <div id="grafico-longo-rampa" class="grafico-longo"></div>
             <h3 class="longo-prazo-tabela-titulo">Resumo em tabela<span id="longo-prazo-tabela-pais"></span> <small>(€/MWh; clique no ano ou no mês para o ver no painel acima)</small></h3>
             <div class="longo-prazo-tabela-scroll" tabindex="0" role="region" aria-label="Tabela das médias desde 2010">
                 <table id="longo-prazo-tabela" class="longo-prazo-tabela"></table>
@@ -4424,6 +4427,7 @@ document.addEventListener('DOMContentLoaded', function() {
         desenharLongoEvolucao(linhas, pais);
         if (comCiclos) desenharLongoCiclos(linhas);
         desenharLongoNegativos(linhas, pais);
+        desenharLongoRampa(linhas, pais);
         desenharLongoTabela(linhas, pais);
         const nota = document.getElementById('longo-prazo-nota-parcial');
         const parcial = linhas.some(r => r.parcial);
@@ -4576,6 +4580,75 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             exporting: { filename: `omie-horas-negativas-${pais === 'es' ? 'espanha-' : ''}${porAno ? 'anual' : 'mensal'}`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
             series: [{ name: 'Horas com preço negativo', color: _coresPeriodosLongo().neg, data: _pontosLongo(visiveis, 'horas_negativas') }]
+        });
+    }
+
+    // Do meio-dia ao fim da tarde (colunas rampa_* dos agregados): em cada dia, o preço mais alto das horas que começam entre as
+    // 17h e as 21h menos o mais baixo das que começam entre as 10h e as 16h (cada hora pela média dos seus quartos de hora, na
+    // hora do dia de cada país), e a média dos dias por ano ou por mês. A margem de uma bateria conta que de cada MWh guardado
+    // ao meio-dia voltam 0,85 MWh ao fim da tarde.
+    const ANOS_BASE_RAMPA = [2010, 2020];
+    function _mediaRampaLongo(linhas, campo) {
+        let soma = 0, dias = 0;
+        linhas.forEach(r => { if (r[campo] !== null && r.rampa_dias) { soma += r[campo] * r.rampa_dias; dias += r.rampa_dias; } });
+        return dias ? soma / dias : null;
+    }
+    function _insightRampaLongo(pais) {
+        const anual = _dadosPaisLongo().anual.filter(r => r.rampa_dif != null && r.rampa_dias);
+        const ult = anual[anual.length - 1];
+        if (!ult) return '';
+        const base = anual.filter(r => r.ano >= ANOS_BASE_RAMPA[0] && r.ano <= ANOS_BASE_RAMPA[1]);
+        const mediaBase = _mediaRampaLongo(base, 'rampa_dif');
+        const ate = ult.parcial && longoPrazo.ultimaData ? ` (até ${formatarDataParaCSV(longoPrazo.ultimaData)})` : '';
+        const n = ult.rampa_dias, nb = ult.rampa_dias_bateria;
+        return `Em ${ult.ano}${ate}, o preço mais alto do fim da tarde (17h–22h) ficou, em média, <strong>${_fmtLongo(ult.rampa_dif, 0)} €/MWh</strong> ` +
+               `acima do mais baixo do meio-dia (10h–17h)` +
+               (mediaBase !== null ? `; entre ${ANOS_BASE_RAMPA[0]} e ${ANOS_BASE_RAMPA[1]}, a diferença era de ${_fmtLongo(mediaBase, 0)} €/MWh. ` : '. ') +
+               `Ao meio-dia, ${_fmtLongo(ult.rampa_meio_dia, 0)} €/MWh; ao fim da tarde, ${_fmtLongo(ult.rampa_fim_tarde, 0)} €/MWh. ` +
+               `Uma bateria que guardasse a eletricidade do meio-dia para o fim da tarde, com 85 % de rendimento, ganhava em ${nb} ${nb === 1 ? 'dia' : 'dias'} de ${n}.` +
+               `<span class="longo-prazo-ressalva">Só o preço de mercado ${pais === 'es' ? 'de Espanha, em hora de Espanha' : 'de Portugal, em hora de Portugal'}: na fatura somam-se as redes, as taxas e o IVA.</span>`;
+    }
+
+    function desenharLongoRampa(linhas, pais) {
+        const d = _hcDark();
+        const porAno = _longoGran === 'ano';
+        const cfg = PAISES_LONGO[pais];
+        const insight = document.getElementById('longo-prazo-rampa-insight');
+        const grafico = document.getElementById('grafico-longo-rampa');
+        // Agregados gerados antes das colunas rampa_*: a frase e o gráfico ficam escondidos
+        const comRampa = linhas.some(r => r.rampa_dif != null);
+        insight.hidden = grafico.hidden = !comRampa;
+        if (!comRampa) return;
+        insight.innerHTML = _insightRampaLongo(pais);
+        Highcharts.chart('grafico-longo-rampa', {
+            chart: { type: 'column', height: 360, backgroundColor: d.bg, style: { color: d.txt } },
+            title: { text: `Do meio-dia ao fim da tarde em ${cfg.nome}, ${porAno ? 'por ano' : 'por mês'}`, style: { color: d.txt } },
+            subtitle: {
+                text: `Média, nos dias ${porAno ? 'de cada ano' : 'de cada mês'}, do preço mais alto das 17h–22h menos o mais baixo das 10h–17h (${cfg.hora}).`,
+                style: { color: d.txt }
+            },
+            xAxis: _eixoXLongo(linhas, d),
+            yAxis: { title: { text: '€/MWh', style: { color: d.txt } }, labels: { format: '{value:,.0f} €', style: { color: d.txt } } },
+            legend: { enabled: false },
+            tooltip: {
+                useHTML: true,
+                formatter: function () {
+                    const r = _pontoDoContexto(this);
+                    if (!r || r.rampa_dif == null) return false;
+                    return `<b>${_tituloLinhaLongo(r)}</b><br>` +
+                           `Fim da tarde − meio-dia: <b>${_fmtLongo(r.rampa_dif)} €/MWh</b><br>` +
+                           `Meio-dia (mais baixo, 10h–17h): ${_fmtLongo(r.rampa_meio_dia)} €/MWh<br>` +
+                           `Fim da tarde (mais alto, 17h–22h): ${_fmtLongo(r.rampa_fim_tarde)} €/MWh<br>` +
+                           `Margem de uma bateria (85 %): ${_fmtSinalLongo(r.rampa_bateria)} €/MWh<br>` +
+                           `Dias em que a bateria ganhava: ${r.rampa_dias_bateria} de ${r.rampa_dias}`;
+                }
+            },
+            plotOptions: {
+                series: { cursor: 'pointer', point: { events: { click: function () { _abrirLinhaLongo(this.options.linha); } } } },
+                column: { borderWidth: 0, pointPadding: 0.05 }
+            },
+            exporting: { filename: `omie-meio-dia-fim-da-tarde-${pais === 'es' ? 'espanha-' : ''}${porAno ? 'anual' : 'mensal'}`, enabled: true, buttons: { contextButton: { menuItems: MENU_EXPORT_LONGO } } },
+            series: [{ name: 'Fim da tarde − meio-dia', color: pais === 'es' ? '#28a745' : '#007bff', data: _pontosLongo(linhas, 'rampa_dif') }]
         });
     }
 
