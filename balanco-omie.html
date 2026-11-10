@@ -269,6 +269,7 @@
         .mix-toggle-btn { background: #fff; border: 1px solid #cbd5e1; padding: 6px 18px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; }
         .mix-toggle-btn:first-child { border-radius: 16px 0 0 16px; }
         .mix-toggle-btn:last-child { border-radius: 0 16px 16px 0; border-left: none; }
+        .mix-toggle-btn:not(:first-child) { border-left: none; }
         .mix-toggle-btn:hover:not(.active) { background: #e2e8f0; }
         .mix-toggle-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
         [data-theme="dark"] .mix-toggle-btn { background: #1e293b; color: #cbd5e1; border-color: #475569; }
@@ -410,6 +411,7 @@
         <div class="mix-toggle" role="group" aria-label="Vista do mix">
             <button type="button" class="mix-toggle-btn active" data-view="producao">Produção</button>
             <button type="button" class="mix-toggle-btn" data-view="consumo">Consumo</button>
+            <button type="button" class="mix-toggle-btn" data-view="consumo-ren">Abastecimento</button>
         </div>
         <div class="mix-grid">
             <div id="grafico-donut-container"></div>
@@ -492,7 +494,7 @@
             <div class="faq-content">
                 <p>É a percentagem da <strong>produção nacional do dia</strong> que veio de fontes renováveis (Hídrica + Eólica + Solar + Biomassa + Ondas), face à <strong>produção total</strong> (todas as fontes nacionais, incluindo gás e baterias). A <strong>importação não entra</strong> neste cálculo por não ser produção nacional. Este é o valor mostrado nos KPI e na vista <em>Produção</em> do "Mix do dia".</p>
                 <p>O quadro <strong>Renováveis no consumo</strong> responde a outra pergunta: que parte do <strong>consumo</strong> foi abastecida por renováveis. Segue o critério dos balanços mensais da REN: produção renovável ÷ (produção renovável + produção não renovável + <strong>saldo importador</strong>). A bombagem e as baterias ficam de fora, porque só devolvem energia guardada antes. O quadro <strong>Saldo no consumo</strong> faz a mesma conta para o saldo importador; com as não renováveis, as três parcelas somam 100%. Com muita importação, esta percentagem fica bem abaixo da % da produção; num dia exportador, pode passar de 100%.</p>
-                <p>No "Mix do dia", o botão <strong>Consumo</strong> mostra cada fonte, a importação e a exportação em percentagem do <strong>consumo</strong> do dia, com os <strong>GWh reais</strong> (iguais ao Balanço). Aí divide-se pelo consumo, um pouco menor do que a soma usada nos quadros (não conta a energia perdida na bombagem e nas baterias), por isso as percentagens ficam ligeiramente acima.</p>
+                <p>No "Mix do dia", o botão <strong>Consumo</strong> mostra cada fonte, a importação e a exportação em percentagem do <strong>consumo</strong> do dia, com os <strong>GWh reais</strong> (iguais ao Balanço). Aí divide-se pelo consumo real. A soma usada nos quadros é o consumo mais o que a bombagem e as baterias absorveram e menos o que devolveram, por isso as duas contas diferem um pouco: ao longo de um mês, os quadros dão ligeiramente menos; num dia em que a bombagem devolve mais do que absorveu, dão mais. O botão <strong>Abastecimento</strong> mostra as parcelas dos quadros, fonte a fonte: hídrica, eólica, solar, biomassa, gás e saldo importador, a somar 100%.</p>
                 <p><strong>Separação da bombagem:</strong> a coluna "Hídrica" dos dados a 15 minutos inclui a turbinagem de hidroelétricas reversíveis (água previamente bombeada). Essa parcela — a <strong>"Produção por Bombagem"</strong> — <strong>não é renovável</strong> (é energia armazenada da rede). Por isso, nos dias completos, subtraímos a "Produção por Bombagem" (valor diário da REN) à Hídrica antes de calcular a % renováveis, obtendo um valor mais rigoroso. A indicação "(s/ bombagem)" aparece quando este ajuste é aplicado.</p>
                 <p>Nota: em dias ainda em curso (provisórios), o ajuste não é aplicado (o valor diário da bombagem só é publicado após o fecho do dia) e os valores são marcados como provisórios.</p>
             </div>
@@ -1414,6 +1416,8 @@ document.addEventListener('DOMContentLoaded', function() {
     //  • 'consumo' : BARRAS com cada fonte em % do CONSUMO (energia real ÷ consumo), com linha aos 100%.
     //                A produção total pode passar 100% (dias exportadores) ou ficar abaixo (importadores);
     //                inclui Importação e Exportação, também em % do consumo. Tudo em VALORES REAIS.
+    //  • 'consumo-ren': BARRAS com cada fonte e o saldo importador ÷ (renovável + fóssil + saldo), como nos
+    //                balanços mensais da REN (sem o armazenamento); somam 100% e são os números dos quadros.
     let _mixView = 'producao';
     let _mixCtx = null; // { a, dataTitulo, isProvisorio }
 
@@ -1552,6 +1556,7 @@ document.addEventListener('DOMContentLoaded', function() {
             exportacao: a.exportacaoGwh || 0,
             consumoArmaz: a.consumoArmazGwh || 0,
             aplicouBombagem: !!a.aplicouBombagem,
+            renRenov: a.pctRenovConsumo, renSaldo: a.pctSaldoConsumo,   // conta da REN (quadros)
             pct: (g) => C > 0 ? g / C * 100 : 0
         };
     }
@@ -1642,7 +1647,120 @@ document.addEventListener('DOMContentLoaded', function() {
         const notas = [];
         notas.push('Consumo = Produção + Importação − Exportação − Consumo para armazenamento (bombagem + carga de baterias). Pequenos desvios (~0,3%) resultam do arredondamento dos dados a 15 min.');
         notas.push('A produção total pode passar 100% do consumo (o excedente vai para exportação e armazenamento) ou ficar abaixo (a importação cobre a diferença).');
+        if (cons.renRenov != null && cons.renSaldo != null) {
+            const fR = (v) => (v < -0.05 ? '-' : '') + Math.abs(v).toFixed(1).replace('.', ',') + '%';
+            notas.push('Os quadros «Renováveis no consumo» e «Saldo no consumo» e o botão «Abastecimento» dividem pela soma renovável + fóssil + saldo importador, sem o armazenamento, como nos balanços da REN: renováveis ' + fR(cons.renRenov) + ', saldo ' + fR(cons.renSaldo) + '.');
+        }
         if (cons.aplicouBombagem) notas.push('A Hídrica conta como renovável já sem a turbinagem de bombagem (em Armazenamento).');
+        if (isProvisorio) notas.push('Valores provisórios — dia ainda em curso.');
+        h += `<p class="bal-notas">${notas.join('<br>')}</p>`;
+        cont.innerHTML = h;
+    }
+
+    // --- Vista ABASTECIMENTO (barras): parcelas do consumo como nos balanços mensais da REN ---
+    // Cada fonte e o saldo importador ÷ (renovável + fóssil + saldo); a bombagem e as baterias ficam de fora (só
+    // guardam energia). São os números dos quadros «Renováveis no consumo» e «Saldo no consumo» e somam 100%;
+    // num dia exportador, o saldo é negativo e as renováveis podem passar de 100%.
+    function calcularConsumoRen(a) {
+        const mix = calcularMix(a);
+        const macros = mix.macros.filter(m => m.nome !== 'Armazenamento');
+        const saldo = a.saldoImportadorGwh || 0;
+        const base = macros.reduce((s, m) => s + m.gwh, 0) + saldo;
+        return {
+            macros, saldo, base,
+            aplicouBombagem: !!a.aplicouBombagem,
+            pct: (g) => base > 0 ? g / base * 100 : 0
+        };
+    }
+
+    function itensConsumoRen(cr) {
+        const itens = [];
+        cr.macros.forEach(m => {
+            itens.push({ name: m.nome, gwh: m.gwh, color: m.cor });
+            if (m.fontes.length > 1) m.fontes.forEach(f => itens.push({ name: f.nome, gwh: f.gwh, color: f.cor }));
+        });
+        if (Math.abs(cr.saldo) > 0.001) {
+            itens.push(cr.saldo > 0 ? { name: 'Saldo importador', gwh: cr.saldo, color: '#ED7D31' }
+                                    : { name: 'Saldo exportador', gwh: cr.saldo, color: '#8E44AD' });
+        }
+        return itens;
+    }
+
+    function renderConsumoRenBarras(cr, dataTitulo, isProvisorio) {
+        const _dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        const _txtC = _dk ? '#e2e8f0' : '#333';
+        const _bgC = _dk ? '#1e293b' : '#ffffff';
+        const itens = itensConsumoRen(cr);
+        const dados = itens.map(it => ({ y: cr.pct(it.gwh), color: it.color, gwh: it.gwh }));
+        const maxBar = Math.max(100, ...dados.map(d => d.y)) * 1.12;
+        const minBar = Math.min(0, ...dados.map(d => d.y)) * 1.12;
+        const ren = cr.macros.find(m => m.nome === 'Renovável');
+        const fP = (v) => v.toFixed(1).replace('.', ',');
+
+        Highcharts.chart('grafico-donut-container', {
+            chart: { type: 'bar', height: 460, backgroundColor: _bgC, style: { color: _txtC } },
+            title: { text: null },
+            subtitle: { text: `% do consumo, como nos balanços da REN · Renováveis = ${cr.pct(ren ? ren.gwh : 0).toFixed(0)}%`, style: { color: _txtC, fontSize: '0.8em' } },
+            xAxis: { categories: itens.map(it => it.name), labels: { style: { color: _txtC, fontSize: '0.8em' } } },
+            yAxis: {
+                min: minBar, max: maxBar,
+                title: { text: '% do consumo', style: { color: _txtC } },
+                labels: { format: '{value:.0f}%', style: { color: _txtC } },
+                gridLineColor: _dk ? '#334155' : '#e9ecef',
+                plotLines: [{ value: 0, color: _dk ? '#94a3b8' : '#64748b', width: 1, zIndex: 4 }]
+            },
+            legend: { enabled: false },
+            tooltip: {
+                useHTML: true,
+                pointFormatter: function () {
+                    return `<b>${this.category}</b><br>${this.gwh.toFixed(2).replace('.', ',')} GWh · ${fP(this.y)}% do consumo`;
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () { return fP(this.y) + '%'; },
+                        style: { color: _txtC, textOutline: 'none', fontSize: '0.72em', fontWeight: 'normal' }
+                    }
+                }
+            },
+            exporting: {
+                filename: `mix-consumo-ren-${(dataTitulo || '').replace(/\//g, '-')}`,
+                enabled: true,
+                buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } }
+            },
+            series: [{ name: '% do consumo', data: dados, colorByPoint: true }]
+        });
+    }
+
+    function renderTabelaConsumoRen(cr, isProvisorio) {
+        const cont = document.getElementById('tabela-mix-container');
+        if (!cont) return;
+        const fG = (v) => v.toFixed(2).replace('.', ',');
+        const fP = (v) => cr.pct(v).toFixed(1).replace('.', ',');
+        const sw = (cor) => `<span class="fonte-cor" style="background:${cor};"></span>`;
+
+        let h = `<table class="tabela-mix"><thead><tr><th scope="col">Fonte</th><th scope="col" class="num">GWh</th><th scope="col" class="num">% consumo</th></tr></thead><tbody>`;
+        cr.macros.forEach(m => {
+            h += `<tr class="mix-macro"><td>${sw(m.cor)}${m.nome}</td><td class="num">${fG(m.gwh)}</td><td class="num">${fP(m.gwh)}%</td></tr>`;
+            if (m.fontes.length > 1) {
+                m.fontes.forEach(f => {
+                    h += `<tr class="mix-fonte"><td>${sw(f.cor)}${f.nome}</td><td class="num">${fG(f.gwh)}</td><td class="num">${fP(f.gwh)}%</td></tr>`;
+                });
+            }
+        });
+        if (Math.abs(cr.saldo) > 0.001) {
+            const imp = cr.saldo > 0;
+            h += `<tr class="mix-macro"><td>${sw(imp ? '#ED7D31' : '#8E44AD')}${imp ? 'Saldo importador' : 'Saldo exportador'}</td><td class="num">${fG(cr.saldo)}</td><td class="num">${fP(cr.saldo)}%</td></tr>`;
+        }
+        h += `<tr class="mix-total"><td>Total</td><td class="num">${fG(cr.base)}</td><td class="num">100,0%</td></tr>`;
+        h += `</tbody></table>`;
+
+        const notas = ['Cada parcela ÷ (renovável + fóssil + saldo importador), como nos balanços mensais da REN: são os números dos quadros «Renováveis no consumo» e «Saldo no consumo». A bombagem e as baterias ficam de fora, porque só guardam energia; estão na tabela do Balanço Energético.'];
+        if (cr.saldo < -0.001) notas.push('Dia exportador: o saldo entra a negativo e as renováveis podem passar de 100%.');
+        if (cr.aplicouBombagem) notas.push('A Hídrica conta como renovável já sem a turbinagem de bombagem.');
         if (isProvisorio) notas.push('Valores provisórios — dia ainda em curso.');
         h += `<p class="bal-notas">${notas.join('<br>')}</p>`;
         cont.innerHTML = h;
@@ -1670,6 +1788,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             // sem dados de consumo → mostra a vista de produção
+        }
+        if (_mixView === 'consumo-ren') {
+            const cr = calcularConsumoRen(a);
+            if (cr.base > 0) {
+                renderConsumoRenBarras(cr, dataTitulo, isProvisorio);
+                renderTabelaConsumoRen(cr, isProvisorio);
+                return;
+            }
         }
         const mix = calcularMix(a);
         if (mix.total <= 0) { sec.style.display = 'none'; return; }
@@ -2393,7 +2519,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btnPrev.addEventListener('click', () => alterarData(-1));
     btnNext.addEventListener('click', () => alterarData(1));
 
-    // === Botão de alternância do Mix (Produção / Consumo) ===
+    // === Botão de alternância do Mix (Produção / Consumo / Abastecimento) ===
     document.querySelectorAll('.mix-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const v = btn.dataset.view;
