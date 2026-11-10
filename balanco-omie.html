@@ -155,10 +155,12 @@
         [data-theme="dark"] #prod-provisorio { background: #332b00; border-color: #665600; color: #ffd54f; }
 
         /* ===== KPIs do dia ===== */
-        #prod-kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; width: 95%; max-width: 1200px; margin: 10px auto 20px auto; }
-        @media (max-width: 1100px) { #prod-kpis { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 800px) { #prod-kpis { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 560px) { #prod-kpis { grid-template-columns: repeat(2, 1fr); } }
+        /* 14 quadros: 7 colunas × 2 linhas; com 4 colunas, os 2 últimos ocupam juntos a última linha; 2 colunas no telemóvel */
+        #prod-kpis { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; width: 95%; max-width: 1200px; margin: 10px auto 20px auto; }
+        @media (max-width: 1100px) { #prod-kpis { grid-template-columns: repeat(4, 1fr); } #prod-kpis > .prod-kpi-card:nth-last-child(-n+2) { grid-column: span 2; } }
+        @media (max-width: 700px) { #prod-kpis { grid-template-columns: repeat(2, 1fr); } #prod-kpis > .prod-kpi-card:nth-last-child(-n+2) { grid-column: auto; } }
+        /* Com 7 ou 4 colunas, os títulos ocupam sempre 2 linhas, para os valores ficarem alinhados em cada linha */
+        @media (min-width: 701px) { #prod-kpis .prod-kpi-card { padding: 12px 8px; } #prod-kpis .prod-kpi-label { line-height: 1.3; min-height: 2.6em; } }
         .prod-kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
         .prod-kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; }
         .prod-kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
@@ -489,7 +491,8 @@
             <summary><strong>Como é calculada a "% Renováveis" do dia?</strong></summary>
             <div class="faq-content">
                 <p>É a percentagem da <strong>produção nacional do dia</strong> que veio de fontes renováveis (Hídrica + Eólica + Solar + Biomassa + Ondas), face à <strong>produção total</strong> (todas as fontes nacionais, incluindo gás e baterias). A <strong>importação não entra</strong> neste cálculo por não ser produção nacional. Este é o valor mostrado nos KPI e na vista <em>Produção</em> do "Mix do dia".</p>
-                <p>No "Mix do dia", o botão <strong>Consumo</strong> acrescenta o <strong>saldo importador</strong> como fatia; mantêm-se os <strong>GWh reais</strong> (iguais ao Balanço) e a percentagem passa a ser sobre o total <em>produção + importação</em>. Por usarmos valores reais (sem escalar ao consumo), estas percentagens <strong>não coincidem</strong> com as publicadas pela REN.</p>
+                <p>O quadro <strong>Renováveis no consumo</strong> responde a outra pergunta: que parte do <strong>consumo</strong> foi abastecida por renováveis. Segue o critério dos balanços mensais da REN: produção renovável ÷ (produção renovável + produção não renovável + <strong>saldo importador</strong>). A bombagem e as baterias ficam de fora, porque só devolvem energia guardada antes. O quadro <strong>Saldo no consumo</strong> faz a mesma conta para o saldo importador; com as não renováveis, as três parcelas somam 100%. Com muita importação, esta percentagem fica bem abaixo da % da produção; num dia exportador, pode passar de 100%.</p>
+                <p>No "Mix do dia", o botão <strong>Consumo</strong> mostra cada fonte, a importação e a exportação em percentagem do <strong>consumo</strong> do dia, com os <strong>GWh reais</strong> (iguais ao Balanço). Aí divide-se pelo consumo, um pouco menor do que a soma usada nos quadros (não conta a energia perdida na bombagem e nas baterias), por isso as percentagens ficam ligeiramente acima.</p>
                 <p><strong>Separação da bombagem:</strong> a coluna "Hídrica" dos dados a 15 minutos inclui a turbinagem de hidroelétricas reversíveis (água previamente bombeada). Essa parcela — a <strong>"Produção por Bombagem"</strong> — <strong>não é renovável</strong> (é energia armazenada da rede). Por isso, nos dias completos, subtraímos a "Produção por Bombagem" (valor diário da REN) à Hídrica antes de calcular a % renováveis, obtendo um valor mais rigoroso. A indicação "(s/ bombagem)" aparece quando este ajuste é aplicado.</p>
                 <p>Nota: em dias ainda em curso (provisórios), o ajuste não é aplicado (o valor diário da bombagem só é publicado após o fecho do dia) e os valores são marcados como provisórios.</p>
             </div>
@@ -1318,6 +1321,12 @@ document.addEventListener('DOMContentLoaded', function() {
             else saldoSubFin = `recebeu ${formatarEurTotal(-_saldoFin)} líq.`;
         }
         const saldoSub = saldoSubFin ? `${saldoSubEnergia}<br>${saldoSubFin}` : saldoSubEnergia;
+        // Abastecimento do consumo (critério da REN; ver atualizarAnaliseProducao)
+        const fmtPctS = (v) => v == null ? '--' : (v < -0.05 ? '-' : '') + fmtPct(Math.abs(v));
+        const subRenCons = `do consumo${sufixo}${a.aplicouBombagem ? ' (s/ bombagem)' : ''}<br>não renováveis ${fmtPctS(a.pctNaoRenovConsumo)}`;
+        const pSal = a.pctSaldoConsumo;
+        const subSaldoCons = pSal == null ? '' : Math.abs(pSal) < 0.05 ? `do consumo${sufixo}<br>equilibrado`
+            : `do consumo${sufixo}<br>${pSal > 0 ? 'importador líquido' : 'exportador líquido'}`;
         const fonteDomTxt = a.fonteDom
             ? `${EMOJI_FONTE[a.fonteDom] || ''} ${a.fonteDom}`.trim()
             : '--';
@@ -1339,6 +1348,7 @@ document.addEventListener('DOMContentLoaded', function() {
             card('', '🏭 Produção nacional', fmtGWh(producaoGwh), '', 'no dia', 'Energia total produzida em Portugal no dia (todas as fontes nacionais, incluindo baterias). Não inclui a importação.') +
             card('kpi-renovavel', '🌱 Produção renovável', fmtGWh(renovGwh), '', a.aplicouBombagem ? `s/ bombagem · ${ctx}` : ctx, 'Energia de fontes renováveis no dia. Quando disponível, exclui a turbinagem de bombagem (hídrica reversível, não renovável).') +
             card('', '🔌 Consumo total', fmtGWh(consumoGwh), '', a.vwapConsumo != null ? `${fmtEur(a.vwapConsumo)}/MWh (pond. consumo)<br>custo grossista ${formatarEurTotal(a.consumoEur)}` : `consumo nacional ${ctx}`, 'Consumo nacional do dia. O preço é o VWAP do consumo: preço OMIE PT ponderado pela procura de cada quarto-hora. Custo grossista = energia × esse preço (só Mercado Diário, sem redes nem taxas).') +
+            card('kpi-renovavel', '♻️ Renováveis no consumo', fmtPctS(a.pctRenovConsumo), '', subRenCons, 'Parte do consumo do dia abastecida por renováveis, com o critério dos balanços mensais da REN: produção renovável ÷ (renovável + não renovável + saldo importador). A bombagem e as baterias ficam de fora, porque só guardam energia. Num dia exportador pode passar de 100%. Quando disponível, exclui a turbinagem de bombagem.') +
             card('kpi-importador', '📥 Importação', formatarEnergiaGWh(a.importacaoGwh || 0), '', subFronteira(a.importacaoGwh, a.precoMedioImportacao, 'ES', a.importacaoEur, 'custo'), 'Energia importada de Espanha e o seu preço médio ponderado (VWAP) ao preço OMIE de Espanha. Custo = energia importada × esse preço.') +
             card('kpi-importador', '🔄 Saldo c/ Espanha', saldoStr, '', saldoSub, 'Saldo de energia (Importação − Exportação): positivo = importador líquido. O valor em € é custo de importação − receita de exportação e pode ter sinal independente do saldo de energia.') +
             // Linha 2 (por baixo de cada coluna)
@@ -1346,6 +1356,7 @@ document.addEventListener('DOMContentLoaded', function() {
             card('', '🔺 Pico produção', fmtMW(a.picoProducao), '', `às ${picoProdHora}`, 'Maior potência de produção nacional total registada num quarto-hora do dia, e a hora a que ocorreu.') +
             card('kpi-renovavel', '⚡ Pico renovável', fmtMW(a.picoRenovavel), '', `às ${picoHora}`, 'Maior potência renovável instantânea registada num quarto-hora do dia, e a hora.') +
             card('', '📈 Pico consumo', fmtMW(a.picoConsumo), '', `às ${picoConsHora}`, 'Maior potência de consumo registada num quarto-hora do dia, e a hora.') +
+            card('kpi-importador', '🌐 Saldo no consumo', fmtPctS(pSal), '', subSaldoCons, 'Parte do consumo do dia abastecida pelo saldo importador (importação − exportação), com a mesma conta: saldo ÷ (renovável + não renovável + saldo). Negativo quando Portugal exportou mais do que importou. Somado às renováveis e às não renováveis, dá 100%.') +
             card('kpi-exportador', '📤 Exportação', formatarEnergiaGWh(a.exportacaoGwh || 0), '', subFronteira(a.exportacaoGwh, a.precoMedioExportacao, 'PT', a.exportacaoEur, 'receita'), 'Energia exportada para Espanha e o seu preço médio ponderado (VWAP) ao preço OMIE de Portugal. Receita = energia exportada × esse preço.') +
             card('', '💶 Preço médio OMIE', fmtEur(a.precoMedio), '', `média /MWh ${ctx}`, 'Média simples (temporal) do preço do Mercado Diário OMIE em Portugal nos quartos-hora do dia.');
     }
@@ -1832,6 +1843,14 @@ document.addEventListener('DOMContentLoaded', function() {
         a.consumoEur = bal.consumoEur;       // custo grossista do consumo (€)
         a.consumoArmazGwh = (bal.en['Bombagem'] || 0) + (bal.en['Consumo Baterias'] || 0); // carga (bombagem + baterias)
         a.consumoGwh = bal.en['Consumo'] || 0;
+        // Abastecimento do consumo, como nos balanços mensais da REN: cada parcela ÷ (renovável + não renovável + saldo
+        // importador). A bombagem e as baterias ficam de fora (só guardam energia); num dia exportador, o saldo é negativo
+        // e as renováveis podem passar de 100%.
+        a.naoRenovGwh = toGWh((a.totais['Gás Natural'] || 0) + (a.totais['Carvão'] || 0) + (a.totais['Outra Térmica'] || 0));
+        const _abast = a.renovGwh + a.naoRenovGwh + a.saldoImportadorGwh;
+        a.pctRenovConsumo = _abast > 0 ? a.renovGwh / _abast * 100 : null;
+        a.pctNaoRenovConsumo = _abast > 0 ? a.naoRenovGwh / _abast * 100 : null;
+        a.pctSaldoConsumo = _abast > 0 ? a.saldoImportadorGwh / _abast * 100 : null;
         // Por hora: quota de Espanha no consumo e procura residual (Análise do dia)
         const _horas = horasDoDia(dadosConjugados, firstNullIndex);
         a.dependencia = calcularDependencia(_horas);

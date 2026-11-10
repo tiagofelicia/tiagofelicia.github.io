@@ -124,6 +124,8 @@
         {"@type": "PropertyValue", "name": "Consumo", "unitText": "MW"},
         {"@type": "PropertyValue", "name": "Saldo importador (Importação − Exportação)", "unitText": "MW"},
         {"@type": "PropertyValue", "name": "% Renováveis", "unitText": "%"},
+        {"@type": "PropertyValue", "name": "% do consumo abastecida por renováveis", "unitText": "%"},
+        {"@type": "PropertyValue", "name": "% do consumo abastecida pelo saldo importador", "unitText": "%"},
         {"@type": "PropertyValue", "name": "Preço médio do Mercado Diário OMIE", "unitText": "EUR/MWh"},
         {"@type": "PropertyValue", "name": "Preço médio ponderado de importação (OMIE Espanha)", "unitText": "EUR/MWh"},
         {"@type": "PropertyValue", "name": "Preço médio ponderado de exportação (OMIE Portugal)", "unitText": "EUR/MWh"},
@@ -206,10 +208,12 @@
         [data-theme="dark"] #erro-periodo { background: #4a1a1a; border-color: #6c2222; color: #f8d7da; }
 
         /* ===== KPIs ===== */
-        #kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; width: 95%; max-width: 1280px; margin: 10px auto 20px auto; }
-        @media (max-width: 1100px) { #kpis { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 900px)  { #kpis { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 600px)  { #kpis { grid-template-columns: repeat(2, 1fr); } }
+        /* 14 quadros: 7 colunas × 2 linhas; com 4 colunas, os 2 últimos ocupam juntos a última linha; 2 colunas no telemóvel */
+        #kpis { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; width: 95%; max-width: 1280px; margin: 10px auto 20px auto; }
+        @media (max-width: 1100px) { #kpis { grid-template-columns: repeat(4, 1fr); } #kpis > .kpi-card:nth-last-child(-n+2) { grid-column: span 2; } }
+        @media (max-width: 700px)  { #kpis { grid-template-columns: repeat(2, 1fr); } #kpis > .kpi-card:nth-last-child(-n+2) { grid-column: auto; } }
+        /* Com 7 ou 4 colunas, os títulos ocupam sempre 2 linhas, para os valores ficarem alinhados em cada linha */
+        @media (min-width: 701px) { #kpis .kpi-card { padding: 12px 8px; } #kpis .kpi-label { line-height: 1.3; min-height: 2.6em; } }
         .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
         .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; }
         .kpi-value { font-size: 1.35em; font-weight: 700; color: #212529; line-height: 1.2; }
@@ -671,7 +675,7 @@
             <summary><strong>O que mostra esta página?</strong></summary>
             <div class="faq-content">
                 <p>Esta página apresenta o <strong>balanço energético agregado</strong> de Portugal para o período selecionado. Os dados de 15 minutos da REN são somados para cada dia, e depois agregados por período.</p>
-                <p>Para cada dia ou período pode ver: a produção por tecnologia, o consumo, o saldo importador (importação − exportação), a bombagem, e a percentagem de renováveis na produção nacional.</p>
+                <p>Para cada dia ou período pode ver: a produção por tecnologia, o consumo, o saldo importador (importação − exportação), a bombagem, e a percentagem de renováveis na produção nacional e no consumo.</p>
                 <p>No <strong>gráfico de evolução diária</strong>, as <strong>áreas acima de zero</strong> são oferta (produção + importação + injeção de baterias). As séries de <strong>sumidouros</strong> — <em>Bombagem (consumo)</em>, <em>Consumo Baterias</em> e <em>Exportação</em> — estão disponíveis na legenda mas <strong>ocultas por defeito</strong>; clique nelas para as ativar como áreas negativas (abaixo de zero).</p>
                 <p>Para análise hora-a-hora de um dia específico, use a página <a href="balanco-omie">Balanço Energético vs OMIE</a>.</p>
             </div>
@@ -682,6 +686,7 @@
             <div class="faq-content">
                 <p>É a percentagem da <strong>produção nacional</strong> que veio de fontes renováveis (Hídrica + Eólica + Solar + Biomassa + Ondas), face à <strong>produção total nacional</strong> (todas as fontes, incluindo gás, carvão e injeção de baterias). A <strong>importação não entra</strong> no cálculo por não ser produção nacional.</p>
                 <p>Sempre que disponível, a <strong>Produção por Bombagem</strong> diária (turbinagem de hidroelétricas reversíveis, que <strong>não é renovável</strong> — é energia armazenada) é subtraída da Hídrica antes de calcular a percentagem. Para dias muito recentes em que esse valor ainda não foi publicado pela REN, o ajuste pode não estar aplicado.</p>
+                <p>O quadro <strong>Renováveis no consumo</strong> responde a outra pergunta: que parte do <strong>consumo</strong> foi abastecida por renováveis. Segue o critério dos balanços mensais da REN: produção renovável ÷ (produção renovável + produção não renovável + <strong>saldo importador</strong>). A bombagem e as baterias ficam de fora, porque só devolvem energia guardada antes. O quadro <strong>Saldo no consumo</strong> faz a mesma conta para o saldo importador; com as não renováveis, as três parcelas somam 100%. Com muita importação, esta percentagem fica bem abaixo da % da produção; num período exportador, pode passar de 100%.</p>
             </div>
         </details>
 
@@ -1422,6 +1427,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const renovavelMWh = hidricaRenov + t['Eólica'] + t['Solar'] + t['Biomassa'] + t['Ondas'];
         const percRenov = producaoNacionalMWh > 0 ? (renovavelMWh / producaoNacionalMWh * 100) : 0;
         const saldoImportadorMWh = t['Importação'] - t['Exportação'];
+        // Abastecimento do consumo, como nos balanços mensais da REN: cada parcela ÷ (renovável + não renovável + saldo
+        // importador). A bombagem e as baterias ficam de fora (só guardam energia); num período exportador, o saldo é
+        // negativo e as renováveis podem passar de 100%.
+        const naoRenovMWh = t['Gás Natural'] + t['Carvão'] + t['Outra Térmica'];
+        const abastMWh = renovavelMWh + naoRenovMWh + saldoImportadorMWh;
+        const pctAbast = v => abastMWh > 0 ? v / abastMWh * 100 : null;
         // Médias ponderadas do OMIE e valor das trocas (€/intervalo = MW × 0.25 h × €/MWh)
         const precoMedioImportacao = t._impSomaPot > 0 ? t._impSomaPreco / t._impSomaPot : null;
         const precoMedioExportacao = t._expSomaPot > 0 ? t._expSomaPreco / t._expSomaPot : null;
@@ -1433,6 +1444,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return {
             percRenov,
             percRenovAjuste: usarAjuste,
+            percRenovConsumo: pctAbast(renovavelMWh),
+            percNaoRenovConsumo: pctAbast(naoRenovMWh),
+            percSaldoConsumo: pctAbast(saldoImportadorMWh),
             producaoTotalGWh: producaoNacionalMWh / 1000,
             renovavelGWh: renovavelMWh / 1000,
             consumoTotalGWh: t['Consumo'] / 1000,
@@ -1482,10 +1496,15 @@ document.addEventListener('DOMContentLoaded', function() {
             else saldoSubFin = `recebeu ${formatarEurTotal(-_saldoFin)} líq.`;
         }
         const saldoSub = saldoSubFin ? `${saldoSubEnergia}<br>${saldoSubFin}` : saldoSubEnergia;
-        // Layout pareado em 6 colunas × 2 linhas (desktop): a coluna 5 (Importação/Exportação)
-        // fica imediatamente antes da coluna 6 (Saldo/Bombagem).
-        //   Linha 1: ☀️ Renováveis · 🏭 Produção nacional · 🌱 Produção renovável · 🔌 Consumo · 📥 Importação · 🔄 Saldo
-        //   Linha 2: 🏆 Fonte dom.   · 🔺 Pico produção   · ⚡ Pico renovável     · 📈 Pico cons. · 📤 Exportação · 💶 Preço médio OMIE PT
+        // Abastecimento do consumo (critério da REN; ver calcularKPIs)
+        const fmtPctS = v => v == null ? '—' : (v < -0.05 ? '−' : '') + formatarPT(Math.abs(v), 1) + '%';
+        const pSal = k.percSaldoConsumo;
+        const subSaldoCons = pSal == null ? '' : Math.abs(pSal) < 0.05 ? 'do consumo<br>equilibrado'
+            : `do consumo<br>${pSal > 0 ? 'importador líquido' : 'exportador líquido'}`;
+        // Layout pareado em 7 colunas × 2 linhas (desktop): a coluna 5 (abastecimento do consumo) fica a seguir
+        // ao Consumo e a coluna 6 (Importação/Exportação) imediatamente antes da coluna 7 (Saldo/Preço).
+        //   Linha 1: ☀️ Renováveis · 🏭 Produção nacional · 🌱 Produção renovável · 🔌 Consumo · ♻️ Renov. no consumo · 📥 Importação · 🔄 Saldo
+        //   Linha 2: 🏆 Fonte dom.   · 🔺 Pico produção   · ⚡ Pico renovável     · 📈 Pico cons. · 🌐 Saldo no consumo · 📤 Exportação · 💶 Preço médio OMIE PT
         kpisEl.innerHTML = `
             <div class="kpi-card kpi-renovavel">
                 <div class="kpi-label">☀️ Renováveis</div>
@@ -1506,6 +1525,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="kpi-label">🔌 Consumo total</div>
                 <div class="kpi-value">${formatarEnergia(k.consumoTotalGWh)}</div>
                 <div class="kpi-sub">${k.vwapConsumo != null ? `${fmtEurMWh(k.vwapConsumo)}/MWh (pond. consumo)<br>custo grossista ${formatarEurTotal(k.consumoEur)}` : 'consumo nacional'}</div>
+            </div>
+            <div class="kpi-card kpi-renovavel">
+                <div class="kpi-label">♻️ Renováveis no consumo</div>
+                <div class="kpi-value">${fmtPctS(k.percRenovConsumo)}</div>
+                <div class="kpi-sub">${k.percRenovAjuste ? 'do consumo (s/ bombagem)' : 'do consumo (inclui turbinagem)'}<br>não renováveis ${fmtPctS(k.percNaoRenovConsumo)}</div>
             </div>
             <div class="kpi-card kpi-importador">
                 <div class="kpi-label">📥 Importação</div>
@@ -1537,6 +1561,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="kpi-value">${formatarPotencia(k.picoConsumoMW)}</div>
                 <div class="kpi-sub">${dataPT(k.picoConsumoDia)}</div>
             </div>
+            <div class="kpi-card kpi-importador">
+                <div class="kpi-label">🌐 Saldo no consumo</div>
+                <div class="kpi-value">${fmtPctS(pSal)}</div>
+                <div class="kpi-sub">${subSaldoCons}</div>
+            </div>
             <div class="kpi-card kpi-exportador">
                 <div class="kpi-label">📤 Exportação</div>
                 <div class="kpi-value">${formatarEnergia(k.exportacaoGWh)}</div>
@@ -1554,6 +1583,8 @@ document.addEventListener('DOMContentLoaded', function() {
             '🏭 Produção nacional': 'Energia total produzida em Portugal no período (todas as fontes nacionais, incluindo baterias). Não inclui a importação.',
             '🌱 Produção renovável': 'Energia de fontes renováveis no período. Quando há dados, exclui a turbinagem de bombagem (hídrica reversível, não renovável).',
             '🔌 Consumo total': 'Consumo nacional do período. O preço é o VWAP do consumo: preço OMIE PT ponderado pela procura de cada quarto-hora. Custo grossista = energia × esse preço (só Mercado Diário, sem redes nem taxas).',
+            '♻️ Renováveis no consumo': 'Parte do consumo do período abastecida por renováveis, com o critério dos balanços mensais da REN: produção renovável ÷ (renovável + não renovável + saldo importador). A bombagem e as baterias ficam de fora, porque só guardam energia. Num período exportador pode passar de 100%. Quando há dados, exclui a turbinagem de bombagem.',
+            '🌐 Saldo no consumo': 'Parte do consumo do período abastecida pelo saldo importador (importação − exportação), com a mesma conta: saldo ÷ (renovável + não renovável + saldo). Negativo quando Portugal exportou mais do que importou. Somado às renováveis e às não renováveis, dá 100%.',
             '📥 Importação': 'Energia importada de Espanha no período e o seu preço médio ponderado (VWAP) ao preço OMIE de Espanha. Custo = energia importada × esse preço.',
             '🔄 Saldo c/ Espanha': 'Saldo de energia (Importação − Exportação): positivo = importador líquido. O valor em € é custo de importação − receita de exportação e pode ter sinal independente do saldo de energia.',
             '🏆 Fonte dominante': 'Fonte com maior produção no período e o seu peso na produção nacional.',
@@ -2647,7 +2678,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const biomassaGwh = toGWh((totais['Biomassa'] || 0) + (totais['Ondas'] || 0));
         const renovavelGwh = hidricaRenovGwh + eolicaGwh + solarGwh + biomassaGwh;
         const saldoGwh = toGWh(totais['Importação'] - totais['Exportação']);
-        const pct = g => consumoGwh > 0 ? (g / consumoGwh * 100) : 0;
+        // Parcelas do consumo como nos balanços mensais da REN: ÷ (renovável + não renovável + saldo importador), com a
+        // bombagem e as baterias de fora — os mesmos números dos quadros «Renováveis no consumo» e «Saldo no consumo»
+        const naoRenovGwh = toGWh((totais['Gás Natural'] || 0) + (totais['Carvão'] || 0) + (totais['Outra Térmica'] || 0));
+        const baseAbast = renovavelGwh + naoRenovGwh + saldoGwh;
+        const pct = g => baseAbast > 0 ? (g / baseAbast * 100) : 0;
 
         // Pico de consumo
         let frasePico = '';
