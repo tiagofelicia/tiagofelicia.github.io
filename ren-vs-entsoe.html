@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>REN vs ENTSO-E: a produção e o consumo de Portugal nas duas fontes | Tiago Felícia</title>
+    <meta name="description" content="Os números de Portugal na REN e na ENTSO-E, lado a lado desde 2015: produção por tecnologia, consumo, saldo importador e % de renováveis, com o que bate, o que não bate e porquê (a bombagem, as trocas com Espanha e as horas em falta)." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/ren-vs-entsoe" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/ren-vs-entsoe" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/ren-vs-entsoe" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="REN vs ENTSO-E: a produção e o consumo de Portugal nas duas fontes" />
+    <meta property="og:description" content="O que bate e o que não bate entre a REN e a ENTSO-E, tecnologia a tecnologia, desde 2015 — e porque é que a ENTSO-E dá menos renováveis a Portugal." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/ren-vs-entsoe" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="REN vs ENTSO-E — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Produção, consumo e trocas de Portugal segundo a ENTSO-E, dia a dia, comparados com a REN",
+      "description": "Por dia (hora de Lisboa), desde 1 de janeiro de 2015: a produção de Portugal por tipo (biomassa, gás, carvão, hídrica de fio de água, de albufeira e das centrais reversíveis, eólica, solar e outras), o consumo das bombas e das baterias, o consumo (Total Load) e os fluxos físicos com Espanha, segundo a ENTSO-E Transparency Platform, com as horas com dados de cada dia; e, ao lado, os mesmos números da REN.",
+      "url": "https://www.tiagofelicia.pt/ren-vs-entsoe",
+      "inLanguage": "pt-PT",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "spatialCoverage": { "@type": "Place", "name": "Portugal" },
+      "temporalCoverage": "2015-01-01/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Produção por tecnologia (REN e ENTSO-E)", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Consumo (REN e ENTSO-E)", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Saldo importador (REN e ENTSO-E)", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Percentagem de renováveis na produção e no consumo", "unitText": "%" },
+        { "@type": "PropertyValue", "name": "Horas com dados na ENTSO-E", "unitText": "h" }
+      ],
+      "isBasedOn": [
+        { "@type": "CreativeWork", "name": "ENTSO-E Transparency Platform", "url": "https://transparency.entsoe.eu/" },
+        { "@type": "CreativeWork", "name": "REN — Data Hub", "url": "https://datahub.ren.pt/" }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2015", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2015.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2016", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2016.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2017", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2017.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2018", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2018.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2019", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2019.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2020", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2020.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2021", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2021.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2022", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2022.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2023", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2023.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2024", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2024.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2025", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2025.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Portugal segundo a ENTSO-E, totais diários de 2026", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2026.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Produção e consumo diários segundo a REN, desde 2010", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/producao_diario.csv" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "REN vs ENTSO-E", "item": "https://www.tiagofelicia.pt/ren-vs-entsoe" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Porque é que a REN e a ENTSO-E não dão os mesmos números?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Na maior parte das tecnologias dão: a eólica, a solar, a biomassa, o gás natural e o consumo batem quase sempre a menos de 1 %, porque são as mesmas centrais e os mesmos contadores. As diferenças grandes vêm de três coisas: a forma de separar a produção das centrais hídricas reversíveis, os fluxos com Espanha que a ENTSO-E publica e as horas em que a ENTSO-E não tem dados. A REN é a fonte nacional (é ela que gere a rede); a ENTSO-E junta o que os operadores de toda a Europa lhe enviam, com as categorias comuns a todos os países."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que a ENTSO-E dá menos renováveis a Portugal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Por causa das centrais hídricas reversíveis, as que tanto produzem como bombeiam água para cima. As albufeiras destas centrais também recebem a água do rio. A ENTSO-E põe toda a produção destas centrais na categoria «bombagem», que não conta como renovável, mesmo a da água que chegou pelo rio; a REN só conta como produção por bombagem a parte que corresponde à água antes bombeada, e o resto fica na hídrica, renovável. O total da hídrica é praticamente igual nas duas fontes; muda só a divisão. Em janeiro–outubro de 2026, a ENTSO-E contou cerca de 6 400 GWh de bombagem e a REN cerca de 4 100: a diferença, mais de 2 TWh, passa de renovável a não renovável, e a percentagem de renováveis na produção desce de cerca de 73 % (REN) para cerca de 67 % (ENTSO-E). Desde 2015, a diferença foi de cerca de 1,5 a 6 pontos por ano e cresceu com o uso da bombagem: as bombas consumiram cerca de 1 500 GWh em 2015 e 5 100 GWh em 2025."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como se sabe que a bombagem da ENTSO-E inclui água do rio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pelas contas: uma central não pode devolver mais energia do que a que gastou a bombear, porque há perdas. Em janeiro–outubro de 2026, as bombas consumiram cerca de 5 100 GWh (nas duas fontes). A REN conta cerca de 4 100 GWh de produção por bombagem, perto de 80 % do que se gastou a bombear, o que bate com as perdas habituais. A ENTSO-E conta cerca de 6 400 GWh, mais do que todo o consumo das bombas: isso só é possível se uma parte for água que chegou à albufeira pelo rio."
+        }
+      },{
+        "@type": "Question",
+        "name": "Qual dos dois métodos está certo?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Para contar renováveis, o da REN. O da ENTSO-E não está errado no que diz (que a energia saiu de uma central reversível), mas a categoria dela é uma etiqueta de tecnologia, comum a toda a Europa, e não foi pensada para separar o que é renovável. A água que chega pelo rio à albufeira de uma central reversível é igual à de qualquer outra barragem: a energia que dá é renovável. A água bombeada subiu com eletricidade tirada da rede, que já foi contada quando foi produzida; ao turbiná-la, a central devolve energia guardada, menos as perdas, e contá-la como renovável seria contá-la duas vezes. É também a regra europeia: a Diretiva (UE) 2018/2001 (artigo 7.º) tira das renováveis só a eletricidade produzida em centrais de bombagem a partir de água antes bombeada, e as percentagens oficiais de renováveis seguem-na. O limite do método da REN é que a água do rio e a bombeada se misturam na albufeira: a parte de cada uma é uma estimativa, e não uma medição."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que o saldo importador da ENTSO-E é mais baixo desde julho de 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Desde julho de 2026, os fluxos físicos entre Portugal e Espanha que a ENTSO-E publica (artigo 12.1.G do Regulamento (UE) n.º 543/2013) ficam abaixo dos da REN: tudo indica que lhes falta a nova linha Ponte de Lima–Fontefría. Por isso, o saldo importador da ENTSO-E sai mais baixo e o consumo deixa de bater com a produção mais o saldo. Nas páginas de Portugal deste site usa-se o saldo da REN."
+        }
+      },{
+        "@type": "Question",
+        "name": "Que dias ficam de fora da comparação?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Por omissão, só entram os dias em que a ENTSO-E tem todas as horas de dados para o que se está a comparar (produção, consumo ou trocas), e esses dias saem dos dois lados, REN e ENTSO-E. De outro modo, uma semana sem dados na ENTSO-E pareceria uma diferença entre as fontes. O botão «Todos os dias» junta também os dias incompletos, e o bloco «Horas em falta na ENTSO-E» mostra quantas horas faltam."
+        }
+      },{
+        "@type": "Question",
+        "name": "Que fonte usa este site?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nas páginas de Portugal (Balanço Energético diário e histórico, Albufeiras, ERC) usa-se a REN, a fonte nacional. Nas páginas da Europa (Produção, Balanço Energético e Preços na Europa) usa-se a ENTSO-E (ou a Energy-Charts, que também parte dela), para comparar todos os países com as mesmas regras. Por isso, Portugal pode aparecer com menos renováveis nas páginas da Europa do que no Balanço Energético."
+        }
+      },{
+        "@type": "Question",
+        "name": "De onde vêm estes dados?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Da REN (Data Hub, produção e consumo por quarto de hora, e o balanço diário com a produção por bombagem) e da ENTSO-E Transparency Platform (produção por tipo, consumo e fluxos físicos com Espanha), recolhidos todos os dias. Os dados completos, com os totais diários das duas fontes, estão em dados.tiagofelicia.pt, sob licença CC BY 4.0."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        .aviso-box, .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .aviso-box, .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #666; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 0 0 14px 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos de período (como nos Serviços de Sistema) --- */
+        .periodo-presets { display: flex; justify-content: center; margin-bottom: 12px; padding: 2px; }
+        .periodo-presets .hh-mode-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .periodo-presets .hh-mode-btn { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 7px 14px; font-size: 0.9em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .periodo-presets .hh-mode-btn:last-child { border-right: none; }
+        .periodo-presets .hh-mode-btn:hover { background: #f1f5f9; }
+        .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        .date-selector-periodo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+        .date-selector-periodo label { font-weight: bold; font-size: 0.9em; }
+        .date-selector-periodo input { padding: 7px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95em; }
+        .date-selector-periodo.no-dates .date-input-wrapper { display: none; }
+        #btn-partilhar { background: #fff; border: 1px solid #ccc; padding: 7px 14px; font-size: 0.95em; cursor: pointer; color: #2c3e50; border-radius: 5px; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        #erro-periodo { display: none; max-width: 600px; margin: 0 auto 12px auto; background: #fdecea; border-left: 3px solid #c0392b; padding: 8px 12px; font-size: 0.88em; color: #7b241c; border-radius: 0 5px 5px 0; }
+        .periodo-titulo { font-weight: 600; color: #2c3e50 !important; }
+        .periodo-presets .so-tel { display: none; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+        /* No telemóvel: sem o "Últimos" e os botões em grelha de 4 */
+        @media (max-width: 760px) {
+            .periodo-presets .ult { display: none; }
+            .periodo-presets .so-tel { display: inline; }
+            /* Colunas iguais e texto em duas linhas se for preciso: com 'auto', a 375 px a 4.ª coluna saía da caixa */
+            .periodo-presets .hh-mode-toggle { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 100%; }
+            .periodo-presets .hh-mode-btn { padding: 6px 4px; font-size: 0.8em; line-height: 1.2; white-space: normal; border-bottom: 1px solid #cbd5e1; }
+            .periodo-presets .hh-mode-btn:nth-child(4n) { border-right: none; }
+            .periodo-presets .hh-mode-btn:nth-last-child(-n+4) { border-bottom: none; }
+        }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e, abaixo de 768px,
+           position: sticky !important); um <nav> dentro do <main> apanha-as — por isso são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        .kpi-cabecalho { width: 95%; max-width: 1200px; margin: 18px auto 8px auto; }
+        .kpi-cabecalho h2 { font-size: 1.05em; color: #2c3e50; margin: 0 0 4px 0; }
+        .kpi-cabecalho p { font-size: 0.85em; color: #6c757d; margin: 0 0 8px 0; }
+        #rve-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 22px auto; }
+        @media (max-width: 1000px) { #rve-kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 560px) { #rve-kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 8px; }
+        .kpi-par { display: flex; justify-content: center; gap: 22px; }
+        .kpi-fonte { font-size: 0.72em; color: #5c636a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .kpi-value { font-size: 1.2em; font-weight: 700; color: #212529; line-height: 1.25; font-variant-numeric: tabular-nums; }
+        .kpi-dif { font-size: 0.8em; font-weight: 600; color: #334155; margin-top: 6px; }
+        .kpi-sub { font-size: 0.76em; color: #5c636a; margin-top: 4px; line-height: 1.4; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #666; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 420px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #6c757d; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .resumo-bloco { width: 100%; margin: 12px 0 0; font-size: 0.9em; color: #444; line-height: 1.6; }
+        .nota-bloco { font-size: 0.8em; color: #666; margin: 6px 0 0; line-height: 1.5; }
+
+        .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
+        .ctrl-label { font-size: 0.75em; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; align-self: center; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.85em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(:disabled):not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+
+        .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
+        .tabela-rve { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-rve caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-rve th, .tabela-rve td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-rve thead th { background: #f1f3f5; font-weight: 600; }
+        .tabela-rve th.esq, .tabela-rve td.esq { text-align: left; }
+        .tabela-rve tr.grupo th { text-align: left; background: #e9eef5; color: #2c3e50; font-size: 0.92em; }
+        .tabela-rve td.sub { padding-left: 26px; color: #475569; }
+        .tabela-rve tr.total td { font-weight: 700; }
+        .tabela-rve tr.total td.porque { font-weight: normal; }
+        .tabela-rve td.porque { text-align: left; white-space: normal; min-width: 280px; font-size: 0.92em; color: #475569; line-height: 1.45; }
+        .tabela-rve td.forte { font-weight: 700; }
+        .tabela-rve tr.atual td { color: #64748b; }
+        .tabela-anos th, .tabela-anos td { padding: 5px 8px; }
+        .estado-carregamento { text-align: center; color: #666; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 360px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.8em; }
+            .kpi-par { gap: 16px; }
+        }
+
+        /* --- Dark mode --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-cabecalho h2,
+        [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2 { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub, [data-theme="dark"] .kpi-fonte,
+        [data-theme="dark"] .kpi-cabecalho p, [data-theme="dark"] .ctrl-label,
+        [data-theme="dark"] .nota-bloco { color: #94a3b8; }
+        [data-theme="dark"] .kpi-dif, [data-theme="dark"] .resumo-bloco, [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(:disabled):not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .periodo-presets .hh-mode-toggle { border-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn { background: #1e293b; color: #cbd5e1; border-right-color: #475569; border-bottom-color: #475569; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn:hover { background: #334155; }
+        [data-theme="dark"] .periodo-presets .hh-mode-btn.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .date-selector-periodo input { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .date-selector-periodo input::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] #btn-partilhar { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] #erro-periodo { background: #4a1c1c; color: #fca5a5; border-left-color: #dc2626; }
+        [data-theme="dark"] .periodo-titulo { color: #e2e8f0 !important; }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-rve { background: #1e293b; }
+        [data-theme="dark"] .tabela-rve caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-rve th, [data-theme="dark"] .tabela-rve td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-rve thead th { background: #0f172a; }
+        [data-theme="dark"] .tabela-rve tr.grupo th { background: #16202e; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-rve td.sub, [data-theme="dark"] .tabela-rve td.porque { color: #cbd5e1; }
+        [data-theme="dark"] .tabela-rve tr.atual td { color: #94a3b8; }
+
+        @page { size: A4 landscape; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav,
+            .periodo-presets, .date-selector-periodo, .toast-feedback,
+            .bloco-controls, .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li aria-current="page">REN vs ENTSO-E</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <div class="periodo-presets">
+            <div class="hh-mode-toggle" role="group" aria-label="Período">
+                <button type="button" class="hh-mode-btn" data-preset="30d"><span class="ult">Últimos </span>30 dias</button>
+                <button type="button" class="hh-mode-btn" data-preset="mes">Este mês</button>
+                <button type="button" class="hh-mode-btn" data-preset="mespassado">Mês passado</button>
+                <button type="button" class="hh-mode-btn active" data-preset="12m"><span class="ult">Últimos </span>12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="ano">Ano corrente</button>
+                <button type="button" class="hh-mode-btn" data-preset="anopassado">Ano passado</button>
+                <button type="button" class="hh-mode-btn" data-preset="tudo">Desde 2015</button>
+                <button type="button" class="hh-mode-btn" data-preset="custom" title="Escolher as datas — abre com a série completa, desde 2015"><span class="ult">Personalizado</span><span class="so-tel">Datas</span></button>
+            </div>
+        </div>
+        <div class="date-selector-periodo no-dates">
+            <div class="date-input-wrapper"><label for="seletor-data-inicio">De:</label> <input type="date" id="seletor-data-inicio"></div>
+            <div class="date-input-wrapper"><label for="seletor-data-fim">até:</label> <input type="date" id="seletor-data-fim"></div>
+            <button type="button" id="btn-partilhar" title="Copiar ou partilhar o link desta vista" aria-label="Partilhar"><span aria-hidden="true">📤</span> Partilhar</button>
+        </div>
+        <div id="erro-periodo" role="alert"></div>
+        <p class="badge-global">Comparação desde <strong id="badge-inicio">--/--/----</strong> · Último dia nas duas fontes: <strong id="badge-ultima">--/--/----</strong></p>
+
+        <h1>REN vs ENTSO-E</h1>
+        <p>Os números de Portugal em duas fontes: a REN, que gere a rede, e a ENTSO-E, a plataforma de transparência europeia. O que bate, o que não bate e porquê</p>
+        <p class="periodo-titulo" id="periodo-titulo"></p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-kpis" class="mini-nav-chip">📋 Resumo</a>
+        <a href="#bloco-tabela" class="mini-nav-chip">🔎 Tecnologia a tecnologia</a>
+        <a href="#bloco-evol" class="mini-nav-chip">📈 Ao longo do tempo</a>
+        <a href="#bloco-tec" class="mini-nav-chip">⚡ Por tecnologia</a>
+        <a href="#bloco-anos" class="mini-nav-chip">📅 Ano a ano</a>
+        <a href="#bloco-cob" class="mini-nav-chip">🕒 Horas em falta</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados…</div>
+
+    <!-- ====================== RESUMO ====================== -->
+    <div class="kpi-cabecalho" id="bloco-kpis">
+        <h2>Resumo do período</h2>
+        <p>Em GWh e em %, por dia de Lisboa. Por omissão só entram os dias com todas as horas na ENTSO-E (e saem dos dois lados), para uma lacuna nos dados não parecer uma diferença entre as fontes.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Dias</span>
+            <div class="btn-toggle" id="ctrl-dias" role="group" aria-label="Que dias entram na comparação">
+                <button type="button" data-v="completos" class="active">Só os completos</button>
+                <button type="button" data-v="todos">Todos os dias</button>
+            </div>
+        </div>
+    </div>
+    <div id="rve-kpis"></div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/ren-vs-entsoe</p></div>
+
+    <!-- ====================== TABELA ====================== -->
+    <div class="grafico-box" id="bloco-tabela">
+        <h2>Tecnologia a tecnologia</h2>
+        <p class="grafico-intro">A mesma conta nas duas fontes, com a razão de cada diferença. As categorias da ENTSO-E são as comuns a toda a Europa; aqui estão juntas como as da REN (por exemplo, a eólica é a soma da eólica em terra e no mar).</p>
+        <div class="tabela-box" id="tabela-tec"></div>
+        <p class="nota-bloco" id="tabela-nota"></p>
+    </div>
+
+    <!-- ====================== EVOLUÇÃO ====================== -->
+    <div class="grafico-box" id="bloco-evol">
+        <h2>Ao longo do tempo</h2>
+        <p class="grafico-intro">As duas fontes lado a lado, por dia (até 3 meses) ou por mês. Nas renováveis, a distância entre as linhas é quase toda a hídrica das centrais reversíveis.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Indicador</span>
+            <div class="btn-toggle" id="ctrl-evol" role="group" aria-label="Indicador do gráfico">
+                <button type="button" data-v="renovProd" class="active">Renováveis na produção</button>
+                <button type="button" data-v="renovCons">Renováveis no consumo</button>
+                <button type="button" data-v="cons">Consumo</button>
+                <button type="button" data-v="saldo">Saldo importador</button>
+            </div>
+        </div>
+        <div id="grafico-evol" class="grafico"></div>
+        <p class="resumo-bloco" id="evol-resumo"></p>
+    </div>
+
+    <!-- ====================== POR TECNOLOGIA ====================== -->
+    <div class="grafico-box" id="bloco-tec">
+        <h2>Por tecnologia</h2>
+        <p class="grafico-intro">A produção de cada tecnologia nas duas fontes, por dia ou por mês (em linhas acima de 3 anos). A hídrica total bate; o que muda é quanto dela cada fonte põe na bombagem.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Tecnologia</span>
+            <div class="btn-toggle" id="ctrl-tec" role="group" aria-label="Tecnologia do gráfico">
+                <button type="button" data-v="hidR" class="active">Hídrica sem bombagem</button>
+                <button type="button" data-v="turb">Turbinagem das reversíveis</button>
+                <button type="button" data-v="hid">Hídrica total</button>
+                <button type="button" data-v="eol">Eólica</button>
+                <button type="button" data-v="sol">Solar</button>
+                <button type="button" data-v="bio">Biomassa</button>
+                <button type="button" data-v="gas">Gás natural</button>
+                <button type="button" data-v="bomb">Bombagem (consumo)</button>
+            </div>
+        </div>
+        <div id="grafico-tec" class="grafico"></div>
+        <p class="resumo-bloco" id="tec-resumo"></p>
+    </div>
+
+    <!-- ====================== ANO A ANO ====================== -->
+    <div class="grafico-box" id="bloco-anos">
+        <h2>Ano a ano, desde 2015</h2>
+        <p class="grafico-intro">Todos os anos, independentemente do período escolhido em cima (o ano corrente vai até ao último dia com dados). Segue o botão dos dias: só os completos ou todos.</p>
+        <div class="tabela-box" id="tabela-anos"><div class="estado-carregamento">A carregar os anos…</div></div>
+    </div>
+
+    <!-- ====================== COBERTURA ====================== -->
+    <div class="grafico-box" id="bloco-cob">
+        <h2>Horas em falta na ENTSO-E</h2>
+        <p class="grafico-intro">A parte das horas de cada dia ou mês com dados na ENTSO-E, para a produção, o consumo e as trocas com Espanha (as trocas só contam com os dois sentidos). A REN tem sempre o dia inteiro.</p>
+        <div id="grafico-cob" class="grafico"></div>
+        <p class="resumo-bloco" id="cob-resumo"></p>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>E o resto do balanço de Portugal?</h2>
+        <p>Hora a hora e desde 2010, com a REN: produção por fonte, consumo, trocas com Espanha, bombagem e preço do mercado.</p>
+        <div class="botoes">
+            <a href="balanco-omie" class="button-link">⚡ Balanço Energético Diário</a>
+            <a href="balanco-historico" class="button-link">📊 Balanço Histórico</a>
+            <a href="europe-balance" class="button-link">🇪🇺 Balanço Energético Europa</a>
+        </div>
+    </div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>Porque é que a REN e a ENTSO-E não dão os mesmos números?</strong></summary>
+            <div class="faq-content">
+                <p>Na maior parte das tecnologias dão: a eólica, a solar, a biomassa, o gás natural e o consumo batem quase sempre a menos de 1 %, porque são as mesmas centrais e os mesmos contadores. As diferenças grandes vêm de três coisas:</p>
+                <ul>
+                    <li>a forma de separar a produção das <strong>centrais hídricas reversíveis</strong>;</li>
+                    <li>os <strong>fluxos com Espanha</strong> que a ENTSO-E publica;</li>
+                    <li>as <strong>horas em que a ENTSO-E não tem dados</strong>.</li>
+                </ul>
+                <p>A REN é a fonte nacional (é ela que gere a rede); a ENTSO-E junta o que os operadores de toda a Europa lhe enviam, com as categorias comuns a todos os países.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que a ENTSO-E dá menos renováveis a Portugal?</strong></summary>
+            <div class="faq-content">
+                <p>Por causa das centrais hídricas reversíveis, as que tanto produzem como bombeiam água para cima. As albufeiras destas centrais também recebem a água do rio.</p>
+                <ul>
+                    <li>A <strong>ENTSO-E</strong> põe toda a produção destas centrais na categoria «bombagem», que não conta como renovável, mesmo a da água que chegou pelo rio.</li>
+                    <li>A <strong>REN</strong> só conta como produção por bombagem a parte que corresponde à água antes bombeada, e o resto fica na hídrica, renovável.</li>
+                </ul>
+                <p>O total da hídrica é praticamente igual nas duas fontes; muda só a divisão. Em janeiro–outubro de 2026, a ENTSO-E contou cerca de <strong>6 400 GWh</strong> de bombagem e a REN cerca de <strong>4 100</strong>: a diferença, mais de 2 TWh, passa de renovável a não renovável, e a percentagem de renováveis na produção desce de cerca de 73 % (REN) para cerca de 67 % (ENTSO-E).</p>
+                <p>Desde 2015, a diferença foi de cerca de 1,5 a 6 pontos por ano e cresceu com o uso da bombagem: as bombas consumiram cerca de 1 500 GWh em 2015 e 5 100 GWh em 2025 (ver <a href="#bloco-anos">«Ano a ano»</a>).</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como se sabe que a bombagem da ENTSO-E inclui água do rio?</strong></summary>
+            <div class="faq-content">
+                <p>Pelas contas: uma central não pode devolver mais energia do que a que gastou a bombear, porque há perdas.</p>
+                <ul>
+                    <li>Em janeiro–outubro de 2026, as bombas consumiram cerca de <strong>5 100 GWh</strong> (nas duas fontes).</li>
+                    <li>A REN conta cerca de <strong>4 100 GWh</strong> de produção por bombagem, perto de 80 % do que se gastou a bombear, o que bate com as perdas habituais.</li>
+                    <li>A ENTSO-E conta cerca de <strong>6 400 GWh</strong>, mais do que todo o consumo das bombas: isso só é possível se uma parte for água que chegou à albufeira pelo rio.</li>
+                </ul>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Qual dos dois métodos está certo?</strong></summary>
+            <div class="faq-content">
+                <p>Para contar renováveis, o da <strong>REN</strong>. O da ENTSO-E não está errado no que diz (que a energia saiu de uma central reversível), mas a categoria dela é uma etiqueta de tecnologia, comum a toda a Europa, e não foi pensada para separar o que é renovável.</p>
+                <ul>
+                    <li>A <strong>água que chega pelo rio</strong> à albufeira de uma central reversível é igual à de qualquer outra barragem: a energia que dá é renovável.</li>
+                    <li>A <strong>água bombeada</strong> subiu com eletricidade tirada da rede, que já foi contada quando foi produzida; ao turbiná-la, a central devolve energia guardada, menos as perdas, e contá-la como renovável seria contá-la duas vezes.</li>
+                </ul>
+                <p>É também a regra europeia: a <a href="https://eur-lex.europa.eu/legal-content/PT/TXT/?uri=CELEX:32018L2001" target="_blank" rel="noopener">Diretiva (UE) 2018/2001</a> (artigo 7.º) tira das renováveis só a eletricidade produzida em centrais de bombagem a partir de água antes bombeada, e as percentagens oficiais de renováveis seguem-na.</p>
+                <p>O limite do método da REN é que a água do rio e a bombeada se misturam na albufeira: a parte de cada uma é uma estimativa, e não uma medição.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o saldo importador da ENTSO-E é mais baixo desde julho de 2026?</strong></summary>
+            <div class="faq-content">
+                <p>Desde julho de 2026, os fluxos físicos entre Portugal e Espanha que a ENTSO-E publica (artigo 12.1.G do Regulamento (UE) n.º 543/2013) ficam abaixo dos da REN: tudo indica que lhes falta a nova linha Ponte de Lima–Fontefría. Por isso, o saldo importador da ENTSO-E sai mais baixo e o consumo deixa de bater com a produção mais o saldo.</p>
+                <p>Nas páginas de Portugal deste site usa-se o saldo da REN.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Que dias ficam de fora da comparação?</strong></summary>
+            <div class="faq-content">
+                <p>Por omissão, só entram os dias em que a ENTSO-E tem todas as horas de dados para o que se está a comparar (produção, consumo ou trocas), e esses dias saem dos dois lados, REN e ENTSO-E. De outro modo, uma semana sem dados na ENTSO-E pareceria uma diferença entre as fontes.</p>
+                <p>O botão «Todos os dias» junta também os dias incompletos, e o bloco <a href="#bloco-cob">«Horas em falta na ENTSO-E»</a> mostra quantas horas faltam.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Que fonte usa este site?</strong></summary>
+            <div class="faq-content">
+                <p>Nas páginas de Portugal (<a href="balanco-omie">Balanço Energético diário</a> e <a href="balanco-historico">histórico</a>, <a href="albufeiras">Albufeiras</a>, <a href="erc">ERC</a>) usa-se a REN, a fonte nacional. Nas páginas da Europa (<a href="europe-generation">Produção</a>, <a href="europe-balance">Balanço Energético</a> e <a href="europe-prices">Preços na Europa</a>) usa-se a ENTSO-E (ou a Energy-Charts, que também parte dela), para comparar todos os países com as mesmas regras.</p>
+                <p>Por isso, Portugal pode aparecer com menos renováveis nas páginas da Europa do que no Balanço Energético.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm estes dados?</strong></summary>
+            <div class="faq-content">
+                <p>Da <strong>REN</strong> (Data Hub, produção e consumo por quarto de hora, e o balanço diário com a produção por bombagem) e da <strong>ENTSO-E Transparency Platform</strong> (produção por tipo, consumo e fluxos físicos com Espanha), recolhidos todos os dias.</p>
+                <p>Os dados completos, com os totais diários das duas fontes (da ENTSO-E, um ficheiro por ano, por exemplo o de <a href="https://dados.tiagofelicia.pt/data/producao/entsoe-pt-diario/entsoe_pt_diario_2026.csv" target="_blank" rel="noopener">2026</a>, e da <a href="https://dados.tiagofelicia.pt/data/agregados/producao_diario.csv" target="_blank" rel="noopener">REN</a>), estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    // REN: o agregado diário da produção (o mesmo do Balanço Energético), com a hídrica sem a
+    // produção por bombagem. ENTSO-E: um CSV por ano com os totais diários de Portugal.
+    const URL_REN = 'agregados/producao_diario.csv';
+    const PASTA_ENT = 'producao/entsoe-pt-diario/entsoe_pt_diario_';
+    const INICIO = '2015-01-01';
+    const DIARIO_ATE_DIAS = 92;
+
+    const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const MESES_LONGOS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho',
+                          'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const DIAS_SEMANA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+    // Cores (paleta validada: a mesma cor = a mesma fonte em todos os gráficos)
+    const COR = { ren: ['#2a78d6', '#3987e5'], ent: ['#eb6834', '#d95926'],
+                  p: ['#1baf7a', '#199e70'], c: ['#4a3aa7', '#9085e9'], t: ['#eda100', '#c98500'] };
+    const cor = (k, c) => COR[k][c.dk ? 1 : 0];
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const menos = s => s.replace('-', '−');
+    const fmt0 = v => vazio(v) ? '--' : menos(_nf0.format(v));
+    const fmt1 = v => vazio(v) ? '--' : menos(_nf1.format(v));
+    const fmt2 = v => vazio(v) ? '--' : menos(_nf2.format(v));
+    // GWh: sem casas a partir de 100, com 1 abaixo, com 2 abaixo de 1
+    const fmtG = v => vazio(v) ? '--' : (Math.abs(v) < 0.005 ? '0' : Math.abs(v) >= 100 ? fmt0(v) : Math.abs(v) >= 1 ? fmt1(v) : fmt2(v));
+    const sinal = v => (v > 0 ? '+' : '');
+    const fmtDifG = v => vazio(v) ? '--' : (Math.abs(v) < 0.005 ? '0' : sinal(v) + fmtG(v));
+    // Uma diferença que arredonda a zero fica sem sinal (nada de «−0,0 %»)
+    const fmtDifPct = v => vazio(v) ? '--' : (Math.abs(v) < 0.05 ? '0,0 %' : sinal(v) + fmt1(v) + ' %');
+    const fmtDifPp = v => vazio(v) ? '--' : (Math.abs(v) < 0.05 ? '0,0 pp' : sinal(v) + fmt1(v) + ' pp');
+    const fmtPct = v => vazio(v) ? '--' : fmt1(v) + ' %';
+    function fmtData(iso) { if (!iso) return '--/--/----'; const p = iso.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+    function rotMes(mes) { return `${MESES[+mes.slice(5, 7) - 1]}/${mes.slice(2, 4)}`; }
+    function mesLongo(mes) { return `${MESES_LONGOS[+mes.slice(5, 7) - 1]} de ${mes.slice(0, 4)}`; }
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6',
+                 suave: dk ? '#94a3b8' : '#888' };
+    }
+    function exportacao(nome) {
+        return { enabled: true, filename: nome,
+                 buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } } };
+    }
+    function base(c, nome) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: false },
+            exporting: exportacao(nome),
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    const eixoX = (c, cats, extra) => Object.assign({ categories: cats, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha }, extra || {});
+    const eixoY = (c, titulo, extra) => Object.assign({ title: { text: titulo, style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha }, extra || {});
+
+    function limparGrafico(id, html) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = html || '';
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    function ativarToggle(id, v) {
+        document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+    }
+
+    // ==================================================================
+    // DATAS (AAAA-MM-DD, em UTC para não depender do fuso do visitante)
+    // ==================================================================
+    const DIA_MS = 86400000;
+    const tsDia = iso => { const [a, m, d] = iso.split('-').map(Number); return Date.UTC(a, m - 1, d); };
+    const isoDeTs = ts => new Date(ts).toISOString().slice(0, 10);
+    const addDias = (iso, n) => isoDeTs(tsDia(iso) + n * DIA_MS);
+    function deslocarMeses(iso, n) { const d = new Date(tsDia(iso)); d.setUTCMonth(d.getUTCMonth() + n); return isoDeTs(d.getTime()); }
+    const ultimoDoMes = iso => { const [a, m] = iso.split('-').map(Number); return isoDeTs(Date.UTC(a, m, 0)); };
+    const nDias = (a, b) => Math.round((tsDia(b) - tsDia(a)) / DIA_MS) + 1;
+    function diasDe(inicio, fim) { const out = []; for (let t = tsDia(inicio); t <= tsDia(fim); t += DIA_MS) out.push(isoDeTs(t)); return out; }
+    const diaSemana = iso => DIAS_SEMANA[new Date(tsDia(iso)).getUTCDay()];
+    function hojeISO() {
+        const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+        const v = t => p.find(x => x.type === t).value;
+        return `${v('year')}-${v('month')}-${v('day')}`;
+    }
+    // Horas do dia de Lisboa: 23 no último domingo de março, 25 no último domingo de outubro
+    function horasDoDia(iso) {
+        const [a, m, d] = iso.split('-').map(Number);
+        if (m !== 3 && m !== 10) return 24;
+        const ult = new Date(Date.UTC(a, m, 0));
+        if (d !== ult.getUTCDate() - ult.getUTCDay()) return 24;
+        return m === 3 ? 23 : 25;
+    }
+
+    // ==================================================================
+    // DADOS
+    // ==================================================================
+    function lerCSV(txt) {
+        const linhas = txt.replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim());
+        const cab = linhas[0].split(',');
+        return linhas.slice(1).map(l => { const v = l.split(','); const o = {}; cab.forEach((c, i) => { o[c] = v[i]; }); return o; });
+    }
+    const num = s => (s === undefined || s === null || s === '') ? null : +s;
+    // Soma que distingue "sem dados" (null) de zero
+    function soma(...v) { let t = null; v.forEach(x => { if (!vazio(x)) t = (t || 0) + x; }); return t; }
+
+    // REN[dia] e ENT[dia]: as mesmas chaves, já juntas como na REN
+    const REN = new Map(), ENT = new Map();
+    const CAMPOS = ['hid', 'hidR', 'turb', 'eol', 'sol', 'bio', 'gas', 'carv', 'outra', 'bat', 'prod', 'renov', 'naoRenov',
+                    'cons', 'bomb', 'saldo', 'imp', 'exp', 'batC', 'aux'];
+
+    function lerREN(txt) {
+        lerCSV(txt).forEach(r => {
+            if (!r.data_iso || r.data_iso < INICIO) return;
+            const d = { hid: num(r.hidrica_gwh), hidR: num(r.hidrica_renov_gwh), eol: num(r.eolica_gwh), sol: num(r.solar_gwh),
+                        bio: num(r.biomassa_gwh), gas: num(r.gas_natural_gwh), carv: num(r.carvao_gwh), outra: num(r.outra_termica_gwh),
+                        bat: num(r.baterias_inj_gwh), prod: num(r.producao_nac_gwh), renov: num(r.renovavel_gwh),
+                        cons: num(r.consumo_gwh), bomb: num(r.bombagem_consumo_gwh), saldo: num(r.saldo_importador_gwh) };
+            d.turb = vazio(d.hid) || vazio(d.hidR) ? null : d.hid - d.hidR;
+            d.naoRenov = soma(d.gas, d.carv, d.outra);
+            REN.set(r.data_iso, d);
+        });
+    }
+    function lerENT(txt) {
+        lerCSV(txt).forEach(r => {
+            if (!r.data_iso) return;
+            const z = k => num(r[k]);
+            const d = { hidR: soma(z('hidrica_fio_gwh'), z('hidrica_albufeira_gwh')), turb: z('bombagem_producao_gwh'),
+                        eol: soma(z('eolica_terra_gwh'), z('eolica_mar_gwh')), sol: z('solar_gwh'),
+                        bio: soma(z('biomassa_gwh'), z('outras_renov_gwh'), z('ondas_gwh')), gas: z('gas_gwh'), carv: z('carvao_gwh'),
+                        outra: soma(z('petroleo_gwh'), z('outras_gwh'), z('residuos_gwh'), z('outros_tipos_gwh')),
+                        bat: z('baterias_descarga_gwh'), cons: z('consumo_gwh'), bomb: z('bombagem_consumo_gwh'),
+                        batC: z('baterias_carga_gwh'), aux: z('consumo_centrais_gwh'), imp: z('importacao_gwh'), exp: z('exportacao_gwh'),
+                        hp: +r.horas_producao || 0, hc: +r.horas_consumo || 0, ht: +r.horas_trocas || 0 };
+            d.hid = soma(d.hidR, d.turb);
+            d.prod = soma(d.hid, d.eol, d.sol, d.bio, d.gas, d.carv, d.outra, d.bat);
+            d.renov = soma(d.hidR, d.eol, d.sol, d.bio);
+            d.naoRenov = soma(d.gas, d.carv, d.outra);
+            d.saldo = vazio(d.imp) || vazio(d.exp) ? null : d.imp - d.exp;
+            ENT.set(r.data_iso, d);
+        });
+    }
+    const _anosEnt = new Map();
+    function carregarAnoEnt(ano) {
+        if (!_anosEnt.has(ano)) {
+            _anosEnt.set(ano, fetchDados(PASTA_ENT + ano + '.csv')
+                .then(r => (r.ok ? r.text() : ''))
+                .then(t => { if (t) lerENT(t); })
+                .catch(() => { /* ano sem ficheiro: fica sem dados */ }));
+        }
+        return _anosEnt.get(ano);
+    }
+    function carregarIntervalo(inicio, fim) {
+        const p = [];
+        for (let a = +inicio.slice(0, 4); a <= +fim.slice(0, 4); a++) p.push(carregarAnoEnt(a));
+        return Promise.all(p);
+    }
+
+    // ==================================================================
+    // CONTAS
+    // ==================================================================
+    // O que cada comparação precisa de ter completo na ENTSO-E: p(rodução), c(onsumo), t(rocas)
+    const GRUPO = { hid: 'p', hidR: 'p', turb: 'p', eol: 'p', sol: 'p', bio: 'p', gas: 'p', carv: 'p', outra: 'p', bat: 'p',
+                    prod: 'p', renov: 'p', naoRenov: 'p', bomb: 'p', batC: 'p', aux: 'p', cons: 'c', saldo: 't', imp: 't', exp: 't' };
+    const HORAS = { p: 'hp', c: 'hc', t: 'ht' };
+    let MODO_DIAS = 'completos';
+    const completo = (iso, g) => { const e = ENT.get(iso); return !!e && e[HORAS[g]] >= horasDoDia(iso) - 0.25; };
+    function entra(iso, grupos) {
+        if (!REN.has(iso) || !ENT.has(iso)) return false;
+        return MODO_DIAS === 'todos' || [...grupos].every(g => completo(iso, g));
+    }
+    // Soma dos dois lados nos mesmos dias; cada campo com os dias do seu grupo
+    function somar(dias) {
+        const S = { R: {}, E: {}, pub: {}, n: { p: 0, c: 0, t: 0, pt: 0 }, fora: { p: 0, c: 0, t: 0, pt: 0 } };
+        CAMPOS.forEach(k => { S.R[k] = 0; S.E[k] = 0; S.pub[k] = false; });
+        S.R.pt = { renov: 0, naoRenov: 0, saldo: 0, turb: 0 }; S.E.pt = { renov: 0, naoRenov: 0, saldo: 0, turb: 0 };
+        dias.forEach(iso => {
+            const r = REN.get(iso), e = ENT.get(iso);
+            ['p', 'c', 't'].forEach(g => {
+                if (!entra(iso, g)) { if (r) S.fora[g]++; return; }
+                S.n[g]++;
+                CAMPOS.forEach(k => {
+                    if (GRUPO[k] !== g) return;
+                    if (!vazio(r[k])) S.R[k] += r[k];
+                    if (!vazio(e[k])) { S.E[k] += e[k]; S.pub[k] = true; }
+                });
+            });
+            // Renováveis no consumo: produção e trocas no mesmo dia
+            if (entra(iso, 'pt')) {
+                S.n.pt++;
+                ['renov', 'naoRenov', 'saldo', 'turb'].forEach(k => {
+                    if (!vazio(r[k])) S.R.pt[k] += r[k];
+                    if (!vazio(e[k])) S.E.pt[k] += e[k];
+                });
+            } else if (r) S.fora.pt++;
+        });
+        S.R.pRenovProd = S.n.p && S.R.prod ? S.R.renov / S.R.prod * 100 : null;
+        S.E.pRenovProd = S.n.p && S.E.prod ? S.E.renov / S.E.prod * 100 : null;
+        const pc = x => { const b = x.renov + x.naoRenov + x.saldo; return b > 0 ? x.renov / b * 100 : null; };
+        S.R.pRenovCons = S.n.pt ? pc(S.R.pt) : null;
+        S.E.pRenovCons = S.n.pt ? pc(S.E.pt) : null;
+        // A ENTSO-E com a hídrica dividida como na REN: a turbinagem a mais volta às renováveis
+        const corr = S.E.turb - S.R.turb;
+        S.E.pRenovProdCorr = S.n.p && S.E.prod ? (S.E.renov + corr) / S.E.prod * 100 : null;
+        const corrPt = S.E.pt.turb - S.R.pt.turb;
+        S.E.pRenovConsCorr = S.n.pt ? pc({ renov: S.E.pt.renov + corrPt, naoRenov: S.E.pt.naoRenov, saldo: S.E.pt.saldo }) : null;
+        return S;
+    }
+    const difPct = (r, e) => (vazio(r) || vazio(e) || Math.abs(r) < 1e-9) ? null : (e - r) / Math.abs(r) * 100;
+
+    // Horas com dados na ENTSO-E sobre as horas do dia, por grupo
+    function cobertura(dias) {
+        const o = { esperado: 0, p: 0, c: 0, t: 0, incompletos: [] };
+        dias.forEach(iso => {
+            const h = horasDoDia(iso), e = ENT.get(iso);
+            o.esperado += h;
+            const hp = e ? Math.min(e.hp, h) : 0, hc = e ? Math.min(e.hc, h) : 0, ht = e ? Math.min(e.ht, h) : 0;
+            o.p += hp; o.c += hc; o.t += ht;
+            const falta = Math.max(h - hp, h - hc, h - ht);
+            if (falta > 0.25) o.incompletos.push({ iso, h, hp, hc, ht, falta });
+        });
+        return o;
+    }
+
+    // ==================================================================
+    // RESUMO (quadros)
+    // ==================================================================
+    let SOMA = null;
+    function cartao(rotulo, vR, vE, dif, sub) {
+        return `<div class="kpi-card"><div class="kpi-label">${rotulo}</div>
+            <div class="kpi-par"><div><div class="kpi-fonte">REN</div><div class="kpi-value">${vR}</div></div>
+            <div><div class="kpi-fonte">ENTSO-E</div><div class="kpi-value">${vE}</div></div></div>
+            ${dif ? `<div class="kpi-dif">${dif}</div>` : ''}${sub ? `<div class="kpi-sub">${sub}</div>` : ''}</div>`;
+    }
+    function renderKPIs(S, cob) {
+        const R = S.R, E = S.E;
+        const g = v => fmtG(v) + ' GWh';
+        // Sem dias comparáveis no grupo, os totais ficam vazios (e não zero)
+        const v = (x, grupo) => S.n[grupo] ? x : null;
+        const pctHoras = (x) => cob.esperado ? x / cob.esperado * 100 : null;
+        const html = [
+            cartao('⚡ Consumo', g(v(R.cons, 'c')), g(v(E.cons, 'c')), `ENTSO-E ${fmtDifPct(difPct(v(R.cons, 'c'), v(E.cons, 'c')))}`,
+                   S.n.c ? `${S.n.c} ${S.n.c === 1 ? 'dia' : 'dias'}` : 'Sem dias completos'),
+            cartao('☀️ Renováveis na produção', fmtPct(R.pRenovProd), fmtPct(E.pRenovProd), `ENTSO-E ${fmtDifPp(E.pRenovProd - R.pRenovProd)}`,
+                   vazio(E.pRenovProdCorr) ? '' : `Com a hídrica dividida como na REN, a ENTSO-E daria ${fmtPct(E.pRenovProdCorr)}`),
+            cartao('♻️ Renováveis no consumo', fmtPct(R.pRenovCons), fmtPct(E.pRenovCons), `ENTSO-E ${fmtDifPp(E.pRenovCons - R.pRenovCons)}`,
+                   'renováveis ÷ (renováveis + não renováveis + saldo importador), a conta da REN'),
+            cartao('🌐 Saldo importador', g(v(R.saldo, 't')), g(v(E.saldo, 't')), `ENTSO-E ${fmtDifPct(difPct(v(R.saldo, 't'), v(E.saldo, 't')))}`,
+                   'importação − exportação, com Espanha'),
+            cartao('💧 Turbinagem das reversíveis', g(v(R.turb, 'p')), g(v(E.turb, 'p')), `ENTSO-E ${fmtDifG(v(E.turb - R.turb, 'p'))} GWh`,
+                   S.pub.bomb ? `As bombas consumiram ${g(E.bomb)} (ENTSO-E) e ${g(R.bomb)} (REN)` : ''),
+            `<div class="kpi-card"><div class="kpi-label">🕒 Horas com dados na ENTSO-E</div>
+                <div class="kpi-value">${fmtPct(pctHoras(Math.min(cob.p, cob.c, cob.t)))}</div>
+                <div class="kpi-sub">produção ${fmtPct(pctHoras(cob.p))} · consumo ${fmtPct(pctHoras(cob.c))} · trocas ${fmtPct(pctHoras(cob.t))}</div>
+                <div class="kpi-sub">${cob.incompletos.length ? `${cob.incompletos.length} ${cob.incompletos.length === 1 ? 'dia incompleto' : 'dias incompletos'}${MODO_DIAS === 'completos' ? ' (ficam de fora)' : ''}` : 'Todos os dias completos'}</div></div>`
+        ];
+        document.getElementById('rve-kpis').innerHTML = html.join('');
+    }
+
+    // ==================================================================
+    // TABELA
+    // ==================================================================
+    const LINHAS = [
+        { grupo: 'Produção' },
+        { id: 'hid', nome: 'Hídrica (total)' },
+        { id: 'hidR', nome: 'fio de água e albufeira', sub: true },
+        { id: 'turb', nome: 'turbinagem das centrais reversíveis', sub: true },
+        { id: 'eol', nome: 'Eólica' },
+        { id: 'sol', nome: 'Solar' },
+        { id: 'bio', nome: 'Biomassa' },
+        { id: 'gas', nome: 'Gás natural' },
+        { id: 'carv', nome: 'Carvão' },
+        { id: 'outra', nome: 'Outras térmicas' },
+        { id: 'bat', nome: 'Baterias (descarga)' },
+        { id: 'prod', nome: 'Produção total', total: true },
+        { grupo: 'Consumo e trocas' },
+        { id: 'cons', nome: 'Consumo' },
+        { id: 'bomb', nome: 'Bombagem (consumo das bombas)' },
+        { id: 'saldo', nome: 'Saldo importador' },
+        { grupo: 'Renováveis' },
+        { id: 'pRenovProd', nome: 'Na produção', pct: true },
+        { id: 'pRenovCons', nome: 'No consumo (conta da REN)', pct: true }
+    ];
+    const LINHA_NOVA = '2026-07-01';   // desde aqui, os fluxos da ENTSO-E sem a linha Ponte de Lima–Fontefría
+    function porque(id, S, temJulho2026) {
+        const R = S.R, E = S.E;
+        const dif = difPct(R[id], E[id]);
+        const grande = dif !== null && Math.abs(dif) >= 2;
+        const lacunas = MODO_DIAS === 'todos' ? ' Neste modo entram dias com horas em falta na ENTSO-E: ver o bloco das horas em falta.' : '';
+        switch (id) {
+            case 'hid': return grande ? `Diferença acima do habitual neste período.${lacunas}` : 'O total bate: o que muda é a divisão entre as duas linhas de baixo.';
+            case 'hidR': return 'A ENTSO-E põe na bombagem toda a produção das centrais reversíveis, também a da água que lhes chegou pelo rio; a REN só a da água antes bombeada. Por isso a ENTSO-E dá menos aqui…';
+            case 'turb': return '… e mais aqui.' + (S.pub.turb && E.turb > E.bomb ? ` A ENTSO-E conta mais turbinagem do que todo o consumo das bombas (${fmtG(E.bomb)} GWh): sem a água do rio, seria impossível.` : '');
+            case 'eol': case 'sol': case 'bio': case 'gas':
+                return grande ? `Diferença acima do habitual neste período.${lacunas}` : 'As mesmas centrais nas duas fontes: diferenças de medição e de arredondamento.';
+            case 'carv': return (R.carv < 0.5 && E.carv < 0.5) ? 'Portugal deixou de produzir eletricidade com carvão em novembro de 2021.' : (grande ? `Diferença acima do habitual neste período.${lacunas}` : 'As mesmas centrais nas duas fontes.');
+            case 'outra': return 'Pequenas térmicas: a REN junta-as em «outra térmica»; a ENTSO-E reparte-as por petróleo, resíduos e outras.';
+            case 'bat': return S.pub.bat ? (grande ? 'Diferença acima do habitual neste período.' : 'As mesmas baterias nas duas fontes.') : 'A ENTSO-E não publica as baterias de Portugal.';
+            case 'prod': return 'A soma das linhas de cima.' + (S.pub.bat ? '' : ' A ENTSO-E não tem as baterias.') +
+                (S.pub.aux ? ` A ENTSO-E publica à parte o consumo próprio de algumas centrais (${fmtG(E.aux)} GWh neste período).` : '');
+            case 'cons': return grande ? `Diferença acima do habitual neste período.${lacunas}` : 'Nas duas fontes, o consumo inclui as perdas na rede e não inclui a bombagem nem a carga das baterias.';
+            case 'bomb': return grande ? 'Diferença acima do habitual neste período.' : 'A energia que as bombas tiraram da rede: bate nas duas.';
+            case 'saldo': {
+                // A falta da linha nova só se vê nos dias desde julho de 2026: num período mais longo, o resto dilui-a
+                let desdeJulho = null;
+                if (temJulho2026) {
+                    const S2 = somar(diasDe(periodo.inicio > LINHA_NOVA ? periodo.inicio : LINHA_NOVA, periodo.fim));
+                    if (S2.n.t) desdeJulho = difPct(S2.R.saldo, S2.E.saldo);
+                }
+                if (desdeJulho !== null && desdeJulho <= -2) {
+                    return 'Desde julho de 2026, os fluxos físicos que a ENTSO-E publica (art. 12.1.G) ficam abaixo dos da REN: tudo indica que lhes falta a linha Ponte de Lima–Fontefría' +
+                           (periodo.inicio < LINHA_NOVA ? ` (desde 01/07/2026, neste período: ${fmtDifPct(desdeJulho)}).` : '.') + lacunas;
+                }
+                return grande ? `Diferença acima do habitual neste período.${lacunas}` : 'Os fluxos físicos na fronteira com Espanha: batem neste período.';
+            }
+            case 'pRenovProd': return vazio(E.pRenovProdCorr) ? '' : `Quase tudo da hídrica: com a divisão da REN, a ENTSO-E daria ${fmtPct(E.pRenovProdCorr)}.`;
+            case 'pRenovCons': return vazio(E.pRenovConsCorr) ? '' : `A hídrica e o saldo: só com a divisão da hídrica da REN, a ENTSO-E daria ${fmtPct(E.pRenovConsCorr)}.`;
+        }
+        return '';
+    }
+    function renderTabela(S) {
+        const temJulho2026 = periodo.fim >= LINHA_NOVA;
+        let h = '<table class="tabela-rve"><caption>REN e ENTSO-E no período (GWh)</caption><thead><tr>' +
+                '<th scope="col" class="esq">Tecnologia</th><th scope="col">REN</th><th scope="col">ENTSO-E</th>' +
+                '<th scope="col">Diferença</th><th scope="col">Dif. %</th><th scope="col" class="esq">Porquê</th></tr></thead><tbody>';
+        LINHAS.forEach(l => {
+            if (l.grupo) { h += `<tr class="grupo"><th colspan="6" scope="rowgroup">${l.grupo}</th></tr>`; return; }
+            const n = l.pct ? 1 : S.n[GRUPO[l.id]];
+            const r = n ? S.R[l.id] : null, e = n ? S.E[l.id] : null;
+            const semE = n && !l.pct && !S.pub[l.id];
+            const cls = l.total ? ' class="total"' : '';
+            const nome = `<td class="esq${l.sub ? ' sub' : ''}">${l.sub ? '└ ' : ''}${l.nome}</td>`;
+            if (l.pct) {
+                h += `<tr${cls}>${nome}<td>${fmtPct(r)}</td><td>${fmtPct(e)}</td><td>${fmtDifPp(vazio(r) || vazio(e) ? null : e - r)}</td><td></td><td class="porque">${porque(l.id, S, temJulho2026)}</td></tr>`;
+            } else {
+                const d = semE || !n ? null : e - r, dp = semE || !n ? null : difPct(r, e);
+                const forte = dp !== null && Math.abs(dp) >= 5 ? ' class="forte"' : '';
+                h += `<tr${cls}>${nome}<td>${fmtG(r)}</td><td>${semE ? '—' : fmtG(e)}</td><td${forte}>${fmtDifG(d)}</td><td${forte}>${fmtDifPct(dp)}</td><td class="porque">${porque(l.id, S, temJulho2026)}</td></tr>`;
+            }
+        });
+        h += '</tbody></table>';
+        document.getElementById('tabela-tec').innerHTML = h;
+        const partes = [];
+        const fora = S.fora;
+        if (MODO_DIAS === 'completos' && (fora.p || fora.c || fora.t)) {
+            const txt = [['p', 'na produção'], ['c', 'no consumo'], ['t', 'nas trocas']].filter(([g]) => fora[g]).map(([g, n]) => `${fora[g]} ${n}`);
+            partes.push(`Ficaram de fora, dos dois lados, os dias com horas em falta na ENTSO-E: ${txt.join(', ')}.`);
+        }
+        partes.push('Hídrica, turbinagem e renováveis da REN: com a produção por bombagem do balanço diário da REN.');
+        document.getElementById('tabela-nota').textContent = partes.join(' ');
+    }
+
+    // ==================================================================
+    // GRÁFICOS
+    // ==================================================================
+    function baldes() {
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        if (dias.length <= DIARIO_ATE_DIAS) {
+            return { porDia: true, lista: dias.map(d => ({ rotulo: fmtData(d).slice(0, 5), longo: `${diaSemana(d)}, ${fmtData(d)}`, dias: [d] })) };
+        }
+        const meses = new Map();
+        dias.forEach(d => { const m = d.slice(0, 7); if (!meses.has(m)) meses.set(m, []); meses.get(m).push(d); });
+        return { porDia: false, lista: [...meses].map(([m, ds]) => ({ rotulo: rotMes(m), longo: mesLongo(m), dias: ds })) };
+    }
+    const EVOL = {
+        renovProd: { nome: 'Renováveis na produção', un: '%', val: (S, f) => S[f].pRenovProd },
+        renovCons: { nome: 'Renováveis no consumo', un: '%', val: (S, f) => S[f].pRenovCons },
+        cons: { nome: 'Consumo', un: 'GWh', val: (S, f) => S.n.c ? S[f].cons : null },
+        saldo: { nome: 'Saldo importador', un: 'GWh', val: (S, f) => S.n.t ? S[f].saldo : null }
+    };
+    const TEC = {
+        hidR: 'Hídrica sem bombagem (fio de água e albufeira)', turb: 'Turbinagem das centrais reversíveis', hid: 'Hídrica total',
+        eol: 'Eólica', sol: 'Solar', bio: 'Biomassa', gas: 'Gás natural', bomb: 'Bombagem (consumo das bombas)'
+    };
+    let VISTA = { evol: 'renovProd', tec: 'hidR' };
+    // Com muitos meses as colunas ficam com menos de 2 px e algumas nem se desenham: passam a linhas
+    const COLUNAS_ATE = 36;
+    const tipoBarras = B => (B.lista.length > COLUNAS_ATE ? 'line' : 'column');
+    const opcoesBarras = { column: { borderWidth: 0, groupPadding: 0.08, pointPadding: 0.02 },
+                           line: { marker: { radius: 2, symbol: 'circle' }, lineWidth: 2, connectNulls: false } };
+    let BALDES = null, SOMAS_BALDE = null;
+
+    function renderEvol() {
+        const c = _hcDark(), cfg = EVOL[VISTA.evol], B = BALDES;
+        const vals = SOMAS_BALDE.map(S => ({ r: cfg.val(S, 'R'), e: cfg.val(S, 'E') }));
+        if (!vals.some(v => !vazio(v.r) && !vazio(v.e))) {
+            limparGrafico('grafico-evol', '<div class="bloco-vazio">Sem dias para comparar neste período.</div>');
+            document.getElementById('evol-resumo').textContent = '';
+            return;
+        }
+        const pct = cfg.un === '%';
+        const f = v => pct ? fmtPct(v) : fmtG(v) + ' GWh';
+        limparGrafico('grafico-evol');
+        Highcharts.chart('grafico-evol', Object.assign(base(c, 'ren-vs-entsoe-' + VISTA.evol), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, B.lista.map(b => b.rotulo)),
+            yAxis: eixoY(c, pct ? '%' : 'GWh', pct ? {} : { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            plotOptions: { line: { marker: { radius: 2.5, symbol: 'circle' }, lineWidth: 2, connectNulls: false } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const i = this.points[0].point.index, v = vals[i];
+                    let s = `<b>${B.lista[i].longo}</b><br>`;
+                    this.points.forEach(p => { s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${f(p.y)}<br>`; });
+                    if (!vazio(v.r) && !vazio(v.e)) s += pct ? `Diferença: ${fmtDifPp(v.e - v.r)}` : `Diferença: ${fmtDifG(v.e - v.r)} GWh (${fmtDifPct(difPct(v.r, v.e))})`;
+                    return s;
+                }
+            }),
+            series: [{ name: 'REN', data: vals.map(v => vazio(v.r) ? null : +v.r.toFixed(2)), color: cor('ren', c) },
+                     { name: 'ENTSO-E', data: vals.map(v => vazio(v.e) ? null : +v.e.toFixed(2)), color: cor('ent', c), dashStyle: 'Solid' }]
+        }));
+        const S = SOMA, vr = cfg.val(S, 'R'), ve = cfg.val(S, 'E');
+        let txt = `No período, ${cfg.nome.toLowerCase()}: REN ${f(vr)}, ENTSO-E ${f(ve)} (${pct ? fmtDifPp(ve - vr) : fmtDifPct(difPct(vr, ve))}).`;
+        if (pct) {
+            const difs = vals.map((v, i) => ({ i, d: vazio(v.r) || vazio(v.e) ? null : v.e - v.r })).filter(x => x.d !== null);
+            if (difs.length > 1) {
+                const max = difs.reduce((a, b) => (Math.abs(b.d) > Math.abs(a.d) ? b : a));
+                txt += ` A maior distância foi em ${B.porDia ? fmtData(B.lista[max.i].dias[0]) : B.lista[max.i].longo}: ${fmtDifPp(max.d)}.`;
+            }
+        }
+        document.getElementById('evol-resumo').textContent = txt;
+    }
+
+    function renderTec() {
+        const c = _hcDark(), B = BALDES, k = VISTA.tec;
+        const vals = SOMAS_BALDE.map(S => { const g = GRUPO[k]; return S.n[g] ? { r: S.R[k], e: S.pub[k] ? S.E[k] : null } : { r: null, e: null }; });
+        if (!vals.some(v => !vazio(v.r))) {
+            limparGrafico('grafico-tec', '<div class="bloco-vazio">Sem dias para comparar neste período.</div>');
+            document.getElementById('tec-resumo').textContent = '';
+            return;
+        }
+        limparGrafico('grafico-tec');
+        Highcharts.chart('grafico-tec', Object.assign(base(c, 'ren-vs-entsoe-' + k), {
+            chart: { type: tipoBarras(B), backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, B.lista.map(b => b.rotulo)),
+            yAxis: eixoY(c, 'GWh'),
+            plotOptions: opcoesBarras,
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const i = this.points[0].point.index, v = vals[i];
+                    let s = `<b>${B.lista[i].longo}</b><br>`;
+                    this.points.forEach(p => { s += `<span style="color:${p.color}">●</span> ${p.series.name}: ${fmtG(p.y)} GWh<br>`; });
+                    if (!vazio(v.r) && !vazio(v.e)) s += `Diferença: ${fmtDifG(v.e - v.r)} GWh (${fmtDifPct(difPct(v.r, v.e))})`;
+                    return s;
+                }
+            }),
+            series: [{ name: 'REN', data: vals.map(v => vazio(v.r) ? null : +v.r.toFixed(2)), color: cor('ren', c) },
+                     { name: 'ENTSO-E', data: vals.map(v => vazio(v.e) ? null : +v.e.toFixed(2)), color: cor('ent', c) }]
+        }));
+        const S = SOMA;
+        document.getElementById('tec-resumo').textContent = S.pub[k]
+            ? `${TEC[k]} no período: REN ${fmtG(S.R[k])} GWh, ENTSO-E ${fmtG(S.E[k])} GWh (${fmtDifPct(difPct(S.R[k], S.E[k]))}).`
+            : `${TEC[k]}: a ENTSO-E não tem dados neste período.`;
+    }
+
+    function renderCob() {
+        const c = _hcDark(), B = BALDES;
+        const cobs = B.lista.map(b => cobertura(b.dias));
+        const pc = (o, g) => o.esperado ? +(o[g] / o.esperado * 100).toFixed(1) : null;
+        limparGrafico('grafico-cob');
+        Highcharts.chart('grafico-cob', Object.assign(base(c, 'ren-vs-entsoe-horas'), {
+            chart: { type: tipoBarras(B), backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, B.lista.map(b => b.rotulo)),
+            yAxis: eixoY(c, '% das horas com dados', { max: 100, min: 0 }),
+            plotOptions: opcoesBarras,
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const i = this.points[0].point.index, o = cobs[i];
+                    let s = `<b>${B.lista[i].longo}</b><br>`;
+                    [['p', 'Produção'], ['c', 'Consumo'], ['t', 'Trocas']].forEach(([g, n]) => {
+                        s += `<span style="color:${cor(g, c)}">●</span> ${n}: ${fmt1(o[g])} de ${fmt0(o.esperado)} h (${fmtPct(pc(o, g))})<br>`;
+                    });
+                    return s;
+                }
+            }),
+            series: [{ name: 'Produção', data: cobs.map(o => pc(o, 'p')), color: cor('p', c) },
+                     { name: 'Consumo', data: cobs.map(o => pc(o, 'c')), color: cor('c', c) },
+                     { name: 'Trocas', data: cobs.map(o => pc(o, 't')), color: cor('t', c) }]
+        }));
+        const tot = cobertura(diasDe(periodo.inicio, periodo.fim));
+        const inc = tot.incompletos;
+        let txt;
+        if (!inc.length) txt = 'No período, a ENTSO-E tem todas as horas de todos os dias.';
+        else {
+            const piores = [...inc].sort((a, b) => b.falta - a.falta || (a.iso < b.iso ? -1 : 1)).slice(0, 5)
+                .map(x => `${fmtData(x.iso)} (${[['hp', 'produção'], ['hc', 'consumo'], ['ht', 'trocas']].filter(([k]) => x[k] < x.h - 0.25).map(([k, n]) => `${n} ${fmt0(x[k])} de ${x.h} h`).join(', ')})`);
+            txt = `${inc.length} ${inc.length === 1 ? 'dia' : 'dias'} com horas em falta na ENTSO-E. Os que têm mais em falta: ${piores.join('; ')}.`;
+        }
+        document.getElementById('cob-resumo').textContent = txt;
+    }
+
+    // ==================================================================
+    // ANO A ANO
+    // ==================================================================
+    let _anosProntos = false;
+    function renderAnos() {
+        if (!_anosProntos) return;
+        const anos = [];
+        for (let a = +INICIO.slice(0, 4); a <= +FIM_DIA.slice(0, 4); a++) anos.push(a);
+        let h = '<table class="tabela-rve tabela-anos"><caption>REN e ENTSO-E, ano a ano</caption><thead>' +
+                '<tr><th scope="col" rowspan="2" class="esq">Ano</th><th scope="colgroup" colspan="3">Renováveis na produção</th>' +
+                '<th scope="colgroup" colspan="3">Renováveis no consumo</th><th scope="colgroup" colspan="2">Turbinagem das reversíveis (GWh)</th>' +
+                '<th scope="col" rowspan="2">Consumo<br>dif.</th><th scope="col" rowspan="2">Saldo<br>dif.</th><th scope="col" rowspan="2">Horas com<br>dados</th></tr>' +
+                '<tr><th scope="col">REN</th><th scope="col">ENTSO-E</th><th scope="col">dif.</th><th scope="col">REN</th><th scope="col">ENTSO-E</th><th scope="col">dif.</th>' +
+                '<th scope="col">REN</th><th scope="col">ENTSO-E</th></tr></thead><tbody>';
+        anos.forEach(a => {
+            const fim = `${a}-12-31` < FIM_DIA ? `${a}-12-31` : FIM_DIA;
+            const dias = diasDe(`${a}-01-01` < INICIO ? INICIO : `${a}-01-01`, fim);
+            const S = somar(dias), cob = cobertura(dias);
+            const R = S.R, E = S.E;
+            const horas = cob.esperado ? Math.min(cob.p, cob.c, cob.t) / cob.esperado * 100 : null;
+            const atual = fim !== `${a}-12-31`;
+            h += `<tr${atual ? ' class="atual"' : ''}><td class="esq">${a}${atual ? ` (até ${fmtData(fim).slice(0, 5)})` : ''}</td>` +
+                 `<td>${fmtPct(R.pRenovProd)}</td><td>${fmtPct(E.pRenovProd)}</td><td>${fmtDifPp(vazio(R.pRenovProd) || vazio(E.pRenovProd) ? null : E.pRenovProd - R.pRenovProd)}</td>` +
+                 `<td>${fmtPct(R.pRenovCons)}</td><td>${fmtPct(E.pRenovCons)}</td><td>${fmtDifPp(vazio(R.pRenovCons) || vazio(E.pRenovCons) ? null : E.pRenovCons - R.pRenovCons)}</td>` +
+                 `<td>${S.n.p ? fmtG(R.turb) : '--'}</td><td>${S.n.p && S.pub.turb ? fmtG(E.turb) : '--'}</td>` +
+                 `<td>${S.n.c ? fmtDifPct(difPct(R.cons, E.cons)) : '--'}</td><td>${S.n.t ? fmtDifPct(difPct(R.saldo, E.saldo)) : '--'}</td>` +
+                 `<td>${fmtPct(horas)}</td></tr>`;
+        });
+        h += '</tbody></table>';
+        document.getElementById('tabela-anos').innerHTML = h;
+    }
+    function carregarTodosAnos() {
+        const p = [];
+        for (let a = +INICIO.slice(0, 4); a <= +FIM_DIA.slice(0, 4); a++) p.push(carregarAnoEnt(a));
+        return Promise.all(p).then(() => { _anosProntos = true; renderAnos(); });
+    }
+
+    // ==================================================================
+    // PERÍODO
+    // ==================================================================
+    let MIN_DIA = INICIO, FIM_DIA = null;
+    let periodo = { inicio: null, fim: null };
+    const PRESETS = ['30d', 'mes', 'mespassado', '12m', 'ano', 'anopassado', 'tudo'];
+    function getPresetDates(p) {
+        if (!FIM_DIA) return null;
+        const fim = FIM_DIA, clamp = s => (s < MIN_DIA ? MIN_DIA : s), hoje = hojeISO();
+        if (p === '30d') return { inicio: clamp(addDias(fim, -29)), fim };
+        if (p === 'mes') {
+            let i = hoje.slice(0, 8) + '01';
+            if (i > fim) i = fim.slice(0, 8) + '01';
+            return { inicio: clamp(i), fim };
+        }
+        if (p === 'mespassado') {
+            let i = deslocarMeses(hoje.slice(0, 8) + '01', -1);
+            if (i > fim) i = deslocarMeses(fim.slice(0, 8) + '01', -1);
+            const f = ultimoDoMes(i);
+            return { inicio: clamp(i), fim: f < fim ? f : fim };
+        }
+        if (p === '12m') return { inicio: clamp(addDias(deslocarMeses(fim, -12), 1)), fim };
+        if (p === 'ano') return { inicio: clamp(fim.slice(0, 4) + '-01-01'), fim };
+        if (p === 'anopassado') { const a = +fim.slice(0, 4) - 1; return { inicio: clamp(`${a}-01-01`), fim: `${a}-12-31` }; }
+        if (p === 'tudo') return { inicio: MIN_DIA, fim };
+        return null;
+    }
+    function detectarPreset(inicio, fim) {
+        for (const p of PRESETS) { const d = getPresetDates(p); if (d && d.inicio === inicio && d.fim === fim) return p; }
+        return 'custom';
+    }
+    function atualizarBotoesPreset(p) {
+        document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === p));
+    }
+    function setDateInputsVisibilidade(p) {
+        document.querySelector('.date-selector-periodo').classList.toggle('no-dates', p !== 'custom');
+    }
+    function lerURL() {
+        const p = new URLSearchParams(window.location.search);
+        const ler = k => (p.get(k) || '').trim() || null;
+        const iso = s => (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? s : null;
+        const i = iso(ler('inicio')), f = iso(ler('fim'));
+        const evol = ler('evol'), tec = ler('tec');
+        return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null,
+                 dias: ler('dias') === 'todos' ? 'todos' : 'completos',
+                 evol: evol && EVOL[evol] ? evol : null, tec: tec && TEC[tec] ? tec : null };
+    }
+    function paramsAtuais(sempreDatas) {
+        const p = new URLSearchParams();
+        const d = getPresetDates('12m');
+        if (sempreDatas || !(d && periodo.inicio === d.inicio && periodo.fim === d.fim)) {
+            p.set('inicio', periodo.inicio); p.set('fim', periodo.fim);
+        }
+        if (MODO_DIAS === 'todos') p.set('dias', 'todos');
+        if (VISTA.evol !== 'renovProd') p.set('evol', VISTA.evol);
+        if (VISTA.tec !== 'hidR') p.set('tec', VISTA.tec);
+        return p;
+    }
+    function atualizarURL() {
+        if (!periodo.inicio) return;
+        const q = paramsAtuais(false).toString();
+        window.history.replaceState(null, '', `${window.location.pathname}${q ? '?' + q : ''}${window.location.hash}`);
+    }
+    function mostrarFeedback(msg) {
+        const antigo = document.getElementById('toast-feedback');
+        if (antigo) antigo.remove();
+        const t = document.createElement('div');
+        t.id = 'toast-feedback'; t.className = 'toast-feedback'; t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { if (t.parentNode) t.remove(); }, 2500);
+    }
+    async function partilharVista() {
+        const url = `${window.location.origin}${window.location.pathname}?${paramsAtuais(true).toString()}`;
+        const resumo = `⚡ REN vs ENTSO-E — de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}`;
+        const texto = `${resumo}\n${url}`;
+        if (navigator.share) {
+            try { await navigator.share({ title: 'REN vs ENTSO-E — Tiago Felícia', text: resumo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try { await navigator.clipboard.writeText(texto); mostrarFeedback('✓ Link copiado'); return; }
+        catch (e) { /* sem permissão de clipboard — cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = texto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+            document.body.removeChild(ta);
+            mostrarFeedback('✓ Link copiado');
+        } catch (e) { prompt('Copie este link:', texto); }
+    }
+
+    let _pedidoPeriodo = 0;
+    async function aplicarPeriodo() {
+        const pedido = ++_pedidoPeriodo;
+        const L = nDias(periodo.inicio, periodo.fim);
+        document.getElementById('periodo-titulo').textContent =
+            `De ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} (${L} ${L === 1 ? 'dia' : 'dias'})`;
+        await carregarIntervalo(periodo.inicio, periodo.fim);
+        if (pedido !== _pedidoPeriodo) return;
+        renderPeriodo();
+    }
+    function renderPeriodo() {
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        SOMA = somar(dias);
+        BALDES = baldes();
+        SOMAS_BALDE = BALDES.lista.map(b => somar(b.dias));
+        renderKPIs(SOMA, cobertura(dias));
+        renderTabela(SOMA);
+        renderEvol();
+        renderTec();
+        renderCob();
+    }
+    function aplicarPreset(p) {
+        const d = getPresetDates(p);
+        if (!d) return;
+        periodo = { inicio: d.inicio, fim: d.fim };
+        document.getElementById('seletor-data-inicio').value = d.inicio;
+        document.getElementById('seletor-data-fim').value = d.fim;
+        document.getElementById('erro-periodo').style.display = 'none';
+        atualizarBotoesPreset(p);
+        setDateInputsVisibilidade(p);
+        atualizarURL();
+        aplicarPeriodo();
+    }
+    function aplicarDatasManuais() {
+        const inicio = document.getElementById('seletor-data-inicio').value;
+        const fim = document.getElementById('seletor-data-fim').value;
+        const erro = document.getElementById('erro-periodo');
+        if (!inicio || !fim) return;
+        if (inicio > fim) { erro.textContent = 'A data de início é posterior à data de fim.'; erro.style.display = 'block'; return; }
+        erro.style.display = 'none';
+        periodo = { inicio: inicio < MIN_DIA ? MIN_DIA : inicio, fim: fim > FIM_DIA ? FIM_DIA : fim };
+        atualizarBotoesPreset(detectarPreset(periodo.inicio, periodo.fim));
+        atualizarURL();
+        aplicarPeriodo();
+    }
+
+    // ==================================================================
+    // ARRANQUE
+    // ==================================================================
+    ligarToggle('ctrl-dias', v => { MODO_DIAS = v; if (periodo.inicio) renderPeriodo(); renderAnos(); atualizarURL(); });
+    ligarToggle('ctrl-evol', v => { VISTA.evol = v; renderEvol(); atualizarURL(); });
+    ligarToggle('ctrl-tec', v => { VISTA.tec = v; renderTec(); atualizarURL(); });
+    document.addEventListener('themeChanged', () => { if (periodo.inicio && SOMA) renderPeriodo(); });
+
+    document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (!FIM_DIA) return;
+            const p = this.dataset.preset;
+            if (p === 'custom') {
+                const d = getPresetDates('tudo');
+                periodo = { inicio: d.inicio, fim: d.fim };
+                document.getElementById('seletor-data-inicio').value = d.inicio;
+                document.getElementById('seletor-data-fim').value = d.fim;
+                document.getElementById('erro-periodo').style.display = 'none';
+                atualizarBotoesPreset('custom');
+                setDateInputsVisibilidade('custom');
+                atualizarURL();
+                aplicarPeriodo();
+                return;
+            }
+            aplicarPreset(p);
+        });
+    });
+    document.getElementById('seletor-data-inicio').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('seletor-data-fim').addEventListener('change', aplicarDatasManuais);
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.addEventListener('beforeprint', () => document.querySelectorAll('details.faq-item').forEach(d => {
+        if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+    }));
+    window.addEventListener('afterprint', () => document.querySelectorAll('details.faq-item[data-opened-for-print]').forEach(d => {
+        d.removeAttribute('open'); delete d.dataset.openedForPrint;
+    }));
+
+    const URL_INICIAL = lerURL();
+    MODO_DIAS = URL_INICIAL.dias; ativarToggle('ctrl-dias', MODO_DIAS);
+    if (URL_INICIAL.evol) { VISTA.evol = URL_INICIAL.evol; ativarToggle('ctrl-evol', VISTA.evol); }
+    if (URL_INICIAL.tec) { VISTA.tec = URL_INICIAL.tec; ativarToggle('ctrl-tec', VISTA.tec); }
+
+    // O último dia comparável é o mais antigo dos dois últimos: o da REN e o da ENTSO-E
+    const anoHoje = +hojeISO().slice(0, 4);
+    Promise.all([
+        fetchDados(URL_REN).then(r => { if (!r.ok) throw new Error('REN: HTTP ' + r.status); return r.text(); }).then(lerREN),
+        carregarAnoEnt(anoHoje), carregarAnoEnt(anoHoje - 1)
+    ]).then(() => {
+        const ultimo = m => [...m.keys()].reduce((a, b) => (b > a ? b : a), '');
+        const fimR = ultimo(REN), fimE = ultimo(ENT);
+        if (!fimR || !fimE) throw new Error('sem dados ' + (!fimR ? 'da REN' : 'da ENTSO-E'));
+        FIM_DIA = fimR < fimE ? fimR : fimE;
+        document.getElementById('estado').hidden = true;
+        document.getElementById('badge-inicio').textContent = fmtData(MIN_DIA);
+        document.getElementById('badge-ultima').textContent = fmtData(FIM_DIA);
+        ['seletor-data-inicio', 'seletor-data-fim'].forEach(id => { const el = document.getElementById(id); el.min = MIN_DIA; el.max = FIM_DIA; });
+        const u = URL_INICIAL.datas;
+        if (u && u.fim >= MIN_DIA && u.inicio <= FIM_DIA) {
+            periodo = { inicio: u.inicio < MIN_DIA ? MIN_DIA : u.inicio, fim: u.fim > FIM_DIA ? FIM_DIA : u.fim };
+            document.getElementById('seletor-data-inicio').value = periodo.inicio;
+            document.getElementById('seletor-data-fim').value = periodo.fim;
+            const p = detectarPreset(periodo.inicio, periodo.fim);
+            atualizarBotoesPreset(p);
+            setDateInputsVisibilidade(p);
+            atualizarURL();
+            aplicarPeriodo();
+        } else {
+            aplicarPreset('12m');
+        }
+        carregarTodosAnos();
+    }).catch(err => {
+        console.error('REN vs ENTSO-E:', err);
+        const el = document.getElementById('estado');
+        el.className = 'estado-erro';
+        el.textContent = 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.';
+    });
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>

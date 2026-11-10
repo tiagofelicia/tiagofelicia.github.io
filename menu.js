@@ -168,33 +168,34 @@
 
         /* ── MEGAMENU: posicionamento inteligente ── */
         (function smartMegamenu() {
-            var mega = document.querySelector('.mega-dropdown');
-            if (!mega) return;
-            var parentLi = mega.closest('li.dropdown');
-            if (!parentLi) return;
+            // Uma caixa de colunas em cada menu que a tem (Mercados e Regulação)
+            document.querySelectorAll('.mega-dropdown').forEach(function(mega) {
+                var parentLi = mega.closest('li.dropdown');
+                if (!parentLi) return;
 
-            parentLi.addEventListener('mouseenter', function() {
-                requestAnimationFrame(function() {
-                    var rect = mega.getBoundingClientRect();
-                    // Se sai pela direita, alinha à direita do item pai
-                    if (rect.right > window.innerWidth - 10) {
-                        mega.style.left = 'auto';
-                        mega.style.right = '0';
-                        mega.style.transform = 'translateY(0)';
-                    }
-                    // Se sai pela esquerda, alinha à esquerda
-                    if (rect.left < 10) {
-                        mega.style.left = '0';
-                        mega.style.right = 'auto';
-                        mega.style.transform = 'translateY(0)';
-                    }
+                parentLi.addEventListener('mouseenter', function() {
+                    requestAnimationFrame(function() {
+                        var rect = mega.getBoundingClientRect();
+                        // Se sai pela direita, alinha à direita do item pai
+                        if (rect.right > window.innerWidth - 10) {
+                            mega.style.left = 'auto';
+                            mega.style.right = '0';
+                            mega.style.transform = 'translateY(0)';
+                        }
+                        // Se sai pela esquerda, alinha à esquerda
+                        if (rect.left < 10) {
+                            mega.style.left = '0';
+                            mega.style.right = 'auto';
+                            mega.style.transform = 'translateY(0)';
+                        }
+                    });
                 });
-            });
 
-            parentLi.addEventListener('mouseleave', function() {
-                mega.style.left = '';
-                mega.style.right = '';
-                mega.style.transform = '';
+                parentLi.addEventListener('mouseleave', function() {
+                    mega.style.left = '';
+                    mega.style.right = '';
+                    mega.style.transform = '';
+                });
             });
         })();
 
