@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Preços da Eletricidade e do Gás na Europa — Famílias e Empresas | Tiago Felícia</title>
+    <meta name="description" content="Quanto pagam as famílias e as empresas pela eletricidade e pelo gás natural em cada país europeu, por faixa de consumo e por semestre, desde 2007: Portugal face à média da UE, mapa, evolução e de que é feito o preço (energia, redes e impostos). Dados do Eurostat, com e sem impostos." />
+    <meta name="keywords" content="preço da eletricidade na Europa, preço do gás na Europa, Eurostat, preço da luz Portugal vs UE, famílias, empresas, nrg_pc_204, nrg_pc_205, componentes do preço, impostos, Tiago Felícia" />
+    <meta name="author" content="Tiago Felícia" />
+
+    <!-- Canonical por língua: a versão portuguesa e a ?lang=en apontam cada uma para si, e o hreflang
+         liga-as (o ficheiro é o mesmo para as duas línguas, como nas outras páginas da Europa). -->
+    <script>(function () { var l = document.createElement('link'); l.rel = 'canonical'; l.href = 'https://www.tiagofelicia.pt/europe-consumer-prices' + (new URLSearchParams(location.search).get('lang') === 'en' ? '?lang=en' : ''); document.head.appendChild(l); })();</script>
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/europe-consumer-prices" />
+    <link rel="alternate" hreflang="en" href="https://www.tiagofelicia.pt/europe-consumer-prices?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/europe-consumer-prices" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Preços da Eletricidade e do Gás na Europa" />
+    <meta property="og:description" content="Quanto pagam as famílias e as empresas pela eletricidade e pelo gás em cada país europeu, desde 2007: Portugal face à média da UE, mapa, evolução e de que é feito o preço. Dados do Eurostat." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/europe-consumer-prices" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Preços da Eletricidade e do Gás na Europa — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Tiago Felícia" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+    <meta name="twitter:title" content="Preços da Eletricidade e do Gás na Europa" />
+    <meta name="twitter:description" content="Famílias e empresas, país a país, desde 2007: Portugal face à média da UE. Dados do Eurostat." />
+    <meta name="twitter:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/map.js" integrity="sha384-/L1bC1sakpDt5pNXRMvWoIhEHtfIQGNlLmZaM/FLMbHqMWN16TOaukUrzv/50r1V" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+        gtag('consent', 'update', { 'analytics_storage': 'granted' });
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Preços da eletricidade e do gás natural nas famílias e nas empresas, por país europeu (Eurostat)",
+      "description": "O preço médio da eletricidade e do gás natural pago pelas famílias e pelas empresas em cada país europeu (os 27 da UE, a média da UE e da zona euro, e os países da EFTA e candidatos que publicam), por semestre desde 2007 e por faixa de consumo anual: sem impostos, sem IVA e com todos os impostos, em €/kWh e em paridade de poder de compra; e, por ano desde 2017, a divisão do preço em energia e fornecimento, redes e impostos e taxas. Recolhido do Eurostat ao abrigo do Regulamento (UE) 2016/1952.",
+      "url": "https://www.tiagofelicia.pt/europe-consumer-prices",
+      "inLanguage": ["pt-PT", "en"],
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "keywords": ["preço da eletricidade", "preço do gás natural", "Europa", "famílias", "empresas", "Eurostat", "impostos"],
+      "spatialCoverage": { "@type": "Place", "name": "Europa" },
+      "temporalCoverage": "2007-01-01/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Preço sem impostos", "unitText": "€/kWh" },
+        { "@type": "PropertyValue", "name": "Preço sem IVA e outros impostos recuperáveis", "unitText": "€/kWh" },
+        { "@type": "PropertyValue", "name": "Preço com todos os impostos", "unitText": "€/kWh" },
+        { "@type": "PropertyValue", "name": "Preço em paridade de poder de compra", "unitText": "PPS/kWh" },
+        { "@type": "PropertyValue", "name": "Componentes do preço: energia e fornecimento, redes, impostos e taxas", "unitText": "€/kWh" }
+      ],
+      "isBasedOn": [
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_204: Electricity prices for household consumers - bi-annual data", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_204/default/table?lang=en" },
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_205: Electricity prices for non-household consumers - bi-annual data", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205/default/table?lang=en" },
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_202: Gas prices for household consumers - bi-annual data", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_202/default/table?lang=en" },
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_203: Gas prices for non-household consumers - bi-annual data", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_203/default/table?lang=en" },
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_204_c: Electricity prices components for household consumers", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_204_c/default/table?lang=en" },
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_205_c: Electricity prices components for non-household consumers", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205_c/default/table?lang=en" },
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_202_c: Gas prices components for household consumers", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_202_c/default/table?lang=en" },
+        { "@type": "CreativeWork", "name": "Eurostat — nrg_pc_203_c: Gas prices components for non-household consumers", "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_203_c/default/table?lang=en" }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Preços da eletricidade nas famílias, por semestre", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_precos_familias.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Preços da eletricidade nas empresas, por semestre", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_precos_empresas.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Preços do gás natural nas famílias, por semestre", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/gas_precos_familias.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Preços do gás natural nas empresas, por semestre", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/gas_precos_empresas.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Componentes do preço da eletricidade nas famílias, por ano", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_componentes_familias.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Componentes do preço da eletricidade nas empresas, por ano", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_componentes_empresas.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Componentes do preço do gás natural nas famílias, por ano", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/gas_componentes_familias.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Componentes do preço do gás natural nas empresas, por ano", "contentUrl": "https://dados.tiagofelicia.pt/data/precos-consumidor/gas_componentes_empresas.csv" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Preços ao Consumidor na Europa", "item": "https://www.tiagofelicia.pt/europe-consumer-prices" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que mostra esta página?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O preço médio que as famílias e as empresas pagam pela eletricidade e pelo gás natural em cada país europeu, por semestre, desde 2007, como o publica o Eurostat. Pode escolher a energia, o tipo de consumidor, a faixa de consumo anual, os impostos (sem impostos, sem IVA ou com todos os impostos) e a unidade (euros ou paridade de poder de compra). Para cada escolha, a página mostra Portugal face à média da União Europeia e a Espanha, o mapa da Europa, a tabela de todos os países, a evolução desde 2007, de que é feito o preço (energia e fornecimento, redes, impostos e taxas) e o lugar de Portugal em todas as faixas de consumo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "De onde vêm os dados e quando são atualizados?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Do Eurostat, o serviço de estatística da União Europeia. Cada país envia, duas vezes por ano, os preços médios pagos pelos seus consumidores em cada faixa de consumo, como obriga o Regulamento (UE) 2016/1952. O Eurostat publica o 1.º semestre em outubro e o 2.º em abril ou maio do ano seguinte; a divisão do preço em componentes é anual e sai em outubro do ano seguinte. Os valores novos ou revistos são recolhidos duas vezes por semana. Os ficheiros com todos os valores — eletricidade das famílias e das empresas, gás natural das famílias e das empresas, e os componentes de cada um — estão em dados.tiagofelicia.pt, sob licença CC BY 4.0. Os originais estão no Eurostat: nrg_pc_204, nrg_pc_205, nrg_pc_202, nrg_pc_203 (preços) e nrg_pc_204_c, nrg_pc_205_c, nrg_pc_202_c, nrg_pc_203_c (componentes)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que muda entre «Sem impostos», «Sem IVA» e «Com impostos»?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Com impostos é o preço com todos os impostos e taxas, IVA incluído: o que as famílias pagam de facto. Sem IVA tira o IVA (e, nas empresas, os outros impostos que recuperam): é o que conta para as empresas, que descontam o IVA, e compara melhor o que cada país cobra, porque o IVA muda muito de um país para outro (em Portugal, a eletricidade das famílias paga 6 % ou 23 %, conforme a potência contratada e o consumo). Sem impostos tira todos os impostos e taxas: fica a energia, o fornecimento e as redes. Como o Eurostat, a página abre com todos os impostos nas famílias e sem IVA nas empresas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que são as faixas de consumo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O Eurostat agrupa os consumidores pelo que gastam num ano. Na eletricidade das famílias: DA (menos de 1 000 kWh), DB (1 000 a 2 499), DC (2 500 a 4 999), DD (5 000 a 14 999) e DE (15 000 kWh ou mais). Nas empresas: de IA (menos de 20 MWh) a IG (150 000 MWh ou mais). No gás natural, as faixas estão em gigajoules: nas famílias, D1 (menos de 20 GJ, cerca de 5 600 kWh), D2 (20 a 199 GJ) e D3 (200 GJ ou mais); nas empresas, de I1 (menos de 1 000 GJ) a I6 (4 milhões de GJ ou mais). A página abre nas faixas que o Eurostat usa nos comunicados: DC e D2 nas famílias, ID e I3 nas empresas. Todas as faixas é a média de todos os consumidores."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que é a paridade de poder de compra (PPS)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "É uma unidade do Eurostat que tira as diferenças de nível de preços entre países: um PPS compra o mesmo cabaz de bens e serviços em todos. Em PPS, a energia de um país com salários e preços mais baixos aparece mais cara do que em euros, porque pesa mais no orçamento. No 1.º semestre de 2026, a eletricidade das famílias portuguesas (faixa DC, sem IVA) custou 0,2053 €/kWh e 0,2446 PPS/kWh: cerca de 19 % mais em PPS."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que a média da UE não é a média dos 27 países?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Porque o Eurostat pesa cada país pelo seu consumo: a Alemanha, a França e a Itália contam muito mais do que Malta ou a Estónia. A média da zona euro é feita da mesma forma, só com os países do euro."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que estes preços não batem com o meu tarifário?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Porque são médias de todos os consumidores da faixa no semestre, com todos os tarifários (mercado livre e regulado) e todas as potências contratadas. E incluem tudo o que a fatura cobra, também a parte fixa (nas famílias, o termo de potência), dividido pelos kWh consumidos: por isso a faixa mais pequena tem um preço por kWh muito mais alto. Para saber quanto pagaria com cada tarifário, use o simulador de eletricidade ou o de gás natural."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que há valores negativos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Porque alguns impostos ou encargos foram devoluções. Nos Países Baixos, as famílias têm uma redução fixa no imposto sobre a energia; as que gastam menos de 1 000 kWh por ano receberam em 2022 mais do que pagaram, e o preço médio dessa faixa ficou negativo. Em Portugal, em 2023, a parcela das renováveis nos impostos e taxas foi negativa (−0,09 €/kWh nas famílias da faixa DC): com os preços de mercado altos, a produção renovável com preço garantido custou menos do que o mercado, e a diferença baixou as tarifas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que querem dizer as letras junto a alguns valores?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "São as marcas do Eurostat: p provisório, e estimado, d definição diferente (o país não segue em tudo a metodologia comum), b quebra de série (o valor não é comparável com o anterior), n pouco significativo e u pouco fiável. Um país que não publica uma faixa (por segredo estatístico ou por não ter consumidores nela) fica a cinzento no mapa e fora da tabela."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        .aviso-box, .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header h1 .h1-sub { font-size: 0.6em; font-weight: 400; color: #5c636a; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #5c636a; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 10px 0 0 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos --- */
+        .controlos { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .controlos-linha { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; }
+        .grupo-ctrl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .ctrl-label { font-size: 0.75em; color: #5c636a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.88em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .controlos select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.9em; background: #fff; color: #2c3e50; max-width: 100%; }
+        .btn-nav { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 10px; cursor: pointer; color: #475569; font-size: 0.9em; }
+        .btn-nav:hover:not(:disabled) { background: #f1f5f9; }
+        .btn-nav:disabled { opacity: 0.4; cursor: default; }
+        #btn-partilhar { background: #fff; border: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        .lang-switch { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; font-size: 0.82em; }
+        .lang-switch a { padding: 6px 10px; color: #475569; text-decoration: none; font-weight: 600; border-right: 1px solid #cbd5e1; }
+        .lang-switch a:last-child { border-right: none; }
+        .lang-switch a.active { background: #2563eb; color: #fff; }
+        .lang-switch a:not(.active):hover { background: #e2e8f0; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #15803d; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e, abaixo de 768px,
+           position: sticky !important); um <nav> dentro do <main> apanha-as — por isso são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-box h3 { font-size: 1em; color: #2c3e50; margin: 18px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #5c636a; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 420px; }
+        #mapa { height: 560px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #5c636a; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .nota-bloco { font-size: 0.8em; color: #5c636a; margin: 6px 0 0; line-height: 1.5; }
+        .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
+
+        .resumo-frase { font-size: 1em; color: #2c3e50; line-height: 1.6; margin: 0 0 14px 0; }
+        #kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 10px 0 6px 0; }
+        @media (max-width: 1000px) { #kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-card.destaque { border-color: #2563eb; border-width: 2px; padding: 11px 13px; }
+        .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.3em; font-weight: 700; color: #212529; line-height: 1.25; font-variant-numeric: tabular-nums; }
+        .kpi-unid { font-size: 0.62em; font-weight: 600; color: #5c636a; }
+        .kpi-sub { font-size: 0.78em; color: #5c636a; margin-top: 5px; line-height: 1.45; }
+
+        .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
+        .tabela-ecp { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-ecp caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-ecp th, .tabela-ecp td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-ecp thead th { background: #f1f3f5; font-weight: 600; }
+        .tabela-ecp th.esq, .tabela-ecp td.esq { text-align: left; }
+        .tabela-ecp th.ord { cursor: pointer; user-select: none; }
+        .tabela-ecp th.ord:hover { background: #e2e8f0; }
+        .tabela-ecp th.ord[aria-sort="ascending"]::after { content: " ▲"; font-size: 0.75em; }
+        .tabela-ecp th.ord[aria-sort="descending"]::after { content: " ▼"; font-size: 0.75em; }
+        .tabela-ecp tr.pt td { background: #eef4ff; font-weight: 700; }
+        .tabela-ecp tr.ref td { color: #475569; font-style: italic; background: #f8fafc; }
+        .tabela-ecp tr.atual td { background: #eef4ff; font-weight: 600; }
+        .tabela-ecp .marca { font-size: 0.78em; color: #5c636a; font-style: normal; margin-left: 3px; }
+        .barra { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; background: #93c5fd; vertical-align: middle; margin-right: 8px; }
+        .tabela-ecp tr.pt .barra { background: #2563eb; }
+        .chips-paises { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chip-pais { display: inline-flex; align-items: center; gap: 4px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 14px; padding: 3px 4px 3px 10px; font-size: 0.82em; color: #334155; }
+        .chip-pais button { border: none; background: transparent; cursor: pointer; color: #5c636a; font-size: 1em; padding: 0 5px; line-height: 1; }
+        .chip-pais button:hover { color: #b91c1c; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .estado-carregamento { text-align: center; color: #5c636a; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; overflow-wrap: anywhere; }
+        .downloads { margin: 6px 0 0 0; padding-left: 20px; font-size: 0.9em; line-height: 1.7; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        /* FAQ nas duas línguas: cada bloco tem a versão PT e a EN, e só se vê a da página */
+        html[lang="en"] [data-lang-block="pt"] { display: none; }
+        html:not([lang="en"]) [data-lang-block="en"] { display: none; }
+
+        @media (max-width: 700px) {
+            .grafico { height: 360px; }
+            #mapa { height: 420px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.82em; }
+            .controlos select { font-size: 0.85em; }
+            .tabela-ecp th, .tabela-ecp td { padding: 5px 7px; }
+            .barra { display: none; }
+        }
+        /* No telemóvel, o semestre e as duas setas numa linha só */
+        @media (max-width: 520px) {
+            .grupo-semestre { flex-wrap: nowrap; gap: 6px; }
+            .grupo-semestre select { width: 175px; }
+        }
+
+        /* --- Modo escuro --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .grafico-box h3,
+        [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2, [data-theme="dark"] .resumo-frase { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .painel-header h1 .h1-sub, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub, [data-theme="dark"] .kpi-unid,
+        [data-theme="dark"] .ctrl-label, [data-theme="dark"] .nota-bloco, [data-theme="dark"] .tabela-ecp .marca { color: #94a3b8; }
+        [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .kpi-card.destaque { border-color: #60a5fa; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle, [data-theme="dark"] .lang-switch { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active, [data-theme="dark"] .lang-switch a.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .lang-switch a { color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .lang-switch a:not(.active):hover { background: #334155; }
+        [data-theme="dark"] .controlos select, [data-theme="dark"] .btn-nav, [data-theme="dark"] #btn-partilhar { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .btn-nav:hover:not(:disabled), [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip):not([data-lang]) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-ecp { background: #1e293b; }
+        [data-theme="dark"] .tabela-ecp caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-ecp th, [data-theme="dark"] .tabela-ecp td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-ecp thead th { background: #0f172a; }
+        [data-theme="dark"] .tabela-ecp th.ord:hover { background: #334155; }
+        [data-theme="dark"] .tabela-ecp tr.pt td, [data-theme="dark"] .tabela-ecp tr.atual td { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-ecp tr.ref td { background: #16202e; color: #cbd5e1; }
+        [data-theme="dark"] .barra { background: #3b82f6; }
+        [data-theme="dark"] .tabela-ecp tr.pt .barra { background: #93c5fd; }
+        [data-theme="dark"] .chip-pais { background: #1e293b; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .chip-pais button { color: #94a3b8; }
+        [data-theme="dark"] .chip-pais button:hover { color: #f87171; }
+
+        @page { size: A4 portrait; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav, .controlos .grupo-acoes,
+            .toast-feedback, .bloco-controls, .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button, .highcharts-map-navigation { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" data-i18n="skip">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/" data-i18n="breadcrumbHome">Início</a></li>
+        <li data-i18n="breadcrumbEuropa">Europa</li>
+        <li aria-current="page" data-i18n="breadcrumbThis">Preços ao Consumidor na Europa</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <h1><span data-i18n="h1">Preços da eletricidade e do gás na Europa</span> <span class="h1-sub" data-i18n="h1sub">(famílias e empresas)</span></h1>
+        <p data-i18n-html="subtitle">O preço médio pago pelas famílias e pelas empresas em cada país europeu, por faixa de consumo e por semestre, desde 2007, sem impostos, sem IVA ou com todos os impostos. Fonte: <strong>Eurostat</strong>.</p>
+        <p class="badge-global" id="badge"></p>
+    </div>
+
+    <div class="controlos" aria-label="Escolhas" data-i18n-aria="ariaControlos">
+        <div class="controlos-linha">
+            <div class="grupo-ctrl">
+                <span class="ctrl-label" data-i18n="lblEnergia">Energia</span>
+                <div class="btn-toggle" id="ctrl-energia" role="group" aria-label="Energia" data-i18n-aria="lblEnergia">
+                    <button type="button" data-v="ele" class="active" data-i18n="optEle">Eletricidade</button>
+                    <button type="button" data-v="gas" data-i18n="optGas">Gás natural</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl">
+                <span class="ctrl-label" data-i18n="lblCons">Consumidor</span>
+                <div class="btn-toggle" id="ctrl-cons" role="group" aria-label="Consumidor" data-i18n-aria="lblCons">
+                    <button type="button" data-v="fam" class="active" data-i18n="optFam">Famílias</button>
+                    <button type="button" data-v="emp" data-i18n="optEmp">Empresas</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl grupo-acoes">
+                <button type="button" id="btn-partilhar" title="Copiar ou partilhar o link desta vista" data-i18n-title="shareTitle"><span aria-hidden="true">📤</span> <span data-i18n="share">Partilhar</span></button>
+                <span class="lang-switch" role="group" aria-label="Idioma / Language">
+                    <a href="#" data-lang="pt">PT</a><a href="#" data-lang="en">EN</a>
+                </span>
+            </div>
+        </div>
+        <div class="controlos-linha">
+            <div class="grupo-ctrl">
+                <label class="ctrl-label" for="sel-faixa" data-i18n="lblFaixa">Faixa de consumo</label>
+                <select id="sel-faixa"></select>
+            </div>
+            <div class="grupo-ctrl">
+                <span class="ctrl-label" data-i18n="lblImp">Impostos</span>
+                <div class="btn-toggle" id="ctrl-imp" role="group" aria-label="Impostos" data-i18n-aria="lblImp">
+                    <button type="button" data-v="sem" data-i18n="optSemImp">Sem impostos</button>
+                    <button type="button" data-v="siva" data-i18n="optSemIva">Sem IVA</button>
+                    <button type="button" data-v="com" class="active" data-i18n="optComImp">Com impostos</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl">
+                <span class="ctrl-label" data-i18n="lblUnid">Unidade</span>
+                <div class="btn-toggle" id="ctrl-unid" role="group" aria-label="Unidade" data-i18n-aria="lblUnid">
+                    <button type="button" data-v="eur" class="active" title="Euros por kWh" data-i18n-title="titEur">€/kWh</button>
+                    <button type="button" data-v="pps" title="Paridade de poder de compra: corrige as diferenças de nível de preços entre países" data-i18n-title="titPps">PPS/kWh</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl grupo-semestre">
+                <label class="ctrl-label" for="sel-semestre" data-i18n="lblSem">Semestre</label>
+                <button type="button" class="btn-nav" id="sem-ant" title="Semestre anterior" data-i18n-title="semAnt" aria-label="Semestre anterior" data-i18n-aria="semAnt">&#10094;</button>
+                <select id="sel-semestre"></select>
+                <button type="button" class="btn-nav" id="sem-seg" title="Semestre seguinte" data-i18n-title="semSeg" aria-label="Semestre seguinte" data-i18n-aria="semSeg">&#10095;</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página" data-i18n-aria="ariaNav">
+        <a href="#bloco-resumo" class="mini-nav-chip" data-i18n="navResumo">📋 Resumo</a>
+        <a href="#bloco-mapa" class="mini-nav-chip" data-i18n="navMapa">🗺️ Mapa</a>
+        <a href="#bloco-paises" class="mini-nav-chip" data-i18n="navPaises">🌍 País a país</a>
+        <a href="#bloco-evol" class="mini-nav-chip" data-i18n="navEvol">📈 Desde 2007</a>
+        <a href="#bloco-comp" class="mini-nav-chip" data-i18n="navComp">🧾 De que é feito</a>
+        <a href="#bloco-faixas" class="mini-nav-chip" data-i18n="navFaixas">🇵🇹 Todas as faixas</a>
+        <a href="#faq" class="mini-nav-chip" data-i18n="navFaq">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento" data-i18n="loading">A carregar os dados…</div>
+
+    <div id="conteudo" hidden>
+        <!-- ====================== RESUMO ====================== -->
+        <div class="grafico-box" id="bloco-resumo">
+            <h2 data-i18n="h2Resumo">Resumo</h2>
+            <p class="resumo-frase" id="resumo-frase"></p>
+            <div id="kpis"></div>
+        </div>
+
+        <!-- ====================== MAPA ====================== -->
+        <div class="grafico-box" id="bloco-mapa">
+            <h2 id="titulo-mapa" data-i18n="h2Mapa">No mapa</h2>
+            <p class="grafico-intro" data-i18n="mapaIntro">A cor vai do mais barato ao mais caro (ver a legenda). A cinzento, os países sem valor para esta faixa e este semestre. Portugal tem o contorno mais grosso.</p>
+            <div id="mapa" class="grafico"></div>
+        </div>
+
+        <!-- ====================== PAÍS A PAÍS ====================== -->
+        <div class="grafico-box" id="bloco-paises">
+            <h2 data-i18n="h2Paises">País a país</h2>
+            <p class="grafico-intro" data-i18n="paisesIntro">O lugar conta só os países da UE (1.º = o mais barato). Clique num cabeçalho para ordenar.</p>
+            <div class="bloco-controls">
+                <span class="ctrl-label" data-i18n="lblRegiao">Países</span>
+                <div class="btn-toggle" id="ctrl-regiao" role="group" aria-label="Países" data-i18n-aria="lblRegiao">
+                    <button type="button" data-v="ue" class="active" data-i18n="optUe">Só a UE</button>
+                    <button type="button" data-v="europa" data-i18n="optEuropa">Toda a Europa</button>
+                </div>
+            </div>
+            <div class="tabela-box" id="tabela-paises"></div>
+            <p class="nota-bloco" data-i18n="legendaMarcas">Marcas do Eurostat: p provisório · e estimado · d definição diferente · b quebra de série · n pouco significativo · u pouco fiável.</p>
+        </div>
+
+        <!-- ====================== EVOLUÇÃO ====================== -->
+        <div class="grafico-box" id="bloco-evol">
+            <h2 data-i18n="h2Evol">Desde 2007</h2>
+            <p class="grafico-intro" id="evol-intro"></p>
+            <div class="bloco-controls">
+                <label class="ctrl-label" for="sel-pais-extra" data-i18n="addPais">Acrescentar um país</label>
+                <select id="sel-pais-extra"></select>
+                <div class="chips-paises" id="chips-paises"></div>
+            </div>
+            <div id="grafico-evol" class="grafico"></div>
+        </div>
+
+        <!-- ====================== COMPONENTES ====================== -->
+        <div class="grafico-box" id="bloco-comp">
+            <h2 data-i18n="h2Comp">De que é feito o preço</h2>
+            <p class="grafico-intro" data-i18n="compIntro">O preço de cada ano dividido em três partes: a energia e o fornecimento, as redes, e os impostos e taxas sem o IVA; com a opção «Com impostos», o IVA entra como quarta parte. O Eurostat publica esta divisão uma vez por ano, para o ano inteiro, e só desde 2017; está em euros, mesmo com a opção PPS.</p>
+            <div class="bloco-controls">
+                <label class="ctrl-label" for="sel-ano" data-i18n="lblAno">Ano</label>
+                <select id="sel-ano"></select>
+            </div>
+            <h3 id="titulo-comp-paises"></h3>
+            <div id="grafico-comp-paises" class="grafico"></div>
+            <h3 data-i18n="compPT">Portugal, ano a ano</h3>
+            <div id="grafico-comp-pt" class="grafico"></div>
+            <div class="tabela-box" id="tabela-impostos"></div>
+            <p class="nota-bloco" data-i18n="notaImpostos">Os impostos e taxas incluem os apoios às renováveis, à capacidade e outros encargos que o Eurostat separa do preço da energia e das redes. Um valor negativo quer dizer que essa parcela baixou o preço.</p>
+        </div>
+
+        <!-- ====================== TODAS AS FAIXAS ====================== -->
+        <div class="grafico-box" id="bloco-faixas">
+            <h2 data-i18n="h2Faixas">Portugal em todas as faixas</h2>
+            <p class="grafico-intro" id="faixas-frase"></p>
+            <div class="tabela-box" id="tabela-faixas"></div>
+        </div>
+    </div>
+
+    <div class="cta-simulador">
+        <h2 data-i18n="ctaTitulo">E na sua casa?</h2>
+        <p data-i18n="ctaTexto">Os valores do Eurostat são médias de todos os consumidores de cada faixa. Para saber quanto pagaria com cada tarifário, use os simuladores.</p>
+        <div class="botoes">
+            <a href="eletricidade-tiagofelicia" class="button-link" data-i18n="ctaEle">⚡ Simulador de eletricidade</a>
+            <a href="gas-natural-tiagofelicia" class="button-link" data-i18n="ctaGas">🔥 Simulador de gás natural</a>
+            <a href="europe-prices" class="button-link" data-i18n="ctaMercado">🗺️ Preços do mercado diário na Europa</a>
+        </div>
+    </div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/europe-consumer-prices</p></div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;" data-i18n="faqTitulo">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">O que mostra esta página?</span><span data-lang-block="en">What does this page show?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>O preço médio que as famílias e as empresas pagam pela eletricidade e pelo gás natural em cada país europeu, por semestre, desde 2007, como o publica o <strong>Eurostat</strong>. Pode escolher a energia, o tipo de consumidor, a faixa de consumo anual, os impostos (sem impostos, sem IVA ou com todos os impostos) e a unidade (euros ou paridade de poder de compra).</p><p>Para cada escolha, a página mostra Portugal face à média da União Europeia e a Espanha, o mapa da Europa, a tabela de todos os países, a evolução desde 2007, de que é feito o preço (energia e fornecimento, redes, impostos e taxas) e o lugar de Portugal em todas as faixas de consumo.</p></div>
+                <div data-lang-block="en"><p>The average price households and businesses pay for electricity and natural gas in each European country, by half-year, since 2007, as published by <strong>Eurostat</strong>. You can choose the energy, the type of consumer, the annual consumption band, the taxes (excluding taxes, excluding VAT or including all taxes) and the unit (euros or purchasing power standard).</p><p>For each choice, the page shows Portugal against the European Union average and Spain, the map of Europe, the table of every country, the trend since 2007, what the price is made of (energy and supply, networks, taxes and levies) and Portugal's rank in every consumption band.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">De onde vêm os dados e quando são atualizados?</span><span data-lang-block="en">Where does the data come from and when is it updated?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>Do <strong>Eurostat</strong>, o serviço de estatística da União Europeia. Cada país envia, duas vezes por ano, os preços médios pagos pelos seus consumidores em cada faixa de consumo, como obriga o Regulamento (UE) 2016/1952. O Eurostat publica o 1.º semestre em outubro e o 2.º em abril ou maio do ano seguinte; a divisão do preço em componentes é anual e sai em outubro do ano seguinte. Os valores novos ou revistos são recolhidos duas vezes por semana.</p><p>Os ficheiros com todos os valores — eletricidade das <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_precos_familias.csv" target="_blank" rel="noopener">famílias</a> e das <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_precos_empresas.csv" target="_blank" rel="noopener">empresas</a>, gás natural das <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/gas_precos_familias.csv" target="_blank" rel="noopener">famílias</a> e das <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/gas_precos_empresas.csv" target="_blank" rel="noopener">empresas</a>, e os componentes de cada um — estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>. Os originais estão no Eurostat: <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_204/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_204</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_205</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_202/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_202</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_203/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_203</a> (preços) e <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_204_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_204_c</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_205_c</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_202_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_202_c</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_203_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_203_c</a> (componentes).</p></div>
+                <div data-lang-block="en"><p>From <strong>Eurostat</strong>, the statistical office of the European Union. Twice a year, each country reports the average prices paid by its consumers in each consumption band, as required by Regulation (EU) 2016/1952. Eurostat publishes the first half-year in October and the second in April or May of the following year; the split of the price into components is annual and comes out in October of the following year. New or revised values are collected twice a week.</p><p>The files with every value — electricity for <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_precos_familias.csv" target="_blank" rel="noopener">households</a> and <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/eletricidade_precos_empresas.csv" target="_blank" rel="noopener">businesses</a>, natural gas for <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/gas_precos_familias.csv" target="_blank" rel="noopener">households</a> and <a href="https://dados.tiagofelicia.pt/data/precos-consumidor/gas_precos_empresas.csv" target="_blank" rel="noopener">businesses</a>, and the components of each — are at <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> licence. The originals are on Eurostat: <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_204/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_204</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_205</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_202/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_202</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_203/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_203</a> (prices) and <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_204_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_204_c</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_205_c</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_202_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_202_c</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_203_c/default/table?lang=en" target="_blank" rel="noopener">nrg_pc_203_c</a> (components).</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">O que muda entre «Sem impostos», «Sem IVA» e «Com impostos»?</span><span data-lang-block="en">What is the difference between «Excluding taxes», «Excluding VAT» and «Including taxes»?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p><strong>Com impostos</strong> é o preço com todos os impostos e taxas, IVA incluído: o que as famílias pagam de facto. <strong>Sem IVA</strong> tira o IVA (e, nas empresas, os outros impostos que recuperam): é o que conta para as empresas, que descontam o IVA, e compara melhor o que cada país cobra, porque o IVA muda muito de um país para outro (em Portugal, a eletricidade das famílias paga 6 % ou 23 %, conforme a potência contratada e o consumo). <strong>Sem impostos</strong> tira todos os impostos e taxas: fica a energia, o fornecimento e as redes.</p><p>Como o Eurostat, a página abre com todos os impostos nas famílias e sem IVA nas empresas.</p></div>
+                <div data-lang-block="en"><p><strong>Including taxes</strong> is the price with every tax and levy, VAT included: what households actually pay. <strong>Excluding VAT</strong> removes VAT (and, for businesses, the other taxes they recover): it is what matters to businesses, which deduct VAT, and it compares better what each country charges, because VAT varies a lot between countries (in Portugal, household electricity pays 6% or 23%, depending on the contracted power and the consumption). <strong>Excluding taxes</strong> removes every tax and levy: what is left is energy, supply and networks.</p><p>As Eurostat does, the page opens with all taxes for households and excluding VAT for businesses.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">O que são as faixas de consumo?</span><span data-lang-block="en">What are the consumption bands?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>O Eurostat agrupa os consumidores pelo que gastam num ano. Na eletricidade das famílias: DA (menos de 1 000 kWh), DB (1 000 a 2 499), DC (2 500 a 4 999), DD (5 000 a 14 999) e DE (15 000 kWh ou mais). Nas empresas: de IA (menos de 20 MWh) a IG (150 000 MWh ou mais). No gás natural, as faixas estão em gigajoules: nas famílias, D1 (menos de 20 GJ, cerca de 5 600 kWh), D2 (20 a 199 GJ) e D3 (200 GJ ou mais); nas empresas, de I1 (menos de 1 000 GJ) a I6 (4 milhões de GJ ou mais).</p><p>A página abre nas faixas que o Eurostat usa nos comunicados: DC e D2 nas famílias, ID e I3 nas empresas. <strong>Todas as faixas</strong> é a média de todos os consumidores.</p></div>
+                <div data-lang-block="en"><p>Eurostat groups consumers by how much they use in a year. For household electricity: DA (under 1,000 kWh), DB (1,000 to 2,499), DC (2,500 to 4,999), DD (5,000 to 14,999) and DE (15,000 kWh or more). For businesses: from IA (under 20 MWh) to IG (150,000 MWh or more). For natural gas, the bands are in gigajoules: for households, D1 (under 20 GJ, about 5,600 kWh), D2 (20 to 199 GJ) and D3 (200 GJ or more); for businesses, from I1 (under 1,000 GJ) to I6 (4 million GJ or more).</p><p>The page opens on the bands Eurostat uses in its news releases: DC and D2 for households, ID and I3 for businesses. <strong>All bands</strong> is the average over all consumers.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">O que é a paridade de poder de compra (PPS)?</span><span data-lang-block="en">What is the purchasing power standard (PPS)?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>É uma unidade do Eurostat que tira as diferenças de nível de preços entre países: um PPS compra o mesmo cabaz de bens e serviços em todos. Em PPS, a energia de um país com salários e preços mais baixos aparece mais cara do que em euros, porque pesa mais no orçamento. No 1.º semestre de 2026, a eletricidade das famílias portuguesas (faixa DC, sem IVA) custou 0,2053 €/kWh e 0,2446 PPS/kWh: cerca de 19 % mais em PPS.</p></div>
+                <div data-lang-block="en"><p>It is a Eurostat unit that removes the differences in price levels between countries: one PPS buys the same basket of goods and services everywhere. In PPS, energy in a country with lower wages and prices looks more expensive than in euros, because it weighs more on the budget. In the first half of 2026, electricity for Portuguese households (band DC, excluding VAT) cost €0.2053/kWh and 0.2446 PPS/kWh: about 19% more in PPS.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">Porque é que a média da UE não é a média dos 27 países?</span><span data-lang-block="en">Why is the EU average not the average of the 27 countries?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>Porque o Eurostat pesa cada país pelo seu consumo: a Alemanha, a França e a Itália contam muito mais do que Malta ou a Estónia. A média da zona euro é feita da mesma forma, só com os países do euro.</p></div>
+                <div data-lang-block="en"><p>Because Eurostat weights each country by its consumption: Germany, France and Italy count far more than Malta or Estonia. The euro area average is built the same way, with the euro countries only.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">Porque é que estes preços não batem com o meu tarifário?</span><span data-lang-block="en">Why don't these prices match my tariff?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>Porque são médias de todos os consumidores da faixa no semestre, com todos os tarifários (mercado livre e regulado) e todas as potências contratadas. E incluem tudo o que a fatura cobra, também a parte fixa (nas famílias, o termo de potência), dividido pelos kWh consumidos: por isso a faixa mais pequena tem um preço por kWh muito mais alto. Para saber quanto pagaria com cada tarifário, use o <a href="eletricidade-tiagofelicia">simulador de eletricidade</a> ou o <a href="gas-natural-tiagofelicia">de gás natural</a>.</p></div>
+                <div data-lang-block="en"><p>Because they are averages over all consumers in the band during the half-year, across every tariff (free and regulated market) and every contracted power. And they include everything the bill charges, the fixed part too (for households, the capacity charge), divided by the kWh consumed: that is why the smallest band has a much higher price per kWh. To see what you would pay with each tariff in Portugal, use the <a href="eletricidade-tiagofelicia">electricity simulator</a> or the <a href="gas-natural-tiagofelicia">natural gas simulator</a> (in Portuguese).</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">Porque é que há valores negativos?</span><span data-lang-block="en">Why are there negative values?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>Porque alguns impostos ou encargos foram devoluções. Nos Países Baixos, as famílias têm uma redução fixa no imposto sobre a energia; as que gastam menos de 1 000 kWh por ano receberam em 2022 mais do que pagaram, e o preço médio dessa faixa ficou negativo. Em Portugal, em 2023, a parcela das renováveis nos impostos e taxas foi negativa (−0,09 €/kWh nas famílias da faixa DC): com os preços de mercado altos, a produção renovável com preço garantido custou menos do que o mercado, e a diferença baixou as tarifas.</p></div>
+                <div data-lang-block="en"><p>Because some taxes or charges were refunds. In the Netherlands, households get a fixed reduction on the energy tax; those using under 1,000 kWh a year received more than they paid in 2022, and the average price of that band was negative. In Portugal, in 2023, the renewables item of taxes and levies was negative (−€0.09/kWh for band DC households): with high market prices, renewable output with a guaranteed price cost less than the market, and the difference lowered the tariffs.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">O que querem dizer as letras junto a alguns valores?</span><span data-lang-block="en">What do the letters next to some values mean?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>São as marcas do Eurostat: <strong>p</strong> provisório, <strong>e</strong> estimado, <strong>d</strong> definição diferente (o país não segue em tudo a metodologia comum), <strong>b</strong> quebra de série (o valor não é comparável com o anterior), <strong>n</strong> pouco significativo e <strong>u</strong> pouco fiável. Um país que não publica uma faixa (por segredo estatístico ou por não ter consumidores nela) fica a cinzento no mapa e fora da tabela.</p></div>
+                <div data-lang-block="en"><p>They are Eurostat flags: <strong>p</strong> provisional, <strong>e</strong> estimated, <strong>d</strong> definition differs (the country does not fully follow the common methodology), <strong>b</strong> break in series (the value is not comparable with the previous one), <strong>n</strong> not significant and <strong>u</strong> low reliability. A country that does not publish a band (for confidentiality or because it has no consumers in it) is grey on the map and left out of the table.</p></div>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo" data-i18n-title="topo" data-i18n-aria="topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // LÍNGUA (PT / EN): o mesmo ficheiro serve as duas, por ?lang=en
+    // ==================================================================
+    const LANG = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'pt';
+    const EN = LANG === 'en';
+    try {
+        Highcharts.setOptions({ lang: EN ? { decimalPoint: '.', thousandsSep: ',' } : {
+            decimalPoint: ',', thousandsSep: ' ',
+            contextButtonTitle: 'Menu do gráfico', viewFullscreen: 'Ver em ecrã inteiro', exitFullscreen: 'Sair do ecrã inteiro',
+            printChart: 'Imprimir', downloadPNG: 'Descarregar PNG', downloadJPEG: 'Descarregar JPEG', downloadPDF: 'Descarregar PDF',
+            downloadSVG: 'Descarregar SVG', downloadCSV: 'Descarregar CSV', downloadXLS: 'Descarregar XLS', viewData: 'Ver a tabela de dados',
+            hideData: 'Esconder a tabela de dados', zoomIn: 'Aproximar', zoomOut: 'Afastar', resetZoom: 'Repor o zoom'
+        } });
+    } catch (_) {}
+
+    const I18N = {
+        pt: {
+            htmlLang: 'pt-PT', title: 'Preços da Eletricidade e do Gás na Europa — Famílias e Empresas | Tiago Felícia',
+            metaDesc: 'Quanto pagam as famílias e as empresas pela eletricidade e pelo gás natural em cada país europeu, por faixa de consumo e por semestre, desde 2007: Portugal face à média da UE, mapa, evolução e de que é feito o preço (energia, redes e impostos). Dados do Eurostat, com e sem impostos.',
+            ogTitle: 'Preços da Eletricidade e do Gás na Europa',
+            skip: 'Saltar para o conteúdo', breadcrumbHome: 'Início', breadcrumbEuropa: 'Europa', breadcrumbThis: 'Preços ao Consumidor na Europa',
+            h1: 'Preços da eletricidade e do gás na Europa', h1sub: '(famílias e empresas)',
+            subtitle: 'O preço médio pago pelas famílias e pelas empresas em cada país europeu, por faixa de consumo e por semestre, desde 2007, sem impostos, sem IVA ou com todos os impostos. Fonte: <strong>Eurostat</strong>.',
+            ariaControlos: 'Escolhas', ariaNav: 'Navegação rápida da página',
+            lblEnergia: 'Energia', optEle: 'Eletricidade', optGas: 'Gás natural',
+            lblCons: 'Consumidor', optFam: 'Famílias', optEmp: 'Empresas',
+            share: 'Partilhar', shareTitle: 'Copiar ou partilhar o link desta vista', linkCopiado: '✓ Link copiado', copieLink: 'Copie este link:',
+            lblFaixa: 'Faixa de consumo', lblImp: 'Impostos', optSemImp: 'Sem impostos', optSemIva: 'Sem IVA', optComImp: 'Com impostos',
+            lblUnid: 'Unidade', titEur: 'Euros por kWh', titPps: 'Paridade de poder de compra: corrige as diferenças de nível de preços entre países',
+            lblSem: 'Semestre', semAnt: 'Semestre anterior', semSeg: 'Semestre seguinte',
+            navResumo: '📋 Resumo', navMapa: '🗺️ Mapa', navPaises: '🌍 País a país', navEvol: '📈 Desde 2007', navComp: '🧾 De que é feito', navFaixas: '🇵🇹 Todas as faixas', navFaq: '❔ Perguntas',
+            loading: 'A carregar os dados…', erro: 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.',
+            badge: 'Último semestre publicado pelo Eurostat: <strong>{per}</strong> · componentes até <strong>{ano}</strong> · atualizado a {data}',
+            h2Resumo: 'Resumo', h2Mapa: 'No mapa',
+            mapaIntro: 'A cor vai do mais barato ao mais caro (ver a legenda). A cinzento, os países sem valor para esta faixa e este semestre. Portugal tem o contorno mais grosso.',
+            mapaErro: 'Não foi possível carregar o mapa.',
+            h2Paises: 'País a país', paisesIntro: 'O lugar conta só os países da UE (1.º = o mais barato). Clique num cabeçalho para ordenar.',
+            lblRegiao: 'Países', optUe: 'Só a UE', optEuropa: 'Toda a Europa',
+            legendaMarcas: 'Marcas do Eurostat: p provisório · e estimado · d definição diferente · b quebra de série · n pouco significativo · u pouco fiável.',
+            h2Evol: 'Desde 2007', addPais: 'Acrescentar um país', escolher: '— escolher —', tirar: 'Tirar {p}',
+            evolIntro: '{cons}, {faixa}, {imp}, {unid}. O semestre escolhido está marcado.',
+            h2Comp: 'De que é feito o preço',
+            compIntro: 'O preço de cada ano dividido em três partes: a energia e o fornecimento, as redes, e os impostos e taxas sem o IVA; com a opção «Com impostos», o IVA entra como quarta parte. O Eurostat publica esta divisão uma vez por ano, para o ano inteiro, e só desde 2017; está em euros, mesmo com a opção PPS.',
+            lblAno: 'Ano', compPaises: 'Por país, em {ano}', compPT: 'Portugal, ano a ano',
+            sEnergia: 'Energia e fornecimento', sRedes: 'Redes', sImpostos: 'Impostos e taxas (sem IVA)', sIva: 'IVA', sMediaUE: 'Média da UE (total sem IVA)', sMediaUECom: 'Média da UE (total com impostos)',
+            notaImpostos: 'Os impostos e taxas incluem os encargos que o Eurostat separa da energia e das redes, como o apoio às renováveis e à capacidade. Um valor negativo quer dizer que essa parcela baixou o preço.',
+            impCaption: 'Os impostos e taxas sem IVA, em {ano} ({unid})', impCaptionCom: 'Os impostos e taxas, em {ano} ({unid})', totalComImp: 'Total com impostos', impRenov: 'Apoio às renováveis', impCap: 'Capacidade', impAmb: 'Ambientais', impNuc: 'Nuclear', impOutros: 'Outros', impTotal: 'Total sem IVA', impParcela: 'Parcela',
+            semComp: 'O Eurostat ainda não tem a divisão do preço para esta escolha.',
+            h2Faixas: 'Portugal em todas as faixas',
+            thFaixa: 'Faixa de consumo', thPTsem: 'Portugal sem impostos', thPTsiva: 'Portugal sem IVA', thPTcom: 'Portugal com impostos', thLugar: 'Lugar na UE', thUEsel: 'Média da UE, {imp}', thESsel: 'Espanha, {imp}',
+            faixasFrase: 'No {per}, Portugal fica {sem} lugar da UE sem impostos, {siva} sem IVA e {com} com todos os impostos, consoante a faixa (1.º = o mais barato).',
+            faixasEntre: 'entre o {a} e o {b}', faixasNo: 'no {a}',
+            thPos: '#', thPais: 'País', thPreco: 'Preço', thVsUE: 'Face à UE', thVsAnt: 'Face ao semestre anterior', thVsAno: 'Face a um ano antes',
+            ctaTitulo: 'E na sua casa?', ctaTexto: 'Os valores do Eurostat são médias de todos os consumidores de cada faixa. Para saber quanto pagaria com cada tarifário, use os simuladores.',
+            ctaEle: '⚡ Simulador de eletricidade', ctaGas: '🔥 Simulador de gás natural', ctaMercado: '🗺️ Preços do mercado diário na Europa',
+            faqTitulo: '❔ Perguntas Frequentes', topo: 'Voltar ao topo',
+            semestre1: '1.º semestre de {a}', semestre2: '2.º semestre de {a}', semCurto: 'S{n} {a}',
+            consFam: 'famílias', consEmp: 'empresas', impSem: 'sem impostos', impSiva: 'sem IVA', impCom: 'com todos os impostos',
+            kpiPT: 'Portugal', kpiUE: 'Média da UE', kpiES: 'Espanha', kpiLugar: 'Lugar de Portugal na UE',
+            deN: '{p} de {n}', maisBarato: 'mais barato', maisCaro: 'mais caro',
+            vsAnt: 'face ao semestre anterior: {v}', vsAno: 'face a um ano antes: {v}', ptFace: 'Portugal: {v}',
+            semValor: 'sem valor',
+            frase: 'No {per}, {quem} portuguesas {faixa} pagaram em média <strong>{v}</strong> {energia}, {imp}: <strong>{dif}</strong> do que a média da União Europeia ({ue}). Portugal foi o <strong>{pos}</strong> mais barato dos {n} países da UE com valor publicado.',
+            fraseES: ' Em Espanha, {es}.',
+            fraseSemPT: 'O Eurostat não tem o valor de Portugal no {per} nesta faixa de consumo.',
+            quemFam: 'as famílias', quemEmp: 'as empresas', enEle: 'pela eletricidade', enGas: 'pelo gás natural',
+            menos: '{v} menos', mais: '{v} mais', igual: 'o mesmo',
+            faixaCom: 'com um consumo de {f} por ano', faixaTot: 'em todas as faixas de consumo',
+            todas: 'Todas as faixas (média)',
+            cuidadoProv: 'Valores marcados como provisórios pelo Eurostat.'
+        },
+        en: {
+            htmlLang: 'en', title: 'Electricity and Gas Prices in Europe — Households and Businesses | Tiago Felícia',
+            metaDesc: 'What households and businesses pay for electricity and natural gas in each European country, by consumption band and half-year, since 2007: Portugal against the EU average, map, trend and what the price is made of (energy, networks and taxes). Eurostat data, with and without taxes.',
+            ogTitle: 'Electricity and Gas Prices in Europe',
+            skip: 'Skip to content', breadcrumbHome: 'Home', breadcrumbEuropa: 'Europe', breadcrumbThis: 'Consumer Prices in Europe',
+            h1: 'Electricity and gas prices in Europe', h1sub: '(households and businesses)',
+            subtitle: 'The average price paid by households and businesses in each European country, by consumption band and half-year, since 2007, excluding taxes, excluding VAT or including all taxes. Source: <strong>Eurostat</strong>.',
+            ariaControlos: 'Choices', ariaNav: 'Page navigation',
+            lblEnergia: 'Energy', optEle: 'Electricity', optGas: 'Natural gas',
+            lblCons: 'Consumer', optFam: 'Households', optEmp: 'Businesses',
+            share: 'Share', shareTitle: 'Copy or share the link to this view', linkCopiado: '✓ Link copied', copieLink: 'Copy this link:',
+            lblFaixa: 'Consumption band', lblImp: 'Taxes', optSemImp: 'Excluding taxes', optSemIva: 'Excluding VAT', optComImp: 'Including taxes',
+            lblUnid: 'Unit', titEur: 'Euros per kWh', titPps: 'Purchasing power standard: corrects for differences in price levels between countries',
+            lblSem: 'Half-year', semAnt: 'Previous half-year', semSeg: 'Next half-year',
+            navResumo: '📋 Summary', navMapa: '🗺️ Map', navPaises: '🌍 By country', navEvol: '📈 Since 2007', navComp: '🧾 What it is made of', navFaixas: '🇵🇹 All bands', navFaq: '❔ Questions',
+            loading: 'Loading data…', erro: 'The data could not be loaded. Please try again in a few minutes.',
+            badge: 'Latest half-year published by Eurostat: <strong>{per}</strong> · components up to <strong>{ano}</strong> · updated on {data}',
+            h2Resumo: 'Summary', h2Mapa: 'On the map',
+            mapaIntro: 'The colour goes from the cheapest to the most expensive (see the legend). Countries in grey have no value for this band and half-year. Portugal has the thicker outline.',
+            mapaErro: 'The map could not be loaded.',
+            h2Paises: 'Country by country', paisesIntro: 'The rank counts EU countries only (1st = the cheapest). Click a header to sort.',
+            lblRegiao: 'Countries', optUe: 'EU only', optEuropa: 'All of Europe',
+            legendaMarcas: 'Eurostat flags: p provisional · e estimated · d definition differs · b break in series · n not significant · u low reliability.',
+            h2Evol: 'Since 2007', addPais: 'Add a country', escolher: '— choose —', tirar: 'Remove {p}',
+            evolIntro: '{cons}, {faixa}, {imp}, {unid}. The chosen half-year is marked.',
+            h2Comp: 'What the price is made of',
+            compIntro: 'Each year\'s price split into three parts: energy and supply, network costs, and taxes, fees and levies excluding VAT; with the «Including taxes» option, VAT is added as a fourth part. Eurostat publishes this split once a year, for the whole year, and only since 2017; it is in euros, even with the PPS option.',
+            lblAno: 'Year', compPaises: 'By country, {ano}', compPT: 'Portugal, year by year',
+            sEnergia: 'Energy and supply', sRedes: 'Network costs', sImpostos: 'Taxes, fees and levies (excl. VAT)', sIva: 'VAT', sMediaUE: 'EU average (total excl. VAT)', sMediaUECom: 'EU average (total incl. taxes)',
+            notaImpostos: 'Taxes, fees and levies include the charges Eurostat separates from energy and networks, such as renewables and capacity support. A negative value means that part lowered the price.',
+            impCaption: 'Taxes, fees and levies excluding VAT, {ano} ({unid})', impCaptionCom: 'Taxes, fees and levies, {ano} ({unid})', totalComImp: 'Total incl. taxes', impRenov: 'Renewables support', impCap: 'Capacity', impAmb: 'Environmental', impNuc: 'Nuclear', impOutros: 'Other', impTotal: 'Total excl. VAT', impParcela: 'Item',
+            semComp: 'Eurostat does not have the price split for this choice yet.',
+            h2Faixas: 'Portugal in every band',
+            thFaixa: 'Consumption band', thPTsem: 'Portugal excl. taxes', thPTsiva: 'Portugal excl. VAT', thPTcom: 'Portugal incl. taxes', thLugar: 'EU rank', thUEsel: 'EU average, {imp}', thESsel: 'Spain, {imp}',
+            faixasFrase: 'In the {per}, Portugal ranks {sem} in the EU excluding taxes, {siva} excluding VAT and {com} including all taxes, depending on the band (1st = the cheapest).',
+            faixasEntre: 'between {a} and {b}', faixasNo: '{a}',
+            thPos: '#', thPais: 'Country', thPreco: 'Price', thVsUE: 'vs EU', thVsAnt: 'vs previous half-year', thVsAno: 'vs a year before',
+            ctaTitulo: 'What about your home?', ctaTexto: 'Eurostat figures are averages over all consumers in each band. To see what you would pay with each tariff in Portugal, use the simulators (in Portuguese).',
+            ctaEle: '⚡ Electricity simulator', ctaGas: '🔥 Natural gas simulator', ctaMercado: '🗺️ Day-ahead prices in Europe',
+            faqTitulo: '❔ Frequently Asked Questions', topo: 'Back to top',
+            semestre1: 'first half of {a}', semestre2: 'second half of {a}', semCurto: 'H{n} {a}',
+            consFam: 'households', consEmp: 'businesses', impSem: 'excluding taxes', impSiva: 'excluding VAT', impCom: 'including all taxes',
+            kpiPT: 'Portugal', kpiUE: 'EU average', kpiES: 'Spain', kpiLugar: 'Portugal\'s rank in the EU',
+            deN: '{p} of {n}', maisBarato: 'cheapest', maisCaro: 'most expensive',
+            vsAnt: 'vs previous half-year: {v}', vsAno: 'vs a year before: {v}', ptFace: 'Portugal: {v}',
+            semValor: 'no value',
+            frase: 'In the {per}, Portuguese {quem} {faixa} paid on average <strong>{v}</strong> {energia}, {imp}: <strong>{dif}</strong> than the European Union average ({ue}). Portugal was the <strong>{pos}</strong> cheapest of the {n} EU countries with a published value.',
+            fraseES: ' In Spain, {es}.',
+            fraseSemPT: 'Eurostat has no value for Portugal in the {per} in this consumption band.',
+            quemFam: 'households', quemEmp: 'businesses', enEle: 'for electricity', enGas: 'for natural gas',
+            menos: '{v} less', mais: '{v} more', igual: 'the same',
+            faixaCom: 'consuming {f} a year', faixaTot: 'across all consumption bands',
+            todas: 'All bands (average)',
+            cuidadoProv: 'Values flagged as provisional by Eurostat.'
+        }
+    };
+    function T(k, v) {
+        let s = I18N[LANG][k] !== undefined ? I18N[LANG][k] : (I18N.pt[k] !== undefined ? I18N.pt[k] : k);
+        if (v) Object.keys(v).forEach(x => { s = s.split('{' + x + '}').join(v[x]); });
+        return s;
+    }
+    function aplicarLingua() {
+        document.documentElement.lang = T('htmlLang');
+        document.title = T('title');
+        const selfUrl = 'https://www.tiagofelicia.pt/europe-consumer-prices' + (EN ? '?lang=en' : '');
+        const canon = document.querySelector('link[rel="canonical"]'); if (canon) canon.href = selfUrl;
+        const meta = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+        meta('meta[property="og:url"]', selfUrl);
+        meta('meta[name="description"]', T('metaDesc'));
+        meta('meta[property="og:title"]', T('ogTitle'));
+        meta('meta[name="twitter:title"]', T('ogTitle'));
+        meta('meta[property="og:locale"]', EN ? 'en_GB' : 'pt_PT');
+        document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.getAttribute('data-i18n')); });
+        document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = T(el.getAttribute('data-i18n-html')); });
+        document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = T(el.getAttribute('data-i18n-title')); });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', T(el.getAttribute('data-i18n-aria'))); });
+        document.querySelectorAll('.lang-switch a').forEach(a => a.classList.toggle('active', a.dataset.lang === LANG));
+    }
+    document.querySelectorAll('.lang-switch a').forEach(a => a.addEventListener('click', ev => {
+        ev.preventDefault();
+        if (a.dataset.lang === LANG) return;
+        const p = paramsAtuais();
+        if (a.dataset.lang === 'en') p.set('lang', 'en'); else p.delete('lang');
+        window.location.search = p.toString();
+    }));
+    aplicarLingua();
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    const PASTA = 'precos-consumidor/';
+    const FICH = {
+        ele: { fam: 'eletricidade_precos_familias.csv', emp: 'eletricidade_precos_empresas.csv' },
+        gas: { fam: 'gas_precos_familias.csv', emp: 'gas_precos_empresas.csv' }
+    };
+    const FICH_COMP = {
+        ele: { fam: 'eletricidade_componentes_familias.csv', emp: 'eletricidade_componentes_empresas.csv' },
+        gas: { fam: 'gas_componentes_familias.csv', emp: 'gas_componentes_empresas.csv' }
+    };
+    const MAPA_URL = 'https://cdn.jsdelivr.net/npm/@highcharts/map-collection@2.3.3/custom/europe.topo.json';
+
+    // As faixas de consumo anual do Eurostat. No gás, as faixas estão em GJ: 1 GJ = 277,8 kWh.
+    const FAIXAS = {
+        ele: {
+            fam: [['DA', '< 1 000 kWh', '< 1,000 kWh'], ['DB', '1 000–2 499 kWh', '1,000–2,499 kWh'], ['DC', '2 500–4 999 kWh', '2,500–4,999 kWh'],
+                  ['DD', '5 000–14 999 kWh', '5,000–14,999 kWh'], ['DE', '≥ 15 000 kWh', '≥ 15,000 kWh']],
+            emp: [['IA', '< 20 MWh', '< 20 MWh'], ['IB', '20–499 MWh', '20–499 MWh'], ['IC', '500–1 999 MWh', '500–1,999 MWh'],
+                  ['ID', '2 000–19 999 MWh', '2,000–19,999 MWh'], ['IE', '20 000–69 999 MWh', '20,000–69,999 MWh'],
+                  ['IF', '70 000–149 999 MWh', '70,000–149,999 MWh'], ['IG', '≥ 150 000 MWh', '≥ 150,000 MWh']]
+        },
+        gas: {
+            fam: [['D1', '< 20 GJ (< 5 600 kWh)', '< 20 GJ (< 5,600 kWh)'], ['D2', '20–199 GJ (5 600–55 300 kWh)', '20–199 GJ (5,600–55,300 kWh)'],
+                  ['D3', '≥ 200 GJ (≥ 55 600 kWh)', '≥ 200 GJ (≥ 55,600 kWh)']],
+            emp: [['I1', '< 1 000 GJ (< 278 MWh)', '< 1,000 GJ (< 278 MWh)'], ['I2', '1 000–9 999 GJ (278–2 778 MWh)', '1,000–9,999 GJ (278–2,778 MWh)'],
+                  ['I3', '10 000–99 999 GJ (2,8–28 GWh)', '10,000–99,999 GJ (2.8–28 GWh)'], ['I4', '100 000–999 999 GJ (28–278 GWh)', '100,000–999,999 GJ (28–278 GWh)'],
+                  ['I5', '1–4 milhões de GJ (278–1 111 GWh)', '1–4 million GJ (278–1,111 GWh)'], ['I6', '≥ 4 milhões de GJ (≥ 1 111 GWh)', '≥ 4 million GJ (≥ 1,111 GWh)']]
+        }
+    };
+    // As faixas de referência do Eurostat (as dos comunicados)
+    const FAIXA_OMISSAO = { ele: { fam: 'DC', emp: 'ID' }, gas: { fam: 'D2', emp: 'I3' } };
+
+    const UE27 = ['BE', 'BG', 'CZ', 'DK', 'DE', 'EE', 'IE', 'EL', 'ES', 'FR', 'HR', 'IT', 'CY', 'LV', 'LT', 'LU', 'HU', 'MT', 'NL', 'AT', 'PL', 'PT', 'RO', 'SI', 'SK', 'FI', 'SE'];
+    const REFS = ['EU27_2020', 'EA'];
+    const NOMES = {
+        pt: { EU27_2020: 'Média da UE (27)', EA: 'Média da zona euro', BE: 'Bélgica', BG: 'Bulgária', CZ: 'Chéquia', DK: 'Dinamarca', DE: 'Alemanha', EE: 'Estónia',
+              IE: 'Irlanda', EL: 'Grécia', ES: 'Espanha', FR: 'França', HR: 'Croácia', IT: 'Itália', CY: 'Chipre', LV: 'Letónia', LT: 'Lituânia', LU: 'Luxemburgo',
+              HU: 'Hungria', MT: 'Malta', NL: 'Países Baixos', AT: 'Áustria', PL: 'Polónia', PT: 'Portugal', RO: 'Roménia', SI: 'Eslovénia', SK: 'Eslováquia',
+              FI: 'Finlândia', SE: 'Suécia', IS: 'Islândia', LI: 'Listenstaine', NO: 'Noruega', UK: 'Reino Unido', BA: 'Bósnia e Herzegovina', ME: 'Montenegro',
+              MD: 'Moldávia', MK: 'Macedónia do Norte', GE: 'Geórgia', AL: 'Albânia', RS: 'Sérvia', TR: 'Turquia', UA: 'Ucrânia', XK: 'Kosovo' },
+        en: { EU27_2020: 'EU average (27)', EA: 'Euro area average', BE: 'Belgium', BG: 'Bulgaria', CZ: 'Czechia', DK: 'Denmark', DE: 'Germany', EE: 'Estonia',
+              IE: 'Ireland', EL: 'Greece', ES: 'Spain', FR: 'France', HR: 'Croatia', IT: 'Italy', CY: 'Cyprus', LV: 'Latvia', LT: 'Lithuania', LU: 'Luxembourg',
+              HU: 'Hungary', MT: 'Malta', NL: 'Netherlands', AT: 'Austria', PL: 'Poland', PT: 'Portugal', RO: 'Romania', SI: 'Slovenia', SK: 'Slovakia',
+              FI: 'Finland', SE: 'Sweden', IS: 'Iceland', LI: 'Liechtenstein', NO: 'Norway', UK: 'United Kingdom', BA: 'Bosnia and Herzegovina', ME: 'Montenegro',
+              MD: 'Moldova', MK: 'North Macedonia', GE: 'Georgia', AL: 'Albania', RS: 'Serbia', TR: 'Türkiye', UA: 'Ukraine', XK: 'Kosovo' }
+    };
+    const nome = c => NOMES[LANG][c] || c;
+    // Nos eixos dos gráficos de barras, sem o «(27)» (cortava-se no telemóvel)
+    const nomeCurto = c => c === 'EU27_2020' ? (EN ? 'EU average' : 'Média da UE') : nome(c);
+    // O código do país no mapa (o do Eurostat em minúsculas, menos estes três)
+    const CHAVE_MAPA = c => ({ EL: 'gr', UK: 'gb', XK: 'kv' })[c] || c.toLowerCase();
+
+    // Cores (paleta validada, a mesma da página REN vs ENTSO-E: a mesma cor = o mesmo país em todos os gráficos)
+    const COR_PAIS = { PT: ['#2a78d6', '#5b9be8'], EU27_2020: ['#64748b', '#94a3b8'], ES: ['#eb6834', '#f08a5d'] };
+    const COR_EXTRA = [['#1baf7a', '#2fc58e'], ['#4a3aa7', '#9085e9'], ['#eda100', '#f0b43c']];
+    const COR_COMP = { energia: ['#2a78d6', '#5b9be8'], redes: ['#1baf7a', '#2fc58e'], impostos: ['#eda100', '#f0b43c'], iva: ['#4a3aa7', '#9085e9'] };
+    const MAX_EXTRA = 3;
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const LOC = EN ? 'en-GB' : 'pt-PT';
+    const _nf4 = new Intl.NumberFormat(LOC, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+    const _nf1 = new Intl.NumberFormat(LOC, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const menos = s => s.replace('-', '−');
+    const fmt4 = v => vazio(v) ? '--' : menos(_nf4.format(v));
+    const unid = () => E.m === 'pps' ? 'PPS/kWh' : '€/kWh';
+    // Espaços que não quebram: o valor fica com a unidade, e «2 500–4 999 kWh» numa linha só
+    // (e o traço com «word joiners» à volta, para «2 500–4 999» não quebrar no traço)
+    const NB = s => s.replace(/ /g, ' ').replace(/–/g, '⁠–⁠');
+    const fmtV = v => vazio(v) ? '--' : fmt4(v) + ' ' + unid();
+    // Uma diferença que arredonda a zero fica sem sinal (nada de «−0,0 %»)
+    const fmtPct = v => vazio(v) ? '--' : (Math.abs(v) < 0.05 ? (EN ? '0.0%' : '0,0 %') : (v > 0 ? '+' : '') + menos(_nf1.format(v)) + (EN ? '%' : ' %'));
+    // Nos eixos chegam 2 casas (3 quando o passo é pequeno, como no gás das empresas)
+    function fmtEixo(ctx) {
+        const casas = ctx.axis.tickInterval < 0.01 ? 3 : 2;
+        return menos(new Intl.NumberFormat(LOC, { minimumFractionDigits: casas, maximumFractionDigits: casas }).format(ctx.value));
+    }
+    const pctAbs = v => menos(_nf1.format(Math.abs(v))) + (EN ? '%' : ' %');
+    const varPct = (a, b) => (vazio(a) || vazio(b) || b === 0) ? null : (a / b - 1) * 100;
+    function ordinal(n) {
+        if (!EN) return n + '.º';
+        const s = (n % 100 >= 11 && n % 100 <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' })[n % 10] || 'th';
+        return n + s;
+    }
+    function fmtDataIso(iso) {
+        if (!iso) return '--';
+        const [a, m, d] = iso.slice(0, 10).split('-');
+        return EN ? `${a}-${m}-${d}` : `${d}/${m}/${a}`;
+    }
+    const perLongo = p => T(p.endsWith('S1') ? 'semestre1' : 'semestre2', { a: p.slice(0, 4) });
+    // No início de uma linha (listas, títulos, legendas), com maiúscula: «First half of 2026»
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const perCurto = p => T('semCurto', { n: p.slice(-1), a: p.slice(0, 4) });
+    function rotFaixa(b) {
+        if (b === 'TOT') return T('todas');
+        const f = FAIXAS[E.e][E.c].find(x => x[0] === b);
+        return f ? `${b} · ${EN ? f[2] : f[1]}` : b;
+    }
+    // Na frase do resumo: «2 500–4 999 kWh», «menos de 1 000 kWh», «150 000 MWh ou mais» (no gás, sem o equivalente em kWh)
+    function intervaloFaixa(b) {
+        const f = FAIXAS[E.e][E.c].find(x => x[0] === b);
+        if (!f) return '';
+        const t = (EN ? f[2] : f[1]).split(' (')[0];
+        if (t.startsWith('< ')) return NB((EN ? 'under ' : 'menos de ') + t.slice(2));
+        if (t.startsWith('≥ ')) return NB(t.slice(2) + (EN ? ' or more' : ' ou mais'));
+        return NB(t);
+    }
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6', suave: dk ? '#94a3b8' : '#5c636a' };
+    }
+    const corDe = (par, c) => par[c.dk ? 1 : 0];
+    function exportacao(nome) {
+        return { enabled: true, filename: nome,
+                 buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } } };
+    }
+    function base(c, nome) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: true, text: 'Eurostat · tiagofelicia.pt', href: 'https://www.tiagofelicia.pt/europe-consumer-prices', style: { color: c.suave } },
+            exporting: exportacao(nome),
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    function limparGrafico(id, html) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = html || '';
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    const ativarToggle = (id, v) => document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+
+    // ==================================================================
+    // ESTADO E LINK
+    // ==================================================================
+    // Os impostos por omissão, como o Eurostat: as famílias com todos os impostos (o que pagam), as empresas sem
+    // IVA (recuperam-no). Ao trocar de consumidor, a opção acompanha, a menos que o utilizador a tenha escolhido.
+    const IMP_OMISSAO = { fam: 'com', emp: 'siva' };
+    const E = { e: 'ele', c: 'fam', b: 'DC', i: 'com', iEscolhido: false, m: 'eur', s: null, r: 'ue', ano: null, extra: [] };
+    (function lerURL() {
+        const p = new URLSearchParams(window.location.search);
+        if (p.get('e') === 'gas') E.e = 'gas';
+        if (p.get('c') === 'emp') E.c = 'emp';
+        E.b = FAIXA_OMISSAO[E.e][E.c];
+        const b = (p.get('b') || '').toUpperCase();
+        if (b === 'TOT' || FAIXAS[E.e][E.c].some(f => f[0] === b)) E.b = b;
+        E.i = IMP_OMISSAO[E.c];
+        if (['sem', 'siva', 'com'].includes(p.get('i'))) { E.i = p.get('i'); E.iEscolhido = true; }
+        if (p.get('m') === 'pps') E.m = 'pps';
+        if (/^\d{4}-S[12]$/.test(p.get('s') || '')) E.s = p.get('s');
+        if (p.get('r') === 'europa') E.r = 'europa';
+        if (/^\d{4}$/.test(p.get('ano') || '')) E.ano = p.get('ano');
+        E.extra = (p.get('p') || '').toUpperCase().split(',').filter(c => NOMES.pt[c] && !['PT', 'ES', 'EU27_2020'].includes(c)).slice(0, MAX_EXTRA);
+    })();
+    function paramsAtuais() {
+        const p = new URLSearchParams();
+        if (E.e !== 'ele') p.set('e', E.e);
+        if (E.c !== 'fam') p.set('c', E.c);
+        if (E.b !== FAIXA_OMISSAO[E.e][E.c]) p.set('b', E.b);
+        if (E.i !== IMP_OMISSAO[E.c]) p.set('i', E.i);
+        if (E.m !== 'eur') p.set('m', E.m);
+        if (E.s && DADOS && E.s !== DADOS.periodos[DADOS.periodos.length - 1]) p.set('s', E.s);
+        if (E.r !== 'ue') p.set('r', E.r);
+        if (E.ano && COMP && E.ano !== COMP.anos[COMP.anos.length - 1]) p.set('ano', E.ano);
+        if (E.extra.length) p.set('p', E.extra.join(','));
+        if (EN) p.set('lang', 'en');
+        return p;
+    }
+    function atualizarURL() {
+        const q = paramsAtuais().toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+    }
+    function mostrarFeedback(txt) {
+        const t = document.createElement('div'); t.className = 'toast-feedback'; t.textContent = txt;
+        document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
+    }
+    async function partilharVista() {
+        const q = paramsAtuais().toString();
+        const url = `${window.location.origin}${window.location.pathname}${q ? '?' + q : ''}`;
+        const resumo = `💶 ${T('ogTitle')} — ${T(E.e === 'ele' ? 'optEle' : 'optGas')}, ${T(E.c === 'fam' ? 'consFam' : 'consEmp')}, ${perLongo(E.s)}`;
+        if (navigator.share) {
+            try { await navigator.share({ title: T('ogTitle') + ' — Tiago Felícia', text: resumo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        const texto = `${resumo}\n${url}`;
+        try { await navigator.clipboard.writeText(texto); mostrarFeedback(T('linkCopiado')); return; } catch (e) { /* cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea'); ta.value = texto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+            mostrarFeedback(T('linkCopiado'));
+        } catch (e) { prompt(T('copieLink'), texto); }
+    }
+
+    // ==================================================================
+    // DADOS
+    // ==================================================================
+    function lerCSV(txt) {
+        const linhas = txt.replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim());
+        const cab = linhas[0].split(',');
+        return linhas.slice(1).map(l => { const v = l.split(','); const o = {}; cab.forEach((c, i) => { o[c] = v[i]; }); return o; });
+    }
+    const num = s => (s === undefined || s === null || s === '') ? null : +s;
+    const CACHE = {};
+    function carregarCSV(nomeFicheiro) {
+        if (!CACHE[nomeFicheiro]) {
+            CACHE[nomeFicheiro] = fetchDados(PASTA + nomeFicheiro).then(r => {
+                if (!r.ok) throw new Error(nomeFicheiro + ': HTTP ' + r.status);
+                return r.text();
+            }).then(lerCSV);
+            CACHE[nomeFicheiro].catch(() => { delete CACHE[nomeFicheiro]; });
+        }
+        return CACHE[nomeFicheiro];
+    }
+    // Os preços de um ficheiro, por (período, país, faixa)
+    function indexarPrecos(linhas) {
+        const idx = new Map(), periodos = new Set(), paises = new Set();
+        linhas.forEach(r => { idx.set(`${r.periodo}|${r.pais}|${r.banda}`, r); periodos.add(r.periodo); paises.add(r.pais); });
+        return { idx, periodos: [...periodos].sort(), paises };
+    }
+    function indexarComp(linhas) {
+        const idx = new Map(), anos = new Set();
+        linhas.forEach(r => { idx.set(`${r.ano}|${r.pais}|${r.banda}`, r); anos.add(r.ano); });
+        return { idx, anos: [...anos].sort() };
+    }
+    let DADOS = null, COMP = null;
+    const COL_IMP = { sem: 'sem_impostos', siva: 'sem_iva', com: 'com_impostos' };
+    const colPreco = () => (E.m === 'pps' ? 'pps_' : '') + COL_IMP[E.i];
+    const impTxt = () => T({ sem: 'impSem', siva: 'impSiva', com: 'impCom' }[E.i]);
+    function linha(per, pais, banda) { return DADOS.idx.get(`${per}|${pais}|${banda || E.b}`) || null; }
+    function valor(per, pais, banda, col) { const r = linha(per, pais, banda); return r ? num(r[col || colPreco()]) : null; }
+    const marcas = (per, pais, banda) => { const r = linha(per, pais, banda); return r && r.estado ? r.estado : ''; };
+    function anterior(per, n) {
+        let a = +per.slice(0, 4), s = +per.slice(-1);
+        for (let i = 0; i < n; i++) { if (s === 2) s = 1; else { s = 2; a -= 1; } }
+        return `${a}-S${s}`;
+    }
+    // O lugar de cada país da UE com valor (1 = o mais barato)
+    function lugares(per, banda, col) {
+        const v = UE27.map(c => [c, valor(per, c, banda, col)]).filter(x => !vazio(x[1])).sort((a, b) => a[1] - b[1]);
+        const pos = {}; v.forEach((x, i) => { pos[x[0]] = i + 1; });
+        return { pos, n: v.length, lista: v };
+    }
+
+    // ==================================================================
+    // SELETORES
+    // ==================================================================
+    function encherFaixas() {
+        const sel = document.getElementById('sel-faixa');
+        sel.innerHTML = FAIXAS[E.e][E.c].map(f => `<option value="${f[0]}">${esc(f[0] + ' · ' + (EN ? f[2] : f[1]))}</option>`).join('')
+            + `<option value="TOT">${esc(T('todas'))}</option>`;
+        sel.value = E.b;
+    }
+    function encherSemestres() {
+        const sel = document.getElementById('sel-semestre');
+        const pers = DADOS.periodos.slice().reverse();
+        sel.innerHTML = pers.map(p => `<option value="${p}">${esc(cap(perLongo(p)))}</option>`).join('');
+        if (!E.s || !DADOS.periodos.includes(E.s)) E.s = DADOS.periodos[DADOS.periodos.length - 1];
+        sel.value = E.s;
+        document.getElementById('sem-ant').disabled = E.s === DADOS.periodos[0];
+        document.getElementById('sem-seg').disabled = E.s === DADOS.periodos[DADOS.periodos.length - 1];
+    }
+    function encherAnos() {
+        const sel = document.getElementById('sel-ano');
+        if (!COMP || !COMP.anos.length) { sel.innerHTML = ''; return; }
+        if (!E.ano || !COMP.anos.includes(E.ano)) E.ano = COMP.anos[COMP.anos.length - 1];
+        sel.innerHTML = COMP.anos.slice().reverse().map(a => `<option value="${a}">${a}</option>`).join('');
+        sel.value = E.ano;
+    }
+
+    // ==================================================================
+    // RESUMO
+    // ==================================================================
+    function renderResumo() {
+        const per = E.s, vPT = valor(per, 'PT'), vUE = valor(per, 'EU27_2020'), vES = valor(per, 'ES');
+        const L = lugares(per);
+        const fraseEl = document.getElementById('resumo-frase');
+        if (vazio(vPT)) {
+            fraseEl.textContent = T('fraseSemPT', { per: perLongo(per) });
+        } else {
+            const dif = varPct(vPT, vUE);
+            const difTxt = vazio(dif) ? '--' : Math.abs(dif) < 0.05 ? T('igual') : T(dif < 0 ? 'menos' : 'mais', { v: pctAbs(dif) });
+            fraseEl.innerHTML = T('frase', {
+                per: perLongo(per), quem: T(E.c === 'fam' ? 'quemFam' : 'quemEmp'),
+                faixa: E.b === 'TOT' ? T('faixaTot') : T('faixaCom', { f: intervaloFaixa(E.b) }),
+                v: fmtV(vPT), energia: T(E.e === 'ele' ? 'enEle' : 'enGas'), imp: impTxt(),
+                dif: difTxt, ue: fmtV(vUE), pos: L.pos.PT ? ordinal(L.pos.PT) : '--', n: L.n
+            }) + (vazio(vES) ? '' : T('fraseES', { es: fmtV(vES) }));
+        }
+        const sub = (a, b) => [T('vsAnt', { v: fmtPct(varPct(a, valor(anterior(per, 1), b))) }), T('vsAno', { v: fmtPct(varPct(a, valor(anterior(per, 2), b))) })].join('<br>');
+        const cartao = (rot, v, pais, extra, destaque) => `<div class="kpi-card${destaque ? ' destaque' : ''}"><div class="kpi-label">${esc(rot)}</div>`
+            + `<div class="kpi-value">${vazio(v) ? '--' : fmt4(v)} <span class="kpi-unid">${unid()}</span></div>`
+            + `<div class="kpi-sub">${vazio(v) ? T('semValor') : (extra || sub(v, pais))}</div></div>`;
+        const ptFace = v => T('ptFace', { v: fmtPct(varPct(vPT, v)) });
+        const barato = L.lista[0], caro = L.lista[L.lista.length - 1];
+        const lugarSub = barato ? `${T('maisBarato')}: ${esc(nome(barato[0]))} (${fmt4(barato[1])})<br>${T('maisCaro')}: ${esc(nome(caro[0]))} (${fmt4(caro[1])})` : '';
+        document.getElementById('kpis').innerHTML =
+            cartao(T('kpiPT'), vPT, 'PT', null, true)
+            + cartao(T('kpiUE'), vUE, 'EU27_2020', vazio(vPT) ? sub(vUE, 'EU27_2020') : ptFace(vUE) + '<br>' + sub(vUE, 'EU27_2020').split('<br>')[0])
+            + cartao(T('kpiES'), vES, 'ES', vazio(vPT) ? sub(vES, 'ES') : ptFace(vES) + '<br>' + sub(vES, 'ES').split('<br>')[0])
+            + `<div class="kpi-card"><div class="kpi-label">${esc(T('kpiLugar'))}</div><div class="kpi-value">${L.pos.PT ? esc(T('deN', { p: ordinal(L.pos.PT), n: L.n })) : '--'}</div><div class="kpi-sub">${lugarSub}</div></div>`;
+    }
+
+    // ==================================================================
+    // MAPA
+    // ==================================================================
+    let TOPO = null, _topoPedido = null;
+    function carregarMapa() {
+        if (!_topoPedido) _topoPedido = fetch(MAPA_URL).then(r => { if (!r.ok) throw new Error('mapa: HTTP ' + r.status); return r.json(); }).then(j => { TOPO = j; return j; });
+        return _topoPedido;
+    }
+    function renderMapa() {
+        const c = _hcDark();
+        document.getElementById('titulo-mapa').textContent = `${T('h2Mapa')} — ${cap(perLongo(E.s))}`;
+        if (!TOPO) {
+            carregarMapa().then(renderMapa).catch(err => { console.error(err); limparGrafico('mapa', `<div class="bloco-vazio">${esc(T('mapaErro'))}</div>`); });
+            return;
+        }
+        const L = lugares(E.s), vUE = valor(E.s, 'EU27_2020');
+        const dados = [];
+        DADOS.paises.forEach(p => {
+            if (REFS.includes(p)) return;
+            const v = valor(E.s, p);
+            if (vazio(v)) return;
+            const ponto = { 'hc-key': CHAVE_MAPA(p), value: v, pais: p };
+            if (p === 'PT') { ponto.borderColor = c.dk ? '#f8fafc' : '#0f172a'; ponto.borderWidth = 2.5; }
+            dados.push(ponto);
+        });
+        // A escala pelos países da UE: um país de fora muito barato ou muito caro não esbate as cores do resto
+        const valsUE = L.lista.map(x => x[1]);
+        const min = valsUE.length ? Math.min(...valsUE) : undefined, max = valsUE.length ? Math.max(...valsUE) : undefined;
+        // Um passo redondo, para umas 4 divisões: sem ele, num ecrã estreito o Highcharts escolhia −0,08 a 0,48
+        const passo = [0.005, 0.01, 0.02, 0.025, 0.05, 0.1, 0.2, 0.5].find(x => x >= ((max - min) || 0.1) / 4) || 0.5;
+        limparGrafico('mapa');
+        Highcharts.mapChart('mapa', Object.assign(base(c, 'precos-consumidor-mapa'), {
+            chart: { map: TOPO, backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            mapNavigation: { enabled: true, enableMouseWheelZoom: false, buttonOptions: { verticalAlign: 'bottom', theme: { fill: c.dk ? '#334155' : '#f1f5f9', style: { color: c.txt } } } },
+            // Só a Europa da UE e dos vizinhos: a Rússia inteira deixava o resto pequeno
+            mapView: { fitToGeometry: { type: 'MultiPoint', coordinates: [[-24, 35], [34, 35], [34, 70.5], [-24, 70.5]] } },
+            colorAxis: {
+                min, max, tickInterval: passo, startOnTick: true, endOnTick: true,
+                stops: c.dk ? [[0, '#1e3a5f'], [0.5, '#3b82f6'], [1, '#dbeafe']] : [[0, '#dbeafe'], [0.5, '#60a5fa'], [1, '#1e3a8a']],
+                // Na legenda chegam 2 casas (3 quando a escala é estreita, como no gás das empresas)
+                // overflow 'allow': sem ele, os números das duas pontas saíam cortados («0,…»)
+                labels: { overflow: 'allow', style: { color: c.txt, textOverflow: 'clip', whiteSpace: 'nowrap' }, formatter() {
+                    const casas = passo < 0.01 ? 3 : 2;
+                    return menos(new Intl.NumberFormat(LOC, { minimumFractionDigits: casas, maximumFractionDigits: casas }).format(this.value));
+                } }
+            },
+            legend: { title: { text: unid(), style: { color: c.txt, fontWeight: 'normal' } }, layout: 'horizontal', align: 'center', verticalAlign: 'bottom', padding: 14,
+                      symbolWidth: Math.max(160, Math.min(320, document.getElementById('mapa').clientWidth - 60)) },
+            tooltip: {
+                useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                formatter() {
+                    const p = this.point.pais, v = this.point.value, m = marcas(E.s, p);
+                    let s = `<b>${esc(nome(p))}</b><br>${fmtV(v)}${m ? ` <span style="opacity:.75">(${esc(m)})</span>` : ''}`;
+                    if (!vazio(vUE) && p !== 'EU27_2020') s += `<br>${T('thVsUE')}: ${fmtPct(varPct(v, vUE))}`;
+                    if (L.pos[p]) s += `<br>${esc(T('thLugar'))}: ${esc(T('deN', { p: ordinal(L.pos[p]), n: L.n }))}`;
+                    return s;
+                }
+            },
+            series: [{
+                name: T(E.e === 'ele' ? 'optEle' : 'optGas'), data: dados, joinBy: 'hc-key', allAreas: true,
+                nullColor: c.dk ? '#334155' : '#e5e7eb', borderColor: c.dk ? '#0f172a' : '#ffffff', borderWidth: 0.6,
+                states: { hover: { brightness: c.dk ? 0.15 : -0.1, borderColor: c.dk ? '#fff' : '#000' } }
+            }]
+        }));
+    }
+
+    // ==================================================================
+    // PAÍS A PAÍS
+    // ==================================================================
+    let ORD = { col: 'preco', dir: 1 };
+    function renderTabela() {
+        const per = E.s, L = lugares(per), vUE = valor(per, 'EU27_2020');
+        const lista = [...DADOS.paises].filter(p => REFS.includes(p) || UE27.includes(p) || E.r === 'europa')
+            .map(p => ({ p, v: valor(per, p), ant: valor(anterior(per, 1), p), ano: valor(anterior(per, 2), p) }))
+            .filter(x => !vazio(x.v));
+        const chave = x => ORD.col === 'vsAnt' ? varPct(x.v, x.ant) : ORD.col === 'vsAno' ? varPct(x.v, x.ano) : x.v;
+        lista.sort((a, b) => {
+            if (ORD.col === 'pais') return nome(a.p).localeCompare(nome(b.p), LOC) * ORD.dir;
+            // Os números sem valor (sem o semestre anterior, por exemplo) ficam sempre no fim
+            const ka = chave(a), kb = chave(b);
+            if (vazio(ka) && vazio(kb)) return 0; if (vazio(ka)) return 1; if (vazio(kb)) return -1;
+            return (ka - kb) * ORD.dir;
+        });
+        const maxV = Math.max(...lista.map(x => x.v));
+        const th = (col, rot, esq) => `<th class="ord${esq ? ' esq' : ''}" data-col="${col}" aria-sort="${ORD.col === col ? (ORD.dir > 0 ? 'ascending' : 'descending') : 'none'}">${esc(rot)}</th>`;
+        const linhas = lista.map(x => {
+            const cls = x.p === 'PT' ? ' class="pt"' : REFS.includes(x.p) ? ' class="ref"' : '';
+            const m = marcas(per, x.p);
+            const larg = maxV > 0 && x.v > 0 ? Math.round(x.v / maxV * 90) : 0;
+            return `<tr${cls}><td>${L.pos[x.p] ? ordinal(L.pos[x.p]) : ''}</td><td class="esq">${esc(nome(x.p))}</td>`
+                + `<td class="esq"><span class="barra" style="width:${larg}px"></span>${fmt4(x.v)}${m ? `<span class="marca">${esc(m)}</span>` : ''}</td>`
+                + `<td>${x.p === 'EU27_2020' ? '' : fmtPct(varPct(x.v, vUE))}</td><td>${fmtPct(varPct(x.v, x.ant))}</td><td>${fmtPct(varPct(x.v, x.ano))}</td></tr>`;
+        }).join('');
+        document.getElementById('tabela-paises').innerHTML = `<table class="tabela-ecp"><caption>${esc(cap(perLongo(per)))} · ${esc(rotFaixa(E.b))} · ${esc(impTxt())} · ${unid()}</caption>`
+            + `<thead><tr><th>${T('thPos')}</th>${th('pais', T('thPais'), true)}${th('preco', T('thPreco'), true)}<th>${esc(T('thVsUE'))}</th>${th('vsAnt', T('thVsAnt'))}${th('vsAno', T('thVsAno'))}</tr></thead>`
+            + `<tbody>${linhas}</tbody></table>`;
+    }
+    document.getElementById('tabela-paises').addEventListener('click', e => {
+        const th = e.target.closest('th.ord');
+        if (!th) return;
+        const col = th.dataset.col;
+        ORD = { col, dir: ORD.col === col ? -ORD.dir : 1 };
+        renderTabela();
+    });
+
+    // ==================================================================
+    // DESDE 2007
+    // ==================================================================
+    function paisesEvol() { return ['PT', 'EU27_2020', 'ES', ...E.extra]; }
+    function encherPaisExtra() {
+        const sel = document.getElementById('sel-pais-extra');
+        const fora = paisesEvol();
+        const opcoes = [...DADOS.paises].filter(p => !fora.includes(p)).sort((a, b) => nome(a).localeCompare(nome(b), LOC));
+        sel.innerHTML = `<option value="">${esc(T('escolher'))}</option>` + opcoes.map(p => `<option value="${p}">${esc(nome(p))}</option>`).join('');
+        sel.disabled = E.extra.length >= MAX_EXTRA;
+        document.getElementById('chips-paises').innerHTML = E.extra.map(p =>
+            `<span class="chip-pais">${esc(nome(p))}<button type="button" data-p="${p}" aria-label="${esc(T('tirar', { p: nome(p) }))}" title="${esc(T('tirar', { p: nome(p) }))}">×</button></span>`).join('');
+    }
+    function renderEvol() {
+        const c = _hcDark(), pers = DADOS.periodos;
+        document.getElementById('evol-intro').textContent = T('evolIntro', {
+            cons: T(E.e === 'ele' ? 'optEle' : 'optGas') + ', ' + T(E.c === 'fam' ? 'consFam' : 'consEmp'),
+            faixa: rotFaixa(E.b), imp: impTxt(), unid: unid()
+        });
+        const series = paisesEvol().map((p, i) => {
+            const cor = COR_PAIS[p] ? corDe(COR_PAIS[p], c) : corDe(COR_EXTRA[i - 3] || COR_EXTRA[0], c);
+            return { name: nome(p), color: cor, data: pers.map(per => valor(per, p)),
+                     lineWidth: p === 'PT' ? 3 : 2, dashStyle: p === 'EU27_2020' ? 'ShortDash' : 'Solid',
+                     marker: { enabled: false, symbol: 'circle', radius: 4 }, zIndex: p === 'PT' ? 3 : 1 };
+        });
+        const iSel = pers.indexOf(E.s);
+        limparGrafico('grafico-evol');
+        Highcharts.chart('grafico-evol', Object.assign(base(c, 'precos-consumidor-evolucao'), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: { categories: pers.map(perCurto), labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha,
+                     plotLines: iSel >= 0 ? [{ value: iSel, color: c.suave, width: 1, dashStyle: 'Dot', zIndex: 2 }] : [] },
+            yAxis: { title: { text: unid(), style: { color: c.txt } }, labels: { style: { color: c.txt }, formatter() { return fmtEixo(this); } }, gridLineColor: c.grelha },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                       formatter() {
+                           const per = pers[this.points[0].point.index];
+                           return `<b>${esc(cap(perLongo(per)))}</b><br>` + this.points.map(pt => `<span style="color:${pt.color}">●</span> ${esc(pt.series.name)}: <b>${fmt4(pt.y)}</b>`).join('<br>');
+                       } },
+            plotOptions: { series: { connectNulls: false, states: { inactive: { opacity: 0.35 } } } },
+            series
+        }));
+    }
+    document.getElementById('sel-pais-extra').addEventListener('change', e => {
+        const p = e.target.value;
+        if (!p || E.extra.length >= MAX_EXTRA) return;
+        E.extra.push(p); encherPaisExtra(); renderEvol(); atualizarURL();
+    });
+    document.getElementById('chips-paises').addEventListener('click', e => {
+        const b = e.target.closest('button[data-p]');
+        if (!b) return;
+        E.extra = E.extra.filter(p => p !== b.dataset.p); encherPaisExtra(); renderEvol(); atualizarURL();
+    });
+
+    // ==================================================================
+    // DE QUE É FEITO O PREÇO
+    // ==================================================================
+    // Com a opção «Com impostos», o IVA entra como 4.ª parte; nas outras, a divisão é sempre sem IVA
+    const comIva = () => E.i === 'com';
+    function comp(ano, pais, banda) {
+        const r = COMP ? COMP.idx.get(`${ano}|${pais}|${banda || E.b}`) : null;
+        if (!r) return null;
+        const t = num(r.impostos_taxas), iva = num(r.iva);
+        const o = { energia: num(r.energia_fornecimento), redes: num(r.redes), impostos: vazio(t) ? null : t - (iva || 0), iva,
+                    renov: num(r.impostos_renovaveis), cap: num(r.impostos_capacidade), amb: num(r.impostos_ambientais),
+                    nuc: num(r.impostos_nuclear), outros: num(r.impostos_outros), estado: r.estado || '' };
+        if (vazio(o.energia) && vazio(o.redes) && vazio(o.impostos)) return null;
+        o.semIva = (o.energia || 0) + (o.redes || 0) + (o.impostos || 0);
+        o.comIva = o.semIva + (o.iva || 0);
+        o.total = comIva() ? o.comIva : o.semIva;
+        return o;
+    }
+    function renderComp() {
+        const c = _hcDark();
+        const vazioHTML = `<div class="bloco-vazio">${esc(T('semComp'))}</div>`;
+        if (!COMP || !COMP.anos.length) {
+            ['grafico-comp-paises', 'grafico-comp-pt'].forEach(id => limparGrafico(id, vazioHTML));
+            document.getElementById('tabela-impostos').innerHTML = '';
+            return;
+        }
+        const ano = E.ano;
+        document.getElementById('titulo-comp-paises').textContent = T('compPaises', { ano });
+        const SERIES = [['energia', 'sEnergia'], ['redes', 'sRedes'], ['impostos', 'sImpostos']].concat(comIva() ? [['iva', 'sIva']] : []);
+        const rotTotal = T(comIva() ? 'totalComImp' : 'impTotal');
+        // Por país: os da UE (ou de toda a Europa) com a divisão neste ano, do mais barato ao mais caro
+        const paises = [...new Set([...COMP.idx.keys()].filter(k => k.startsWith(ano + '|')).map(k => k.split('|')[1]))]
+            .filter(p => p === 'EU27_2020' || UE27.includes(p) || (E.r === 'europa' && p !== 'EA'))
+            .map(p => ({ p, o: comp(ano, p) })).filter(x => x.o).sort((a, b) => a.o.total - b.o.total);
+        limparGrafico('grafico-comp-paises');
+        if (!paises.length) { limparGrafico('grafico-comp-paises', vazioHTML); }
+        else {
+            const el = document.getElementById('grafico-comp-paises');
+            el.style.height = Math.max(360, paises.length * 22 + 110) + 'px';
+            Highcharts.chart('grafico-comp-paises', Object.assign(base(c, 'precos-consumidor-componentes-' + ano), {
+                chart: { type: 'bar', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+                xAxis: { categories: paises.map(x => x.p), lineColor: c.grelha, tickColor: c.grelha,
+                         labels: { useHTML: false, style: { color: c.txt, textOverflow: 'none', whiteSpace: 'nowrap' },
+                                   formatter() { const n = nomeCurto(this.value); return this.value === 'PT' || this.value === 'EU27_2020' ? `<b>${n}</b>` : n; } } },
+                // reversedStacks: false — a energia junto ao eixo, depois as redes, os impostos e o IVA
+                yAxis: { title: { text: '€/kWh', style: { color: c.txt } }, labels: { style: { color: c.txt }, formatter() { return fmtEixo(this); } }, gridLineColor: c.grelha,
+                         reversedStacks: false },
+                tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                           formatter() {
+                               const p = this.points[0].point.category, o = comp(ano, p);
+                               return `<b>${esc(nome(p))}</b> · ${ano}<br>` + this.points.map(pt => `<span style="color:${pt.color}">●</span> ${esc(pt.series.name)}: ${fmt4(pt.y)}`).join('<br>')
+                                   + `<br><b>${esc(rotTotal)}: ${fmt4(o.total)} €/kWh</b>`;
+                           } },
+                plotOptions: { series: { stacking: 'normal', borderWidth: 0, groupPadding: 0.08, pointPadding: 0.04 } },
+                series: SERIES.map(([k, rot]) => ({ name: T(rot), color: corDe(COR_COMP[k], c), data: paises.map(x => x.o[k]) }))
+            }));
+        }
+        // Portugal ano a ano, com o total da média da UE
+        const anos = COMP.anos.filter(a => comp(a, 'PT'));
+        limparGrafico('grafico-comp-pt');
+        if (!anos.length) { limparGrafico('grafico-comp-pt', vazioHTML); }
+        else {
+            Highcharts.chart('grafico-comp-pt', Object.assign(base(c, 'precos-consumidor-componentes-portugal'), {
+                chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+                xAxis: { categories: anos, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha,
+                         plotBands: anos.includes(ano) ? [{ from: anos.indexOf(ano) - 0.5, to: anos.indexOf(ano) + 0.5, color: c.dk ? 'rgba(148,163,184,0.12)' : 'rgba(37,99,235,0.06)' }] : [] },
+                yAxis: { title: { text: '€/kWh', style: { color: c.txt } }, labels: { style: { color: c.txt }, formatter() { return fmtEixo(this); } }, gridLineColor: c.grelha,
+                         reversedStacks: false },
+                tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                           formatter() {
+                               const a = this.points[0].point.category, o = comp(a, 'PT');
+                               return `<b>${esc(nome('PT'))}</b> · ${a}<br>` + this.points.map(pt => `<span style="color:${pt.color}">●</span> ${esc(pt.series.name)}: ${fmt4(pt.y)}`).join('<br>')
+                                   + (o ? `<br><b>${esc(rotTotal)} (${esc(nome('PT'))}): ${fmt4(o.total)} €/kWh</b>` : '');
+                           } },
+                plotOptions: { column: { stacking: 'normal', borderWidth: 0 } },
+                series: SERIES.map(([k, rot]) => ({ name: T(rot), color: corDe(COR_COMP[k], c), data: anos.map(a => comp(a, 'PT')[k]) }))
+                    .concat([{ type: 'scatter', name: T(comIva() ? 'sMediaUECom' : 'sMediaUE'), color: corDe(COR_PAIS.EU27_2020, c), marker: { symbol: 'diamond', radius: 6 },
+                               data: anos.map(a => { const o = comp(a, 'EU27_2020'); return o ? o.total : null; }), stacking: undefined }])
+            }));
+        }
+        // As parcelas dos impostos (e, com a opção «Com impostos», o IVA e o total com ele)
+        const cols = ['PT', 'ES', 'EU27_2020'].map(p => ({ p, o: comp(ano, p) }));
+        const linhaImp = (rot, k, forte) => `<tr${forte ? ' class="atual"' : ''}><td class="esq">${esc(T(rot))}</td>` + cols.map(x => `<td>${x.o ? fmt4(x.o[k]) : '--'}</td>`).join('') + '</tr>';
+        document.getElementById('tabela-impostos').innerHTML = `<table class="tabela-ecp"><caption>${esc(T(comIva() ? 'impCaptionCom' : 'impCaption', { ano, unid: '€/kWh' }))} · ${esc(rotFaixa(E.b))}</caption>`
+            + `<thead><tr><th class="esq">${esc(T('impParcela'))}</th>${cols.map(x => `<th>${esc(nome(x.p))}</th>`).join('')}</tr></thead><tbody>`
+            + linhaImp('impRenov', 'renov') + linhaImp('impCap', 'cap') + linhaImp('impAmb', 'amb') + linhaImp('impNuc', 'nuc') + linhaImp('impOutros', 'outros')
+            + linhaImp('impTotal', 'impostos', true)
+            + (comIva() ? linhaImp('sIva', 'iva') + linhaImp('totalComImp', 'comIva', true) : '') + '</tbody></table>';
+    }
+
+    // ==================================================================
+    // TODAS AS FAIXAS
+    // ==================================================================
+    // Os três níveis de impostos, lado a lado; a média da UE e Espanha no nível escolhido
+    const NIVEIS = [['sem', 'thPTsem'], ['siva', 'thPTsiva'], ['com', 'thPTcom']];
+    function renderFaixas() {
+        const per = E.s, pre = E.m === 'pps' ? 'pps_' : '', cSel = colPreco();
+        const faixas = FAIXAS[E.e][E.c].map(f => f[0]).concat(['TOT']);
+        const posicoes = { sem: [], siva: [], com: [] };
+        const lug = L => L.pos.PT ? esc(T('deN', { p: ordinal(L.pos.PT), n: L.n })) : '--';
+        const linhas = faixas.map(b => {
+            const tds = NIVEIS.map(([k]) => {
+                const col = pre + COL_IMP[k], L = lugares(per, b, col);
+                if (b !== 'TOT' && L.pos.PT) posicoes[k].push(L.pos.PT);
+                return `<td>${fmt4(valor(per, 'PT', b, col))}</td><td>${lug(L)}</td>`;
+            }).join('');
+            return `<tr${b === E.b ? ' class="atual"' : ''}><td class="esq">${esc(rotFaixa(b))}</td>${tds}`
+                + `<td>${fmt4(valor(per, 'EU27_2020', b, cSel))}</td><td>${fmt4(valor(per, 'ES', b, cSel))}</td></tr>`;
+        }).join('');
+        const intervalo = k => {
+            const v = posicoes[k];
+            if (!v.length) return '--';
+            const a = Math.min(...v), b = Math.max(...v);
+            return a === b ? T('faixasNo', { a: ordinal(a) }) : T('faixasEntre', { a: ordinal(a), b: ordinal(b) });
+        };
+        document.getElementById('faixas-frase').textContent = posicoes.siva.length
+            ? T('faixasFrase', { per: perLongo(per), sem: intervalo('sem'), siva: intervalo('siva'), com: intervalo('com') }) : '';
+        document.getElementById('tabela-faixas').innerHTML = `<table class="tabela-ecp"><caption>${esc(T(E.e === 'ele' ? 'optEle' : 'optGas'))} · ${esc(T(E.c === 'fam' ? 'consFam' : 'consEmp'))} · ${esc(cap(perLongo(per)))} · ${unid()}</caption>`
+            + `<thead><tr><th class="esq">${esc(T('thFaixa'))}</th>` + NIVEIS.map(([, rot]) => `<th>${esc(T(rot))}</th><th>${esc(T('thLugar'))}</th>`).join('')
+            + `<th>${esc(T('thUEsel', { imp: impTxt() }))}</th><th>${esc(T('thESsel', { imp: impTxt() }))}</th></tr></thead>`
+            + `<tbody>${linhas}</tbody></table>`;
+    }
+
+    // ==================================================================
+    // CICLO
+    // ==================================================================
+    function renderPrecos() {
+        encherSemestres();
+        renderResumo(); renderMapa(); renderTabela(); renderEvol(); renderFaixas();
+        atualizarURL();
+    }
+    let _pedido = 0;
+    async function carregarTudo() {
+        const pedido = ++_pedido;
+        const linhas = await carregarCSV(FICH[E.e][E.c]);
+        if (pedido !== _pedido) return;
+        DADOS = indexarPrecos(linhas);
+        // Mostrar antes de desenhar: escondidos, os gráficos não sabem a largura que têm
+        document.getElementById('estado').hidden = true;
+        document.getElementById('conteudo').hidden = false;
+        encherFaixas(); encherPaisExtra();
+        renderPrecos();
+        // Os componentes não atrasam o resto da página
+        COMP = null; renderComp();
+        try {
+            const lc = await carregarCSV(FICH_COMP[E.e][E.c]);
+            if (pedido !== _pedido) return;
+            COMP = indexarComp(lc);
+        } catch (err) { console.error('Componentes:', err); }
+        encherAnos(); renderComp(); atualizarURL();
+    }
+    function falhou(err) {
+        console.error('Preços ao consumidor:', err);
+        const el = document.getElementById('estado');
+        el.hidden = false; el.className = 'estado-erro'; el.textContent = T('erro');
+    }
+
+    ligarToggle('ctrl-energia', v => { E.e = v; E.b = FAIXA_OMISSAO[E.e][E.c]; carregarTudo().catch(falhou); });
+    ligarToggle('ctrl-cons', v => {
+        E.c = v; E.b = FAIXA_OMISSAO[E.e][E.c];
+        if (!E.iEscolhido) { E.i = IMP_OMISSAO[E.c]; ativarToggle('ctrl-imp', E.i); }
+        carregarTudo().catch(falhou);
+    });
+    ligarToggle('ctrl-imp', v => { E.i = v; E.iEscolhido = true; renderPrecos(); renderComp(); });
+    ligarToggle('ctrl-unid', v => { E.m = v; renderPrecos(); });
+    ligarToggle('ctrl-regiao', v => { E.r = v; renderTabela(); renderComp(); atualizarURL(); });
+    document.getElementById('sel-faixa').addEventListener('change', e => { E.b = e.target.value; renderPrecos(); renderComp(); });
+    document.getElementById('sel-semestre').addEventListener('change', e => { E.s = e.target.value; renderPrecos(); });
+    document.getElementById('sem-ant').addEventListener('click', () => { const i = DADOS.periodos.indexOf(E.s); if (i > 0) { E.s = DADOS.periodos[i - 1]; renderPrecos(); } });
+    document.getElementById('sem-seg').addEventListener('click', () => { const i = DADOS.periodos.indexOf(E.s); if (i < DADOS.periodos.length - 1) { E.s = DADOS.periodos[i + 1]; renderPrecos(); } });
+    document.getElementById('sel-ano').addEventListener('change', e => { E.ano = e.target.value; renderComp(); atualizarURL(); });
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+    document.addEventListener('themeChanged', () => { if (DADOS) { renderMapa(); renderEvol(); renderComp(); } });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 600), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    ativarToggle('ctrl-energia', E.e); ativarToggle('ctrl-cons', E.c); ativarToggle('ctrl-imp', E.i);
+    ativarToggle('ctrl-unid', E.m); ativarToggle('ctrl-regiao', E.r);
+    carregarMapa().catch(() => {});
+
+    // O selo do topo: o último semestre e a data da última atualização do Eurostat
+    fetchDados(PASTA + 'metadata.json').then(r => r.ok ? r.json() : null).then(m => {
+        if (!m || !m.grupos) return;
+        const g = m.grupos, f = m.ficheiros || {};
+        const per = g.eletricidade_precos && g.eletricidade_precos.ultimo_periodo;
+        const ano = g.eletricidade_componentes && g.eletricidade_componentes.ultimo_periodo;
+        const datas = Object.values(f).map(x => x.atualizado_eurostat).filter(Boolean).sort();
+        if (per) document.getElementById('badge').innerHTML = T('badge', { per: esc(perLongo(per)), ano: esc(ano || '--'), data: esc(fmtDataIso(datas[datas.length - 1])) });
+    }).catch(() => {});
+
+    carregarTudo().catch(falhou);
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
