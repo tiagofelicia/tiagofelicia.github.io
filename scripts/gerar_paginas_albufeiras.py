@@ -58,6 +58,8 @@ ROOT = os.path.dirname(AQUI)
 DADOS = 'https://dados.tiagofelicia.pt/data/producao/'
 ARTIGOS_CSV = os.path.join(AQUI, 'albufeiras_artigos.csv')
 FOTOS_CSV = os.path.join(AQUI, 'albufeiras_fotos.csv')
+# O copyrightNotice das fotografias sem direitos de autor (licenças como estão no albufeiras_fotos.csv)
+DOMINIO_PUBLICO = {'Public domain': 'Domínio público', 'CC0': 'Domínio público (CC0)'}
 ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Sado', 'Guadiana', 'Arade', 'Ribeiras do Algarve']
 INICIO_IDX = '<!-- PAGINAS-ALBUFEIRAS: gerado por scripts/gerar_paginas_albufeiras.py, não editar à mão -->'
 FIM_IDX = '<!-- /PAGINAS-ALBUFEIRAS -->'
@@ -399,6 +401,9 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
         ld_foto = {'@context': 'https://schema.org', '@type': 'ImageObject', 'contentUrl': SITE + src,
                    'name': f'Barragem e albufeira {do_}', 'license': url_lic, 'acquireLicensePage': foto['pagina_commons'],
                    'creditText': (foto['autor'] or foto['carregada_por']) + ', Wikimedia Commons',
+                   # Quem tem os direitos: o autor (as licenças Creative Commons não os tiram ao autor);
+                   # as fotografias em domínio público e CC0 não têm dono
+                   'copyrightNotice': DOMINIO_PUBLICO.get(lic, foto['autor'] or foto['carregada_por']),
                    'creator': {'@type': 'Person', 'name': foto['autor'] or foto['carregada_por']}}
 
     # ---- as limitações desta albufeira
