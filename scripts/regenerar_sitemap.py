@@ -44,6 +44,8 @@ RULES = [
       "precos-horarios.html", "formulas-tarifarios-indexados.html", "erc.html",
       "servicos-sistema.html", "quotas-agentes.html", "albufeiras.html",
       "ren-vs-entsoe.html"}, "daily", "0.8"),
+    # Preços ao consumidor (Eurostat): os dados mudam duas vezes por ano
+    ({"europe-consumer-prices.html"}, "monthly", "0.8"),
     # Regulação eletricidade/gás
     ({"periodos-horarios.html", "tarifas-acesso-redes.html", "tarifa-social.html",
       "tarifa-regulada-eletricidade.html", "perfil-perdas.html",
@@ -88,6 +90,11 @@ LANG_ALTERNATES = {
         ("pt-pt", "/europe-generation"),
         ("en", "/europe-generation?lang=en"),
         ("x-default", "/europe-generation"),
+    ],
+    "europe-consumer-prices.html": [
+        ("pt-pt", "/europe-consumer-prices"),
+        ("en", "/europe-consumer-prices?lang=en"),
+        ("x-default", "/europe-consumer-prices"),
     ],
 }
 
