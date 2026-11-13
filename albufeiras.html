@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
 
     <title>Albufeiras hoje: quanta água há nas barragens portuguesas | Tiago Felícia</title>
-    <meta name="description" content="Quanta água há nas albufeiras com uso para energia em Portugal: volume e percentagem de cada barragem e de cada bacia, por dia, semana ou mês, comparação com o ano anterior e com a média desde 2011, potência das centrais e energia guardada. Dados do SNIRH (Agência Portuguesa do Ambiente), da APREN e da ENTSO-E." />
+    <meta name="description" content="Quanta água há nas albufeiras com uso para energia em Portugal: volume e percentagem de cada barragem e de cada bacia, por dia, semana ou mês, comparação com o ano anterior e com a média desde 2011, potência das centrais, energia guardada, afluências e descarregamentos. Dados do SNIRH (Agência Portuguesa do Ambiente), da REN, da APREN e da ENTSO-E." />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/albufeiras" />
     <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/albufeiras" />
@@ -78,7 +78,7 @@
       "@context": "https://schema.org",
       "@type": "Dataset",
       "name": "Água guardada nas albufeiras das centrais hidroelétricas de Portugal",
-      "description": "Desde 2001: o volume de água armazenado em cada uma das 57 albufeiras com uso para energia em Portugal (as das centrais hidroelétricas, com um valor por dia, e as de rega que também têm central, com um valor por semana), a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), sem os valores impossíveis; a capacidade de cada albufeira (boletim semanal da APA; CNPGB nas que lá não estão); a potência e a produção das centrais que tiram água de cada uma (APREN; CNPGB); e, por semana desde 2015, a energia guardada nas albufeiras portuguesas, publicada na plataforma de transparência da ENTSO-E. Para comparação, à parte: a energia guardada nas albufeiras de Espanha, por semana desde 2015 (ENTSO-E), e o enchimento das albufeiras espanholas no fim de cada mês, desde 1990 (Red Eléctrica).",
+      "description": "Desde 2001: o volume de água armazenado em cada uma das 57 albufeiras com uso para energia em Portugal (as das centrais hidroelétricas, com um valor por dia, e as de rega que também têm central, com um valor por semana), a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), sem os valores impossíveis; a capacidade de cada albufeira (boletim semanal da APA; CNPGB nas que lá não estão); a potência e a produção das centrais que tiram água de cada uma (APREN; CNPGB); e, dia a dia desde 2010, o balanço hidráulico da REN: a energia guardada nas albufeiras portuguesas, a energia que lhes chega com a água (afluências) e a que se descarrega sem passar pelas turbinas. Para comparação, à parte: a energia guardada nas albufeiras portuguesas, por semana desde 2015 (ENTSO-E), a energia guardada nas albufeiras de Espanha, por semana desde 2015 (ENTSO-E), e o enchimento das albufeiras espanholas no fim de cada mês, desde 1990 (Red Eléctrica).",
       "url": "https://www.tiagofelicia.pt/albufeiras",
       "inLanguage": "pt-PT",
       "isAccessibleForFree": true,
@@ -89,6 +89,8 @@
         { "@type": "PropertyValue", "name": "Volume armazenado em cada albufeira", "unitText": "hm3" },
         { "@type": "PropertyValue", "name": "Percentagem da capacidade", "unitText": "%" },
         { "@type": "PropertyValue", "name": "Energia guardada nas albufeiras", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Energia afluente às barragens (afluências)", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Energia descarregada sem passar pelas turbinas", "unitText": "GWh" },
         { "@type": "PropertyValue", "name": "Enchimento das albufeiras de Espanha no fim de cada mês", "unitText": "%" },
         { "@type": "PropertyValue", "name": "Potência de turbinamento e de bombagem das centrais de cada albufeira", "unitText": "MW" }
       ],
@@ -98,6 +100,12 @@
           "name": "SNIRH — Sistema Nacional de Informação de Recursos Hídricos: dados de base da rede hidrométrica",
           "url": "https://snirh.apambiente.pt",
           "creator": { "@type": "Organization", "name": "Agência Portuguesa do Ambiente", "url": "https://apambiente.pt" }
+        },
+        {
+          "@type": "CreativeWork",
+          "name": "REN Data Hub — Balanço Diário: Balanço Hidráulico",
+          "url": "https://datahub.ren.pt/pt/eletricidade/balanco-diario/",
+          "creator": { "@type": "Organization", "name": "REN — Redes Energéticas Nacionais", "url": "https://www.ren.pt" }
         },
         {
           "@type": "CreativeWork",
@@ -127,6 +135,7 @@
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/balanco_hidraulico_ren.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal_es.csv" },
         { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_mensal_es.csv" }
@@ -155,7 +164,7 @@
           "name": "De onde vêm estes dados?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "O volume de cada albufeira vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte. A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da ENTSO-E, onde é publicada todas as semanas, para Portugal e para Espanha; o enchimento das albufeiras espanholas no fim de cada mês, da Red Eléctrica."
+            "text": "O volume de cada albufeira vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte. A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada, as afluências e os descarregamentos de Portugal vêm do balanço hidráulico que a REN publica todos os dias; a energia guardada em Espanha, da plataforma de transparência da ENTSO-E, onde é publicada todas as semanas (a de Portugal, na mesma fonte, serve para comparar); o enchimento das albufeiras espanholas no fim de cada mês, da Red Eléctrica."
           }
         },
         {
@@ -216,6 +225,14 @@
         },
         {
           "@type": "Question",
+          "name": "O que são as afluências e os descarregamentos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A afluência é a eletricidade que a água que chega às barragens pode produzir. Nas albufeiras, a REN calcula-a pelo balanço do dia (o que a energia guardada variou, mais o que se produziu e o que se descarregou, menos o que a bombagem lá pôs), por isso num dia seco pode sair ligeiramente negativa; nas centrais a fio de água e nas mini-hídricas, que quase não guardam água, conta-a igual à produção do dia. O descarregamento é a energia da água que passou pelos descarregadores das barragens sem passar pelas turbinas; a REN separa a parte que ainda se podia ter turbinado. Os valores vêm em GWh inteiros, e a REN revê-os semanas depois de os publicar."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "E as albufeiras de Espanha?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -227,7 +244,7 @@
           "name": "Como se compara com os outros anos?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a soma dos volumes a dividir pela soma das capacidades das albufeiras com valor nesse dia."
+            "text": "A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a soma dos volumes a dividir pela soma das capacidades das albufeiras com valor nesse dia. Na energia guardada, nas afluências e nos descarregamentos, os anos completos desde 2010 (no ano hidrológico, desde 2010/11)."
           }
         },
         {
@@ -251,7 +268,7 @@
           "name": "Posso usar estes dados?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Sim. As séries estão em dados.tiagofelicia.pt, sob licença CC BY 4.0: o volume de cada albufeira (albufeiras_snirh_diario.csv), a lista com as capacidades (albufeiras_snirh.csv), as centrais (centrais_hidricas.csv), a energia guardada por semana (albufeiras_semanal.csv) e, para Espanha, a energia guardada por semana (albufeiras_semanal_es.csv) e o enchimento por mês (albufeiras_mensal_es.csv). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB."
+            "text": "Sim. As séries estão em dados.tiagofelicia.pt, sob licença CC BY 4.0: o volume de cada albufeira (albufeiras_snirh_diario.csv), a lista com as capacidades (albufeiras_snirh.csv), as centrais (centrais_hidricas.csv), o balanço hidráulico de cada dia, com a energia guardada, as afluências e os descarregamentos (balanco_hidraulico_ren.csv), a energia guardada por semana segundo a ENTSO-E (albufeiras_semanal.csv) e, para Espanha, a energia guardada por semana (albufeiras_semanal_es.csv) e o enchimento por mês (albufeiras_mensal_es.csv). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; o balanço hidráulico, da REN; a potência e a produção, da APREN e da CNPGB."
           }
         }
       ]
@@ -493,6 +510,8 @@
         <a href="#bloco-tabela" class="mini-nav-chip">🏞️ Albufeiras</a>
         <a href="#bloco-bacias" class="mini-nav-chip">🗺️ Por bacia</a>
         <a href="#bloco-energia" class="mini-nav-chip">⚡ Energia guardada</a>
+        <a href="#bloco-afluencias" class="mini-nav-chip">💧 Afluências</a>
+        <a href="#bloco-descargas" class="mini-nav-chip">🌊 Descargas</a>
         <a href="#bloco-espanha" class="mini-nav-chip">🇪🇸 Espanha</a>
         <a href="#bloco-paginas" class="mini-nav-chip">📄 Cada albufeira</a>
         <a href="#bloco-fontes" class="mini-nav-chip">📚 Fontes</a>
@@ -523,7 +542,7 @@
             <div id="alb-kpis"></div>
             <p id="resumo-texto"></p>
             <div class="kpi-cabecalho" id="kpi-energia-cab" hidden>
-                <h3>⚡ Energia guardada (ENTSO-E)</h3>
+                <h3>⚡ Energia guardada (REN)</h3>
                 <p id="kpi-energia-sub"></p>
             </div>
             <div id="alb-kpis-energia"></div>
@@ -577,16 +596,59 @@
             <div id="grafico-bacias" class="grafico"></div>
         </section>
 
-        <section id="bloco-energia" class="grafico-box">
+        <section id="bloco-energia" class="grafico-box" hidden>
             <h2>⚡ Energia guardada</h2>
-            <p class="grafico-intro">A eletricidade que a água de todas as albufeiras e centrais de bombagem portuguesas pode produzir, semana a semana, como é publicada na plataforma de transparência da ENTSO-E. A mesma água vale mais numa barragem alta, ou com várias centrais a jusante, do que numa barragem baixa: por isso a energia e o volume não sobem nem descem sempre na mesma proporção.</p>
+            <p class="grafico-intro">A eletricidade que a água guardada nas albufeiras portuguesas pode produzir, dia a dia desde 2010, segundo o balanço hidráulico da REN, comparada com o ano anterior e com os anos completos desde 2010 (a média e a faixa entre o mínimo e o máximo de cada dia). A mesma água vale mais numa barragem alta, ou com várias centrais a jusante, do que numa barragem baixa: por isso a energia e o volume não sobem nem descem sempre na mesma proporção.</p>
+            <div class="bloco-controls">
+                <span class="ctrl-label">Em</span>
+                <div class="btn-toggle" id="ctrl-en-unid" role="group" aria-label="Unidade">
+                    <button type="button" data-v="pct" class="active">% da capacidade</button>
+                    <button type="button" data-v="gwh">GWh</button>
+                </div>
+                <span class="ctrl-label">Ano</span>
+                <div class="btn-toggle" id="ctrl-en-ano" role="group" aria-label="Ano">
+                    <button type="button" data-v="civil" class="active">Civil</button>
+                    <button type="button" data-v="hidro" title="De 1 de outubro a 30 de setembro">Hidrológico</button>
+                </div>
+            </div>
             <div id="grafico-energia" class="grafico"></div>
             <p class="resumo-bloco" id="energia-resumo"></p>
         </section>
 
+        <section id="bloco-afluencias" class="grafico-box" hidden>
+            <h2>💧 Afluências: a água que chega às barragens</h2>
+            <p class="grafico-intro">A eletricidade que a água dos rios que chega às barragens pode produzir, segundo o balanço hidráulico da REN: a que entra nas albufeiras e a que passa nas centrais a fio de água e nas mini-hídricas (nestas, que quase não guardam água, a REN conta-a igual à produção do dia). Mede se o ano está seco ou húmido para as barragens: conta a água que chega, e não a que já lá está. O ano hidrológico começa a 1 de outubro.</p>
+            <div class="bloco-controls">
+                <span class="ctrl-label">Ver</span>
+                <div class="btn-toggle" id="ctrl-afl" role="group" aria-label="Afluências">
+                    <button type="button" data-v="acum" class="active">Acumulado no ano hidrológico</button>
+                    <button type="button" data-v="mes">Por mês</button>
+                </div>
+            </div>
+            <div id="grafico-afl" class="grafico"></div>
+            <p class="resumo-bloco" id="afl-resumo"></p>
+            <p class="nota-bloco" id="afl-balanco"></p>
+        </section>
+
+        <section id="bloco-descargas" class="grafico-box" hidden>
+            <h2>🌊 Descarregamentos</h2>
+            <p class="grafico-intro">A energia da água que passou pelos descarregadores das barragens sem passar pelas turbinas: acontece quando as albufeiras estão cheias e chove muito, ou quando a água chega mais depressa do que as centrais a conseguem turbinar. A REN separa a parte que ainda se podia ter turbinado.</p>
+            <div class="bloco-controls">
+                <span class="ctrl-label">Ver</span>
+                <div class="btn-toggle" id="ctrl-desc" role="group" aria-label="Descarregamentos">
+                    <button type="button" data-v="ano" class="active">Por ano hidrológico</button>
+                    <button type="button" data-v="mes">Últimos 3 anos, por mês</button>
+                </div>
+            </div>
+            <div id="grafico-desc" class="grafico"></div>
+            <p class="resumo-bloco" id="desc-resumo"></p>
+            <h3 class="h3-bloco">O dia com mais descargas de cada ano hidrológico</h3>
+            <div class="tabela-box"><table class="tabela-alb" id="tabela-desc"></table></div>
+        </section>
+
         <section id="bloco-espanha" class="grafico-box" hidden>
             <h2>🇪🇸 E em Espanha?</h2>
-            <p class="grafico-intro">A energia guardada nas albufeiras e centrais de bombagem de Espanha, semana a semana, publicada na ENTSO-E como a portuguesa, e o enchimento das albufeiras espanholas no fim de cada mês, em percentagem da capacidade, publicado pela Red Eléctrica. Ficam à parte: não entram nos valores de Portugal desta página. Os cartões e a frase seguem o período escolhido no topo.</p>
+            <p class="grafico-intro">A energia guardada nas albufeiras e centrais de bombagem de Espanha, semana a semana, publicada na ENTSO-E (comparada com a de Portugal, na mesma fonte), e o enchimento das albufeiras espanholas no fim de cada mês, em percentagem da capacidade, publicado pela Red Eléctrica. Ficam à parte: não entram nos valores de Portugal desta página. Os cartões e a frase seguem o período escolhido no topo.</p>
             <p id="kpi-es-sub"></p>
             <div id="alb-kpis-es"></div>
             <p class="resumo-bloco" id="es-resumo"></p>
@@ -633,9 +695,10 @@
             <tbody>
                 <tr><th scope="row" class="esq">Volume e percentagem de cada albufeira</th><td class="esq" data-rot="Fonte">SNIRH (Agência Portuguesa do Ambiente), dados de base: o volume no fim de cada dia</td><td class="esq" data-rot="Atualização">Duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte</td><td class="esq" data-rot="Limitações">As albufeiras de rega só têm um valor por semana. As mais recentes (Foz Tua, as três do Tâmega) só têm alguns anos de série. Os valores impossíveis (zeros, algarismos a mais) são retirados: cerca de 0,2%.</td></tr>
                 <tr><th scope="row" class="esq">Capacidade (os 100%)</th><td class="esq" data-rot="Fonte">Boletim semanal de albufeiras da APA; nas que lá não estão, CNPGB</td><td class="esq" data-rot="Atualização">Fixa</td><td class="esq" data-rot="Limitações">Inclui o volume morto: 100% não é toda água que se pode usar. O Alto Ceira não tem capacidade publicada: os 100% são o máximo registado.</td></tr>
-                <tr><th scope="row" class="esq">Médias, mínimos e máximos</th><td class="esq" data-rot="Fonte">Contas desta página, a partir dos volumes do SNIRH</td><td class="esq" data-rot="Atualização">Todos os dias</td><td class="esq" data-rot="Limitações">Anos completos desde 2011; as albufeiras mais recentes só contam nos anos em que já existiam. Um dia sem valor usa o último dos 31 dias anteriores (no resumo e na tabela, só até 7 dias).</td></tr>
+                <tr><th scope="row" class="esq">Médias, mínimos e máximos</th><td class="esq" data-rot="Fonte">Contas desta página, a partir dos volumes do SNIRH e do balanço hidráulico da REN</td><td class="esq" data-rot="Atualização">Todos os dias</td><td class="esq" data-rot="Limitações">Anos completos desde 2011 (na energia guardada, nas afluências e nos descarregamentos, desde 2010); as albufeiras mais recentes só contam nos anos em que já existiam. Um dia sem valor usa o último dos 31 dias anteriores (no resumo e na tabela, só até 7 dias).</td></tr>
                 <tr><th scope="row" class="esq">Centrais (potência e produção)</th><td class="esq" data-rot="Fonte">APREN, Anuário 2026; Serra Serrada, Póvoa e Caia, CNPGB</td><td class="esq" data-rot="Atualização">Uma vez por ano, com o anuário</td><td class="esq" data-rot="Limitações">Produção de 2024 e 2025. Algumas centrais de rega e de derivação não têm potência publicada.</td></tr>
-                <tr><th scope="row" class="esq">Energia guardada, Portugal e Espanha</th><td class="esq" data-rot="Fonte">Plataforma de transparência da ENTSO-E</td><td class="esq" data-rot="Atualização">Três vezes por semana; cada semana sai com alguns dias de atraso</td><td class="esq" data-rot="Limitações">Só o total de cada país, não de cada albufeira. A ENTSO-E pode rever semanas já publicadas. A mesma água vale mais energia numa barragem alta.</td></tr>
+                <tr><th scope="row" class="esq">Energia guardada, afluências e descarregamentos (Portugal)</th><td class="esq" data-rot="Fonte">REN, Data Hub: o balanço hidráulico do balanço diário</td><td class="esq" data-rot="Atualização">Três vezes por dia; o valor de cada dia sai na manhã seguinte</td><td class="esq" data-rot="Limitações">Só o total do país, separado em albufeiras, fios de água e mini-hídricas, em GWh inteiros. Nos fios de água e nas mini-hídricas a afluência é a produção do dia; a das albufeiras sai do balanço e pode ser negativa. A REN revê valores semanas depois. A capacidade que conta como 100% foi subindo com as albufeiras novas (cerca de 3 080 GWh em 2015 e 3 250 GWh em 2026).</td></tr>
+                <tr><th scope="row" class="esq">Energia guardada, Espanha (e Portugal, para comparar)</th><td class="esq" data-rot="Fonte">Plataforma de transparência da ENTSO-E</td><td class="esq" data-rot="Atualização">Três vezes por semana; cada semana sai com alguns dias de atraso</td><td class="esq" data-rot="Limitações">Só o total de cada país, não de cada albufeira. A ENTSO-E pode rever semanas já publicadas. A mesma água vale mais energia numa barragem alta.</td></tr>
                 <tr><th scope="row" class="esq">Enchimento das albufeiras de Espanha</th><td class="esq" data-rot="Fonte">Red Eléctrica (REData)</td><td class="esq" data-rot="Atualização">Uma vez por mês, semanas depois de o mês acabar</td><td class="esq" data-rot="Limitações">Só Espanha peninsular e só o total, as anuais e as hiperanuais. Não se soma a Portugal.</td></tr>
                 <tr><th scope="row" class="esq">Mapa e localização</th><td class="esq" data-rot="Fonte">SNIRH e CNPGB (as barragens); Natural Earth e OpenStreetMap (o fundo)</td><td class="esq" data-rot="Atualização">Fixo</td><td class="esq" data-rot="Limitações">O espelho de água desenhado é o da albufeira cheia, não o do dia.</td></tr>
                 <tr><th scope="row" class="esq">Fotografias das páginas de cada albufeira</th><td class="esq" data-rot="Fonte">Wikimedia Commons: o autor e a licença estão por baixo de cada uma</td><td class="esq" data-rot="Atualização">Fixas</td><td class="esq" data-rot="Limitações">Não têm a licença dos dados (CC BY 4.0): cada uma tem a sua. Podem ser de há anos e não mostram o nível de hoje. Cinco albufeiras ainda não têm fotografia.</td></tr>
@@ -645,7 +708,7 @@
         <ul class="lista-fora">
             <li>As albufeiras só de rega ou de abastecimento, que não têm uso para energia.</li>
             <li>A chuva e a seca: os dados abertos do IPMA não estão atualizados.</li>
-            <li>Os caudais que entram e saem de cada albufeira (afluente, turbinado, descarregado), que o SNIRH publica para algumas.</li>
+            <li>Os caudais que entram e saem de cada albufeira (afluente, turbinado, descarregado), que o SNIRH publica para algumas: as afluências e os descarregamentos desta página são os do conjunto do país, em energia (REN).</li>
             <li>As albufeiras de Espanha uma a uma: só há o total do país.</li>
         </ul>
     </section>
@@ -665,7 +728,7 @@
             <summary><strong>De onde vêm estes dados?</strong></summary>
             <div class="faq-content">
                 <p>O volume de cada albufeira vem do <a href="https://snirh.apambiente.pt" target="_blank" rel="noopener">SNIRH</a>, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia (nas albufeiras de rega, uma vez por semana). É recolhido duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte.</p>
-                <p>A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada vem da plataforma de transparência da <a href="https://transparency.entsoe.eu" target="_blank" rel="noopener">ENTSO-E</a>, onde é publicada todas as semanas, para Portugal e para Espanha; o enchimento das albufeiras espanholas no fim de cada mês, da <a href="https://www.ree.es/es/datos" target="_blank" rel="noopener">Red Eléctrica</a>.</p>
+                <p>A capacidade de cada albufeira é a do boletim semanal de albufeiras da APA (nas que lá não estão, a da CNPGB); a potência e a produção das centrais, as do Anuário 2026 da APREN. A energia guardada, as afluências e os descarregamentos de Portugal vêm do balanço hidráulico que a <a href="https://datahub.ren.pt/pt/eletricidade/balanco-diario/" target="_blank" rel="noopener">REN</a> publica todos os dias; a energia guardada em Espanha, da plataforma de transparência da <a href="https://transparency.entsoe.eu" target="_blank" rel="noopener">ENTSO-E</a>, onde é publicada todas as semanas (a de Portugal, na mesma fonte, serve para comparar); o enchimento das albufeiras espanholas no fim de cada mês, da <a href="https://www.ree.es/es/datos" target="_blank" rel="noopener">Red Eléctrica</a>.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -718,6 +781,13 @@
             </div>
         </details>
         <details class="faq-item">
+            <summary><strong>O que são as afluências e os descarregamentos?</strong></summary>
+            <div class="faq-content">
+                <p>A afluência é a eletricidade que a água que chega às barragens pode produzir. Nas albufeiras, a REN calcula-a pelo balanço do dia (o que a energia guardada variou, mais o que se produziu e o que se descarregou, menos o que a bombagem lá pôs), por isso num dia seco pode sair ligeiramente negativa; nas centrais a fio de água e nas mini-hídricas, que quase não guardam água, conta-a igual à produção do dia.</p>
+                <p>O descarregamento é a energia da água que passou pelos descarregadores das barragens sem passar pelas turbinas; a REN separa a parte que ainda se podia ter turbinado. Os valores vêm em GWh inteiros, e a REN revê-os semanas depois de os publicar.</p>
+            </div>
+        </details>
+        <details class="faq-item">
             <summary><strong>E as albufeiras de Espanha?</strong></summary>
             <div class="faq-content">
                 <p>Ficam à parte, no bloco «E em Espanha?», sem se somarem às portuguesas: a energia guardada nas albufeiras e centrais de bombagem espanholas, semana a semana desde 2015, publicada na plataforma de transparência da ENTSO-E como a portuguesa; e o enchimento das albufeiras hidroelétricas da Espanha peninsular no fim de cada mês, desde 1990, publicado pela Red Eléctrica, com a energia guardada e a percentagem da capacidade.</p>
@@ -727,7 +797,7 @@
         <details class="faq-item">
             <summary><strong>Como se compara com os outros anos?</strong></summary>
             <div class="faq-content">
-                <p>A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a <strong>soma dos volumes a dividir pela soma das capacidades</strong> das albufeiras com valor nesse dia.</p>
+                <p>A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a <strong>soma dos volumes a dividir pela soma das capacidades</strong> das albufeiras com valor nesse dia. Na energia guardada, nas afluências e nos descarregamentos, os anos completos desde 2010 (no ano hidrológico, desde 2010/11).</p>
             </div>
         </details>
         <details class="faq-item">
@@ -746,7 +816,7 @@
         <details class="faq-item">
             <summary><strong>Posso usar estes dados?</strong></summary>
             <div class="faq-content">
-                <p>Sim. As séries estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: o volume de cada albufeira (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv">albufeiras_snirh_diario.csv</a>), a lista com as capacidades (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv">albufeiras_snirh.csv</a>), as centrais (<a href="https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv">centrais_hidricas.csv</a>), a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv">albufeiras_semanal.csv</a>) e, para Espanha, a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal_es.csv">albufeiras_semanal_es.csv</a>) e o enchimento por mês (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_mensal_es.csv">albufeiras_mensal_es.csv</a>). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; a potência e a produção, da APREN e da CNPGB.</p>
+                <p>Sim. As séries estão em <a href="https://dados.tiagofelicia.pt" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: o volume de cada albufeira (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv">albufeiras_snirh_diario.csv</a>), a lista com as capacidades (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh.csv">albufeiras_snirh.csv</a>), as centrais (<a href="https://dados.tiagofelicia.pt/data/producao/centrais_hidricas.csv">centrais_hidricas.csv</a>), o balanço hidráulico de cada dia, com a energia guardada, as afluências e os descarregamentos (<a href="https://dados.tiagofelicia.pt/data/producao/balanco_hidraulico_ren.csv">balanco_hidraulico_ren.csv</a>), a energia guardada por semana segundo a ENTSO-E (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal.csv">albufeiras_semanal.csv</a>) e, para Espanha, a energia guardada por semana (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_semanal_es.csv">albufeiras_semanal_es.csv</a>) e o enchimento por mês (<a href="https://dados.tiagofelicia.pt/data/producao/albufeiras_mensal_es.csv">albufeiras_mensal_es.csv</a>). Os volumes vêm do SNIRH, que pede que se refira a origem dos dados; o balanço hidráulico, da REN; a potência e a produção, da APREN e da CNPGB.</p>
             </div>
         </details>
     </div>
@@ -786,17 +856,21 @@ document.addEventListener('DOMContentLoaded', function () {
     //   são diários ou semanais);
     // producao/albufeiras_snirh_diario.csv: o volume de cada uma (hm3), desde 2001 (SNIRH);
     // producao/centrais_hidricas.csv: as centrais de cada albufeira, com a potência e a produção (APREN; CNPGB);
-    // producao/albufeiras_semanal.csv: a energia guardada em todas as albufeiras, por semana (ENTSO-E);
+    // producao/balanco_hidraulico_ren.csv: o balanço hidráulico de cada dia, desde 2010 (REN): a energia guardada, as afluências e os
+    //   descarregamentos;
+    // producao/albufeiras_semanal.csv: a energia guardada em todas as albufeiras, por semana (ENTSO-E; só para comparar com Espanha);
     // producao/albufeiras_semanal_es.csv: o mesmo, em Espanha (ENTSO-E);
     // producao/albufeiras_mensal_es.csv: as reservas de Espanha no fim de cada mês, com o enchimento, desde 1990 (Red Eléctrica).
     const URL_LISTA = 'producao/albufeiras_snirh.csv';
     const URL_DIARIO = 'producao/albufeiras_snirh_diario.csv';
     const URL_CENTRAIS = 'producao/centrais_hidricas.csv';
+    const URL_REN = 'producao/balanco_hidraulico_ren.csv';
     const URL_ENTSOE = 'producao/albufeiras_semanal.csv';
     const URL_ENTSOE_ES = 'producao/albufeiras_semanal_es.csv';
     const URL_REE = 'producao/albufeiras_mensal_es.csv';
     const ANO_COMP = 2011;      // comparação com os anos completos desde 2011 (o Alqueva encheu pela primeira vez em 2010)
     const ANO_COMP_ENTSOE = 2015;
+    const ANO_COMP_REN = 2010;  // o balanço hidráulico da REN começa a 01/01/2010
     const ANO_COMP_REE = 1990;
     const ARRASTO = 31;         // nos gráficos, um valor conta até 31 dias para a frente (até 2017 há albufeiras com um valor por mês)
     const GRANDE = 100;         // hm3: as albufeiras «grandes» do resumo
@@ -881,6 +955,9 @@ document.addEventListener('DOMContentLoaded', function () {
     let ENTSOE_ES = null;            // o mesmo, em Espanha
     const ENTSOE_ES_ANO = new Map();
     let REE = null;                  // [{ mes, ano, m, total, totalPct, anuaisPct, hiperPct }]: Espanha, no fim de cada mês
+    let REN = null;                  // [{ iso, arm, pct, var_, afl, aflAlb, prodAlb, prod, bomb, desc, descAlb, descFios, descTurb }]: por dia
+    const REN_IDX = new Map();       // iso → posição em REN
+    let EN_UNID = 'pct', EN_ANO = 'civil', AFL_VISTA = 'acum', DESC_VISTA = 'ano';
     let ES_VISTA = 'ano';
     let SEL = 'todas', ANO = 'civil', ORDEM = 'bacia';
     // Período: o último dia, uma semana (a segunda-feira, o dia dos boletins semanais da APA) ou um mês (o último
@@ -950,6 +1027,20 @@ document.addEventListener('DOMContentLoaded', function () {
         return serie;
     }
     function prepararEntsoe(t) { ENTSOE = lerEntsoe(t, ENTSOE_ANO); }
+    function prepararRen(t) {
+        const { cab, linhas } = lerCSV(t);
+        const k = n => cab.indexOf(n);
+        const num = (l, n) => { const v = l[k(n)]; return v === undefined || v === '' ? null : parseFloat(v); };
+        REN = linhas.map(l => ({
+            iso: l[k('data')], arm: num(l, 'armazenamento_gwh'), pct: num(l, 'armazenamento_pct'), var_: num(l, 'variacao_gwh'),
+            afl: num(l, 'afluente_total_gwh'), aflAlb: num(l, 'afluente_albufeiras_gwh'),
+            prodAlb: num(l, 'producao_albufeiras_gwh'), prod: num(l, 'producao_total_gwh'), bomb: num(l, 'bombagem_gwh'),
+            desc: num(l, 'descarregamento_total_gwh'), descAlb: num(l, 'descarregamento_albufeiras_gwh'),
+            descFios: num(l, 'descarregamento_fios_agua_gwh'), descTurb: num(l, 'descarregamento_turbinavel_gwh')
+        })).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x.iso || '') && x.arm !== null && x.pct !== null);
+        REN.sort((a, b) => a.iso < b.iso ? -1 : 1);
+        REN.forEach((x, j) => REN_IDX.set(x.iso, j));
+    }
     function prepararEntsoeEs(t) { ENTSOE_ES = lerEntsoe(t, ENTSOE_ES_ANO); }
     function prepararRee(t) {
         const { cab, linhas } = lerCSV(t);
@@ -1382,25 +1473,80 @@ document.addEventListener('DOMContentLoaded', function () {
         return `Na semana de ${fmtData(e.iso)} (semana ${e.sem}), a energia guardada nas albufeiras ${onde} era de <strong>${fmt0(e.gwh)} GWh</strong>`
             + (partes.length ? ': ' + partes.join(' e ') : '') + '.';
     }
-    // No Resumo, a semana do período escolhido: a última publicada que começa até ao dia de referência
+    // ==================================================================
+    // BALANÇO HIDRÁULICO (REN): ENERGIA GUARDADA, AFLUÊNCIAS E DESCARREGAMENTOS
+    // ==================================================================
+    // Um registo por dia desde 01/01/2010. A média, o mínimo e o máximo são dos anos (ou anos hidrológicos) completos.
+    const isoMais = (iso, n) => new Date(tsDia(iso) + n * DIA_MS).toISOString().slice(0, 10);
+    const mesDia = iso => iso.slice(5) === '02-29' ? '02-28' : iso.slice(5);
+    const xDe = (iso, hidro) => chaveX(+iso.slice(5, 7) - 1, +iso.slice(8, 10), hidro);
+    const anoDe = (iso, hidro) => { const y = +iso.slice(0, 4); return hidro && +iso.slice(5, 7) < 10 ? y - 1 : y; };
+    const fmtGWh = v => vazio(v) ? '--' : fmt0(v) + ' GWh';
+    const fmtDGWh = v => vazio(v) ? '--' : (v > 0.5 ? '+' : v < -0.5 ? '−' : '') + fmt0(Math.abs(v)) + ' GWh';
+    const renDia = iso => { const j = REN_IDX.get(iso); return j === undefined ? null : REN[j]; };
+    // O último dia da REN até iso (inclusive)
+    function renAte(iso) {
+        if (!REN || !REN.length || !iso) return null;
+        let lo = 0, hi = REN.length - 1, r = -1;
+        while (lo <= hi) { const m = (lo + hi) >> 1; if (REN[m].iso <= iso) { r = m; lo = m + 1; } else hi = m - 1; }
+        return r >= 0 ? REN[r] : null;
+    }
+    function renEntre(a, b) {
+        const out = [];
+        for (const x of REN) { if (x.iso < a) continue; if (x.iso > b) break; out.push(x); }
+        return out;
+    }
+    // O período (ano civil ou hidrológico) que começa em p
+    const periodoRen = (p, hidro) => renEntre(hidro ? `${p}-10-01` : `${p}-01-01`, hidro ? `${p + 1}-09-30` : `${p}-12-31`);
+    // O mesmo dia um ano antes e a média, o mínimo e o máximo desse dia nos anos completos desde 2010 antes do dele
+    function estatRen(e) {
+        const ano = +e.iso.slice(0, 4), md = mesDia(e.iso), v = [];
+        for (let y = ANO_COMP_REN; y < ano; y++) { const x = renDia(`${y}-${md}`); if (x) v.push({ ano: y, pct: x.pct }); }
+        const hist = v.length >= 3 ? { media: v.reduce((t, x) => t + x.pct, 0) / v.length, de: v[0].ano, ate: v[v.length - 1].ano,
+                                       min: v.reduce((m, x) => x.pct < m.pct ? x : m), max: v.reduce((m, x) => x.pct > m.pct ? x : m) } : null;
+        return { antes: renDia(`${ano - 1}-${md}`), hist };
+    }
+    function fraseRen(e, antes, hist) {
+        const comp = (d, txt) => Math.abs(d) < 0.05 ? `igual ${txt}` : `${fmt1(Math.abs(d))} p.p. ${d > 0 ? 'acima' : 'abaixo'} ${txt}`;
+        const partes = [];
+        if (antes) partes.push(comp(e.pct - antes.pct, `do mesmo dia de ${+e.iso.slice(0, 4) - 1}`));
+        if (hist) partes.push(comp(e.pct - hist.media, `da média de ${hist.de} a ${hist.ate} para este dia`));
+        return `A energia guardada nas albufeiras portuguesas era de <strong>${fmtGWh(e.arm)}</strong> a ${fmtData(e.iso)}, <strong>${fmtPct(e.pct)}</strong> da capacidade`
+            + (partes.length ? ': ' + partes.join(' e ') : '') + '.';
+    }
+    // O que entrou e saiu no período escolhido no topo: o dia, a semana (de segunda a domingo) ou o mês
+    function fluxosPeriodo(e) {
+        let a, b, rot;
+        if (VISTA === 'semana') { a = PER; b = isoMais(PER, 6); rot = `Nessa semana (de ${fmtDiaMes(a)} a ${fmtDiaMes(b)})`; }
+        else if (VISTA === 'mes') { a = PER + '-01'; b = fimMes(+PER.slice(0, 4), +PER.slice(5, 7)); rot = `Em ${MESES[+PER.slice(5, 7) - 1]} de ${PER.slice(0, 4)}`; }
+        else { a = b = e.iso; rot = 'Nesse dia'; }
+        const dias = renEntre(a, b);
+        if (!dias.length) return null;
+        const soma = c => dias.reduce((t, x) => t + (x[c] || 0), 0), ultimo = dias[dias.length - 1].iso;
+        if (VISTA !== 'dia' && ultimo < b) rot = rot.replace(/\)$/, '') + (rot.endsWith(')') ? `, até ${fmtDiaMes(ultimo)})` : ` (até ${fmtDiaMes(ultimo)})`);
+        return { rot, afl: soma('afl'), prod: soma('prod'), bomb: soma('bomb'), desc: soma('desc') };
+    }
+    // No Resumo: o dia de referência do período escolhido (ou o último publicado antes dele)
     function renderResumoEnergia() {
         const cab = document.getElementById('kpi-energia-cab'), kp = document.getElementById('alb-kpis-energia'), tx = document.getElementById('resumo-energia');
-        const iso = ULT >= 0 ? isoDe(REF) : '';
-        let k = ENTSOE ? ENTSOE.length - 1 : -1;
-        while (k >= 0 && ENTSOE[k].iso > iso) k--;
-        if (k < 0) { cab.hidden = true; kp.innerHTML = ''; tx.innerHTML = ''; return; }
-        const r = estatSemana(k), { e, ant, antes, hist } = r;
-        const varPct = (a, b) => { const p = (a / b - 1) * 100; return sinal(p) + fmt1(Math.abs(p)) + '%'; };
+        const e = ULT >= 0 ? renAte(isoDe(REF)) : null;
+        if (!e) { cab.hidden = true; kp.innerHTML = ''; tx.innerHTML = ''; return; }
+        const c = renAte(isoDe(COMP)), cOk = c && c.iso < e.iso, { antes, hist } = estatRen(e);
+        const rotComp = VISTA === 'semana' ? '📅 Face à semana anterior' : VISTA === 'mes' ? '📅 Face ao mês anterior' : '📅 Numa semana';
         cab.hidden = false;
-        document.getElementById('kpi-energia-sub').textContent = `Semana de ${fmtData(e.iso)} (semana ${e.sem} de ${e.ano}) · `
-            + 'nas albufeiras e centrais de bombagem portuguesas; a ENTSO-E publica cada semana com alguns dias de atraso';
-        kp.innerHTML = card('⚡ Energia guardada', `${fmt0(e.gwh)} GWh`, 'a eletricidade que a água guardada pode produzir')
-            + card('📅 Face à semana anterior', ant ? varPct(e.gwh, ant.gwh) : '--',
-                   ant ? `${sinal(e.gwh - ant.gwh)}${fmt0(Math.abs(e.gwh - ant.gwh))} GWh desde ${fmtData(ant.iso)}` : '')
-            + card('↩️ Há um ano', antes ? `${fmt0(antes)} GWh` : '--', antes ? `agora ${varPct(e.gwh, antes)}` : '')
-            + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para a semana ${e.sem}`, hist ? `${fmt0(hist.media)} GWh` : '--',
-                   hist ? `mín. ${fmt0(hist.min.gwh)} GWh (${hist.min.ano}) · máx. ${fmt0(hist.max.gwh)} GWh (${hist.max.ano})` : '');
-        tx.innerHTML = fraseEnergia(r);
+        document.getElementById('kpi-energia-sub').textContent = `${fmtData(e.iso)} · nas albufeiras portuguesas, segundo o balanço hidráulico da REN`
+            + (e.iso < isoDe(REF) ? ' (o último dia publicado)' : '');
+        kp.innerHTML = card('⚡ Energia guardada', fmtGWh(e.arm), `${fmtPct(e.pct)} da capacidade`)
+            + card(rotComp, cOk ? fmtPp(e.pct - c.pct) : '--', cOk ? `${fmtDGWh(e.arm - c.arm)} desde ${fmtData(c.iso)}` : '')
+            + card('↩️ Há um ano', antes ? fmtPct(antes.pct) : '--', antes ? `${fmtGWh(antes.arm)} · agora ${fmtPp(e.pct - antes.pct)}` : '')
+            + card(`📊 Média ${hist ? hist.de + '–' + hist.ate : ''} para ${fmtDiaMes(e.iso)}`, hist ? fmtPct(hist.media) : '--',
+                   hist ? `mín. ${fmtPct(hist.min.pct)} (${hist.min.ano}) · máx. ${fmtPct(hist.max.pct)} (${hist.max.ano})` : '');
+        let t = fraseRen(e, antes, hist);
+        const f = fluxosPeriodo(e);
+        if (f) t += ` ${f.rot}, a água que chegou às barragens valia ${fmtGWh(f.afl)}, as centrais hídricas produziram ${fmtGWh(f.prod)}`
+                  + (f.bomb >= 0.5 ? `, a bombagem pôs ${fmtGWh(f.bomb)} nas albufeiras` : '')
+                  + (f.desc >= 0.5 ? ` e descarregou-se água que valia ${fmtGWh(f.desc)}` : ' e quase não houve descargas') + '.';
+        tx.innerHTML = t;
     }
     // Semana a semana: a faixa entre o mínimo e o máximo e a média dos anos completos desde 2015, o ano anterior e o atual
     function graficoEnergia(id, serie, porAno, ficheiro) {
@@ -1435,13 +1581,186 @@ document.addEventListener('DOMContentLoaded', function () {
             ]
         }));
     }
+    // A faixa (mín.–máx.) e a média, em cada dia do eixo, dos períodos completos desde 2010 antes de pAtual;
+    // pontos(p) devolve os pontos { x, y } do período p
+    function faixaMedia(pAtual, hidro, pontos) {
+        const porX = new Map(), usados = [];
+        for (let p = ANO_COMP_REN; p < pAtual; p++) {
+            const pts = pontos(p);
+            if (pts.length < 360) continue;
+            usados.push(p);
+            pts.forEach(pt => { if (!porX.has(pt.x)) porX.set(pt.x, []); porX.get(pt.x).push(pt.y); });
+        }
+        // Só os dias com pelo menos 60% dos anos (o 29 de fevereiro só existe nos bissextos)
+        const chaves = [...porX.keys()].filter(x => porX.get(x).length >= Math.max(3, usados.length * 0.6)).sort((a, b) => a - b);
+        const ok = usados.length >= 3;
+        return { usados, ok,
+                 faixa: ok ? chaves.map(x => { const v = porX.get(x); return [x, Math.min(...v), Math.max(...v)]; }) : [],
+                 media: ok ? chaves.map(x => { const v = porX.get(x); return [x, Math.round(v.reduce((t, y) => t + y, 0) / v.length * 10) / 10]; }) : [],
+                 rot: ok ? `${rotPeriodo(usados[0], hidro)}–${rotPeriodo(usados[usados.length - 1], hidro)}` : '' };
+    }
+    // Um gráfico ao longo do ano (civil ou hidrológico), com a faixa, a média, o ano anterior e o atual
+    function graficoAno(id, ficheiro, c, hidro, fm, passado, atual, pAtual, eixo, fmtV, fmtPonto) {
+        Highcharts.chart(id, Object.assign(base(c, ficheiro), {
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
+            xAxis: { type: 'datetime', min: hidro ? Date.UTC(1999, 9, 1) : Date.UTC(2000, 0, 1), max: hidro ? Date.UTC(2000, 8, 30) : Date.UTC(2000, 11, 31),
+                     tickInterval: 30 * DIA_MS, labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: Object.assign({ labels: { style: { color: c.txt } }, gridLineColor: c.grelha, min: 0 }, eixo),
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt }, xDateFormat: '%e de %B',
+                       pointFormatter: function () {
+                           const v = this.series.type === 'arearange' ? `${fmtV(this.low)} – ${fmtV(this.high)}` : fmtPonto(this);
+                           return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${v}</b><br>`;
+                       } },
+            plotOptions: { series: { marker: { enabled: false }, states: { inactive: { opacity: 1 } } } },
+            series: [
+                { type: 'arearange', name: `Mín.–máx. ${fm.rot}`, data: fm.faixa, color: c.faixa, fillColor: c.faixa, lineWidth: 0, zIndex: 0, visible: fm.ok, showInLegend: fm.ok },
+                { name: `Média ${fm.rot}`, data: fm.media, color: c.media, dashStyle: 'ShortDot', lineWidth: 1.5, zIndex: 1, visible: fm.ok, showInLegend: fm.ok },
+                { name: rotPeriodo(pAtual - 1, hidro), data: passado, color: c.passado, dashStyle: 'ShortDash', lineWidth: 1.5, zIndex: 2 },
+                { name: rotPeriodo(pAtual, hidro), data: atual, color: c.atual, lineWidth: 2.5, zIndex: 3 }
+            ]
+        }));
+    }
+    // A energia guardada dia a dia (REN), em % da capacidade ou em GWh, no ano civil ou no hidrológico
     function renderEnergia() {
         const bloco = document.getElementById('bloco-energia');
-        if (!ENTSOE || !ENTSOE.length) { bloco.hidden = true; return; }
+        if (!REN || !REN.length) { bloco.hidden = true; return; }
         bloco.hidden = false;
-        graficoEnergia('grafico-energia', ENTSOE, ENTSOE_ANO, 'albufeiras-energia-entsoe');
-        document.getElementById('energia-resumo').innerHTML = fraseEnergia(estatSemana(ENTSOE.length - 1))
-            + ' A ENTSO-E publica cada semana com alguns dias de atraso.';
+        const c = _hcDark(), hidro = EN_ANO === 'hidro', gwh = EN_UNID === 'gwh';
+        const ult = REN[REN.length - 1], pAtual = anoDe(ult.iso, hidro);
+        const pontos = p => periodoRen(p, hidro).map(x => ({ x: xDe(x.iso, hidro), y: gwh ? x.arm : x.pct, gwh: x.arm, pct: x.pct }));
+        const fm = faixaMedia(pAtual, hidro, pontos);
+        const fmtV = v => gwh ? fmtGWh(v) : fmtPct(v);
+        graficoAno('grafico-energia', `albufeiras-energia-${EN_UNID}-${EN_ANO}`, c, hidro, fm, pontos(pAtual - 1), pontos(pAtual), pAtual,
+                   { title: { text: gwh ? 'GWh' : '% da capacidade', style: { color: c.txt } }, labels: { format: gwh ? '{value}' : '{value}%', style: { color: c.txt } },
+                     softMax: gwh ? undefined : 100 },
+                   fmtV, p => `${fmtPct(p.pct)} · ${fmtGWh(p.gwh)}`);
+        const { antes, hist } = estatRen(ult);
+        document.getElementById('energia-resumo').innerHTML = fraseRen(ult, antes, hist) + ' A REN publica cada dia na manhã seguinte.';
+    }
+    // As afluências: o acumulado no ano hidrológico (com a faixa e a média dos anos completos) ou o total de cada mês
+    const MESES_HIDRO = [9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8];   // de outubro a setembro (0 = janeiro)
+    function acumuladoAfl(p) {
+        let s = 0;
+        return periodoRen(p, true).map(x => { s += x.afl || 0; return { x: xDe(x.iso, true), y: s }; });
+    }
+    function renderAfluencias() {
+        const bloco = document.getElementById('bloco-afluencias');
+        if (!REN || !REN.length) { bloco.hidden = true; return; }
+        bloco.hidden = false;
+        const c = _hcDark(), ult = REN[REN.length - 1], pAtual = anoDe(ult.iso, true), xUlt = xDe(ult.iso, true);
+        const atual = acumuladoAfl(pAtual), passado = acumuladoAfl(pAtual - 1);
+        const fm = faixaMedia(pAtual, true, acumuladoAfl);
+        if (AFL_VISTA === 'mes') {
+            const somaMes = p => { const m = new Array(12).fill(null); periodoRen(p, true).forEach(x => { const k = MESES_HIDRO.indexOf(+x.iso.slice(5, 7) - 1); m[k] = (m[k] || 0) + (x.afl || 0); }); return m; };
+            const porAno = fm.usados.map(somaMes);
+            const media = MESES_HIDRO.map((_, k) => { const v = porAno.map(a => a[k]).filter(x => x !== null); return v.length ? Math.round(v.reduce((t, x) => t + x, 0) / v.length) : null; });
+            const mesUlt = MESES_HIDRO.indexOf(+ult.iso.slice(5, 7) - 1);
+            Highcharts.chart('grafico-afl', Object.assign(base(c, 'albufeiras-afluencias-mes'), {
+                chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+                xAxis: { categories: MESES_HIDRO.map(m => MESES[m].slice(0, 3)), labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+                yAxis: { title: { text: 'GWh', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha, min: 0 },
+                tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                           pointFormatter: function () {
+                               const ate = this.series.index === 1 && this.index === mesUlt ? ` (até ${fmtDiaMes(ult.iso)})` : '';
+                               return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmtGWh(this.y)}</b>${ate}<br>`;
+                           } },
+                plotOptions: { column: { groupPadding: 0.12, pointPadding: 0.04, borderWidth: 0 }, series: { states: { inactive: { opacity: 1 } } } },
+                series: [
+                    { name: rotPeriodo(pAtual - 1, true), data: somaMes(pAtual - 1), color: c.passado },
+                    { name: rotPeriodo(pAtual, true), data: somaMes(pAtual), color: c.atual },
+                    { type: 'line', name: `Média ${fm.rot}`, data: media, color: c.media, dashStyle: 'ShortDot', lineWidth: 1.5, marker: { enabled: true, radius: 3 }, visible: fm.ok, showInLegend: fm.ok }
+                ]
+            }));
+        } else {
+            graficoAno('grafico-afl', 'albufeiras-afluencias-acumuladas', c, true, fm, passado, atual, pAtual,
+                       { title: { text: 'GWh, desde 1 de outubro', style: { color: c.txt } } }, fmtGWh, p => fmtGWh(p.y));
+        }
+        // A frase: o acumulado até ao último dia, contra o mesmo período do ano anterior e da média, e os anos extremos
+        const el = document.getElementById('afl-resumo');
+        const at = atual.length ? atual[atual.length - 1].y : 0;
+        const ateX = s => { const v = s.filter(pt => pt.x <= xUlt); return v.length ? v[v.length - 1].y : null; };
+        const pas = ateX(passado);
+        const anos = fm.usados.map(p => { const a = acumuladoAfl(p); return { p, total: a[a.length - 1].y, ate: ateX(a) }; }).filter(a => a.ate !== null);
+        let t = `Desde 1 de outubro de ${pAtual} e até ${fmtData(ult.iso)}, a água que chegou às barragens valia <strong>${fmtGWh(at)}</strong>`;
+        if (anos.length >= 3) {
+            const med = anos.reduce((s, a) => s + a.ate, 0) / anos.length;
+            t += `: ${fmt0(at / med * 100)}% da média de ${rotPeriodo(fm.usados[0], true)} a ${rotPeriodo(fm.usados[fm.usados.length - 1], true)} para o mesmo período`;
+        }
+        if (pas !== null) t += ` (no mesmo período de ${rotPeriodo(pAtual - 1, true)}: ${fmtGWh(pas)})`;
+        t += '.';
+        if (anos.length >= 3) {
+            const max = anos.reduce((m, a) => a.total > m.total ? a : m), min = anos.reduce((m, a) => a.total < m.total ? a : m);
+            t += ` Nos anos hidrológicos completos desde ${rotPeriodo(fm.usados[0], true)}, o mais húmido foi ${rotPeriodo(max.p, true)} (${fmtGWh(max.total)})`
+               + ` e o mais seco ${rotPeriodo(min.p, true)} (${fmtGWh(min.total)}).`;
+        }
+        el.innerHTML = t;
+        const b = document.getElementById('afl-balanco');
+        b.textContent = [ult.aflAlb, ult.prodAlb, ult.var_].some(vazio) ? '' :
+            `As contas de ${fmtData(ult.iso)} nas albufeiras, segundo a REN: chegou água que valia ${fmtGWh(ult.aflAlb)}, produziram ${fmtGWh(ult.prodAlb)},`
+            + ` descarregou-se ${fmtGWh(ult.descAlb || 0)} e a bombagem pôs lá ${fmtGWh(ult.bomb || 0)}: a energia guardada variou ${fmtDGWh(ult.var_)}`
+            + ` (${fmt0(ult.aflAlb)} − ${fmt0(ult.prodAlb)} − ${fmt0(ult.descAlb || 0)} + ${fmt0(ult.bomb || 0)}; em GWh inteiros, a conta pode falhar por 1 ou 2).`;
+    }
+    // Os descarregamentos: por ano hidrológico ou nos últimos 36 meses, e os dias com mais descargas
+    function renderDescargas() {
+        const bloco = document.getElementById('bloco-descargas');
+        if (!REN || !REN.length) { bloco.hidden = true; return; }
+        bloco.hidden = false;
+        const c = _hcDark(), ult = REN[REN.length - 1], pAtual = anoDe(ult.iso, true);
+        const corFios = c.dk ? '#2dd4bf' : '#0f766e';
+        const somar = dias => ({ alb: dias.reduce((t, x) => t + (x.descAlb || 0), 0), fios: dias.reduce((t, x) => t + (x.descFios || 0), 0),
+                                 turb: dias.reduce((t, x) => t + (x.descTurb || 0), 0), tot: dias.reduce((t, x) => t + (x.desc || 0), 0) });
+        // gTot: o total da REN (o rótulo de cada coluna e as frases); as partes, somadas dia a dia, podem diferir por arredondamentos
+        const cats = [], gAlb = [], gFios = [], gTurb = [], gTot = [];
+        if (DESC_VISTA === 'mes') {
+            const ay = +ult.iso.slice(0, 4), am = +ult.iso.slice(5, 7);
+            for (let k = 35; k >= 0; k--) {
+                let y = ay, m = am - k;
+                while (m <= 0) { m += 12; y--; }
+                const s = somar(renEntre(`${y}-${String(m).padStart(2, '0')}-01`, fimMes(y, m)));
+                cats.push(`${MESES[m - 1].slice(0, 3)} ${String(y).slice(2)}`); gAlb.push(s.alb); gFios.push(s.fios); gTurb.push(s.turb); gTot.push(s.tot);
+            }
+        } else {
+            for (let p = ANO_COMP_REN; p <= pAtual; p++) {
+                const s = somar(periodoRen(p, true));
+                cats.push(rotPeriodo(p, true) + (p === pAtual ? '*' : '')); gAlb.push(s.alb); gFios.push(s.fios); gTurb.push(s.turb); gTot.push(s.tot);
+            }
+        }
+        Highcharts.chart('grafico-desc', Object.assign(base(c, 'albufeiras-descarregamentos-' + DESC_VISTA), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: { categories: cats, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: { title: { text: 'GWh', style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha, min: 0,
+                     stackLabels: { enabled: DESC_VISTA === 'ano' && document.getElementById('grafico-desc').clientWidth >= 640, style: { color: c.txt, textOutline: 'none', fontWeight: 'normal', fontSize: '10px' }, formatter: function () { return fmt0(gTot[this.x]); } } },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                       headerFormat: '<b>{point.key}</b><br>',
+                       pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmtGWh(this.y)}</b><br>`; },
+                       footerFormat: '', formatter: function (tt) { return tt.defaultFormatter.call(this, tt).concat(`Total: <b>${fmtGWh(gTot[this.x])}</b>`); } },
+            plotOptions: { column: { stacking: 'normal', groupPadding: 0.08, pointPadding: 0.04, borderWidth: 0 }, series: { states: { inactive: { opacity: 1 } } } },
+            series: [
+                { name: 'Fios de água', data: gFios, color: corFios },
+                { name: 'Albufeiras', data: gAlb, color: c.atual },
+                { name: 'Dos quais, ainda turbináveis', data: gTurb, type: 'line', color: c.media, dashStyle: 'ShortDot', lineWidth: 1.5, marker: { enabled: true, radius: 2.5 }, stacking: undefined }
+            ]
+        }));
+        // A frase: o ano hidrológico até agora, contra o mesmo período do anterior, o ano e o dia com mais descargas
+        const ateMesmoDia = p => { const fim = isoMais(`${p}-10-01`, (tsDia(ult.iso) - tsDia(`${pAtual}-10-01`)) / DIA_MS); return renEntre(`${p}-10-01`, fim).reduce((t, x) => t + (x.desc || 0), 0); };
+        const at = ateMesmoDia(pAtual), pas = ateMesmoDia(pAtual - 1);
+        const totais = [];
+        for (let p = ANO_COMP_REN; p < pAtual; p++) { const d = periodoRen(p, true); if (d.length >= 360) totais.push({ p, t: d.reduce((s, x) => s + (x.desc || 0), 0) }); }
+        const rec = REN.reduce((m, x) => (x.desc || 0) > (m.desc || 0) ? x : m, REN[0]);
+        let t = `No ano hidrológico de ${rotPeriodo(pAtual, true)}, até ${fmtData(ult.iso)}, descarregou-se água que valia <strong>${fmtGWh(at)}</strong> (no mesmo período de ${rotPeriodo(pAtual - 1, true)}: ${fmtGWh(pas)}).`;
+        if (totais.length) { const m = totais.reduce((a, x) => x.t > a.t ? x : a); t += ` O ano completo com mais descargas foi ${rotPeriodo(m.p, true)} (${fmtGWh(m.t)})`; }
+        t += `; o dia com mais, ${fmtData(rec.iso)} (${fmtGWh(rec.desc)}).` + (DESC_VISTA === 'ano' ? ' * Até ao último dia publicado.' : '');
+        document.getElementById('desc-resumo').innerHTML = t;
+        // O dia com mais descargas de cada ano hidrológico, do mais recente para o mais antigo
+        const picos = [];
+        for (let p = pAtual; p >= ANO_COMP_REN; p--) {
+            const d = periodoRen(p, true).filter(x => x.desc > 0);
+            if (d.length) picos.push({ p, x: d.reduce((m, x) => x.desc > m.desc ? x : m) });
+        }
+        document.getElementById('tabela-desc').innerHTML = '<thead><tr><th scope="col" class="esq">Ano hidrológico</th><th scope="col" class="esq">Dia</th><th scope="col">Descarregado</th>'
+            + '<th scope="col">Albufeiras</th><th scope="col">Fios de água</th><th scope="col" class="col-ref">Ainda turbinável</th><th scope="col" class="col-ref">Energia guardada</th></tr></thead><tbody>'
+            + picos.map(({ p, x }) => `<tr><td class="esq">${rotPeriodo(p, true)}${p === pAtual ? '*' : ''}</td><td class="esq">${fmtData(x.iso)}</td><td>${fmtGWh(x.desc)}</td>`
+                + `<td>${fmtGWh(x.descAlb)}</td><td>${fmtGWh(x.descFios)}</td><td class="col-ref">${fmtGWh(x.descTurb)}</td><td class="col-ref">${fmtPct(x.pct)}</td></tr>`).join('') + '</tbody>';
     }
 
     // ==================================================================
@@ -1487,7 +1806,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (pk >= 0) {
             const p = estatSemana(pk);
             const face = p.hist ? `, ${fmt1(Math.abs(p.e.gwh / p.hist.media - 1) * 100)}% ${p.e.gwh >= p.hist.media ? 'acima' : 'abaixo'} da média` : '';
-            t += ` Em Portugal, na mesma semana, eram ${fmt0(p.e.gwh)} GWh${face}: Espanha guardava ${fmt1(e.gwh / p.e.gwh)} vezes mais.`;
+            t += ` Em Portugal, na mesma semana e na mesma fonte, eram ${fmt0(p.e.gwh)} GWh${face}: Espanha guardava ${fmt1(e.gwh / p.e.gwh)} vezes mais.`;
         }
         if (mr) {
             const { r: x, hist: h } = mr;
@@ -1766,6 +2085,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     ligarToggle('ctrl-vista', v => mudarVista(v, PER));
     ligarToggle('ctrl-es-vista', v => { ES_VISTA = v; renderEnchimento(); });
+    ligarToggle('ctrl-en-unid', v => { EN_UNID = v; renderEnergia(); });
+    ligarToggle('ctrl-en-ano', v => { EN_ANO = v; renderEnergia(); });
+    ligarToggle('ctrl-afl', v => { AFL_VISTA = v; renderAfluencias(); });
+    ligarToggle('ctrl-desc', v => { DESC_VISTA = v; renderDescargas(); });
     // Ao mudar de ano, a mesma semana do ano (a mais próxima) ou o mesmo mês
     document.getElementById('sel-ano-per').addEventListener('change', e => {
         const a = e.target.value;
@@ -1802,7 +2125,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const tr = e.target.closest('tr[data-sel]');
         if (tr) { e.preventDefault(); escolher(tr.dataset.sel, true); }
     });
-    document.addEventListener('themeChanged', () => { if (ULT >= 0) { renderEvol(); renderBacias(); renderEnergia(); renderEspanha(); renderMapa(); } });
+    document.addEventListener('themeChanged', () => { if (ULT >= 0) { renderEvol(); renderBacias(); renderEnergia(); renderAfluencias(); renderDescargas(); renderEspanha(); renderMapa(); } });
 
     const btnTopo = document.getElementById('btn-voltar-topo');
     window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 500), { passive: true });
@@ -1816,6 +2139,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const params = new URLSearchParams(location.search);
     const texto = caminho => fetchDados(caminho).then(r => { if (!r.ok) throw new Error(caminho + ': HTTP ' + r.status); return r.text(); });
+    // Sem o balanço hidráulico da REN, a página funciona na mesma, só sem a energia guardada, as afluências e as descargas
+    const pRen = texto(URL_REN).then(prepararRen).catch(err => { console.warn('Balanço hidráulico (REN):', err); });
     const pEntsoe = texto(URL_ENTSOE).then(prepararEntsoe).catch(err => { console.warn('Energia guardada (ENTSO-E):', err); });
     // Espanha: sem estes dois, a página funciona na mesma, só sem o bloco «E em Espanha?» (ou sem o enchimento)
     const pEntsoeEs = texto(URL_ENTSOE_ES).then(prepararEntsoeEs).catch(err => { console.warn('Energia guardada em Espanha (ENTSO-E):', err); });
@@ -1838,7 +2163,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const v = params.get('vista');
             mudarVista(v === 'semana' || v === 'mes' ? v : 'dia', v === 'semana' ? params.get('data') : params.get('mes'));
             return Promise.all([
-                pEntsoe.then(() => { renderEnergia(); renderResumoEnergia(); }),
+                pRen.then(() => { renderEnergia(); renderAfluencias(); renderDescargas(); renderResumoEnergia(); }),
                 // A frase de Espanha compara com Portugal na mesma semana: espera também pelos dados de Portugal
                 Promise.all([pEntsoe, pEntsoeEs, pRee]).then(() => { renderEspanha(); renderResumoEspanha(); })
             ]);
