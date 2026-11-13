@@ -3671,6 +3671,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 10. ORQUESTRAÇÃO
     // ============================================================
     let _aplicarSeq = 0; // token anti-corrida: só a execução mais recente renderiza
+    let _tituloComPeriodo = false;   // o separador só mostra o período depois de se escolher outro
     async function aplicarPeriodo(dataInicio, dataFim, opts) {
         opts = opts || {};
         mostrarErro(null);
@@ -3756,10 +3757,14 @@ document.addEventListener('DOMContentLoaded', function() {
             tituloFim.textContent = new Date(dataFim + 'T00:00:00').toLocaleDateString('pt-PT');
             setCreditoFonte(dataInicio, dataFim);
 
-            // document.title dinâmico (bom para SEO + partilha)
-            const periodoCurto = descreverPeriodo(dataInicio, dataFim).replace(/^Em /, '').replace(/^De /, '');
-            const consumoLabel = formatarEnergia(totais['Consumo'] / 1000);
-            document.title = `${periodoCurto} · ${consumoLabel} · ${formatarPT(kpis.percRenov, 0)}% renov. — Balanço Energético | Tiago Felícia`;
+            // document.title com o período (para quem tem vários separadores abertos e para partilhar).
+            // Só depois de o utilizador escolher outro período (ou abrir um link com ?inicio=&fim=): ao abrir fica o <title> fixo, que é o
+            // que o Google guarda — com o título do período, o resultado da pesquisa mostrava uma data de há dias.
+            if (_tituloComPeriodo) {
+                const periodoCurto = descreverPeriodo(dataInicio, dataFim).replace(/^Em /, '').replace(/^De /, '');
+                const consumoLabel = formatarEnergia(totais['Consumo'] / 1000);
+                document.title = `${periodoCurto} · ${consumoLabel} · ${formatarPT(kpis.percRenov, 0)}% renov. — Balanço Energético | Tiago Felícia`;
+            }
 
             if (!opts.skipURL) atualizarURLPeriodo(dataInicio, dataFim);
         } catch (e) {
@@ -3782,6 +3787,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!r) return;
         inputInicio.value = r.inicio;
         inputFim.value = r.fim;
+        _tituloComPeriodo = true;
         await aplicarPeriodo(r.inicio, r.fim);
     }));
 
@@ -3794,6 +3800,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (_debounceDatas) clearTimeout(_debounceDatas);
         _debounceDatas = setTimeout(function () {
             _debounceDatas = null;
+            _tituloComPeriodo = true;
             aplicarPeriodo(inputInicio.value, inputFim.value);
         }, 600);
     }
@@ -3880,6 +3887,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             ativarPreset('custom');
         }
+        _tituloComPeriodo = true;
         aplicarPeriodo(novoIni, novoFim);
     }
     document.addEventListener('keydown', (e) => {
@@ -4001,6 +4009,7 @@ document.addEventListener('DOMContentLoaded', function() {
             inputInicio.value = urlP.inicio;
             inputFim.value = urlP.fim;
             ativarPreset('custom');
+            _tituloComPeriodo = true;   // um link com o período escolhido
             await aplicarPeriodo(urlP.inicio, urlP.fim, { skipURL: true });
         } else {
             const r = calcularPreset('mes');

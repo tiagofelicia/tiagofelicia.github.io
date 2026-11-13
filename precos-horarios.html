@@ -7,8 +7,8 @@
     <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
 
-    <title>Preços OMIE Hora-a-Hora 2026: Simulador de Custo | Tiago Felícia</title>
-    <meta name="description" content="Veja o preço da eletricidade para cada hora do dia e simule o seu custo real. Ferramenta essencial para otimizar o consumo em tarifários dinâmicos (indexados ao OMIE)." />
+    <title>Preço da Luz Hoje Hora a Hora (OMIE) e Horas Mais Baratas | Tiago Felícia</title>
+    <meta name="description" content="Preço da luz hoje e amanhã, a cada 15 minutos, no seu tarifário indexado. Veja as horas mais baratas, a melhor janela para consumir ou carregar e quanto custa." />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/precos-horarios" />
     <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/precos-horarios" />
@@ -95,7 +95,7 @@
       "name": "A que horas é mais barata a eletricidade?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia. Para não ter de o interpretar, use o indicador \"Melhor janela\" no topo da página: mostra o bloco de 1 a 8 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia — e, nas durações mais longas, a janela pode atravessar a meia-noite e entrar por amanhã."
+        "text": "Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia. Para não ter de o interpretar, use o indicador \"Melhor janela\" no topo da página: mostra o bloco de 1 a 8 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia — e, nas durações mais longas, a janela pode atravessar a meia-noite e entrar por amanhã. Em «Energia», escreva os kWh que quer consumir ou carregar (num carro, numa bateria, num termoacumulador ou noutro aparelho) e a potência a que o aparelho os gasta: a página calcula a duração, procura as horas seguidas que ficam mais baratas e diz quanto custa essa energia e quanto poupa face a começar já. Nas duas formas pode dizer até que horas a janela tem de acabar e descarregar a janela para o calendário do telemóvel, com um aviso 5 minutos antes."
       }
     },
     {
@@ -224,14 +224,37 @@
             <div id="precosAgora" class="precos-agora" aria-live="polite"></div>
 
             <div class="janela-container">
-                <div class="janela-controlo" role="radiogroup" aria-label="Duração da janela de consumo">
-                    <span class="janela-label"><span class="so-largo">Melhor janela de:</span><span class="so-estreito">Janela:</span></span>
-                    <label title="1h — forno, secador de cabelo, ciclo rápido"><input type="radio" name="janela" value="1" onchange="desenhaGrafico()"> <span>1h</span></label>
-                    <label title="2h — máquina de lavar roupa"><input type="radio" name="janela" value="2" checked onchange="desenhaGrafico()"> <span>2h</span></label>
-                    <label title="3h — máquina de lavar loiça, ciclo longo de roupa"><input type="radio" name="janela" value="3" onchange="desenhaGrafico()"> <span>3h</span></label>
-                    <label title="4h — termoacumulador, bomba de calor"><input type="radio" name="janela" value="4" onchange="desenhaGrafico()"> <span>4h</span></label>
-                    <label title="6h — carro elétrico, acumulação de água quente"><input type="radio" name="janela" value="6" onchange="desenhaGrafico()"> <span>6h</span></label>
-                    <label title="8h — carregamento noturno de carro elétrico"><input type="radio" name="janela" value="8" onchange="desenhaGrafico()"> <span>8h</span></label>
+                <div class="janela-controlo">
+                    <span class="janela-label"><span class="so-largo">Melhor janela:</span><span class="so-estreito">Janela:</span></span>
+                    <span class="janela-modo" role="radiogroup" aria-label="Escolher a janela pela duração ou pela energia">
+                        <label title="Para um aparelho com um programa de duração conhecida (uma máquina de lavar, um forno…)"><input type="radio" name="janelaModo" value="duracao" checked> <span>Duração</span></label>
+                        <label title="Para consumir ou carregar uma quantidade de energia a uma dada potência (um carro elétrico, uma bateria, um termoacumulador ou outro aparelho)"><input type="radio" name="janelaModo" value="energia"> <span>Energia</span></label>
+                    </span>
+                    <span id="janelaDuracoes" class="janela-opcoes" role="radiogroup" aria-label="Duração da janela de consumo">
+                        <label title="1h — forno, secador de cabelo, ciclo rápido"><input type="radio" name="janela" value="1" onchange="desenhaGrafico()"> <span>1h</span></label>
+                        <label title="2h — máquina de lavar roupa"><input type="radio" name="janela" value="2" checked onchange="desenhaGrafico()"> <span>2h</span></label>
+                        <label title="3h — máquina de lavar loiça, ciclo longo de roupa"><input type="radio" name="janela" value="3" onchange="desenhaGrafico()"> <span>3h</span></label>
+                        <label title="4h — termoacumulador, bomba de calor"><input type="radio" name="janela" value="4" onchange="desenhaGrafico()"> <span>4h</span></label>
+                        <label title="6h — carro elétrico, acumulação de água quente"><input type="radio" name="janela" value="6" onchange="desenhaGrafico()"> <span>6h</span></label>
+                        <label title="8h — carregamento noturno de carro elétrico"><input type="radio" name="janela" value="8" onchange="desenhaGrafico()"> <span>8h</span></label>
+                    </span>
+                    <span id="janelaEnergia" class="janela-opcoes janela-energia" hidden>
+                        <label class="janela-campo" title="A energia a consumir ou a carregar, em kWh"><input type="number" id="janelaKwh" min="0.1" max="500" step="0.1" value="10" inputmode="decimal" aria-label="Energia a consumir ou carregar, em kWh"> kWh</label>
+                        <span class="janela-a">a</span>
+                        <label class="janela-campo" title="A potência a que o aparelho consome ou carrega, em kW"><input type="number" id="janelaKw" min="0.1" max="50" step="0.1" value="3.7" inputmode="decimal" aria-label="Potência, em kW"> kW</label>
+                        <span id="janelaDuracaoCalc" class="janela-duracao-calc" title="A duração que sai da energia e da potência"></span>
+                        <span id="janelaPotencias" class="janela-potencias" role="group" aria-label="Potências típicas">
+                            <button type="button" data-kw="2.3" title="2,3 kW — uma tomada comum (10 A, monofásico)">2,3 kW</button>
+                            <button type="button" data-kw="3.7" title="3,7 kW — 16 A, monofásico">3,7 kW</button>
+                            <button type="button" data-kw="7.4" title="7,4 kW — 32 A, monofásico">7,4 kW</button>
+                            <button type="button" data-kw="11" title="11 kW — 16 A, trifásico">11 kW</button>
+                        </span>
+                    </span>
+                    <span class="janela-limite" title="Opcional: a janela tem de acabar até esta hora (hoje, se ainda não passou; senão amanhã). Sem hora, não há limite.">
+                        <span class="janela-limite-rot"><span class="so-largo">Acabar até às</span><span class="so-estreito">Até às</span></span>
+                        <input type="time" id="janelaLimite" step="900" aria-label="Hora a que a janela tem de acabar (opcional)">
+                        <button type="button" id="janelaLimiteLimpar" class="janela-limite-limpar" title="Sem hora limite" aria-label="Tirar a hora limite" hidden>×</button>
+                    </span>
                 </div>
                 <div id="janelaResultado" class="janela-resultado" aria-live="polite"></div>
             </div>
@@ -268,6 +291,7 @@
                             <option value="perfil">com o perfil típico de uma casa (ERSE)</option>
                             <option value="igual">por igual ao longo do dia</option>
                             <option value="janela">na melhor janela de 2h do dia</option>
+                            <option value="energia">na melhor janela para 10 kWh a 3,7 kW</option>
                         </select>
                         <button type="button" id="btnPreencher" class="btn-limpar-consumos">Preencher</button>
                     </div>
@@ -317,7 +341,7 @@
                     <summary><strong>A que horas é mais barata a eletricidade?</strong></summary>
                     <div class="faq-content">
                         <p>Muda todos os dias, porque o preço resulta do equilíbrio entre a procura e a produção disponível. Em Portugal, com o peso que a produção solar já tem, as horas mais baratas tendem a concentrar-se no período solar (sensivelmente entre as 11h e as 17h) e na madrugada, e as mais caras ao início da noite, quando o sol se põe e o consumo doméstico sobe. Há, no entanto, dias em que esta ordem se inverte — por isso a resposta fiável é sempre o gráfico do próprio dia.</p>
-                        <p>Para não ter de o interpretar, use o indicador <strong>"Melhor janela"</strong> no topo da página: mostra o bloco de 1 a 8 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia — e, nas durações mais longas, a janela pode atravessar a meia-noite e entrar por amanhã.</p>
+                        <p>Para não ter de o interpretar, use o indicador <strong>"Melhor janela"</strong> no topo da página: mostra o bloco de 1 a 8 horas seguidas com o preço médio mais baixo, já a contar apenas com o que falta do dia — e, nas durações mais longas, a janela pode atravessar a meia-noite e entrar por amanhã. Em «Energia», escreva os kWh que quer consumir ou carregar (num carro, numa bateria, num termoacumulador ou noutro aparelho) e a potência a que o aparelho os gasta: a página calcula a duração, procura as horas seguidas que ficam mais baratas e diz quanto custa essa energia e quanto poupa face a começar já. Nas duas formas pode dizer até que horas a janela tem de acabar e descarregar a janela para o calendário do telemóvel, com um aviso 5 minutos antes.</p>
                     </div>
                 </details>
 
@@ -402,6 +426,18 @@
         [data-theme="dark"] .janela-controlo label:hover > span { border-color: #6ea04a; color: #b6e39a; }
         [data-theme="dark"] .janela-controlo input[type="radio"]:checked + span { background: #548235; border-color: #6ea04a; color: #fff; }
         [data-theme="dark"] .janela-controlo input[type="radio"]:focus-visible + span { outline-color: #cbd5e1; }
+        [data-theme="dark"] .janela-modo { border-right-color: #475569; }
+        [data-theme="dark"] .janela-campo, [data-theme="dark"] .janela-a { color: #cbd5e1; }
+        [data-theme="dark"] .janela-campo input { background: #0f172a; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .janela-duracao-calc { color: #b6e39a; }
+        [data-theme="dark"] .janela-potencias button { background: #0f172a; border-color: #475569; color: #cbd5e1; }
+        [data-theme="dark"] .janela-potencias button:hover { border-color: #6ea04a; color: #b6e39a; }
+        [data-theme="dark"] .janela-potencias button.ativo { background: #548235; border-color: #6ea04a; color: #fff; }
+        [data-theme="dark"] .janela-limite, [data-theme="dark"] .janela-limite-limpar { color: #cbd5e1; }
+        [data-theme="dark"] .janela-limite input { background: #0f172a; border-color: #475569; color: #e2e8f0; color-scheme: dark; }
+        [data-theme="dark"] .janela-limite-limpar:hover { color: #f87171; }
+        [data-theme="dark"] .janela-chip.calendario { background: #0f172a; border-color: #3f6128; color: #b6e39a; }
+        [data-theme="dark"] .janela-chip.calendario:hover { background: #1c2b18; }
         [data-theme="dark"] .janela-chip { background: #1c2b18; border-color: #3f6128; color: #b6e39a; }
         [data-theme="dark"] .janela-chip strong { color: #d4f0c2; }
         [data-theme="dark"] .janela-chip.periodo { background: #2d5016; border-color: #548235; color: #e2f5d5; }
@@ -463,7 +499,28 @@
         .janela-controlo label:hover > span { border-color: #548235; color: #3f6128; }
         .janela-controlo input[type="radio"]:checked + span { background: #548235; border-color: #548235; color: #fff; font-weight: 600; }
         .janela-controlo input[type="radio"]:focus-visible + span { outline: 2px solid #495057; outline-offset: 2px; }
+        /* A forma de escolher (Duração | Energia), separada das opções por um traço */
+        .janela-modo { display: inline-flex; gap: 6px; align-items: center; padding-right: 10px; border-right: 1px solid #ced4da; }
+        .janela-opcoes { display: inline-flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+        .janela-opcoes[hidden] { display: none; }   /* sem isto, o display acima ganhava ao atributo hidden */
+        .janela-campo { gap: 4px; color: #495057; }
+        .janela-campo input { width: 64px; padding: 3px 6px; font-size: 1em; border: 1px solid #ced4da; border-radius: 6px; background: #fff; color: #212529; }
+        .janela-a { color: #495057; }
+        .janela-duracao-calc { font-weight: 600; color: #3f6128; }
+        .janela-potencias { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+        .janela-potencias button { padding: 2px 9px; border: 1px solid #ced4da; border-radius: 14px; background: #fff; color: #495057; font-size: 0.95em; line-height: 1.25; cursor: pointer; }
+        .janela-potencias button:hover { border-color: #548235; color: #3f6128; }
+        .janela-potencias button.ativo { background: #548235; border-color: #548235; color: #fff; font-weight: 600; }
+        /* A hora limite (opcional) */
+        .janela-limite { display: inline-flex; align-items: center; gap: 4px; color: #495057; }
+        .janela-limite input { width: 92px; padding: 3px 6px; font-size: 1em; border: 1px solid #ced4da; border-radius: 6px; background: #fff; color: #212529; }
+        .janela-limite-limpar { border: none; background: transparent; color: #495057; font-size: 1.1em; line-height: 1; padding: 0 4px; cursor: pointer; }
+        .janela-limite-limpar:hover { color: #b91c1c; }
+        .janela-limite-limpar[hidden] { display: none; }
         .janela-resultado { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+        /* «📅 Calendário»: um botão com o aspeto dos outros chips */
+        .janela-chip.calendario { cursor: pointer; font-family: inherit; line-height: inherit; background: #fff; border-color: #c5e0b4; color: #3f6128; }
+        .janela-chip.calendario:hover { background: #f2f8ee; }
         .janela-chip { background: #f2f8ee; border: 1px solid #c5e0b4; border-radius: 16px; padding: 5px 12px; font-size: 0.88em; color: #3f6128; }
         .janela-chip strong { color: #2f4a1e; }
         .janela-chip.periodo { background: #dcecd2; border-color: #a9d08e; font-weight: 600; }
@@ -485,6 +542,9 @@
             .janela-container { gap: 8px; }
             .janela-controlo { padding: 6px 8px; gap: 6px; font-size: 0.85em; }
             .janela-controlo label > span { padding: 2px 8px; }
+            .janela-campo input { width: 56px; }
+            .janela-limite input { width: 84px; }
+            .janela-potencias button { padding: 2px 7px; }
             .so-largo { display: none; }
             .so-estreito { display: inline; }
             /* Seletores numa linha cada, com o rótulo à esquerda: empilhados (rótulo por cima) ocupavam

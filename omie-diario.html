@@ -7,8 +7,8 @@
     <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     
-    <title>Preços Mercado Diário (Day-Ahead) OMIE Spot: Eletricidade Hora-a-Hora | Tiago Felícia</title>
-    <meta name="description" content="Consulte os preços diários e horários do Mercado Diário (Day-Ahead) de eletricidade (OMIE Spot) para Portugal. Consulte médias diárias, bi-horárias e tri-horárias atualizadas." />
+    <title>Preço OMIE Hoje: Mercado Diário (Spot) em Portugal e Espanha | Tiago Felícia</title>
+    <meta name="description" content="Preço OMIE de hoje e amanhã em Portugal e Espanha (€/MWh), a cada 15 minutos: média do dia, bi-horário e tri-horário, e as horas mais caras e mais baratas." />
 
     <link rel="canonical" href="https://www.tiagofelicia.pt/omie-diario" />
     <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/omie-diario" />
@@ -787,6 +787,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let modoTabela = 'hora';
     let ultimosArgsTabela = null;
     let ultimosArgsGrafico = null;
+    let tituloComDia = false;   // o separador só mostra o dia e o preço depois de se escolher outro dia
 
     // --- FUNÇÕES AUXILIARES ---
     function formatarDataParaInput(dataStr) { if (!dataStr || typeof dataStr !== 'string' || !dataStr.includes('/')) { return null; } const [dia, mes, ano] = dataStr.split('/'); if (!dia || !mes || !ano || dia.length !== 2 || mes.length !== 2 || ano.length !== 4) { return null; } return `${ano}-${mes}-${dia}`; }
@@ -1124,8 +1125,12 @@ document.addEventListener('DOMContentLoaded', function() {
         renderTopHoras(topHoras, emCET);
 
         // === Título dinâmico da tab ===
-        const mediaPTTitulo = mediaPTAtual !== null ? Math.round(mediaPTAtual) + '€' : '--€';
-        document.title = `OMIE ${dataFormatadaCSV} · ${mediaPTTitulo} — Tiago Felícia`;
+        // Só depois de o utilizador escolher outro dia (ou abrir um link com ?data=): ao abrir fica o <title> fixo, que é o
+        // que o Google guarda — com o título do dia, o resultado da pesquisa mostrava uma data de há dias.
+        if (tituloComDia) {
+            const mediaPTTitulo = mediaPTAtual !== null ? Math.round(mediaPTAtual) + '€' : '--€';
+            document.title = `OMIE ${dataFormatadaCSV} · ${mediaPTTitulo} — Tiago Felícia`;
+        }
 
         // Futuros do Dia
         const containerFuturosPT = document.getElementById('futuros-container-pt'); const futuroDiarioPT = dadosFuturosPT.find(f => f.Contrato?.includes(" D ") && f.Descricao === dataFormatadaCSV); if (futuroDiarioPT) { document.getElementById('futuros-anterior-pt').innerHTML = formatarValor(futuroDiarioPT.Valor); document.getElementById('futuros-pt-data').textContent = dataOMIP; containerFuturosPT.style.display = 'block'; } else { containerFuturosPT.style.display = 'none'; }
@@ -1927,8 +1932,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 : dataMaximaValida;
             seletorData.value = dataInicial;
             atualizarURLDia(dataInicial, dataMaximaValida);
+            tituloComDia = dataInicial !== dataMaximaValida;   // um link com ?data= de outro dia
 
             seletorData.addEventListener('change', (e) => {
+                tituloComDia = true;
                 atualizarURLDia(e.target.value, dataMaximaValida);
                 atualizarBotoesPresetDia();
                 atualizarDashboard(e.target.value);

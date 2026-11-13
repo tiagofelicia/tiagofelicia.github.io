@@ -585,6 +585,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let dadosProducaoHistoricos = {};
     let anoMinimoAtual = null;
     let dataMaximaDados = null; // última data com dados (YYYY-MM-DD)
+    let tituloComDia = false;   // o separador só mostra o dia depois de se escolher outro dia
     let _bombagemDiaria = {};   // { 'DD/MM/YYYY': gwh_string } — Produção por Bombagem (serviço 1363)
 
     // --- 4. FUNÇÕES AUXILIARES ---
@@ -2008,9 +2009,13 @@ document.addEventListener('DOMContentLoaded', function() {
             renderRecordesFontes(a, dataTitulo, isProvisorio, horaLimite, linhas);
         });
         // Título dinâmico da tab
-        const pctTitulo = (a && a.pctRenovavelFinal !== undefined) ? a.pctRenovavelFinal : (a ? a.pctRenovavel : 0);
-        const pct = a && a.count ? Math.round(pctTitulo) + '% renov.' : '';
-        document.title = `Produção PT ${dataTitulo}${pct ? ' · ' + pct : ''}${isProvisorio ? ' (prov.)' : ''} — Tiago Felícia`;
+        // Só depois de o utilizador escolher outro dia (ou abrir um link com ?data=): ao abrir fica o <title> fixo, que é o
+        // que o Google guarda — com o título do dia, o resultado da pesquisa mostrava uma data de há dias.
+        if (tituloComDia) {
+            const pctTitulo = (a && a.pctRenovavelFinal !== undefined) ? a.pctRenovavelFinal : (a ? a.pctRenovavel : 0);
+            const pct = a && a.count ? Math.round(pctTitulo) + '% renov.' : '';
+            document.title = `Produção PT ${dataTitulo}${pct ? ' · ' + pct : ''}${isProvisorio ? ' (prov.)' : ''} — Tiago Felícia`;
+        }
     }
 
     // --- 6. FUNÇÃO PRINCIPAL (ATUALIZAR DASHBOARD) ---
@@ -2450,6 +2455,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dataParaSelecionar = dataMaxDoFicheiro;
         }
 
+        const dataPadrao = dataParaSelecionar;
         // URL state: se ?data= válido e dentro do intervalo, aplicar
         const dataURL = lerDataURL();
         if (dataURL && dataURL >= seletorData.min && dataURL <= dataMaxDoFicheiro) {
@@ -2458,8 +2464,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         seletorData.value = dataParaSelecionar;
         atualizarURLDia(dataParaSelecionar, dataMaxDoFicheiro);
+        tituloComDia = dataParaSelecionar !== dataPadrao;   // um link com ?data= de outro dia
 
         seletorData.addEventListener('change', (e) => {
+            tituloComDia = true;
             atualizarURLDia(e.target.value, dataMaximaDados);
             atualizarBotoesPresetDia();
             atualizarDashboard(e.target.value);

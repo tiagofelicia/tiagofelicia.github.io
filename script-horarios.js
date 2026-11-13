@@ -170,6 +170,256 @@ document.addEventListener('DOMContentLoaded', function () {
         if (radio) radio.checked = true;
     }
 
+    // --- MELHOR JANELA POR ENERGIA ---
+    // Em vez da duração, a energia a consumir ou a carregar (um carro, uma bateria, um
+    // termoacumulador ou outro aparelho) e a potência a que o aparelho a gasta: a duração sai
+    // da conta (kWh ÷ kW) e o último intervalo pode ficar só em parte. A forma escolhida, os kWh
+    // e os kW ficam guardados, como a duração, e vão no link (?kwh=&kw=).
+    const CHAVE_JANELA_ENERGIA = 'precosHorariosJanelaEnergia';
+    const ENERGIA_PADRAO = { kwh: 10, kw: 3.7 };
+    const KWH_MAX = 500;
+    const KW_MAX = 50;
+    // O que estava guardado ao abrir: tal como a duração, é uma preferência pessoal e não suja o link
+    let energiaGuardadaAoAbrir = null;
+
+    const numCampo = id => parseFloat(String(document.getElementById(id)?.value ?? '').replace(',', '.'));
+    const energiaValida = (kwh, kw) => kwh > 0 && kwh <= KWH_MAX && kw > 0 && kw <= KW_MAX;
+    function getModoJanela() {
+        return document.querySelector('input[name="janelaModo"]:checked')?.value === 'energia' ? 'energia' : 'duracao';
+    }
+    function getEnergiaJanela() {
+        const kwh = numCampo('janelaKwh'), kw = numCampo('janelaKw');
+        return energiaValida(kwh, kw) ? { kwh, kw } : null;
+    }
+    function guardarEnergia() {
+        const e = getEnergiaJanela();
+        try {
+            localStorage.setItem(CHAVE_JANELA_ENERGIA, JSON.stringify({ modo: getModoJanela(), kwh: e ? e.kwh : null, kw: e ? e.kw : null }));
+        } catch (err) {}
+    }
+    // 2,7 h → "2h42"; menos de uma hora → "45 min"
+    function fmtDuracao(horas) {
+        const min = Math.round(horas * 60);
+        return min < 60 ? `${min} min` : `${Math.floor(min / 60)}h${String(min % 60).padStart(2, '0')}`;
+    }
+    // 3,70 → "3,7"; 10,00 → "10"
+    const fmtNumCurto = v => fmtPt(v, 2).replace(/,?0+$/, '');
+
+    // Os kWh de cada intervalo da janela: kW × duração do intervalo, e o último só na parte que
+    // falta. É com eles que se pesa o preço de cada intervalo para escolher o arranque mais barato.
+    function planoEnergia(vista) {
+        const e = getEnergiaJanela();
+        if (!e) return null;
+        const slotH = vista === 'horaria' ? 1 : 0.25;
+        const horas = e.kwh / e.kw;
+        const n = Math.max(1, Math.ceil(horas / slotH - 1e-9));
+        const resto = horas / slotH - (n - 1);   // a parte do último intervalo que se usa (0 a 1)
+        const pesos = Array.from({ length: n }, (_, k) => e.kw * slotH * (k < n - 1 ? 1 : resto));
+        return { kwh: e.kwh, kw: e.kw, horas, pontos: n, pesos, resto, slotMin: slotH * 60 };
+    }
+    // A hora a que acaba de facto: o início do último intervalo mais a parte dele que se usa
+    function fimExato(catUltimo, plano) {
+        const [h, m] = inicioIntervalo(catUltimo).split(':').map(x => parseInt(x, 10));
+        const t = (h * 60 + m + Math.round(plano.resto * plano.slotMin)) % 1440;
+        return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+    }
+    // Mostra as durações ou os campos da energia, e a duração que sai da conta
+    function aplicarModoJanela() {
+        const energia = getModoJanela() === 'energia';
+        const dur = document.getElementById('janelaDuracoes');
+        const ene = document.getElementById('janelaEnergia');
+        if (dur) dur.hidden = energia;
+        if (ene) ene.hidden = !energia;
+        const e = getEnergiaJanela();
+        const calc = document.getElementById('janelaDuracaoCalc');
+        if (calc) calc.textContent = e ? `≈ ${fmtDuracao(e.kwh / e.kw)}` : '';
+        document.querySelectorAll('#janelaPotencias button').forEach(b =>
+            b.classList.toggle('ativo', !!e && Math.abs(parseFloat(b.dataset.kw) - e.kw) < 1e-9));
+        const tirarLimite = document.getElementById('janelaLimiteLimpar');
+        if (tirarLimite) tirarLimite.hidden = !document.getElementById('janelaLimite')?.value;
+    }
+    // Corre logo a seguir ao reporJanelaGuardada. O link manda sobre o que está guardado:
+    // ?kwh=&kw= abre a energia, ?janela= abre a duração.
+    function reporEnergiaGuardada(urlParams) {
+        let g = null;
+        try { g = JSON.parse(localStorage.getItem(CHAVE_JANELA_ENERGIA) || 'null'); } catch (e) {}
+        if (g && (g.modo === 'energia' || g.modo === 'duracao')) {
+            const ok = energiaValida(g.kwh, g.kw);
+            energiaGuardadaAoAbrir = { modo: g.modo, kwh: ok ? g.kwh : null, kw: ok ? g.kw : null };
+        }
+        const kwhUrl = parseFloat(urlParams.get('kwh')), kwUrl = parseFloat(urlParams.get('kw'));
+        let modo = energiaGuardadaAoAbrir ? energiaGuardadaAoAbrir.modo : 'duracao';
+        let kwh = energiaGuardadaAoAbrir?.kwh ?? ENERGIA_PADRAO.kwh;
+        let kw = energiaGuardadaAoAbrir?.kw ?? ENERGIA_PADRAO.kw;
+        if (energiaValida(kwhUrl, kwUrl)) { modo = 'energia'; kwh = kwhUrl; kw = kwUrl; }
+        else if (janelaValida(urlParams.get('janela'))) modo = 'duracao';
+        const campoKwh = document.getElementById('janelaKwh'), campoKw = document.getElementById('janelaKw');
+        if (campoKwh) campoKwh.value = kwh;
+        if (campoKw) campoKw.value = kw;
+        const radio = document.querySelector(`input[name="janelaModo"][value="${modo}"]`);
+        if (radio) radio.checked = true;
+        aplicarModoJanela();
+    }
+    function ligarJanelaEnergia() {
+        document.querySelectorAll('input[name="janelaModo"]').forEach(r =>
+            r.addEventListener('change', () => { aplicarModoJanela(); desenhaGrafico(); }));
+        // Enquanto se escreve, só a duração calculada; o resto meio segundo depois da última tecla
+        let espera = null;
+        ['janelaKwh', 'janelaKw'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', () => { aplicarModoJanela(); clearTimeout(espera); espera = setTimeout(desenhaGrafico, 500); });
+            el.addEventListener('change', () => { clearTimeout(espera); aplicarModoJanela(); desenhaGrafico(); });
+        });
+        const pots = document.getElementById('janelaPotencias');
+        if (pots) pots.addEventListener('click', e => {
+            const b = e.target.closest('button[data-kw]');
+            if (!b) return;
+            document.getElementById('janelaKw').value = b.dataset.kw;
+            aplicarModoJanela();
+            desenhaGrafico();
+        });
+        // A hora limite e o botão que a tira
+        const limite = document.getElementById('janelaLimite');
+        let esperaLimite = null;
+        if (limite) {
+            limite.addEventListener('change', () => { clearTimeout(esperaLimite); aplicarModoJanela(); desenhaGrafico(); });
+            limite.addEventListener('input', () => { clearTimeout(esperaLimite); esperaLimite = setTimeout(() => { aplicarModoJanela(); desenhaGrafico(); }, 600); });
+        }
+        const tirarLimite = document.getElementById('janelaLimiteLimpar');
+        if (tirarLimite) tirarLimite.addEventListener('click', () => {
+            if (limite) limite.value = '';
+            aplicarModoJanela();
+            desenhaGrafico();
+        });
+    }
+
+    // --- O INTERVALO EM CURSO ---
+    // Só conta para a janela enquanto não passou de metade: às 22:44 a janela já não começa às
+    // 22:30 (14 minutos no passado, e com o quarto de hora inteiro no custo), começa às 22:45.
+    // Vale para a janela, para o «começar já» e para o «Repartir».
+    function primeiroIntervaloUtil(estadoAgora, vista) {
+        const agora = getAgoraLisboa();
+        const slot = vista === 'horaria' ? 60 : 15;
+        return estadoAgora.i + ((agora.minuto % slot) > slot / 2 ? 1 : 0);
+    }
+
+    // --- HORA LIMITE («acabar até às HH:MM», opcional, nas duas formas) ---
+    // No dia de hoje é a próxima vez que o relógio marca essa hora (hoje, se ainda não passou;
+    // senão amanhã); ao ver outro dia, a desse dia. Guarda-se e vai no link (?ate=HH:MM).
+    const CHAVE_JANELA_LIMITE = 'precosHorariosJanelaLimite';
+    const RE_HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
+    let limiteGuardadoAoAbrir = '';
+    const minutosHHMM = s => parseInt(s.slice(0, 2), 10) * 60 + parseInt(s.slice(3, 5), 10);
+    function getLimiteJanela() {
+        const v = document.getElementById('janelaLimite')?.value || '';
+        return RE_HHMM.test(v) ? v : null;
+    }
+    // "07:30" ou, no dia de hoje com a hora já passada, "07:30 de amanhã"
+    function textoLimite(isHoje) {
+        const l = getLimiteJanela();
+        if (!l) return '';
+        const a = getAgoraLisboa();
+        return l + (isHoje && minutosHHMM(l) <= a.hora * 60 + a.minuto ? ' de amanhã' : '');
+    }
+    function guardarLimite() {
+        try { localStorage.setItem(CHAVE_JANELA_LIMITE, getLimiteJanela() || ''); } catch (e) {}
+    }
+    // Corre a seguir ao reporEnergiaGuardada. Um link com parâmetros (?dia=…) reproduz o que se
+    // via: sem ?ate=, abre sem limite, mesmo que haja um guardado.
+    function reporLimiteGuardado(urlParams) {
+        let g = '';
+        try { g = localStorage.getItem(CHAVE_JANELA_LIMITE) || ''; } catch (e) {}
+        limiteGuardadoAoAbrir = RE_HHMM.test(g) ? g : '';
+        const doLink = urlParams.get('ate') || '';
+        const campo = document.getElementById('janelaLimite');
+        if (campo) campo.value = RE_HHMM.test(doLink) ? doLink : (urlParams.has('dia') ? '' : limiteGuardadoAoAbrir);
+        aplicarModoJanela();
+    }
+    // O índice (na série) do último intervalo em que a janela pode acabar, com a hora limite;
+    // undefined sem limite, ou quando o limite cai num dia de que ainda não há preços (aí tudo serve).
+    function fimMaxPorLimite(serie, nHoje, isHoje, plano) {
+        const limite = getLimiteJanela();
+        if (!limite || !serie) return undefined;
+        const lim = minutosHHMM(limite);
+        let ini = 0, fimDia = nHoje;
+        if (isHoje) {
+            const agora = getAgoraLisboa();
+            if (lim <= agora.hora * 60 + agora.minuto) { ini = nHoje; fimDia = serie.colunas.length; }
+            if (ini >= serie.colunas.length) return undefined;
+        }
+        // O último intervalo do dia acaba às "00:00", que aqui são as 24:00
+        const fimEmMin = cat => { const m = minutosHHMM(fimIntervalo(cat)); return m === 0 ? 1440 : m; };
+        let k = ini - 1;
+        for (let j = ini; j < fimDia; j++) if (fimEmMin(serie.categorias[j]) <= lim) k = j;
+        // Por energia, o último intervalo fica a meio: pode ser o seguinte, se acabar antes do limite
+        if (plano && k + 1 < fimDia && minutosDoIntervalo(serie.categorias[k + 1]) + plano.resto * plano.slotMin <= lim) k++;
+        return k;
+    }
+
+    // --- «ADICIONAR AO CALENDÁRIO»: um .ics com a janela ---
+    // O ficheiro faz-se no browser e descarrega-se; não passa por nenhum servidor. Leva um aviso 5
+    // minutos antes, para o telemóvel lembrar quem quer ligar a máquina ou o carregador.
+    let janelaParaCalendario = null;   // { ini, fim (Date), titulo, descricao, url, nome }
+    // "DD/MM/AAAA" + "HH:MM" em Lisboa → instante. Estima-se o UTC e acerta-se pelo desvio de
+    // Lisboa nesse instante (duas voltas, para as horas junto da mudança de hora).
+    const fmtLisboa = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', year: 'numeric', month: '2-digit',
+        day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    function instanteLisboa(diaStr, hhmm) {
+        const [d, m, a] = diaStr.split('/').map(Number);
+        const [h, mi] = hhmm.slice(0, 5).split(':').map(Number);
+        const desvio = ms => {
+            const p = fmtLisboa.formatToParts(new Date(ms));
+            const v = t => parseInt(p.find(x => x.type === t).value, 10);
+            return Date.UTC(v('year'), v('month') - 1, v('day'), v('hour'), v('minute')) - ms;
+        };
+        const local = Date.UTC(a, m - 1, d, h, mi);
+        let t = local - desvio(local);
+        t = local - desvio(t);
+        return new Date(t);
+    }
+    const icsData = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const icsTexto = s => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+    // As linhas de um .ics não passam de 75 octetos: o resto continua na linha seguinte, a começar por um espaço
+    function icsDobrar(linha) {
+        const enc = new TextEncoder();
+        const partes = [];
+        let atual = '', n = 0;
+        for (const ch of linha) {
+            const b = enc.encode(ch).length;
+            if (n + b > 75) { partes.push(atual); atual = ' ' + ch; n = 1 + b; }
+            else { atual += ch; n += b; }
+        }
+        partes.push(atual);
+        return partes.join('\r\n');
+    }
+    function descarregarCalendario() {
+        const j = janelaParaCalendario;
+        if (!j) return;
+        const linhas = [
+            'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//tiagofelicia.pt//Precos horarios//PT', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+            'BEGIN:VEVENT',
+            `UID:${Date.now()}-${Math.random().toString(36).slice(2, 10)}@tiagofelicia.pt`,
+            `DTSTAMP:${icsData(new Date())}`,
+            `DTSTART:${icsData(j.ini)}`,
+            `DTEND:${icsData(j.fim)}`,
+            `SUMMARY:${icsTexto(j.titulo)}`,
+            `DESCRIPTION:${icsTexto(j.descricao)}`,
+            `URL:${j.url}`,
+            'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsTexto(j.titulo)}`, 'TRIGGER:-PT5M', 'END:VALARM',
+            'END:VEVENT', 'END:VCALENDAR'
+        ];
+        const blob = new Blob([linhas.map(icsDobrar).join('\r\n') + '\r\n'], { type: 'text/calendar;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `melhor-janela-${j.nome}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        avisoToast('✓ Evento descarregado: abra-o para o pôr no calendário');
+    }
+
     // --- PARSE DAS CONSTANTES ---
     function parseConstantes(csv) {
         constantes = {};
@@ -304,6 +554,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const paramOpcao = urlParams.get('opcao');
         // Antes de qualquer desenho: os radios da janela são estáticos, basta marcá-los
         reporJanelaGuardada(urlParams.get('janela'));
+        reporEnergiaGuardada(urlParams);
+        reporLimiteGuardado(urlParams);
 
         const diaSelect = document.getElementById("dropdownDia");
         const tarifarioSelect = document.getElementById("dropdownTarifario");
@@ -836,24 +1088,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // inicioMax limita o ARRANQUE da janela, não o seu fim: é o que permite procurar
     // numa série de dois dias e mesmo assim obrigar a janela a começar hoje.
-    function calcularMelhorJanela(dados, pontos, inicioMin, inicioMax) {
+    // pesos (opcional): os kWh de cada intervalo da janela, na janela por energia. Com eles, a
+    // média é pesada e vem também o custo (Σ kWh × €/kWh); sem eles, todos os intervalos pesam o mesmo.
+    // fimMax (opcional): o último índice em que a janela pode acabar (a hora limite).
+    function calcularMelhorJanela(dados, pontos, inicioMin, inicioMax, pesos, fimMax) {
         if (!dados || !Array.isArray(dados.colunas) || pontos <= 0) return null;
         const v = dados.colunas;
         const limiteNatural = v.length - pontos;
-        const iMax = (inicioMax === undefined || inicioMax === null)
+        let iMax = (inicioMax === undefined || inicioMax === null)
             ? limiteNatural
             : Math.min(inicioMax, limiteNatural);
+        if (fimMax !== undefined && fimMax !== null) iMax = Math.min(iMax, fimMax - pontos + 1);
+        const somaPesos = pesos ? pesos.reduce((s, p) => s + p, 0) : pontos;
         let melhor = null;
         for (let i = Math.max(0, inicioMin); i <= iMax; i++) {
             let soma = 0, valido = true;
             for (let k = 0; k < pontos; k++) {
                 const x = v[i + k];
                 if (x === null || x === undefined || isNaN(x)) { valido = false; break; }
-                soma += x;
+                soma += pesos ? pesos[k] * x : x;
             }
             if (!valido) continue;
-            const media = soma / pontos;
-            if (!melhor || media < melhor.media) melhor = { i: i, fim: i + pontos - 1, media: media };
+            const media = soma / somaPesos;
+            if (!melhor || media < melhor.media) melhor = { i: i, fim: i + pontos - 1, media: media, custo: pesos ? soma : null };
         }
         return melhor;
     }
@@ -878,7 +1135,18 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!dados) return limpar();
 
         const horas = getHorasJanela();
-        const pontos = sel.vista === "horaria" ? horas : horas * 4;
+        // Por energia: os intervalos e os kWh de cada um saem dos kWh e dos kW escritos
+        const porEnergia = getModoJanela() === 'energia';
+        const plano = porEnergia ? planoEnergia(sel.vista) : null;
+        janelaParaCalendario = null;
+        const aviso = msg => {
+            const html = `<span class="janela-chip subiu">${msg}</span>`;
+            if (html !== htmlJanelaRenderizado) { container.innerHTML = html; htmlJanelaRenderizado = html; }
+            return null;
+        };
+        if (porEnergia && !plano) return aviso(`Escreva a energia (até ${KWH_MAX} kWh) e a potência (até ${KW_MAX} kW)`);
+        const pontos = plano ? plano.pontos : (sel.vista === "horaria" ? horas : horas * 4);
+        const pesos = plano ? plano.pesos : undefined;
         const estadoAgora = obterEstadoAgora();
         const isHoje = !!estadoAgora;
 
@@ -899,31 +1167,52 @@ document.addEventListener('DOMContentLoaded', function () {
             inicioMax = nHoje - 1; // pode arrancar no último intervalo de hoje
         }
 
-        let melhor = calcularMelhorJanela(serie, pontos, isHoje ? estadoAgora.i : 0, inicioMax);
+        // O intervalo em curso só conta até meio; a hora limite (se houver) fixa o último fim possível
+        const inicioUtil = isHoje ? primeiroIntervaloUtil(estadoAgora, sel.vista) : 0;
+        const limite = getLimiteJanela();
+        const fimMax = fimMaxPorLimite(serie, nHoje, isHoje, plano);
+        let melhor = calcularMelhorJanela(serie, pontos, inicioUtil, inicioMax, pesos, fimMax);
         let cats = serie.categorias;
         let dadosJanela = dados;  // dia de referência da média (o que está no gráfico)
-        let escopo = isHoje ? ' · a partir de agora' : '';
+        // Com limite, a janela encontrada cumpre-o sempre (também quando o limite cai amanhã e ainda não há
+        // preços de amanhã: aí a janela é toda de hoje)
+        let escopo = (isHoje ? ' · a partir de agora' : '') + (limite ? ` · até às ${textoLimite(isHoje)}` : '');
         let noGrafico = true;
         const cruzaMeiaNoite = !!melhor && melhor.fim >= nHoje;
 
         // Rede de segurança: nada serve a começar hoje (ex.: buracos nos dados do que
         // resta do dia) → mostrar a melhor janela de amanhã, como antes.
         if (!melhor && isHoje && dadosAmanha) {
-            const melhorAmanha = calcularMelhorJanela(dadosAmanha, pontos, 0);
+            const melhorAmanha = calcularMelhorJanela(dadosAmanha, pontos, 0, undefined, pesos,
+                fimMax === undefined ? undefined : fimMax - nHoje);
             if (melhorAmanha) {
                 melhor = melhorAmanha;
                 cats = dadosAmanha.categorias;
                 dadosJanela = dadosAmanha;
-                escopo = ' · amanhã';
+                escopo = ' · amanhã' + (limite ? ` · até às ${textoLimite(isHoje)}` : '');
                 noGrafico = false; // pertence a outro dia que não o do gráfico
             }
+        }
+        const oQueCurto = plano ? `${fmtNumCurto(plano.kwh)} kWh a ${fmtNumCurto(plano.kw)} kW (${fmtDuracao(plano.horas)})` : `${horas}h seguidas`;
+        if (!melhor && limite && fimMax !== undefined) {
+            return aviso(`${oQueCurto} não cabem ${isHoje ? 'entre agora e' : 'até'} as ${textoLimite(isHoje)}`);
+        }
+        if (!melhor && plano) {
+            // A energia não cabe nos preços que já saíram, a contar de agora: conta só os intervalos
+            // seguidos com preço (no último dia publicado falta a última hora)
+            let livres = 0;
+            for (let k = inicioUtil; k < serie.colunas.length && temValor(serie.colunas[k]); k++) livres++;
+            const ateKwh = livres * (plano.slotMin / 60) * plano.kw;
+            return aviso(`${fmtNumCurto(plano.kwh)} kWh a ${fmtNumCurto(plano.kw)} kW (${fmtDuracao(plano.horas)}) não cabem nos preços já publicados`
+                + `${isHoje && !dadosAmanha ? ' (os de amanhã ainda não saíram)' : ''}: a esta potência, cabem até ${fmtNumCurto(Math.floor(ateKwh * 10) / 10)} kWh`);
         }
         if (!melhor) return limpar();
 
         // O fim já traz o " (2.ª)" da hora repetida; o início só o leva se a janela sair dela
         const inicio = inicioIntervalo(cats[melhor.i])
             + (ehRepetida(cats[melhor.i]) && !ehRepetida(cats[melhor.fim]) ? SUFIXO_REPETIDA : '');
-        const fim = fimIntervalo(cats[melhor.fim]);
+        // Por energia, a hora a que acaba de facto (o último intervalo pode ficar a meio)
+        const fim = plano ? fimExato(cats[melhor.fim], plano) : fimIntervalo(cats[melhor.fim]);
         const decimais = sel.vista === "horaria" ? 4 : 5;
 
         // Poupança face à média do dia a que a janela pertence. Quando a janela
@@ -951,21 +1240,64 @@ document.addEventListener('DOMContentLoaded', function () {
         // acabar: propor horas que a própria janela já inclui seria redundante, mas uma
         // janela bem mais barata noutra altura de amanhã (o sol do meio-dia) não pode
         // ficar escondida (27/10 às 19h: 23:30–01:30 a 0,332 contra 09:30–11:30 a 0,170).
-        const chipAmanha = (isHoje && noGrafico)
-            ? construirChipAmanha(fonte, sel, pontos, melhor, decimais, cruzaMeiaNoite ? melhor.fim - nHoje : -1) : '';
+        // Com hora limite, não: proporia horas depois dela
+        const chipAmanha = (isHoje && noGrafico && !limite)
+            ? construirChipAmanha(fonte, sel, pontos, melhor, decimais, cruzaMeiaNoite ? melhor.fim - nHoje : -1, plano) : '';
+
+        // Por energia: o custo da energia e quanto poupa face a começar no intervalo em curso
+        let chipsEnergia = '';
+        if (plano && melhor.custo !== null) {
+            const tipCusto = `Custo de ${fmtNumCurto(plano.kwh)} kWh a ${fmtNumCurto(plano.kw)} kW nesta janela, ao preço de ${sel.tarifario} | ${sel.opcao} — inclui TAR de energia, sem IVA nem termo fixo`;
+            chipsEnergia += `<span class="janela-chip" title="${escAttr(tipCusto)}"><strong>${fmtPt(melhor.custo, 2)} €</strong> de energia</span>`;
+            if (isHoje && noGrafico) {
+                const ja = calcularMelhorJanela(serie, pontos, inicioUtil, inicioUtil, pesos, fimMax);
+                if (ja && ja.i === inicioUtil) {
+                    const dif = ja.custo - melhor.custo;
+                    const tipJa = `Se começar já (às ${inicioIntervalo(serie.categorias[inicioUtil])}), a mesma energia custa ${fmtPt(ja.custo, 2)} €`;
+                    chipsEnergia += dif < 0.005
+                        ? `<span class="janela-chip poupa" title="${escAttr(tipJa)}">começar já é o mais barato</span>`
+                        : `<span class="janela-chip poupa" title="${escAttr(tipJa)}">−${fmtPt(dif, 2)} € vs. começar já</span>`;
+                }
+            }
+        }
 
         const marcaAmanha = cruzaMeiaNoite ? '<span class="janela-escopo"> (acaba amanhã)</span>' : '';
         const fimTexto = cruzaMeiaNoite ? `${fim} de amanhã` : fim;
-        const tipPeriodo = cruzaMeiaNoite
-            ? `As ${horas}h seguidas mais baratas a contar do intervalo em curso. Começa hoje às ${inicio} e termina às ${fim} de amanhã.`
-            : `As ${horas}h seguidas mais baratas${isHoje && noGrafico ? ', a contar do intervalo em curso' : ''}`;
+        const oQue = plano
+            ? `A janela mais barata para ${fmtNumCurto(plano.kwh)} kWh a ${fmtNumCurto(plano.kw)} kW (${fmtDuracao(plano.horas)} seguidas)`
+            : `As ${horas}h seguidas mais baratas`;
+        const tipLimite = limite ? ` Tem de acabar até às ${textoLimite(isHoje)}.` : '';
+        const tipPeriodo = (cruzaMeiaNoite
+            ? `${oQue} a contar do intervalo em curso. Começa hoje às ${inicio} e termina às ${fim} de amanhã.`
+            : `${oQue}${isHoje && noGrafico ? ', a contar do intervalo em curso' : ''}.`) + tipLimite;
         const tipPreco = `Preço médio de energia entre as ${inicio} e as ${fimTexto}, para ${sel.tarifario} | ${sel.opcao} — inclui TAR de energia, sem IVA`;
+
+        // O evento para o calendário: o dia de cada índice (a série pode ter hoje e amanhã)
+        const diaDe = k => (noGrafico && k < nHoje) ? sel.dia : getAmanhaStr();
+        const minSlot = sel.vista === 'horaria' ? 60 : 15;
+        const iniCal = instanteLisboa(diaDe(melhor.i), inicioIntervalo(cats[melhor.i]));
+        // ao minuto, como a hora do fim que se mostra (o último intervalo da energia é fracionário)
+        const fimCal = new Date(instanteLisboa(diaDe(melhor.fim), inicioIntervalo(cats[melhor.fim])).getTime()
+            + Math.round(plano ? plano.resto * plano.slotMin : minSlot) * 60000);
+        const [dCal, mCal, aCal] = diaDe(melhor.i).split('/');
+        janelaParaCalendario = {
+            ini: iniCal, fim: fimCal,
+            titulo: plano ? `⚡ Melhor janela: ${fmtNumCurto(plano.kwh)} kWh a ${fmtNumCurto(plano.kw)} kW` : `⚡ Melhor janela de ${horas}h`,
+            descricao: `${sel.tarifario} | ${sel.opcao}: ${fmtPt(melhor.media, decimais)} €/kWh médios`
+                + (plano && melhor.custo !== null ? `, ${fmtPt(melhor.custo, 2)} € de energia` : '')
+                + ` (com TAR de energia, sem IVA). Das ${inicio} às ${fimTexto}.\nPreços horários: https://www.tiagofelicia.pt/precos-horarios`,
+            url: 'https://www.tiagofelicia.pt/precos-horarios' + window.location.search,
+            nome: `${aCal}${mCal}${dCal}-${inicio.slice(0, 5).replace(':', '')}`
+        };
+        const chipCalendario = `<button type="button" class="janela-chip calendario" title="Descarregar um evento (.ics) com esta janela, para o calendário do telemóvel ou do computador avisar 5 minutos antes" aria-label="Adicionar ao calendário">📅<span class="so-largo"> Calendário</span></button>`;
 
         const html =
             `<span class="janela-chip periodo" title="${escAttr(tipPeriodo)}">${inicio}–${fim}${marcaAmanha}<span class="janela-escopo">${escopo}</span></span>` +
             `<span class="janela-chip" title="${escAttr(tipPreco)}"><strong>${fmtPt(melhor.media, decimais)} €/kWh</strong> médios</span>` +
+            chipsEnergia +
             chipPoupanca +
-            chipAmanha;
+            chipAmanha +
+            chipCalendario;
 
         if (html !== htmlJanelaRenderizado) {
             container.innerHTML = html;
@@ -987,14 +1319,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // fimJaIncluido: índice (em amanhã) onde acaba a janela de hoje quando ela atravessa a
     // meia-noite, ou -1; a janela de amanhã só pode começar depois dele.
-    function construirChipAmanha(fonte, sel, pontos, melhorHoje, decimais, fimJaIncluido) {
+    // plano: o da janela por energia (null na duração), para a de amanhã ter os mesmos pesos.
+    function construirChipAmanha(fonte, sel, pontos, melhorHoje, decimais, fimJaIncluido, plano) {
         // Preços negativos ou nulos: a comparação relativa deixa de fazer sentido
         if (!(melhorHoje.media > 0)) return '';
 
         const amanhaStr = getAmanhaStr();
         const dadosAmanha = fonte[amanhaStr]?.[sel.tarifario]?.[sel.opcao];
         const cruza = fimJaIncluido >= 0;
-        const melhorAmanha = calcularMelhorJanela(dadosAmanha, pontos, cruza ? fimJaIncluido + 1 : 0);
+        const melhorAmanha = calcularMelhorJanela(dadosAmanha, pontos, cruza ? fimJaIncluido + 1 : 0, undefined, plano ? plano.pesos : undefined);
         if (!melhorAmanha) return '';
 
         const ganhoAbs = melhorHoje.media - melhorAmanha.media;
@@ -1002,8 +1335,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (ganhoPct < GANHO_MIN_PCT || ganhoAbs < GANHO_MIN_KWH) return '';
 
         const inicio = inicioIntervalo(dadosAmanha.categorias[melhorAmanha.i]);
-        const fim = fimIntervalo(dadosAmanha.categorias[melhorAmanha.fim]);
-        const tip = `Clique para ver amanhã no gráfico. A melhor janela de amanhã fica ${fmtPt(ganhoPct, 0)}% mais barata (menos ${fmtPt(ganhoAbs, decimais)} €/kWh) do que a melhor ${cruza ? 'a começar hoje (que acaba amanhã às ' + fimIntervalo(dadosAmanha.categorias[fimJaIncluido]) + ')' : 'que resta hoje'}.`;
+        const fim = plano ? fimExato(dadosAmanha.categorias[melhorAmanha.fim], plano) : fimIntervalo(dadosAmanha.categorias[melhorAmanha.fim]);
+        const custoAmanha = plano && melhorAmanha.custo !== null ? ` Custaria ${fmtPt(melhorAmanha.custo, 2)} € (hoje, ${fmtPt(melhorHoje.custo, 2)} €).` : '';
+        const tip = `Clique para ver amanhã no gráfico. A melhor janela de amanhã fica ${fmtPt(ganhoPct, 0)}% mais barata (menos ${fmtPt(ganhoAbs, decimais)} €/kWh) do que a melhor ${cruza ? 'a começar hoje (que acaba amanhã às ' + fimIntervalo(dadosAmanha.categorias[fimJaIncluido]) + ')' : 'que resta hoje'}.${custoAmanha}`;
 
         // "ainda melhor" desaparece em ecrãs estreitos (CSS), para o chip caber numa linha
         return `<button type="button" class="janela-chip amanha" data-dia="${escAttr(amanhaStr)}" title="${escAttr(tip)}">` +
@@ -1015,6 +1349,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('janelaResultado');
         if (!container) return;
         container.addEventListener('click', function (e) {
+            if (e.target.closest('.janela-chip.calendario')) { descarregarCalendario(); return; }
             const btn = e.target.closest('.janela-chip.amanha');
             if (!btn) return;
             const diaSelect = document.getElementById('dropdownDia');
@@ -1148,7 +1483,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (lblSim) lblSim.textContent = vista === "horaria" ? "Simular consumos horários?" : "Simular consumos quarto-horários?";
         // Preenchimento «na melhor janela de Nh»: acompanha a duração escolhida
         const optJanela = document.querySelector('#preencherModo option[value="janela"]');
-        if (optJanela) optJanela.textContent = `na melhor janela de ${getHorasJanela()}h do dia`;
+        // No dia de hoje, a janela do «Repartir» procura-se a partir de agora, como a de cima
+        const sufixoRep = dia === getHojeStr() ? ' a partir de agora' : ' do dia';
+        if (optJanela) optJanela.textContent = `na melhor janela de ${getHorasJanela()}h${sufixoRep}`;
+        // … e «na melhor janela para N kWh a P kW», com os valores da janela por energia
+        const optEnergia = document.querySelector('#preencherModo option[value="energia"]');
+        const energiaAtual = getEnergiaJanela();
+        if (optEnergia) optEnergia.textContent = energiaAtual
+            ? `na melhor janela para ${fmtNumCurto(energiaAtual.kwh)} kWh a ${fmtNumCurto(energiaAtual.kw)} kW${sufixoRep}`
+            : 'na melhor janela para a energia da «Melhor janela»';
+        aplicarModoJanela();
 
         // Atualizar visibilidade do checkbox "Sobrepor amanhã" antes de o lermos
         atualizarVisibilidadeSobreporAmanha();
@@ -1176,13 +1520,24 @@ document.addEventListener('DOMContentLoaded', function () {
             // A duração da janela acompanha o link e fica guardada para a visita seguinte
             const horasJanela = getHorasJanela();
             guardarJanela(horasJanela);
+            // A janela por energia também: a forma, os kWh e os kW
+            const modoJanela = getModoJanela();
+            guardarEnergia();
+            const g = energiaGuardadaAoAbrir;
+            // A hora limite também, e só deixa o link limpo se for a que estava guardada ao abrir
+            guardarLimite();
+            const limiteAtual = getLimiteJanela() || '';
+            const janelaPadrao = (modoJanela === 'energia'
+                ? !!(g && g.modo === 'energia' && energiaAtual && energiaAtual.kwh === g.kwh && energiaAtual.kw === g.kw)
+                : (horasJanela === JANELA_PADRAO || horasJanela === janelaGuardadaAoAbrir))
+                && limiteAtual === limiteGuardadoAoAbrir;
 
             // Verifica se as opções atuais são os valores por defeito
             const nomesTarifarios = Array.from(tarifarioSelect.options, o => o.value);
             const isDefault = (diaParam === 'hoje'
                                && tarifarioSelect.selectedIndex === indiceTarifarioPadrao(nomesTarifarios)
                                && opcaoParam === '0'
-                               && (horasJanela === JANELA_PADRAO || horasJanela === janelaGuardadaAoAbrir));
+                               && janelaPadrao);
 
             if (isDefault) {
                 // Se for o estado padrão, limpa a querystring mantendo o link limpo
@@ -1193,7 +1548,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 qp.set('dia', diaParam);
                 qp.set('tarifario', tarifarioParam);
                 qp.set('opcao', opcaoParam);
-                if (horasJanela !== JANELA_PADRAO) qp.set('janela', horasJanela.toString());
+                if (modoJanela === 'energia' && energiaAtual) {
+                    qp.set('kwh', String(energiaAtual.kwh));
+                    qp.set('kw', String(energiaAtual.kw));
+                } else if (horasJanela !== JANELA_PADRAO) qp.set('janela', horasJanela.toString());
+                if (limiteAtual) qp.set('ate', limiteAtual);
                 window.history.replaceState(null, '', '?' + qp.toString());
             }
         })();
@@ -1488,7 +1847,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // 1.ª linha da janela sem o «· a partir de agora» (relativo ao momento) e 2.ª com o preço médio
         const janela = (document.getElementById('janelaResultado')?.innerText || '').split('\n').map(s => s.trim()).filter(Boolean);
         const horas = document.querySelector('input[name="janela"]:checked')?.value;
-        const linhaJanela = janela.length >= 2 && horas ? `Melhor janela de ${horas}h: ${janela[0].split(' · ')[0]} · ${janela[1]}` : '';
+        const ene = getModoJanela() === 'energia' ? getEnergiaJanela() : null;
+        const rotJanela = ene ? `Melhor janela para ${fmtNumCurto(ene.kwh)} kWh a ${fmtNumCurto(ene.kw)} kW` : (horas ? `Melhor janela de ${horas}h` : '');
+        // Por energia, também o custo (o 3.º chip)
+        const linhaJanela = janela.length >= 2 && rotJanela
+            ? `${rotJanela}: ${janela[0].split(' · ')[0]} · ${janela[1]}${ene && janela[2] ? ' · ' + janela[2] : ''}` : '';
         const resumo = [`⚡ Preços horários — ${tarifario} (${opcao})`, etiquetaDia(dia), ...chips, linhaJanela].filter(Boolean).join('\n');
         const url = window.location.href;
         const textoCompleto = `${resumo}\n${url}`;
@@ -1612,19 +1975,34 @@ document.addEventListener('DOMContentLoaded', function () {
         const sel = getSelecao();
         const dados = sel && getFonteDadosAtual()[sel.dia]?.[sel.tarifario]?.[sel.opcao];
         if (!dados) return;
-        const total = parseFloat(String(document.getElementById('preencherKwh').value).replace(',', '.'));
+        const modo = document.getElementById('preencherModo').value;
+        // Na janela por energia, os kWh e a potência são os da «Melhor janela» (e passam para a caixa)
+        const planoE = modo === 'energia' ? planoEnergia(sel.vista) : null;
+        if (modo === 'energia' && !planoE) { avisoToast('Escreva primeiro a energia e a potência na «Melhor janela»'); return; }
+        if (planoE) document.getElementById('preencherKwh').value = planoE.kwh;
+        const total = planoE ? planoE.kwh : parseFloat(String(document.getElementById('preencherKwh').value).replace(',', '.'));
         if (!(total > 0)) { avisoToast('Escreva primeiro quantos kWh quer repartir'); return; }
         if (estadoTabela.dados.some(d => d.consumo > 0) && !confirm('Substituir os consumos que já estão na tabela?')) return;
 
-        const modo = document.getElementById('preencherModo').value;
         const comPreco = dados.colunas.map(temValor);
         let pesos, descricao;
-        if (modo === 'janela') {
-            // A melhor janela do DIA mostrado, desde as 00:00: é uma simulação do custo do dia,
-            // não a janela «a partir de agora» dos chips
+        // A janela procura-se no dia mostrado (a tabela é de um dia só): no de hoje, a partir de agora,
+        // como a de cima (com o intervalo em curso só até meio); e até à hora limite, se cair neste dia
+        const estadoHoje = obterEstadoAgora();
+        const inicioRep = estadoHoje ? primeiroIntervaloUtil(estadoHoje, sel.vista) : 0;
+        const fimMaxRep = fimMaxPorLimite(dados, dados.colunas.length, !!estadoHoje, planoE);
+        const ondeRep = (estadoHoje ? 'no que resta de hoje' : 'neste dia')
+            + (getLimiteJanela() && fimMaxRep !== undefined ? ` até às ${textoLimite(!!estadoHoje)}` : '');
+        if (planoE) {
+            // Para esta energia: cada intervalo com os kWh da potência, e o último só com o que falta
+            const jan = calcularMelhorJanela(dados, planoE.pontos, inicioRep, undefined, planoE.pesos, fimMaxRep);
+            if (!jan) { avisoToast(`Não cabem ${fmtNumCurto(planoE.kwh)} kWh a ${fmtNumCurto(planoE.kw)} kW ${ondeRep}`); return; }
+            pesos = dados.colunas.map((_, i) => (i >= jan.i && i <= jan.fim) ? planoE.pesos[i - jan.i] : 0);
+            descricao = `a ${fmtNumCurto(planoE.kw)} kW, entre as ${inicioIntervalo(dados.categorias[jan.i])} e as ${fimExato(dados.categorias[jan.fim], planoE)}`;
+        } else if (modo === 'janela') {
             const horas = getHorasJanela();
-            const jan = calcularMelhorJanela(dados, sel.vista === 'horaria' ? horas : horas * 4, 0);
-            if (!jan) { avisoToast('Não há preços para uma janela de ' + horas + 'h neste dia'); return; }
+            const jan = calcularMelhorJanela(dados, sel.vista === 'horaria' ? horas : horas * 4, inicioRep, undefined, undefined, fimMaxRep);
+            if (!jan) { avisoToast(`Não há ${horas}h seguidas com preço ${ondeRep}`); return; }
             pesos = dados.colunas.map((_, i) => (i >= jan.i && i <= jan.fim) ? 1 : 0);
             descricao = `entre as ${inicioIntervalo(dados.categorias[jan.i])} e as ${fimIntervalo(dados.categorias[jan.fim])}`;
         } else if (modo === 'igual') {
@@ -2044,6 +2422,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ligarBotaoLimparConsumos();
                 ligarPreenchimento();
                 ligarChipAmanha();
+                ligarJanelaEnergia();
                 const hojeEmLisboa = getHojeStr();
                 populaDropdowns(hojeEmLisboa);
             })
