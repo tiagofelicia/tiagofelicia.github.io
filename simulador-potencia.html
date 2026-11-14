@@ -100,7 +100,7 @@
             { "@type": "Question", "name": "Monofásica ou trifásica?", "acceptedAnswer": { "@type": "Answer", "text": "Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada." } },
             { "@type": "Question", "name": "Quanto poupo a baixar um escalão?", "acceptedAnswer": { "@type": "Answer", "text": "Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato." } },
             { "@type": "Question", "name": "Os painéis solares deixam-me baixar a potência?", "acceptedAnswer": { "@type": "Answer", "text": "Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos." } },
-            { "@type": "Question", "name": "Como obtenho o ficheiro da E-Redes?", "acceptedAnswer": { "@type": "Answer", "text": "No Balcão Digital da E-Redes (balcaodigital.e-redes.pt), em Consumos, Consultar consumos detalhados: escolha o período, de preferência os últimos 12 meses, e exporte para Excel. É preciso ter contador inteligente ligado à rede." } },
+            { "@type": "Question", "name": "Como obtenho o ficheiro da E-Redes?", "acceptedAnswer": { "@type": "Answer", "text": "No Balcão Digital da E-Redes (balcaodigital.e-redes.pt), escolha o local de consumo e carregue em «Exportar excel». Para 12 meses, que é o recomendado, escolha «Escolher uma data até um ano», indique as datas e carregue em «Exportar»: quando o ficheiro estiver pronto, aparece uma notificação no Balcão com a ligação para o descarregar. Para um só mês, escolha-o primeiro em «Período» e use «Exportação diagrama atual»: o ficheiro descarrega-se logo. É preciso ter contador inteligente ligado à rede." } },
             { "@type": "Question", "name": "Os meus dados saem do computador?", "acceptedAnswer": { "@type": "Answer", "text": "Não. O ficheiro é lido no seu browser e não é enviado para nenhum servidor. O link de partilha leva só as escolhas da página, nunca os consumos." } }
         ]
     }
@@ -195,6 +195,11 @@
         .stepper { display: inline-flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
         .stepper button { border: none; background: #f1f5f9; width: 28px; height: 28px; cursor: pointer; font-size: 1em; color: #334155; }
         .stepper span { min-width: 24px; text-align: center; font-weight: 700; }
+        .stepper.zonas span { padding: 0 6px; font-weight: 600; white-space: nowrap; }
+        /* «2 de 4 zonas» é mais largo: num cartão estreito, o contador passa para baixo em vez de encolher */
+        .equip.com-zonas .linha { flex-wrap: wrap; row-gap: 6px; }
+        .equip.com-zonas .linha label { white-space: nowrap; }
+        .stepper.zonas { flex-shrink: 0; }
         .equip select.fase { font-size: 0.9em; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; }
         .equip .obs { font-size: 0.85em; color: #52606d; }
         .acoes-equip { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
@@ -479,9 +484,10 @@
                 <details>
                     <summary>Como obter o ficheiro?</summary>
                     <ol>
-                        <li>Aceda a <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">balcaodigital.e-redes.pt</a> (é preciso ter contador inteligente).</li>
-                        <li>Vá a «Consumos» → «Consultar consumos detalhados».</li>
-                        <li>Escolha o período — de preferência os últimos 12 meses, para apanhar o inverno — e exporte para Excel.</li>
+                        <li>Abra <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">balcaodigital.e-redes.pt</a> (é preciso ter contador inteligente) e escolha o local de consumo, se tiver mais do que um.</li>
+                        <li><strong>Para 12 meses</strong> (recomendado, para apanhar o inverno e o verão): carregue em «Exportar excel», escolha «Escolher uma data até um ano», indique as datas e carregue em «Exportar». Aparece «Exportação em curso»: quando o ficheiro estiver pronto, surge uma notificação no Balcão com a ligação para o descarregar.</li>
+                        <li><strong>Para um só mês:</strong> escolha o mês em «Período», carregue em «Exportar excel» e escolha «Exportação diagrama atual». O ficheiro descarrega-se logo.</li>
+                        <li>Carregue aqui o ficheiro Excel. Pode juntar vários, por exemplo um por mês.</li>
                     </ol>
                 </details>
             </div>
@@ -502,7 +508,7 @@
     <!-- 3. Equipamentos -->
     <section class="bloco" id="bloco-equip">
         <h2><span class="passo">3</span>Equipamentos que liga ao mesmo tempo</h2>
-        <p class="bloco-intro">Comece por um exemplo e ajuste: quantidades, potência máxima de cada equipamento (veja a chapa ou o manual) e, numa instalação trifásica, a fase a que está ligado. Os equipamentos que aquecem por ciclos (forno, máquinas de lavar…) contam 75 % da potência máxima, e as placas uma zona a 75 % — cada «+» é mais uma zona ligada. Se usa algum sempre no máximo, marque «uso-o à potência máxima».</p>
+        <p class="bloco-intro">Comece por um exemplo e ajuste: quantidades, potência máxima de cada equipamento (veja a chapa ou o manual) e, numa instalação trifásica, a fase a que está ligado. Os equipamentos que aquecem por ciclos (forno, máquinas de lavar…) contam 75 % da potência máxima, e, nas placas, a quantidade é o número de zonas ligadas ao mesmo tempo (até 4), cada uma a 75 % da sua potência. Se usa algum sempre no máximo, marque «uso-o à potência máxima».</p>
         <div class="presets" id="presets"></div>
         <div class="btn-toggle cats" id="tg-cats" role="group" aria-label="Categoria de equipamentos"></div>
         <div class="grelha-equip" id="grelha-equip"></div>
@@ -647,7 +653,7 @@
         <details class="faq-item"><summary><strong>Monofásica ou trifásica?</strong></summary><div class="faq-content"><p>Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada.</p></div></details>
         <details class="faq-item"><summary><strong>Quanto poupo a baixar um escalão?</strong></summary><div class="faq-content"><p>Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato.</p></div></details>
         <details class="faq-item"><summary><strong>Os painéis solares deixam-me baixar a potência?</strong></summary><div class="faq-content"><p>Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos.</p></div></details>
-        <details class="faq-item"><summary><strong>Como obtenho o ficheiro da E-Redes?</strong></summary><div class="faq-content"><p>No <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">Balcão Digital da E-Redes</a>, em «Consumos» → «Consultar consumos detalhados»: escolha o período, de preferência os últimos 12 meses, e exporte para Excel. É preciso ter contador inteligente ligado à rede.</p></div></details>
+        <details class="faq-item"><summary><strong>Como obtenho o ficheiro da E-Redes?</strong></summary><div class="faq-content"><p>No <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">Balcão Digital da E-Redes</a>, escolha o local de consumo e carregue em «Exportar excel». Para 12 meses, que é o recomendado, escolha «Escolher uma data até um ano», indique as datas e carregue em «Exportar»: quando o ficheiro estiver pronto, aparece uma notificação no Balcão com a ligação para o descarregar. Para um só mês, escolha-o primeiro em «Período» e use «Exportação diagrama atual»: o ficheiro descarrega-se logo. É preciso ter contador inteligente ligado à rede.</p></div></details>
         <details class="faq-item"><summary><strong>Os meus dados saem do computador?</strong></summary><div class="faq-content"><p>Não. O ficheiro é lido no seu browser e não é enviado para nenhum servidor. O link de partilha leva só as escolhas da página, nunca os consumos.</p></div></details>
     </section>
 </main>
@@ -693,8 +699,8 @@ const EQUIP = [
     { id: 'arca', cat: 'cozinha', nome: 'Arca congeladora', w: 250, ic: '❄️' },
     { id: 'micro', cat: 'cozinha', nome: 'Micro-ondas', w: 750, ic: '📡' },
     { id: 'forno', cat: 'cozinha', nome: 'Forno elétrico', w: 1500, f: 0.75, ic: '🔥' },
-    { id: 'placa', cat: 'cozinha', nome: 'Placa de indução (4 zonas)', w: 7200, zonas: 4, ic: '🍳' },
-    { id: 'vitro', cat: 'cozinha', nome: 'Placa vitrocerâmica (4 zonas)', w: 6000, zonas: 4, ic: '♨️' },
+    { id: 'placa', cat: 'cozinha', nome: 'Placa de indução', w: 7200, zonas: 4, ic: '🍳' },
+    { id: 'vitro', cat: 'cozinha', nome: 'Placa vitrocerâmica', w: 6000, zonas: 4, ic: '♨️' },
     { id: 'chaleira', cat: 'cozinha', nome: 'Chaleira', w: 2200, ic: '🫖' },
     { id: 'cafe', cat: 'cozinha', nome: 'Máquina de café', w: 1200, ic: '☕' },
     { id: 'torradeira', cat: 'cozinha', nome: 'Torradeira', w: 900, ic: '🍞' },
@@ -1538,18 +1544,20 @@ function desenharPresets() {
 }
 function desenharCats() {
     document.getElementById('tg-cats').innerHTML = CATEGORIAS.map(([id, nome]) => {
-        const n = EQUIP.filter(q => q.cat === id).reduce((s, q) => s + (E.qtd[q.id] || 0), 0);
+        const n = EQUIP.filter(q => q.cat === id).reduce((s, q) => s + (q.zonas ? (E.qtd[q.id] ? 1 : 0) : (E.qtd[q.id] || 0)), 0);
         return `<button type="button" data-v="${id}" class="${id === E.cat ? 'active' : ''}">${nome}${n ? ` (${n})` : ''}</button>`;
     }).join('');
 }
 function desenharEquip() {
     document.getElementById('grelha-equip').innerHTML = EQUIP.filter(q => q.cat === E.cat).map(q => {
         const n = E.qtd[q.id] || 0;
-        return `<div class="equip ${n ? 'ligado' : ''}">
+        return `<div class="equip ${n ? 'ligado' : ''}${q.zonas ? ' com-zonas' : ''}">
             <div class="topo"><span class="icone" aria-hidden="true">${q.ic}</span><span class="nome">${q.nome}</span></div>
-            <div class="linha"><label><input class="w" type="number" min="0" step="10" value="${E.w[q.id]}" data-w="${q.id}" aria-label="Potência máxima de ${q.nome}, em W"> W máx.</label>
-                <span class="stepper"><button type="button" data-menos="${q.id}" aria-label="Menos ${q.nome}">−</button><span aria-label="Quantidade">${n}</span><button type="button" data-mais="${q.id}" aria-label="Mais ${q.nome}">+</button></span></div>
-            ${q.zonas || q.f ? `<div class="obs">conta ${fmt(wEfetivo(q), 0)} W${q.zonas ? ' por zona ligada' : ''}${E.max[q.id] ? ' (à potência máxima)' : ` (75 % da potência máxima${q.zonas ? ' de uma zona' : ''})`}</div>
+            <div class="linha"><label><input class="w" type="number" min="0" step="10" value="${E.w[q.id]}" data-w="${q.id}" aria-label="Potência máxima de ${q.nome}${q.zonas ? ' (a placa inteira)' : ''}, em W"> W máx.${q.zonas ? ' da placa' : ''}</label>
+                <span class="stepper${q.zonas ? ' zonas' : ''}"><button type="button" data-menos="${q.id}" aria-label="${q.zonas ? 'Menos uma zona de' : 'Menos'} ${q.nome}">−</button><span aria-label="${q.zonas ? 'Zonas ligadas' : 'Quantidade'}">${q.zonas ? `${n} de ${q.zonas} zonas` : n}</span><button type="button" data-mais="${q.id}" aria-label="${q.zonas ? 'Mais uma zona de' : 'Mais'} ${q.nome}">+</button></span></div>
+            ${q.zonas ? `<div class="obs">cada zona ligada conta ${fmt(wEfetivo(q), 0)} W${E.max[q.id] ? ` (à potência máxima): a potência da placa a dividir pelas ${q.zonas} zonas` : `: 75 % de ${fmt(E.w[q.id] / q.zonas, 0)} W, a potência da placa a dividir pelas ${q.zonas} zonas`}</div>`
+                : q.f ? `<div class="obs">conta ${fmt(wEfetivo(q), 0)} W${E.max[q.id] ? ' (à potência máxima)' : ' (75 % da potência máxima)'}</div>` : ''}
+            ${q.zonas || q.f ? `
                 <label class="obs"><input type="checkbox" data-max="${q.id}" ${E.max[q.id] ? 'checked' : ''}> uso-o à potência máxima</label>` : ''}
             ${E.tri ? `<div class="linha"><span class="obs">Fase</span><select class="fase" data-fase="${q.id}" aria-label="Fase de ${q.nome}">${[1, 2, 3].map(f => `<option value="${f}" ${E.fase[q.id] === f ? 'selected' : ''}>L${f}</option>`).join('')}</select></div>` : ''}
         </div>`;
@@ -1999,7 +2007,7 @@ async function exportarExcel() {
         const dias = [['Dia', 'Hora do maior quarto de hora', 'Maior média de 15 min (kVA)']].concat(A.picoDia.map(p => [dataHora(p.t).slice(0, 10), dataHora(p.t).slice(11), +p.kva.toFixed(3)]));
         XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(dias), 'Picos por dia');
     }
-    const eq = [['Equipamento', 'Quantidade', 'Potência máxima (W)', 'Conta (W)', 'Fase']].concat(EQUIP.filter(q => E.qtd[q.id]).map(q => [q.nome, E.qtd[q.id], E.w[q.id], +(E.qtd[q.id] * wEfetivo(q)).toFixed(0), E.tri ? 'L' + E.fase[q.id] : '']));
+    const eq = [['Equipamento', 'Quantidade', 'Potência máxima (W)', 'Conta (W)', 'Fase']].concat(EQUIP.filter(q => E.qtd[q.id]).map(q => [q.zonas ? `${q.nome} (zonas ligadas)` : q.nome, E.qtd[q.id], E.w[q.id], +(E.qtd[q.id] * wEfetivo(q)).toFixed(0), E.tri ? 'L' + E.fase[q.id] : '']));
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(eq), 'Equipamentos');
     XLSX.writeFile(wb, 'simulador-potencia.xlsx');
 }
