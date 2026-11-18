@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Quem marca o preço da eletricidade? Gás, água, sol e vento no OMIE | Tiago Felícia</title>
+    <meta name="description" content="Que tecnologias estão ao preço do mercado diário (OMIE) em Portugal e em Espanha, hora a hora desde 2018: hídrica, bombagem, gás natural, carvão, nuclear, solar e eólica. Ano a ano, mês a mês, nas horas mais caras e mais baratas e por hora do dia." />
+    <meta name="keywords" content="quem marca o preço da eletricidade, preço marginal, OMIE, MIBEL, mercado diário, gás natural marca o preço, hídrica, tecnologia marginal, Portugal, Espanha, Tiago Felícia" />
+    <meta name="author" content="Tiago Felícia" />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/quem-marca-o-preco" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/quem-marca-o-preco" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/quem-marca-o-preco" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Quem marca o preço da eletricidade?" />
+    <meta property="og:description" content="Gás, água, sol ou vento: que tecnologias estão ao preço do mercado diário em Portugal e em Espanha, desde 2018, nas horas caras e nas baratas. Dados da OMIE." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/quem-marca-o-preco" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Quem marca o preço da eletricidade — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Tiago Felícia" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+    <meta name="twitter:title" content="Quem marca o preço da eletricidade?" />
+    <meta name="twitter:description" content="Gás, água, sol ou vento: que tecnologias estão ao preço do mercado diário em Portugal e em Espanha, desde 2018. Dados da OMIE." />
+    <meta name="twitter:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+        gtag('consent', 'update', { 'analytics_storage': 'granted' });
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Tecnologias ao preço do mercado diário do MIBEL (OMIE), em Portugal e em Espanha",
+      "description": "Em cada período do mercado diário do MIBEL (uma hora até 30/09/2025, um quarto de hora desde 01/10/2025), desde janeiro de 2018, as unidades com ofertas casadas exatamente ao preço de Portugal e ao de Espanha e o grupo de tecnologia de cada uma (hídrica, bombagem, gás natural, carvão, nuclear, solar, eólica, cogeração, baterias, comercializadores e consumidores, interligações), com totais por ano e por mês, nas horas mais caras e mais baratas e por hora do dia. Calculado a partir das curvas do mercado diário publicadas pela OMIE.",
+      "url": "https://www.tiagofelicia.pt/quem-marca-o-preco",
+      "inLanguage": "pt-PT",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "keywords": ["preço marginal", "mercado diário", "OMIE", "MIBEL", "tecnologia marginal", "gás natural", "hídrica", "Portugal", "Espanha"],
+      "spatialCoverage": { "@type": "Place", "name": "Península Ibérica (Portugal e Espanha)" },
+      "temporalCoverage": "2018-01-01/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Horas com cada tecnologia ao preço do mercado diário", "unitText": "%" },
+        { "@type": "PropertyValue", "name": "Parte das horas do lado da venda e do lado da compra", "unitText": "%" },
+        { "@type": "PropertyValue", "name": "Preço médio do mercado diário quando cada tecnologia está ao preço", "unitText": "€/MWh" }
+      ],
+      "isBasedOn": [
+        { "@type": "CreativeWork", "name": "OMIE — Curvas agregadas de oferta e procura do mercado diário, com as unidades de oferta (curva_pbc_uof)", "url": "https://www.omie.es/es/file-access-list" },
+        { "@type": "CreativeWork", "name": "OMIE — Lista de unidades ofertantes", "url": "https://www.omie.es/es/listado-de-agentes" }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Tecnologias ao preço, período a período (um ficheiro por mês)", "contentUrl": "https://dados.tiagofelicia.pt/data/omie/tecnologia-marginal/" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Classificação das unidades de oferta", "contentUrl": "https://dados.tiagofelicia.pt/data/omie/tecnologia-marginal/unidades.csv" },
+        { "@type": "DataDownload", "encodingFormat": "application/json", "name": "Totais por ano e por mês", "contentUrl": "https://dados.tiagofelicia.pt/data/omie/tecnologia-marginal/resumo.json" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Quem marca o preço?", "item": "https://www.tiagofelicia.pt/quem-marca-o-preco" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que mostra esta página?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Em cada hora do mercado diário do MIBEL desde 2018 (e em cada quarto de hora desde 1 de outubro de 2025), que tecnologias tinham ofertas aceites exatamente ao preço desse período, em Portugal e em Espanha: a hídrica, a bombagem, o gás natural, o carvão, a nuclear, a solar, a eólica, a cogeração, as baterias, os comercializadores e consumidores e as interligações, separadas entre ofertas de venda e ofertas de compra. Pode ver os últimos 12 meses, um ano ou um mês; a evolução ano a ano e mês a mês; o que muda nas horas mais caras e nas mais baratas; cada hora do dia; e o preço médio das horas em que cada tecnologia esteve ao preço."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que quer dizer «marcar o preço» no mercado diário?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Na véspera, cada central oferece a sua energia para cada hora do dia seguinte a um preço, e cada comprador (comercializadores, grandes consumidores, centrais de bombagem) diz quanto quer comprar e até que preço. O mercado ordena as ofertas de venda da mais barata para a mais cara e as de compra da mais cara para a mais barata, e o preço fica onde as duas curvas se cruzam. Todas as ofertas aceites recebem (ou pagam) esse mesmo preço, o preço marginal. A oferta que está nesse cruzamento é a que «marca» o preço: se ela não existisse, o preço seria outro. Esta página procura, em cada período, as ofertas aceites com preço igual ao preço marginal."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Então não é o gás que marca o preço da eletricidade?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Na maior parte das horas, a oferta que está exatamente ao preço não é a de uma central a gás: é sobretudo a de uma barragem, de uma central de bombagem ou de um comprador. Mas isso não quer dizer que o gás não pese no preço. As barragens com albufeira e as centrais de bombagem podem guardar a água para outra hora. Por isso oferecem a água pelo que esperam ganhar com ela mais tarde, e esse valor depende do preço a que as centrais a gás estariam dispostas a produzir. Quando o gás encarece, as ofertas da água acompanham-no. Veja também o bloco «A que preço está cada tecnologia»: o gás aparece sobretudo nas horas caras."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que aparecem ofertas de compra ao preço?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O preço também pode ficar onde um comprador deixa de querer comprar. Os comercializadores e os consumidores oferecem comprar até um certo preço, e as centrais de bombagem e as baterias só compram eletricidade para a guardar quando ela está barata: se o preço subir acima do que oferecem, deixam de comprar. Nas horas de muito sol e vento, é muitas vezes uma oferta de bombagem (ou de baterias) a comprar que fica exatamente ao preço. Nos gráficos a 100 %, as ofertas de venda (centrais, importações) ficam em baixo e as de compra (bombagem a bombear, baterias a carregar, comercializadores e consumidores, exportações) em cima, com uma linha a separar os dois lados. As ligações entre as zonas de Portugal e de Espanha aparecem dos dois lados: do lado da venda quando a energia entra na zona, do lado da compra quando sai."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que são as horas sem nenhuma oferta ao preço exato?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Desde 2014 o mercado diário do MIBEL é calculado em conjunto com o resto da Europa pelo mesmo algoritmo. Numa parte das horas, o preço não coincide com o de nenhuma oferta aceite do MIBEL: pode ter vindo do acoplamento com a França, de uma oferta com condições (as ofertas complexas, que só são aceites se a central receber o suficiente ao longo do dia) ou ter ficado entre o preço de dois blocos. Essas horas aparecem como «Nenhuma oferta ao preço exato»."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual é a diferença entre «Repartida» e «Presença»?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Numa hora podem estar várias tecnologias exatamente ao preço: uma barragem e uma central de bombagem, por exemplo. Com Repartida, essa hora divide-se em partes iguais por elas, e as partes de todas as tecnologias somam 100 %. Com Presença, a hora conta inteira para cada uma: é a parte das horas em que cada tecnologia esteve ao preço, e a soma passa de 100 %."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que os dados só chegam até há três meses?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A OMIE publica o preço de cada hora no próprio dia, mas as ofertas de cada central só são públicas 90 dias depois do dia de mercado. Até lá, as curvas de oferta e de procura saem sem o nome de quem fez cada oferta, e não dá para saber de que tecnologia é. A página atualiza-se todos os dias, com o dia de mercado de há 90 dias."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "De onde vêm os dados e como os posso descarregar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Da OMIE, o operador do mercado ibérico: as curvas do mercado diário com o código de cada unidade de oferta, os nomes das unidades nas ofertas e a lista de unidades com a tecnologia de cada uma. As centrais que já fecharam são identificadas pelo nome nas ofertas (por exemplo, «C.T. SINES 4» é carvão). Todos os valores estão em dados.tiagofelicia.pt, sob licença CC BY 4.0: um ficheiro por mês com as unidades e as tecnologias ao preço em cada período, a classificação de cada unidade e os totais por ano e por mês."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header h1 .h1-sub { font-size: 0.6em; font-weight: 400; color: #5c636a; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #5c636a; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 10px 0 0 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos --- */
+        .controlos { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .controlos-linha { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; }
+        .grupo-ctrl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .ctrl-label { font-size: 0.75em; color: #5c636a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.88em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .controlos select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.9em; background: #fff; color: #2c3e50; max-width: 100%; }
+        .controlos select:disabled { opacity: 0.5; }
+        .btn-nav { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 10px; cursor: pointer; color: #475569; font-size: 0.9em; }
+        .btn-nav:hover:not(:disabled) { background: #f1f5f9; }
+        .btn-nav:disabled { opacity: 0.4; cursor: default; }
+        #btn-partilhar { background: #fff; border: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #15803d; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e, abaixo de 768px,
+           position: sticky !important); um <nav> dentro do <main> apanha-as — por isso são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-box h3 { font-size: 1em; color: #2c3e50; margin: 18px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #5c636a; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 440px; }
+        #grafico-quartis { height: 300px; }
+        #grafico-precos { height: 460px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #5c636a; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .nota-bloco { font-size: 0.8em; color: #5c636a; margin: 6px 0 0; line-height: 1.5; }
+
+        .resumo-frase { font-size: 1em; color: #2c3e50; line-height: 1.6; margin: 0 0 14px 0; }
+        #kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 10px 0 6px 0; }
+        @media (max-width: 1000px) { #kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-card.destaque { border-color: #2563eb; border-width: 2px; padding: 11px 13px; }
+        .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.3em; font-weight: 700; color: #212529; line-height: 1.25; font-variant-numeric: tabular-nums; }
+        .kpi-unid { font-size: 0.62em; font-weight: 600; color: #5c636a; }
+        .kpi-sub { font-size: 0.78em; color: #5c636a; margin-top: 5px; line-height: 1.45; }
+        .kpi-cor { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
+
+        .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
+        .tabela-tm { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-tm caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-tm th, .tabela-tm td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-tm thead th { background: #f1f3f5; font-weight: 600; }
+        .tabela-tm th.esq, .tabela-tm td.esq { text-align: left; }
+        .tabela-tm td.vazio { color: #94a3b8; }
+        .tabela-tm tr.destaque td { background: #eef4ff; font-weight: 600; }
+        .tabela-tm tfoot td { font-weight: 600; background: #f8fafc; }
+        .tabela-tm tr.subtotal td { font-weight: 600; background: #f1f5f9; border-top: 2px solid #94a3b8; }
+        .barra { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; vertical-align: middle; margin-right: 8px; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box ul { margin: 0 0 8px 0; padding-left: 20px; }
+        .estado-carregamento { text-align: center; color: #5c636a; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; overflow-wrap: anywhere; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 380px; }
+            #grafico-quartis { height: 280px; }
+            #grafico-precos { height: 420px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.82em; }
+            .controlos select { font-size: 0.85em; }
+            .tabela-tm th, .tabela-tm td { padding: 5px 7px; }
+            .barra { display: none; }
+        }
+        /* No telemóvel, o período e as duas setas numa linha só */
+        @media (max-width: 520px) {
+            .grupo-periodo { flex-wrap: nowrap; gap: 6px; }
+            .grupo-periodo select { width: 150px; }
+        }
+
+        /* --- Modo escuro --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .grafico-box h3,
+        [data-theme="dark"] .kpi-value, [data-theme="dark"] .cta-simulador h2, [data-theme="dark"] .resumo-frase { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .painel-header h1 .h1-sub, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub, [data-theme="dark"] .kpi-unid,
+        [data-theme="dark"] .ctrl-label, [data-theme="dark"] .nota-bloco { color: #94a3b8; }
+        [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .kpi-card.destaque { border-color: #60a5fa; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .controlos select, [data-theme="dark"] .btn-nav, [data-theme="dark"] #btn-partilhar { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .btn-nav:hover:not(:disabled), [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-tm { background: #1e293b; }
+        [data-theme="dark"] .tabela-tm caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-tm th, [data-theme="dark"] .tabela-tm td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-tm thead th { background: #0f172a; }
+        [data-theme="dark"] .tabela-tm td.vazio { color: #64748b; }
+        [data-theme="dark"] .tabela-tm tr.destaque td { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-tm tfoot td { background: #16202e; }
+        [data-theme="dark"] .tabela-tm tr.subtotal td { background: #0f172a; border-top-color: #64748b; }
+
+        @page { size: A4 portrait; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav, .controlos .grupo-acoes,
+            .toast-feedback, .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li>Mercados</li>
+        <li aria-current="page">Quem marca o preço?</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <h1>Quem marca o preço da eletricidade? <span class="h1-sub">(mercado diário do MIBEL)</span></h1>
+        <p>Em cada hora do mercado diário (em cada quarto de hora desde outubro de 2025), que tecnologias tinham ofertas aceites <strong>exatamente ao preço</strong>, em Portugal e em Espanha, desde 2018. Fonte: <strong>OMIE</strong>.</p>
+        <p class="badge-global" id="badge"></p>
+    </div>
+
+    <div class="controlos" aria-label="Escolhas">
+        <div class="controlos-linha">
+            <div class="grupo-ctrl">
+                <span class="ctrl-label">País</span>
+                <div class="btn-toggle" id="ctrl-pais" role="group" aria-label="País">
+                    <button type="button" data-v="PT" class="active">Portugal</button>
+                    <button type="button" data-v="ES">Espanha</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl">
+                <span class="ctrl-label">Contar</span>
+                <div class="btn-toggle" id="ctrl-medida" role="group" aria-label="Como contar">
+                    <button type="button" data-v="rep" class="active" title="Cada hora divide-se em partes iguais pelas tecnologias que estão ao preço: as partes somam 100 %">Repartida</button>
+                    <button type="button" data-v="pres" title="Em que parte das horas cada tecnologia esteve ao preço; uma hora com duas tecnologias conta para as duas, por isso a soma passa de 100 %">Presença</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl grupo-periodo">
+                <label class="ctrl-label" for="sel-periodo">Período</label>
+                <button type="button" class="btn-nav" id="per-ant" title="Período anterior" aria-label="Período anterior">&#10094;</button>
+                <select id="sel-periodo"></select>
+                <button type="button" class="btn-nav" id="per-seg" title="Período seguinte" aria-label="Período seguinte">&#10095;</button>
+            </div>
+            <div class="grupo-ctrl grupo-acoes">
+                <button type="button" id="btn-partilhar" title="Copiar ou partilhar o link desta vista"><span aria-hidden="true">📤</span> Partilhar</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-resumo" class="mini-nav-chip">📋 Resumo</a>
+        <a href="#bloco-anos" class="mini-nav-chip">📊 Ano a ano</a>
+        <a href="#bloco-quartis" class="mini-nav-chip">💶 Horas caras e baratas</a>
+        <a href="#bloco-horas" class="mini-nav-chip">🕒 Hora do dia</a>
+        <a href="#bloco-precos" class="mini-nav-chip">🏷️ Preço por tecnologia</a>
+        <a href="#bloco-metodo" class="mini-nav-chip">🔎 Como se conta</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados…</div>
+
+    <div id="conteudo" hidden>
+        <!-- ====================== RESUMO ====================== -->
+        <div class="grafico-box" id="bloco-resumo">
+            <h2 id="titulo-resumo">Resumo</h2>
+            <p class="resumo-frase" id="resumo-frase"></p>
+            <div id="kpis"></div>
+        </div>
+
+        <!-- ====================== ANO A ANO / MÊS A MÊS ====================== -->
+        <div class="grafico-box" id="bloco-anos">
+            <h2>Ano a ano</h2>
+            <p class="grafico-intro" id="anos-intro"></p>
+            <div id="grafico-anos" class="grafico"></div>
+            <h3 id="titulo-meses">Mês a mês</h3>
+            <div id="grafico-meses" class="grafico"></div>
+            <div class="tabela-box" id="tabela-anos"></div>
+        </div>
+
+        <!-- ====================== HORAS CARAS E BARATAS ====================== -->
+        <div class="grafico-box" id="bloco-quartis">
+            <h2>Nas horas mais caras e nas mais baratas</h2>
+            <p class="grafico-intro" id="quartis-intro"></p>
+            <div id="grafico-quartis" class="grafico"></div>
+        </div>
+
+        <!-- ====================== HORA DO DIA ====================== -->
+        <div class="grafico-box" id="bloco-horas">
+            <h2>Hora a hora</h2>
+            <p class="grafico-intro" id="horas-intro"></p>
+            <div id="grafico-horas" class="grafico"></div>
+        </div>
+
+        <!-- ====================== PREÇO POR TECNOLOGIA ====================== -->
+        <div class="grafico-box" id="bloco-precos">
+            <h2>A que preço está cada tecnologia</h2>
+            <p class="grafico-intro" id="precos-intro"></p>
+            <div id="grafico-precos" class="grafico"></div>
+            <div class="tabela-box" id="tabela-periodo"></div>
+        </div>
+
+        <!-- ====================== COMO SE CONTA ====================== -->
+        <div class="grafico-box" id="bloco-metodo">
+            <h2>Como se conta (e o que não quer dizer)</h2>
+            <div class="metodo-box">
+                <p>No mercado diário, cada central oferece energia a um preço e cada comprador oferece um preço pela que quer comprar. O mercado ordena as ofertas e encontra, para cada hora, o preço a que a procura e a oferta se cruzam: o <strong>preço marginal</strong>, que todas as ofertas aceites recebem ou pagam. Para cada hora (cada quarto de hora desde 01/10/2025), esta página procura as ofertas aceites cujo preço é <strong>igual</strong> ao preço desse período, em Portugal e em Espanha, e arruma as centrais e os compradores por tecnologia.</p>
+                <ul>
+                    <li><strong>Estar ao preço não é o mesmo que marcar o preço.</strong> Numa hora podem estar várias tecnologias exatamente ao preço. Com «Repartida», a hora divide-se em partes iguais por elas; com «Presença», conta para todas.</li>
+                    <li><strong>A água oferece-se pelo que vale noutra hora.</strong> As barragens com albufeira e a bombagem guardam a água para as horas em que o preço é mais alto, e é por isso que oferecem a preços próximos dos do gás. Quando a hídrica está ao preço, o gás continua a pesar nele.</li>
+                    <li><strong>Quem compra também conta.</strong> O preço pode ficar onde um comprador deixa de querer comprar: um comercializador, um consumidor, uma central de bombagem que só bombeia abaixo de um certo preço, uma bateria a carregar ou uma exportação. Nos gráficos a 100 %, as ofertas de venda ficam em baixo, as de compra em cima, e uma linha separa os dois lados.</li>
+                    <li><strong>O preço pode vir de fora.</strong> Desde 2014 o mercado diário é calculado em conjunto com o resto da Europa. Numa parte das horas nenhuma oferta do MIBEL tem exatamente o preço: o preço veio do acoplamento europeu, de uma oferta com condições (as ofertas complexas) ou ficou entre dois blocos. Essas horas aparecem como «Nenhuma oferta ao preço exato».</li>
+                    <li><strong>Três meses de atraso.</strong> A OMIE só publica as ofertas de cada central 90 dias depois do dia de mercado. Por isso não há «quem marcou o preço ontem».</li>
+                    <li><strong>Classificação das centrais.</strong> Cada unidade de oferta é classificada pela tecnologia que tem na lista de unidades da OMIE. As que já não estão lá (as centrais a carvão que fecharam, por exemplo) são classificadas pelo nome nas ofertas («C.T. SINES 4» é carvão) ou pelo tipo de código; as vendas dos representantes de pequenos produtores sem tecnologia conhecida ficam em «Produção sem tecnologia identificada».</li>
+                </ul>
+                <p id="metodo-dados"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>E o preço de hoje e de amanhã?</h2>
+        <p>Esta página olha para trás. Para os preços do mercado diário de hoje e de amanhã, e para o que isso dá na sua fatura com um tarifário indexado, use estas páginas.</p>
+        <div class="botoes">
+            <a href="omie-diario" class="button-link">📅 OMIE Diário</a>
+            <a href="omie" class="button-link">📈 OMIE Histórico</a>
+            <a href="balanco-omie" class="button-link">⚡ Balanço Energético Diário</a>
+            <a href="eletricidade-tiagofelicia" class="button-link">🧮 Simulador de eletricidade</a>
+        </div>
+    </div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/quem-marca-o-preco</p></div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que mostra esta página?</strong></summary>
+            <div class="faq-content">
+                <p>Em cada hora do mercado diário do MIBEL desde 2018 (e em cada quarto de hora desde 1 de outubro de 2025), que tecnologias tinham ofertas aceites <strong>exatamente ao preço</strong> desse período, em Portugal e em Espanha: a hídrica, a bombagem, o gás natural, o carvão, a nuclear, a solar, a eólica, a cogeração, as baterias, os comercializadores e consumidores e as interligações, separadas entre ofertas de venda e ofertas de compra.</p><p>Pode ver os últimos 12 meses, um ano ou um mês; a evolução ano a ano e mês a mês; o que muda nas horas mais caras e nas mais baratas; cada hora do dia; e o preço médio das horas em que cada tecnologia esteve ao preço.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que quer dizer «marcar o preço» no mercado diário?</strong></summary>
+            <div class="faq-content">
+                <p>Na véspera, cada central oferece a sua energia para cada hora do dia seguinte a um preço, e cada comprador (comercializadores, grandes consumidores, centrais de bombagem) diz quanto quer comprar e até que preço. O mercado ordena as ofertas de venda da mais barata para a mais cara e as de compra da mais cara para a mais barata, e o preço fica onde as duas curvas se cruzam. Todas as ofertas aceites recebem (ou pagam) esse mesmo preço, o <strong>preço marginal</strong>.</p><p>A oferta que está nesse cruzamento é a que «marca» o preço: se ela não existisse, o preço seria outro. Esta página procura, em cada período, as ofertas aceites com preço igual ao preço marginal.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Então não é o gás que marca o preço da eletricidade?</strong></summary>
+            <div class="faq-content">
+                <p>Na maior parte das horas, a oferta que está exatamente ao preço não é a de uma central a gás: é sobretudo a de uma barragem, de uma central de bombagem ou de um comprador. Mas isso não quer dizer que o gás não pese no preço.</p><p>As barragens com albufeira e as centrais de bombagem podem guardar a água para outra hora. Por isso oferecem a água pelo que esperam ganhar com ela mais tarde, e esse valor depende do preço a que as centrais a gás estariam dispostas a produzir. Quando o gás encarece, as ofertas da água acompanham-no. Veja também o bloco «A que preço está cada tecnologia»: o gás aparece sobretudo nas horas caras.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que aparecem ofertas de compra ao preço?</strong></summary>
+            <div class="faq-content">
+                <p>O preço também pode ficar onde um comprador deixa de querer comprar. Os comercializadores e os consumidores oferecem comprar até um certo preço, e as centrais de bombagem e as baterias só compram eletricidade para a guardar quando ela está barata: se o preço subir acima do que oferecem, deixam de comprar. Nas horas de muito sol e vento, é muitas vezes uma oferta de bombagem (ou de baterias) a comprar que fica exatamente ao preço.</p><p>Nos gráficos a 100 %, as ofertas de venda (centrais, importações) ficam em baixo e as de compra (bombagem a bombear, baterias a carregar, comercializadores e consumidores, exportações) em cima, com uma linha a separar os dois lados. As ligações entre as zonas de Portugal e de Espanha aparecem dos dois lados: do lado da venda quando a energia entra na zona, do lado da compra quando sai.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que são as horas sem nenhuma oferta ao preço exato?</strong></summary>
+            <div class="faq-content">
+                <p>Desde 2014 o mercado diário do MIBEL é calculado em conjunto com o resto da Europa pelo mesmo algoritmo. Numa parte das horas, o preço não coincide com o de nenhuma oferta aceite do MIBEL: pode ter vindo do acoplamento com a França, de uma oferta com condições (as ofertas complexas, que só são aceites se a central receber o suficiente ao longo do dia) ou ter ficado entre o preço de dois blocos. Essas horas aparecem como «Nenhuma oferta ao preço exato».</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Qual é a diferença entre «Repartida» e «Presença»?</strong></summary>
+            <div class="faq-content">
+                <p>Numa hora podem estar várias tecnologias exatamente ao preço: uma barragem e uma central de bombagem, por exemplo. Com <strong>Repartida</strong>, essa hora divide-se em partes iguais por elas, e as partes de todas as tecnologias somam 100 %. Com <strong>Presença</strong>, a hora conta inteira para cada uma: é a parte das horas em que cada tecnologia esteve ao preço, e a soma passa de 100 %.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que os dados só chegam até há três meses?</strong></summary>
+            <div class="faq-content">
+                <p>A OMIE publica o preço de cada hora no próprio dia, mas as ofertas de cada central só são públicas 90 dias depois do dia de mercado. Até lá, as curvas de oferta e de procura saem sem o nome de quem fez cada oferta, e não dá para saber de que tecnologia é. A página atualiza-se todos os dias, com o dia de mercado de há 90 dias.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm os dados e como os posso descarregar?</strong></summary>
+            <div class="faq-content">
+                <p>Da <strong>OMIE</strong>, o operador do mercado ibérico: as curvas do mercado diário com o código de cada unidade de oferta, os nomes das unidades nas ofertas e a lista de unidades com a tecnologia de cada uma. As centrais que já fecharam são identificadas pelo nome nas ofertas (por exemplo, «C.T. SINES 4» é carvão).</p><p>Todos os valores estão em <a href="https://dados.tiagofelicia.pt/data/omie/tecnologia-marginal/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, sob licença <a href="https://creativecommons.org/licenses/by/4.0/deed.pt" target="_blank" rel="noopener">CC BY 4.0</a>: um ficheiro por mês com as unidades e as tecnologias ao preço em cada período, a <a href="https://dados.tiagofelicia.pt/data/omie/tecnologia-marginal/unidades.csv" target="_blank" rel="noopener">classificação de cada unidade</a> e os <a href="https://dados.tiagofelicia.pt/data/omie/tecnologia-marginal/resumo.json" target="_blank" rel="noopener">totais por ano e por mês</a>.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    try {
+        Highcharts.setOptions({ lang: {
+            decimalPoint: ',', thousandsSep: ' ',
+            contextButtonTitle: 'Menu do gráfico', viewFullscreen: 'Ver em ecrã inteiro', exitFullscreen: 'Sair do ecrã inteiro',
+            printChart: 'Imprimir', downloadPNG: 'Descarregar PNG', downloadJPEG: 'Descarregar JPEG', downloadPDF: 'Descarregar PDF',
+            downloadSVG: 'Descarregar SVG', downloadCSV: 'Descarregar CSV', downloadXLS: 'Descarregar XLS', viewData: 'Ver a tabela de dados',
+            hideData: 'Esconder a tabela de dados'
+        } });
+    } catch (_) {}
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    const PASTA = 'omie/tecnologia-marginal/';
+    const URL_DADOS = 'https://dados.tiagofelicia.pt/data/omie/tecnologia-marginal/';
+
+    // Cores por grupo [tema claro, tema escuro]: as da hídrica, gás, carvão, solar, eólica, bombagem, baterias e
+    // importação são as dos balanços energéticos do site; as outras escolheram-se para não se confundirem com estas.
+    const COR = {
+        HID: ['#9DC3E6', '#9DC3E6'], BOMP: ['#1F4E79', '#4F8FCB'], BOMC: ['#2E75B6', '#6FA8DC'],
+        GAS: ['#808080', '#A6A6A6'], CAR: ['#C00000', '#E05252'], NUC: ['#7030A0', '#B07FD6'],
+        SOL: ['#E6AC00', '#FFC000'], EOL: ['#70AD47', '#8FCB65'], TER: ['#B4A284', '#CDBFA6'],
+        REN: ['#2F6B2F', '#5FA35F'], ARM: ['#D63384', '#E879B0'], REP: ['#7FA9A1', '#8FB8B0'],
+        INT: ['#ED7D31', '#F4A26B'], OUT: ['#4B5563', '#9CA3AF'],
+        // do lado da compra
+        ARMC: ['#F2A7CB', '#9D2A63'], PRO: ['#8C564B', '#C08A7E'], INTC: ['#F8C49A', '#A8551F'], OUTC: ['#A8A29E', '#78716C'],
+        SEM: ['#E4E4E7', '#3F3F46']
+    };
+    // Nas linhas (contagem «Presença») as cores claras não se viam contra o fundo: estes tons mais escuros (no tema claro)
+    // e mais claros (no escuro) passam os 3:1
+    const COR_LINHA = {
+        HID: ['#4A90C2', '#9DC3E6'], SOL: ['#B07A00', '#FFC000'], TER: ['#8A7556', '#CDBFA6'], REP: ['#4F7F77', '#8FB8B0'],
+        INT: ['#C2581B', '#F4A26B'], SEM: ['#8E8E96', '#8A8A94'], ARMC: ['#C2347A', '#E879B0'],
+        INTC: ['#B5651D', '#F8C49A'], OUTC: ['#78716C', '#A8A29E']
+    };
+    // Os três grupos de horas do bloco «horas caras e baratas», na presença
+    const COR_FAIXA = { baratas: ['#1baf7a', '#2fc58e'], todas: ['#64748b', '#94a3b8'], caras: ['#c2410c', '#f08a5d'] };
+    const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    // Na presença e no preço por tecnologia só entram os grupos com pelo menos isto das horas (o resto é ruído)
+    const MIN_PRES = 1;
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const menos = s => s.replace('-', '−');
+    // Espaço que não quebra entre o número e a unidade («29 %» nunca fica partido em duas linhas)
+    const NB = ' ';
+    const fmtPct = v => vazio(v) ? '--' : menos(_nf1.format(v)) + NB + '%';
+    const fmtPctCurto = v => vazio(v) ? '--' : (v >= 10 ? _nf0.format(v) : menos(_nf1.format(v))) + NB + '%';
+    const fmtEur = v => vazio(v) ? '--' : menos(_nf2.format(v)) + NB + '€/MWh';
+    const fmtEur0 = v => vazio(v) ? '--' : menos(_nf0.format(v)) + NB + '€/MWh';
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    function fmtData(iso) { const [a, m, d] = iso.split('-'); return `${d}/${m}/${a}`; }
+    const nomeGrupo = g => (R && R.nomes[g]) || g;
+    // Para as frases: [com artigo, com «de» contraído, género/número do particípio]
+    const FRASE = {
+        HID: ['a hídrica', 'da hídrica', 'a'], BOMP: ['a bombagem a produzir', 'da bombagem a produzir', 'a'],
+        BOMC: ['a bombagem a consumir', 'da bombagem a consumir', 'a'], GAS: ['o gás natural', 'do gás natural', 'o'],
+        CAR: ['o carvão', 'do carvão', 'o'], NUC: ['a nuclear', 'da nuclear', 'a'], SOL: ['a solar', 'da solar', 'a'],
+        EOL: ['a eólica', 'da eólica', 'a'], TER: ['a cogeração e outras térmicas', 'da cogeração e outras térmicas', 'a'],
+        REN: ['a biomassa e outras renováveis', 'da biomassa e outras renováveis', 'a'],
+        ARM: ['as baterias a descarregar', 'das baterias a descarregar', 'as'], ARMC: ['as baterias a carregar', 'das baterias a carregar', 'as'],
+        REP: ['a produção sem tecnologia identificada', 'da produção sem tecnologia identificada', 'a'],
+        PRO: ['os comercializadores e consumidores', 'dos comercializadores e consumidores', 'os'],
+        INT: ['as interligações (venda)', 'das interligações (venda)', 'as'], INTC: ['as interligações (compra)', 'das interligações (compra)', 'as'],
+        OUT: ['as outras ofertas de venda', 'das outras ofertas de venda', 'as'], OUTC: ['as outras ofertas de compra', 'das outras ofertas de compra', 'as']
+    };
+    const negrito = (txt) => {
+        // o artigo fica de fora do negrito: «a <strong>hídrica</strong>»
+        const m = txt.match(/^(o|a|os|as|do|da|dos|das) (.*)$/);
+        return m ? m[1] + ' <strong>' + esc(m[2]) + '</strong>' : '<strong>' + esc(txt) + '</strong>';
+    };
+    const comArtigo = g => negrito((FRASE[g] || ['', nomeGrupo(g)])[0] || nomeGrupo(g));
+    const deGrupo = g => negrito((FRASE[g] || ['', nomeGrupo(g)])[1]);
+    const seguida = g => ({ a: 'seguida', o: 'seguido', as: 'seguidas', os: 'seguidos' })[(FRASE[g] || [])[2]] || 'seguida';
+    // O lado de cada grupo: V venda, C compra ('' = nenhuma oferta ao preço)
+    const ladoDe = g => (R && R.lados && R.lados[g]) || '';
+    const NOME_SEP = 'Separação venda / compra';
+    // A parte repartida de um lado (a soma dos grupos desse lado), em % das horas do bloco
+    const pctLadoRep = (b, lado) => b && b.h ? 100 * Object.keys(b.rep).filter(g => ladoDe(g) === lado).reduce((t, g) => t + b.rep[g], 0) / b.h : null;
+    // As horas com pelo menos uma oferta desse lado ao preço
+    const pctLadoPres = (b, lado) => b && b.h ? 100 * (lado === 'V' ? b.pv : b.pc) / b.h : null;
+    const pctLado = (b, lado, m) => m === 'rep' ? pctLadoRep(b, lado) : pctLadoPres(b, lado);
+    // A linha que separa a venda (em baixo) da compra (em cima), nos gráficos a 100 %
+    function serieSeparacao(valores, c) {
+        return { type: 'line', name: NOME_SEP, id: 'sep', color: c.txt, lineWidth: 2, zIndex: 5, stacking: undefined,
+                 marker: { enabled: true, radius: 2, symbol: 'circle' }, data: valores.map(v => v === null ? null : +v.toFixed(2)) };
+    }
+    // O cabeçalho das dicas: o que fica de cada lado
+    function linhaLados(pontos) {
+        const sep = pontos.find(p => p.series.options.id === 'sep');
+        if (!sep) return '';
+        const compra = pontos.filter(p => ladoDe(p.series.options.grupo) === 'C').reduce((t, p) => t + (p.y || 0), 0);
+        return `Venda: <b>${fmtPct(sep.y)}</b> · compra: <b>${fmtPct(compra)}</b><br>`;
+    }
+    const semSep = pontos => pontos.filter(p => p.series.options.id !== 'sep');
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6', suave: dk ? '#94a3b8' : '#5c636a' };
+    }
+    const corDe = (par, c) => par[c.dk ? 1 : 0];
+    const corGrupo = (g, c) => corDe(COR[g] || ['#999', '#999'], c);
+    const corLinha = (g, c) => corDe(COR_LINHA[g] || COR[g] || ['#999', '#999'], c);
+    function base(c, nome) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: true, text: 'OMIE · tiagofelicia.pt', href: 'https://www.tiagofelicia.pt/quem-marca-o-preco', style: { color: c.suave } },
+            exporting: { enabled: true, filename: nome,
+                         buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS', 'viewData'] } } },
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    function eixoX(c, cats, extra) {
+        return Object.assign({ categories: cats, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha }, extra || {});
+    }
+    function eixoPct(c, max) {
+        return { min: 0, max: max, title: { text: null }, reversedStacks: false, gridLineColor: c.grelha,
+                 labels: { style: { color: c.txt }, formatter: function () { return _nf0.format(this.value) + ' %'; } } };
+    }
+    function limparGrafico(id, html) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = html || '';
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    const ativarToggle = (id, v) => document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+
+    // ==================================================================
+    // ESTADO E LINK
+    // ==================================================================
+    // p: país (PT/ES); m: rep (repartida) ou pres (presença); per: u12, AAAA ou AAAA-MM
+    const E = { p: 'PT', m: 'rep', per: 'u12' };
+    let R = null, META = null;
+    (function lerURL() {
+        const q = new URLSearchParams(window.location.search);
+        if (q.get('p') === 'es') E.p = 'ES';
+        if (q.get('m') === 'pres') E.m = 'pres';
+        if (/^\d{4}(-\d{2})?$/.test(q.get('per') || '')) E.per = q.get('per');
+    })();
+    function paramsAtuais() {
+        const q = new URLSearchParams();
+        if (E.p !== 'PT') q.set('p', 'es');
+        if (E.m !== 'rep') q.set('m', 'pres');
+        if (E.per !== 'u12') q.set('per', E.per);
+        return q;
+    }
+    function atualizarURL() {
+        const q = paramsAtuais().toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+    }
+    function mostrarFeedback(txt) {
+        const t = document.createElement('div'); t.className = 'toast-feedback'; t.textContent = txt;
+        document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
+    }
+    async function partilharVista() {
+        const q = paramsAtuais().toString();
+        const url = `${window.location.origin}${window.location.pathname}${q ? '?' + q : ''}`;
+        const resumo = `⚖️ Quem marca o preço da eletricidade? — ${E.p === 'PT' ? 'Portugal' : 'Espanha'}, ${rotuloPeriodo(E.per)}`;
+        if (navigator.share) {
+            try { await navigator.share({ title: 'Quem marca o preço da eletricidade? — Tiago Felícia', text: resumo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        const texto = `${resumo}\n${url}`;
+        try { await navigator.clipboard.writeText(texto); mostrarFeedback('✓ Link copiado'); return; } catch (e) { /* cai para o textarea */ }
+        try {
+            const ta = document.createElement('textarea'); ta.value = texto; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+            mostrarFeedback('✓ Link copiado');
+        } catch (e) { prompt('Copie este link:', texto); }
+    }
+
+    // ==================================================================
+    // DADOS
+    // ==================================================================
+    const anos = () => Object.keys(R.anos).sort();
+    const meses = () => Object.keys(R.meses).sort();
+    const parcialAno = a => R.ultimo_dia.slice(0, 4) === a && R.ultimo_dia.slice(5) !== '12-31';
+    function parcialMes(m) {
+        if (R.ultimo_dia.slice(0, 7) !== m) return false;
+        const [a, mm] = m.split('-').map(Number);
+        return +R.ultimo_dia.slice(8) < new Date(a, mm, 0).getDate();
+    }
+    const ateCurto = () => fmtData(R.ultimo_dia).slice(0, 5);
+    function rotuloPeriodo(per) {
+        if (!R) return per;
+        if (per === 'u12') return `últimos 12 meses (${fmtData(R.u12.de)} a ${fmtData(R.u12.ate)})`;
+        if (per.length === 4) return per + (parcialAno(per) ? ` (até ${ateCurto()})` : '');
+        const [a, m] = per.split('-');
+        return `${MESES[+m - 1]} de ${a}` + (parcialMes(per) ? ` (até ${ateCurto()})` : '');
+    }
+    function emPeriodo(per) {
+        const r = rotuloPeriodo(per);
+        return per === 'u12' ? 'Nos ' + r : 'Em ' + r;
+    }
+    function bloco(per, p) {
+        if (per === 'u12') return R.u12[p];
+        if (per.length === 4) return R.anos[per] && R.anos[per][p];
+        return R.meses[per] && R.meses[per][p];
+    }
+    // As horas do dia só existem por ano e nos últimos 12 meses: num mês usa-se o ano desse mês
+    function blocoHoras(per, p) {
+        const b = per === 'u12' ? R.u12[p] : R.anos[per.slice(0, 4)] && R.anos[per.slice(0, 4)][p];
+        return b && b.horas;
+    }
+    const valor = (b, g, m) => b ? ((m === 'rep' ? b.rep : b.pres)[g] || 0) : 0;
+    const pct = (b, g, m) => (b && b.h) ? 100 * valor(b, g, m) / b.h : null;
+    // Os grupos com algum valor no país escolhido, em qualquer ano, pela ordem dos dados
+    function gruposComDados(p) {
+        const tem = new Set();
+        anos().forEach(a => { const b = R.anos[a][p]; Object.keys(b.pres).forEach(g => tem.add(g)); });
+        return R.grupos.filter(g => tem.has(g));
+    }
+    // Os grupos por ordem decrescente num bloco, sem o «nenhuma oferta ao preço»
+    const ordenarGrupos = (b, m) => R.grupos.filter(g => g !== 'SEM' && valor(b, g, m) > 0).sort((x, y) => valor(b, y, m) - valor(b, x, m));
+
+    function encherPeriodos() {
+        const sel = document.getElementById('sel-periodo');
+        let html = `<option value="u12">Últimos 12 meses</option>`;
+        anos().slice().reverse().forEach(a => {
+            html += `<optgroup label="${a}"><option value="${a}">${a} — ano inteiro${parcialAno(a) ? ` (até ${ateCurto()})` : ''}</option>`;
+            meses().filter(m => m.startsWith(a)).reverse().forEach(m => {
+                html += `<option value="${m}">${MESES[+m.slice(5) - 1]} de ${a}${parcialMes(m) ? ` (até ${ateCurto()})` : ''}</option>`;
+            });
+            html += '</optgroup>';
+        });
+        sel.innerHTML = html;
+        if (E.per !== 'u12' && !bloco(E.per, E.p)) E.per = 'u12';
+        sel.value = E.per;
+        atualizarSetas();
+    }
+    // As setas andam dentro do mesmo tipo de período: de ano em ano ou de mês em mês; dos últimos 12 meses, a
+    // anterior vai para o último ano completo
+    function vizinho(dir) {
+        if (E.per === 'u12') {
+            if (dir > 0) return null;
+            const completos = anos().filter(a => !parcialAno(a));
+            return completos.length ? completos[completos.length - 1] : anos()[anos().length - 1];
+        }
+        const lista = E.per.length === 4 ? anos() : meses();
+        const i = lista.indexOf(E.per) + dir;
+        return i >= 0 && i < lista.length ? lista[i] : null;
+    }
+    function atualizarSetas() {
+        document.getElementById('per-ant').disabled = !vizinho(-1);
+        document.getElementById('per-seg').disabled = !vizinho(1);
+    }
+
+    // ==================================================================
+    // RESUMO
+    // ==================================================================
+    function renderResumo() {
+        const b = bloco(E.per, E.p);
+        const pais = E.p === 'PT' ? 'Portugal' : 'Espanha';
+        document.getElementById('titulo-resumo').textContent = 'Resumo — ' + pais + ', ' + rotuloPeriodo(E.per);
+        const ord = ordenarGrupos(b, E.m);
+        const top = ord.slice(0, 3);
+        const val = g => '<strong>' + fmtPctCurto(pct(b, g, E.m)) + '</strong>';
+        let f = E.m === 'pres'
+            ? `${emPeriodo(E.per)}, em ${pais}, quem mais vezes esteve ao preço do mercado diário foi ${comArtigo(top[0])}, em ${val(top[0])} das horas`
+            : `${emPeriodo(E.per)}, em ${pais}, quem ficou com a maior parte das horas foi ${comArtigo(top[0])}, com ${val(top[0])} (cada hora repartida em partes iguais pelas tecnologias ao preço)`;
+        if (top[1]) f += `, ${seguida(top[0])} ${deGrupo(top[1])} (${fmtPctCurto(pct(b, top[1], E.m))})` + (top[2] ? ` e ${deGrupo(top[2])} (${fmtPctCurto(pct(b, top[2], E.m))})` : '');
+        f += '. ';
+        if (!top.includes('GAS')) f += `O <strong>gás natural</strong> ${E.m === 'pres' ? 'esteve ao preço em' : 'ficou com'} <strong>${fmtPctCurto(pct(b, 'GAS', E.m))}</strong> das horas. `;
+        const q = b.q, caras = q && q.caras;
+        if (caras && caras.h) {
+            const oc = R.grupos.filter(g => g !== 'SEM' && (caras.pres[g] || 0) > 0).sort((x, y) => (caras.pres[y] || 0) - (caras.pres[x] || 0));
+            const gasC = 100 * (caras.pres.GAS || 0) / caras.h;
+            f += `Nas 25 % de horas mais caras (a partir de ${fmtEur0(q.lim[1])}), ${comArtigo(oc[0])} esteve ao preço em <strong>${fmtPctCurto(100 * caras.pres[oc[0]] / caras.h)}</strong> delas`
+               + (oc[0] !== 'GAS' ? ` e o gás natural em ${fmtPctCurto(gasC)}` : '') + '. ';
+        }
+        f += E.m === 'rep'
+            ? `Repartindo cada hora, <strong>${fmtPctCurto(pctLadoRep(b, 'V'))}</strong> ficaram do lado de quem vende e <strong>${fmtPctCurto(pctLadoRep(b, 'C'))}</strong> do lado de quem compra (bombagem a bombear, baterias a carregar, comercializadores e consumidores, exportações). `
+            : `Em <strong>${fmtPctCurto(pctLadoPres(b, 'V'))}</strong> das horas havia uma oferta de venda ao preço e em <strong>${fmtPctCurto(pctLadoPres(b, 'C'))}</strong> uma de compra. `;
+        const sem = pct(b, 'SEM', 'pres');
+        if (sem) f += `Em ${fmtPctCurto(sem)} das horas nenhuma oferta tinha exatamente o preço.`;
+        document.getElementById('resumo-frase').innerHTML = f;
+
+        const c = _hcDark();
+        const card = (rot, val, sub, g, destaque) => `<div class="kpi-card${destaque ? ' destaque' : ''}"><div class="kpi-label">${g ? `<span class="kpi-cor" style="background:${corGrupo(g, c)}"></span>` : ''}${rot}</div><div class="kpi-value">${val}</div><div class="kpi-sub">${sub}</div></div>`;
+        const subMedida = E.m === 'pres' ? 'das horas ao preço' : 'das horas (repartida)';
+        const presCaras = g => caras && caras.h ? fmtPctCurto(100 * (caras.pres[g] || 0) / caras.h) : '--';
+        document.getElementById('kpis').innerHTML =
+            card('Mais vezes ao preço: ' + esc(nomeGrupo(top[0])), fmtPctCurto(pct(b, top[0], E.m)), subMedida + ' · nas mais caras: ' + presCaras(top[0]), top[0], true) +
+            card('Gás natural', fmtPctCurto(pct(b, 'GAS', E.m)), subMedida + ' · nas mais caras: ' + presCaras('GAS'), 'GAS') +
+            card('Sol e vento', fmtPctCurto((pct(b, 'SOL', E.m) || 0) + (E.m === 'rep' ? (pct(b, 'EOL', E.m) || 0) : 0)),
+                 E.m === 'rep' ? 'das horas (repartida): solar ' + fmtPctCurto(pct(b, 'SOL', 'rep')) + ' · eólica ' + fmtPctCurto(pct(b, 'EOL', 'rep'))
+                               : 'solar ao preço · eólica: ' + fmtPctCurto(pct(b, 'EOL', 'pres')), 'SOL') +
+            card('Preço médio do período', fmtEur(b.preco), 'mercado diário, ' + (E.p === 'PT' ? 'Portugal' : 'Espanha') + ' · sem IVA');
+    }
+
+    // ==================================================================
+    // ANO A ANO E MÊS A MÊS
+    // ==================================================================
+    function seriesPorGrupo(blocos, grupos, c) {
+        return grupos.map(g => ({
+            name: nomeGrupo(g), id: g, grupo: g, color: E.m === 'pres' ? corLinha(g, c) : corGrupo(g, c),
+            data: blocos.map(b => { const v = pct(b, g, E.m); return v === null ? null : +v.toFixed(2); })
+        })).filter(s => s.data.some(v => v));
+    }
+    function grafPeriodos(id, cats, blocos, rotTooltip, nome, plotBands) {
+        const c = _hcDark();
+        const grupos = gruposComDados(E.p);
+        let series = seriesPorGrupo(blocos, grupos, c);
+        if (E.m === 'pres') {
+            // Na presença, só os grupos que passam de MIN_PRES % em algum período (o resto fica na tabela); as linhas
+            // que nunca passam de 5 % começam escondidas (ficam na legenda, para as ligar)
+            series = series.filter(s => s.data.some(v => v >= MIN_PRES));
+            series.forEach(s => { s.visible = s.data.some(v => v >= 5); });
+        } else {
+            series.push(serieSeparacao(blocos.map(b => pctLadoRep(b, 'V')), c));
+        }
+        limparGrafico(id);
+        Highcharts.chart(id, Highcharts.merge(base(c, nome), {
+            chart: { type: E.m === 'rep' ? 'column' : 'line' },
+            xAxis: eixoX(c, cats, { plotBands: plotBands || [] }),
+            yAxis: eixoPct(c, E.m === 'rep' ? 100 : null),
+            plotOptions: {
+                column: { stacking: 'normal', borderWidth: 1, borderColor: c.bg, groupPadding: 0.08, pointPadding: 0.02 },
+                line: { marker: { enabled: true, radius: 3 } },
+                series: { animation: false }
+            },
+            legend: { enabled: true },
+            tooltip: {
+                shared: true,
+                formatter: function () {
+                    const pts = semSep(this.points).sort((a, b) => (b.y || 0) - (a.y || 0)).filter(p => p.y);
+                    return `<b>${esc(rotTooltip(this.points[0].point.index))}</b><br>` + linhaLados(this.points) + pts.map(p =>
+                        `<span style="color:${p.color}">●</span> ${esc(p.series.name)}: <b>${fmtPct(p.y)}</b>`).join('<br>');
+                }
+            },
+            series
+        }));
+    }
+    function renderAnos() {
+        const as = anos();
+        const blocos = as.map(a => R.anos[a][E.p]);
+        const cats = as.map(a => a + (parcialAno(a) ? '*' : ''));
+        const anoSel = E.per === 'u12' ? null : E.per.slice(0, 4);
+        const c = _hcDark();
+        const bands = anoSel ? [{ from: as.indexOf(anoSel) - 0.5, to: as.indexOf(anoSel) + 0.5, color: c.dk ? 'rgba(96,165,250,0.12)' : 'rgba(37,99,235,0.07)' }] : [];
+        document.getElementById('anos-intro').innerHTML = (E.m === 'rep'
+            ? 'Cada coluna é um ano e soma 100 %: cada hora divide-se em partes iguais pelas tecnologias que estavam ao preço. Em baixo, as ofertas de venda; em cima, as de compra (bombagem a bombear, baterias a carregar, comercializadores e consumidores, exportações); a linha separa os dois lados.'
+            : 'A parte das horas de cada ano em que cada tecnologia teve ofertas aceites exatamente ao preço (uma hora com duas tecnologias conta para as duas). Só as tecnologias que passam de 1 % em algum ano; as outras estão na tabela.')
+            + (parcialAno(as[as.length - 1]) ? ` * ${as[as.length - 1]} até ${fmtData(R.ultimo_dia)}.` : '');
+        grafPeriodos('grafico-anos', cats, blocos, i => as[i] + (parcialAno(as[i]) ? ` (até ${ateCurto()})` : ''), 'quem-marca-o-preco-anos', bands);
+
+        // Mês a mês: os meses do ano escolhido, ou os últimos 12
+        let ms;
+        if (E.per === 'u12') ms = meses().filter(m => m >= R.u12.de.slice(0, 7));
+        else ms = meses().filter(m => m.startsWith(E.per.slice(0, 4)));
+        document.getElementById('titulo-meses').textContent = 'Mês a mês, ' + (E.per === 'u12' ? 'nos últimos 12 meses' : 'em ' + E.per.slice(0, 4));
+        const mBands = E.per.length === 7 ? [{ from: ms.indexOf(E.per) - 0.5, to: ms.indexOf(E.per) + 0.5, color: c.dk ? 'rgba(96,165,250,0.12)' : 'rgba(37,99,235,0.07)' }] : [];
+        grafPeriodos('grafico-meses', ms.map(m => MESES_CURTOS[+m.slice(5) - 1] + (E.per === 'u12' || ms.some(x => x.slice(0, 4) !== ms[0].slice(0, 4)) ? ' ' + m.slice(2, 4) : '')),
+            ms.map(m => R.meses[m][E.p]), i => MESES[+ms[i].slice(5) - 1] + ' de ' + ms[i].slice(0, 4) + (parcialMes(ms[i]) ? ` (até ${ateCurto()})` : ''),
+            'quem-marca-o-preco-meses', mBands);
+
+        // Tabela: tecnologias × anos
+        const grupos = gruposComDados(E.p);
+        let h = `<table class="tabela-tm"><caption>${E.m === 'rep' ? 'Parte das horas, repartida' : 'Horas com a tecnologia ao preço'} (%), ${E.p === 'PT' ? 'Portugal' : 'Espanha'}</caption><thead><tr><th class="esq">Tecnologia</th>`
+              + as.map(a => `<th>${a}${parcialAno(a) ? '*' : ''}</th>`).join('') + '</tr></thead><tbody>';
+        const linhaG = g => `<tr${g === 'GAS' ? ' class="destaque"' : ''}><td class="esq"><span class="kpi-cor" style="background:${corGrupo(g, c)}"></span>${esc(nomeGrupo(g))}</td>`
+               + as.map(a => { const v = pct(R.anos[a][E.p], g, E.m); return v ? `<td>${fmtPct(v)}</td>` : '<td class="vazio">—</td>'; }).join('') + '</tr>';
+        const linhaLado = (lado, rot) => `<tr class="subtotal"><td class="esq">${rot}</td>` + as.map(a => `<td>${fmtPct(pctLado(R.anos[a][E.p], lado, E.m))}</td>`).join('') + '</tr>';
+        grupos.filter(g => ladoDe(g) === 'V').forEach(g => { h += linhaG(g); });
+        h += linhaLado('V', E.m === 'rep' ? 'Do lado da venda' : 'Com alguma oferta de venda ao preço');
+        grupos.filter(g => ladoDe(g) === 'C').forEach(g => { h += linhaG(g); });
+        h += linhaLado('C', E.m === 'rep' ? 'Do lado da compra' : 'Com alguma oferta de compra ao preço');
+        grupos.filter(g => !ladoDe(g)).forEach(g => { h += linhaG(g); });
+        h += '</tbody><tfoot><tr><td class="esq">Preço médio</td>' + as.map(a => `<td>${fmtEur0(R.anos[a][E.p].preco)}</td>`).join('') + '</tr></tfoot></table>';
+        document.getElementById('tabela-anos').innerHTML = h;
+    }
+
+    // ==================================================================
+    // HORAS CARAS E BARATAS
+    // ==================================================================
+    function renderQuartis() {
+        const b = bloco(E.per, E.p), q = b.q, c = _hcDark();
+        const fx = [['baratas', `25 % mais baratas (até ${fmtEur0(q.lim[0])})`], ['todas', 'Todas as horas'], ['caras', `25 % mais caras (a partir de ${fmtEur0(q.lim[1])})`]];
+        const blocoFx = k => k === 'todas' ? b : q[k];
+        document.getElementById('quartis-intro').innerHTML = `${emPeriodo(E.per)}, ${E.p === 'PT' ? 'em Portugal' : 'em Espanha'}: as tecnologias ao preço nas horas mais baratas, em todas e nas mais caras. `
+            + (E.m === 'rep' ? 'Cada barra soma 100 %: à esquerda as ofertas de venda, à direita as de compra; o losango marca a separação.' : 'A percentagem é das horas de cada grupo; só as tecnologias que passam de 1 % em algum deles.');
+        limparGrafico('grafico-quartis');
+        document.getElementById('grafico-quartis').style.height = '';
+        if (E.m === 'rep') {
+            const series = gruposComDados(E.p).map(g => ({
+                name: nomeGrupo(g), color: corGrupo(g, c),
+                data: fx.map(([k]) => { const x = blocoFx(k); return x && x.h ? +(100 * (x.rep[g] || 0) / x.h).toFixed(2) : null; })
+            })).filter(s => s.data.some(v => v));
+            series.forEach(s => { s.grupo = gruposComDados(E.p).find(g => nomeGrupo(g) === s.name); });
+            series.push({ type: 'scatter', name: NOME_SEP, id: 'sep', color: c.txt, zIndex: 5,
+                          marker: { symbol: 'diamond', radius: 6, lineColor: c.bg, lineWidth: 1 },
+                          data: fx.map(([k]) => { const v = pctLadoRep(blocoFx(k), 'V'); return v === null ? null : +v.toFixed(2); }) });
+            Highcharts.chart('grafico-quartis', Highcharts.merge(base(c, 'quem-marca-o-preco-horas-caras-baratas'), {
+                chart: { type: 'bar' },
+                xAxis: eixoX(c, fx.map(f => f[1])),
+                yAxis: eixoPct(c, 100),
+                plotOptions: { bar: { stacking: 'normal', borderWidth: 1, borderColor: c.bg }, series: { animation: false } },
+                tooltip: { shared: true, formatter: function () {
+                    return `<b>${esc(this.points[0].key)}</b><br>` + linhaLados(this.points) + semSep(this.points).sort((a, b) => b.y - a.y).filter(p => p.y).map(p =>
+                        `<span style="color:${p.color}">●</span> ${esc(p.series.name)}: <b>${fmtPct(p.y)}</b>`).join('<br>');
+                } },
+                series
+            }));
+        } else {
+            const grupos = R.grupos.filter(g => fx.some(([k]) => { const x = blocoFx(k); return x && x.h && 100 * (x.pres[g] || 0) / x.h >= MIN_PRES; }))
+                .sort((x, y) => (q.caras.pres[y] || 0) - (q.caras.pres[x] || 0));
+            const series = fx.map(([k, rot]) => ({
+                name: rot, color: corDe(COR_FAIXA[k], c),
+                data: grupos.map(g => { const x = blocoFx(k); return x && x.h ? +(100 * (x.pres[g] || 0) / x.h).toFixed(2) : null; })
+            }));
+            const alt = Math.max(300, 90 + grupos.length * 52);
+            document.getElementById('grafico-quartis').style.height = alt + 'px';
+            Highcharts.chart('grafico-quartis', Highcharts.merge(base(c, 'quem-marca-o-preco-horas-caras-baratas'), {
+                chart: { type: 'bar', height: alt },
+                xAxis: eixoX(c, grupos.map(nomeGrupo)),
+                yAxis: eixoPct(c, null),
+                plotOptions: { bar: { groupPadding: 0.12, pointPadding: 0.04, borderWidth: 0 }, series: { animation: false } },
+                tooltip: { shared: true, formatter: function () {
+                    return `<b>${esc(this.points[0].key)}</b><br>` + this.points.map(p =>
+                        `<span style="color:${p.color}">●</span> ${esc(p.series.name)}: <b>${fmtPct(p.y)}</b>`).join('<br>');
+                } },
+                series
+            }));
+        }
+    }
+
+    // ==================================================================
+    // HORA A HORA
+    // ==================================================================
+    function renderHoras() {
+        const hh = blocoHoras(E.per, E.p), c = _hcDark();
+        const ref = E.per === 'u12' ? 'nos últimos 12 meses' : 'em ' + E.per.slice(0, 4) + (parcialAno(E.per.slice(0, 4)) ? ` (até ${ateCurto()})` : '');
+        document.getElementById('horas-intro').innerHTML = `As tecnologias ao preço em cada hora do dia, ${ref}, ${E.p === 'PT' ? 'em Portugal' : 'em Espanha'}, em hora de Portugal`
+            + (E.per.length === 7 ? ' (a vista por hora é do ano inteiro, não só do mês escolhido)' : '') + '. '
+            + (E.m === 'rep' ? 'Cada coluna soma 100 %; a linha separa as ofertas de venda (em baixo) das de compra (em cima).' : 'Só as tecnologias que passam de 1 % em alguma hora.');
+        limparGrafico('grafico-horas');
+        if (!hh) { limparGrafico('grafico-horas', '<div class="bloco-vazio">Sem dados.</div>'); return; }
+        const fonte = E.m === 'rep' ? hh.rep : hh.pres;
+        let series = R.grupos.filter(g => fonte[g]).map(g => ({
+            name: nomeGrupo(g), grupo: g, color: E.m === 'pres' ? corLinha(g, c) : corGrupo(g, c),
+            data: fonte[g].map((v, i) => hh.h[i] ? +(100 * v / hh.h[i]).toFixed(2) : null)
+        }));
+        if (E.m === 'pres') {
+            series = series.filter(s => s.data.some(v => v >= MIN_PRES));
+            series.forEach(s => { s.visible = s.data.some(v => v >= 5); });
+        } else {
+            series.push(serieSeparacao(hh.h.map((h, i) => h ? 100 * R.grupos.filter(g => ladoDe(g) === 'V' && hh.rep[g]).reduce((t, g) => t + hh.rep[g][i], 0) / h : null), c));
+        }
+        const cats = Array.from({ length: 24 }, (_, i) => i + 'h');
+        Highcharts.chart('grafico-horas', Highcharts.merge(base(c, 'quem-marca-o-preco-hora-a-hora'), {
+            chart: { type: E.m === 'rep' ? 'column' : 'line' },
+            xAxis: eixoX(c, cats),
+            yAxis: eixoPct(c, E.m === 'rep' ? 100 : null),
+            plotOptions: { column: { stacking: 'normal', borderWidth: 1, borderColor: c.bg, groupPadding: 0.05, pointPadding: 0.02 },
+                           line: { marker: { enabled: false } }, series: { animation: false } },
+            tooltip: { shared: true, formatter: function () {
+                const i = this.points[0].point.index;
+                return `<b>${i}h–${i + 1}h</b><br>` + linhaLados(this.points) + semSep(this.points).sort((a, b) => b.y - a.y).filter(p => p.y).map(p =>
+                    `<span style="color:${p.color}">●</span> ${esc(p.series.name)}: <b>${fmtPct(p.y)}</b>`).join('<br>');
+            } },
+            series
+        }));
+    }
+
+    // ==================================================================
+    // PREÇO POR TECNOLOGIA
+    // ==================================================================
+    function renderPrecos() {
+        const b = bloco(E.per, E.p), c = _hcDark();
+        const grupos = R.grupos.filter(g => g !== 'SEM' && pct(b, g, 'pres') >= MIN_PRES && !vazio(b.pm[g]))
+            .sort((x, y) => b.pm[y] - b.pm[x]);
+        document.getElementById('precos-intro').innerHTML = `O preço médio do mercado diário nas horas em que cada tecnologia esteve ao preço, ${rotuloPeriodo(E.per)}, ${E.p === 'PT' ? 'em Portugal' : 'em Espanha'} (só as que estiveram ao preço em pelo menos 1 % das horas). A linha é o preço médio de todas as horas: ${fmtEur(b.preco)}.`;
+        limparGrafico('grafico-precos');
+        const alt = Math.max(320, 80 + grupos.length * 34);
+        document.getElementById('grafico-precos').style.height = alt + 'px';
+        Highcharts.chart('grafico-precos', Highcharts.merge(base(c, 'quem-marca-o-preco-preco-por-tecnologia'), {
+            chart: { type: 'bar', height: alt },
+            xAxis: eixoX(c, grupos.map(nomeGrupo)),
+            yAxis: { title: { text: '€/MWh', style: { color: c.suave } }, gridLineColor: c.grelha, labels: { style: { color: c.txt } },
+                     plotLines: [{ value: b.preco, color: c.suave, width: 2, dashStyle: 'Dash', zIndex: 5,
+                                   label: { text: 'média: ' + fmtEur0(b.preco), align: 'right', style: { color: c.suave }, x: -4 } }] },
+            legend: { enabled: false },
+            plotOptions: { bar: { colorByPoint: true, borderWidth: 0, borderRadius: 3,
+                                  dataLabels: { enabled: true, style: { color: c.txt, textOutline: 'none', fontWeight: 'normal' },
+                                                formatter: function () { return fmtEur0(this.y); } } },
+                           series: { animation: false } },
+            tooltip: { formatter: function () {
+                const g = grupos[this.point.index];
+                return `<b>${esc(nomeGrupo(g))}</b><br>Ao preço em ${fmtPct(pct(b, g, 'pres'))} das horas<br>Preço médio nessas horas: <b>${fmtEur(this.y)}</b>`;
+            } },
+            series: [{ name: 'Preço médio quando está ao preço', data: grupos.map(g => ({ y: b.pm[g], color: corGrupo(g, c) })) }]
+        }));
+
+        // Tudo numa tabela
+        const q = b.q;
+        const presQ = (x, g) => x && x.h ? 100 * (x.pres[g] || 0) / x.h : null;
+        const porPres = (x, y) => (b.pres[y] || 0) - (b.pres[x] || 0);
+        const doLado = lado => R.grupos.filter(g => b.pres[g] && ladoDe(g) === lado).sort(porPres);
+        let h = `<table class="tabela-tm"><caption>${esc(rotuloPeriodo(E.per).charAt(0).toUpperCase() + rotuloPeriodo(E.per).slice(1))}, ${E.p === 'PT' ? 'Portugal' : 'Espanha'}</caption><thead><tr>`
+              + '<th class="esq">Tecnologia</th><th>Ao preço (presença)</th><th>Parte repartida</th><th>Preço médio quando ao preço</th>'
+              + `<th>Nas 25 % mais baratas</th><th>Nas 25 % mais caras</th></tr></thead><tbody>`;
+        const linhaG = g => `<tr${g === 'GAS' ? ' class="destaque"' : ''}><td class="esq"><span class="kpi-cor" style="background:${corGrupo(g, c)}"></span>${esc(nomeGrupo(g))}</td>`
+               + `<td>${fmtPct(pct(b, g, 'pres'))}</td><td>${fmtPct(pct(b, g, 'rep'))}</td><td>${fmtEur(b.pm[g])}</td>`
+               + `<td>${fmtPct(presQ(q.baratas, g))}</td><td>${fmtPct(presQ(q.caras, g))}</td></tr>`;
+        const linhaLado = (lado, rot) => `<tr class="subtotal"><td class="esq">${rot}</td><td>${fmtPct(pctLadoPres(b, lado))}</td><td>${fmtPct(pctLadoRep(b, lado))}</td><td></td><td></td><td></td></tr>`;
+        doLado('V').forEach(g => { h += linhaG(g); });
+        h += linhaLado('V', 'Do lado da venda');
+        doLado('C').forEach(g => { h += linhaG(g); });
+        h += linhaLado('C', 'Do lado da compra');
+        doLado('').forEach(g => { h += linhaG(g); });
+        h += `</tbody><tfoot><tr><td class="esq">Todas as horas</td><td>—</td><td>100,0 %</td><td>${fmtEur(b.preco)}</td><td>até ${fmtEur0(q.lim[0])}</td><td>a partir de ${fmtEur0(q.lim[1])}</td></tr></tfoot></table>`;
+        document.getElementById('tabela-periodo').innerHTML = h;
+    }
+
+    // ==================================================================
+    // TUDO
+    // ==================================================================
+    function renderTudo() {
+        document.getElementById('sel-periodo').value = E.per;
+        atualizarSetas();
+        renderResumo(); renderAnos(); renderQuartis(); renderHoras(); renderPrecos();
+        atualizarURL();
+    }
+    function renderMetodo() {
+        const sem = META && META.por_classificar_pct ? Math.max(...Object.values(META.por_classificar_pct).map(v => Math.max(v.PT || 0, v.ES || 0))) : null;
+        const falta = META && META.dias_em_falta ? META.dias_em_falta : [];
+        document.getElementById('metodo-dados').innerHTML =
+            `Dados de ${fmtData(R.primeiro_dia)} a ${fmtData(R.ultimo_dia)}.`
+            + (sem !== null ? ` As unidades por classificar nunca passam de ${fmtPct(sem)} das horas num ano.` : '')
+            + (falta.length ? ` Faltam ${falta.length === 1 ? 'o dia ' + fmtData(falta[0]) : falta.length + ' dias (' + falta.slice(0, 5).map(fmtData).join(', ') + (falta.length > 5 ? '…' : '') + ')'}, em que o ficheiro da OMIE veio incompleto.` : '')
+            + ` Todos os valores, período a período e com a classificação de cada unidade, estão em <a href="${URL_DADOS}" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> (licença CC BY 4.0).`;
+    }
+
+    async function carregar() {
+        const r = await fetchDados(PASTA + 'resumo.json');
+        if (!r.ok) throw new Error('resumo.json: HTTP ' + r.status);
+        R = await r.json();
+        try { const m = await fetchDados(PASTA + 'metadata.json'); if (m.ok) META = await m.json(); } catch (_) {}
+        document.getElementById('badge').innerHTML = `Dados até <strong>${fmtData(R.ultimo_dia)}</strong> · a OMIE publica as ofertas de cada central 90 dias depois do dia de mercado`;
+        encherPeriodos();
+        document.getElementById('estado').hidden = true;
+        document.getElementById('conteudo').hidden = false;
+        renderMetodo();
+        renderTudo();
+    }
+    function falhou(err) {
+        console.error('Quem marca o preço:', err);
+        const el = document.getElementById('estado');
+        el.hidden = false; el.className = 'estado-erro'; el.textContent = 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.';
+    }
+
+    ligarToggle('ctrl-pais', v => { E.p = v; renderTudo(); });
+    ligarToggle('ctrl-medida', v => { E.m = v; renderTudo(); });
+    document.getElementById('sel-periodo').addEventListener('change', e => { E.per = e.target.value; renderTudo(); });
+    document.getElementById('per-ant').addEventListener('click', () => { const v = vizinho(-1); if (v) { E.per = v; renderTudo(); } });
+    document.getElementById('per-seg').addEventListener('click', () => { const v = vizinho(1); if (v) { E.per = v; renderTudo(); } });
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+    document.addEventListener('themeChanged', () => { if (R) renderTudo(); });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 600), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    ativarToggle('ctrl-pais', E.p); ativarToggle('ctrl-medida', E.m);
+    carregar().catch(falhou);
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
