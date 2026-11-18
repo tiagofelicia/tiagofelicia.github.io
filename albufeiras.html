@@ -180,15 +180,15 @@
           "name": "Porque é que algumas albufeiras só têm um valor por semana?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "As de rega (Maranhão, Montargil, Alvito, Odivelas e outras, marcadas como «semanal» na tabela) passaram a ter no SNIRH um valor por semana, à segunda-feira, o dia dos boletins semanais da APA. Na vista do último dia, estas albufeiras aparecem com o valor da última segunda-feira, com a data a laranja. Na vista por semana, todas as albufeiras ficam na mesma segunda-feira."
+            "text": "As de rega (Maranhão, Montargil, Alvito, Odivelas e outras, marcadas como «semanal» na tabela) passaram a ter no SNIRH um valor por semana, à segunda-feira, o dia dos boletins semanais da APA. Na vista por dia, estas albufeiras aparecem com o valor da última segunda-feira até ao dia escolhido, com a data a laranja. Na vista por semana, todas as albufeiras ficam na mesma segunda-feira."
           }
         },
         {
           "@type": "Question",
-          "name": "Como funcionam as vistas por semana e por mês?",
+          "name": "Como funcionam as vistas por dia, por semana e por mês?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Na vista por semana, os valores são os da segunda-feira escolhida, como no boletim semanal da APA, comparados com a segunda-feira anterior. Na vista por mês, são os do último dia do mês, como no boletim mensal, comparados com o fim do mês anterior; o mês em curso vai até ao último dia com dados. Em todas as vistas, se faltar o valor do dia, conta o último dos 6 ou 7 dias anteriores, e há a comparação com o mesmo dia do ano anterior e com a média desde 2011. O link da página guarda o período escolhido."
+            "text": "Na vista por dia, os valores são os do último dia com dados ou, no calendário, os de qualquer dia desde 1 de janeiro de 2001, comparados com o dia uma semana antes; as setas passam ao dia anterior ou ao seguinte. Na vista por semana, os valores são os da segunda-feira escolhida, como no boletim semanal da APA, comparados com a segunda-feira anterior. Na vista por mês, são os do último dia do mês, como no boletim mensal, comparados com o fim do mês anterior; o mês em curso vai até ao último dia com dados. Em Comparar com, a comparação pode passar a ser com uma semana ou um mês antes, com o início do ano hidrológico ou do ano civil (contam os valores de 30 de setembro e de 31 de dezembro, o fim do dia antes de o ano começar), com um ano antes ou com outra data. O resumo, a tabela e o mapa mostram a variação desde essa data, e o resumo da energia guardada soma a água que chegou às barragens, a produção, a bombagem e as descargas desde o dia seguinte. Se faltar o valor do dia, conta o último dos 6 ou 7 dias anteriores; até 2016, quando várias albufeiras só tinham um valor por semana ou por mês, o último dos 31 dias anteriores. Há sempre a comparação com o mesmo dia do ano anterior e com a média desde 2011. O link da página guarda o período e a comparação escolhidos."
           }
         },
         {
@@ -244,7 +244,7 @@
           "name": "Como se compara com os outros anos?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a soma dos volumes a dividir pela soma das capacidades das albufeiras com valor nesse dia. Na energia guardada, nas afluências e nos descarregamentos, os anos completos desde 2010 (no ano hidrológico, desde 2010/11)."
+            "text": "A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a soma dos volumes a dividir pela soma das capacidades das albufeiras com valor nesse dia. Na energia guardada, nas afluências e nos descarregamentos, os anos completos desde 2010 (no ano hidrológico, desde 2010/11). Para cada dia, contam os anos completos antes do ano desse dia; quando ainda não há três (nos dias antes de 2014 e, na energia guardada, antes de 2013), contam todos os anos completos, sem o do próprio dia."
           }
         },
         {
@@ -252,7 +252,7 @@
           "name": "Os dados do SNIRH têm erros?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis — acima de 125% da capacidade ou muito longe dos dias à volta — são retirados (cerca de 0,2% do total). Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias."
+            "text": "Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis — acima de 125% da capacidade ou muito longe dos dias à volta — são retirados (cerca de 0,2% do total). Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias (até 2016, com até 31 dias)."
           }
         },
         {
@@ -343,6 +343,16 @@
         .vista-bar { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 12px; width: 95%; max-width: 1200px; margin: 4px auto 6px auto; }
         .vista-bar #vista-escolha { display: inline-flex; gap: 8px; flex-wrap: wrap; }
         .vista-bar #vista-escolha[hidden] { display: none; }
+        .vista-bar .vista-grupo { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+        .vista-bar input[hidden], .vista-bar button[hidden] { display: none; }
+        .vista-bar input[type="date"] { font-size: 0.88em; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #334155; font-family: inherit; }
+        .vista-bar .btn-nav { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 10px; cursor: pointer; color: #475569; font-size: 0.85em; line-height: 1.2; }
+        .vista-bar .btn-nav:hover:not(:disabled) { background: #f1f5f9; }
+        .vista-bar .btn-nav:disabled { opacity: 0.4; cursor: default; }
+        .vista-nota { width: 95%; max-width: 1200px; box-sizing: border-box; margin: 2px auto 8px auto; padding: 7px 12px; font-size: 0.82em; line-height: 1.5; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; }
+        .vista-nota[hidden] { display: none; }
+        .vista-nota ul { margin: 0; padding-left: 18px; }
+        .vista-nota li + li { margin-top: 2px; }
         .tabela-alb .mini-tag { font-size: 0.72em; color: #475569; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0 6px; margin-left: 6px; vertical-align: 1px; }
         .tabela-centrais { margin-top: 12px; }
         .tabela-centrais caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
@@ -441,6 +451,9 @@
         [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
         [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
         [data-theme="dark"] #sel-albufeira, [data-theme="dark"] .vista-bar select { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .vista-bar input[type="date"], [data-theme="dark"] .vista-bar .btn-nav { background: #1e293b; border-color: #475569; color: #e2e8f0; color-scheme: dark; }
+        [data-theme="dark"] .vista-bar .btn-nav:hover:not(:disabled) { background: #334155; }
+        [data-theme="dark"] .vista-nota { background: #2b2111; border-color: #78591a; color: #fcd34d; }
         [data-theme="dark"] .tabela-alb .mini-tag { color: #cbd5e1; background: #0f172a; border-color: #475569; }
         [data-theme="dark"] .tabela-centrais caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
         [data-theme="dark"] #outras-centrais h3 { color: #e2e8f0; }
@@ -524,15 +537,27 @@
         <div class="vista-bar">
             <span class="ctrl-label">Ver</span>
             <div class="btn-toggle" id="ctrl-vista" role="group" aria-label="Período">
-                <button type="button" data-v="dia" class="active">Último dia</button>
+                <button type="button" data-v="dia" class="active" title="Um dia à escolha, desde 1 de janeiro de 2001 (por omissão, o último)">Dia</button>
                 <button type="button" data-v="semana" title="A segunda-feira de cada semana, como no boletim semanal da APA">Semana</button>
                 <button type="button" data-v="mes" title="O último dia de cada mês, como no boletim mensal da APA">Mês</button>
             </div>
-            <span id="vista-escolha" hidden>
-                <select id="sel-ano-per" aria-label="Ano"></select>
-                <select id="sel-per" aria-label="Semana ou mês"></select>
+            <span class="vista-grupo">
+                <button type="button" class="btn-nav" id="per-ant" title="Dia anterior" aria-label="Dia anterior">&#10094;</button>
+                <input type="date" id="sel-dia" aria-label="Dia">
+                <span id="vista-escolha" hidden>
+                    <select id="sel-ano-per" aria-label="Ano"></select>
+                    <select id="sel-per" aria-label="Semana ou mês"></select>
+                </span>
+                <button type="button" class="btn-nav" id="per-seg" title="Dia seguinte" aria-label="Dia seguinte">&#10095;</button>
+                <button type="button" class="btn-nav" id="per-ultimo" title="Voltar ao período mais recente" hidden>Mais recente</button>
+            </span>
+            <span class="vista-grupo">
+                <label class="ctrl-label" for="sel-comp">Comparar com</label>
+                <select id="sel-comp"></select>
+                <input type="date" id="sel-comp-data" aria-label="Data de comparação" hidden>
             </span>
         </div>
+        <div class="vista-nota" id="vista-nota" role="note" hidden></div>
 
         <section id="bloco-kpis">
             <div class="kpi-cabecalho">
@@ -576,7 +601,7 @@
 
         <section id="bloco-tabela" class="grafico-box">
             <h2 id="tabela-titulo">🏞️ As albufeiras</h2>
-            <p class="grafico-intro">O valor de cada albufeira no período escolhido, a percentagem da capacidade, a variação face ao período anterior, a percentagem um ano antes e a potência de turbinamento e de bombagem das centrais que tiram água de cada uma. Clique numa linha para ver a evolução e as centrais, ou no título de uma coluna para ordenar por ela.</p>
+            <p class="grafico-intro">O valor de cada albufeira no período escolhido, a percentagem da capacidade, a variação desde a data de «Comparar com» (por omissão, o período anterior), a percentagem um ano antes e a potência de turbinamento e de bombagem das centrais que tiram água de cada uma. Clique numa linha para ver a evolução e as centrais, ou no título de uma coluna para ordenar por ela.</p>
             <div class="bloco-controls">
                 <span class="ctrl-label">Ordenar</span>
                 <div class="btn-toggle" id="ctrl-ordem" role="group" aria-label="Ordenar">
@@ -695,7 +720,7 @@
             <tbody>
                 <tr><th scope="row" class="esq">Volume e percentagem de cada albufeira</th><td class="esq" data-rot="Fonte">SNIRH (Agência Portuguesa do Ambiente), dados de base: o volume no fim de cada dia</td><td class="esq" data-rot="Atualização">Duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte</td><td class="esq" data-rot="Limitações">As albufeiras de rega só têm um valor por semana. As mais recentes (Foz Tua, as três do Tâmega) só têm alguns anos de série. Os valores impossíveis (zeros, algarismos a mais) são retirados: cerca de 0,2%.</td></tr>
                 <tr><th scope="row" class="esq">Capacidade (os 100%)</th><td class="esq" data-rot="Fonte">Boletim semanal de albufeiras da APA; nas que lá não estão, CNPGB</td><td class="esq" data-rot="Atualização">Fixa</td><td class="esq" data-rot="Limitações">Inclui o volume morto: 100% não é toda água que se pode usar. O Alto Ceira não tem capacidade publicada: os 100% são o máximo registado.</td></tr>
-                <tr><th scope="row" class="esq">Médias, mínimos e máximos</th><td class="esq" data-rot="Fonte">Contas desta página, a partir dos volumes do SNIRH e do balanço hidráulico da REN</td><td class="esq" data-rot="Atualização">Todos os dias</td><td class="esq" data-rot="Limitações">Anos completos desde 2011 (na energia guardada, nas afluências e nos descarregamentos, desde 2010); as albufeiras mais recentes só contam nos anos em que já existiam. Um dia sem valor usa o último dos 31 dias anteriores (no resumo e na tabela, só até 7 dias).</td></tr>
+                <tr><th scope="row" class="esq">Médias, mínimos e máximos</th><td class="esq" data-rot="Fonte">Contas desta página, a partir dos volumes do SNIRH e do balanço hidráulico da REN</td><td class="esq" data-rot="Atualização">Todos os dias</td><td class="esq" data-rot="Limitações">Anos completos desde 2011 (na energia guardada, nas afluências e nos descarregamentos, desde 2010); as albufeiras mais recentes só contam nos anos em que já existiam. Um dia sem valor usa o último dos 31 dias anteriores (no resumo e na tabela, só até 7 dias; até 2016, até 31).</td></tr>
                 <tr><th scope="row" class="esq">Centrais (potência e produção)</th><td class="esq" data-rot="Fonte">APREN, Anuário 2026; Serra Serrada, Póvoa e Caia, CNPGB</td><td class="esq" data-rot="Atualização">Uma vez por ano, com o anuário</td><td class="esq" data-rot="Limitações">Produção de 2024 e 2025. Algumas centrais de rega e de derivação não têm potência publicada.</td></tr>
                 <tr><th scope="row" class="esq">Energia guardada, afluências e descarregamentos (Portugal)</th><td class="esq" data-rot="Fonte">REN, Data Hub: o balanço hidráulico do balanço diário</td><td class="esq" data-rot="Atualização">Três vezes por dia; o valor de cada dia sai na manhã seguinte</td><td class="esq" data-rot="Limitações">Só o total do país, separado em albufeiras, fios de água e mini-hídricas, em GWh inteiros. Nos fios de água e nas mini-hídricas a afluência é a produção do dia; a das albufeiras sai do balanço e pode ser negativa. A REN revê valores semanas depois. A capacidade que conta como 100% foi subindo com as albufeiras novas (cerca de 3 080 GWh em 2015 e 3 250 GWh em 2026).</td></tr>
                 <tr><th scope="row" class="esq">Energia guardada, Espanha (e Portugal, para comparar)</th><td class="esq" data-rot="Fonte">Plataforma de transparência da ENTSO-E</td><td class="esq" data-rot="Atualização">Três vezes por semana; cada semana sai com alguns dias de atraso</td><td class="esq" data-rot="Limitações">Só o total de cada país, não de cada albufeira. A ENTSO-E pode rever semanas já publicadas. A mesma água vale mais energia numa barragem alta.</td></tr>
@@ -742,14 +767,15 @@
             <summary><strong>Porque é que algumas albufeiras só têm um valor por semana?</strong></summary>
             <div class="faq-content">
                 <p>As de rega (Maranhão, Montargil, Alvito, Odivelas e outras, marcadas como «semanal» na tabela) passaram a ter no SNIRH um valor por semana, à segunda-feira, o dia dos boletins semanais da APA.</p>
-                <p>Na vista do último dia, estas albufeiras aparecem com o valor da última segunda-feira, com a data a laranja. Na vista por semana, todas as albufeiras ficam na mesma segunda-feira.</p>
+                <p>Na vista por dia, estas albufeiras aparecem com o valor da última segunda-feira até ao dia escolhido, com a data a laranja. Na vista por semana, todas as albufeiras ficam na mesma segunda-feira.</p>
             </div>
         </details>
         <details class="faq-item">
-            <summary><strong>Como funcionam as vistas por semana e por mês?</strong></summary>
+            <summary><strong>Como funcionam as vistas por dia, por semana e por mês?</strong></summary>
             <div class="faq-content">
-                <p>Na vista por <strong>semana</strong>, os valores são os da segunda-feira escolhida, como no boletim semanal da APA, comparados com a segunda-feira anterior. Na vista por <strong>mês</strong>, são os do último dia do mês, como no boletim mensal, comparados com o fim do mês anterior; o mês em curso vai até ao último dia com dados.</p>
-                <p>Em todas as vistas, se faltar o valor do dia, conta o último dos 6 ou 7 dias anteriores, e há a comparação com o mesmo dia do ano anterior e com a média desde 2011. O link da página guarda o período escolhido.</p>
+                <p>Na vista por <strong>dia</strong>, os valores são os do último dia com dados ou, no calendário, os de qualquer dia desde 1 de janeiro de 2001, comparados com o dia uma semana antes; as setas passam ao dia anterior ou ao seguinte. Na vista por <strong>semana</strong>, os valores são os da segunda-feira escolhida, como no boletim semanal da APA, comparados com a segunda-feira anterior. Na vista por <strong>mês</strong>, são os do último dia do mês, como no boletim mensal, comparados com o fim do mês anterior; o mês em curso vai até ao último dia com dados.</p>
+                <p>Em <strong>Comparar com</strong>, a comparação pode passar a ser com uma semana ou um mês antes, com o início do ano hidrológico ou do ano civil (contam os valores de 30 de setembro e de 31 de dezembro, o fim do dia antes de o ano começar), com um ano antes ou com outra data. O resumo, a tabela e o mapa mostram a variação desde essa data, e o resumo da energia guardada soma a água que chegou às barragens, a produção, a bombagem e as descargas desde o dia seguinte.</p>
+                <p>Se faltar o valor do dia, conta o último dos 6 ou 7 dias anteriores; até 2016, quando várias albufeiras só tinham um valor por semana ou por mês, o último dos 31 dias anteriores. Há sempre a comparação com o mesmo dia do ano anterior e com a média desde 2011. O link da página guarda o período e a comparação escolhidos.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -797,14 +823,14 @@
         <details class="faq-item">
             <summary><strong>Como se compara com os outros anos?</strong></summary>
             <div class="faq-content">
-                <p>A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a <strong>soma dos volumes a dividir pela soma das capacidades</strong> das albufeiras com valor nesse dia. Na energia guardada, nas afluências e nos descarregamentos, os anos completos desde 2010 (no ano hidrológico, desde 2010/11).</p>
+                <p>A média, o mínimo e o máximo são dos anos completos desde 2011, quando o Alqueva já tinha enchido pela primeira vez. As albufeiras mais recentes só contam nos anos em que já existiam: a percentagem de um conjunto é a <strong>soma dos volumes a dividir pela soma das capacidades</strong> das albufeiras com valor nesse dia. Na energia guardada, nas afluências e nos descarregamentos, os anos completos desde 2010 (no ano hidrológico, desde 2010/11). Para cada dia, contam os anos completos antes do ano desse dia; quando ainda não há três (nos dias antes de 2014 e, na energia guardada, antes de 2013), contam todos os anos completos, sem o do próprio dia.</p>
             </div>
         </details>
         <details class="faq-item">
             <summary><strong>Os dados do SNIRH têm erros?</strong></summary>
             <div class="faq-content">
                 <p>Têm algumas falhas de leitura: dias a zero, volumes com algarismos a mais e, no Douro, semanas de valores trocados no verão de 2018. Os valores impossíveis — acima de 125% da capacidade ou muito longe dos dias à volta — são retirados (cerca de 0,2% do total).</p>
-                <p>Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias.</p>
+                <p>Nos gráficos, um dia sem valor usa o último valor dos 31 dias anteriores; no resumo e na tabela, só contam valores com até 7 dias (até 2016, com até 31 dias).</p>
             </div>
         </details>
         <details class="faq-item">
@@ -877,6 +903,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Sado', 'Guadiana', 'Arade', 'Ribeiras do Algarve'];
     // Quantos dias para trás pode estar o valor de cada albufeira: as de rega só têm um valor por semana, à segunda-feira
     const TOL = { dia: 7, semana: 6, mes: 7 };
+    // Até 2016, várias albufeiras só têm no SNIRH um valor por semana ou por mês: nas datas antes de 2017, o resumo, a
+    // tabela e o mapa aceitam o último valor dos 31 dias anteriores (ARRASTO)
+    const ANO_TOL_LONGA = 2017;
     const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
     // ==================================================================
@@ -934,6 +963,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const DIA_MS = 86400000;
     const tsDia = iso => { const [a, m, d] = iso.split('-').map(Number); return Date.UTC(a, m - 1, d); };
     let T0 = 0, N = 0, ULT = -1;     // dia 0 (UTC), número de dias e índice do último dia
+    let I_TOL = 0;                   // índice de 01/01/2017 (ANO_TOL_LONGA)
     const idxDe = iso => Math.round((tsDia(iso) - T0) / DIA_MS);
     const isoDe = i => new Date(T0 + i * DIA_MS).toISOString().slice(0, 10);
     const diaSemana = i => (new Date(T0 + i * DIA_MS).getUTCDay() + 6) % 7;   // 0 = segunda-feira
@@ -963,6 +993,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Período: o último dia, uma semana (a segunda-feira, o dia dos boletins semanais da APA) ou um mês (o último
     // dia, como nos boletins mensais). REF é o dia de referência e COMP o de comparação.
     let VISTA = 'dia', PER = null, REF = -1, COMP = -1;
+    // Comparar com: null = o da vista (COMP_PADRAO); 'semana' (7 dias antes), 'mes' (um mês antes; na vista por mês, o
+    // fim do mês anterior), 'hidro' (30 de setembro, o fim do dia antes de o ano hidrológico começar), 'jan' (31 de
+    // dezembro), 'ano' (um ano antes) ou 'data' (COMP_DATA)
+    let COMP_MODO = null, COMP_DATA = null;
+    const COMP_PADRAO = { dia: 'semana', semana: 'semana', mes: 'mes' };
 
     function lerCSV(t) {
         const linhas = t.replace(/^﻿/, '').trim().split(/\r?\n/);
@@ -984,6 +1019,7 @@ document.addEventListener('DOMContentLoaded', function () {
         T0 = tsDia(linhas[0][0]);
         N = idxDe(linhas[linhas.length - 1][0]) + 1;
         ULT = N - 1;
+        I_TOL = idxDe(ANO_TOL_LONGA + '-01-01');
         const pos = ALB.map(a => cab.indexOf(a.col));
         ALB.forEach(a => { BRUTO[a.col] = new Float64Array(N).fill(NaN); });
         linhas.forEach(l => {
@@ -1062,16 +1098,26 @@ document.addEventListener('DOMContentLoaded', function () {
         if (iso === fimMes(a, m)) return iso.slice(0, 7);
         return m === 1 ? `${a - 1}-12` : `${a}-${String(m - 1).padStart(2, '0')}`;
     }
+    const modoComp = () => COMP_MODO || COMP_PADRAO[VISTA];
+    const compPadrao = () => modoComp() === COMP_PADRAO[VISTA];
+    // O mesmo dia, um mês antes (31/03 → 28/02 ou 29/02)
+    function menosUmMes(i) {
+        const iso = isoDe(i), a = +iso.slice(0, 4), m = +iso.slice(5, 7), d = +iso.slice(8, 10);
+        const a2 = m === 1 ? a - 1 : a, m2 = m === 1 ? 12 : m - 1;
+        return idxDe(`${a2}-${String(m2).padStart(2, '0')}-${String(Math.min(d, +fimMes(a2, m2).slice(8, 10))).padStart(2, '0')}`);
+    }
+    // REF: o dia de referência do período; COMP: o de comparação (-1 se cair antes do primeiro dia ou não for anterior a REF)
     function definirPeriodo() {
-        if (VISTA === 'semana') {
-            REF = idxDe(PER); COMP = REF - 7;
-        } else if (VISTA === 'mes') {
-            const a = +PER.slice(0, 4), m = +PER.slice(5, 7);
-            REF = Math.min(idxDe(fimMes(a, m)), ULT);
-            COMP = idxDe(m === 1 ? fimMes(a - 1, 12) : fimMes(a, m - 1));
-        } else {
-            REF = ULT; COMP = ULT - 7;
-        }
+        if (VISTA === 'mes') REF = Math.min(idxDe(fimMes(+PER.slice(0, 4), +PER.slice(5, 7))), ULT);
+        else REF = idxDe(PER);
+        const modo = modoComp(), iso = isoDe(REF), a = +iso.slice(0, 4), m = +iso.slice(5, 7);
+        if (modo === 'mes') COMP = VISTA === 'mes' ? idxDe(m === 1 ? fimMes(a - 1, 12) : fimMes(a, m - 1)) : menosUmMes(REF);
+        else if (modo === 'hidro') COMP = idxDe(`${m >= 10 ? a : a - 1}-09-30`);
+        else if (modo === 'jan') COMP = idxDe(`${a - 1}-12-31`);
+        else if (modo === 'ano') COMP = menosUmAno(REF);
+        else if (modo === 'data') COMP = idxDe(COMP_DATA);
+        else COMP = REF - 7;
+        if (COMP < 0 || COMP >= REF) COMP = -1;
     }
     const tol = () => TOL[VISTA];
     function rotuloPeriodo() {
@@ -1080,9 +1126,27 @@ document.addEventListener('DOMContentLoaded', function () {
             const nome = `${MESES[+PER.slice(5, 7) - 1]} de ${PER.slice(0, 4)}`;
             return REF === ULT && isoDe(ULT) !== fimMes(+PER.slice(0, 4), +PER.slice(5, 7)) ? `${nome}, até ${fmtData(isoDe(ULT))}` : `fim de ${nome}`;
         }
-        return `último dia, ${fmtData(isoDe(ULT))}`;
+        return REF === ULT ? `último dia, ${fmtData(isoDe(ULT))}` : `dia ${fmtData(isoDe(REF))}`;
     }
-    const rotuloComp = () => VISTA === 'semana' ? 'Na semana' : VISTA === 'mes' ? 'No mês' : 'Numa semana';
+    // A comparação: curta no título da coluna da tabela e no mapa, mais longa nos cartões do resumo
+    function rotuloComp() {
+        const modo = modoComp();
+        if (modo === 'semana') return VISTA === 'semana' ? 'Na semana' : 'Numa semana';
+        if (modo === 'mes') return VISTA === 'mes' ? 'No mês' : 'Num mês';
+        if (modo === 'hidro') return 'Desde 1/10';
+        if (modo === 'jan') return 'Desde 1/1';
+        if (modo === 'ano') return 'Num ano';
+        return `Desde ${fmtData(COMP_DATA)}`;
+    }
+    function rotuloCard() {
+        const modo = modoComp();
+        if (modo === 'semana') return VISTA === 'semana' ? '📅 Face à semana anterior' : '📅 Numa semana';
+        if (modo === 'mes') return VISTA === 'mes' ? '📅 Face ao mês anterior' : '📅 Num mês';
+        if (modo === 'hidro') return '📅 Desde o início do ano hidrológico';
+        if (modo === 'jan') return '📅 Desde o início do ano';
+        if (modo === 'ano') return '📅 Num ano';
+        return `📅 Desde ${fmtData(COMP_DATA)}`;
+    }
 
     // ==================================================================
     // CONTAS
@@ -1107,9 +1171,10 @@ document.addEventListener('DOMContentLoaded', function () {
         for (const a of lista) { const x = CHEIO[a.col][i]; if (!isNaN(x)) { v += x; r += a.ref; n++; } }
         return n ? { hm3: v, ref: r, pct: v / r * 100, n } : null;
     }
-    // O valor de uma albufeira no dia i ou, se não houver, o último dos `t` dias anteriores
+    // O valor de uma albufeira no dia i ou, se não houver, o último dos `t` dias anteriores (antes de 2017, dos 31)
     function valor(a, i, t) {
         if (i < 0) return null;
+        if (i < I_TOL) t = Math.max(t, ARRASTO);
         const b = BRUTO[a.col];
         for (let j = Math.min(i, N - 1); j >= Math.max(0, i - t); j--) if (!isNaN(b[j])) return { v: b[j], i: j };
         return null;
@@ -1129,14 +1194,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         return n ? { agora: v1 / r * 100, antes: v0 / r * 100, dHm3: v1 - v0, n } : null;
     }
-    // O mesmo dia do calendário nos anos completos desde 2011, antes do ano do dia i
+    // O mesmo dia do calendário nos anos completos desde 2011, antes do ano do dia i (nos dias antes de 2014, que ainda
+    // não têm três, todos os anos completos desde 2011, sem o do dia i)
     function historicoDoDia(lista, i) {
         const iso = isoDe(i), ano = +iso.slice(0, 4), md = iso.slice(5) === '02-29' ? '02-28' : iso.slice(5);
-        const anos = [];
-        for (let y = ANO_COMP; y < ano; y++) {
-            const s = somaDia(lista, idxDe(y + '-' + md));
-            if (s) anos.push({ ano: y, pct: s.pct });
-        }
+        const juntar = ate => {
+            const out = [];
+            for (let y = ANO_COMP; y < ate; y++) {
+                if (y === ano) continue;
+                const s = somaDia(lista, idxDe(y + '-' + md));
+                if (s) out.push({ ano: y, pct: s.pct });
+            }
+            return out;
+        };
+        let anos = juntar(ano);
+        if (anos.length < 3 && ano < ANO_COMP + 3) anos = juntar(anoMax());
         if (anos.length < 3) return null;
         const media = anos.reduce((t, x) => t + x.pct, 0) / anos.length;
         const min = anos.reduce((m, x) => x.pct < m.pct ? x : m), max = anos.reduce((m, x) => x.pct > m.pct ? x : m);
@@ -1164,8 +1236,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const t_ = tol(), iso = isoDe(REF);
         const agora = estado(ALB, REF, t_), sem = comparar(ALB, COMP, REF, t_), ano = comparar(ALB, menosUmAno(REF), REF, t_);
         const hist = historicoDoDia(ALB, REF);
-        const rotComp = VISTA === 'semana' ? '📅 Face à semana anterior' : VISTA === 'mes' ? '📅 Face ao mês anterior' : '📅 Numa semana';
-        document.getElementById('kpi-sub').textContent = `${rotuloPeriodo().replace(/^./, c => c.toUpperCase())} · ${agora ? agora.n : 0} albufeiras com valor`;
+        const rotComp = rotuloCard();
+        document.getElementById('kpi-sub').textContent = `${rotuloPeriodo().replace(/^./, c => c.toUpperCase())} · ${agora ? agora.n : 0} de ${ALB.length} albufeiras com valor`;
         document.getElementById('alb-kpis').innerHTML =
             card('💧 Água guardada', agora ? fmtHm3(agora.hm3) : '--', agora ? `${fmtPct(agora.pct)} da capacidade` : '')
             + card(rotComp, sem ? fmtPp(sem.agora - sem.antes) : '--', sem ? `${fmtDHm3(sem.dHm3)} desde ${fmtData(isoDe(COMP))}` : '')
@@ -1228,12 +1300,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const atualS = seriePeriodo(lista, pAtual, hidro, ULT);
         const passadoS = seriePeriodo(lista, pAtual - 1, hidro, N - 1);
         const porX = new Map(), usados = [];
-        for (let p = ANO_COMP; p < pAtual; p++) {
-            const s = seriePeriodo(lista, p, hidro, N - 1);
-            if (s.length < 300) continue;
-            usados.push(p);
-            s.forEach(pt => { if (!porX.has(pt.x)) porX.set(pt.x, []); porX.get(pt.x).push(pt.y); });
-        }
+        const juntar = ate => {
+            porX.clear(); usados.length = 0;
+            for (let p = ANO_COMP; p < ate; p++) {
+                if (p === pAtual) continue;
+                const s = seriePeriodo(lista, p, hidro, N - 1);
+                if (s.length < 300) continue;
+                usados.push(p);
+                s.forEach(pt => { if (!porX.has(pt.x)) porX.set(pt.x, []); porX.get(pt.x).push(pt.y); });
+            }
+        };
+        juntar(pAtual);
+        // Antes de haver três anos completos (os anos antes de 2014), os anos completos desde 2011, sem o do dia
+        if (usados.length < 3 && pAtual < ANO_COMP + 3) juntar(inicioPeriodo(ULT, hidro));
         // Só os dias com pelo menos 60% dos anos (o 29 de fevereiro só existe nos bissextos)
         const chaves = [...porX.keys()].filter(x => porX.get(x).length >= Math.max(3, usados.length * 0.6)).sort((a, b) => a - b);
         const comFaixa = usados.length >= 3;
@@ -1246,7 +1325,7 @@ document.addEventListener('DOMContentLoaded', function () {
             chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
             xAxis: { type: 'datetime', min: hidro ? Date.UTC(1999, 9, 1) : Date.UTC(2000, 0, 1), max: hidro ? Date.UTC(2000, 8, 30) : Date.UTC(2000, 11, 31),
                      tickInterval: 30 * DIA_MS, labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true,
-                     plotLines: VISTA === 'dia' ? [] : [{ value: xRef, color: c.passado, width: 1, dashStyle: 'Dash', zIndex: 4,
+                     plotLines: VISTA === 'dia' && REF === ULT ? [] : [{ value: xRef, color: c.passado, width: 1, dashStyle: 'Dash', zIndex: 4,
                                                           label: { text: fmtDiaMes(isoDe(REF)), rotation: 0, y: 12, style: { color: c.txt, fontSize: '11px' } } }] },
             yAxis: { title: { text: '% da capacidade', style: { color: c.txt } }, labels: { format: '{value}%', style: { color: c.txt } }, gridLineColor: c.grelha, softMax: 100 },
             tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt }, xDateFormat: '%e de %B',
@@ -1434,7 +1513,7 @@ document.addEventListener('DOMContentLoaded', function () {
             med.push(hist ? Math.round(hist.media * 10) / 10 : null);
             if (hist && !rotComp) rotComp = `${hist.de}–${hist.ate}`;
         });
-        const rotHoje = VISTA === 'dia' ? 'Último dia' : VISTA === 'semana' ? `Semana de ${fmtDiaMes(PER)}` : fmtData(isoDe(REF));
+        const rotHoje = VISTA === 'dia' ? (REF === ULT ? 'Último dia' : fmtData(isoDe(REF))) : VISTA === 'semana' ? `Semana de ${fmtDiaMes(PER)}` : fmtData(isoDe(REF));
         Highcharts.chart('grafico-bacias', Object.assign(base(c, 'albufeiras-por-bacia'), {
             chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
             xAxis: { categories: bacias, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha },
@@ -1500,8 +1579,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const periodoRen = (p, hidro) => renEntre(hidro ? `${p}-10-01` : `${p}-01-01`, hidro ? `${p + 1}-09-30` : `${p}-12-31`);
     // O mesmo dia um ano antes e a média, o mínimo e o máximo desse dia nos anos completos desde 2010 antes do dele
     function estatRen(e) {
-        const ano = +e.iso.slice(0, 4), md = mesDia(e.iso), v = [];
-        for (let y = ANO_COMP_REN; y < ano; y++) { const x = renDia(`${y}-${md}`); if (x) v.push({ ano: y, pct: x.pct }); }
+        const ano = +e.iso.slice(0, 4), md = mesDia(e.iso);
+        const juntar = ate => { const out = []; for (let y = ANO_COMP_REN; y < ate; y++) { if (y === ano) continue; const x = renDia(`${y}-${md}`); if (x) out.push({ ano: y, pct: x.pct }); } return out; };
+        // Nos dias antes de 2013, que ainda não têm três anos completos antes, os anos completos desde 2010, sem o do dia
+        let v = juntar(ano);
+        if (v.length < 3 && ano < ANO_COMP_REN + 3) v = juntar(+REN[REN.length - 1].iso.slice(0, 4));
         const hist = v.length >= 3 ? { media: v.reduce((t, x) => t + x.pct, 0) / v.length, de: v[0].ano, ate: v[v.length - 1].ano,
                                        min: v.reduce((m, x) => x.pct < m.pct ? x : m), max: v.reduce((m, x) => x.pct > m.pct ? x : m) } : null;
         return { antes: renDia(`${ano - 1}-${md}`), hist };
@@ -1514,16 +1596,33 @@ document.addEventListener('DOMContentLoaded', function () {
         return `A energia guardada nas albufeiras portuguesas era de <strong>${fmtGWh(e.arm)}</strong> a ${fmtData(e.iso)}, <strong>${fmtPct(e.pct)}</strong> da capacidade`
             + (partes.length ? ': ' + partes.join(' e ') : '') + '.';
     }
-    // O que entrou e saiu no período escolhido no topo: o dia, a semana (de segunda a domingo) ou o mês
+    // A data de comparação na REN: quando o último dia publicado é anterior ao de referência, as comparações relativas
+    // (uma semana, um mês, um ano antes) contam a partir dele
+    function compRen(e) {
+        const i = idxDe(e.iso), modo = modoComp();
+        if (i === REF || COMP < 0) return COMP;
+        if (modo === 'semana') return i - 7;
+        if (modo === 'mes' && VISTA !== 'mes') return menosUmMes(i);
+        if (modo === 'ano') return menosUmAno(i);
+        return COMP < i ? COMP : -1;
+    }
+    // O que entrou e saiu no período escolhido no topo: o dia, a semana (de segunda a domingo) ou o mês; com outra
+    // comparação em «Comparar com», do dia a seguir ao da comparação até ao de referência
     function fluxosPeriodo(e) {
         let a, b, rot;
-        if (VISTA === 'semana') { a = PER; b = isoMais(PER, 6); rot = `Nessa semana (de ${fmtDiaMes(a)} a ${fmtDiaMes(b)})`; }
+        const livre = !compPadrao();
+        if (livre) {
+            const ci = compRen(e);
+            if (ci < 0) return null;
+            a = isoDe(ci + 1); b = e.iso;
+        } else if (VISTA === 'semana') { a = PER; b = isoMais(PER, 6); rot = `Nessa semana (de ${fmtDiaMes(a)} a ${fmtDiaMes(b)})`; }
         else if (VISTA === 'mes') { a = PER + '-01'; b = fimMes(+PER.slice(0, 4), +PER.slice(5, 7)); rot = `Em ${MESES[+PER.slice(5, 7) - 1]} de ${PER.slice(0, 4)}`; }
         else { a = b = e.iso; rot = 'Nesse dia'; }
         const dias = renEntre(a, b);
         if (!dias.length) return null;
         const soma = c => dias.reduce((t, x) => t + (x[c] || 0), 0), ultimo = dias[dias.length - 1].iso;
-        if (VISTA !== 'dia' && ultimo < b) rot = rot.replace(/\)$/, '') + (rot.endsWith(')') ? `, até ${fmtDiaMes(ultimo)})` : ` (até ${fmtDiaMes(ultimo)})`);
+        if (livre) rot = `De ${fmtData(dias[0].iso)} a ${fmtData(ultimo)}`;
+        else if (VISTA !== 'dia' && ultimo < b) rot = rot.replace(/\)$/, '') + (rot.endsWith(')') ? `, até ${fmtDiaMes(ultimo)})` : ` (até ${fmtDiaMes(ultimo)})`);
         return { rot, afl: soma('afl'), prod: soma('prod'), bomb: soma('bomb'), desc: soma('desc') };
     }
     // No Resumo: o dia de referência do período escolhido (ou o último publicado antes dele)
@@ -1531,8 +1630,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const cab = document.getElementById('kpi-energia-cab'), kp = document.getElementById('alb-kpis-energia'), tx = document.getElementById('resumo-energia');
         const e = ULT >= 0 ? renAte(isoDe(REF)) : null;
         if (!e) { cab.hidden = true; kp.innerHTML = ''; tx.innerHTML = ''; return; }
-        const c = renAte(isoDe(COMP)), cOk = c && c.iso < e.iso, { antes, hist } = estatRen(e);
-        const rotComp = VISTA === 'semana' ? '📅 Face à semana anterior' : VISTA === 'mes' ? '📅 Face ao mês anterior' : '📅 Numa semana';
+        const ci = compRen(e), c = ci >= 0 ? renAte(isoDe(ci)) : null, cOk = c && c.iso < e.iso, { antes, hist } = estatRen(e);
+        const rotComp = rotuloCard();
         cab.hidden = false;
         document.getElementById('kpi-energia-sub').textContent = `${fmtData(e.iso)} · nas albufeiras portuguesas, segundo o balanço hidráulico da REN`
             + (e.iso < isoDe(REF) ? ' (o último dia publicado)' : '');
@@ -1788,9 +1887,21 @@ document.addEventListener('DOMContentLoaded', function () {
         const iso = ULT >= 0 ? isoDe(REF) : '';
         let k = ENTSOE_ES.length - 1;
         while (k >= 0 && ENTSOE_ES[k].iso > iso) k--;
-        if (k < 0) { kp.innerHTML = ''; tx.innerHTML = ''; sub.textContent = ''; return; }
-        const r = estatSemana(k, ENTSOE_ES, ENTSOE_ES_ANO), { e, ant, antes, hist } = r;
         const mr = estatMesRee();
+        if (k < 0) {
+            // Antes de 2015 não há a ENTSO-E: só o enchimento da Red Eléctrica (desde 1990)
+            if (!mr) { kp.innerHTML = ''; tx.innerHTML = ''; sub.textContent = ''; return; }
+            const { r: x, hist: h } = mr, ano1 = REE.find(y => y.ano === x.ano - 1 && y.m === x.m);
+            sub.textContent = `Enchimento no fim de ${nomeMes(x)} · a energia guardada semana a semana (ENTSO-E) só começa em 2015`;
+            kp.innerHTML = card('💧 Enchimento (Red Eléctrica)', fmtPct(x.totalPct), `fim de ${nomeMes(x)} · ${fmt0(x.total)} de ${fmt0(x.total / x.totalPct * 100)} GWh`)
+                + card('↩️ Um ano antes', ano1 ? fmtPct(ano1.totalPct) : '--', ano1 ? `agora ${fmtPp(x.totalPct - ano1.totalPct)}` : '')
+                + card(`📊 Média ${h ? h.de + '–' + h.ate : ''} no fim de ${MESES[x.m - 1]}`, h ? fmtPct(h.media) : '--', '');
+            tx.innerHTML = `No fim de ${nomeMes(x)}, segundo a Red Eléctrica, as albufeiras espanholas estavam a <strong>${fmtPct(x.totalPct)}</strong> da capacidade`
+                + ` (as anuais a ${fmtPct(x.anuaisPct)} e as hiperanuais a ${fmtPct(x.hiperPct)})`
+                + (h ? `; a média dos fins de ${MESES[x.m - 1]} de ${h.de} a ${h.ate} é de ${fmtPct(h.media)}` : '') + '.';
+            return;
+        }
+        const r = estatSemana(k, ENTSOE_ES, ENTSOE_ES_ANO), { e, ant, antes, hist } = r;
         const varPct = (a, b) => { const p = (a / b - 1) * 100; return sinal(p) + fmt1(Math.abs(p)) + '%'; };
         sub.textContent = `Semana de ${fmtData(e.iso)} (semana ${e.sem} de ${e.ano})` + (mr ? ` · enchimento no fim de ${nomeMes(mr.r)}` : '');
         kp.innerHTML = card('⚡ Energia guardada', `${fmt0(e.gwh)} GWh`,
@@ -1990,10 +2101,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return out;
     }
+    // O período mais recente de cada vista
+    const perUltimo = v => v === 'semana' ? ultimaSegunda() : v === 'mes' ? ultimoMesCompleto() : isoDe(ULT);
+    // O período ao lado (d = −1 ou +1), ou null fora dos dados
+    function passo(d) {
+        if (VISTA !== 'mes') { const i = idxDe(PER) + d * (VISTA === 'semana' ? 7 : 1); return i >= 0 && i <= ULT ? isoDe(i) : null; }
+        const a = +PER.slice(0, 4), m = +PER.slice(5, 7) + d;
+        return periodoValido('mes', m < 1 ? `${a - 1}-12` : m > 12 ? `${a + 1}-01` : `${a}-${String(m).padStart(2, '0')}`);
+    }
     function preencherPeriodo() {
-        const caixa = document.getElementById('vista-escolha');
+        const caixa = document.getElementById('vista-escolha'), dia = document.getElementById('sel-dia');
         caixa.hidden = VISTA === 'dia';
-        if (VISTA === 'dia') return;
+        dia.hidden = VISTA !== 'dia';
+        const [tAnt, tSeg] = { dia: ['Dia anterior', 'Dia seguinte'], semana: ['Semana anterior', 'Semana seguinte'], mes: ['Mês anterior', 'Mês seguinte'] }[VISTA];
+        [['per-ant', tAnt, -1], ['per-seg', tSeg, 1]].forEach(([id, t, d]) => {
+            const b = document.getElementById(id);
+            b.title = t; b.setAttribute('aria-label', t); b.disabled = passo(d) === null;
+        });
+        document.getElementById('per-ultimo').hidden = PER >= perUltimo(VISTA);
+        if (VISTA === 'dia') { dia.min = isoDe(0); dia.max = isoDe(ULT); dia.value = PER; return; }
         const selAno = document.getElementById('sel-ano-per'), selPer = document.getElementById('sel-per');
         const ano = +PER.slice(0, 4);
         let h = '';
@@ -2015,6 +2141,11 @@ document.addEventListener('DOMContentLoaded', function () {
         selPer.value = PER;
     }
     function periodoValido(v, p) {
+        if (v === 'dia') {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(p || '')) return null;
+            const i = idxDe(p);
+            return i >= 0 && i <= ULT ? isoDe(i) : null;
+        }
         if (v === 'semana') {
             if (!/^\d{4}-\d{2}-\d{2}$/.test(p || '')) return null;
             let i = idxDe(p);
@@ -2029,13 +2160,48 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return null;
     }
+    // As opções de «Comparar com», com os nomes da vista
+    function preencherComp() {
+        const sel = document.getElementById('sel-comp'), dt = document.getElementById('sel-comp-data'), modo = modoComp();
+        sel.innerHTML = [
+            ['semana', VISTA === 'semana' ? 'Semana anterior' : 'Uma semana antes'],
+            ['mes', VISTA === 'mes' ? 'Fim do mês anterior' : 'Um mês antes'],
+            ['hidro', 'Início do ano hidrológico (1 de outubro)'],
+            ['jan', 'Início do ano (1 de janeiro)'],
+            ['ano', 'Um ano antes'],
+            ['data', 'Outra data…']
+        ].map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
+        sel.value = modo;
+        dt.hidden = modo !== 'data';
+        if (modo === 'data') { dt.min = isoDe(0); dt.max = isoDe(Math.max(0, REF - 1)); dt.value = COMP_DATA; }
+    }
+    // Por baixo da escolha: o que muda nas datas antigas e numa comparação que não dá
+    function renderNota() {
+        const el = document.getElementById('vista-nota'), iso = isoDe(REF), partes = [];
+        if (COMP < 0) partes.push(modoComp() === 'data' && idxDe(COMP_DATA) >= REF ? 'A data de comparação tem de ser anterior à do período escolhido.'
+                                                                                   : `A data de comparação fica antes de ${fmtData(isoDe(0))}, o primeiro dia com dados.`);
+        if (REF < I_TOL || (COMP >= 0 && COMP < I_TOL))
+            partes.push('Até 2016, várias albufeiras só têm um valor por semana ou por mês: nessas datas, quando falta o valor do dia, conta o último dos 31 dias anteriores (na tabela, com a data a laranja). As albufeiras que ainda não existiam ficam de fora.');
+        if (iso < '2010-01-01' && POR_COL.has('alqueva'))
+            partes.push(`Até 2010, o Alqueva (${fmtHm3(POR_COL.get('alqueva').ref)}, o maior) ainda estava a encher pela primeira vez: a percentagem do conjunto e a da bacia do Guadiana não se comparam bem com as de hoje.`);
+        if (+iso.slice(0, 4) < ANO_COMP + 3) partes.push('Antes de 2014 ainda não há três anos completos antes do dia: a média, o mínimo e o máximo são os de todos os anos completos desde 2011.');
+        const renDesde = REN && REN.length ? REN[0].iso : '2010-01-01', esDesde = ENTSOE_ES && ENTSOE_ES.length ? ENTSOE_ES[0].iso : '2014-12-29';
+        if (iso < renDesde) partes.push(`A energia guardada (o balanço hidráulico da REN) só começa a ${fmtData(renDesde)}.`);
+        if (iso < esDesde) partes.push('Em Espanha, a energia guardada semana a semana (ENTSO-E) só começa em 2015: até lá, só o enchimento no fim de cada mês (Red Eléctrica).');
+        el.hidden = !partes.length;
+        el.innerHTML = partes.length > 1 ? '<ul>' + partes.map(p => `<li>${p}</li>`).join('') + '</ul>' : partes.join('');
+    }
     function mudarVista(v, per) {
         VISTA = v;
-        PER = v === 'semana' ? (periodoValido('semana', per) || ultimaSegunda())
-            : v === 'mes' ? (periodoValido('mes', per) || ultimoMesCompleto()) : null;
+        PER = periodoValido(v, per) || perUltimo(v);
+        aplicarPeriodo();
+    }
+    function aplicarPeriodo() {
         ativarToggle('ctrl-vista', VISTA);
         definirPeriodo();
         preencherPeriodo();
+        preencherComp();
+        renderNota();
         renderResumo();
         renderEvol();
         renderTabela();
@@ -2062,8 +2228,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function atualizarURL() {
         const p = new URLSearchParams();
+        if (VISTA === 'dia' && PER !== isoDe(ULT)) p.set('data', PER);
         if (VISTA === 'semana') { p.set('vista', 'semana'); p.set('data', PER); }
         if (VISTA === 'mes') { p.set('vista', 'mes'); p.set('mes', PER); }
+        if (!compPadrao()) p.set('comparar', modoComp() === 'data' ? COMP_DATA : modoComp());
         if (SEL !== 'todas') p.set('albufeira', SEL);
         if (ANO !== 'civil') p.set('ano', ANO);
         const q = p.toString();
@@ -2083,7 +2251,8 @@ document.addEventListener('DOMContentLoaded', function () {
         else { ORDEM = 'lista'; ORD = { col: 'cheia', dir: v === 'cheia' ? -1 : 1 }; }
         renderTabela();
     });
-    ligarToggle('ctrl-vista', v => mudarVista(v, PER));
+    // Ao mudar de vista, o período que tem o dia de referência (ou o mais recente, se já se estava no mais recente)
+    ligarToggle('ctrl-vista', v => mudarVista(v, PER >= perUltimo(VISTA) ? null : v === 'mes' ? isoDe(REF).slice(0, 7) : isoDe(REF)));
     ligarToggle('ctrl-es-vista', v => { ES_VISTA = v; renderEnchimento(); });
     ligarToggle('ctrl-en-unid', v => { EN_UNID = v; renderEnergia(); });
     ligarToggle('ctrl-en-ano', v => { EN_ANO = v; renderEnergia(); });
@@ -2104,6 +2273,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     document.getElementById('sel-per').addEventListener('change', e => mudarVista(VISTA, e.target.value));
+    // O calendário só muda a página com uma data completa dentro dos dados (ao escrever o ano, não salta para outro dia)
+    document.getElementById('sel-dia').addEventListener('change', e => { if (periodoValido('dia', e.target.value)) mudarVista('dia', e.target.value); });
+    // Ao sair do calendário com uma data incompleta ou fora dos dados, volta a do período
+    document.getElementById('sel-dia').addEventListener('blur', e => { if (VISTA === 'dia' && e.target.value !== PER) e.target.value = PER; });
+    document.getElementById('sel-comp-data').addEventListener('blur', e => { if (COMP_DATA && e.target.value !== COMP_DATA) e.target.value = COMP_DATA; });
+    document.getElementById('per-ant').addEventListener('click', () => { const p = passo(-1); if (p) mudarVista(VISTA, p); });
+    document.getElementById('per-seg').addEventListener('click', () => { const p = passo(1); if (p) mudarVista(VISTA, p); });
+    document.getElementById('per-ultimo').addEventListener('click', () => mudarVista(VISTA, null));
+    // «Outra data…» começa na data da comparação que estava escolhida
+    document.getElementById('sel-comp').addEventListener('change', e => {
+        if (e.target.value === 'data') COMP_DATA = isoDe(COMP >= 0 ? COMP : Math.max(0, REF - 7));
+        COMP_MODO = e.target.value;
+        aplicarPeriodo();
+    });
+    document.getElementById('sel-comp-data').addEventListener('change', e => {
+        if (!periodoValido('dia', e.target.value)) return;
+        COMP_DATA = e.target.value;
+        aplicarPeriodo();
+    });
     const tabela = document.getElementById('tabela-alb');
     tabela.addEventListener('click', e => {
         if (e.target.closest('a')) return;      // a ligação à página da albufeira
@@ -2160,8 +2348,10 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('conteudo').hidden = false;
             preencherSelect();
             renderOutras();
-            const v = params.get('vista');
-            mudarVista(v === 'semana' || v === 'mes' ? v : 'dia', v === 'semana' ? params.get('data') : params.get('mes'));
+            const v = params.get('vista'), cp = params.get('comparar');
+            if (periodoValido('dia', cp)) { COMP_MODO = 'data'; COMP_DATA = cp; }
+            else if (['semana', 'mes', 'hidro', 'jan', 'ano'].includes(cp)) COMP_MODO = cp;
+            mudarVista(v === 'semana' || v === 'mes' ? v : 'dia', v === 'mes' ? params.get('mes') : params.get('data'));
             return Promise.all([
                 pRen.then(() => { renderEnergia(); renderAfluencias(); renderDescargas(); renderResumoEnergia(); }),
                 // A frase de Espanha compara com Portugal na mesma semana: espera também pelos dados de Portugal
