@@ -168,6 +168,14 @@
         },
         {
           "@type": "Question",
+          "name": "Qual é a diferença entre «Hora PT» e «Hora CET (mercado)»?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O mercado diário funciona em hora CET, a de Espanha e do centro da Europa: o dia de mercado vai das 23h da véspera às 23h em Portugal. Com Hora PT, os dias, os meses, os anos e as horas de Portugal contam em hora de Portugal, como no relógio; com Hora CET (mercado), contam pelo dia de mercado. As médias mudam pouco (em janeiro de 2026, 71,04 €/MWh em hora de Portugal contra 71,19 €/MWh pelo dia de mercado), mas assim batem certo com as do OMIE Histórico em cada um dos modos. Espanha conta sempre pelo dia e pela hora de Espanha, como nas páginas do OMIE. A escolha fica guardada no browser e é a mesma do OMIE Histórico e do OMIE Diário."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Porque é que os dados só chegam até há três meses?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -207,6 +215,7 @@
         .btn-toggle button:last-child { border-right: none; }
         .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
         .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .btn-toggle button:disabled { cursor: not-allowed; background: #f1f5f9; color: #64748b; font-weight: 400; }
         .controlos select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.9em; background: #fff; color: #2c3e50; max-width: 100%; }
         .controlos select:disabled { opacity: 0.5; }
         .btn-nav { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 10px; cursor: pointer; color: #475569; font-size: 0.9em; }
@@ -308,6 +317,7 @@
         [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
         [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
         [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .btn-toggle button:disabled { background: #0f172a; color: #94a3b8; }
         [data-theme="dark"] .controlos select, [data-theme="dark"] .btn-nav, [data-theme="dark"] #btn-partilhar { background: #1e293b; border-color: #475569; color: #e2e8f0; }
         [data-theme="dark"] .btn-nav:hover:not(:disabled), [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
         [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
@@ -362,6 +372,13 @@
                 <div class="btn-toggle" id="ctrl-pais" role="group" aria-label="País">
                     <button type="button" data-v="PT" class="active">Portugal</button>
                     <button type="button" data-v="ES">Espanha</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl">
+                <span class="ctrl-label">Fuso</span>
+                <div class="btn-toggle" id="ctrl-fuso" role="group" aria-label="Fuso horário">
+                    <button type="button" data-v="pt" class="active" title="Portugal pelo dia e pela hora de Portugal">🇵🇹 Hora PT</button>
+                    <button type="button" data-v="cet" title="Portugal pelo dia de mercado, em hora CET (a de Espanha)">🇪🇺 Hora CET (mercado)</button>
                 </div>
             </div>
             <div class="grupo-ctrl">
@@ -445,6 +462,7 @@
                     <li><strong>A água oferece-se pelo que vale noutra hora.</strong> As barragens com albufeira e a bombagem guardam a água para as horas em que o preço é mais alto, e é por isso que oferecem a preços próximos dos do gás. Quando a hídrica está ao preço, o gás continua a pesar nele.</li>
                     <li><strong>Quem compra também conta.</strong> O preço pode ficar onde um comprador deixa de querer comprar: um comercializador, um consumidor, uma central de bombagem que só bombeia abaixo de um certo preço, uma bateria a carregar ou uma exportação. Nos gráficos a 100 %, as ofertas de venda ficam em baixo, as de compra em cima, e uma linha separa os dois lados.</li>
                     <li><strong>O preço pode vir de fora.</strong> Desde 2014 o mercado diário é calculado em conjunto com o resto da Europa. Numa parte das horas nenhuma oferta do MIBEL tem exatamente o preço: o preço veio do acoplamento europeu, de uma oferta com condições (as ofertas complexas) ou ficou entre dois blocos. Essas horas aparecem como «Nenhuma oferta ao preço exato».</li>
+                    <li><strong>Hora de Portugal ou hora CET.</strong> O dia de mercado vai da meia-noite à meia-noite em hora CET, ou seja, das 23h da véspera às 23h em Portugal. Com «🇵🇹 Hora PT», os dias, os meses, os anos e as horas de Portugal contam em hora de Portugal; com «🇪🇺 Hora CET (mercado)», pelo dia de mercado. Espanha conta sempre pelo dia e pela hora de Espanha, como nas páginas do OMIE. Em hora de Portugal, o último dia mostrado é a véspera do último dia de mercado, porque a última hora do dia português (23h–24h) pertence ao dia de mercado seguinte.</li>
                     <li><strong>Três meses de atraso.</strong> A OMIE só publica as ofertas de cada central 90 dias depois do dia de mercado. Por isso não há «quem marcou o preço ontem».</li>
                     <li><strong>Classificação das centrais.</strong> Cada unidade de oferta é classificada pela tecnologia que tem na lista de unidades da OMIE. As que já não estão lá (as centrais a carvão que fecharam, por exemplo) são classificadas pelo nome nas ofertas («C.T. SINES 4» é carvão) ou pelo tipo de código; as vendas dos representantes de pequenos produtores sem tecnologia conhecida ficam em «Produção sem tecnologia identificada».</li>
                 </ul>
@@ -502,6 +520,12 @@
             <summary><strong>Qual é a diferença entre «Repartida» e «Presença»?</strong></summary>
             <div class="faq-content">
                 <p>Numa hora podem estar várias tecnologias exatamente ao preço: uma barragem e uma central de bombagem, por exemplo. Com <strong>Repartida</strong>, essa hora divide-se em partes iguais por elas, e as partes de todas as tecnologias somam 100 %. Com <strong>Presença</strong>, a hora conta inteira para cada uma: é a parte das horas em que cada tecnologia esteve ao preço, e a soma passa de 100 %.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Qual é a diferença entre «Hora PT» e «Hora CET (mercado)»?</strong></summary>
+            <div class="faq-content">
+                <p>O mercado diário funciona em hora CET, a de Espanha e do centro da Europa: o dia de mercado vai das 23h da véspera às 23h em Portugal. Com <strong>Hora PT</strong>, os dias, os meses, os anos e as horas de Portugal contam em hora de Portugal, como no relógio; com <strong>Hora CET (mercado)</strong>, contam pelo dia de mercado. As médias mudam pouco (em janeiro de 2026, 71,04 €/MWh em hora de Portugal contra 71,19 €/MWh pelo dia de mercado), mas assim batem certo com as do OMIE Histórico em cada um dos modos.</p><p>Espanha conta sempre pelo dia e pela hora de Espanha, como nas páginas do OMIE. A escolha fica guardada no browser e é a mesma do OMIE Histórico e do OMIE Diário.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -672,22 +696,34 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     // ESTADO E LINK
     // ==================================================================
-    // p: país (PT/ES); m: rep (repartida) ou pres (presença); per: u12, AAAA ou AAAA-MM
-    const E = { p: 'PT', m: 'rep', per: 'u12' };
+    // p: país (PT/ES); m: rep (repartida) ou pres (presença); per: u12, AAAA ou AAAA-MM;
+    // f: fuso de Portugal, pt (dia e hora de Portugal) ou cet (dia de mercado, hora CET). Espanha conta sempre pelo dia e
+    // pela hora de Espanha, como no OMIE Histórico e no OMIE Diário.
+    const E = { p: 'PT', m: 'rep', per: 'u12', f: 'pt' };
+    // A escolha do fuso é a mesma das páginas do OMIE (guardada no browser); o link manda sobre ela
+    const CHAVE_FUSO = 'omie_diario_fuso';
     let R = null, META = null;
+    const RESUMOS = {};
     (function lerURL() {
         const q = new URLSearchParams(window.location.search);
         if (q.get('p') === 'es') E.p = 'ES';
         if (q.get('m') === 'pres') E.m = 'pres';
         if (/^\d{4}(-\d{2})?$/.test(q.get('per') || '')) E.per = q.get('per');
+        let f = null;
+        try { f = localStorage.getItem(CHAVE_FUSO); } catch (_) {}
+        if (f === 'cet') E.f = 'cet';
+        if (q.get('fuso') === 'cet' || q.get('fuso') === 'pt') E.f = q.get('fuso');
     })();
     function paramsAtuais() {
         const q = new URLSearchParams();
         if (E.p !== 'PT') q.set('p', 'es');
         if (E.m !== 'rep') q.set('m', 'pres');
         if (E.per !== 'u12') q.set('per', E.per);
+        if (E.f !== 'pt') q.set('fuso', E.f);
         return q;
     }
+    // Em que hora está o país escolhido
+    const emHora = () => E.p === 'ES' ? 'em hora de Espanha (CET)' : (E.f === 'pt' ? 'em hora de Portugal' : 'em hora CET (a do dia de mercado)');
     function atualizarURL() {
         const q = paramsAtuais().toString();
         history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
@@ -699,7 +735,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function partilharVista() {
         const q = paramsAtuais().toString();
         const url = `${window.location.origin}${window.location.pathname}${q ? '?' + q : ''}`;
-        const resumo = `⚖️ Quem marca o preço da eletricidade? — ${E.p === 'PT' ? 'Portugal' : 'Espanha'}, ${rotuloPeriodo(E.per)}`;
+        const resumo = `⚖️ Quem marca o preço da eletricidade? — ${E.p === 'PT' ? 'Portugal' : 'Espanha'}, ${rotuloPeriodo(E.per)}, ${emHora()}`;
         if (navigator.share) {
             try { await navigator.share({ title: 'Quem marca o preço da eletricidade? — Tiago Felícia', text: resumo, url }); return; }
             catch (e) { if (e && e.name === 'AbortError') return; }
@@ -829,7 +865,7 @@ document.addEventListener('DOMContentLoaded', function () {
             card('Sol e vento', fmtPctCurto((pct(b, 'SOL', E.m) || 0) + (E.m === 'rep' ? (pct(b, 'EOL', E.m) || 0) : 0)),
                  E.m === 'rep' ? 'das horas (repartida): solar ' + fmtPctCurto(pct(b, 'SOL', 'rep')) + ' · eólica ' + fmtPctCurto(pct(b, 'EOL', 'rep'))
                                : 'solar ao preço · eólica: ' + fmtPctCurto(pct(b, 'EOL', 'pres')), 'SOL') +
-            card('Preço médio do período', fmtEur(b.preco), 'mercado diário, ' + (E.p === 'PT' ? 'Portugal' : 'Espanha') + ' · sem IVA');
+            card('Preço médio do período', fmtEur(b.preco), 'mercado diário, ' + (E.p === 'PT' ? 'Portugal' : 'Espanha') + ', ' + emHora().replace('em hora ', 'hora ').replace(' (a do dia de mercado)', '') + ' · sem IVA');
     }
 
     // ==================================================================
@@ -974,8 +1010,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderHoras() {
         const hh = blocoHoras(E.per, E.p), c = _hcDark();
         const ref = E.per === 'u12' ? 'nos últimos 12 meses' : 'em ' + E.per.slice(0, 4) + (parcialAno(E.per.slice(0, 4)) ? ` (até ${ateCurto()})` : '');
-        document.getElementById('horas-intro').innerHTML = `As tecnologias ao preço em cada hora do dia, ${ref}, ${E.p === 'PT' ? 'em Portugal' : 'em Espanha'}, em hora de Portugal`
-            + (E.per.length === 7 ? ' (a vista por hora é do ano inteiro, não só do mês escolhido)' : '') + '. '
+        document.getElementById('horas-intro').innerHTML = `As tecnologias ao preço em cada hora do dia, ${ref}, ${E.p === 'PT' ? 'em Portugal' : 'em Espanha'}, ${emHora()}`
+            + '. ' + (E.per.length === 7 ? 'A vista por hora é do ano inteiro, não só do mês escolhido. ' : '')
             + (E.m === 'rep' ? 'Cada coluna soma 100 %; a linha separa as ofertas de venda (em baixo) das de compra (em cima).' : 'Só as tecnologias que passam de 1 % em alguma hora.');
         limparGrafico('grafico-horas');
         if (!hh) { limparGrafico('grafico-horas', '<div class="bloco-vazio">Sem dados.</div>'); return; }
@@ -1061,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     function renderTudo() {
         document.getElementById('sel-periodo').value = E.per;
-        atualizarSetas();
+        atualizarSetas(); atualizarFuso(); renderBadge();
         renderResumo(); renderAnos(); renderQuartis(); renderHoras(); renderPrecos();
         atualizarURL();
     }
@@ -1075,12 +1111,38 @@ document.addEventListener('DOMContentLoaded', function () {
             + ` Todos os valores, período a período e com a classificação de cada unidade, estão em <a href="${URL_DADOS}" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> (licença CC BY 4.0).`;
     }
 
+    // resumo.json: Portugal pelo dia e pela hora de Portugal; resumo_cet.json: pelo dia de mercado (hora CET)
+    async function carregarResumo(f) {
+        if (!RESUMOS[f]) {
+            const nome = f === 'cet' ? 'resumo_cet.json' : 'resumo.json';
+            const r = await fetchDados(PASTA + nome);
+            if (!r.ok) throw new Error(nome + ': HTTP ' + r.status);
+            RESUMOS[f] = await r.json();
+        }
+        return RESUMOS[f];
+    }
+    function renderBadge() {
+        const fusoTxt = E.p === 'ES' ? 'dias de Espanha (hora CET)' : (E.f === 'pt' ? 'em hora de Portugal' : 'dias de mercado (hora CET)');
+        document.getElementById('badge').innerHTML = `Dados até <strong>${fmtData(R.ultimo_dia)}</strong>, ${fusoTxt} · a OMIE publica as ofertas de cada central 90 dias depois do dia de mercado`;
+    }
+    // Em Espanha o fuso não muda nada (conta sempre pelo dia de Espanha): os botões ficam desligados
+    function atualizarFuso() {
+        ativarToggle('ctrl-fuso', E.f);
+        document.querySelectorAll('#ctrl-fuso button').forEach(b => {
+            b.disabled = E.p === 'ES';
+            b.title = E.p === 'ES' ? 'Espanha conta sempre pelo dia e pela hora de Espanha (CET)'
+                : (b.dataset.v === 'pt' ? 'Portugal pelo dia e pela hora de Portugal' : 'Portugal pelo dia de mercado, em hora CET (a de Espanha)');
+        });
+    }
+    async function mudarFuso(f) {
+        E.f = f;
+        try { localStorage.setItem(CHAVE_FUSO, f); } catch (_) {}
+        R = await carregarResumo(f);
+        encherPeriodos(); renderMetodo(); renderTudo();
+    }
     async function carregar() {
-        const r = await fetchDados(PASTA + 'resumo.json');
-        if (!r.ok) throw new Error('resumo.json: HTTP ' + r.status);
-        R = await r.json();
+        R = await carregarResumo(E.f);
         try { const m = await fetchDados(PASTA + 'metadata.json'); if (m.ok) META = await m.json(); } catch (_) {}
-        document.getElementById('badge').innerHTML = `Dados até <strong>${fmtData(R.ultimo_dia)}</strong> · a OMIE publica as ofertas de cada central 90 dias depois do dia de mercado`;
         encherPeriodos();
         document.getElementById('estado').hidden = true;
         document.getElementById('conteudo').hidden = false;
@@ -1094,6 +1156,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     ligarToggle('ctrl-pais', v => { E.p = v; renderTudo(); });
+    ligarToggle('ctrl-fuso', v => { mudarFuso(v).catch(falhou); });
     ligarToggle('ctrl-medida', v => { E.m = v; renderTudo(); });
     document.getElementById('sel-periodo').addEventListener('change', e => { E.per = e.target.value; renderTudo(); });
     document.getElementById('per-ant').addEventListener('click', () => { const v = vizinho(-1); if (v) { E.per = v; renderTudo(); } });
@@ -1105,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 600), { passive: true });
     btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    ativarToggle('ctrl-pais', E.p); ativarToggle('ctrl-medida', E.m);
+    ativarToggle('ctrl-pais', E.p); ativarToggle('ctrl-medida', E.m); atualizarFuso();
     carregar().catch(falhou);
 });
 </script>
