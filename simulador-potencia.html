@@ -100,6 +100,10 @@
             { "@type": "Question", "name": "Porque é que os dados da E-Redes não chegam sozinhos?", "acceptedAnswer": { "@type": "Answer", "text": "São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa — se a média passou um valor, o pico também passou — mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança." } },
             { "@type": "Question", "name": "kW ou kVA?", "acceptedAnswer": { "@type": "Answer", "text": "Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98." } },
             { "@type": "Question", "name": "Monofásica ou trifásica?", "acceptedAnswer": { "@type": "Answer", "text": "Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada. O ficheiro da E-Redes só tem a soma das três fases, em médias de 15 minutos: um pico numa só fase só se vê na lista de equipamentos, escolhendo a fase (L1, L2 ou L3) de cada um." } },
+            { "@type": "Question", "name": "Que potência têm o forno e os outros equipamentos?", "acceptedAnswer": { "@type": "Answer", "text": "A potência máxima vem na chapa do equipamento ou no manual. Valores habituais: forno elétrico entre 1,5 e 3,5 kW; placa de indução até 7,4 kW com todas as zonas no máximo; chaleira cerca de 2 kW; termoacumulador 1,5 a 2 kW; máquina de lavar roupa ou loiça cerca de 2 kW enquanto aquece a água; aquecedor a óleo 2 kW; ar condicionado 0,8 a 1,5 kW. Os que aquecem por ciclos, como o forno, as máquinas e os aquecedores, não estão sempre no máximo: por omissão, o simulador conta 75 % da potência deles. No passo 3 pode escrever a potência de cada equipamento." } },
+            { "@type": "Question", "name": "O que posso ligar ao mesmo tempo com 3,45, 4,6 ou 6,9 kVA?", "acceptedAnswer": { "@type": "Answer", "text": "O contador só começa a contar acima de 1,2 vezes a potência contratada (1,3 nas trifásicas): com 3,45 kVA, até cerca de 4,1 kVA (4 kW); com 4,6 kVA, até 5,5 kVA (5,4 kW); com 6,9 kVA, até 8,3 kVA (8,1 kW). Acima disso, corta ao fim de um prazo que encurta com o excesso. Por exemplo, com 3,45 kVA dá para ter o frigorífico, a máquina de lavar e o micro-ondas ao mesmo tempo, mas não o forno, a chaleira e a máquina de lavar juntos. No passo 3, escolha os equipamentos que liga ao mesmo tempo e veja o escalão de que precisa." } },
+            { "@type": "Question", "name": "Que potências há numa instalação trifásica?", "acceptedAnswer": { "@type": "Answer", "text": "Numa instalação trifásica pode contratar os mesmos escalões da monofásica (de 1,15 a 10,35 kVA) e ainda 13,8, 17,25, 20,7, 27,6, 34,5 e 41,4 kVA. Acima de 10,35 kVA a instalação tem de ser trifásica, acima de 20,7 kVA só há tarifas tri-horárias, e acima de 41,4 kVA já não é baixa tensão normal. O contador só começa a contar acima de 1,3 vezes a contratada e, acima de 6,9 kVA, controla também cada fase, que aguenta cerca de um terço da potência contratada." } },
+            { "@type": "Question", "name": "Se trocar o fogão a gás por uma placa de indução, preciso de mais potência?", "acceptedAnswer": { "@type": "Answer", "text": "Muitas vezes, sim. Uma placa de indução pode pedir até 7,4 kW com todas as zonas no máximo, mas a cozinhar o normal são 2 a 3,5 kW, à hora de jantar, quando já há outros equipamentos ligados. Muitas placas deixam limitar a potência total (por exemplo a 2,8 ou 3,7 kW), o que ajuda a ficar no mesmo escalão. Com o ficheiro da E-Redes, ligue o cenário «Trocar o fogão a gás por placa de indução» em «E se…?» e veja o novo pico e o escalão de que precisa." } },
             { "@type": "Question", "name": "Quanto poupo a baixar um escalão?", "acceptedAnswer": { "@type": "Answer", "text": "Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato." } },
             { "@type": "Question", "name": "Como alterar a potência contratada?", "acceptedAnswer": { "@type": "Answer", "text": "Pede-se ao comercializador com quem tem contrato, que trata do pedido junto da E-Redes. Num contador inteligente, a potência nova é programada à distância; sem contador inteligente, um técnico da E-Redes tem de ir ao local. Se a potência nova se revelar curta, volta-se atrás da mesma maneira. Antes de mudar, veja na tabela «Escalão a escalão» se o seu tarifário tem a potência nova: nem todas as ofertas cobrem todos os escalões." } },
             { "@type": "Question", "name": "Quanto custa mudar de potência?", "acceptedAnswer": { "@type": "Answer", "text": "Nada: subir ou descer de potência é grátis, as vezes que precisar, até à potência requisitada da instalação, que consta da ficha eletrotécnica. Ir além dela pede-se à E-Redes e pode implicar custos e obras." } },
@@ -283,8 +287,11 @@
         .cenario.ligado { border-color: #2563eb; background: #eef6ff; }
         .cenario .cab { display: flex; align-items: center; gap: 8px; font-weight: 600; color: #2c3e50; }
         .cenario .params { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+        .dias-ev { display: inline-flex; flex-wrap: wrap; gap: 2px 6px; }
+        .dia-ev { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; cursor: pointer; }
         .cenario select, .cenario input[type=number] { padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.95em; background: #fff; color: #1e293b; }
         .cenario-res { margin-top: 12px; }
+        .grafico-cenario { height: 300px; margin-top: 12px; }
         .dica { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 0.9em; line-height: 1.5; color: #713f12; margin-top: 10px; }
 
         .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; line-height: 1.55; }
@@ -645,6 +652,13 @@
             <div class="tabela-box"><table class="tabela" id="tabela-corte"></table></div>
             <div id="grafico-disparo" class="grafico"></div>
         </div>
+        <h3 class="h3-bloco" style="margin-top:18px">💡 A luz foi abaixo: porquê?</h3>
+        <p class="bloco-intro">Escolha o dia e a hora em que o contador cortou: o simulador mostra o que o ficheiro da E-Redes diz desse momento. O ficheiro tem de incluir esse dia (a E-Redes publica os consumos no dia seguinte).</p>
+        <div class="campos">
+            <div class="campo"><label class="ctrl-label" for="porque-dia">Dia</label><input type="date" id="porque-dia"></div>
+            <div class="campo"><label class="ctrl-label" for="porque-hora">Hora</label><input type="time" id="porque-hora" value="20:00"></div>
+        </div>
+        <div class="disparo-res" id="porque-res" aria-live="polite"></div>
     </section>
 
     <!-- 9. Como mudar -->
@@ -682,6 +696,10 @@
         <details class="faq-item"><summary><strong>Porque é que os dados da E-Redes não chegam sozinhos?</strong></summary><div class="faq-content"><p>São médias de 15 minutos: uma chaleira de 2 kW ligada 3 minutos quase não aparece. Dizem o mínimo de que precisa — se a média passou um valor, o pico também passou — mas não mostram os picos curtos. Por isso o simulador junta-lhes a lista de equipamentos e uma margem de segurança.</p></div></details>
         <details class="faq-item"><summary><strong>kW ou kVA?</strong></summary><div class="faq-content"><p>Os equipamentos e o ficheiro da E-Redes indicam kW (potência ativa); o contrato e o contador usam kVA (potência aparente), que é igual ou maior. O simulador converte com um fator de potência de 0,98.</p></div></details>
         <details class="faq-item"><summary><strong>Monofásica ou trifásica?</strong></summary><div class="faq-content"><p>Acima de 10,35 kVA a instalação tem de ser trifásica. Na trifásica a potência divide-se pelas três fases e, acima de 6,9 kVA, o contador controla também cada fase: com 10,35 kVA trifásicos cada fase aguenta cerca de 3,45 kVA × 1,3, por isso um carregador monofásico de 7,4 kW numa só fase faz cortar. Até 6,9 kVA, o Regulamento n.º 817/2023 da ERSE (art. 19.º) manda controlar só pela soma das três fases, desde que a instalação seja conforme: numa entrada trifásica anterior a 2018 é preciso entregar à E-Redes uma declaração de conformidade ou um termo de responsabilidade (Édito n.º 235/2020 da DGEG); sem isso, cada fase fica limitada a um terço da potência contratada. O ficheiro da E-Redes só tem a soma das três fases, em médias de 15 minutos: um pico numa só fase só se vê na lista de equipamentos, escolhendo a fase (L1, L2 ou L3) de cada um.</p></div></details>
+        <details class="faq-item"><summary><strong>Que potência têm o forno e os outros equipamentos?</strong></summary><div class="faq-content"><p>A potência máxima vem na chapa do equipamento ou no manual. Valores habituais: forno elétrico entre 1,5 e 3,5 kW; placa de indução até 7,4 kW com todas as zonas no máximo; chaleira cerca de 2 kW; termoacumulador 1,5 a 2 kW; máquina de lavar roupa ou loiça cerca de 2 kW enquanto aquece a água; aquecedor a óleo 2 kW; ar condicionado 0,8 a 1,5 kW. Os que aquecem por ciclos, como o forno, as máquinas e os aquecedores, não estão sempre no máximo: por omissão, o simulador conta 75 % da potência deles. No passo 3 pode escrever a potência de cada equipamento.</p></div></details>
+        <details class="faq-item"><summary><strong>O que posso ligar ao mesmo tempo com 3,45, 4,6 ou 6,9 kVA?</strong></summary><div class="faq-content"><p>O contador só começa a contar acima de 1,2 vezes a potência contratada (1,3 nas trifásicas): com 3,45 kVA, até cerca de 4,1 kVA (4 kW); com 4,6 kVA, até 5,5 kVA (5,4 kW); com 6,9 kVA, até 8,3 kVA (8,1 kW). Acima disso, corta ao fim de um prazo que encurta com o excesso. Por exemplo, com 3,45 kVA dá para ter o frigorífico, a máquina de lavar e o micro-ondas ao mesmo tempo, mas não o forno, a chaleira e a máquina de lavar juntos. No passo 3, escolha os equipamentos que liga ao mesmo tempo e veja o escalão de que precisa.</p></div></details>
+        <details class="faq-item"><summary><strong>Que potências há numa instalação trifásica?</strong></summary><div class="faq-content"><p>Numa instalação trifásica pode contratar os mesmos escalões da monofásica (de 1,15 a 10,35 kVA) e ainda 13,8, 17,25, 20,7, 27,6, 34,5 e 41,4 kVA. Acima de 10,35 kVA a instalação tem de ser trifásica, acima de 20,7 kVA só há tarifas tri-horárias, e acima de 41,4 kVA já não é baixa tensão normal. O contador só começa a contar acima de 1,3 vezes a contratada e, acima de 6,9 kVA, controla também cada fase, que aguenta cerca de um terço da potência contratada.</p></div></details>
+        <details class="faq-item"><summary><strong>Se trocar o fogão a gás por uma placa de indução, preciso de mais potência?</strong></summary><div class="faq-content"><p>Muitas vezes, sim. Uma placa de indução pode pedir até 7,4 kW com todas as zonas no máximo, mas a cozinhar o normal são 2 a 3,5 kW, à hora de jantar, quando já há outros equipamentos ligados. Muitas placas deixam limitar a potência total (por exemplo a 2,8 ou 3,7 kW), o que ajuda a ficar no mesmo escalão. Com o ficheiro da E-Redes, ligue o cenário «Trocar o fogão a gás por placa de indução» em <a href="#bloco-cenarios">«E se…?»</a> e veja o novo pico e o escalão de que precisa.</p></div></details>
         <details class="faq-item"><summary><strong>Quanto poupo a baixar um escalão?</strong></summary><div class="faq-content"><p>Até 6,9 kVA, cerca de 20 a 30 euros por ano por escalão, conforme o tarifário. Há também degraus: o IVA a 6 % nos primeiros 200 kWh por mês e a tarifa social só existem até 6,9 kVA, e o IVA a 6 % no termo de potência da tarifa de acesso às redes só até 3,45 kVA. O simulador calcula o custo de cada escalão com o seu tarifário e com o mais barato.</p></div></details>
         <details class="faq-item"><summary><strong>Como alterar a potência contratada?</strong></summary><div class="faq-content"><p>Pede-se ao comercializador com quem tem contrato, que trata do pedido junto da E-Redes. Num contador inteligente, a potência nova é programada à distância; sem contador inteligente, um técnico da E-Redes tem de ir ao local. Se a potência nova se revelar curta, volta-se atrás da mesma maneira. Antes de mudar, veja na tabela «Escalão a escalão» se o seu tarifário tem a potência nova: nem todas as ofertas cobrem todos os escalões.</p></div></details>
         <details class="faq-item"><summary><strong>Quanto custa mudar de potência?</strong></summary><div class="faq-content"><p>Nada: subir ou descer de potência é grátis, as vezes que precisar, até à potência requisitada da instalação, que consta da ficha eletrotécnica. Ir além dela pede-se à E-Redes e pode implicar custos e obras.</p></div></details>
@@ -789,7 +807,7 @@ const E = {
     // en = energia por período; *Ed = escrito pelo utilizador (senão segue a tarifa regulada)
     manual: { pot: null, potEd: false, en: {}, enEd: false, outros: {}, descPot: 0, descEn: 0, tarPot: true, tarEn: true, tse: true, cavMensal: true },
     cen: {
-        ev: { on: false, kw: 3.7, ini: 20, horas: 4, dias: 'uteis' },
+        ev: { on: false, kw: 3.7, ini: 20, horas: 4, dias: '1111100', din: false },   // dias: de segunda a domingo (1 = carrega); din: gestão dinâmica
         bc: { on: false, kw: 1.5, ini: 13, horas: 2 },
         ac: { on: false, kw: 1.2 },
         aq: { on: false, kw: 1.5, ini: 19, horas: 4 },
@@ -1132,6 +1150,70 @@ function diasDeRegistos(regs) {
     return { soEst, dias: [...m.keys()].sort().map(iso => Object.assign({ iso, t: Date.parse(iso + 'T00:00:00Z') }, m.get(iso))) };
 }
 
+// «A luz foi abaixo: porquê?»: o quarto de hora do ficheiro em que o contador cortou (e os vizinhos), contra a potência de
+// hoje e o limite a partir do qual o contador conta; a hora é a do início do quarto de hora
+function desenharPorque() {
+    const el = document.getElementById('porque-res'), inDia = document.getElementById('porque-dia'), C = E.consumos;
+    if (!el) return;
+    if (!C) { el.innerHTML = 'Carregue primeiro o ficheiro da E-Redes (passo 2) com o dia em que a luz foi abaixo.'; return; }
+    inDia.min = C.d1; inDia.max = C.d2;
+    const iso = inDia.value, hm = document.getElementById('porque-hora').value;
+    if (!iso || !hm) { el.innerHTML = `Escolha o dia (entre ${dataPT(C.d1)} e ${dataPT(C.d2)}) e a hora do corte.`; return; }
+    const d = C.dias.find(x => x.iso === iso);
+    if (!d) { el.innerHTML = `Esse dia não está no ficheiro, que vai de ${dataPT(C.d1)} a ${dataPT(C.d2)}. Carregue uma exportação que o inclua: a E-Redes publica os consumos no dia seguinte.`; return; }
+    const [h, m] = hm.split(':').map(Number), q = Math.min(95, Math.floor((h * 60 + (m || 0)) / 15));
+    const k = kRegra(), S = E.atual, lim = S * k;
+    const ponto = i => {
+        const j = q + i;
+        if (j < 0 || j > 95) return null;
+        const v = d.qh[j], e = d.qhEst ? d.qhEst[j] : NaN;
+        return { t: d.t + j * 9e5, kva: !isNaN(v) ? v / COS_PHI : !isNaN(e) ? e / COS_PHI : null, est: isNaN(v) && !isNaN(e) };
+    };
+    const ant = ponto(-1), qh = ponto(0), seg = ponto(1);
+    if (!qh || qh.kva == null) { el.innerHTML = 'Esse quarto de hora não tem valor no ficheiro.'; return; }
+    const linha = x => x && x.kva != null ? `${dasAs(x.t)}: <strong>${fmtKva(x.kva)}</strong>${x.est ? ' (estimado)' : ''}` : '';
+    let porque;
+    if (qh.kva > lim) porque = `A média desse quarto de hora (${fmtKva(qh.kva)}) passou o limite de ${fmtKva(lim)} dos ${nomeEsc(S)} contratados: o contador contou o tempo e cortou. Com essa média, o prazo até cortar é de ${fmtTempo(tempoDisparo(qh.kva, S, k))}.`;
+    else if (qh.kva > S) porque = `A média (${fmtKva(qh.kva)}) passou os ${nomeEsc(S)} contratados, mas ficou abaixo do limite de ${fmtKva(lim)} a partir do qual o contador conta: o corte veio de um pico curto, dentro desses 15 minutos, que a média esconde (por exemplo, vários equipamentos que aquecem a ligar ao mesmo tempo).`;
+    else porque = `A média (${fmtKva(qh.kva)}) ficou abaixo dos ${nomeEsc(S)} contratados: o corte veio de um pico curto, que a média de 15 minutos esconde. Para saber de quanto, some na calculadora acima os equipamentos que estavam ligados.`;
+    if (qh.est) porque += ' Atenção: este valor é uma estimativa da E-Redes, não uma medição.';
+    // depois de um corte, a casa fica sem luz até alguém religar o quadro: o quarto de hora seguinte costuma gastar menos
+    const queda = seg && seg.kva != null && qh.kva > 0.3 && seg.kva < qh.kva * 0.5 ? ` No quarto de hora seguinte, o consumo caiu para ${fmtKva(seg.kva)}, o que bate com a casa ter ficado sem luz.` : '';
+    const sOk = escaloesPossiveis().find(s => s * k >= qh.kva);
+    const sugestao = qh.kva > lim ? (sOk ? ` Com <strong>${nomeEsc(sOk)}</strong>, esta média ficava dentro da folga.` : '') : ' Se acontece muitas vezes, veja os equipamentos que liga ao mesmo tempo (passo 3) ou suba um escalão.';
+    el.innerHTML = `<p>Com a potência de hoje (${nomeEsc(S)}${E.tri ? ', trifásica' : ''}): ${[ant, qh, seg].map(linha).filter(Boolean).join(' · ')}.</p>`
+        + `<p>${porque}${queda}${sugestao}</p><p style="margin:0"><button type="button" class="btn-link" data-ver-dia="${iso}">Ver esse dia em detalhe</button></p>`;
+}
+
+// Levar o ficheiro e a potência recomendada para o Simulador de Eletricidade (o caminho contrário ao do lote 100): pelo
+// IndexedDB do site, no browser; o simulador de eletricidade lê-os com ?ficheiro=1 e apaga-os logo. Nada sai do computador.
+let _ficheirosEredes = [];        // os ficheiros da E-Redes carregados (do disco ou de outro simulador)
+function levarParaEletricidade(ev) {
+    if (!E.consumos || E.consumos.origem !== 'ficheiro' || !_ficheirosEredes.length || !window.indexedDB) return;
+    ev.preventDefault();
+    const { rec } = recomendacao(), pot = rec || E.atual, cfg = CICLOS[E.ciclo], ciclo = pot > 20.7 ? cfg.acima : cfg.bd;
+    const destino = new URL('eletricidade-tiagofelicia?ficheiro=1', location.href).href, janela = window.open('about:blank', '_blank');
+    const ir = () => { if (janela) janela.location.href = destino; else location.href = destino; };
+    try {
+        const pedido = indexedDB.open('tf-ficheiros', 1);
+        pedido.onupgradeneeded = () => pedido.result.createObjectStore('eredes');
+        pedido.onerror = ir;
+        pedido.onsuccess = () => {
+            const db = pedido.result, tx = db.transaction('eredes', 'readwrite');
+            tx.objectStore('eredes').put({ t: Date.now(), ficheiros: _ficheirosEredes, potencia: pot, ciclo }, 'ultimo');
+            tx.oncomplete = () => { db.close(); ir(); };
+            tx.onerror = () => { db.close(); ir(); };
+        };
+    } catch (e) { ir(); }
+}
+function desenharLinkEletricidade() {
+    const a = document.getElementById('link-simulador');
+    if (!a) return;
+    const comFicheiro = !!(E.consumos && E.consumos.origem === 'ficheiro' && _ficheirosEredes.length);
+    const rec = comFicheiro ? recomendacao().rec : null;
+    a.textContent = comFicheiro ? `Abrir o Simulador de Eletricidade com este ficheiro e ${nomeEsc(rec || E.atual)}` : 'Abrir o Simulador de Eletricidade';
+}
+
 // Casa de exemplo: 12 meses gerados no browser (sempre iguais: gerador com semente)
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function registosExemplo() {
@@ -1202,7 +1284,31 @@ function usarConsumos(regs, origem, nomes) {
 // Cenários «e se»: somam carga às médias de 15 min (o que passa da meia-noite entra no dia seguinte)
 // ====================================================================
 function cenarioAtivo(c) { c = c || E.cen; return c.ev.on || c.bc.on || c.ac.on || c.aq.on || c.placa.on; }
-function aplicarCenarios(dias, cen, evKw) {
+// Os dias de carregamento do carro: 7 algarismos, de segunda a domingo (1 = carrega); os valores antigos da ligação
+// partilhada (todos, uteis, 3x) passam aos dias equivalentes
+const DIAS_EV = { todos: '1111111', uteis: '1111100', '3x': '1010100' };
+const mascaraDias = d => /^[01]{7}$/.test(d) ? d : DIAS_EV[d] || '1111100';
+// Gestão dinâmica de carga: o carregador só usa o que sobra até à potência contratada (sem a folga do contador), quarto de
+// hora a quarto de hora, por cima da casa e dos outros cenários, até carregar a mesma energia (kW × horas), no máximo 24 h
+// por carregamento. stats (opcional): { sessoes, porAcabar, horas: [duração de cada carregamento que acabou] }
+function carregarDinamico(novos, c, evKw, stats) {
+    const cap = E.atual * COS_PHI, kwMax = evKw != null ? evKw : c.ev.kw, energia = kwMax * c.ev.horas, mascara = mascaraDias(c.ev.dias);
+    novos.forEach((d, idx) => {
+        if (mascara[(new Date(d.t).getUTCDay() + 6) % 7] !== '1') return;
+        let falta = energia, ultimo = -1, cortado = false;
+        const q0 = Math.round(c.ev.ini * 4);
+        for (let n = 0; falta > 1e-9 && n < 96; n++) {
+            const i = q0 + n, alvo = novos[idx + Math.floor(i / 96)];
+            if (!alvo) { cortado = true; break; }               // o ficheiro acaba antes
+            const q = i % 96, casa = alvo.qh[q];
+            if (isNaN(casa)) continue;
+            const p = Math.min(kwMax, Math.max(0, cap - casa), falta * 4);
+            if (p > 0) { alvo.qh[q] += p; falta -= p / 4; ultimo = n; }
+        }
+        if (stats && !cortado) { stats.sessoes++; if (falta > 1e-6) stats.porAcabar++; else stats.horas.push((ultimo + 1) / 4); }
+    });
+}
+function aplicarCenarios(dias, cen, evKw, stats) {
     const c = cen || E.cen;
     if (!cenarioAtivo(c)) return dias;
     const novos = dias.map(d => ({ iso: d.iso, t: d.t, qh: Float64Array.from(d.qh) }));
@@ -1214,8 +1320,8 @@ function aplicarCenarios(dias, cen, evKw) {
                 if (alvo && !isNaN(alvo.qh[i % 96])) alvo.qh[i % 96] += kw;
             }
         };
-        if (c.ev.on) {
-            const carrega = c.ev.dias === 'todos' || (c.ev.dias === 'uteis' && dow >= 1 && dow <= 5) || (c.ev.dias === '3x' && [1, 3, 5].includes(dow));
+        if (c.ev.on && !c.ev.din) {
+            const carrega = mascaraDias(c.ev.dias)[(dow + 6) % 7] === '1';      // getUTCDay: 0 = domingo
             if (carrega) somar(c.ev.ini, c.ev.horas, evKw != null ? evKw : c.ev.kw);
         }
         if (c.bc.on) somar(c.bc.ini, c.bc.horas, c.bc.kw);
@@ -1223,6 +1329,8 @@ function aplicarCenarios(dias, cen, evKw) {
         if (c.aq.on && [10, 11, 0, 1, 2].includes(mes)) somar(c.aq.ini, c.aq.horas, c.aq.kw);
         if (c.placa.on) somar(19.5, 1, c.placa.kw);
     });
+    // com gestão dinâmica, o carro carrega por fim, por cima da casa e dos outros cenários
+    if (c.ev.on && c.ev.din) carregarDinamico(novos, c, evKw, stats);
     return novos;
 }
 
@@ -1760,6 +1868,34 @@ function desenharResultado() {
         const pl = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
         extra.unshift(`⚠️ <strong>Atenção:</strong> com ${nomeEsc(rec)}, em ${pl(evR.nAcima + evR.nMargem + evR.nLimite, 'quarto de hora', 'quartos de hora')} (${pl(evR.diasAcima, 'dia', 'dias')}) a média de 15 minutos passou os ${nomeEsc(rec)} contratados — o maior foi ${fmtKva(A.max)}, a ${dataHora(A.tMax).slice(0, 10)}, ${dasAs(A.tMax)}. ${evR.nLimite ? `Em ${pl(evR.nLimite, 'deles', 'deles')} a média passou mesmo o limite de ${fmtKva(rec * k)} e o contador teria começado a contar, mas, pela curva de corte e com a potência constante, não chegaria a cortar antes de a média voltar abaixo — dentro desses quartos de hora, picos mais altos podem ter feito cortar.` : `O contador só começa a contar acima de ${fmtKva(rec * k)}, por isso pelas médias não teria cortado, mas dentro desses quartos de hora pode ter havido picos curtos acima desse limite.`} Se o quadro for abaixo, pode voltar a subir${folgado ? ` para ${nomeEsc(folgado)}` : ''}: a mudança é gratuita. <button type="button" class="btn-link" data-ver-dia="${new Date(A.tMax).toISOString().slice(0, 10)}">Ver esse dia</button>`);
     }
+    // Quanto falta para descer um escalão: os quartos de hora acima do limite do escalão de baixo (onde o contador começa a
+    // contar, com a margem), quanto teria de baixar e a que horas; só se esse escalão poupar
+    if (A && rec && E.consumos) {
+        const lista = escaloesPossiveis(), sBaixo = lista[lista.indexOf(rec) - 1];
+        const cRec = custoSeu(rec), cBaixo = sBaixo ? custoSeu(sBaixo) : null;
+        if (sBaixo && cRec != null && cBaixo != null && cRec - cBaixo > 0.5) {
+            const lim = sBaixo * k * (1 - E.margem), horas = new Array(24).fill(0), diasCom = new Set();
+            let n = 0, exc = 0;
+            E.consumos.dias.forEach(d => {
+                for (let i = 0; i < 96; i++) {
+                    const v = d.qh[i] / COS_PHI;
+                    if (isNaN(v) || v <= lim) continue;
+                    n++; diasCom.add(d.iso); exc = Math.max(exc, v - lim); horas[Math.floor(i / 4)]++;
+                }
+            });
+            if (n) {
+                // a janela de horas mais curta (até 4 h) com pelo menos 70 % desses quartos de hora
+                let jan = null;
+                for (let L = 1; L <= 4 && !jan; L++) for (let h0 = 0; h0 < 24; h0++) {
+                    let s = 0;
+                    for (let j = 0; j < L; j++) s += horas[(h0 + j) % 24];
+                    if (s >= 0.7 * n && (!jan || s > jan.s)) jan = { h0, L, s };
+                }
+                const hh = x => String(x % 24).padStart(2, '0') + ':00';
+                extra.push(`💡 <strong>Para descer para ${nomeEsc(sBaixo)}</strong> (menos ${fmtEur(cRec - cBaixo)} por ano): em ${n === 1 ? '1 quarto de hora' : `${n} quartos de hora`} de ${diasCom.size === 1 ? '1 dia' : `${diasCom.size} dias`} a média passou ${fmtKva(lim)}, o limite a partir do qual o contador começa a contar. Teria de baixar até ${fmt(exc * COS_PHI, 1)} kW nesses momentos${jan ? `, ${jan.s === n ? 'todos' : 'quase todos'} entre as ${hh(jan.h0)} e as ${hh(jan.h0 + jan.L)}` : ''}: por exemplo, não ligando ao mesmo tempo os equipamentos que mais gastam.`);
+            }
+        }
+    }
     const degrau = rec > 6.9 && E.atual <= 6.9 ? ` Atenção: acima de 6,9 kVA perde o IVA a 6 % nos primeiros ${E.numerosa ? 300 : 200} kWh por mês${E.social ? ' e a tarifa social' : ''}.` : '';
     // Com o posto na MOBI.E: a contratada é o teto do contador; a fatura cobra a potência pelo maior pico da casa
     if (paga) extra.unshift(`🔌 <strong>Com o posto de carregamento na MOBI.E, a potência que paga não é a contratada</strong>: a fatura cobra o escalão do maior quarto de hora da casa sem o posto nos últimos 12 meses (${fmt(paga.kw, 2)} kW, a ${dataHora(paga.t).slice(0, 10)}, ${dasAs(paga.t)}), ou seja <strong>${nomeEsc(paga.s)}</strong>, no máximo a contratada${paga.rec ? ' (valor aproximado: este ficheiro não traz o posto, que foi calculado a partir das outras colunas)' : ''}. A contratada é o teto do contador, que vê a casa e o posto juntos: escolha-a para o contador não cortar com o carro a carregar. Mais folga não aumenta a fatura enquanto ficar acima de ${nomeEsc(paga.s)}.`);
@@ -1849,6 +1985,9 @@ function desenharPicos() {
     if (alvo !== E.atual) linhas.push(
         { value: alvo, color: c.verde, width: 2, zIndex: 4, label: { text: `recomendado: ${nomeEsc(alvo)}`, style: { color: c.verde } } },
         { value: alvo * k, color: c.verde, width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `com ${nomeEsc(alvo)} começa a contar: ${fmtKva(alvo * k)}`, style: { color: c.verde } } });
+    // com um cenário «e se» ligado, também o recomendado com o cenário (a laranja)
+    const recCen = cenarioAtivo() ? recomendadoDados(analisar(aplicarCenarios(E.consumos.dias))) : null;
+    if (recCen && recCen !== alvo && recCen !== E.atual) linhas.push({ value: recCen, color: c.dk ? '#fb923c' : '#ea580c', width: 2, zIndex: 4, label: { text: `recomendado com o cenário: ${nomeEsc(recCen)}`, align: 'center', style: { color: c.dk ? '#fb923c' : '#ea580c' } } });
     // Os textos das linhas: o das cheias por baixo da linha e o das tracejadas por cima (não se sobrepõem quando as duas
     // linhas estão perto, nos escalões baixos), com um contorno da cor do fundo para se lerem por cima das colunas
     linhas.forEach(l => { l.label.style.textOutline = `3px ${c.bg}`; if (!l.dashStyle) l.label.y = 15; });
@@ -1885,7 +2024,7 @@ function desenharPicos() {
         series[0].name = 'Maior quarto de hora do dia no contador (casa e posto)';
         series.push({ name: 'Casa sem o posto (conta para a fatura)', type: 'line', data: casaDia, color: c.dk ? '#2dd4bf' : '#0d9488', lineWidth: 1.5, marker: { enabled: false } });
     }
-    const maxY = Math.max(E.atual * k, alvo * k, A.max, ...(serieCen || []).map(p => p[1]), ...estDia.map(p => p.y)) * 1.08;
+    const maxY = Math.max(E.atual * k, alvo * k, recCen || 0, A.max, ...(serieCen || []).map(p => p[1]), ...estDia.map(p => p.y)) * 1.08;
     Highcharts.chart('grafico-picos', Object.assign(base(c, 'picos-diarios'), {
         // zoom como nos outros simuladores: arrastar amplia; clicar numa barra abre o dia em detalhe
         chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
@@ -1961,10 +2100,25 @@ function desenharDia() {
     if (pEst.length) series.push(Object.assign({ name: 'Estimado pela E-Redes (não conta)', data: pEst, color: c.dk ? '#64748b' : '#cbd5e1' }, col));
     if (pPosto.length) series.push(Object.assign({ name: 'Posto de carregamento (conta só para o contador)', data: pPosto, color: c.dk ? '#c084fc' : '#a855f7' }, col));
     if (cenarioAtivo()) {
-        const dc = aplicarCenarios(dias)[i];
-        const pc = [];
-        for (let q = 0; q < 96; q++) if (!isNaN(dc.qh[q])) pc.push([dc.t + q * 9e5 + 4.5e5, +(dc.qh[q] / COS_PHI).toFixed(3)]);
-        series.push({ name: 'Com o cenário «e se»', type: 'line', data: pc, color: c.dk ? '#fb923c' : '#ea580c', lineWidth: 1.5, marker: { enabled: false } });
+        // cada cenário com a sua cor, empilhado por cima da casa (e do posto): o que cada equipamento novo junta
+        const CORES_CEN = { ev: ['Cenário: carro elétrico', '#f97316', '#fb923c'], bc: ['Cenário: águas quentes', '#ca8a04', '#facc15'],
+            ac: ['Cenário: ar condicionado', '#0891b2', '#22d3ee'], aq: ['Cenário: aquecimento', '#dc2626', '#f87171'], placa: ['Cenário: placa de indução', '#65a30d', '#a3e635'] };
+        const desliga = { ev: { on: false }, bc: { on: false }, ac: { on: false }, aq: { on: false }, placa: { on: false } };
+        Object.keys(CORES_CEN).forEach(chave => {
+            if (!E.cen[chave].on) return;
+            // com gestão dinâmica, o carro carrega por cima dos outros cenários: a parte dele é o total menos os outros
+            const din = chave === 'ev' && E.cen.ev.din;
+            const dc = (din ? aplicarCenarios(dias) : aplicarCenarios(dias, Object.assign({}, desliga, { [chave]: E.cen[chave] })))[i], pc = [];
+            const ref = din ? aplicarCenarios(dias, Object.assign({}, E.cen, { ev: { on: false } }))[i] : d;
+            for (let q = 0; q < 96; q++) { const x = dc.qh[q] - ref.qh[q]; if (x > 1e-6) pc.push([d.t + q * 9e5, +(x / COS_PHI).toFixed(3)]); }
+            const [nome, cor, corEsc] = CORES_CEN[chave];
+            if (pc.length) series.push(Object.assign({ name: nome, data: pc, color: c.dk ? corEsc : cor }, col));
+        });
+        // o maior quarto de hora do dia com todos os cenários, no título
+        const dt = aplicarCenarios(dias)[i];
+        let mc = -1, tc = 0;
+        for (let q = 0; q < 96; q++) if (!isNaN(dt.qh[q]) && dt.qh[q] / COS_PHI > mc) { mc = dt.qh[q] / COS_PHI; tc = d.t + q * 9e5; }
+        if (mc > maior[1] + 1e-6) document.getElementById('dia-titulo').textContent += ` (com o cenário: ${fmtKva(mc)} ${dasAs(tc)})`;
     }
     const linhas = [
         { value: E.atual, color: c.suave, width: 2, zIndex: 4, label: { text: `hoje: ${nomeEsc(E.atual)}`, align: 'right', x: -6, style: { color: c.txt } } },
@@ -1973,13 +2127,16 @@ function desenharDia() {
     if (alvo !== E.atual) linhas.push(
         { value: alvo, color: c.verde, width: 2, zIndex: 4, label: { text: `recomendado: ${nomeEsc(alvo)}`, style: { color: c.verde } } },
         { value: alvo * k, color: c.verde, width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `começa a contar: ${fmtKva(alvo * k)}`, style: { color: c.verde } } });
+    // com um cenário «e se» ligado, também o recomendado com o cenário (a laranja)
+    const recCen = cenarioAtivo() ? recomendadoDados(analisar(aplicarCenarios(E.consumos.dias))) : null;
+    if (recCen && recCen !== alvo && recCen !== E.atual) linhas.push({ value: recCen, color: c.dk ? '#fb923c' : '#ea580c', width: 2, zIndex: 4, label: { text: `recomendado com o cenário: ${nomeEsc(recCen)}`, align: 'center', style: { color: c.dk ? '#fb923c' : '#ea580c' } } });
     // Os textos das linhas: o das cheias por baixo da linha e o das tracejadas por cima (não se sobrepõem quando as duas
     // linhas estão perto, nos escalões baixos), com um contorno da cor do fundo para se lerem por cima das colunas
     linhas.forEach(l => { l.label.style.textOutline = `3px ${c.bg}`; if (!l.dashStyle) l.label.y = 15; });
     // o eixo vai até ao topo das colunas empilhadas (casa + posto) e da linha do cenário
     const pilha = new Map();
     series.filter(sr => sr.type === 'column').forEach(sr => sr.data.forEach(p => pilha.set(p[0], (pilha.get(p[0]) || 0) + p[1])));
-    const maxY = Math.max(E.atual * k, alvo * k, ...pilha.values(), ...series.filter(sr => sr.type !== 'column').flatMap(sr => sr.data.map(p => p[1]))) * 1.08;
+    const maxY = Math.max(E.atual * k, alvo * k, recCen || 0, ...pilha.values(), ...series.filter(sr => sr.type !== 'column').flatMap(sr => sr.data.map(p => p[1]))) * 1.08;
     Highcharts.chart('grafico-dia', Object.assign(base(c, 'dia-' + d.iso), {
         chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
         xAxis: { type: 'datetime', min: d.t, max: d.t + 864e5, labels: { style: { color: c.txt }, format: '{value:%H:%M}' }, lineColor: c.grelha, tickColor: c.grelha },
@@ -1987,7 +2144,9 @@ function desenharDia() {
         legend: { enabled: series.length > 1, itemStyle: { color: c.txt, fontWeight: 'normal' } },
         tooltip: Object.assign(base(c).tooltip, { shared: true, formatter: function () {
             const ini = Math.floor(this.x / 9e5) * 9e5, h = t => dataHora(t).slice(11);
-            return `<b>${h(ini)}–${h(ini + 9e5)}</b><br>` + this.points.map(p => `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtKva(p.y)}</b> (${fmt(p.y * COS_PHI, 2)} kW)`).join('<br>');
+            const cols = this.points.filter(p => p.series.type === 'column'), tot = cols.reduce((s, p) => s + p.y, 0);
+            return `<b>${h(ini)}–${h(ini + 9e5)}</b><br>` + this.points.map(p => `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtKva(p.y)}</b> (${fmt(p.y * COS_PHI, 2)} kW)`).join('<br>')
+                + (cols.length > 1 ? `<br><b>Total: ${fmtKva(tot)} (${fmt(tot * COS_PHI, 2)} kW)</b>` : '');
         } }),
         series
     }));
@@ -2002,7 +2161,8 @@ function desenharCenarios() {
             <div class="params"><span class="btn-toggle" data-evkw role="group" aria-label="Potência do carregador">${evKws().map(kw => `<button type="button" data-v="${kw}" class="${c.ev.kw === kw ? 'active' : ''}">${fmt(kw, kw % 1 ? 1 : 0)} kW</button>`).join('')}</span>
             <label>começa às <select data-p="ev.ini">${horas(c.ev.ini)}</select></label>
             <label>durante <input type="number" min="1" max="12" value="${c.ev.horas}" data-p="ev.horas" style="width:52px"> h</label>
-            <label><select data-p="ev.dias" aria-label="Dias de carregamento"><option value="todos" ${c.ev.dias === 'todos' ? 'selected' : ''}>todos os dias</option><option value="uteis" ${c.ev.dias === 'uteis' ? 'selected' : ''}>dias úteis</option><option value="3x" ${c.ev.dias === '3x' ? 'selected' : ''}>3 dias por semana</option></select></label></div></div>
+            <span class="dias-ev" role="group" aria-label="Dias de carregamento">${['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'domingo'].map((nome, j) => `<label class="dia-ev" title="${nome}"><input type="checkbox" data-evdia="${j}" aria-label="${nome}" ${mascaraDias(c.ev.dias)[j] === '1' ? 'checked' : ''}>${'STQQSSD'[j]}</label>`).join('')}</span>${mascaraDias(c.ev.dias) === '0000000' ? '<span class="obs">escolha pelo menos um dia</span>' : ''}
+            <label title="O carregador só usa a potência que sobra até à contratada"><input type="checkbox" data-evdin ${c.ev.din ? 'checked' : ''}> gestão dinâmica de carga</label>${c.ev.din ? `<span class="obs">${fmt(c.ev.kw * c.ev.horas, 1)} kWh por carregamento</span>` : ''}</div></div>
         <div class="cenario ${c.bc.on ? 'ligado' : ''}"><label class="cab"><input type="checkbox" data-cen="bc" ${c.bc.on ? 'checked' : ''}> ♨️ Bomba de calor ou termoacumulador para águas quentes</label>
             <div class="params"><label><input type="number" min="0.3" max="5" step="0.1" value="${c.bc.kw}" data-p="bc.kw" style="width:60px"> kW</label>
             <label>começa às <select data-p="bc.ini">${horas(c.bc.ini)}</select></label>
@@ -2020,6 +2180,7 @@ function desenharCenarios() {
 }
 function desenharResCenario() {
     agendarSubCPE();
+    limpar('grafico-cenario');
     const el = document.getElementById('cenario-res'), c = E.cen;
     if (!E.consumos) { el.innerHTML = '<div class="vazio">Os cenários juntam o equipamento novo aos seus consumos reais: carregue o ficheiro da E-Redes (passo 2) ou experimente com a casa de exemplo.</div>'; return; }
     if (!cenarioAtivo()) { el.innerHTML = '<p class="nota">Ligue um dos cenários acima.</p>'; return; }
@@ -2027,8 +2188,15 @@ function desenharResCenario() {
     const r0 = recomendadoDados(A0), r1 = recomendadoDados(A1);
     const c0 = r0 ? custoSeu(r0) : null, c1 = r1 ? custoSeu(r1) : null;
     const dif = c0 != null && c1 != null ? c1 - c0 : null;
-    let h = `<div class="veredito ${r1 && r0 && r1 > r0 ? 'subir' : 'manter'}"><p>Sem o cenário: maior quarto de hora <strong>${fmtKva(A0.max)}</strong> → ${r0 ? nomeEsc(r0) : textoAcima()}. Com o cenário: <strong>${fmtKva(A1.max)}</strong> → <strong>${r1 ? nomeEsc(r1) : textoAcima()}</strong>${dif ? ` (${dif > 0 ? 'mais' : 'menos'} ${fmtEur(Math.abs(dif))} por ano com o seu tarifário, só pela potência; a energia do equipamento novo é à parte)` : ''}.</p>`
+    let h = `<div class="veredito ${r1 && r0 && r1 > r0 ? 'subir' : 'manter'}"><p>Sem o cenário: maior quarto de hora <strong>${fmtKva(A0.max)}</strong> → ${r0 ? nomeEsc(r0) : textoAcima()}. Com o cenário: <strong>${fmtKva(A1.max)}</strong> → <strong>${r1 ? nomeEsc(r1) : textoAcima()}</strong>${dif ? ` (${dif > 0 ? 'mais' : 'menos'} ${fmtEur(Math.abs(dif))} por ano com o seu tarifário, só pela potência; a energia do equipamento novo é à parte)` : ''}. <button type="button" class="btn-link" data-ver-dia="${new Date(A1.tMax).toISOString().slice(0, 10)}">Ver o dia do maior pico com o cenário</button></p>`
         + `<p class="nota" style="margin:0">Só com as médias de 15 minutos: some-lhe os picos curtos dos equipamentos que liga ao mesmo tempo (passo 3).</p></div>`;
+    // gestão dinâmica: quanto tempo demora cada carregamento
+    if (c.ev.on && c.ev.din) {
+        const st = { sessoes: 0, porAcabar: 0, horas: [] };
+        aplicarCenarios(E.consumos.dias, null, null, st);
+        const media = st.horas.length ? st.horas.reduce((a, b) => a + b, 0) / st.horas.length : 0, max = st.horas.length ? Math.max(...st.horas) : 0;
+        if (st.sessoes) h += `<div class="dica">🔌 Com gestão dinâmica de carga, o carregador só usa o que sobra até aos ${nomeEsc(E.atual)} contratados: cada carregamento de ${fmt(c.ev.kw * c.ev.horas, 1)} kWh demora em média ${fmt(media, 1)} h (no máximo ${fmt(max, 1)} h), em vez de ${c.ev.horas} h${st.porAcabar ? `; em ${st.porAcabar} de ${st.sessoes} carregamentos não acabaria em 24 horas` : ''}.</div>`;
+    }
     if (c.ev.on && r0 && (!r1 || r1 > r0)) {
         // o carregador mais forte que cabe no escalão de hoje, e a melhor hora para começar
         // (o escalão só sobe com a potência do carregador: pesquisa binária, em décimas de kW, entre 1,4 kW e a escolhida)
@@ -2051,7 +2219,51 @@ function desenharResCenario() {
         if (melhorHora !== c.ev.ini && rMelhor && rMelhor <= r0) dicas.push(`começar a carregar às <strong>${String(melhorHora).padStart(2, '0')}:00</strong> (maior quarto de hora ${fmtKva(melhorPico)})`);
         if (dicas.length) h += `<div class="dica">💡 Para ficar em ${nomeEsc(r0)}: ${dicas.join(' ou ')}.</div>`;
     }
-    el.innerHTML = h;
+    // Águas quentes: a hora de começar que deixa o maior quarto de hora mais baixo (com os outros cenários como estão)
+    if (c.bc.on && r0 && (!r1 || r1 > r0)) {
+        const comHora = hIni => aplicarCenarios(E.consumos.dias, Object.assign({}, c, { bc: Object.assign({}, c.bc, { ini: hIni }) }));
+        let melhor = c.bc.ini, pico = Infinity;
+        for (let hIni = 0; hIni < 24; hIni++) {
+            let m = 0;
+            comHora(hIni).forEach(d => { for (let i = 0; i < 96; i++) if (d.qh[i] > m) m = d.qh[i]; });
+            if (m < pico - 1e-9) { pico = m; melhor = hIni; }
+        }
+        const rM = melhor !== c.bc.ini ? recomendadoDados(analisar(comHora(melhor))) : null;
+        if (rM && rM < (r1 || Infinity)) h += `<div class="dica">💡 Águas quentes: se começarem às <strong>${String(melhor).padStart(2, '0')}:00</strong>, o maior quarto de hora desce para ${fmtKva(pico / COS_PHI)} e ${rM <= r0 ? `continua a chegar ${nomeEsc(r0)}` : `chega ${nomeEsc(rM)} em vez de ${r1 ? nomeEsc(r1) : textoAcima()}`}.</div>`;
+    }
+    el.innerHTML = h + '<div class="grafico-cenario" id="grafico-cenario"></div>';
+    // O maior quarto de hora de cada mês, sem e com o cenário (só os reais), com a potência de hoje e a recomendada
+    const porMes = dias => {
+        const m = new Map();
+        dias.forEach(d => {
+            const k = d.iso.slice(0, 7);
+            let x = m.has(k) ? m.get(k) : -1;
+            for (let i = 0; i < 96; i++) if (!isNaN(d.qh[i])) x = Math.max(x, d.qh[i] / COS_PHI);
+            m.set(k, x);
+        });
+        return m;
+    };
+    const m0 = porMes(E.consumos.dias), m1 = porMes(aplicarCenarios(E.consumos.dias));
+    const meses = [...m0.keys()].sort(), hc = _hcDark();
+    const val = (m, x) => { const v = m.get(x); return v >= 0 ? +v.toFixed(2) : null; };
+    const linhas = [{ value: E.atual, color: hc.suave, width: 2, zIndex: 4, label: { text: `hoje: ${nomeEsc(E.atual)}`, align: 'right', x: -6, y: 15, style: { color: hc.txt, textOutline: `3px ${hc.bg}` } } }];
+    if (r1 && r1 !== E.atual) linhas.push({ value: r1, color: hc.verde, width: 2, zIndex: 4, label: { text: `com o cenário: ${nomeEsc(r1)}`, y: 15, style: { color: hc.verde, textOutline: `3px ${hc.bg}` } } });
+    const maxY = Math.max(E.atual, r1 || 0, ...meses.map(x => val(m1, x) || 0)) * 1.1;
+    Highcharts.chart('grafico-cenario', Object.assign(base(hc, 'cenario-por-mes'), {
+        chart: { type: 'column', backgroundColor: hc.bg, style: { fontFamily: 'inherit' } },
+        xAxis: { categories: meses.map(x => `${MESES[+x.slice(5) - 1]}/${x.slice(2, 4)}`), labels: { style: { color: hc.txt } }, lineColor: hc.grelha, tickColor: hc.grelha },
+        yAxis: { title: { text: 'kVA', style: { color: hc.txt } }, labels: { style: { color: hc.txt } }, gridLineColor: hc.grelha, plotLines: linhas, min: 0, max: maxY },
+        plotOptions: { column: { borderWidth: 0, groupPadding: 0.12, pointPadding: 0.04 } },
+        tooltip: Object.assign(base(hc).tooltip, { shared: true, formatter: function () {
+            const [a, b] = this.points;
+            return `<b>${a.key}</b><br>` + this.points.map(p => `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtKva(p.y)}</b>`).join('<br>')
+                + (a && b && b.y - a.y > 0.005 ? `<br>+${fmtKva(b.y - a.y)} com o cenário` : '');
+        } }),
+        series: [
+            { name: 'Maior quarto de hora do mês, sem o cenário', data: meses.map(x => val(m0, x)), color: '#60a5fa' },
+            { name: 'Com o cenário', data: meses.map(x => val(m1, x)), color: hc.dk ? '#fb923c' : '#ea580c' }
+        ]
+    }));
 }
 
 function desenharCorte() {
@@ -2313,7 +2525,7 @@ function desenharSubCPE() {
 function renderTudo() {
     desenharManual();
     desenharPresets(); desenharCats(); desenharEquip(); desenharSoma();
-    desenharResultado(); desenharEscaloes(); desenharPicos(); desenharResCenario(); desenharCorte();
+    desenharResultado(); desenharEscaloes(); desenharPicos(); desenharResCenario(); desenharCorte(); desenharPorque(); desenharLinkEletricidade();
     atualizarURL();
 }
 
@@ -2350,7 +2562,7 @@ function estadoParaURL() {
     if (mx.length) p.set('mx', mx.join(','));
     if (E.tri) { const fz = EQUIP.filter(q => E.qtd[q.id] && !q.tri).map(q => `${q.id}:${E.fase[q.id]}`); if (fz.length) p.set('fz', fz.join(',')); }
     const c = E.cen;
-    if (c.ev.on) p.set('ev', [c.ev.kw, c.ev.ini, c.ev.horas, c.ev.dias].join(','));
+    if (c.ev.on) p.set('ev', [c.ev.kw, c.ev.ini, c.ev.horas, c.ev.dias].concat(c.ev.din ? ['d'] : []).join(','));
     if (c.bc.on) p.set('bc', [c.bc.kw, c.bc.ini, c.bc.horas].join(','));
     if (c.ac.on) p.set('ac', String(c.ac.kw));
     if (c.aq.on) p.set('aq', [c.aq.kw, c.aq.ini, c.aq.horas].join(','));
@@ -2404,7 +2616,7 @@ function lerURL() {
     pares(p.get('fz')).forEach(([id, f]) => { if ([1, 2, 3].includes(+f)) E.fase[id] = +f; });
     if (p.has('eq')) E.preset = 5;
     const c = E.cen;
-    if (p.get('ev')) { const [kw, ini, hh, d] = p.get('ev').split(','); c.ev = { on: true, kw: evKws().includes(num(kw)) ? num(kw) : 3.7, ini: Math.min(23, Math.max(0, Math.round(num(ini, 20)))), horas: Math.min(12, Math.max(1, Math.round(num(hh, 4)))), dias: ['todos', 'uteis', '3x'].includes(d) ? d : 'uteis' }; }
+    if (p.get('ev')) { const [kw, ini, hh, d, din] = p.get('ev').split(','); c.ev = { on: true, kw: evKws().includes(num(kw)) ? num(kw) : 3.7, ini: Math.min(23, Math.max(0, Math.round(num(ini, 20)))), horas: Math.min(12, Math.max(1, Math.round(num(hh, 4)))), dias: mascaraDias(d), din: din === 'd' }; }
     if (p.get('bc')) { const [kw, ini, hh] = p.get('bc').split(','); c.bc = { on: true, kw: Math.min(5, Math.max(0.3, num(kw, 1.5))), ini: Math.min(23, Math.max(0, Math.round(num(ini, 13)))), horas: Math.min(8, Math.max(1, Math.round(num(hh, 2)))) }; }
     if (p.get('ac')) c.ac = { on: true, kw: Math.min(6, Math.max(0.5, num(p.get('ac'), 1.2))) };
     if (p.get('aq')) { const [kw, ini, hh] = p.get('aq').split(','); c.aq = { on: true, kw: Math.min(8, Math.max(0.5, num(kw, 1.5))), ini: Math.min(23, Math.max(0, Math.round(num(ini, 19)))), horas: Math.min(12, Math.max(1, Math.round(num(hh, 4)))) }; }
@@ -2560,20 +2772,49 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!inp.files || !inp.files.length) return;
         estado.innerHTML = 'A ler o ficheiro…';
         try {
-            const { registos, nomes } = await lerFicheiros([...inp.files]);
+            _ficheirosEredes = [...inp.files];
+            const { registos, nomes } = await lerFicheiros(_ficheirosEredes);
             usarConsumos(registos, 'ficheiro', nomes);
         } catch (err) {
             console.error(err);
             estado.innerHTML = `<span class="erro">❌ ${esc(err.message || err)}</span>`;
         } finally { inp.value = ''; }
     });
-    document.getElementById('btn-exemplo').addEventListener('click', () => usarConsumos(registosExemplo(), 'exemplo'));
-    document.getElementById('btn-limpar').addEventListener('click', () => { E.consumos = null; E.custos = null; desenharEstadoDados(); renderTudo(); agendarCustos(); });
+    document.getElementById('btn-exemplo').addEventListener('click', () => { _ficheirosEredes = []; usarConsumos(registosExemplo(), 'exemplo'); });
+    document.getElementById('btn-limpar').addEventListener('click', () => { _ficheirosEredes = []; E.consumos = null; E.custos = null; desenharEstadoDados(); renderTudo(); agendarCustos(); });
+    // Vindo do Simulador de Eletricidade ou do de Autoconsumo («abrir no Simulador de Potência com este ficheiro»): os
+    // ficheiros ficaram no IndexedDB do site, no browser; lê-os e apaga-os logo (só valem 10 minutos)
+    if (new URLSearchParams(location.search).get('ficheiro') === '1') {
+        const tirarParam = () => { try { const u = new URL(location.href); u.searchParams.delete('ficheiro'); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch (e) { /* sem history */ } };
+        try {
+            const pedido = indexedDB.open('tf-ficheiros', 1);
+            pedido.onupgradeneeded = () => pedido.result.createObjectStore('eredes');
+            pedido.onerror = tirarParam;
+            pedido.onsuccess = () => {
+                const db = pedido.result, tx = db.transaction('eredes', 'readwrite'), st = tx.objectStore('eredes'), g = st.get('ultimo');
+                tx.oncomplete = () => db.close();
+                g.onsuccess = async () => {
+                    const v = g.result;
+                    st.delete('ultimo');
+                    tirarParam();
+                    if (!v || !v.ficheiros || !v.ficheiros.length || Date.now() - v.t > 6e5) {
+                        estado.innerHTML = '<span class="aviso">⚠️ Não encontrei o ficheiro do outro simulador: escolha-o aqui.</span>';
+                        return;
+                    }
+                    estado.innerHTML = 'A ler o ficheiro…';
+                    try { _ficheirosEredes = v.ficheiros; const { registos, nomes } = await lerFicheiros(v.ficheiros); usarConsumos(registos, 'ficheiro', nomes); }
+                    catch (err) { console.error(err); estado.innerHTML = `<span class="erro">❌ ${esc(err.message || err)}</span>`; }
+                };
+            };
+        } catch (e) { tirarParam(); }
+    }
 
     const cen = document.getElementById('cenarios');
     cen.addEventListener('change', e => {
         const t = e.target;
         if (t.dataset.cen) E.cen[t.dataset.cen].on = t.checked;
+        if (t.dataset.evdin != null) E.cen.ev.din = t.checked;
+        if (t.dataset.evdia != null) { const m = mascaraDias(E.cen.ev.dias).split(''); m[+t.dataset.evdia] = t.checked ? '1' : '0'; E.cen.ev.dias = m.join(''); }
         if (t.dataset.p) {
             const [a, b] = t.dataset.p.split('.');
             E.cen[a][b] = b === 'dias' ? t.value : Math.max(0, +t.value || 0);
@@ -2592,11 +2833,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     document.getElementById('sel-corte').addEventListener('change', desenharCorte);
     document.getElementById('inp-corte').addEventListener('input', desenharCorte);
+    ['porque-dia', 'porque-hora'].forEach(id => document.getElementById(id).addEventListener('change', desenharPorque));
+    document.getElementById('link-simulador').addEventListener('click', levarParaEletricidade);
     document.getElementById('btn-corte-equip').addEventListener('click', () => { document.getElementById('inp-corte').value = somaEquip().kva.toFixed(2); desenharCorte(); });
     document.getElementById('btn-partilhar').addEventListener('click', partilhar);
     document.getElementById('btn-pdf').addEventListener('click', () => window.print());
     document.getElementById('btn-excel').addEventListener('click', exportarExcel);
-    document.addEventListener('themeChanged', () => { desenharPicos(); desenharCorte(); });
+    document.addEventListener('themeChanged', () => { desenharPicos(); desenharCorte(); desenharResCenario(); });
     // o dia em detalhe: setas, data, maior pico; «ver» na tabela dos 10 momentos e no aviso do resultado
     const passoDia = n => { if (!E.consumos) return; const ds = E.consumos.dias, i = ds.findIndex(d => d.iso === E.diaSel); const j = Math.min(ds.length - 1, Math.max(0, i + n)); selecionarDia(ds[j].iso); };
     document.getElementById('dia-ant').addEventListener('click', () => passoDia(-1));
