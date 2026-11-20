@@ -44,6 +44,7 @@ import re
 import sys
 import urllib.request
 from datetime import date, timedelta
+from decimal import Decimal, ROUND_HALF_UP
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -69,7 +70,7 @@ slug = lambda col: col.replace('_', '-')
 
 # ---------------------------------------------------------------- formatação (como o Intl.NumberFormat('pt-PT'))
 def num(v, casas=0):
-    s = f'{abs(v):.{casas}f}'
+    s = f'{Decimal(repr(abs(v))).quantize(Decimal(1).scaleb(-casas), rounding=ROUND_HALF_UP):f}'
     inteiro, _, dec = s.partition('.')
     if len(inteiro) >= 5:                       # o pt-PT só agrupa a partir de 10 000
         g = []
@@ -431,8 +432,12 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
     # ---- série para o gráfico: um valor por dia desde o primeiro (null sem valor)
     i0 = next(i for i, x in enumerate(a['bruto']) if not math.isnan(x))
     serie = [None if math.isnan(x) else round(x, 2) for x in a['bruto'][i0:iv + 1]]
-    dados = {'nome': nome, 'ref': a['ref'], 'refMax': refmax, 'inicio': C.dia(i0).isoformat(), 'ult': du.isoformat(),
+    dados = {'nome': nome, 'do': do_, 'o': o_, 'ref': a['ref'], 'refMax': refmax, 'inicio': C.dia(i0).isoformat(), 'ult': du.isoformat(),
              'lat': a['lat'], 'lon': a['lon'], 'v': serie}
+
+    opcoes_comp = ''.join(f'<option value="{v}">{t}</option>' for v, t in (
+        ('semana', 'Uma semana antes'), ('mes', 'Um mês antes'), ('hidro', 'Início do ano hidrológico (1 de outubro)'),
+        ('jan', 'Início do ano (1 de janeiro)'), ('ano', 'Um ano antes'), ('data', 'Outra data…')))
 
     # «barragem» e «nível» são o que mais se pesquisa (Search Console, novembro de 2026); «albufeira» fica nos textos
     titulo = f'Barragem {do_} hoje: nível e água da albufeira | Tiago Felícia'
@@ -500,8 +505,23 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
     </div>
 
     <section class="bloco" id="bloco-resumo">
-        <p class="resumo-topo">{frase}</p>
-        <div class="kpis">{kpis}</div>
+        <div class="vista-bar" id="alb-dia">
+            <span class="vista-grupo">
+                <label class="ctrl-label" for="sel-dia">Dia</label>
+                <button type="button" class="btn-nav" id="dia-ant" title="Dia anterior" aria-label="Dia anterior">&#10094;</button>
+                <input type="date" id="sel-dia" value="{du.isoformat()}" min="{C.dia(i0).isoformat()}" max="{du.isoformat()}">
+                <button type="button" class="btn-nav" id="dia-seg" title="Dia seguinte" aria-label="Dia seguinte" disabled>&#10095;</button>
+                <button type="button" class="btn-nav" id="dia-ultimo" title="Voltar ao último dia" hidden>Mais recente</button>
+            </span>
+            <span class="vista-grupo">
+                <label class="ctrl-label" for="sel-comp">Comparar com</label>
+                <select id="sel-comp">{opcoes_comp}</select>
+                <input type="date" id="sel-comp-data" aria-label="Data de comparação" hidden>
+            </span>
+        </div>
+        <div class="vista-nota" id="vista-nota" role="note" hidden></div>
+        <p class="resumo-topo" id="resumo-frase">{frase}</p>
+        <div class="kpis" id="resumo-kpis">{kpis}</div>
     </section>
 
     <section class="grafico-box" id="bloco-evol">
@@ -545,9 +565,9 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
 
     <section class="grafico-box" id="bloco-bacia">
         <h2>🗺️ Na bacia {esc(da_bacia(a['bacia']))}</h2>
-        <p class="grafico-intro">{"As outras albufeiras com uso para energia da mesma bacia, com a percentagem do último dia" + (f"; no conjunto da bacia, {fmt_pct(pct_bacia)}" if pct_bacia is not None else "") + "." if irmas else "É a única albufeira com uso para energia desta bacia nesta lista."}</p>
+        <p class="grafico-intro">{"As outras albufeiras com uso para energia da mesma bacia, com a percentagem do último dia (" + fmt_data(dv) + ")" + (f"; no conjunto da bacia, {fmt_pct(pct_bacia)}" if pct_bacia is not None else "") + "." if irmas else "É a única albufeira com uso para energia desta bacia nesta lista."}</p>
         {f'<ul class="lista-bacia">{bacia_html}</ul>' if irmas else ''}
-        <p class="nota-bloco"><a href="/albufeiras?albufeira=bacia-{esc(a['bacia'])}">Ver a bacia na página das albufeiras</a> · <a href="/albufeiras?albufeira={col}">ver {esc(o_)} ao lado das outras</a></p>
+        <p class="nota-bloco"><a id="link-bacia" href="/albufeiras?albufeira=bacia-{esc(a['bacia'])}">Ver a bacia na página das albufeiras</a> · <a id="link-outras" href="/albufeiras?albufeira={col}">ver {esc(o_)} ao lado das outras</a></p>
     </section>
 
     {f"""<section class="grafico-box" id="bloco-mapa">
