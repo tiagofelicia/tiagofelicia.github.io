@@ -341,6 +341,9 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
         (f'Quanta água tem {o_} hoje?',
          f'A {fmt_data(dv)}, o último valor publicado pelo SNIRH, {o_} tinha {fmt_hm3(v)} de água, {fmt_pct(pct)} {rot_ref}'
          + (': ' + ' e '.join(partes) if partes else '') + '. Esta página é atualizada todos os dias.'),
+        (f'Qual é o nível da barragem {do_}?',
+         f'A {fmt_data(dv)}, a albufeira da barragem {do_} estava a {fmt_pct(pct)} {rot_ref}, com {fmt_hm3(v)} de água. '
+         'É esta percentagem do volume guardado que costuma ser dada como o nível da barragem.'),
     ]
     if a['cap']:
         faq.append((f'Qual é a capacidade {do_}?',
@@ -431,8 +434,9 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
     dados = {'nome': nome, 'ref': a['ref'], 'refMax': refmax, 'inicio': C.dia(i0).isoformat(), 'ult': du.isoformat(),
              'lat': a['lat'], 'lon': a['lon'], 'v': serie}
 
-    titulo = f'{nome} hoje: quanta água tem a albufeira | Tiago Felícia'
-    desc = (f'A albufeira {do_} tinha {fmt_hm3(v)} a {fmt_data(dv)}, {fmt_pct(pct)} {rot_ref}. Comparação com o ano anterior e '
+    # «barragem» e «nível» são o que mais se pesquisa (Search Console, novembro de 2026); «albufeira» fica nos textos
+    titulo = f'Barragem {do_} hoje: nível e água da albufeira | Tiago Felícia'
+    desc = (f'Nível da barragem {do_}: a albufeira tinha {fmt_hm3(v)} a {fmt_data(dv)}, {fmt_pct(pct)} {rot_ref}. Comparação com o ano anterior e '
             f'com a média desde {ANO_COMP}, máximos e mínimos, ano a ano e as centrais. Dados do SNIRH, atualizados todos os dias.')
     hc = '\n    '.join(cab['hc'])
     return f'''<!DOCTYPE html>
@@ -449,7 +453,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
 
     <link rel="canonical" href="{url}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="{esc(O_)} hoje — a água guardada na albufeira" />
+    <meta property="og:title" content="Barragem {esc(do_)} hoje — a água guardada na albufeira" />
     <meta property="og:description" content="{esc(desc)}" />
     <meta property="og:url" content="{url}" />
     <meta property="og:image" content="{SITE}/images/social/social-albufeiras.jpg" />
@@ -491,7 +495,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
 <main id="main-content">
     <div class="painel-header">
         <p class="badge-global">Dados desde <strong>{fmt_data(date.fromisoformat(a['inicio_serie']))}</strong> · {"um valor por semana" if semanal else "um valor por dia"} · Último valor: <strong>{fmt_data(dv)}</strong></p>
-        <h1>Albufeira {esc(do_)}: quanta água tem hoje</h1>
+        <h1>Barragem e albufeira {esc(do_)}: quanta água tem hoje</h1>
         <p>Bacia {esc(da_bacia(a['bacia']))} · {"capacidade " + fmt_hm3(a['cap']) if a['cap'] else "sem capacidade publicada"}{" · " + str(len(cs)) + (" central" if len(cs) == 1 else " centrais") if cs else ""} · dados do SNIRH (Agência Portuguesa do Ambiente)</p>
     </div>
 
