@@ -412,7 +412,7 @@
         <a href="#bloco-escaloes" class="mini-nav-chip">📋 Escalão a escalão</a>
         <a href="#bloco-picos" class="mini-nav-chip">📈 Os seus picos</a>
         <a href="#bloco-cenarios" class="mini-nav-chip">🚗 E se…?</a>
-        <a href="#bloco-subcpe" class="mini-nav-chip">⚡ Posto e sub-CPE</a>
+        <a href="#bloco-subcpe" class="mini-nav-chip" id="chip-subcpe" hidden>⚡ Posto e sub-CPE</a>
         <a href="#bloco-corte" class="mini-nav-chip">⏱️ Quando o contador corta</a>
         <a href="#bloco-mudar" class="mini-nav-chip">🔁 Como mudar</a>
         <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
@@ -618,8 +618,8 @@
         <div class="cenario-res" id="cenario-res"></div>
     </section>
 
-    <!-- Posto de carregamento: MOBI.E, sub-CPE ou tudo num contrato -->
-    <section class="bloco" id="bloco-subcpe">
+    <!-- Posto de carregamento: MOBI.E, sub-CPE ou tudo num contrato (só aparece com posto no ficheiro ou com o cenário do carro) -->
+    <section class="bloco" id="bloco-subcpe" hidden>
         <h2>⚡ Posto de carregamento: MOBI.E, sub-CPE ou tudo num contrato</h2>
         <p class="bloco-intro">Quanto paga por ano com o posto de carregamento integrado na MOBI.E (até 31/12/2027), com tudo no contrato da casa (sem MOBI.E nem sub-CPE: já possível, e obrigatório a partir de 2028) ou com um <strong>sub-CPE</strong>: um contador só para o posto, dentro da instalação da casa, com contrato de eletricidade próprio. Com os seus consumos e o tarifário de cada contrato.</p>
         <div class="campos" id="sub-campos" hidden>
@@ -704,7 +704,7 @@
         <details class="faq-item"><summary><strong>Como alterar a potência contratada?</strong></summary><div class="faq-content"><p>Pede-se ao comercializador com quem tem contrato, que trata do pedido junto da E-Redes. Num contador inteligente, a potência nova é programada à distância; sem contador inteligente, um técnico da E-Redes tem de ir ao local. Se a potência nova se revelar curta, volta-se atrás da mesma maneira. Antes de mudar, veja na tabela «Escalão a escalão» se o seu tarifário tem a potência nova: nem todas as ofertas cobrem todos os escalões.</p></div></details>
         <details class="faq-item"><summary><strong>Quanto custa mudar de potência?</strong></summary><div class="faq-content"><p>Nada: subir ou descer de potência é grátis, as vezes que precisar, até à potência requisitada da instalação, que consta da ficha eletrotécnica. Ir além dela pede-se à E-Redes e pode implicar custos e obras.</p></div></details>
         <details class="faq-item"><summary><strong>Os painéis solares deixam-me baixar a potência?</strong></summary><div class="faq-content"><p>Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos.</p></div></details>
-        <details class="faq-item"><summary><strong>O que é um sub-CPE e compensa?</strong></summary><div class="faq-content"><p>É um contador só para o posto de carregamento, dentro da instalação da casa, com contrato de eletricidade próprio. É opcional e pede-se ao operador de rede, com autorização do titular do contrato da casa; obriga a tirar da MOBI.E todos os postos da mesma instalação (num prédio, também os de outros condóminos). A casa passa a pagar a potência pelo seu maior quarto de hora sem o posto, e o posto paga o seu escalão: são dois termos de potência, por isso raramente compensa só pela potência. Pode compensar para dar ao carro outro tarifário ou para separar as contas. Compare as situações com os seus consumos em <a href="#bloco-subcpe">Posto de carregamento</a>.</p></div></details>
+        <details class="faq-item"><summary><strong>O que é um sub-CPE e compensa?</strong></summary><div class="faq-content"><p>É um contador só para o posto de carregamento, dentro da instalação da casa, com contrato de eletricidade próprio. É opcional e pede-se ao operador de rede, com autorização do titular do contrato da casa; obriga a tirar da MOBI.E todos os postos da mesma instalação (num prédio, também os de outros condóminos). A casa passa a pagar a potência pelo seu maior quarto de hora sem o posto, e o posto paga o seu escalão: são dois termos de potência, por isso raramente compensa só pela potência. Pode compensar para dar ao carro outro tarifário ou para separar as contas. Com um ficheiro da E-Redes com posto de carregamento, ou com o cenário «Carro elétrico» ligado em <a href="#bloco-cenarios">«E se…?»</a>, aparece a secção «Posto de carregamento», que compara as situações com os seus consumos.</p></div></details>
         <details class="faq-item"><summary><strong>Como obtenho o ficheiro da E-Redes?</strong></summary><div class="faq-content"><p>No <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">Balcão Digital da E-Redes</a>, escolha o local de consumo e carregue em «Exportar excel». Para 12 meses, que é o recomendado, escolha «Escolher uma data até um ano», indique as datas e carregue em «Exportar»: quando o ficheiro estiver pronto, aparece uma notificação no Balcão com a ligação para o descarregar. Para um só mês, escolha-o primeiro em «Período» e use «Exportação diagrama atual»: o ficheiro descarrega-se logo. É preciso ter contador inteligente ligado à rede.</p></div></details>
         <details class="faq-item"><summary><strong>Os meus dados saem do computador?</strong></summary><div class="faq-content"><p>Não. O ficheiro é lido no seu browser e não é enviado para nenhum servidor. O link de partilha leva só as escolhas da página, nunca os consumos.</p></div></details>
     </section>
@@ -2447,9 +2447,11 @@ function desenharSubCPE() {
     if (!res) return;
     _subTabela = null;
     const R = calcularPosto();
+    // a secção e o atalho do topo só aparecem com posto no ficheiro ou com o cenário «Carro elétrico» ligado
+    const bloco = document.getElementById('bloco-subcpe'), chip = document.getElementById('chip-subcpe');
+    bloco.hidden = !R; if (chip) chip.hidden = !R;
     if (!R) {
-        campos.hidden = true; tab.innerHTML = '';
-        res.innerHTML = '<div class="vazio">A comparação aparece com um ficheiro da E-Redes com posto de carregamento (passo 2), ou com o cenário «Carro elétrico» ligado em «E se…?».</div>';
+        campos.hidden = true; tab.innerHTML = ''; res.innerHTML = '';
         return;
     }
     campos.hidden = false;
