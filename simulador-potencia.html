@@ -104,6 +104,7 @@
             { "@type": "Question", "name": "Como alterar a potência contratada?", "acceptedAnswer": { "@type": "Answer", "text": "Pede-se ao comercializador com quem tem contrato, que trata do pedido junto da E-Redes. Num contador inteligente, a potência nova é programada à distância; sem contador inteligente, um técnico da E-Redes tem de ir ao local. Se a potência nova se revelar curta, volta-se atrás da mesma maneira. Antes de mudar, veja na tabela «Escalão a escalão» se o seu tarifário tem a potência nova: nem todas as ofertas cobrem todos os escalões." } },
             { "@type": "Question", "name": "Quanto custa mudar de potência?", "acceptedAnswer": { "@type": "Answer", "text": "Nada: subir ou descer de potência é grátis, as vezes que precisar, até à potência requisitada da instalação, que consta da ficha eletrotécnica. Ir além dela pede-se à E-Redes e pode implicar custos e obras." } },
             { "@type": "Question", "name": "Os painéis solares deixam-me baixar a potência?", "acceptedAnswer": { "@type": "Answer", "text": "Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos." } },
+            { "@type": "Question", "name": "O que é um sub-CPE e compensa?", "acceptedAnswer": { "@type": "Answer", "text": "É um contador só para o posto de carregamento, dentro da instalação da casa, com contrato de eletricidade próprio. É opcional e pede-se ao operador de rede, com autorização do titular do contrato da casa; obriga a tirar da MOBI.E todos os postos da mesma instalação (num prédio, também os de outros condóminos). A casa passa a pagar a potência pelo seu maior quarto de hora sem o posto, e o posto paga o seu escalão: são dois termos de potência, por isso raramente compensa só pela potência. Pode compensar para dar ao carro outro tarifário ou para separar as contas." } },
             { "@type": "Question", "name": "Como obtenho o ficheiro da E-Redes?", "acceptedAnswer": { "@type": "Answer", "text": "No Balcão Digital da E-Redes (balcaodigital.e-redes.pt), escolha o local de consumo e carregue em «Exportar excel». Para 12 meses, que é o recomendado, escolha «Escolher uma data até um ano», indique as datas e carregue em «Exportar»: quando o ficheiro estiver pronto, aparece uma notificação no Balcão com a ligação para o descarregar. Para um só mês, escolha-o primeiro em «Período» e use «Exportação diagrama atual»: o ficheiro descarrega-se logo. É preciso ter contador inteligente ligado à rede." } },
             { "@type": "Question", "name": "Os meus dados saem do computador?", "acceptedAnswer": { "@type": "Answer", "text": "Não. O ficheiro é lido no seu browser e não é enviado para nenhum servidor. O link de partilha leva só as escolhas da página, nunca os consumos." } }
         ]
@@ -254,6 +255,11 @@
         .tabela tr.atual td { background: #f1f5f9; }
         .tabela tr.recomendado td { background: #ecfdf5; font-weight: 600; }
         .tabela tr.so-tri td { color: #6b7280; }
+        .campos[hidden] { display: none; }
+        .tabela-sub th, .tabela-sub td { white-space: normal; }
+        .tabela-sub td.esq { min-width: 190px; }
+        @media (max-width: 520px) { .tabela-sub td.esq { min-width: 130px; } }
+        .tabela-sub small { display: block; color: #556070; font-weight: normal; }
         .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.85em; font-weight: 700; }
         .pill.ok { background: #dcfce7; color: #166534; }
         .pill.risco { background: #fef9c3; color: #854d0e; }
@@ -313,6 +319,7 @@
         [data-theme="dark"] .painel-manual details summary { color: #93c5fd; }
         [data-theme="dark"] .painel-manual .outros input { background: #0f172a; border-color: #475569; color: #e2e8f0; }
         [data-theme="dark"] .tabela small.estimado { color: #94a3b8; }
+        [data-theme="dark"] .tabela-sub small { color: #94a3b8; }
         [data-theme="dark"] .fonte details summary { color: #93c5fd; }
         [data-theme="dark"] .kpi-card.destaque { background: #14301f; border-color: #166534; }
         [data-theme="dark"] .preset, [data-theme="dark"] .equip, [data-theme="dark"] .cenario { background: #1e293b; border-color: #475569; color: #cbd5e1; }
@@ -398,6 +405,7 @@
         <a href="#bloco-escaloes" class="mini-nav-chip">📋 Escalão a escalão</a>
         <a href="#bloco-picos" class="mini-nav-chip">📈 Os seus picos</a>
         <a href="#bloco-cenarios" class="mini-nav-chip">🚗 E se…?</a>
+        <a href="#bloco-subcpe" class="mini-nav-chip">⚡ Posto e sub-CPE</a>
         <a href="#bloco-corte" class="mini-nav-chip">⏱️ Quando o contador corta</a>
         <a href="#bloco-mudar" class="mini-nav-chip">🔁 Como mudar</a>
         <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
@@ -603,6 +611,21 @@
         <div class="cenario-res" id="cenario-res"></div>
     </section>
 
+    <!-- Posto de carregamento: MOBI.E, sub-CPE ou tudo num contrato -->
+    <section class="bloco" id="bloco-subcpe">
+        <h2>⚡ Posto de carregamento: MOBI.E, sub-CPE ou tudo num contrato</h2>
+        <p class="bloco-intro">Quanto paga por ano com o posto de carregamento integrado na MOBI.E (até 31/12/2027), com tudo no contrato da casa (sem MOBI.E nem sub-CPE: já possível, e obrigatório a partir de 2028) ou com um <strong>sub-CPE</strong>: um contador só para o posto, dentro da instalação da casa, com contrato de eletricidade próprio. Com os seus consumos e o tarifário de cada contrato.</p>
+        <div class="campos" id="sub-campos" hidden>
+            <div class="campo"><label class="ctrl-label" for="sub-ciclo">Opção horária do sub-CPE</label><select id="sub-ciclo"></select></div>
+            <div class="campo"><label class="ctrl-label" for="sub-tarifario">Tarifário do sub-CPE</label><select id="sub-tarifario"></select></div>
+            <div class="campo" id="campo-me"><label class="ctrl-label" for="sub-me">Preço do cartão na MOBI.E (€/kWh, com IVA)</label><input type="number" id="sub-me" min="0" step="0.001" placeholder="opcional"></div>
+            <div class="campo"><label class="ctrl-label" for="sub-inst">Contador interno e instalação (€)</label><input type="number" id="sub-inst" min="0" step="1" placeholder="opcional"></div>
+        </div>
+        <div class="tabela-box"><table class="tabela tabela-sub" id="tabela-subcpe"></table></div>
+        <div class="cenario-res" id="sub-res"></div>
+        <p class="nota">Nas três situações, a potência contratada da casa é o teto do contador geral, que vê a casa e o posto juntos; com sub-CPE, tem de ser também pelo menos igual ao escalão do sub-CPE. O sub-CPE já se pode pedir ao operador de rede, mas obriga a tirar da MOBI.E todos os postos da mesma instalação (num prédio, também os de outros condóminos). Com o posto na MOBI.E e com sub-CPE, a casa paga a potência pelo seu maior quarto de hora sem o posto nos últimos 12 meses, no máximo a contratada. O escalão do sub-CPE escolhe-se pelos picos do posto, com a mesma folga do contador geral (por confirmar para o contador interno). A partir de 2028, sem sub-CPE, o sol que vai para o carro passa a contar como autoconsumo; com o posto na MOBI.E ou com sub-CPE, conta como excedente, e a venda do excedente não entra nestas contas. Ficam também de fora o preço do contador interno, a obra e a certificação. O contrato do sub-CPE conta com a contribuição audiovisual e sem tarifa social (por confirmar).</p>
+    </section>
+
     <!-- 8. Quando o contador corta -->
     <section class="bloco" id="bloco-corte">
         <h2>⏱️ Quando o contador corta</h2>
@@ -663,6 +686,7 @@
         <details class="faq-item"><summary><strong>Como alterar a potência contratada?</strong></summary><div class="faq-content"><p>Pede-se ao comercializador com quem tem contrato, que trata do pedido junto da E-Redes. Num contador inteligente, a potência nova é programada à distância; sem contador inteligente, um técnico da E-Redes tem de ir ao local. Se a potência nova se revelar curta, volta-se atrás da mesma maneira. Antes de mudar, veja na tabela «Escalão a escalão» se o seu tarifário tem a potência nova: nem todas as ofertas cobrem todos os escalões.</p></div></details>
         <details class="faq-item"><summary><strong>Quanto custa mudar de potência?</strong></summary><div class="faq-content"><p>Nada: subir ou descer de potência é grátis, as vezes que precisar, até à potência requisitada da instalação, que consta da ficha eletrotécnica. Ir além dela pede-se à E-Redes e pode implicar custos e obras.</p></div></details>
         <details class="faq-item"><summary><strong>Os painéis solares deixam-me baixar a potência?</strong></summary><div class="faq-content"><p>Raramente: os picos costumam ser ao fim do dia e à noite, sem sol. Uma bateria pode ajudar, se estiver programada para cobrir os picos.</p></div></details>
+        <details class="faq-item"><summary><strong>O que é um sub-CPE e compensa?</strong></summary><div class="faq-content"><p>É um contador só para o posto de carregamento, dentro da instalação da casa, com contrato de eletricidade próprio. É opcional e pede-se ao operador de rede, com autorização do titular do contrato da casa; obriga a tirar da MOBI.E todos os postos da mesma instalação (num prédio, também os de outros condóminos). A casa passa a pagar a potência pelo seu maior quarto de hora sem o posto, e o posto paga o seu escalão: são dois termos de potência, por isso raramente compensa só pela potência. Pode compensar para dar ao carro outro tarifário ou para separar as contas. Compare as situações com os seus consumos em <a href="#bloco-subcpe">Posto de carregamento</a>.</p></div></details>
         <details class="faq-item"><summary><strong>Como obtenho o ficheiro da E-Redes?</strong></summary><div class="faq-content"><p>No <a href="https://balcaodigital.e-redes.pt/consumptions/history" target="_blank" rel="noopener noreferrer">Balcão Digital da E-Redes</a>, escolha o local de consumo e carregue em «Exportar excel». Para 12 meses, que é o recomendado, escolha «Escolher uma data até um ano», indique as datas e carregue em «Exportar»: quando o ficheiro estiver pronto, aparece uma notificação no Balcão com a ligação para o descarregar. Para um só mês, escolha-o primeiro em «Período» e use «Exportação diagrama atual»: o ficheiro descarrega-se logo. É preciso ter contador inteligente ligado à rede.</p></div></details>
         <details class="faq-item"><summary><strong>Os meus dados saem do computador?</strong></summary><div class="faq-content"><p>Não. O ficheiro é lido no seu browser e não é enviado para nenhum servidor. O link de partilha leva só as escolhas da página, nunca os consumos.</p></div></details>
     </section>
@@ -770,7 +794,10 @@ const E = {
         ac: { on: false, kw: 1.2 },
         aq: { on: false, kw: 1.5, ini: 19, horas: 4 },
         placa: { on: false, kw: 3.6 }
-    }
+    },
+    // o posto de carregamento: opção horária e tarifário do sub-CPE (null / '__igual__': os da casa), preço do cartão
+    // na MOBI.E (€/kWh, com IVA) e custo do contador interno e da instalação (€)
+    sub: { ciclo: null, tarifario: '__igual__', me: null, inst: null }
 };
 EQUIP.forEach((q, i) => { E.w[q.id] = q.w; E.fase[q.id] = (i % 3) + 1; });
 
@@ -1033,6 +1060,8 @@ function lerFolhaERedes(rows) {
         const kw = isNaN(kwP) ? kwE : kwP;
         // com posto, o contador: o registado (sem a coluna, a casa mais o posto)
         const kwCont = posto > 0 ? (iReg >= 0 && !isNaN(lerKW(r[iReg])) ? lerKW(r[iReg]) : kw + posto) : kw;
+        // e a energia de tudo num contrato (sem a MOBI.E nem sub-CPE): o saldo do contador geral
+        const kwT = posto > 0 && iReg >= 0 ? Math.max(0, lerKW(r[iReg]) - (iInjReg >= 0 ? lerKW(r[iInjReg]) || 0 : 0)) : NaN;
         let a, m, d, hh = 0, mi = 0;
         const vd = r[iD];
         if (typeof vd === 'number') { const x = XLSX.SSF.parse_date_code(vd); a = x.y; m = x.m; d = x.d; }
@@ -1054,7 +1083,7 @@ function lerFolhaERedes(rows) {
         const est = iE >= 0 && r[iE] != null && /^e/i.test(String(r[iE]).trim());
         const reg = { dia, ini, fim: `${chaveDia}_${chaveHora}`, kw: kwCont, est };
         if (iP !== iC) reg.kwE = kwE;
-        if (posto > 0) { reg.posto = posto; reg.casa = kw; if (iPosto < 0) reg.postoRec = true; }
+        if (posto > 0) { reg.posto = posto; reg.casa = kw; if (!isNaN(kwT)) reg.kwT = kwT; if (iPosto < 0) reg.postoRec = true; }
         regs.push(reg);
     }
     if (!regs.length) return { erro: 'não tem valores de consumo' };
@@ -1613,7 +1642,8 @@ function preencherTarifarios() {
 }
 const nomeTarifario = () => E.tarifario === MANUAL ? 'O meu tarifário' : (E.tarifario.split('||')[1] || '').trim();
 
-// Ficheiro com posto de carregamento integrado na Mobi.E: o posto fica de fora da potência e do custo (é faturado à parte)
+// Ficheiro com posto de carregamento integrado na Mobi.E: a energia do posto fica de fora do custo (é faturada à parte);
+// na potência, conta para o contador, mas não para a fatura
 function avisoPosto(regs) {
     const p = regs.filter(r => r.posto != null), kwh = p.reduce((s, r) => s + r.posto, 0) / 4;
     if (kwh < 1) return '';
@@ -1989,6 +2019,7 @@ function desenharCenarios() {
     desenharResCenario();
 }
 function desenharResCenario() {
+    agendarSubCPE();
     const el = document.getElementById('cenario-res'), c = E.cen;
     if (!E.consumos) { el.innerHTML = '<div class="vazio">Os cenários juntam o equipamento novo aos seus consumos reais: carregue o ficheiro da E-Redes (passo 2) ou experimente com a casa de exemplo.</div>'; return; }
     if (!cenarioAtivo()) { el.innerHTML = '<p class="nota">Ligue um dos cenários acima.</p>'; return; }
@@ -2045,6 +2076,240 @@ function desenharCorte() {
     }));
 }
 
+// ====================================================================
+// Posto de carregamento: MOBI.E (até 2027), tudo num contrato (a partir de 2028, sem sub-CPE) ou sub-CPE
+// ====================================================================
+// Em BTN, o contador geral vê a casa e o posto juntos e corta pela potência contratada da casa. Com o posto na MOBI.E
+// (Guia de Medição da ERSE, art. 42.º) e com sub-CPE (Regulamento n.º 7/2026, art. 98.º), a casa paga o escalão do maior
+// quarto de hora sem o posto, no máximo a contratada. Com sub-CPE, a contratada da casa não pode ser inferior ao escalão
+// do sub-CPE (art. 98.º, n.º 8), e o sub-CPE paga o escalão contratado, que não pode passar o da casa (art. 99.º, n.os 5
+// e 6). O escalão do sub-CPE escolhe-se pelos picos do posto, com a mesma curva do contador geral (por confirmar).
+const SUB_IGUAL = '__igual__', SUB_BARATO = '__barato__';
+let _subTimer = null, _subChave = null, _subCustos = null, _subTabela = null, _subMemo = null;
+const escCobertura = kw => ESCALOES.find(s => s >= kw - 1e-9) || null;      // o escalão igual ou logo acima (em kW)
+// Os quartos de hora de uma série, por dia (só os reais; sem nenhum real, todos), para analisar()
+function diasDeSerie(regs, f) {
+    const m = new Map(), soEst = regs.length > 0 && regs.every(r => r.est);
+    regs.forEach(r => {
+        if (r.est && !soEst) return;
+        const i = Math.floor(r.ini / 15);
+        if (i < 0 || i >= 96) return;
+        let a = m.get(r.dia);
+        if (!a) { a = new Float64Array(96).fill(NaN); m.set(r.dia, a); }
+        const v = f(r);
+        a[i] = isNaN(a[i]) ? v : Math.max(a[i], v);
+    });
+    return [...m.keys()].sort().map(iso => ({ iso, t: Date.parse(iso + 'T00:00:00Z'), qh: m.get(iso) }));
+}
+// O posto: o do ficheiro (coluna ou calculado pelas outras colunas) ou, sem posto, o do cenário «Carro elétrico» (só o
+// carro). A energia: a casa sem o posto (como hoje), o posto, e tudo junto (em 2028, sem sub-CPE, o sol que vai para o
+// carro deixa de contar como injeção: o saldo do contador geral, registado − injeção registada)
+function dadosPosto() {
+    const C = E.consumos;
+    if (!C) return null;
+    const chave = C.paga ? 'ficheiro' : E.cen.ev.on ? JSON.stringify(E.cen.ev) : '';
+    if (_subMemo && _subMemo.C === C && _subMemo.chave === chave) return _subMemo.v;
+    let v = null;
+    const eCasa = r => r.kwE ?? r.kw;
+    if (C.paga) {
+        const posto = r => r.posto || 0;
+        v = { origem: 'ficheiro', rec: C.paga.rec, posto, eCasa, ePosto: posto, eTudo: r => r.kwT ?? (eCasa(r) + posto(r)),
+            diasTotal: C.dias, diasPosto: diasDeSerie(C.registos, posto), casaKw: C.paga.kw };
+    } else if (E.cen.ev.on) {
+        const so = { ev: E.cen.ev, bc: { on: false }, ac: { on: false }, aq: { on: false }, placa: { on: false } };
+        const comCarro = aplicarCenarios(C.dias, so), ev = new Map();
+        C.dias.forEach((d, j) => {
+            const a = new Float64Array(96);
+            for (let i = 0; i < 96; i++) a[i] = isNaN(d.qh[i]) ? NaN : comCarro[j].qh[i] - d.qh[i];
+            ev.set(d.iso, a);
+        });
+        const posto = r => { const a = ev.get(r.dia), x = a ? a[Math.floor(r.ini / 15)] : 0; return x > 0 ? x : 0; };
+        let casaKw = 0;
+        C.registos.forEach(r => { if (!(r.est && !C.soEst)) casaKw = Math.max(casaKw, r.kw); });
+        v = { origem: 'cenario', posto, eCasa, ePosto: posto, eTudo: r => eCasa(r) + posto(r),
+            diasTotal: comCarro, diasPosto: C.dias.map(d => ({ iso: d.iso, t: d.t, qh: ev.get(d.iso) })), casaKw };
+    }
+    _subMemo = { C, chave, v };
+    return v;
+}
+// Os escalões de cada situação
+function calcularPosto() {
+    const P = dadosPosto();
+    if (!P) return null;
+    const At = analisar(P.diasTotal), Ap = analisar(P.diasPosto);
+    if (!At || !Ap || !(Ap.max > 0)) return null;
+    const folgado = (A, min) => escaloesPossiveis().find(s => s >= min && avaliarEscalao(A, s).estado === 'ok') || min;
+    const tMin = recomendadoDados(At), sPosto = recomendadoDados(Ap), sCasa = escCobertura(P.casaKw);
+    const m = tMin && sPosto ? Math.max(tMin, sPosto) : null;
+    return {
+        P, At, Ap, tMin, sPosto, sCasa,
+        cMe: P.origem === 'ficheiro' ? recomendacao().rec : null,      // hoje: a recomendada do resultado
+        cTudo: tMin,                                                     // tudo num contrato: paga-se a contratada
+        // com sub-CPE, acima da potência que a casa paga, todos custam o mesmo: fica o primeiro folgado
+        cSub: m && sCasa && m >= sCasa ? folgado(At, m) : m
+    };
+}
+// Os kWh de uma série por período horário de uma opção horária (do ficheiro), como o kwhPorPeriodo
+function kwhSerie(per, cicloKey, f) {
+    const col = CICLOS[cicloKey].col, k = { S: 0, V: 0, F: 0, P: 0, C: 0 }, mapa = mapaOmie();
+    let total = 0, semPer = 0;
+    const porPer = { V: 0, F: 0, P: 0, C: 0 };
+    E.consumos.registos.forEach(r => {
+        if (r.dia < per.d1 || r.dia > per.d2) return;
+        const kwh = f(r) / 4;
+        if (!kwh) return;
+        total += kwh;
+        if (!col) return;
+        const linha = mapa.get(r.fim) || mapa.get(r.fim.slice(0, 14) + '00');
+        const p = linha && linha[col];
+        if (p && p in porPer) porPer[p] += kwh; else semPer += kwh;
+    });
+    if (!col) { k.S = total; return { kwh: k, total }; }
+    const soma = porPer.V + porPer.F + porPer.P + porPer.C || 1;
+    Object.keys(porPer).forEach(p => { k[p] = porPer[p] + semPer * porPer[p] / soma; });
+    return { kwh: k, total };
+}
+// O custo de um ano de um contrato (motor_elet.js, como os custos de cada escalão): kWh por período, potência, opção
+// horária e tarifário (chave «com||nome», MANUAL ou SUB_BARATO) → { total, nome } ou null
+function custoContrato(kwh, pot, cicloKey, tarifario, social, numerosa) {
+    const per = periodoCustos(), C = E.custos;
+    if (!C || !C.fator || !BD.pronta) return null;
+    const cfg = CICLOS[cicloKey], cicloBD = pot > 20.7 ? cfg.acima : cfg.bd;
+    if (!cicloBD) return null;
+    const omieValues = MotorElet.calcularMediasOMIE(BD.omieRaw, per.d1, per.d2, cicloBD, BD.constantes, parseDateStr);
+    const base = {
+        dias: diasEntre(per.d1, per.d2) + 1, mesesJanela: 0, constantes: BD.constantes, perdas: calcularPerdas(per.d1, per.d2),
+        omieData: BD.omieRaw, d1Str: per.d1, d2Str: per.d2, parseDateFn: parseDateStr,
+        cavUser: 2.85, dgegUser: 0.07, famNum: numerosa, tarifaSocial: social,
+        incluirACP: false, incluirPack: true, incluirAmigo: false,
+        filtros: { segmento: 'Doméstico', semCondicionadas: true }, pot, ciclo: cicloBD, omieValues, kwh
+    };
+    if (tarifario === MANUAL) {
+        if (cicloKey !== E.ciclo) return null;
+        const ctx = MotorElet.prepararContexto(Object.assign({}, base, { incluirPack: false }));
+        const linha = linhaManual(pot, cicloBD, ctx), r = linha && MotorElet.calcularTarifa(linha, false, MotorElet.COLS_FIXO, ctx);
+        return r ? { total: r.total * C.fator, nome: 'O meu tarifário' } : null;
+    }
+    const res = MotorElet.calcularTodos(BD.fixos, BD.indexados, base);
+    const r = tarifario === SUB_BARATO ? res[0] : res.find(x => chaveTarifario(x) === tarifario);
+    return r ? { total: r.total * C.fator, nome: r.nomeOriginal || r.nome } : null;
+}
+// A lista de tarifários de uma opção horária (como a da casa, sem «O meu tarifário»)
+function htmlTarifariosDe(cicloKey) {
+    const ciclo = CICLOS[cicloKey].bd, grupos = new Map();
+    const juntar = lista => lista.forEach(r => {
+        if (!MotorElet.linhaTemCiclo(r.opcao_horaria_e_ciclo, ciclo)) return;
+        const seg = String(r.segmento || '').trim();
+        if (seg && seg !== 'Doméstico' && seg !== 'Doméstico e Não Doméstico') return;
+        if (String(r.condicao_adesao == null ? '' : r.condicao_adesao).trim()) return;
+        const com = String(r.comercializador || '').trim(), nome = String(r.nome || '').trim();
+        if (!com || !nome) return;
+        if (!grupos.has(com)) grupos.set(com, new Set());
+        grupos.get(com).add(nome);
+    });
+    juntar(BD.fixos); juntar(BD.indexados);
+    const [comReg, nomeReg] = TARIFARIO_OMISSAO.split('||');
+    const temReg = grupos.has(comReg) && grupos.get(comReg).delete(nomeReg);
+    if (grupos.has(comReg) && !grupos.get(comReg).size) grupos.delete(comReg);
+    return (temReg ? `<option value="${esc(TARIFARIO_OMISSAO)}">★ ${esc(nomeReg)}</option>` : '')
+        + [...grupos.keys()].sort((a, b) => a.localeCompare(b, 'pt')).map(com => `<optgroup label="${esc(com)}">`
+            + [...grupos.get(com)].sort((a, b) => a.localeCompare(b, 'pt')).map(n => `<option value="${esc(com + '||' + n)}">${esc(n)}</option>`).join('') + '</optgroup>').join('');
+}
+function preencherSub(cicloSub) {
+    const sc = document.getElementById('sub-ciclo'), st = document.getElementById('sub-tarifario');
+    if (!sc.options.length) sc.innerHTML = document.getElementById('sel-ciclo').innerHTML;
+    sc.value = cicloSub;
+    if (!BD.pronta) return;
+    const marca = cicloSub + '|' + E.ciclo;
+    if (st.dataset.ciclo !== marca) {
+        st.innerHTML = (cicloSub === E.ciclo ? `<option value="${SUB_IGUAL}">= O mesmo da casa</option>` : '')
+            + `<option value="${SUB_BARATO}">💡 O mais barato para o posto</option>` + htmlTarifariosDe(cicloSub);
+        st.dataset.ciclo = marca;
+    }
+    if (![...st.options].some(o => o.value === E.sub.tarifario)) E.sub.tarifario = cicloSub === E.ciclo ? SUB_IGUAL : SUB_BARATO;
+    st.value = E.sub.tarifario;
+}
+function agendarSubCPE() { clearTimeout(_subTimer); _subTimer = setTimeout(desenharSubCPE, 150); }
+function desenharSubCPE() {
+    const res = document.getElementById('sub-res'), tab = document.getElementById('tabela-subcpe'), campos = document.getElementById('sub-campos');
+    if (!res) return;
+    _subTabela = null;
+    const R = calcularPosto();
+    if (!R) {
+        campos.hidden = true; tab.innerHTML = '';
+        res.innerHTML = '<div class="vazio">A comparação aparece com um ficheiro da E-Redes com posto de carregamento (passo 2), ou com o cenário «Carro elétrico» ligado em «E se…?».</div>';
+        return;
+    }
+    campos.hidden = false;
+    const ficheiro = R.P.origem === 'ficheiro';
+    document.getElementById('campo-me').hidden = !ficheiro;
+    const cicloSub = E.sub.ciclo || E.ciclo;
+    preencherSub(cicloSub);
+    const tarSub = E.sub.tarifario === SUB_IGUAL ? E.tarifario : E.sub.tarifario;
+    const Cc = E.custos, pronto = !!(Cc && Cc.porEscalao && Cc.fator && !Cc.aCalcular && !Cc.erro && BD.pronta);
+    const per = periodoCustos();
+    if (pronto) {
+        const chave = [Cc.chave, R.cTudo, R.sPosto, cicloSub, tarSub, E.tarifario, E.social, E.numerosa, R.P.origem, JSON.stringify(E.cen.ev),
+            E.tarifario === MANUAL ? JSON.stringify(E.manual) : ''].join('|');
+        if (_subChave !== chave) {
+            _subCustos = {
+                tudo: R.cTudo ? custoContrato(kwhSerie(per, E.ciclo, R.P.eTudo).kwh, R.cTudo, E.ciclo, E.tarifario, E.social, E.numerosa) : null,
+                // o contrato do sub-CPE: sem tarifa social (é a da casa) e sem os 300 kWh da família numerosa
+                posto: R.sPosto ? custoContrato(kwhSerie(per, cicloSub, R.P.ePosto).kwh, R.sPosto, cicloSub, tarSub, false, false) : null
+            };
+            _subChave = chave;
+        }
+    }
+    const K = pronto ? _subCustos : { tudo: null, posto: null };
+    const fator = Cc && Cc.fator ? Cc.fator : 365 / (diasEntre(per.d1, per.d2) + 1);
+    const kwhPosto = kwhSerie(per, 's', R.P.ePosto).total * fator;
+    const pagaMe = R.cMe && R.sCasa ? Math.min(R.cMe, R.sCasa) : null, pagaSub = R.cSub && R.sCasa ? Math.min(R.cSub, R.sCasa) : null;
+    const casaMe = pagaMe ? custoSeu(pagaMe) : null, casaSub = pagaSub ? custoSeu(pagaSub) : null;
+    const postoMe = E.sub.me ? kwhPosto * E.sub.me : null;
+    const tot = {
+        me: casaMe != null && postoMe != null ? casaMe + postoMe : null,
+        tudo: K.tudo ? K.tudo.total : null,
+        sub: casaSub != null && K.posto ? casaSub + K.posto.total : null
+    };
+    const cols = (ficheiro ? [{ id: 'me', nome: 'Hoje: posto na MOBI.E', sub: 'até 31/12/2027' }] : []).concat([
+        { id: 'tudo', nome: 'Tudo no contrato da casa', sub: ficheiro ? 'sem MOBI.E nem sub-CPE (obrigatório a partir de 2028)' : 'sem sub-CPE' },
+        { id: 'sub', nome: 'Com sub-CPE', sub: ficheiro ? 'já possível; obriga a sair da MOBI.E' : 'já possível: dois contratos' }]);
+    const v = (x, f) => x == null ? '—' : f(x), espera = pronto ? '—' : '…';
+    const evP = R.sPosto ? avaliarEscalao(R.Ap, R.sPosto) : null;
+    const dif = x => x == null || tot.tudo == null ? '—' : Math.abs(x - tot.tudo) < 0.005 ? 'igual'
+        : `<span style="color:${x < tot.tudo ? 'var(--txt-verde)' : 'var(--txt-vermelho)'}">${x > tot.tudo ? '+' : '−'}${fmtEur(Math.abs(x - tot.tudo))}</span>`;
+    const linhas = [
+        ['Potência contratada da casa<small>o teto do contador, que vê a casa e o posto</small>', { me: v(R.cMe, nomeEsc), tudo: v(R.cTudo, nomeEsc), sub: v(R.cSub, nomeEsc) }],
+        ['A casa paga a potência de', { me: v(pagaMe, nomeEsc), tudo: v(R.cTudo, nomeEsc), sub: v(pagaSub, nomeEsc) }],
+        ['Escalão do sub-CPE<small>pelos picos do posto</small>', { me: '—', tudo: '—', sub: evP ? `${nomeEsc(R.sPosto)} <span class="pill ${evP.estado}">${ROTULO[evP.estado]}</span>` : '—' }],
+        ['Fatura da casa, por ano', { me: v(casaMe, fmtEur), tudo: K.tudo ? `${fmtEur(K.tudo.total)}<small>com o posto</small>` : espera, sub: v(casaSub, fmtEur) }],
+        ['Posto, por ano', { me: postoMe != null ? `${fmtEur(postoMe)}<small>${fmt(kwhPosto, 0)} kWh ao preço do cartão</small>` : `<small>${fmt(kwhPosto, 0)} kWh ao preço do cartão</small>`,
+            tudo: '<small>na fatura da casa</small>', sub: K.posto ? `${fmtEur(K.posto.total)}<small>${esc(K.posto.nome)}</small>` : espera }],
+        ['Total por ano', { me: v(tot.me, x => `<strong>${fmtEur(x)}</strong>`), tudo: v(tot.tudo, x => `<strong>${fmtEur(x)}</strong>`), sub: v(tot.sub, x => `<strong>${fmtEur(x)}</strong>`) }],
+        ['Face a «tudo no contrato da casa»', { me: dif(tot.me), tudo: '—', sub: dif(tot.sub) }]
+    ];
+    tab.innerHTML = `<thead><tr><th class="esq"></th>${cols.map(c => `<th>${c.nome}<small>${c.sub}</small></th>`).join('')}</tr></thead><tbody>`
+        + linhas.map(([rot, x]) => `<tr><td class="esq">${rot}</td>${cols.map(c => `<td>${x[c.id]}</td>`).join('')}</tr>`).join('') + '</tbody>';
+    // para o Excel: o mesmo quadro em texto
+    const texto = h => String(h).split('<small>').join(' (').split('</small>').join(')').replace(/<[^>]+>/g, '').trim();
+    _subTabela = [[''].concat(cols.map(c => `${c.nome} (${c.sub})`))].concat(linhas.map(([rot, x]) => [texto(rot)].concat(cols.map(c => texto(x[c.id])))));
+    // o resumo
+    const p = [];
+    p.push(`O posto chegou a <strong>${fmtKva(R.Ap.max)}</strong> (${intervaloQH(R.Ap.tMax)})${R.sPosto ? `: com sub-CPE, pede <strong>${nomeEsc(R.sPosto)}</strong>` : ''}. Com a casa, o contador chegou a ${fmtKva(R.At.max)} (${intervaloQH(R.At.tMax)}).`);
+    if (tot.sub != null && tot.tudo != null) {
+        const d = tot.sub - tot.tudo;
+        p.push(Math.abs(d) < 0.5 ? 'Com estes consumos, o sub-CPE custa o mesmo que ter tudo no contrato da casa.'
+            : `Com estes consumos, o sub-CPE custa <strong>${fmtEur(Math.abs(d))} por ano ${d > 0 ? 'a mais' : 'a menos'}</strong> do que ter tudo no contrato da casa${d > 0 ? ', sobretudo porque passa a haver dois contratos, cada um com o seu termo de potência' : E.sub.inst ? `: os ${fmtEur(E.sub.inst)} do contador e da instalação pagam-se em cerca de ${fmt(E.sub.inst / -d, 1)} anos` : ''}.`);
+    }
+    if (tot.me != null && tot.tudo != null) {
+        const d = tot.tudo - tot.me;
+        p.push(`Hoje, com o posto na MOBI.E, paga ${fmtEur(tot.me)} por ano; com tudo no contrato da casa (já possível, saindo da MOBI.E, e obrigatório a partir de 2028), ${Math.abs(d) < 0.5 ? 'paga o mesmo' : `paga ${fmtEur(Math.abs(d))} ${d > 0 ? 'a mais' : 'a menos'}`}.`);
+    } else if (ficheiro && !E.sub.me) p.push('Para comparar com o que paga hoje na MOBI.E, escreva acima o preço por kWh do seu cartão de carregamento.');
+    if (ficheiro && R.P.rec) p.push('O posto foi calculado a partir das outras colunas, porque este ficheiro não o traz: os valores são aproximados, e o maior pico do posto pode ser falso (quando a E-Redes estima uma dessas colunas). A exportação de um mês traz a coluna do posto.');
+    if (!ficheiro) p.push('O posto é o do cenário «Carro elétrico» (os outros cenários não entram nesta comparação).');
+    res.innerHTML = `<div class="veredito manter">${p.map(x => `<p>${x}</p>`).join('')}</div>`;
+}
+
 function renderTudo() {
     desenharManual();
     desenharPresets(); desenharCats(); desenharEquip(); desenharSoma();
@@ -2090,6 +2355,10 @@ function estadoParaURL() {
     if (c.ac.on) p.set('ac', String(c.ac.kw));
     if (c.aq.on) p.set('aq', [c.aq.kw, c.aq.ini, c.aq.horas].join(','));
     if (c.placa.on) p.set('pl', String(c.placa.kw));
+    if (E.sub.ciclo && E.sub.ciclo !== E.ciclo) p.set('sc', E.sub.ciclo);
+    if (E.sub.tarifario !== SUB_IGUAL) p.set('st', E.sub.tarifario === SUB_BARATO ? 'barato' : E.sub.tarifario);
+    if (E.sub.me) p.set('me', String(E.sub.me));
+    if (E.sub.inst) p.set('ci', String(E.sub.inst));
     return p;
 }
 function atualizarURL() {
@@ -2140,6 +2409,10 @@ function lerURL() {
     if (p.get('ac')) c.ac = { on: true, kw: Math.min(6, Math.max(0.5, num(p.get('ac'), 1.2))) };
     if (p.get('aq')) { const [kw, ini, hh] = p.get('aq').split(','); c.aq = { on: true, kw: Math.min(8, Math.max(0.5, num(kw, 1.5))), ini: Math.min(23, Math.max(0, Math.round(num(ini, 19)))), horas: Math.min(12, Math.max(1, Math.round(num(hh, 4)))) }; }
     if (p.get('pl')) c.placa = { on: true, kw: Math.min(7.4, Math.max(1, num(p.get('pl'), 3.6))) };
+    if (CICLO_DE_URL.includes(p.get('sc'))) E.sub.ciclo = p.get('sc');
+    if (p.get('st')) E.sub.tarifario = p.get('st') === 'barato' ? SUB_BARATO : p.get('st');
+    if (p.has('me')) { const x = num(p.get('me'), 0); E.sub.me = x > 0 && x < 5 ? x : null; }
+    if (p.has('ci')) { const x = num(p.get('ci'), 0); E.sub.inst = x > 0 && x < 1e5 ? x : null; }
 }
 async function partilhar() {
     const url = location.origin + location.pathname + (estadoParaURL().toString() ? '?' + estadoParaURL().toString() : '');
@@ -2195,6 +2468,7 @@ async function exportarExcel() {
     }
     const eq = [['Equipamento', 'Quantidade', 'Potência máxima (W)', 'Conta (W)', 'Fase']].concat(EQUIP.filter(q => E.qtd[q.id] && !(q.tri && !E.tri)).map(q => [q.zonas ? `${q.nome} (zonas ligadas)` : q.nome, E.qtd[q.id], E.w[q.id], +(E.qtd[q.id] * wEfetivo(q)).toFixed(0), E.tri ? (q.tri ? 'L1+L2+L3' : 'L' + E.fase[q.id]) : '']));
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(eq), 'Equipamentos');
+    if (_subTabela) XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(_subTabela), 'Posto e sub-CPE');
     XLSX.writeFile(wb, 'simulador-potencia.xlsx');
 }
 
@@ -2218,6 +2492,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('chk-social').checked = E.social;
     document.getElementById('chk-numerosa').checked = E.numerosa;
     document.getElementById('inp-kwh').value = E.kwhAno;
+    document.getElementById('sub-me').value = E.sub.me ?? '';
+    document.getElementById('sub-inst').value = E.sub.inst ?? '';
     document.getElementById('rng-margem').value = Math.round(E.margem * 100);
     document.getElementById('txt-margem').textContent = Math.round(E.margem * 100) + ' %';
 
@@ -2308,6 +2584,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const b = e.target.closest('[data-evkw] button'); if (!b) return;
         E.cen.ev.kw = +b.dataset.v; desenharCenarios(); desenharPicos(); atualizarURL();
     });
+    // o posto de carregamento: opção horária e tarifário do sub-CPE, preço do cartão e custo da instalação
+    document.getElementById('sub-ciclo').addEventListener('change', e => { E.sub.ciclo = e.target.value === E.ciclo ? null : e.target.value; desenharSubCPE(); atualizarURL(); });
+    document.getElementById('sub-tarifario').addEventListener('change', e => { E.sub.tarifario = e.target.value; desenharSubCPE(); atualizarURL(); });
+    [['sub-me', 'me'], ['sub-inst', 'inst']].forEach(([id, campo]) => document.getElementById(id).addEventListener('input', e => {
+        const x = parseFloat(e.target.value); E.sub[campo] = isFinite(x) && x > 0 ? x : null; desenharSubCPE(); atualizarURL();
+    }));
     document.getElementById('sel-corte').addEventListener('change', desenharCorte);
     document.getElementById('inp-corte').addEventListener('input', desenharCorte);
     document.getElementById('btn-corte-equip').addEventListener('click', () => { document.getElementById('inp-corte').value = somaEquip().kva.toFixed(2); desenharCorte(); });
