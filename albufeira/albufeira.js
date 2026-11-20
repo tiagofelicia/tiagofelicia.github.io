@@ -15,6 +15,8 @@
     const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const fmtPct = v => _nf1.format(v) + '%';
     const fmtHm3 = v => (Math.abs(v) >= 100 ? _nf0.format(v) : _nf1.format(v)) + ' hm³';
+    const isoDe = i => new Date(T0 + i * DIA_MS).toISOString().slice(0, 10);
+    const fmtData = iso => iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4);
 
     // O valor arrastado até 31 dias (como o CHEIO da página geral)
     const CHEIO = new Float64Array(N).fill(NaN);
@@ -42,10 +44,13 @@
         return out;
     }
     let ANO = 'civil';
+    let DIA = ULT;                  // o dia escolhido no Resumo; por omissão, o último
     function renderEvol() {
         if (typeof Highcharts === 'undefined') return;
         const c = _hcDark(), hidro = ANO === 'hidro';
-        const dU = new Date(T0 + ULT * DIA_MS);
+        const dU = new Date(T0 + DIA * DIA_MS);
+        const linhaDia = DIA === ULT ? [] : [{ value: chaveX(dU.getUTCMonth(), dU.getUTCDate(), hidro), color: c.atual, width: 1.5, dashStyle: 'Dash', zIndex: 4,
+                                               label: { text: fmtData(isoDe(DIA)), rotation: 0, x: 4, y: 14, style: { color: c.txt, fontSize: '11px' } } }];
         const pAtual = hidro ? (dU.getUTCMonth() >= 9 ? dU.getUTCFullYear() : dU.getUTCFullYear() - 1) : dU.getUTCFullYear();
         const atualS = seriePeriodo(pAtual, hidro), passadoS = seriePeriodo(pAtual - 1, hidro);
         const porX = new Map(), usados = [];
@@ -68,7 +73,7 @@
                          buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS'] } } },
             legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
             xAxis: { type: 'datetime', min: hidro ? Date.UTC(1999, 9, 1) : Date.UTC(2000, 0, 1), max: hidro ? Date.UTC(2000, 8, 30) : Date.UTC(2000, 11, 31),
-                     tickInterval: 30 * DIA_MS, labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+                     tickInterval: 30 * DIA_MS, labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true, plotLines: linhaDia },
             yAxis: { title: { text: rotY, style: { color: c.txt } }, labels: { format: '{value}%', style: { color: c.txt } }, gridLineColor: c.grelha, softMax: 100 },
             tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt }, xDateFormat: '%e de %B',
                        pointFormatter: function () {
@@ -138,6 +143,173 @@
         }, { rootMargin: '300px' });
         obs.observe(caixaMapa);
     }
+
+    // ---- Outro dia no Resumo: as contas do gerador (scripts/gerar_paginas_albufeiras.py) e da albufeiras.html, a partir
+    // da série da página. O HTML vem com o último dia (o que o Google lê), que se repõe tal e qual ao voltar a ele.
+    const selDia = document.getElementById('sel-dia'), caixaFrase = document.getElementById('resumo-frase'),
+          caixaKpis = document.getElementById('resumo-kpis');
+    if (selDia && caixaFrase && caixaKpis) (function () {
+        const TOL = 7, I_TOL = idxDe('2017-01-01');      // um valor com até 7 dias; até 2016, até 31 (como a página geral)
+        const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const rotRef = A.refMax ? 'do máximo registado' : 'da capacidade';
+        const doNome = A.do || ('de ' + A.nome), oNome = A.o || A.nome;
+        const fmt1 = v => _nf1.format(v);
+        const fmtPp = v => (v > 0.05 ? '+' : v < -0.05 ? '−' : '') + fmt1(Math.abs(v)) + ' p.p.';
+        const comp = (d, txt) => Math.abs(d) < 0.05 ? `igual ${txt}` : `${fmt1(Math.abs(d))} p.p. ${d > 0 ? 'acima' : 'abaixo'} ${txt}`;
+        const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' })[ch]);
+        const card = (rot, val, sub) => `<div class="kpi-card"><div class="kpi-label">${rot}</div><div class="kpi-value">${val}</div><div class="kpi-sub">${sub}</div></div>`;
+        const pctDe = v => v / A.ref * 100;
+        const diaMes = iso => +iso.slice(8, 10) + ' de ' + MESES[+iso.slice(5, 7) - 1];
+        const ddmm = iso => iso.slice(8, 10) + '/' + iso.slice(5, 7);
+        const mesmoDia = (y, iso) => `${y}-${iso.slice(5, 7)}-${iso.slice(5) === '02-29' ? '28' : iso.slice(8, 10)}`;
+        const isoValido = s => /^\d{4}-\d{2}-\d{2}$/.test(s || '') && isoDe(idxDe(s)) === s && idxDe(s) >= 0 && idxDe(s) <= ULT;
+        // O valor do dia i ou o último dos dias anteriores (null sem nenhum)
+        function valor(i) {
+            if (i < 0) return null;
+            const t = i < I_TOL ? ARRASTO : TOL;
+            for (let j = Math.min(i, ULT); j >= Math.max(0, i - t); j--) if (A.v[j] !== null) return [A.v[j], j];
+            return null;
+        }
+        const menosUmAno = i => { const iso = isoDe(i); return idxDe(mesmoDia(+iso.slice(0, 4) - 1, iso)); };
+        function menosUmMes(i) {
+            const iso = isoDe(i), y = +iso.slice(0, 4), m = +iso.slice(5, 7), d = +iso.slice(8, 10);
+            const y2 = m === 1 ? y - 1 : y, m2 = m === 1 ? 12 : m - 1, fim = new Date(Date.UTC(y2, m2, 0)).getUTCDate();
+            return idxDe(`${y2}-${String(m2).padStart(2, '0')}-${String(Math.min(d, fim)).padStart(2, '0')}`);
+        }
+        // O mesmo dia do calendário nos anos completos desde 2011, antes do ano do dia (pelo menos 3 anos)
+        function historico(i) {
+            const iso = isoDe(i), anos = [];
+            for (let y = ANO_COMP; y < +iso.slice(0, 4); y++) {
+                const j = idxDe(mesmoDia(y, iso));
+                if (j >= 0 && j <= ULT && !isNaN(CHEIO[j])) anos.push([y, pctDe(CHEIO[j])]);
+            }
+            if (anos.length < 3) return null;
+            let mn = anos[0], mx = anos[0];
+            anos.forEach(x => { if (x[1] < mn[1]) mn = x; if (x[1] > mx[1]) mx = x; });
+            return { media: anos.reduce((t, x) => t + x[1], 0) / anos.length, anos, min: mn, max: mx, de: anos[0][0], ate: anos[anos.length - 1][0] };
+        }
+
+        // «Comparar com»: o dia da comparação, a partir do dia do valor (-1 se não for anterior ou cair antes da série)
+        let MODO = 'semana', COMP_DATA = null;
+        const ROT = { semana: '📅 Numa semana', mes: '📅 Num mês', hidro: '📅 Desde o início do ano hidrológico', jan: '📅 Desde o início do ano', ano: '📅 Num ano' };
+        const rotCard = () => MODO === 'data' ? `📅 Desde ${fmtData(COMP_DATA)}` : ROT[MODO];
+        function idxComp(iv) {
+            const iso = isoDe(iv), y = +iso.slice(0, 4), m = +iso.slice(5, 7);
+            const c = MODO === 'mes' ? menosUmMes(iv) : MODO === 'hidro' ? idxDe(`${m >= 10 ? y : y - 1}-09-30`)
+                    : MODO === 'jan' ? idxDe(`${y - 1}-12-31`) : MODO === 'ano' ? menosUmAno(iv)
+                    : MODO === 'data' ? idxDe(COMP_DATA) : iv - 7;
+            return c < 0 || c >= iv ? -1 : c;
+        }
+
+        const FRASE0 = caixaFrase.innerHTML, KPIS0 = caixaKpis.innerHTML, nota = document.getElementById('vista-nota');
+        function renderResumo() {
+            const notas = [];
+            let antigos = DIA < I_TOL;        // algum valor de antes de 2017 (até 31 dias antes)
+            if (DIA === ULT && MODO === 'semana') { caixaFrase.innerHTML = FRASE0; caixaKpis.innerHTML = KPIS0; }
+            else {
+                const r = valor(DIA);
+                if (!r) {
+                    caixaFrase.innerHTML = `Não há nenhum valor publicado nos ${DIA < I_TOL ? ARRASTO : TOL} dias até ${fmtData(isoDe(DIA))}.`;
+                    caixaKpis.innerHTML = card('💧 Água guardada', '--', '') + card(rotCard(), '--', '') + card('↩️ Há um ano', '--', '') + card('📊 Média', '--', '');
+                } else {
+                    const [v, iv] = r, pct = pctDe(v), dv = isoDe(iv), ano = valor(menosUmAno(iv)), hist = historico(iv);
+                    const ic = idxComp(iv), cmp = ic < 0 ? null : valor(ic);
+                    if (menosUmAno(iv) < I_TOL || (ic >= 0 && ic < I_TOL)) antigos = true;
+                    const partes = [];
+                    if (ano) partes.push(comp(pct - pctDe(ano[0]), `do mesmo dia de ${+dv.slice(0, 4) - 1}`));
+                    if (hist) partes.push(comp(pct - hist.media, `da média de ${hist.de} a ${hist.ate} para este dia`));
+                    let frase = `A ${fmtData(dv)}, a albufeira ${esc(doNome)} tinha <strong>${fmtHm3(v)}</strong> de água, <strong>${fmtPct(pct)}</strong> ${rotRef}`
+                        + (partes.length ? ': ' + partes.join(' e ') : '') + '.';
+                    if (hist) {
+                        const acima = hist.anos.filter(x => x[1] > pct).map(x => x[0]);
+                        if (!acima.length) frase += ` Nenhum ano de ${hist.de} a ${hist.ate} tinha tanta água a ${diaMes(dv)}.`;
+                        else if (acima.length <= 4) frase += ` De ${hist.de} a ${hist.ate}, só em ${acima.length === 1 ? acima[0] : acima.slice(0, -1).join(', ') + ' e ' + acima[acima.length - 1]} tinha mais água a ${diaMes(dv)}.`;
+                        else frase += ` De ${hist.de} a ${hist.ate}, em ${acima.length} dos ${hist.anos.length} anos tinha mais água a ${diaMes(dv)}.`;
+                    }
+                    caixaFrase.innerHTML = frase;
+                    const dif = cmp ? v - cmp[0] : 0;
+                    caixaKpis.innerHTML = card('💧 Água guardada', fmtHm3(v), `${fmtPct(pct)} ${rotRef}`)
+                        + card(rotCard(), cmp ? fmtPp(pct - pctDe(cmp[0])) : '--',
+                               cmp ? (dif > 0.5 ? '+' : dif < -0.5 ? '−' : '') + fmtHm3(Math.abs(dif)) + ` desde ${fmtData(isoDe(cmp[1]))}` : '')
+                        + card('↩️ Há um ano', ano ? fmtPct(pctDe(ano[0])) : '--', ano ? `${fmtHm3(ano[0])} a ${fmtData(isoDe(ano[1]))}` : '')
+                        + card(hist ? `📊 Média ${hist.de}–${hist.ate} para ${ddmm(dv)}` : '📊 Média', hist ? fmtPct(hist.media) : '--',
+                               hist ? `mín. ${fmtPct(hist.min[1])} (${hist.min[0]}) · máx. ${fmtPct(hist.max[1])} (${hist.max[0]})` : '');
+                    if (iv !== DIA) notas.push(`Sem valor a ${fmtData(isoDe(DIA))}: conta o último antes, de ${fmtData(dv)}.`);
+                    if (ic < 0) notas.push(MODO === 'data' && idxDe(COMP_DATA) >= iv ? 'A data de comparação tem de ser anterior à do dia escolhido.'
+                                                                                      : `A data de comparação fica antes de ${fmtData(A.inicio)}, o primeiro dia com dados.`);
+                    else if (!cmp) notas.push(`Não há valor publicado perto de ${fmtData(isoDe(ic))}, a data de comparação.`);
+                    if (!hist) notas.push(+dv.slice(0, 4) < ANO_COMP + 3 ? `Antes de ${ANO_COMP + 3} ainda não há três anos completos antes do dia para a média, o mínimo e o máximo.`
+                                                                         : 'A série ainda não tem três anos completos antes deste dia para a média, o mínimo e o máximo.');
+                }
+                if (antigos) notas.push('Até 2016, várias albufeiras só têm um valor por semana ou por mês: nessas datas, quando falta o valor do dia, conta o último dos 31 dias anteriores.');
+            }
+            if (nota) {
+                nota.hidden = !notas.length;
+                nota.innerHTML = notas.length > 1 ? '<ul>' + notas.map(p => `<li>${p}</li>`).join('') + '</ul>' : notas.join('');
+            }
+        }
+
+        const bAnt = document.getElementById('dia-ant'), bSeg = document.getElementById('dia-seg'), bUlt = document.getElementById('dia-ultimo');
+        const selComp = document.getElementById('sel-comp'), compData = document.getElementById('sel-comp-data');
+        const links = ['link-bacia', 'link-outras'].map(id => document.getElementById(id)).filter(Boolean)
+            .map(a => ({ a, href: a.getAttribute('href'), txt: a.textContent }));
+        function atualizarControlos() {
+            selDia.min = A.inicio; selDia.max = isoDe(ULT); selDia.value = isoDe(DIA);
+            if (bAnt) bAnt.disabled = DIA <= 0;
+            if (bSeg) bSeg.disabled = DIA >= ULT;
+            if (bUlt) bUlt.hidden = DIA === ULT;
+            if (selComp) selComp.value = MODO;
+            if (compData) {
+                compData.hidden = MODO !== 'data';
+                if (MODO === 'data') { compData.min = A.inicio; compData.max = isoDe(Math.max(0, DIA - 1)); compData.value = COMP_DATA; }
+            }
+        }
+        // As ligações para a página geral levam o dia escolhido
+        function atualizarLinks() {
+            const iso = isoDe(DIA);
+            links.forEach(({ a, href, txt }) => {
+                if (DIA === ULT) { a.setAttribute('href', href); a.textContent = txt; return; }
+                a.setAttribute('href', href + '&data=' + iso);
+                a.textContent = a.id === 'link-bacia' ? `Ver a bacia a ${fmtData(iso)} na página das albufeiras` : `ver ${oNome} ao lado das outras a ${fmtData(iso)}`;
+            });
+        }
+        // No endereço, com os nomes da página geral: ?data=AAAA-MM-DD&comparar=… (o último dia e «uma semana» não aparecem)
+        function atualizarURL() {
+            const p = new URLSearchParams(location.search);
+            p.delete('data'); p.delete('comparar');
+            if (DIA !== ULT) p.set('data', isoDe(DIA));
+            if (MODO !== 'semana') p.set('comparar', MODO === 'data' ? COMP_DATA : MODO);
+            const q = p.toString();
+            history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+        }
+        function aplicar(mudouDia) {
+            atualizarControlos(); renderResumo(); atualizarLinks(); atualizarURL();
+            if (mudouDia) renderEvol();
+        }
+        const escolherDia = i => { i = Math.max(0, Math.min(ULT, i)); if (i !== DIA) { DIA = i; aplicar(true); } };
+        if (bAnt) bAnt.addEventListener('click', () => escolherDia(DIA - 1));
+        if (bSeg) bSeg.addEventListener('click', () => escolherDia(DIA + 1));
+        if (bUlt) bUlt.addEventListener('click', () => escolherDia(ULT));
+        selDia.addEventListener('change', () => { if (isoValido(selDia.value)) escolherDia(idxDe(selDia.value)); });
+        selDia.addEventListener('blur', () => { if (selDia.value !== isoDe(DIA)) selDia.value = isoDe(DIA); });
+        if (selComp) selComp.addEventListener('change', () => {
+            MODO = selComp.value;
+            if (MODO === 'data' && !COMP_DATA) COMP_DATA = isoDe(Math.max(0, menosUmAno(DIA)));
+            aplicar(false);
+        });
+        if (compData) {
+            compData.addEventListener('change', () => { if (isoValido(compData.value)) { COMP_DATA = compData.value; aplicar(false); } });
+            compData.addEventListener('blur', () => { if (COMP_DATA && compData.value !== COMP_DATA) compData.value = COMP_DATA; });
+        }
+
+        // Um endereço com ?data= e/ou ?comparar= (por exemplo, partilhado) abre nesse dia
+        const params = new URLSearchParams(location.search), pd = params.get('data'), pc = params.get('comparar');
+        if (isoValido(pd)) DIA = idxDe(pd);
+        if (isoValido(pc)) { MODO = 'data'; COMP_DATA = pc; }
+        else if (['mes', 'hidro', 'jan', 'ano'].includes(pc)) MODO = pc;
+        atualizarControlos();
+        if (DIA !== ULT || MODO !== 'semana') { renderResumo(); atualizarLinks(); }
+    })();
 
     document.addEventListener('themeChanged', () => { renderEvol(); if (MAPA) desenharMapa(); });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderEvol); else renderEvol();
