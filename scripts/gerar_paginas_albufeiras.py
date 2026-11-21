@@ -43,8 +43,9 @@ import io
 import re
 import sys
 import urllib.request
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, ROUND_HALF_UP
+from zoneinfo import ZoneInfo
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -125,6 +126,8 @@ def carregar(pasta):
     for r in lista:
         ref = float(r['referencia_hm3'] or 0)
         if not r['coluna'] or ref <= 0 or r['coluna'] not in cab:
+            continue
+        if r.get('energia') == 'não':     # as albufeiras sem central entram numa fase seguinte
             continue
         j = cab.index(r['coluna'])
         bruto = [math.nan] * n
@@ -222,7 +225,99 @@ def card(rot, val, sub):
     return f'<div class="kpi-card"><div class="kpi-label">{rot}</div><div class="kpi-value">{val}</div><div class="kpi-sub">{sub}</div></div>'
 
 
-def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
+# ---------------------------------------------------------------- «Agora»: o InfoÁgua (APA), de hora a hora
+# albufeiras_agora.json (dados-energia, de hora a hora): por albufeira, [data_utc, volume_pct, cota_m, afluente,
+# efluente] das últimas 48 h. As mesmas contas estão no albufeira.js, que refaz os cartões com o ficheiro do momento.
+LISBOA = ZoneInfo('Europe/Lisbon')
+AGORA_MAX_H = 48        # sem valor do volume há mais de 48 h, a secção não aparece
+AGORA_MIN_HORAS = 6     # com menos horas com volume (estações com um valor por dia), não há gráfico
+_utc = lambda s: datetime.strptime(s, '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)
+fmt_caudal = lambda v: num(v, 0 if abs(v) >= 100 else 1 if abs(v) >= 10 else 2) + ' m³/s'
+
+
+def ler_agora(pasta):
+    try:
+        return json.loads(texto(pasta, 'albufeiras_agora.json')).get('albufeiras') or {}
+    except Exception as e:   # sem o ficheiro, as páginas ficam sem a secção
+        print(f'  aviso: sem o albufeiras_agora.json ({type(e).__name__}): as páginas ficam sem «Agora»')
+        return {}
+
+
+def resumo_agora(linhas, agora=None):
+    """Os quatro cartões e a hora do último volume, ou None (sem volume nas últimas 48 h)."""
+    agora = agora or datetime.now(timezone.utc)
+    ultimo = lambda k: next(((l[0], l[k]) for l in reversed(linhas) if l[k] is not None), None)
+    por_hora = {l[0]: l for l in linhas}
+
+    def ha24(t, k):    # o valor 24 h antes (ou a hora antes ou depois dessa)
+        for dh in (24, 25, 23):
+            l = por_hora.get((_utc(t) - timedelta(hours=dh)).strftime('%Y-%m-%d %H:%M'))
+            if l and l[k] is not None:
+                return l[k]
+        return None
+
+    def media24(t, k):
+        ini = _utc(t) - timedelta(hours=24)
+        v = [l[k] for l in linhas if l[k] is not None and ini < _utc(l[0]) <= _utc(t)]
+        return sum(v) / len(v) if v else None
+
+    vol = ultimo(1)
+    if not vol or (agora - _utc(vol[0])).total_seconds() > AGORA_MAX_H * 3600:
+        return None
+    t, v = vol
+    v24 = ha24(t, 1)
+    cartoes = card('💧 Volume armazenado', fmt_pct(v), f'{fmt_pp(v - v24)} em 24 horas' if v24 is not None else '')
+    cota = ultimo(2)
+    if cota:
+        c24 = ha24(cota[0], 2)
+        d = cota[1] - c24 if c24 is not None else None
+        cartoes += card('📏 Cota (nível da água)', num(cota[1], 2) + ' m',
+                        (('+' if d > 0.005 else '−' if d < -0.005 else '') + num(abs(d), 2) + ' m em 24 horas') if d is not None else '')
+    else:
+        cartoes += card('📏 Cota (nível da água)', '--', '')
+    for k, rot in ((3, '⬇️ A entrar (caudal afluente)'), (4, '⬆️ A sair (caudal efluente)')):
+        u = ultimo(k)      # sem nenhum valor nas 48 h, o cartão não aparece
+        if u:
+            m = media24(u[0], k)
+            cartoes += card(rot, fmt_caudal(u[1]), f'média de 24 horas: {fmt_caudal(m)}' if m is not None else '')
+    quando = _utc(t).astimezone(LISBOA).strftime('%d/%m/%Y às %H:%M')
+    return dict(cartoes=cartoes, quando=quando, horas=sum(1 for l in linhas if l[1] is not None))
+
+
+def bloco_agora(col, linhas):
+    r = resumo_agora(linhas) if linhas else None
+    if not r:
+        return ''
+    # Estações com um valor por dia (as de rega do Alentejo, às 07:00): só os cartões, sem o gráfico de 48 h
+    if r['horas'] < AGORA_MIN_HORAS:
+        return f'''<section class="grafico-box" id="bloco-agora" data-albufeira="{col}">
+        <h2>⏱️ Agora</h2>
+        <p class="grafico-intro">O último valor da estação de tempo real da APA, que aqui só publica um valor por dia: <strong id="agora-quando">{r['quando']}</strong><span id="agora-idade"></span> (hora de Portugal continental).</p>
+        <div class="kpis" id="agora-kpis">{r['cartoes']}</div>
+        <p class="nota-bloco">Fonte: APA (InfoÁgua), estações de albufeira de tempo real. A percentagem é a que a APA publica e pode diferir um pouco da do resumo, que usa o valor diário do SNIRH.</p>
+    </section>
+
+    '''
+    return f'''<section class="grafico-box" id="bloco-agora" data-albufeira="{col}">
+        <h2>⏱️ Agora</h2>
+        <p class="grafico-intro">Os valores de hora a hora das últimas 48 horas, das estações de tempo real da APA. Último valor: <strong id="agora-quando">{r['quando']}</strong><span id="agora-idade"></span> (hora de Portugal continental).</p>
+        <div class="kpis" id="agora-kpis">{r['cartoes']}</div>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Gráfico</span>
+            <div class="btn-toggle" id="ctrl-agora" role="group" aria-label="O que mostrar no gráfico das últimas 48 horas">
+                <button type="button" data-v="caudais" class="active">Caudais</button>
+                <button type="button" data-v="volume">Volume</button>
+                <button type="button" data-v="cota">Cota</button>
+            </div>
+        </div>
+        <div id="grafico-agora" class="grafico grafico-agora"></div>
+        <p class="nota-bloco">Fonte: APA (InfoÁgua), estações de albufeira de tempo real. A percentagem é a que a APA publica e pode diferir um pouco da do resumo, que usa o valor diário do SNIRH; o caudal afluente nem sempre vem em todas as horas.</p>
+    </section>
+
+    '''
+
+
+def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None):
     nome, col = a['nome'], a['coluna']
     art = artigos.get(col, '')
     do_ = {'o': 'do ', 'a': 'da ', 'os': 'dos ', 'as': 'das '}.get(art, 'de ') + nome     # «do Alqueva», «de Montargil»
@@ -427,6 +522,10 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
     if not cs:
         limites.append('Não há centrais com potência publicada (APREN; CNPGB) associadas a esta albufeira.')
     limites.append('Os valores impossíveis do SNIRH (erros de leitura) são retirados antes das contas.')
+    agora_html = bloco_agora(col, (agora_apa or {}).get(col))   # («agora», mais acima, é o último valor do SNIRH)
+    if agora_html:
+        limites.append('O «Agora» vem das estações de tempo real da APA (InfoÁgua), de hora a hora, e não do SNIRH: '
+                       'a percentagem é a que a APA publica e pode diferir um pouco da do resumo.')
     limites_html = ''.join(f'<li>{esc(x)}</li>' for x in limites)
 
     # ---- série para o gráfico: um valor por dia desde o primeiro (null sem valor)
@@ -524,7 +623,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
         <div class="kpis" id="resumo-kpis">{kpis}</div>
     </section>
 
-    <section class="grafico-box" id="bloco-evol">
+    {agora_html}<section class="grafico-box" id="bloco-evol">
         <h2>📈 Ao longo do ano</h2>
         <p class="grafico-intro">A percentagem de água guardada, dia a dia, comparada com o ano anterior e com os anos completos desde {ANO_COMP} (a média e a faixa entre o mínimo e o máximo de cada dia).</p>
         <div class="bloco-controls">
@@ -609,6 +708,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base):
 <div id="footer-placeholder"></div>
 
 <script type="application/json" id="dados-albufeira">{json.dumps(dados, ensure_ascii=False, separators=(",", ":"))}</script>
+<script src="/dados.js"></script>
 <script src="{base}{JS_PAGINA}?v={cab['versao']}"></script>
 <script src="/script.js"></script>
 <script src="/cookie-consent.js"></script>
@@ -659,6 +759,7 @@ def main():
     p.add_argument('--sem-indice', action='store_true')
     args = p.parse_args()
     todas, centrais, d0, n = carregar(args.dados)
+    agora = ler_agora(args.dados)
     C = Contas(d0, n)
     ULT = n - 1
     cab = cabeca_do_modelo(args.modelo, args.sem_ga)
@@ -676,7 +777,7 @@ def main():
             continue
         if a['coluna'] not in artigos:
             print(f'  aviso: {a["coluna"]} sem linha em {os.path.basename(ARTIGOS_CSV)} (fica «albufeira de {a["nome"]}»)')
-        h = pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, args.base)
+        h = pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, args.base, agora)
         if h is None:
             print('  sem nenhum valor:', a['coluna'])
             continue
