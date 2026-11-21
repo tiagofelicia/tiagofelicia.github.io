@@ -340,8 +340,14 @@
         let cartoes = cardAgora('💧 Volume armazenado', fmtPct(v), v24 !== null ? `${fmtPpAgora(v - v24)} em 24 horas` : '');
         const cota = ultimo(2);
         if (cota) {
-            const c24 = ha24(cota[0], 2), d = c24 !== null ? cota[1] - c24 : null;
-            cartoes += cardAgora('📏 Cota (nível da água)', fmtN(cota[1], 2) + ' m', d !== null ? (d > 0.005 ? '+' : d < -0.005 ? '−' : '') + fmtN(Math.abs(d), 2) + ' m em 24 horas' : '');
+            const c24 = ha24(cota[0], 2), d = c24 !== null ? cota[1] - c24 : null, partes = [];
+            if (typeof A.npa === 'number') {    // a cota do nível de pleno armazenamento, da ficha técnica
+                const dn = A.npa - cota[1];
+                partes.push(dn > 0.005 ? `a ${fmtN(dn, 2)} m do nível de pleno armazenamento` : dn > -0.005 ? 'no nível de pleno armazenamento'
+                                       : `${fmtN(-dn, 2)} m acima do nível de pleno armazenamento`);
+            }
+            if (d !== null) partes.push((d > 0.005 ? '+' : d < -0.005 ? '−' : '') + fmtN(Math.abs(d), 2) + ' m em 24 horas');
+            cartoes += cardAgora('📏 Cota (nível da água)', fmtN(cota[1], 2) + ' m', partes.join('<br>'));
         } else cartoes += cardAgora('📏 Cota (nível da água)', '--', '');
         for (const [k, rot] of [[3, '⬇️ A entrar (caudal afluente)'], [4, '⬆️ A sair (caudal efluente)']]) {
             const u = ultimo(k);      // sem nenhum valor nas 48 h, o cartão não aparece
