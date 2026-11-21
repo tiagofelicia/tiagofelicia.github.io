@@ -1006,7 +1006,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function prepararLista(t) {
         const { cab, linhas } = lerCSV(t);
         const k = n => cab.indexOf(n);
-        ALB = linhas.map(l => ({
+        // Só as albufeiras com uso para energia (as sem central, energia = não, entram numa fase seguinte)
+        ALB = linhas.filter(l => k('energia') < 0 || l[k('energia')] !== 'não').map(l => ({
             col: l[k('coluna')], nome: l[k('nome')], bacia: l[k('bacia')],
             ref: parseFloat(l[k('referencia_hm3')]), refMax: l[k('referencia')] === 'maximo_registado',
             semanal: k('frequencia') >= 0 && l[k('frequencia')] === 'semanal',
