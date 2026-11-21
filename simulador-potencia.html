@@ -799,6 +799,7 @@ const PRESETS = [
 const E = {
     atual: 6.9, tri: false, ciclo: 's', tarifario: TARIFARIO_OMISSAO, social: false, numerosa: false,
     kwhAno: 2500, margem: 0, criterio: 'contador', ctrlFase: 'soma',
+    pma: null,             // com o posto na MOBI.E: o contador geral corta na potência máxima admissível (kVA); null = na contratada
     cat: 'cozinha', qtd: {}, w: {}, max: {}, fase: {}, preset: -1, todos: false,
     // consumos: { registos (por quarto de hora), dias (para os picos), d1, d2, origem: 'ficheiro'|'exemplo', nomes }
     consumos: null,
@@ -1098,8 +1099,18 @@ function lerFolhaERedes(rows) {
         if (fimMin === 0 || fimMin === 1440) { chaveDia = fimMin === 0 ? somarDias(fimDia, -1) : fimDia; chaveHora = '23:59'; fimMin = 1440; }
         let ini = fimMin - 15, dia = chaveDia;
         if (ini < 0) { ini += 1440; dia = somarDias(chaveDia, -1); }
-        const est = iE >= 0 && r[iE] != null && /^e/i.test(String(r[iE]).trim());
+        // Não contam para a potência: os estimados pela E-Redes; o Estado «-» (sem estado); e, com a coluna do posto, um
+        // consumo próprio que não bate com o registado menos o posto, ou com o registado ou o posto que não sejam medições:
+        // são acertos da E-Redes (por exemplo, logo a seguir a horas de valores estimados), marcados «Real» no consumo próprio
+        const sE = iE >= 0 && r[iE] != null ? String(r[iE]).trim() : '';
+        const naoReal = s => s !== '' && !/^real/i.test(s);
+        const estadoCol = j => h[j + 1] === 'Estado' && r[j + 1] != null ? String(r[j + 1]).trim() : '';
+        let inc = sE === '-';
+        if (iPosto >= 0 && iReg >= 0 && h[iP] === 'Consumo próprio, Ativa (kW)'
+            && (naoReal(estadoCol(iReg)) || naoReal(estadoCol(iPosto)) || Math.abs(kw - Math.max(0, lerKW(r[iReg]) - posto)) > 0.0025)) inc = true;
+        const est = /^e/i.test(sE) || inc;
         const reg = { dia, ini, fim: `${chaveDia}_${chaveHora}`, kw: kwCont, est };
+        if (inc) reg.inc = true;
         if (iP !== iC) reg.kwE = kwE;
         if (posto > 0) { reg.posto = posto; reg.casa = kw; if (!isNaN(kwT)) reg.kwT = kwT; if (iPosto < 0) reg.postoRec = true; }
         regs.push(reg);
@@ -1403,7 +1414,35 @@ function avaliarEscalao(A, s) {
 const ROTULO = { ok: 'Folgado', risco: 'Arriscado', margem: 'Na margem', corta: 'Cortaria' };
 const serve = estado => estado === 'ok' || estado === 'risco';
 function recomendadoDados(A) { return A ? (escaloesPossiveis().find(s => serve(avaliarEscalao(A, s).estado)) || null) : null; }
-function analiseBase() { return E.consumos ? analisar(E.consumos.dias) : null; }
+// Com o posto na MOBI.E e o contador geral configurado para a potência máxima admissível (E.pma, acima da contratada),
+// a contratada só limita a casa: a folga e a recomendação são as da casa sem o posto, e o contador geral (casa e posto
+// juntos) vê-se contra a PMA (analiseContador)
+const modoPMA = () => !!(E.pma && E.pma > E.atual && E.consumos && E.consumos.paga);
+function diasCasa() {
+    const C = E.consumos;
+    if (!C.diasCasa) C.diasCasa = C.dias.map(d => d.casa ? Object.assign({}, d, { qh: d.casa }) : d);
+    return C.diasCasa;
+}
+function analiseContador() { return E.consumos ? analisar(E.consumos.dias) : null; }
+function analiseBase() { return E.consumos ? analisar(modoPMA() ? diasCasa() : E.consumos.dias) : null; }
+// O seletor de onde corta o contador geral (só com posto): as potências acima da contratada (monofásica até 10,35 kVA)
+function seletorPMA() {
+    const ops = ESCALOES.filter(s => s > E.atual && (E.tri || s <= MAX_MONO));
+    if (!ops.length) return '';
+    return `<label class="sel-pma">O contador geral corta <select id="sel-pma"><option value="">na potência contratada (o normal)</option>`
+        + ops.map(s => `<option value="${s}"${s === E.pma ? ' selected' : ''}>na potência máxima admissível: ${nomeEsc(s)}</option>`).join('')
+        + `</select></label> <span class="nota-pma">Há instalações com o posto na MOBI.E em que a E-Redes configurou o contador geral para cortar só na potência máxima admissível (a do certificado da instalação): aí, a contratada só limita a casa. Escolha-a se for o seu caso; na dúvida, pergunte à E-Redes.</span>`;
+}
+// Com a PMA: o contador geral, com a casa e o posto juntos, contra ela
+function textoPMA() {
+    const Ac = analiseContador(), a = avaliarEscalao(Ac, E.pma);
+    const vezes = n => n === 1 ? '1 vez' : `${n} vezes`;
+    const est = a.estado === 'ok' ? 'não passou a PMA'
+        : a.estado === 'corta' ? `pela curva de corte, teria cortado ${vezes(a.nCortes)}`
+        : a.estado === 'margem' ? 'ficou dentro da margem de segurança que escolheu'
+        : 'passou a PMA, mas pela curva de corte não teria cortado';
+    return `O seu contador geral está configurado para a potência máxima admissível de ${nomeEsc(E.pma)}: a contratada só limita a casa, e as contas acima são as da casa sem o posto. Com a casa e o posto juntos, o maior quarto de hora foi ${fmtKva(Ac.max)} (${intervaloQH(Ac.tMax)}): ${est}.`;
+}
 
 // ====================================================================
 // Equipamentos
@@ -1757,7 +1796,7 @@ function avisoPosto(regs) {
     if (kwh < 1) return '';
     const max = p.reduce((m, r) => Math.max(m, r.posto), 0);
     const energia = p.some(r => r.postoRec) ? `cerca de ${fmt(kwh, 0)} kWh do posto (a E-Redes desconta-o do consumo medido)` : `${fmt(kwh, 0)} kWh do posto (picos até ${fmt(max, 1)} kW)`;
-    return `<br><span>🔌 Ficheiro com posto de carregamento de veículos elétricos integrado na MOBI.E: ${energia}. A energia do posto fica de fora dos custos, porque é faturada pelo comercializador de mobilidade elétrica. Na potência, o posto conta para o contador, que vê a casa e o posto juntos e corta pela potência contratada, mas não para a fatura, que cobra a potência pelo maior quarto de hora da casa sem o posto.</span>`;
+    return `<br><span>🔌 Ficheiro com posto de carregamento de veículos elétricos integrado na MOBI.E: ${energia}. A energia do posto fica de fora dos custos, porque é faturada pelo comercializador de mobilidade elétrica. Na potência, o posto conta para o contador geral, que vê a casa e o posto juntos (e corta na potência contratada ou, se a E-Redes o configurou assim, na potência máxima admissível), mas não para a fatura, que cobra a potência pelo maior quarto de hora da casa sem o posto.</span>`;
 }
 function desenharEstadoDados() {
     const el = document.getElementById('estado-dados'), c = E.consumos;
@@ -1767,11 +1806,12 @@ function desenharEstadoDados() {
     document.getElementById('campo-kwh').hidden = !!c;
     document.getElementById('nota-kwh').textContent = c ? 'Com o ficheiro, o custo usa os consumos dele.' : 'Repartido pelos períodos horários com o perfil de consumo da ERSE.';
     if (!c) { el.innerHTML = ''; return; }
-    const dias = diasEntre(c.d1, c.d2) + 1, est = c.registos.filter(r => r.est).length;
+    const dias = diasEntre(c.d1, c.d2) + 1, est = c.registos.filter(r => r.est && !r.inc).length, inc = c.registos.filter(r => r.inc).length;
     const kwhAno = c.registos.reduce((s, r) => s + (r.kwE ?? r.kw) / 4, 0) * 365 / dias;
     el.innerHTML = `<span class="ok">✓ ${c.origem === 'exemplo' ? 'Casa de exemplo (fictícia)' : esc(c.nomes.join(', '))}</span>: ${dataPT(c.d1)} a ${dataPT(c.d2)} (${dias} dias, cerca de ${fmt(kwhAno, 0)} kWh por ano)`
         + (c.soEst ? '<br><span class="aviso">⚠️ Todos os valores do ficheiro são estimados pela E-Redes: os picos e a recomendação usam essas estimativas e podem não corresponder ao que aconteceu.</span>'
             : est ? `<br><span class="aviso">⚠️ ${fmt(est / c.registos.length * 100, 1)} % dos valores são estimados pela E-Redes: os picos e a recomendação só contam os reais, porque as estimativas não são medições (nesses quartos de hora, o pico verdadeiro pode ter sido maior).</span>` : '')
+        + (inc && !c.soEst ? `<br><span class="aviso">⚠️ ${inc === 1 ? '1 quarto de hora' : `${fmt(inc, 0)} quartos de hora`} com valores da E-Redes que não são medições ou não batem certo (Estado «-» ou, com o posto, o consumo próprio diferente do registado menos o posto, como nos acertos depois de horas de valores estimados): também não ${inc === 1 ? 'conta' : 'contam'} para os picos nem para a recomendação.</span>` : '')
         + avisoPosto(c.registos)
         + (dias < 90 ? `<br><span class="aviso">⚠️ Só ${dias} dias: os picos do inverno (ou do verão) podem ficar de fora. O ideal são 12 meses.</span>` : '');
 }
@@ -1835,7 +1875,7 @@ function desenharResultado() {
     const kpis = [];
     const paga = E.consumos && E.consumos.paga && E.consumos.paga.s ? E.consumos.paga : null;
     kpis.push(`<div class="kpi-card destaque"><div class="kpi-label">Escalão recomendado</div><div class="kpi-value">${rec ? nomeEsc(rec) : passa ? '—' : '--'}</div><div class="kpi-sub">${passa ? textoAcima() : `hoje tem ${nomeEsc(E.atual)}${paga ? ` · a fatura cobra ${nomeEsc(escFaturado(E.atual))}` : ''}`}</div></div>`);
-    kpis.push(`<div class="kpi-card"><div class="kpi-label">Maior média de 15 min (${paga ? 'contador, com o posto' : 'E-Redes'})</div><div class="kpi-value">${A ? fmtKva(A.max) : '--'}</div><div class="kpi-sub">${A ? intervaloQH(A.tMax) + (rD ? ` · sozinha pede ${nomeEsc(rD)}` : '') : 'sem ficheiro'}</div></div>`);
+    kpis.push(`<div class="kpi-card"><div class="kpi-label">Maior média de 15 min (${paga ? (modoPMA() ? 'casa sem o posto' : 'contador, com o posto') : 'E-Redes'})</div><div class="kpi-value">${A ? fmtKva(A.max) : '--'}</div><div class="kpi-sub">${A ? intervaloQH(A.tMax) + (rD ? ` · sozinha pede ${nomeEsc(rD)}` : '') : 'sem ficheiro'}</div></div>`);
     kpis.push(`<div class="kpi-card"><div class="kpi-label">Equipamentos ao mesmo tempo</div><div class="kpi-value">${S.kva ? fmtKva(S.kva) : '--'}</div><div class="kpi-sub">${rE ? `sozinhos pedem ${nomeEsc(rE)}` : S.kva ? textoAcima() : 'nenhum escolhido'}</div></div>`);
     kpis.push(`<div class="kpi-card"><div class="kpi-label">${poup != null && poup < 0 ? 'Custa a mais por ano' : 'Poupa por ano'}</div><div class="kpi-value" style="color:${poup > 0.005 ? 'var(--txt-verde)' : poup < -0.005 ? 'var(--txt-vermelho)' : ''}">${poup != null ? fmtEur(Math.abs(poup)) : aCalcular ? '…' : '--'}</div><div class="kpi-sub">${poup != null ? 'com o seu tarifário, com IVA' : aCalcular ? 'a calcular' : (rec && cA != null && cR == null ? 'o seu tarifário não existe nessa potência' : 'com o seu tarifário')}</div></div>`);
     document.getElementById('kpis').innerHTML = kpis.join('');
@@ -1852,7 +1892,7 @@ function desenharResultado() {
         return;
     }
     const porque = [];
-    if (A) porque.push(`nos ${fmt(diasEntre(E.consumos.d1, E.consumos.d2) + 1, 0)} dias ${E.consumos.origem === 'exemplo' ? 'da casa de exemplo' : 'do ficheiro'} o maior quarto de hora${paga ? ' no contador, com a casa e o posto juntos,' : ''} foi ${fmtKva(A.max)} (${intervaloQH(A.tMax)})`);
+    if (A) porque.push(`nos ${fmt(diasEntre(E.consumos.d1, E.consumos.d2) + 1, 0)} dias ${E.consumos.origem === 'exemplo' ? 'da casa de exemplo' : 'do ficheiro'} o maior quarto de hora${paga ? (modoPMA() ? ' da casa sem o posto' : ' no contador, com a casa e o posto juntos,') : ''} foi ${fmtKva(A.max)} (${intervaloQH(A.tMax)})`);
     if (S.kva) porque.push(`os equipamentos que indicou somam ${fmtKva(S.kva)}${E.criterio === 'contador' ? `, abaixo dos ${fmtKva(rec * k)} a partir dos quais o contador começaria a contar` : ''}`);
     const extra = [];
     if (!A) extra.push('Sem o ficheiro da E-Redes, a recomendação vem só dos equipamentos: confirme que não se esqueceu de nenhum que possa estar ligado ao mesmo tempo.');
@@ -1898,12 +1938,13 @@ function desenharResultado() {
     }
     const degrau = rec > 6.9 && E.atual <= 6.9 ? ` Atenção: acima de 6,9 kVA perde o IVA a 6 % nos primeiros ${E.numerosa ? 300 : 200} kWh por mês${E.social ? ' e a tarifa social' : ''}.` : '';
     // Com o posto na MOBI.E: a contratada é o teto do contador; a fatura cobra a potência pelo maior pico da casa
-    if (paga) extra.unshift(`🔌 <strong>Com o posto de carregamento na MOBI.E, a potência que paga não é a contratada</strong>: a fatura cobra o escalão do maior quarto de hora da casa sem o posto nos últimos 12 meses (${fmt(paga.kw, 2)} kW, a ${dataHora(paga.t).slice(0, 10)}, ${dasAs(paga.t)}), ou seja <strong>${nomeEsc(paga.s)}</strong>, no máximo a contratada${paga.rec ? ' (valor aproximado: este ficheiro não traz o posto, que foi calculado a partir das outras colunas)' : ''}. A contratada é o teto do contador, que vê a casa e o posto juntos: escolha-a para o contador não cortar com o carro a carregar. Mais folga não aumenta a fatura enquanto ficar acima de ${nomeEsc(paga.s)}.`);
+    if (paga) extra.unshift(`🔌 <strong>Com o posto de carregamento na MOBI.E, a potência que paga não é a contratada</strong>: a fatura cobra o escalão do maior quarto de hora da casa sem o posto nos últimos 12 meses (${fmt(paga.kw, 2)} kW, a ${dataHora(paga.t).slice(0, 10)}, ${dasAs(paga.t)}), ou seja <strong>${nomeEsc(paga.s)}</strong>, no máximo a contratada${paga.rec ? ' (valor aproximado: este ficheiro não traz o posto, que foi calculado a partir das outras colunas)' : ''}. ${modoPMA() ? textoPMA() : `A contratada é o teto do contador, que vê a casa e o posto juntos: escolha-a para o contador não cortar com o carro a carregar. Mais folga não aumenta a fatura enquanto ficar acima de ${nomeEsc(paga.s)}.`}`);
+    if (paga) { const sp = seletorPMA(); if (sp) extra.splice(1, 0, sp); }
     const semPoupar = paga && (poup == null || Math.abs(poup) < 0.005);
     let txt;
     if (rec < E.atual && semPoupar) txt = `<strong>Pode baixar de ${nomeEsc(E.atual)} para ${nomeEsc(rec)} sem o contador cortar, mas não poupa nada</strong>: ${porque.join('; ')}.`;
     else if (rec < E.atual) txt = `<strong>Pode baixar de ${nomeEsc(E.atual)} para ${nomeEsc(rec)}</strong>${poup != null ? ` e poupar cerca de <strong>${fmtEur(poup)}</strong> por ano` : ''}: ${porque.join('; ')}.${E.margem ? ` Com ${fmt(E.margem * 100, 0)} % de margem de segurança.` : ''}`;
-    else if (rec > E.atual && semPoupar) txt = `<strong>A potência de ${nomeEsc(E.atual)} é curta para a casa e o posto juntos: precisa de ${nomeEsc(rec)}</strong>, e a fatura não sobe: ${porque.join('; ')}.${recMin && recMin < rec ? ` Com ${nomeEsc(recMin)} já não cortaria, mas ficaria arriscado; ${nomeEsc(rec)} custa o mesmo.` : ''}`;
+    else if (rec > E.atual && semPoupar) txt = `<strong>A potência de ${nomeEsc(E.atual)} é curta ${modoPMA() ? 'para a casa' : 'para a casa e o posto juntos'}: precisa de ${nomeEsc(rec)}</strong>, e a fatura não sobe: ${porque.join('; ')}.${recMin && recMin < rec ? ` Com ${nomeEsc(recMin)} já não cortaria, mas ficaria arriscado; ${nomeEsc(rec)} custa o mesmo.` : ''}`;
     else if (rec > E.atual) txt = `<strong>A potência de ${nomeEsc(E.atual)} é curta: precisa de ${nomeEsc(rec)}</strong>${poup != null ? ` (mais ${fmtEur(-poup)} por ano)` : ''}: ${porque.join('; ')}.${degrau}`;
     else txt = `<strong>${nomeEsc(E.atual)} é o escalão certo</strong>: ${porque.join('; ')}.${paga && recMin && recMin < E.atual ? ` Baixar até ${nomeEsc(recMin)} não faria o contador cortar, mas não poupa nada: a fatura já cobra ${nomeEsc(escFaturado(E.atual))}.` : ''}`;
     v.className = 'veredito' + (rec === E.atual ? ' manter' : rec > E.atual ? ' subir' : '');
@@ -2006,14 +2047,23 @@ function desenharPicos() {
         }
         if (m > mr) estDia.push({ x: meioDia(d.t), y: +m.toFixed(2), t: d.t + im * 9e5 });
     });
-    const avEst = document.getElementById('picos-est'), nE = estAcima.n;
+    const avEst = document.getElementById('picos-est'), nE = estAcima.n, comInc = E.consumos.registos.some(r => r.inc);
     avEst.hidden = !nE;
-    avEst.textContent = nE ? `ℹ️ ${nE === 1 ? '1 quarto de hora estimado' : `${nE} quartos de hora estimados`} pela E-Redes ${nE === 1 ? 'passa' : 'passam'} os ${nomeEsc(E.atual)} de hoje (o maior: ${fmtKva(estAcima.max)}, a ${dataHora(estAcima.t).slice(0, 10)}, ${dasAs(estAcima.t)}): não ${nE === 1 ? 'conta' : 'contam'}, porque as estimativas não são medições.` : '';
+    avEst.textContent = nE ? `ℹ️ ${nE === 1 ? '1 quarto de hora estimado' : `${nE} quartos de hora estimados`} pela E-Redes${comInc ? ' (ou com valores que não batem certo)' : ''} ${nE === 1 ? 'passa' : 'passam'} os ${nomeEsc(E.atual)} de hoje (o maior: ${fmtKva(estAcima.max)}, a ${dataHora(estAcima.t).slice(0, 10)}, ${dasAs(estAcima.t)}): não ${nE === 1 ? 'conta' : 'contam'}, porque ${comInc ? 'não são medições certas' : 'as estimativas não são medições'}.` : '';
     const series = [{ name: 'Maior quarto de hora do dia', type: 'column', data: A.picoDia.map(p => [meioDia(p.t), +p.kva.toFixed(2)]), color: '#60a5fa', borderWidth: 0, pointPadding: 0, groupPadding: 0 }];
-    if (estDia.length) series.push({ name: 'Estimado pela E-Redes (não conta)', type: 'column', data: estDia, color: c.dk ? '#64748b' : '#cbd5e1', borderWidth: 0, pointPadding: 0, groupPadding: 0, estimado: true });
+    if (estDia.length) series.push({ name: comInc ? 'Estimado ou incoerente (não conta)' : 'Estimado pela E-Redes (não conta)', type: 'column', data: estDia, color: c.dk ? '#64748b' : '#cbd5e1', borderWidth: 0, pointPadding: 0, groupPadding: 0, estimado: true });
     if (serieCen) series.push({ name: 'Com o cenário «e se»', type: 'line', data: serieCen, color: c.dk ? '#fb923c' : '#ea580c', lineWidth: 1.5, marker: { enabled: false } });
     // com o posto na MOBI.E, as colunas são o contador (casa e posto juntos) e a linha a casa sem o posto, que é a que a fatura cobra
-    if (E.consumos.paga) {
+    let maxPMA = 0;
+    if (E.consumos.paga && modoPMA()) {
+        // com o contador geral na potência máxima admissível, as colunas são a casa sem o posto (a contratada só a limita a
+        // ela) e a linha o contador geral, com a casa e o posto juntos, contra a PMA
+        const Ac = analiseContador(), corPMA = c.dk ? '#f472b6' : '#db2777';
+        series[0].name = 'Maior quarto de hora do dia da casa sem o posto';
+        series.push({ name: 'Contador geral, com o posto', type: 'line', data: Ac.picoDia.map(p => [meioDia(p.t), +p.kva.toFixed(2)]), color: corPMA, lineWidth: 1.5, marker: { enabled: false } });
+        linhas.push({ value: E.pma * k, color: corPMA, width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `contador geral, com a PMA de ${nomeEsc(E.pma)}: começa a contar a ${fmtKva(E.pma * k)}`, align: 'left', x: 6, style: { color: corPMA, textOutline: `3px ${c.bg}` } } });
+        maxPMA = Math.max(E.pma * k, Ac.max);
+    } else if (E.consumos.paga) {
         const casaDia = [];
         E.consumos.dias.forEach(d => {
             if (!d.casa) return;
@@ -2024,7 +2074,7 @@ function desenharPicos() {
         series[0].name = 'Maior quarto de hora do dia no contador (casa e posto)';
         series.push({ name: 'Casa sem o posto (conta para a fatura)', type: 'line', data: casaDia, color: c.dk ? '#2dd4bf' : '#0d9488', lineWidth: 1.5, marker: { enabled: false } });
     }
-    const maxY = Math.max(E.atual * k, alvo * k, recCen || 0, A.max, ...(serieCen || []).map(p => p[1]), ...estDia.map(p => p.y)) * 1.08;
+    const maxY = Math.max(E.atual * k, alvo * k, recCen || 0, A.max, maxPMA, ...(serieCen || []).map(p => p[1]), ...estDia.map(p => p.y)) * 1.08;
     Highcharts.chart('grafico-picos', Object.assign(base(c, 'picos-diarios'), {
         // zoom como nos outros simuladores: arrastar amplia; clicar numa barra abre o dia em detalhe
         chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
@@ -2097,7 +2147,7 @@ function desenharDia() {
     const series = [Object.assign({ name: nomeCasa, data: pontos, color: '#60a5fa' }, col)];
     const pEst = [];
     for (let q = 0; q < 96; q++) if (d.qhEst && !isNaN(d.qhEst[q])) pEst.push([d.t + q * 9e5, +(d.qhEst[q] / COS_PHI).toFixed(3)]);
-    if (pEst.length) series.push(Object.assign({ name: 'Estimado pela E-Redes (não conta)', data: pEst, color: c.dk ? '#64748b' : '#cbd5e1' }, col));
+    if (pEst.length) series.push(Object.assign({ name: E.consumos.registos.some(r => r.inc) ? 'Estimado ou incoerente (não conta)' : 'Estimado pela E-Redes (não conta)', data: pEst, color: c.dk ? '#64748b' : '#cbd5e1' }, col));
     if (pPosto.length) series.push(Object.assign({ name: 'Posto de carregamento (conta só para o contador)', data: pPosto, color: c.dk ? '#c084fc' : '#a855f7' }, col));
     if (cenarioAtivo()) {
         // cada cenário com a sua cor, empilhado por cima da casa (e do posto): o que cada equipamento novo junta
@@ -2132,11 +2182,13 @@ function desenharDia() {
     if (recCen && recCen !== alvo && recCen !== E.atual) linhas.push({ value: recCen, color: c.dk ? '#fb923c' : '#ea580c', width: 2, zIndex: 4, label: { text: `recomendado com o cenário: ${nomeEsc(recCen)}`, align: 'center', style: { color: c.dk ? '#fb923c' : '#ea580c' } } });
     // Os textos das linhas: o das cheias por baixo da linha e o das tracejadas por cima (não se sobrepõem quando as duas
     // linhas estão perto, nos escalões baixos), com um contorno da cor do fundo para se lerem por cima das colunas
+    // com o contador geral na potência máxima admissível: o limite dela, para as colunas empilhadas (casa e posto)
+    if (modoPMA()) linhas.push({ value: E.pma * k, color: c.dk ? '#f472b6' : '#db2777', width: 1, dashStyle: 'Dash', zIndex: 4, label: { text: `contador geral, com a PMA de ${nomeEsc(E.pma)}: começa a contar a ${fmtKva(E.pma * k)}`, align: 'left', x: 6, style: { color: c.dk ? '#f472b6' : '#db2777' } } });
     linhas.forEach(l => { l.label.style.textOutline = `3px ${c.bg}`; if (!l.dashStyle) l.label.y = 15; });
     // o eixo vai até ao topo das colunas empilhadas (casa + posto) e da linha do cenário
     const pilha = new Map();
     series.filter(sr => sr.type === 'column').forEach(sr => sr.data.forEach(p => pilha.set(p[0], (pilha.get(p[0]) || 0) + p[1])));
-    const maxY = Math.max(E.atual * k, alvo * k, recCen || 0, ...pilha.values(), ...series.filter(sr => sr.type !== 'column').flatMap(sr => sr.data.map(p => p[1]))) * 1.08;
+    const maxY = Math.max(E.atual * k, alvo * k, recCen || 0, modoPMA() ? E.pma * k : 0, ...pilha.values(), ...series.filter(sr => sr.type !== 'column').flatMap(sr => sr.data.map(p => p[1]))) * 1.08;
     Highcharts.chart('grafico-dia', Object.assign(base(c, 'dia-' + d.iso), {
         chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
         xAxis: { type: 'datetime', min: d.t, max: d.t + 864e5, labels: { style: { color: c.txt }, format: '{value:%H:%M}' }, lineColor: c.grelha, tickColor: c.grelha },
@@ -2524,6 +2576,12 @@ function desenharSubCPE() {
     res.innerHTML = `<div class="veredito manter">${p.map(x => `<p>${x}</p>`).join('')}</div>`;
 }
 
+// A escolha de onde o contador geral corta (com o posto na MOBI.E): na contratada, ou na potência máxima admissível
+document.addEventListener('change', e => {
+    if (!e.target || e.target.id !== 'sel-pma') return;
+    E.pma = parseFloat(e.target.value) || null;
+    renderTudo();
+});
 function renderTudo() {
     desenharManual();
     desenharPresets(); desenharCats(); desenharEquip(); desenharSoma();
@@ -2556,6 +2614,7 @@ function estadoParaURL() {
     if (E.kwhAno !== 2500) p.set('kwh', String(E.kwhAno));
     if (E.margem) p.set('m', String(Math.round(E.margem * 100)));
     if (E.criterio !== 'contador') p.set('cr', E.criterio);
+    if (E.pma) p.set('pma', String(E.pma));
     const eq = EQUIP.filter(q => E.qtd[q.id]).map(q => `${q.id}:${E.qtd[q.id]}`);
     if (eq.length) p.set('eq', eq.join(','));
     const w = EQUIP.filter(q => E.w[q.id] !== q.w).map(q => `${q.id}:${E.w[q.id]}`);
@@ -2588,6 +2647,7 @@ function lerURL() {
     if (p.has('p') && ESCALOES.includes(num(p.get('p')))) E.atual = num(p.get('p'));
     if (p.get('f') === 'tri') E.tri = true;
     if (p.get('cf') === 'fase') E.ctrlFase = 'fase';
+    if (p.has('pma') && ESCALOES.includes(num(p.get('pma')))) E.pma = num(p.get('pma'));
     if (CICLO_DE_URL.includes(p.get('c'))) E.ciclo = p.get('c');
     if (p.get('t')) E.tarifario = p.get('t');
     {
