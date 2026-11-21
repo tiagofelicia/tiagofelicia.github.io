@@ -311,6 +311,92 @@
         if (DIA !== ULT || MODO !== 'semana') { renderResumo(); atualizarLinks(); }
     })();
 
-    document.addEventListener('themeChanged', () => { renderEvol(); if (MAPA) desenharMapa(); });
+    // ---- «Agora»: os valores de hora a hora do InfoÁgua (APA), em albufeiras_agora.json (dados-energia, de hora a
+    // hora). O HTML vem com os cartões do momento em que o gerador correu; aqui refazem-se com o ficheiro do momento
+    // (as mesmas contas do gerador) e desenha-se o gráfico. Sem volume nas últimas 48 h, a secção esconde-se.
+    const blocoAgora = document.getElementById('bloco-agora');
+    let AGORA = null, VISTA_AGORA = 'caudais';
+    const AGORA_MAX_H = 48;
+    const tUtc = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10), +s.slice(11, 13), +s.slice(14, 16));
+    const fmtN = (v, casas) => new Intl.NumberFormat('pt-PT', { minimumFractionDigits: casas, maximumFractionDigits: casas }).format(v);
+    const fmtCaudal = v => fmtN(v, Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2) + ' m³/s';
+    const fmtPpAgora = v => (v > 0.05 ? '+' : v < -0.05 ? '−' : '') + _nf1.format(Math.abs(v)) + ' p.p.';
+    const cardAgora = (rot, val, sub) => `<div class="kpi-card"><div class="kpi-label">${rot}</div><div class="kpi-value">${val}</div><div class="kpi-sub">${sub}</div></div>`;
+    const quandoLisboa = ms => {
+        const p = Object.fromEntries(new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', year: 'numeric',
+                                                                            hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(ms).map(x => [x.type, x.value]));
+        return `${p.day}/${p.month}/${p.year} às ${p.hour}:${p.minute}`;
+    };
+    function resumoAgora(linhas, agora) {
+        const ultimo = k => { for (let i = linhas.length - 1; i >= 0; i--) if (linhas[i][k] !== null) return [linhas[i][0], linhas[i][k]]; return null; };
+        const porHora = new Map(linhas.map(l => [l[0], l]));
+        const iso = ms => new Date(ms).toISOString().slice(0, 16).replace('T', ' ');
+        const ha24 = (t, k) => { for (const dh of [24, 25, 23]) { const l = porHora.get(iso(tUtc(t) - dh * 3600000)); if (l && l[k] !== null) return l[k]; } return null; };
+        const media24 = (t, k) => { const ini = tUtc(t) - 24 * 3600000, v = linhas.filter(l => l[k] !== null && tUtc(l[0]) > ini && tUtc(l[0]) <= tUtc(t)).map(l => l[k]);
+                                    return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+        const vol = ultimo(1);
+        if (!vol || agora - tUtc(vol[0]) > AGORA_MAX_H * 3600000) return null;
+        const [t, v] = vol, v24 = ha24(t, 1);
+        let cartoes = cardAgora('💧 Volume armazenado', fmtPct(v), v24 !== null ? `${fmtPpAgora(v - v24)} em 24 horas` : '');
+        const cota = ultimo(2);
+        if (cota) {
+            const c24 = ha24(cota[0], 2), d = c24 !== null ? cota[1] - c24 : null;
+            cartoes += cardAgora('📏 Cota (nível da água)', fmtN(cota[1], 2) + ' m', d !== null ? (d > 0.005 ? '+' : d < -0.005 ? '−' : '') + fmtN(Math.abs(d), 2) + ' m em 24 horas' : '');
+        } else cartoes += cardAgora('📏 Cota (nível da água)', '--', '');
+        for (const [k, rot] of [[3, '⬇️ A entrar (caudal afluente)'], [4, '⬆️ A sair (caudal efluente)']]) {
+            const u = ultimo(k);      // sem nenhum valor nas 48 h, o cartão não aparece
+            if (!u) continue;
+            const m = media24(u[0], k);
+            cartoes += cardAgora(rot, fmtCaudal(u[1]), m !== null ? `média de 24 horas: ${fmtCaudal(m)}` : '');
+        }
+        return { cartoes, quando: quandoLisboa(tUtc(t)), idadeH: (agora - tUtc(t)) / 3600000 };
+    }
+    function desenharAgora() {
+        if (!AGORA || typeof Highcharts === 'undefined' || !document.getElementById('grafico-agora')) return;
+        const c = _hcDark(), sai = c.dk ? '#fb923c' : '#ea580c';
+        const serie = k => AGORA.map(l => [tUtc(l[0]), l[k]]);
+        const cfg = VISTA_AGORA === 'volume' ? { u: '%', casas: 1, series: [{ name: 'Volume armazenado', data: serie(1), color: c.atual }] }
+                  : VISTA_AGORA === 'cota' ? { u: 'm', casas: 2, series: [{ name: 'Cota', data: serie(2), color: c.atual }] }
+                  : { u: 'm³/s', casas: null, series: [{ name: 'A entrar (afluente)', data: serie(3), color: c.atual }, { name: 'A sair (efluente)', data: serie(4), color: sai }] };
+        const fmtV = v => cfg.casas === null ? fmtCaudal(v) : fmtN(v, cfg.casas) + (cfg.u === '%' ? '%' : ' ' + cfg.u);
+        Highcharts.chart('grafico-agora', {
+            time: { timezone: 'Europe/Lisbon' },
+            chart: { type: 'line', backgroundColor: c.bg, style: { fontFamily: 'inherit' }, zooming: { type: 'x' } },
+            title: { text: null }, credits: { enabled: false },
+            exporting: { enabled: true, filename: 'albufeira-' + A.nome.toLowerCase().replace(/\s+/g, '-') + '-48h-' + VISTA_AGORA, fallbackToExportServer: false,
+                         buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS'] } } },
+            legend: { enabled: cfg.series.length > 1, itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            xAxis: { type: 'datetime', labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: { title: { text: cfg.u, style: { color: c.txt } }, labels: { style: { color: c.txt } }, gridLineColor: c.grelha },
+            tooltip: { shared: true, useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt }, xDateFormat: '%e de %B, %H:%M',
+                       pointFormatter: function () { return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${fmtV(this.y)}</b><br>`; } },
+            plotOptions: { series: { marker: { enabledThreshold: 30, radius: 3 }, connectNulls: false, states: { inactive: { opacity: 1 } } } },
+            series: cfg.series
+        });
+    }
+    if (blocoAgora) {
+        const grupoAgora = document.getElementById('ctrl-agora');
+        if (grupoAgora) grupoAgora.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupoAgora.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            VISTA_AGORA = b.dataset.v;
+            desenharAgora();
+        });
+        const pedir = c => typeof window.fetchDados === 'function' ? window.fetchDados(c, { cache: 'no-cache' })
+                                                                     : fetch('https://dados.tiagofelicia.pt/data/' + c, { cache: 'no-cache' });
+        pedir('producao/albufeiras_agora.json').then(r => r.ok ? r.json() : null).then(doc => {
+            const linhas = doc && doc.albufeiras ? doc.albufeiras[blocoAgora.dataset.albufeira] : null;
+            const r = linhas && linhas.length ? resumoAgora(linhas, Date.now()) : null;
+            if (!r) { blocoAgora.hidden = true; return; }
+            AGORA = linhas;
+            document.getElementById('agora-kpis').innerHTML = r.cartoes;
+            document.getElementById('agora-quando').textContent = r.quando;
+            document.getElementById('agora-idade').textContent = r.idadeH >= 3 ? `, há ${Math.floor(r.idadeH)} horas` : '';
+            desenharAgora();
+        }).catch(() => { /* sem o ficheiro, ficam os cartões do HTML, sem gráfico */ });
+    }
+
+    document.addEventListener('themeChanged', () => { renderEvol(); if (MAPA) desenharMapa(); desenharAgora(); });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderEvol); else renderEvol();
 })();
