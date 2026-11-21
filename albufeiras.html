@@ -172,7 +172,7 @@
           "name": "Que albufeiras entram?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "As 57 albufeiras com uso para energia: as do boletim semanal de albufeiras da APA que têm «energia» no uso — as das centrais hidroelétricas e as de rega ou de abastecimento que também têm uma central, como o Maranhão, Montargil ou o Alvito — e outras do sistema hidroelétrico que não entram nesse boletim: as três do Tâmega (Alto Tâmega, Daivões e Gouvães), o Feiticeiro (o contra-embalse do Baixo Sabor), o Alto Ceira e o Pedrógão. Ficam de fora as albufeiras só de rega ou de abastecimento."
+            "text": "As 57 albufeiras com uso para energia: as do boletim semanal de albufeiras da APA que têm «energia» no uso — as das centrais hidroelétricas e as de rega ou de abastecimento que também têm uma central, como o Maranhão, Montargil ou o Alvito — e outras do sistema hidroelétrico que não entram nesse boletim: as três do Tâmega (Alto Tâmega, Daivões e Gouvães), o Feiticeiro (o contra-embalse do Baixo Sabor), o Alto Ceira e o Pedrógão. Em «Albufeiras: Todas», entram também 29 sem central (de rega, de abastecimento e de outros usos) que têm o volume no SNIRH, como Odelouca, Odeleite, Beliche, Santa Clara, Monte da Rocha ou Azibo."
           }
         },
         {
@@ -196,7 +196,7 @@
           "name": "O que quer dizer a percentagem?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "É o volume guardado a dividir pela capacidade total da albufeira, a do boletim semanal da APA, que inclui o volume morto — a água abaixo das tomadas, que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil. Nas que não estão no boletim, a capacidade é a da CNPGB: as três do Tâmega, o Feiticeiro e o Pedrógão. Só o Alto Ceira, sem capacidade publicada, tem como 100% o máximo registado (marcado com *)."
+            "text": "É o volume guardado a dividir pela capacidade total da albufeira, a do boletim semanal da APA, que inclui o volume morto — a água abaixo das tomadas, que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil. Nas que não estão no boletim, a capacidade é a da CNPGB: as três do Tâmega, o Feiticeiro e o Pedrógão. O Alto Ceira, que não está no boletim, e o Fagilde, só em «Albufeiras: Todas», têm como 100% o máximo registado (marcados com *): a capacidade publicada é menor do que volumes já registados."
           }
         },
         {
@@ -212,7 +212,7 @@
           "name": "Porque é que os números são diferentes dos do boletim da APA?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "O boletim mensal da APA junta 58 albufeiras e o semanal 80, incluindo as só de rega e de abastecimento. Aqui entram as que têm uso para energia. Nas albufeiras que estão nos dois, o volume e a capacidade são os mesmos e, na vista por semana, também o dia."
+            "text": "O boletim mensal da APA junta 58 albufeiras e o semanal 80, incluindo as só de rega e de abastecimento. Aqui entram, por omissão, as que têm uso para energia; em «Albufeiras: Todas», as 80 do boletim semanal e mais 6 do sistema hidroelétrico que lá não estão. Nas albufeiras que estão nos dois, o volume e a capacidade são os mesmos e, na vista por semana, também o dia."
           }
         },
         {
@@ -556,6 +556,13 @@
                 <select id="sel-comp"></select>
                 <input type="date" id="sel-comp-data" aria-label="Data de comparação" hidden>
             </span>
+            <span class="vista-grupo">
+                <span class="ctrl-label">Albufeiras</span>
+                <div class="btn-toggle" id="ctrl-conjunto" role="group" aria-label="Que albufeiras">
+                    <button type="button" data-v="energia" class="active" title="As 57 albufeiras com uso para energia">Com uso para energia</button>
+                    <button type="button" data-v="todas" title="Também as 29 sem central (rega, abastecimento e outros usos)">Todas</button>
+                </div>
+            </span>
         </div>
         <div class="vista-nota" id="vista-nota" role="note" hidden></div>
 
@@ -576,7 +583,7 @@
 
         <section id="bloco-mapa" class="grafico-box">
             <h2>📍 Mapa</h2>
-            <p class="grafico-intro">Cada albufeira no sítio da barragem: o tamanho do círculo é a capacidade e a cor a percentagem de água guardada no período escolhido. Passe o rato por cima para ver os valores; clique (ou toque) para os fixar e para ver a evolução e as centrais. Num ecrã tátil, o mapa só se arrasta depois de aproximar no «+».</p>
+            <p class="grafico-intro">Cada albufeira no sítio da barragem: o tamanho do círculo é a capacidade e a cor a percentagem de água guardada no período escolhido. Passe o rato por cima para ver os valores; clique (ou toque) para os fixar e para ver a evolução e as centrais. Num ecrã tátil, o mapa só se arrasta depois de aproximar no «+». Em «Todas», as albufeiras sem central aparecem mais claras.</p>
             <div id="mapa-alb" role="region" aria-label="Mapa das albufeiras"></div>
             <div class="mapa-legenda" id="mapa-legenda"></div>
             <p class="nota-bloco">Fundo: Natural Earth (a costa e os países vizinhos) e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (a fronteira, os rios e os espelhos de água, com as albufeiras cheias; licença ODbL). Localização das barragens: lista de características de albufeiras do SNIRH (APA) e, nas que lá não estão, mapa de barragens da CNPGB; o Baixo Sabor, OpenStreetMap.</p>
@@ -611,7 +618,7 @@
                 </div>
             </div>
             <div class="tabela-box"><table class="tabela-alb" id="tabela-alb"></table></div>
-            <p class="nota-bloco">* Sem capacidade publicada: os 100% são o maior volume registado. A data a laranja é a do último valor, quando não é do dia de referência; «semanal»: só tem um valor por semana, à segunda-feira. Capacidade: boletim semanal da APA; as três do Tâmega, o Feiticeiro e o Pedrógão, CNPGB. Turbinamento e bombagem: APREN (Anuário 2026); Serra Serrada, Póvoa e Caia, CNPGB.</p>
+            <p class="nota-bloco">* A capacidade publicada é menor do que volumes já registados: os 100% são o maior volume registado. A data a laranja é a do último valor, quando não é do dia de referência; «semanal»: só tem um valor por semana, à segunda-feira. Capacidade: boletim semanal da APA; as três do Tâmega, o Feiticeiro e o Pedrógão, CNPGB. Turbinamento e bombagem: APREN (Anuário 2026); Serra Serrada, Póvoa e Caia, CNPGB.</p>
             <div id="outras-centrais" hidden></div>
         </section>
 
@@ -719,7 +726,7 @@
             <thead><tr><th scope="col" class="esq">O quê</th><th scope="col" class="esq">Fonte</th><th scope="col" class="esq">Atualização</th><th scope="col" class="esq">Limitações</th></tr></thead>
             <tbody>
                 <tr><th scope="row" class="esq">Volume e percentagem de cada albufeira</th><td class="esq" data-rot="Fonte">SNIRH (Agência Portuguesa do Ambiente), dados de base: o volume no fim de cada dia</td><td class="esq" data-rot="Atualização">Duas vezes por dia; o valor de cada dia costuma aparecer na manhã seguinte</td><td class="esq" data-rot="Limitações">As albufeiras de rega só têm um valor por semana. As mais recentes (Foz Tua, as três do Tâmega) só têm alguns anos de série. Os valores impossíveis (zeros, algarismos a mais) são retirados: cerca de 0,2%.</td></tr>
-                <tr><th scope="row" class="esq">Capacidade (os 100%)</th><td class="esq" data-rot="Fonte">Boletim semanal de albufeiras da APA; nas que lá não estão, CNPGB</td><td class="esq" data-rot="Atualização">Fixa</td><td class="esq" data-rot="Limitações">Inclui o volume morto: 100% não é toda água que se pode usar. O Alto Ceira não tem capacidade publicada: os 100% são o máximo registado.</td></tr>
+                <tr><th scope="row" class="esq">Capacidade (os 100%)</th><td class="esq" data-rot="Fonte">Boletim semanal de albufeiras da APA; nas que lá não estão, CNPGB</td><td class="esq" data-rot="Atualização">Fixa</td><td class="esq" data-rot="Limitações">Inclui o volume morto: 100% não é toda água que se pode usar. No Alto Ceira e no Fagilde, a capacidade publicada é menor do que volumes já registados: os 100% são o máximo registado.</td></tr>
                 <tr><th scope="row" class="esq">Médias, mínimos e máximos</th><td class="esq" data-rot="Fonte">Contas desta página, a partir dos volumes do SNIRH e do balanço hidráulico da REN</td><td class="esq" data-rot="Atualização">Todos os dias</td><td class="esq" data-rot="Limitações">Anos completos desde 2011 (na energia guardada, nas afluências e nos descarregamentos, desde 2010); as albufeiras mais recentes só contam nos anos em que já existiam. Um dia sem valor usa o último dos 31 dias anteriores (no resumo e na tabela, só até 7 dias; até 2016, até 31).</td></tr>
                 <tr><th scope="row" class="esq">Centrais (potência e produção)</th><td class="esq" data-rot="Fonte">APREN, Anuário 2026; Serra Serrada, Póvoa e Caia, CNPGB</td><td class="esq" data-rot="Atualização">Uma vez por ano, com o anuário</td><td class="esq" data-rot="Limitações">Produção de 2024 e 2025. Algumas centrais de rega e de derivação não têm potência publicada.</td></tr>
                 <tr><th scope="row" class="esq">Energia guardada, afluências e descarregamentos (Portugal)</th><td class="esq" data-rot="Fonte">REN, Data Hub: o balanço hidráulico do balanço diário</td><td class="esq" data-rot="Atualização">Três vezes por dia; o valor de cada dia sai na manhã seguinte</td><td class="esq" data-rot="Limitações">Só o total do país, separado em albufeiras, fios de água e mini-hídricas, em GWh inteiros. Nos fios de água e nas mini-hídricas a afluência é a produção do dia; a das albufeiras sai do balanço e pode ser negativa. A REN revê valores semanas depois. A capacidade que conta como 100% foi subindo com as albufeiras novas (cerca de 3 080 GWh em 2015 e 3 250 GWh em 2026).</td></tr>
@@ -760,7 +767,7 @@
             <summary><strong>Que albufeiras entram?</strong></summary>
             <div class="faq-content">
                 <p>As <strong>57 albufeiras com uso para energia</strong>: as do boletim semanal de albufeiras da APA que têm «energia» no uso — as das centrais hidroelétricas e as de rega ou de abastecimento que também têm uma central, como o Maranhão, Montargil ou o Alvito — e outras do sistema hidroelétrico que não entram nesse boletim: as três do Tâmega (Alto Tâmega, Daivões e Gouvães), o Feiticeiro (o contra-embalse do Baixo Sabor), o Alto Ceira e o Pedrógão.</p>
-                <p>Ficam de fora as albufeiras só de rega ou de abastecimento.</p>
+                <p>Em «Albufeiras: Todas», entram também 29 sem central (de rega, de abastecimento e de outros usos) que têm o volume no SNIRH, como Odelouca, Odeleite, Beliche, Santa Clara, Monte da Rocha ou Azibo.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -782,7 +789,7 @@
             <summary><strong>O que quer dizer a percentagem?</strong></summary>
             <div class="faq-content">
                 <p>É o volume guardado a dividir pela <strong>capacidade total</strong> da albufeira, a do boletim semanal da APA, que inclui o volume morto — a água abaixo das tomadas, que não se pode usar. Por isso as albufeiras a fio de água, como as do Douro, aparecem quase sempre acima de 80%: guardam pouca água útil.</p>
-                <p>Nas que não estão no boletim, a capacidade é a da CNPGB: as três do Tâmega, o Feiticeiro e o Pedrógão. Só o Alto Ceira, sem capacidade publicada, tem como 100% o <strong>máximo registado</strong> (marcado com *).</p>
+                <p>Nas que não estão no boletim, a capacidade é a da CNPGB: as três do Tâmega, o Feiticeiro e o Pedrógão. O Alto Ceira, que não está no boletim, e o Fagilde, só em «Albufeiras: Todas», têm como 100% o <strong>máximo registado</strong> (marcados com *): a capacidade publicada é menor do que volumes já registados.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -796,7 +803,7 @@
         <details class="faq-item">
             <summary><strong>Porque é que os números são diferentes dos do boletim da APA?</strong></summary>
             <div class="faq-content">
-                <p>O boletim mensal da APA junta 58 albufeiras e o semanal 80, incluindo as só de rega e de abastecimento. Aqui entram as que têm uso para energia. Nas albufeiras que estão nos dois, o volume e a capacidade são os mesmos e, na vista por semana, também o dia.</p>
+                <p>O boletim mensal da APA junta 58 albufeiras e o semanal 80, incluindo as só de rega e de abastecimento. Aqui entram, por omissão, as que têm uso para energia; em «Albufeiras: Todas», as 80 do boletim semanal e mais 6 do sistema hidroelétrico que lá não estão. Nas albufeiras que estão nos dois, o volume e a capacidade são os mesmos e, na vista por semana, também o dia.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -900,7 +907,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const ANO_COMP_REE = 1990;
     const ARRASTO = 31;         // nos gráficos, um valor conta até 31 dias para a frente (até 2017 há albufeiras com um valor por mês)
     const GRANDE = 100;         // hm3: as albufeiras «grandes» do resumo
-    const ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Sado', 'Guadiana', 'Arade', 'Ribeiras do Algarve'];
+    const ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Ribeiras do Oeste', 'Tejo', 'Sado', 'Ribeiras do Alentejo',
+                          'Mira', 'Guadiana', 'Arade', 'Ribeiras do Algarve'];
     // Quantos dias para trás pode estar o valor de cada albufeira: as de rega só têm um valor por semana, à segunda-feira
     const TOL = { dia: 7, semana: 6, mes: 7 };
     // Até 2016, várias albufeiras só têm no SNIRH um valor por semana ou por mês: nas datas antes de 2017, o resumo, a
@@ -975,7 +983,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return idxDe((+iso.slice(0, 4) - 1) + '-' + md);
     }
 
-    let ALB = [];                    // { col, nome, bacia, ref, refMax, semanal, ultIdx }
+    let ALB = [];                    // { col, nome, bacia, ref, refMax, semanal, energia, uso, ultIdx }: o conjunto escolhido
+    // As 86 (com e sem central) e o conjunto mostrado: 'energia' (as 57 com uso para energia, por omissão) ou 'todas'
+    let ALB_TODAS = [], CONJUNTO = 'energia';
+    const conjuntoEscolhido = () => CONJUNTO === 'todas' ? ALB_TODAS : ALB_TODAS.filter(a => a.energia);
     const POR_COL = new Map();
     const BRUTO = {}, CHEIO = {};    // col → Float64Array(N): o valor do dia e o valor arrastado até 31 dias (NaN sem valor)
     const CENTRAIS = new Map();      // col → [{ central, inicio, turbinas, mw, bomb, p2024, p2025, fonte }]
@@ -1006,12 +1017,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function prepararLista(t) {
         const { cab, linhas } = lerCSV(t);
         const k = n => cab.indexOf(n);
-        // Só as albufeiras com uso para energia (as sem central, energia = não, entram numa fase seguinte)
-        ALB = linhas.filter(l => k('energia') < 0 || l[k('energia')] !== 'não').map(l => ({
+        ALB = linhas.map(l => ({
             col: l[k('coluna')], nome: l[k('nome')], bacia: l[k('bacia')],
             ref: parseFloat(l[k('referencia_hm3')]), refMax: l[k('referencia')] === 'maximo_registado',
             semanal: k('frequencia') >= 0 && l[k('frequencia')] === 'semanal',
-            lat: k('latitude') >= 0 ? parseFloat(l[k('latitude')]) : NaN, lon: k('longitude') >= 0 ? parseFloat(l[k('longitude')]) : NaN
+            lat: k('latitude') >= 0 ? parseFloat(l[k('latitude')]) : NaN, lon: k('longitude') >= 0 ? parseFloat(l[k('longitude')]) : NaN,
+            energia: k('energia') < 0 || l[k('energia')] !== 'não', uso: k('uso') >= 0 ? l[k('uso')] : ''
         })).filter(a => a.col && a.ref > 0);
         ALB.forEach(a => POR_COL.set(a.col, a));
     }
@@ -1437,7 +1448,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function nomeAlb(a, comBacia) {
         const x = valor(a, REF, tol());
         const velho = x && x.i < REF ? `<span class="velho" title="Valor de ${fmtData(isoDe(x.i))}">${fmtDiaMes(isoDe(x.i))}</span>` : '';
-        const sem = a.semanal ? '<span class="mini-tag" title="Só tem um valor por semana, à segunda-feira">semanal</span>' : '';
+        const sem = (a.semanal ? '<span class="mini-tag" title="Só tem um valor por semana, à segunda-feira">semanal</span>' : '')
+            + (a.energia ? '' : `<span class="mini-tag" title="${esc(a.uso || 'Sem central')}">sem central</span>`);
         const pag = `<a class="link-pag" href="/albufeira/${a.col.replace(/_/g, '-')}" title="A página da albufeira" aria-label="Página: ${esc(a.nome)}">↗</a>`;
         return `${esc(a.nome)}${pag}${velho}${sem}${comBacia ? `<span class="mini">${esc(a.bacia)}</span>` : ''}`;
     }
@@ -2060,16 +2072,17 @@ document.addEventListener('DOMContentLoaded', function () {
             const sem = comparar([a], COMP, REF, t_), p = potencia([a]);
             const raio = 4 + 20 * Math.sqrt(a.ref / maxRef);
             const marca = L.circleMarker([a.lat, a.lon], {
-                radius: raio, weight: 1, color: dk ? '#cbd5e1' : '#334155', opacity: 0.9,
-                fillColor: x ? corPct(pct) : 'transparent', fillOpacity: x ? 0.92 : 0, dashArray: x ? null : '3 3'
+                radius: raio, weight: 1, color: a.energia ? (dk ? '#cbd5e1' : '#334155') : '#94a3b8', opacity: 0.9,
+                fillColor: x ? corPct(pct) : 'transparent', fillOpacity: x ? (a.energia ? 0.92 : 0.55) : 0, dashArray: x ? null : '3 3'
             });
             const data = x && x.i !== REF ? ` (valor de ${fmtDiaMes(isoDe(x.i))})` : '';
             const texto = `<b>${esc(a.nome)}</b> · ${esc(nomeBacia(a.bacia))}<br>`
                 + (x ? `<b>${fmtPct(pct)}</b> · ${fmtHm3(x.v)}${data}<br>${rotuloComp()}: ${sem ? fmtPp(sem.agora - sem.antes) : '--'}`
                      : 'sem valor neste período')
+                + (a.energia ? '' : `<br>Sem central${a.uso ? ' · ' + esc(a.uso) : ''}`)
                 + `<br>Capacidade: ${fmtHm3(a.ref)}${a.refMax ? '*' : ''}${p.n ? `<br>Turbinamento: ${fmtMW(p.mw)}${p.bomb ? ` · Bombagem: ${fmtMW(p.bomb)}` : ''}` : ''}`;
             marca.bindTooltip(texto, { direction: 'top', offset: [0, -raio], className: 'mapa-dica' });
-            marca.bindPopup(texto + `<br><button type="button" class="btn-ver-alb" data-ver-alb="${a.col}">Ver a evolução e as centrais</button>`
+            marca.bindPopup(texto + `<br><button type="button" class="btn-ver-alb" data-ver-alb="${a.col}">Ver a evolução${a.energia ? ' e as centrais' : ''}</button>`
                             + `<a class="btn-pag-alb" href="/albufeira/${a.col.replace(/_/g, '-')}">Página da albufeira</a>`,
                             { className: 'mapa-popup' });
             // Com a caixa aberta a dica (o mesmo texto) fica invisível. Não se tira com unbindTooltip: o Leaflet 1.9.4
@@ -2215,7 +2228,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ESCOLHA DA ALBUFEIRA, URL E ARRANQUE
     // ==================================================================
     function preencherSelect() {
-        let h = '<option value="todas">Todas as albufeiras</option><optgroup label="Bacias">';
+        let h = `<option value="todas">${CONJUNTO === 'todas' ? 'Todas as albufeiras' : 'Todas as com uso para energia'}</option><optgroup label="Bacias">`;
         ORDEM_BACIAS.forEach(b => { if (ALB.some(a => a.bacia === b)) h += `<option value="bacia-${b}">${esc(nomeBacia(b))}</option>`; });
         h += '</optgroup>';
         ORDEM_BACIAS.forEach(b => {
@@ -2235,6 +2248,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!compPadrao()) p.set('comparar', modoComp() === 'data' ? COMP_DATA : modoComp());
         if (SEL !== 'todas') p.set('albufeira', SEL);
         if (ANO !== 'civil') p.set('ano', ANO);
+        if (CONJUNTO === 'todas') p.set('conjunto', 'todas');
         const q = p.toString();
         history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
     }
@@ -2253,6 +2267,14 @@ document.addEventListener('DOMContentLoaded', function () {
         renderTabela();
     });
     // Ao mudar de vista, o período que tem o dia de referência (ou o mais recente, se já se estava no mais recente)
+    ligarToggle('ctrl-conjunto', v => {
+        CONJUNTO = v;
+        ALB = conjuntoEscolhido();
+        const valido = SEL === 'todas' || (SEL.startsWith('bacia-') ? ALB.some(a => a.bacia === SEL.slice(6)) : ALB.some(a => a.col === SEL));
+        if (!valido) SEL = 'todas';
+        preencherSelect();
+        aplicarPeriodo();
+    });
     ligarToggle('ctrl-vista', v => mudarVista(v, PER >= perUltimo(VISTA) ? null : v === 'mes' ? isoDe(REF).slice(0, 7) : isoDe(REF)));
     ligarToggle('ctrl-es-vista', v => { ES_VISTA = v; renderEnchimento(); });
     ligarToggle('ctrl-en-unid', v => { EN_UNID = v; renderEnergia(); });
@@ -2341,7 +2363,14 @@ document.addEventListener('DOMContentLoaded', function () {
             prepararLista(lista);
             prepararDiario(diario);
             if (!ALB.length || ULT < 0) throw new Error('sem albufeiras');
+            // As séries de todas ficaram preparadas; ALB passa a ser o conjunto escolhido. Uma albufeira ou bacia sem
+            // central no endereço (as ligações das páginas delas) abre em «Todas»
+            ALB_TODAS = ALB;
             const s = params.get('albufeira');
+            if (params.get('conjunto') === 'todas' || (s && POR_COL.has(s) && !POR_COL.get(s).energia)
+                || (s && s.startsWith('bacia-') && !ALB_TODAS.some(a => a.bacia === s.slice(6) && a.energia))) CONJUNTO = 'todas';
+            ALB = conjuntoEscolhido();
+            ativarToggle('ctrl-conjunto', CONJUNTO);
             if (s && (s.startsWith('bacia-') || POR_COL.has(s))) SEL = s;
             if (params.get('ano') === 'hidro') { ANO = 'hidro'; ativarToggle('ctrl-ano', 'hidro'); }
             document.getElementById('badge-ultima').textContent = fmtData(isoDe(ULT));
