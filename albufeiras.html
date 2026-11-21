@@ -47,6 +47,8 @@
           crossorigin="" />
     <!-- Fundo do mapa (Portugal, países vizinhos, rios e albufeiras) — sem tiles externos -->
     <script src="portugal_background.js" defer></script>
+    <!-- As bacias hidrográficas do mapa (APA) -->
+    <script src="bacias_portugal.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin="" defer></script>
@@ -372,6 +374,13 @@
         .mapa-dica, .mapa-popup .leaflet-popup-content { font-size: 0.85em; line-height: 1.45; }
         .btn-ver-alb { margin-top: 6px; background: #2563eb; color: #fff; border: none; border-radius: 5px; padding: 5px 10px; font-size: 0.95em; cursor: pointer; }
         .btn-ver-alb:hover { background: #1d4ed8; }
+        .mapa-filtros { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; }
+        .mapa-filtros .mapa-conta { font-size: 0.82em; color: #64748b; }
+        .marca-es span { display: block; width: 100%; height: 100%; box-sizing: border-box; border: 1.5px solid #334155; transform: rotate(45deg) scale(0.74); }
+        .mapa-legenda .leg-bacia { border-radius: 2px; background: rgba(116, 173, 209, 0.45); border-color: #fff; }
+        .mapa-legenda .leg-es { border-radius: 0; background: #74add1; transform: rotate(45deg) scale(0.8); }
+        .mapa-popup .pop-extra { display: block; margin-top: 5px; padding-top: 5px; border-top: 1px solid #e2e8f0; }
+        .mapa-dica .pop-quando, .mapa-popup .pop-quando { color: #64748b; }
 
         .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
         .tabela-alb { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
@@ -461,6 +470,11 @@
         [data-theme="dark"] .mapa-legenda { color: #cbd5e1; }
         [data-theme="dark"] .mapa-legenda .leg-cor { border-color: #cbd5e1; }
         [data-theme="dark"] .mapa-legenda .leg-nota { color: #94a3b8; }
+        [data-theme="dark"] .mapa-filtros .mapa-conta { color: #94a3b8; }
+        [data-theme="dark"] .marca-es span { border-color: #cbd5e1; }
+        [data-theme="dark"] .mapa-legenda .leg-bacia { border-color: #0f172a; }
+        [data-theme="dark"] .mapa-popup .pop-extra { border-top-color: #334155; }
+        [data-theme="dark"] .mapa-dica .pop-quando, [data-theme="dark"] .mapa-popup .pop-quando { color: #94a3b8; }
         [data-theme="dark"] .leaflet-control-zoom a { background: #1e293b !important; color: #e2e8f0 !important; border-color: #475569 !important; }
         [data-theme="dark"] .leaflet-control-attribution { background: rgba(30,41,59,0.8) !important; color: #94a3b8 !important; }
         [data-theme="dark"] .leaflet-control-attribution a { color: #60a5fa !important; }
@@ -583,10 +597,20 @@
 
         <section id="bloco-mapa" class="grafico-box">
             <h2>📍 Mapa</h2>
-            <p class="grafico-intro">Cada albufeira no sítio da barragem: o tamanho do círculo é a capacidade e a cor a percentagem de água guardada no período escolhido. Passe o rato por cima para ver os valores; clique (ou toque) para os fixar e para ver a evolução e as centrais. Num ecrã tátil, o mapa só se arrasta depois de aproximar no «+». Em «Todas», as albufeiras sem central aparecem mais claras.</p>
+            <p class="grafico-intro">Cada albufeira no sítio da barragem: o tamanho do círculo é a capacidade e a cor a percentagem de água guardada no período escolhido, do vermelho (vazia) ao azul (cheia), com as classes do boletim semanal de albufeiras da APA. Cada bacia hidrográfica tem a cor da percentagem do conjunto das suas albufeiras que estão no mapa. Os botões dos usos (os do boletim semanal da APA) escolhem as albufeiras do mapa e das contas das bacias: fica no mapa a que tiver pelo menos um dos usos escolhidos. Os losangos são albufeiras espanholas junto à fronteira, com o valor da última hora do InfoÁgua (APA), igual em qualquer período, e não entram nas contas de Portugal. Passe o rato por cima para ver os valores; clique (ou toque) para os fixar, para ver a ficha da barragem e a última hora, a evolução e as centrais. Num ecrã tátil, o mapa só se arrasta depois de aproximar no «+». Em «Todas», as albufeiras sem central aparecem mais claras.</p>
+            <div class="mapa-filtros">
+                <span class="ctrl-label">Usos</span>
+                <div class="btn-toggle" id="mapa-usos" role="group" aria-label="Usos das albufeiras do mapa">
+                    <button type="button" data-v="energia" class="active" aria-pressed="true">Energia</button>
+                    <button type="button" data-v="rega" class="active" aria-pressed="true">Rega</button>
+                    <button type="button" data-v="abastecimento" class="active" aria-pressed="true">Abastecimento</button>
+                    <button type="button" data-v="outros" class="active" aria-pressed="true" title="Lazer e indústria">Lazer e outros</button>
+                </div>
+                <span class="mapa-conta" id="mapa-conta"></span>
+            </div>
             <div id="mapa-alb" role="region" aria-label="Mapa das albufeiras"></div>
             <div class="mapa-legenda" id="mapa-legenda"></div>
-            <p class="nota-bloco">Fundo: Natural Earth (a costa e os países vizinhos) e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (a fronteira, os rios e os espelhos de água, com as albufeiras cheias; licença ODbL). Localização das barragens: lista de características de albufeiras do SNIRH (APA) e, nas que lá não estão, mapa de barragens da CNPGB; o Baixo Sabor, OpenStreetMap.</p>
+            <p class="nota-bloco">Fundo: Natural Earth (a costa e os países vizinhos) e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (a fronteira, os rios e os espelhos de água, com as albufeiras cheias; licença ODbL). Bacias hidrográficas: APA, «Principais Bacias Hidrográficas (DQA)» (só a parte portuguesa), juntas nas bacias do boletim semanal de albufeiras e simplificadas. Localização das barragens: lista de características de albufeiras do SNIRH (APA) e, nas que lá não estão, mapa de barragens da CNPGB; o Baixo Sabor e as de Espanha, OpenStreetMap. A última hora: InfoÁgua (APA). A ficha da barragem: inventário de albufeiras do SNIRH e, nas centrais que lá não estão, CNPGB.</p>
         </section>
 
         <section id="bloco-evol" class="grafico-box">
@@ -732,7 +756,8 @@
                 <tr><th scope="row" class="esq">Energia guardada, afluências e descarregamentos (Portugal)</th><td class="esq" data-rot="Fonte">REN, Data Hub: o balanço hidráulico do balanço diário</td><td class="esq" data-rot="Atualização">Três vezes por dia; o valor de cada dia sai na manhã seguinte</td><td class="esq" data-rot="Limitações">Só o total do país, separado em albufeiras, fios de água e mini-hídricas, em GWh inteiros. Nos fios de água e nas mini-hídricas a afluência é a produção do dia; a das albufeiras sai do balanço e pode ser negativa. A REN revê valores semanas depois. A capacidade que conta como 100% foi subindo com as albufeiras novas (cerca de 3 080 GWh em 2015 e 3 250 GWh em 2026).</td></tr>
                 <tr><th scope="row" class="esq">Energia guardada, Espanha (e Portugal, para comparar)</th><td class="esq" data-rot="Fonte">Plataforma de transparência da ENTSO-E</td><td class="esq" data-rot="Atualização">Três vezes por semana; cada semana sai com alguns dias de atraso</td><td class="esq" data-rot="Limitações">Só o total de cada país, não de cada albufeira. A ENTSO-E pode rever semanas já publicadas. A mesma água vale mais energia numa barragem alta.</td></tr>
                 <tr><th scope="row" class="esq">Enchimento das albufeiras de Espanha</th><td class="esq" data-rot="Fonte">Red Eléctrica (REData)</td><td class="esq" data-rot="Atualização">Uma vez por mês, semanas depois de o mês acabar</td><td class="esq" data-rot="Limitações">Só Espanha peninsular e só o total, as anuais e as hiperanuais. Não se soma a Portugal.</td></tr>
-                <tr><th scope="row" class="esq">Mapa e localização</th><td class="esq" data-rot="Fonte">SNIRH e CNPGB (as barragens); Natural Earth e OpenStreetMap (o fundo)</td><td class="esq" data-rot="Atualização">Fixo</td><td class="esq" data-rot="Limitações">O espelho de água desenhado é o da albufeira cheia, não o do dia.</td></tr>
+                <tr><th scope="row" class="esq">Mapa e localização</th><td class="esq" data-rot="Fonte">SNIRH e CNPGB (as barragens portuguesas); OpenStreetMap (o Baixo Sabor e as de Espanha); APA, «Principais Bacias Hidrográficas (DQA)» (as bacias); Natural Earth e OpenStreetMap (o fundo)</td><td class="esq" data-rot="Atualização">Fixo</td><td class="esq" data-rot="Limitações">O espelho de água desenhado é o da albufeira cheia, não o do dia. As bacias são só a parte portuguesa e estão simplificadas (até cerca de 600 m).</td></tr>
+                <tr><th scope="row" class="esq">Última hora (no mapa e nas páginas de cada albufeira)</th><td class="esq" data-rot="Fonte">InfoÁgua (Agência Portuguesa do Ambiente): o volume, a cota e os caudais de hora a hora</td><td class="esq" data-rot="Atualização">De hora a hora; o InfoÁgua só guarda as últimas 48 horas</td><td class="esq" data-rot="Limitações">Nem todas as albufeiras estão no InfoÁgua, e algumas só têm um valor por dia. A percentagem é a do InfoÁgua. As de Espanha não entram nas contas de Portugal.</td></tr>
                 <tr><th scope="row" class="esq">Fotografias das páginas de cada albufeira</th><td class="esq" data-rot="Fonte">Wikimedia Commons: o autor e a licença estão por baixo de cada uma</td><td class="esq" data-rot="Atualização">Fixas</td><td class="esq" data-rot="Limitações">Não têm a licença dos dados (CC BY 4.0): cada uma tem a sua. Podem ser de há anos e não mostram o nível de hoje. Cinco albufeiras ainda não têm fotografia.</td></tr>
             </tbody>
         </table></div>
@@ -2011,10 +2036,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     // Fundo próprio (portugal_background.js: Natural Earth e OpenStreetMap) sem tiles externos. Um círculo
     // por albufeira, no sítio da barragem: o raio pela capacidade (área proporcional) e a cor pela percentagem.
-    const ESCALA_MAPA = [[20, '#deebf7'], [40, '#9ecae1'], [60, '#6baed6'], [80, '#3182bd'], [Infinity, '#08519c']];
-    const ROT_ESCALA = ['até 20%', '20–40%', '40–60%', '60–80%', '80% ou mais'];
-    const corPct = p => ESCALA_MAPA.find(([lim]) => p < lim)[1];
-    let MAPA = null, FUNDO = null, CIRCULOS = null;
+    // Por baixo dos círculos, as bacias hidrográficas (bacias_portugal.js: APA, só a parte portuguesa), com a cor da
+    // percentagem do conjunto das suas albufeiras no mapa; por cima das bacias, os rios e os espelhos de água do fundo.
+    // Os losangos são as albufeiras de Espanha do InfoÁgua, com o valor da última hora (fora das contas de Portugal).
+    // As classes do boletim semanal de albufeiras da APA (0–20, 21–40, 41–50, 51–60, 61–80 e 81% ou mais; a última
+    // inclui as que passam dos 100%), pela percentagem arredondada às unidades, como no boletim; do vermelho (vazia) ao
+    // azul (cheia), passando pelo amarelo: distinguem-se umas das outras com qualquer tipo de daltonismo (o verde de um
+    // semáforo, ao lado do vermelho, não se distinguia dele)
+    const ESCALA_MAPA = [[20, '#d73027'], [40, '#fc8d59'], [50, '#fee090'], [60, '#abd9e9'], [80, '#74add1'], [Infinity, '#4575b4']];
+    const ROT_ESCALA = ['0–20%', '21–40%', '41–50%', '51–60%', '61–80%', '81% ou mais'];
+    const corPct = p => ESCALA_MAPA.find(([lim]) => Math.round(p) <= lim)[1];
+    let MAPA = null, FUNDO = null, AGUA = null, CIRCULOS = null, BACIAS = null, MARCAS_ES = null;
+    const T_AGUA = new Set(['rio', 'lago']);
     function estiloFundo(f) {
         const dk = document.documentElement.getAttribute('data-theme') === 'dark';
         const agua = dk ? '#3a78bd' : '#9ec9e8';   // no escuro, claro q.b. para as albufeiras se verem na terra
@@ -2024,17 +2057,107 @@ document.addEventListener('DOMContentLoaded', function () {
         return { color: dk ? '#475569' : '#b8c0c6', weight: t === 'pt' ? 1.2 : 0.7, opacity: 1,
                  fillColor: t === 'pt' ? (dk ? '#1e293b' : '#f4f4f1') : (dk ? '#172131' : '#e7e8e3'), fillOpacity: 1 };
     }
+
+    // Os usos de cada albufeira (a coluna «uso» da lista, os do boletim semanal da APA) e os escolhidos nos botões:
+    // uma albufeira fica no mapa se tiver pelo menos um dos usos escolhidos. Sem a coluna, as com central são «energia».
+    const USOS = ['energia', 'rega', 'abastecimento', 'outros'];
+    const USOS_ON = new Set(USOS);
+    function usosDe(a) {
+        const u = (a.uso || '').toLowerCase();
+        if (!u) return [a.energia ? 'energia' : 'outros'];
+        const out = [];
+        if (a.energia || u.includes('energia')) out.push('energia');     // uma com central é sempre «energia»
+        if (/rega|irriga/.test(u)) out.push('rega');                 // «rega» no boletim, «irrigação» no inventário
+        if (u.includes('abastecimento')) out.push('abastecimento');
+        if (/lazer|industrial|recreio|cheias|navega|deriva|outro/.test(u) || !out.length) out.push('outros');
+        return out;
+    }
+    const noMapa = a => usosDe(a).some(k => USOS_ON.has(k));
+
+    // A ficha técnica de cada albufeira e os valores da última hora (InfoÁgua) só se pedem quando o mapa se aproxima
+    // do ecrã; sem eles, o mapa funciona na mesma (sem os losangos de Espanha e sem a ficha nas caixas)
+    let FICHAS = null, AGORA_DOC = null, PEDIU_EXTRAS = false;
+    function pedirExtrasMapa() {
+        if (PEDIU_EXTRAS) return;
+        PEDIU_EXTRAS = true;
+        const json = (c, init) => fetchDados(c, init).then(r => r.ok ? r.json() : null).catch(err => { console.warn(c + ':', err); return null; });
+        Promise.all([json('producao/albufeiras_fichas.json'), json('producao/albufeiras_agora.json', { cache: 'no-cache' })])
+            .then(([f, ag]) => { FICHAS = f; AGORA_DOC = ag; if (MAPA && ULT >= 0) renderMapa(); });
+    }
+    function vigiarMapa() {
+        const el = document.getElementById('bloco-mapa');
+        if (!('IntersectionObserver' in window)) { pedirExtrasMapa(); return; }
+        const io = new IntersectionObserver(es => {
+            if (es.some(e => e.isIntersecting)) { io.disconnect(); pedirExtrasMapa(); }
+        }, { rootMargin: '600px 0px' });
+        io.observe(el);
+    }
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmt2 = v => vazio(v) ? '--' : _nf2.format(v);
+    const fmtM = v => fmt1(v).replace(/,0$/, '');
+    const _hora = new Intl.DateTimeFormat('pt-PT', { timeZone: 'Europe/Lisbon', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const listaPt = xs => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' e ' + xs[xs.length - 1];
+    // O último volume (das últimas 48 horas) de uma albufeira no InfoÁgua: { pct, cota, quando }, ou null
+    function agoraDe(chave) {
+        const l = AGORA_DOC && AGORA_DOC.albufeiras ? AGORA_DOC.albufeiras[chave] : null;
+        if (!l) return null;
+        for (let i = l.length - 1; i >= 0; i--) {
+            if (l[i][1] === null || l[i][1] === undefined) continue;
+            const t = Date.parse(l[i][0].replace(' ', 'T') + 'Z');
+            if (!isFinite(t) || Date.now() - t > 48 * 3600e3) return null;
+            return { pct: l[i][1], cota: l[i][2], quando: _hora.format(new Date(t)).replace(',', ' às') };
+        }
+        return null;
+    }
+    const distNpa = (cota, npa) => {
+        const d = npa - cota;
+        return d > 0.005 ? `a ${fmt2(d)} m do nível de pleno armazenamento` : d > -0.005 ? 'no nível de pleno armazenamento'
+            : `${fmt2(-d)} m acima do nível de pleno armazenamento`;
+    };
+    // O que a caixa da albufeira mostra a mais: a ficha técnica (usos, barragem, capacidade útil) e a última hora
+    function extrasCaixa(a) {
+        const f = FICHAS ? FICHAS[a.col] : null, linhas = [];
+        if (f) {
+            const us = f.aproveitamentos || [];
+            if (us.length) linhas.push('Usos: ' + esc(listaPt(us.map((u, i) => i ? u.toLowerCase() : u))));
+            const ba = f.barragem || {};
+            // o inventário do SNIRH escreve «Abóboda»
+            const xs = [ba.tipo ? ba.tipo.replace(/bóboda/g, 'bóbada') : null, ba.altura_m ? fmtM(ba.altura_m) + ' m de altura' : null,
+                        ba.ano ? 'desde ' + ba.ano : ba.ano_conclusao ? 'concluída em ' + ba.ano_conclusao : null].filter(Boolean);
+            if (xs.length) linhas.push('Barragem: ' + esc(xs.join(' · ')));
+            const cu = (f.albufeira || {}).capacidade_util_dam3;
+            if (cu) linhas.push('Capacidade útil: ' + fmtHm3(cu / 1000));
+        }
+        const ag = agoraDe(a.col), npa = f && f.albufeira ? f.albufeira.npa_m : null;
+        if (ag) linhas.push(`Agora: <b>${fmtPct(ag.pct)}</b>`
+            + (vazio(ag.cota) ? '' : ` · cota ${fmt2(ag.cota)} m` + (vazio(npa) ? '' : `, ${distNpa(ag.cota, npa)}`))
+            + ` <span class="pop-quando">(${ag.quando}, InfoÁgua)</span>`);
+        return linhas.length ? `<span class="pop-extra">${linhas.join('<br>')}</span>` : '';
+    }
+
     function iniciarMapa() {
         if (MAPA || typeof L === 'undefined' || typeof PORTUGAL_BG_GEOJSON === 'undefined') return !!MAPA;
         const [lon0, lat0, lon1, lat1] = PORTUGAL_BG_JANELA;
         MAPA = L.map('mapa-alb', { minZoom: 6, maxZoom: 11, zoomSnap: 0.5, maxBounds: L.latLngBounds([lat0, lon0], [lat1, lon1]),
                                    maxBoundsViscosity: 1.0, attributionControl: true, scrollWheelZoom: false });
-        MAPA.createPane('fundo');
-        MAPA.getPane('fundo').style.zIndex = 250;
+        // Camadas, de baixo para cima: a terra (fundo), as bacias, os rios e os espelhos de água (agua), os círculos
+        [['fundo', 250], ['bacias', 300], ['agua', 350]].forEach(([p, z]) => { MAPA.createPane(p); MAPA.getPane(p).style.zIndex = z; });
         MAPA.getPane('fundo').style.pointerEvents = 'none';
+        MAPA.getPane('agua').style.pointerEvents = 'none';
         FUNDO = L.geoJson(PORTUGAL_BG_GEOJSON, { pane: 'fundo', renderer: L.canvas({ pane: 'fundo', padding: 0.5 }), interactive: false,
-                                                 style: estiloFundo,
-                                                 attribution: '&copy; <a href="https://www.naturalearthdata.com/" rel="noopener">Natural Earth</a> · &copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">colaboradores do OpenStreetMap</a> · SNIRH (APA), CNPGB' }).addTo(MAPA);
+                                                 filter: f => !T_AGUA.has(f.properties.t), style: estiloFundo,
+                                                 attribution: '&copy; <a href="https://www.naturalearthdata.com/" rel="noopener">Natural Earth</a> · &copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">colaboradores do OpenStreetMap</a> · SNIRH, InfoÁgua e bacias: APA · CNPGB' }).addTo(MAPA);
+        AGUA = L.geoJson(PORTUGAL_BG_GEOJSON, { pane: 'agua', renderer: L.canvas({ pane: 'agua', padding: 0.5 }), interactive: false,
+                                                filter: f => T_AGUA.has(f.properties.t), style: estiloFundo }).addTo(MAPA);
+        if (typeof PORTUGAL_BACIAS_GEOJSON !== 'undefined') {
+            BACIAS = L.geoJson(PORTUGAL_BACIAS_GEOJSON, { pane: 'bacias', bubblingMouseEvents: true }).addTo(MAPA);
+            BACIAS.eachLayer(l => {
+                l.bindTooltip('', { sticky: true, direction: 'top', className: 'mapa-dica' });
+                l.bindPopup('', { className: 'mapa-popup' });
+                l.on('popupopen', () => l.getTooltip().setOpacity(0));
+                l.on('popupclose', () => l.getTooltip().setOpacity(0.9));
+            });
+        }
         MAPA.fitBounds([[36.95, -9.55], [42.15, -6.18]], { padding: [6, 6] });
         // Não deixa afastar mais do que a vista inicial (o fundo só cobre o que ela mostra no ecrã mais largo)
         MAPA.setMinZoom(MAPA.getZoom());
@@ -2051,22 +2174,50 @@ document.addEventListener('DOMContentLoaded', function () {
             toque();
             MAPA.on('zoomend', toque);
         }
-        // Botão «Ver a evolução» dentro do popup (na fase de captura: o Leaflet não deixa o clique sair do popup)
+        // Botões «Ver a evolução» dentro das caixas (na fase de captura: o Leaflet não deixa o clique sair da caixa)
         document.getElementById('mapa-alb').addEventListener('click', e => {
             const b = e.target.closest('[data-ver-alb]');
             if (b) { MAPA.closePopup(); escolher(b.dataset.verAlb, true); }
         }, true);
+        vigiarMapa();
         return true;
+    }
+    // A caixa (e a dica) de uma bacia: a percentagem das albufeiras dela que estão no mapa
+    function textoBacia(b, alb, lista, t_) {
+        const nome = alb || ['Minho', 'Lis', 'Leça'].includes(b) ? nomeBacia(b) : b;
+        const ag = lista.length ? estado(lista, REF, t_) : null;
+        if (!ag) {
+            const porque = !alb ? 'sem albufeiras acompanhadas neste site'
+                : lista.length ? 'sem valor neste período'
+                : CONJUNTO === 'energia' && ALB_TODAS.some(a => a.bacia === b && !a.energia) ? 'sem albufeiras com uso para energia (em «Albufeiras: Todas», entram as sem central)'
+                : 'sem albufeiras com os usos escolhidos';
+            return { ag, txt: `<b>${esc(nome)}</b><br>${porque}` };
+        }
+        const sem = comparar(lista, COMP, REF, t_);
+        const n = ag.n < lista.length ? `${ag.n} de ${lista.length} albufeiras com valor` : `${ag.n} ${ag.n === 1 ? 'albufeira' : 'albufeiras'}`;
+        return { ag, txt: `<b>${esc(nome)}</b><br><b>${fmtPct(ag.pct)}</b> · ${fmtHm3(ag.hm3)} de ${fmtHm3(ag.ref)}<br>${n}`
+                          + (USOS_ON.size < USOS.length ? ' (só os usos escolhidos)' : '')
+                          + `<br>${rotuloComp()}: ${sem ? fmtPp(sem.agora - sem.antes) : '--'}` };
     }
     function renderMapa() {
         // Sem as coordenadas (colunas latitude e longitude da lista), sem o Leaflet ou sem o fundo, não há mapa
         if (!ALB.some(a => isFinite(a.lat) && isFinite(a.lon)) || !iniciarMapa()) { document.getElementById('bloco-mapa').hidden = true; return; }
         FUNDO.setStyle(estiloFundo);
+        AGUA.setStyle(estiloFundo);
         if (CIRCULOS) CIRCULOS.remove();
         const dk = document.documentElement.getAttribute('data-theme') === 'dark', t_ = tol();
         const maxRef = Math.max(...ALB.map(a => a.ref));
+        const comSitio = ALB.filter(a => isFinite(a.lat) && isFinite(a.lon));
         // Os maiores primeiro, para os pequenos ficarem por cima e se poderem escolher
-        const lista = ALB.filter(a => isFinite(a.lat) && isFinite(a.lon)).sort((p, q) => q.ref - p.ref);
+        const lista = comSitio.filter(noMapa).sort((p, q) => q.ref - p.ref);
+        if (BACIAS) BACIAS.eachLayer(l => {
+            const { b, alb } = l.feature.properties;
+            const { ag, txt } = textoBacia(b, alb, alb ? lista.filter(a => a.bacia === b) : [], t_);
+            l.setStyle({ weight: 1, color: dk ? '#0f172a' : '#ffffff', opacity: 0.9,
+                         fillColor: ag ? corPct(ag.pct) : 'transparent', fillOpacity: ag ? (dk ? 0.5 : 0.42) : 0 });
+            l.setTooltipContent(txt);
+            l.setPopupContent(txt + (ag ? `<br><button type="button" class="btn-ver-alb" data-ver-alb="bacia-${esc(b)}">Ver a evolução da bacia</button>` : ''));
+        });
         CIRCULOS = L.layerGroup(lista.map(a => {
             const x = valor(a, REF, t_), pct = x ? x.v / a.ref * 100 : null;
             const sem = comparar([a], COMP, REF, t_), p = potencia([a]);
@@ -2082,7 +2233,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 + (a.energia ? '' : `<br>Sem central${a.uso ? ' · ' + esc(a.uso) : ''}`)
                 + `<br>Capacidade: ${fmtHm3(a.ref)}${a.refMax ? '*' : ''}${p.n ? `<br>Turbinamento: ${fmtMW(p.mw)}${p.bomb ? ` · Bombagem: ${fmtMW(p.bomb)}` : ''}` : ''}`;
             marca.bindTooltip(texto, { direction: 'top', offset: [0, -raio], className: 'mapa-dica' });
-            marca.bindPopup(texto + `<br><button type="button" class="btn-ver-alb" data-ver-alb="${a.col}">Ver a evolução${a.energia ? ' e as centrais' : ''}</button>`
+            marca.bindPopup(texto + extrasCaixa(a)
+                            + `<br><button type="button" class="btn-ver-alb" data-ver-alb="${a.col}">Ver a evolução${a.energia ? ' e as centrais' : ''}</button>`
                             + `<a class="btn-pag-alb" href="/albufeira/${a.col.replace(/_/g, '-')}">Página da albufeira</a>`,
                             { className: 'mapa-popup' });
             // Com a caixa aberta a dica (o mesmo texto) fica invisível. Não se tira com unbindTooltip: o Leaflet 1.9.4
@@ -2091,11 +2243,48 @@ document.addEventListener('DOMContentLoaded', function () {
             marca.on('popupclose', () => marca.getTooltip().setOpacity(0.9));
             return marca;
         })).addTo(MAPA);
+        // As de Espanha (InfoÁgua), com o valor da última hora; são todas de centrais hidroelétricas: contam como «Energia»
+        if (MARCAS_ES) MARCAS_ES.remove();
+        MARCAS_ES = null;
+        const es = AGORA_DOC && AGORA_DOC.estacoes && USOS_ON.has('energia')
+            ? Object.entries(AGORA_DOC.estacoes).filter(([, e]) => e.pais === 'ES' && isFinite(e.lat) && isFinite(e.lon)) : [];
+        const marcasEs = es.map(([k, e]) => {
+            const ag = agoraDe(k);
+            if (!ag) return null;
+            const txt = `<b>${esc(e.nome)}</b> · Espanha${e.rio ? ' · rio ' + esc(e.rio) : ''}<br><b>${fmtPct(ag.pct)}</b> na última hora`
+                + (vazio(ag.cota) ? '' : ` · cota ${fmt2(ag.cota)} m`)
+                + `<br><span class="pop-quando">${ag.quando}, InfoÁgua (APA); não entra nas contas de Portugal</span>`;
+            const m = L.marker([e.lat, e.lon], { alt: e.nome, riseOnHover: true,
+                icon: L.divIcon({ className: 'marca-es', html: `<span style="background:${corPct(ag.pct)}"></span>`, iconSize: [16, 16] }) });
+            m.bindTooltip(txt, { direction: 'top', offset: [0, -8], className: 'mapa-dica' });
+            m.bindPopup(txt, { className: 'mapa-popup' });
+            m.on('popupopen', () => m.getTooltip().setOpacity(0));
+            m.on('popupclose', () => m.getTooltip().setOpacity(0.9));
+            return m;
+        }).filter(Boolean);
+        if (marcasEs.length) MARCAS_ES = L.layerGroup(marcasEs).addTo(MAPA);
+        document.getElementById('mapa-conta').textContent = lista.length === comSitio.length ? `${lista.length} albufeiras no mapa`
+            : `${lista.length} de ${comSitio.length} albufeiras no mapa`;
         document.getElementById('mapa-legenda').innerHTML =
             ESCALA_MAPA.map(([, c], i) => `<span class="leg-item"><span class="leg-cor" style="background:${c}"></span>${ROT_ESCALA[i]}</span>`).join('')
             + '<span class="leg-item"><span class="leg-cor leg-vazia"></span>sem valor</span>'
-            + '<span class="leg-item leg-nota">círculo maior = mais capacidade</span>';
+            + '<span class="leg-item leg-nota">círculo maior = mais capacidade</span>'
+            + (BACIAS ? '<span class="leg-item"><span class="leg-cor leg-bacia"></span>bacia: a mesma escala, mais clara</span>' : '')
+            + (MARCAS_ES ? '<span class="leg-item"><span class="leg-cor leg-es"></span>Espanha: a última hora (InfoÁgua)</span>' : '');
     }
+    // Os botões dos usos (pelo menos um fica ligado)
+    document.getElementById('mapa-usos').addEventListener('click', e => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        const k = b.dataset.v;
+        if (USOS_ON.has(k)) { if (USOS_ON.size === 1) return; USOS_ON.delete(k); } else USOS_ON.add(k);
+        document.querySelectorAll('#mapa-usos button').forEach(x => {
+            const on = USOS_ON.has(x.dataset.v);
+            x.classList.toggle('active', on);
+            x.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        if (ULT >= 0) renderMapa();
+    });
 
     // ==================================================================
     // ESCOLHA DO PERÍODO
