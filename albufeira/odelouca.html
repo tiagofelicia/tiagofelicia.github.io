@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Barragem do Odelouca hoje: nível e água da albufeira | Tiago Felícia</title>
+    <meta name="description" content="Nível da barragem do Odelouca: a albufeira tinha 111 hm³ a 16/11/2026, 71,0% da capacidade. Comparação com o ano anterior e com a média desde 2011, máximos e mínimos, ano a ano e as centrais. Dados do SNIRH, atualizados todos os dias." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/albufeira/odelouca" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Barragem do Odelouca hoje — a água guardada na albufeira" />
+    <meta property="og:description" content="Nível da barragem do Odelouca: a albufeira tinha 111 hm³ a 16/11/2026, 71,0% da capacidade. Comparação com o ano anterior e com a média desde 2011, máximos e mínimos, ano a ano e as centrais. Dados do SNIRH, atualizados todos os dias." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/albufeira/odelouca" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-albufeiras.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/albufeira/albufeira.css?v=e6d7ecb4" />
+    <script src="/theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+    <script src="/cores-graficos.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://www.tiagofelicia.pt/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Albufeiras",
+      "item": "https://www.tiagofelicia.pt/albufeiras"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Odelouca",
+      "item": "https://www.tiagofelicia.pt/albufeira/odelouca"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "Água guardada na albufeira do Odelouca",
+  "description": "O volume de água armazenado na albufeira do Odelouca (bacia do Arade), por dia desde 31/12/2009, a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), e a percentagem da capacidade.",
+  "url": "https://www.tiagofelicia.pt/albufeira/odelouca",
+  "inLanguage": "pt-PT",
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "dateModified": "2026-11-16",
+  "temporalCoverage": "2009-12-31/..",
+  "spatialCoverage": {
+    "@type": "Place",
+    "name": "Albufeira do Odelouca",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 37.28694,
+      "longitude": -8.471098
+    }
+  },
+  "variableMeasured": [
+    {
+      "@type": "PropertyValue",
+      "name": "Volume armazenado",
+      "unitText": "hm3"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Percentagem da capacidade",
+      "unitText": "%"
+    }
+  ],
+  "isBasedOn": {
+    "@type": "CreativeWork",
+    "name": "SNIRH — dados de base da rede hidrométrica",
+    "url": "https://snirh.apambiente.pt",
+    "creator": {
+      "@type": "Organization",
+      "name": "Agência Portuguesa do Ambiente",
+      "url": "https://apambiente.pt"
+    }
+  },
+  "creator": {
+    "@type": "Person",
+    "name": "Tiago Felícia",
+    "url": "https://www.tiagofelicia.pt/"
+  },
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "text/csv",
+      "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Quanta água tem o Odelouca hoje?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A 16/11/2026, o último valor publicado pelo SNIRH, o Odelouca tinha 111 hm³ de água, 71,0% da capacidade: 4,3 p.p. abaixo do mesmo dia de 2025 e 22,6 p.p. acima da média de 2011 a 2025 para este dia. Esta página é atualizada todos os dias."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual é o nível da barragem do Odelouca?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A 16/11/2026, a albufeira da barragem do Odelouca estava a 71,0% da capacidade, com 111 hm³ de água. É esta percentagem do volume guardado que costuma ser dada como o nível da barragem."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual é a capacidade do Odelouca?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "157 hm³, segundo o boletim semanal de albufeiras da APA. É a 2.ª maior das albufeiras sem central acompanhadas neste site (11,7% da capacidade de todas elas)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual foi o máximo do Odelouca?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "144 hm³, a 05/05/2025 (91,9% da capacidade), desde o início da série do SNIRH, a 31/12/2009. Desde 2011, o mínimo foi de 37,2 hm³, a 12/10/2023 (23,7%)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "De onde vêm estes dados?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O volume vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia, que costuma aparecer na manhã seguinte. A capacidade é a do boletim semanal de albufeiras da APA."
+      }
+    }
+  ]
+}
+    </script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+<div id="menu-placeholder"></div>
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li><a href="/albufeiras">Albufeiras</a></li>
+        <li aria-current="page">Odelouca</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <p class="badge-global">Dados desde <strong>31/12/2009</strong> · um valor por dia · Último valor: <strong>16/11/2026</strong></p>
+        <h1>Barragem e albufeira do Odelouca: quanta água tem hoje</h1>
+        <p>Bacia do Arade · capacidade 157 hm³ · dados do SNIRH (Agência Portuguesa do Ambiente)</p>
+    </div>
+
+    <section class="bloco" id="bloco-resumo">
+        <div class="vista-bar" id="alb-dia">
+            <span class="vista-grupo">
+                <label class="ctrl-label" for="sel-dia">Dia</label>
+                <button type="button" class="btn-nav" id="dia-ant" title="Dia anterior" aria-label="Dia anterior">&#10094;</button>
+                <input type="date" id="sel-dia" value="2026-11-16" min="2009-12-31" max="2026-11-16">
+                <button type="button" class="btn-nav" id="dia-seg" title="Dia seguinte" aria-label="Dia seguinte" disabled>&#10095;</button>
+                <button type="button" class="btn-nav" id="dia-ultimo" title="Voltar ao último dia" hidden>Mais recente</button>
+            </span>
+            <span class="vista-grupo">
+                <label class="ctrl-label" for="sel-comp">Comparar com</label>
+                <select id="sel-comp"><option value="semana">Uma semana antes</option><option value="mes">Um mês antes</option><option value="hidro">Início do ano hidrológico (1 de outubro)</option><option value="jan">Início do ano (1 de janeiro)</option><option value="ano">Um ano antes</option><option value="data">Outra data…</option></select>
+                <input type="date" id="sel-comp-data" aria-label="Data de comparação" hidden>
+            </span>
+        </div>
+        <div class="vista-nota" id="vista-nota" role="note" hidden></div>
+        <p class="resumo-topo" id="resumo-frase">A 16/11/2026, a albufeira do Odelouca tinha <strong>111 hm³</strong> de água, <strong>71,0%</strong> da capacidade: 4,3 p.p. abaixo do mesmo dia de 2025 e 22,6 p.p. acima da média de 2011 a 2025 para este dia. De 2011 a 2025, só em 2025 tinha mais água a 16 de novembro.</p>
+        <div class="kpis" id="resumo-kpis"><div class="kpi-card"><div class="kpi-label">💧 Água guardada</div><div class="kpi-value">111 hm³</div><div class="kpi-sub">71,0% da capacidade</div></div><div class="kpi-card"><div class="kpi-label">📅 Numa semana</div><div class="kpi-value">+1,1 p.p.</div><div class="kpi-sub">+1,8 hm³ desde 09/11/2026</div></div><div class="kpi-card"><div class="kpi-label">↩️ Há um ano</div><div class="kpi-value">75,3%</div><div class="kpi-sub">118 hm³ a 16/11/2025</div></div><div class="kpi-card"><div class="kpi-label">📊 Média 2011–2025 para 16/11</div><div class="kpi-value">48,4%</div><div class="kpi-sub">mín. 24,1% (2023) · máx. 75,3% (2025)</div></div></div>
+    </section>
+
+    <section class="grafico-box" id="bloco-evol">
+        <h2>📈 Ao longo do ano</h2>
+        <p class="grafico-intro">A percentagem de água guardada, dia a dia, comparada com o ano anterior e com os anos completos desde 2011 (a média e a faixa entre o mínimo e o máximo de cada dia).</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Ano</span>
+            <div class="btn-toggle" id="ctrl-ano" role="group" aria-label="Ano">
+                <button type="button" data-v="civil" class="active">Civil</button>
+                <button type="button" data-v="hidro" title="De 1 de outubro a 30 de setembro">Hidrológico</button>
+            </div>
+        </div>
+        <div id="grafico-evol" class="grafico"></div>
+        <noscript><p class="nota-bloco">O gráfico precisa de JavaScript; os valores estão no resumo acima e na tabela abaixo.</p></noscript>
+    </section>
+
+    <section class="grafico-box" id="bloco-recordes">
+        <h2>🏆 Máximos, mínimos e tamanho</h2>
+        <div class="kpis kpis-3"><div class="kpi-card"><div class="kpi-label">🔝 Máximo registado</div><div class="kpi-value">144 hm³</div><div class="kpi-sub">05/05/2025 · 91,9%</div></div><div class="kpi-card"><div class="kpi-label">🔻 Mínimo desde 2011</div><div class="kpi-value">37,2 hm³</div><div class="kpi-sub">12/10/2023 · 23,7%</div></div><div class="kpi-card"><div class="kpi-label">📏 Capacidade</div><div class="kpi-value">157 hm³</div><div class="kpi-sub">2.ª maior pela capacidade · 11,7% da capacidade de todas as sem central</div></div></div>
+    </section>
+
+    <section class="grafico-box" id="bloco-anos">
+        <h2>📅 Ano a ano</h2>
+        <p class="grafico-intro">O maior e o menor volume de cada ano, com o dia, o volume no fim do ano (no ano em curso, no último dia) e quanto subiu ou desceu do primeiro ao último valor do ano.</p>
+        <div class="tabela-box"><table class="tabela-alb">
+            <thead><tr><th scope="col" class="esq">Ano</th><th scope="col">Máximo</th><th scope="col">Mínimo</th><th scope="col">No fim do ano</th><th scope="col" class="col-opc">Variação no ano</th></tr></thead>
+            <tbody><tr><td class="esq">2026</td><td>142 hm³<span class="mini">24/01/2026</span></td><td>110 hm³<span class="mini">09/11/2026</span></td><td>71,0%<span class="mini">a 16/11/2026</span></td><td class="col-opc desce">−18,8 hm³</td></tr><tr><td class="esq">2025</td><td>144 hm³<span class="mini">06/05/2025</span></td><td>47,4 hm³<span class="mini">01/01/2025</span></td><td>82,8%<span class="mini">31/12</span></td><td class="col-opc sobe">+82,6 hm³</td></tr><tr><td class="esq">2024</td><td>73,1 hm³<span class="mini">20/05/2024</span></td><td>38,7 hm³<span class="mini">01/01/2024</span></td><td>30,2%<span class="mini">31/12</span></td><td class="col-opc sobe">+8,7 hm³</td></tr><tr><td class="esq">2023</td><td>61,9 hm³<span class="mini">14/03/2023</span></td><td>37,2 hm³<span class="mini">12/10/2023</span></td><td>24,6%<span class="mini">31/12</span></td><td class="col-opc desce">−20,5 hm³</td></tr><tr><td class="esq">2022</td><td>81,8 hm³<span class="mini">01/01/2022</span></td><td>48,7 hm³<span class="mini">06/11/2022</span></td><td>37,7%<span class="mini">31/12</span></td><td class="col-opc desce">−22,6 hm³</td></tr><tr><td class="esq">2021</td><td>120 hm³<span class="mini">18/03/2021</span></td><td>81,8 hm³<span class="mini">21/12/2021</span></td><td>52,2%<span class="mini">31/12</span></td><td class="col-opc desce">−5,2 hm³</td></tr><tr><td class="esq">2020</td><td>91,1 hm³<span class="mini">29/05/2020</span></td><td>72,6 hm³<span class="mini">06/01/2020</span></td><td>55,5%<span class="mini">31/12</span></td><td class="col-opc sobe">+14,5 hm³</td></tr><tr><td class="esq">2019</td><td>75,3 hm³<span class="mini">01/01/2019</span></td><td>54,6 hm³<span class="mini">15/12/2019</span></td><td>46,4%<span class="mini">31/12</span></td><td class="col-opc desce">−2,4 hm³</td></tr><tr><td class="esq">2018</td><td>114 hm³<span class="mini">01/05/2018</span></td><td>50,2 hm³<span class="mini">27/02/2018</span></td><td>48,1%<span class="mini">31/12</span></td><td class="col-opc sobe">+21,2 hm³</td></tr><tr><td class="esq">2017</td><td>92,8 hm³<span class="mini">06/04/2017</span></td><td>54,3 hm³<span class="mini">31/12/2017</span></td><td>34,6%<span class="mini">31/12</span></td><td class="col-opc desce">−17,6 hm³</td></tr><tr><td class="esq">2016</td><td>96,7 hm³<span class="mini">20/05/2016</span></td><td>64,3 hm³<span class="mini">30/11/2016</span></td><td>45,8%<span class="mini">31/12</span></td><td class="col-opc desce">−13,1 hm³</td></tr><tr><td class="esq">2015</td><td>121 hm³<span class="mini">13/02/2015</span></td><td>84,3 hm³<span class="mini">01/11/2015</span></td><td>54,2%<span class="mini">31/12</span></td><td class="col-opc desce">−33,4 hm³</td></tr><tr><td class="esq">2014</td><td>135 hm³<span class="mini">04/04/2014</span></td><td>97,1 hm³<span class="mini">16/01/2014</span></td><td>75,5%<span class="mini">31/12</span></td><td class="col-opc sobe">+21,1 hm³</td></tr><tr><td class="esq">2013</td><td>130 hm³<span class="mini">26/04/2013</span></td><td>96,0 hm³<span class="mini">24/12/2013</span></td><td>62,0%<span class="mini">31/12</span></td><td class="col-opc sobe">+1,1 hm³</td></tr><tr><td class="esq">2012*</td><td>106 hm³<span class="mini">15/05/2012</span></td><td>74,5 hm³<span class="mini">02/11/2012</span></td><td>61,3%<span class="mini">a 30/12/2012</span></td><td class="col-opc desce">−5,1 hm³</td></tr><tr><td class="esq">2011*</td><td>101 hm³<span class="mini">31/12/2011</span></td><td>86,0 hm³<span class="mini">15/03/2011</span></td><td>64,6%<span class="mini">31/12</span></td><td class="col-opc sobe">+14,0 hm³</td></tr><tr><td class="esq">2010*</td><td>87,1 hm³<span class="mini">31/12/2010</span></td><td>39,6 hm³<span class="mini">28/02/2010</span></td><td>55,5%<span class="mini">31/12</span></td><td class="col-opc sobe">+42,5 hm³</td></tr><tr><td class="esq">2009*</td><td>48,0 hm³<span class="mini">31/12/2009</span></td><td>48,0 hm³<span class="mini">31/12/2009</span></td><td>30,6%<span class="mini">31/12</span></td><td class="col-opc ">0,0 hm³</td></tr></tbody>
+        </table></div>
+        <p class="nota-bloco">* Com menos de 300 valores no ano (nos primeiros anos da série, o SNIRH tem um valor por mês).</p>
+    </section>
+
+    
+
+    <section class="grafico-box" id="bloco-bacia">
+        <h2>🗺️ Na bacia do Arade</h2>
+        <p class="grafico-intro">As outras albufeiras da mesma bacia acompanhadas neste site, com a percentagem do último dia (16/11/2026).</p>
+        <ul class="lista-bacia"><li><a href="/albufeira/funcho">Funcho</a> <span class="mini">78,5%</span></li><li><a href="/albufeira/arade">Arade</a> <span class="mini">76,4%</span></li></ul>
+        <p class="nota-bloco"><a id="link-bacia" href="/albufeiras?albufeira=bacia-Arade">Ver a bacia na página das albufeiras</a> · <a id="link-outras" href="/albufeiras?albufeira=odelouca">ver o Odelouca ao lado das outras</a></p>
+    </section>
+
+    <section class="grafico-box" id="bloco-mapa">
+        <h2>📍 Onde fica</h2>
+        <div class="onde-fica">
+            <div>
+                <div id="mapa-alb" role="region" aria-label="Mapa com a localização da barragem"></div>
+                <p class="nota-bloco">A barragem: 37,28694, -8,471098 (SNIRH; CNPGB nas que lá não estão). Fundo: Natural Earth e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (licença ODbL).</p>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="grafico-box" id="bloco-ficha">
+        <h2>🧾 Ficha técnica e limitações</h2>
+        <table class="tabela-alb tabela-ficha"><tbody>
+            <tr><th scope="row" class="esq">Bacia</th><td class="esq">Arade</td></tr>
+            <tr><th scope="row" class="esq">Capacidade total</th><td class="esq">157 hm³ (boletim semanal de albufeiras da APA; inclui o volume morto)</td></tr>
+            <tr><th scope="row" class="esq">Código SNIRH</th><td class="esq">30G/11AE</td></tr>
+            <tr><th scope="row" class="esq">Usos</th><td class="esq">Abastecimento</td></tr>
+            <tr><th scope="row" class="esq">Capacidade útil e volume morto</th><td class="esq">134 hm³ de capacidade útil</td></tr>
+            <tr><th scope="row" class="esq">Cotas dos níveis de água</th><td class="esq">pleno armazenamento (NPA): 102 m · máxima cheia (NMC): 102,35 m · mínimo de exploração (NmE): 72 m</td></tr>
+            <tr><th scope="row" class="esq">Barragem</th><td class="esq">Terra zonada · coroamento com 411 m, à cota 106 m · em funcionamento desde 2009</td></tr>
+            <tr><th scope="row" class="esq">Descarregador de cheias</th><td class="esq">Canal de Encosta · 1400 m³/s</td></tr>
+            <tr><th scope="row" class="esq">Rio e local</th><td class="esq">Ribeira de Odelouca · Alferce, Monchique, Faro</td></tr>
+            <tr><th scope="row" class="esq">Dono da obra</th><td class="esq">Águas do Algarve S.A.</td></tr>
+            <tr><th scope="row" class="esq">Entidade exploradora</th><td class="esq">Águas do Algarve, S.A. (24/11/2009)</td></tr>
+            <tr><th scope="row" class="esq">Projeto</th><td class="esq">COBA</td></tr>
+            <tr><th scope="row" class="esq">Série</th><td class="esq">diária, desde 31/12/2009</td></tr>
+            <tr><th scope="row" class="esq">Fonte</th><td class="esq">SNIRH (Agência Portuguesa do Ambiente), dados de base: o volume no fim de cada dia; a ficha técnica, do inventário de albufeiras do SNIRH</td></tr>
+            <tr><th scope="row" class="esq">Atualização</th><td class="esq">Todos os dias; o SNIRH publica o valor de cada dia na manhã seguinte</td></tr>
+            <tr><th scope="row" class="esq">Limitações</th><td class="esq"><ul class="lista-limites"><li>A percentagem conta o volume morto, a água abaixo das tomadas que não se pode usar.</li><li>14 dias sem valor nos últimos 12 meses: no gráfico, um dia sem valor usa o último dos 31 dias anteriores.</li><li>Os valores impossíveis do SNIRH (erros de leitura) são retirados antes das contas.</li></ul></td></tr>
+        </tbody></table>
+        <p class="nota-bloco"><a href="/albufeiras#bloco-fontes">As fontes e as limitações de todos os números</a>.</p>
+    </section>
+
+    <div class="cta-simulador">
+        <h2>E as outras albufeiras?</h2>
+        <p>As 57 albufeiras com uso para energia e as 29 sem central que o site acompanha, no mapa e numa tabela, por bacia, com a energia guardada em Portugal e em Espanha.</p>
+        <div class="botoes"><a href="/albufeiras" class="button-link">Todas as albufeiras</a></div>
+    </div>
+
+    <h2 id="faq" class="faq-titulo">❔ Perguntas Frequentes</h2>
+    <div class="faq-lista">
+<details class="faq-item"><summary><strong>Quanta água tem o Odelouca hoje?</strong></summary><div class="faq-content"><p>A 16/11/2026, o último valor publicado pelo SNIRH, o Odelouca tinha 111 hm³ de água, 71,0% da capacidade: 4,3 p.p. abaixo do mesmo dia de 2025 e 22,6 p.p. acima da média de 2011 a 2025 para este dia. Esta página é atualizada todos os dias.</p></div></details>
+<details class="faq-item"><summary><strong>Qual é o nível da barragem do Odelouca?</strong></summary><div class="faq-content"><p>A 16/11/2026, a albufeira da barragem do Odelouca estava a 71,0% da capacidade, com 111 hm³ de água. É esta percentagem do volume guardado que costuma ser dada como o nível da barragem.</p></div></details>
+<details class="faq-item"><summary><strong>Qual é a capacidade do Odelouca?</strong></summary><div class="faq-content"><p>157 hm³, segundo o boletim semanal de albufeiras da APA. É a 2.ª maior das albufeiras sem central acompanhadas neste site (11,7% da capacidade de todas elas).</p></div></details>
+<details class="faq-item"><summary><strong>Qual foi o máximo do Odelouca?</strong></summary><div class="faq-content"><p>144 hm³, a 05/05/2025 (91,9% da capacidade), desde o início da série do SNIRH, a 31/12/2009. Desde 2011, o mínimo foi de 37,2 hm³, a 12/10/2023 (23,7%).</p></div></details>
+<details class="faq-item"><summary><strong>De onde vêm estes dados?</strong></summary><div class="faq-content"><p>O volume vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: o volume armazenado no fim de cada dia, que costuma aparecer na manhã seguinte. A capacidade é a do boletim semanal de albufeiras da APA.</p></div></details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script type="application/json" id="dados-albufeira">{"nome":"Odelouca","do":"do Odelouca","o":"o Odelouca","ref":157.0,"refMax":false,"inicio":"2009-12-31","ult":"2026-11-16","lat":37.28694,"lon":-8.471098,"npa":102,"v":[48.0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.6,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,43.03,null,null,null,null,null,null,null,null,null,null,null,null,null,null,41.14,null,null,null,null,null,null,null,null,null,null,null,null,39.64,null,null,null,null,null,null,null,null,null,null,null,null,null,null,42.8,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,43.38,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.66,null,null,null,null,null,null,null,null,null,null,null,null,null,null,42.56,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.31,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.69,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.77,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.64,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.17,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.9,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.6,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.6,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.82,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.82,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44.93,null,null,null,null,null,null,null,null,null,null,null,null,null,null,45.39,null,null,null,null,null,null,null,null,null,null,null,null,null,null,61.27,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,87.1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,87.33,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,87.38,null,null,null,null,null,null,null,null,null,null,null,null,null,null,89.25,null,null,null,null,null,null,null,null,null,null,null,null,88.91,null,null,null,null,null,null,null,null,null,null,null,null,null,null,86.02,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,90.95,null,null,null,null,null,null,null,null,null,null,null,null,null,null,92.49,null,null,null,null,null,null,null,null,null,null,null,null,null,null,91.25,null,null,null,null,null,null,null,null,null,null,null,null,null,null,90.51,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,92.24,null,null,null,null,null,null,null,null,null,null,null,null,null,null,93.04,null,null,null,null,null,null,null,null,null,null,null,null,null,null,92.59,null,null,null,null,null,null,null,null,null,null,null,null,null,null,92.14,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,91.64,null,null,null,null,null,null,null,null,null,null,null,null,null,null,91.44,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,90.95,null,null,null,null,null,null,null,null,null,null,null,null,null,null,90.85,null,null,null,null,null,null,null,null,null,null,null,null,null,null,90.56,null,null,null,null,null,null,null,null,null,null,null,null,null,null,90.27,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,91.05,null,null,null,null,null,null,null,null,null,null,null,null,null,null,95.32,null,null,null,null,null,null,null,null,null,null,null,null,null,null,99.93,null,null,null,null,null,null,null,null,null,null,null,null,null,null,100.95,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,101.38,101.4,null,null,null,null,null,null,null,null,null,null,null,null,null,101.82,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,102.36,102.4,null,null,null,null,null,null,null,null,null,null,null,null,null,102.47,null,null,null,null,null,null,null,null,null,null,null,null,null,102.64,102.6,null,null,null,null,null,null,null,null,null,null,null,null,null,102.8,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,103.3,103.4,null,null,null,null,null,null,null,null,null,null,null,null,null,104.46,null,null,null,null,null,null,null,null,null,null,null,null,null,null,104.74,104.7,null,null,null,null,null,null,null,null,null,null,null,null,null,106.42,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,105.8,null,null,null,null,null,null,null,null,null,null,null,null,null,null,103.08,null,null,null,null,null,null,null,null,null,null,null,null,null,null,99.56,null,null,null,null,null,null,null,null,null,null,null,null,null,null,95.32,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,91.25,null,null,null,null,null,null,null,null,null,null,null,null,null,null,87.1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,82.95,null,null,null,null,null,null,null,null,null,null,null,null,null,80.15,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,78.21,78.08,78.04,77.95,77.87,null,null,null,77.19,77.02,76.9,null,null,null,null,76.11,75.9,75.82,75.73,75.65,null,75.44,75.36,75.28,75.2,75.24,75.24,null,null,74.87,74.83,74.75,null,74.54,null,74.87,74.91,74.79,74.79,75.2,77.78,78.3,null,78.51,78.51,78.51,78.47,78.68,88.77,90.27,91.2,91.44,91.79,91.94,91.94,null,null,92.19,92.19,92.19,92.14,92.14,null,null,null,91.99,91.89,91.89,92.89,null,null,93.89,93.99,94.04,94.15,94.3,94.4,95.22,95.32,null,96.09,96.3,96.25,96.25,96.25,96.25,96.35,96.35,96.35,96.35,96.35,96.3,null,96.3,96.25,96.19,96.19,null,null,96.19,96.19,96.19,96.09,96.09,null,96.09,96.09,96.09,null,96.09,96.09,96.61,98.91,100.81,102.76,103.65,104.42,106.41,109.41,111.03,111.89,112.44,112.89,113.14,113.37,113.53,113.65,113.77,113.83,113.95,113.95,113.95,null,114.07,114.07,114.18,114.24,114.29,114.32,114.32,114.32,114.4,114.4,114.4,114.53,114.92,115.4,115.77,116.03,116.2,116.26,116.32,116.44,116.52,116.5,116.75,119.96,123.02,123.5,125.53,126.13,124.42,122.99,122.51,123.83,123.75,123.05,122.78,122.5,122.14,122.39,126.09,125.11,124.02,123.56,123.7,123.12,124.14,126.31,124.72,124.47,124.47,124.47,127.72,128.6,126.09,126.87,125.69,125.74,126.42,126.95,127.42,127.84,128.2,128.49,128.73,128.94,129.14,129.27,129.4,129.47,129.55,null,null,129.65,129.65,null,null,129.71,129.65,129.58,129.5,129.49,129.42,129.36,129.34,129.26,129.2,129.13,129.03,128.94,128.74,128.67,128.6,128.55,null,128.2,128.08,127.95,127.83,127.83,127.74,127.64,127.63,127.52,127.39,127.26,127.11,127.02,126.87,126.74,126.59,126.46,126.31,126.15,125.97,125.82,125.67,125.63,125.29,125.14,124.96,124.84,124.69,124.56,124.41,124.29,124.11,123.92,123.68,123.47,123.29,123.12,122.95,122.69,122.55,null,122.15,null,121.79,121.61,121.43,null,null,120.81,120.63,120.36,120.11,119.95,119.76,119.53,119.33,119.13,118.9,null,118.45,118.25,118.08,117.88,117.7,117.44,117.23,117.01,null,null,116.34,116.12,115.92,115.68,115.48,115.23,115.03,114.83,114.6,114.35,114.14,113.95,113.72,113.5,113.31,113.05,112.83,112.61,112.39,112.22,112.03,111.83,111.63,111.37,111.22,111.06,110.75,110.65,110.56,110.38,110.04,109.82,109.66,109.43,109.2,109.03,108.84,108.68,108.49,108.36,null,null,107.87,null,107.55,107.39,107.23,107.07,106.94,106.77,null,106.41,106.25,106.09,105.94,105.86,105.7,105.56,105.39,105.27,105.14,104.98,104.85,104.68,104.56,104.4,104.26,104.14,104.05,103.98,103.91,103.83,103.73,103.64,103.29,103.19,103.04,102.92,102.79,102.49,102.31,102.17,101.99,101.76,101.62,101.54,101.37,101.22,101.06,100.95,100.81,100.68,100.61,101.1,101.01,101.07,102.23,102.67,102.76,102.74,102.64,102.57,102.49,102.41,102.31,102.21,102.13,102.04,101.95,101.82,101.65,101.55,101.33,101.17,101.0,100.81,100.62,100.43,100.2,100.1,99.91,99.75,99.58,99.43,99.28,99.17,99.03,98.9,98.81,98.68,98.58,98.45,98.3,98.13,97.99,97.84,97.74,97.63,97.52,97.42,97.3,97.2,97.1,97.0,96.93,96.88,96.84,96.69,96.61,96.52,96.44,96.37,96.3,96.18,96.11,96.01,96.24,96.67,97.06,97.27,97.35,97.37,97.39,97.42,97.42,97.42,97.42,97.4,97.39,97.38,97.35,97.34,97.32,97.27,97.2,97.2,97.2,97.2,97.13,97.13,97.36,98.0,99.1,99.55,99.82,99.94,100.04,100.15,100.2,100.23,100.23,100.3,100.29,100.28,100.31,100.3,100.35,100.32,100.55,100.73,101.33,102.13,102.82,105.51,107.79,108.9,110.15,111.32,112.41,112.97,113.81,114.21,114.47,114.71,114.87,115.0,115.08,115.22,115.29,115.39,115.43,115.5,115.55,115.62,115.68,115.73,115.77,115.83,115.85,115.86,115.85,115.85,115.82,115.79,115.77,115.74,115.68,115.66,115.6,115.56,115.48,115.4,115.34,115.3,115.2,115.14,115.05,114.96,114.86,114.86,114.86,114.86,114.94,115.25,129.76,134.41,135.49,134.81,134.29,133.89,133.66,133.43,133.12,132.8,132.76,132.78,132.77,132.8,132.76,132.78,132.74,132.67,132.63,132.74,132.76,132.76,132.74,132.7,132.67,132.61,132.55,132.48,132.38,132.31,132.22,132.07,131.96,131.83,131.68,131.57,131.42,131.29,131.13,131.01,130.85,130.66,130.45,130.31,130.15,130.01,129.83,129.65,129.52,129.52,129.36,129.27,null,null,null,null,null,null,128.18,null,127.89,127.7,127.52,127.33,127.21,126.97,126.84,126.68,126.55,126.35,126.19,126.01,125.82,125.63,125.48,125.23,125.05,124.9,124.73,124.55,124.32,124.14,123.99,123.84,123.67,123.5,123.35,123.14,122.93,122.73,null,122.33,122.15,121.97,121.79,121.6,121.43,121.28,121.07,120.9,120.72,120.54,120.33,120.16,119.97,119.79,119.6,119.42,119.18,119.03,118.81,118.63,118.43,118.2,117.99,117.78,117.59,117.39,117.2,117.01,116.83,116.66,116.45,116.26,116.09,115.85,115.65,115.43,115.23,115.03,114.8,114.6,114.43,114.18,113.97,113.76,113.53,113.31,113.11,112.92,112.69,112.49,112.27,112.08,111.86,111.66,111.47,111.28,111.09,110.89,110.67,110.48,110.31,110.12,109.93,109.74,109.55,109.38,109.22,109.1,108.95,108.79,108.68,108.54,108.4,108.25,108.08,108.0,107.9,107.8,107.71,107.58,107.47,107.34,107.23,107.12,106.99,106.85,106.72,106.56,106.43,106.27,106.14,106.01,105.85,105.71,105.53,105.35,105.19,105.03,105.03,105.09,105.03,105.03,104.9,105.03,104.9,104.82,104.72,104.61,104.48,104.38,104.27,104.14,103.99,103.83,103.68,103.52,103.42,103.26,103.13,103.02,102.87,102.75,102.61,102.45,102.41,102.31,102.16,102.05,101.95,101.87,101.75,101.82,101.82,101.7,102.06,102.18,102.31,102.31,102.31,102.31,103.13,104.55,104.93,105.11,106.43,108.87,109.3,109.9,115.0,119.13,118.28,118.68,119.1,119.33,119.51,119.63,119.69,119.73,119.73,119.77,119.73,119.73,119.69,119.63,119.63,119.51,119.51,119.48,119.42,119.33,119.26,119.16,119.1,118.99,118.99,118.93,118.88,118.88,118.8,118.72,118.65,118.57,118.5,118.42,118.32,118.25,118.16,118.11,118.04,117.99,117.9,117.82,117.82,117.71,117.61,117.52,117.49,117.52,117.49,118.16,119.09,119.63,120.04,120.33,120.53,120.67,120.75,120.81,120.87,120.87,120.87,120.87,120.91,120.91,121.04,121.14,121.22,121.22,121.28,121.28,121.28,121.28,121.22,121.4,121.37,121.4,121.37,121.28,121.28,121.28,121.22,121.17,121.14,121.07,121.07,120.96,120.9,120.88,120.81,120.73,120.66,120.57,120.51,120.45,120.45,120.3,120.18,120.09,119.98,119.89,119.8,119.67,119.62,119.5,119.33,119.3,119.16,119.07,119.07,119.07,118.98,118.98,118.98,118.98,118.98,118.9,118.83,118.75,118.66,118.57,118.5,118.37,118.25,118.13,118.02,117.9,117.79,117.73,117.65,117.57,117.73,117.9,118.34,118.39,118.34,118.34,118.31,118.25,118.18,118.13,118.02,117.9,117.79,117.73,117.61,117.48,117.41,117.31,117.23,117.12,117.01,116.89,116.72,116.63,116.47,116.36,116.25,116.11,116.0,115.85,115.74,115.6,115.43,115.28,115.1,114.98,114.82,114.62,114.47,114.34,114.19,113.97,113.81,113.61,113.42,113.28,113.1,112.97,112.8,112.64,112.46,112.3,112.11,111.98,111.75,111.55,111.36,111.17,110.98,110.78,110.59,110.42,110.21,110.02,109.82,109.63,109.42,109.31,109.09,108.93,108.72,108.54,108.33,108.14,107.96,107.74,107.5,107.31,107.09,106.91,106.67,106.43,106.24,106.04,105.87,105.66,105.46,105.24,105.03,104.85,104.63,104.4,104.19,103.98,103.76,103.52,103.31,103.1,102.92,102.7,102.5,102.26,102.05,101.85,101.63,101.41,101.17,100.95,100.71,100.5,100.27,100.06,99.82,99.58,99.37,99.15,98.95,98.74,98.51,98.26,98.04,97.79,97.56,97.35,97.13,96.93,96.68,96.44,96.22,96.01,95.8,95.59,95.36,95.17,94.95,94.76,94.52,94.33,null,93.93,93.71,93.52,93.31,93.13,92.94,92.75,92.57,92.39,92.19,91.88,91.7,91.54,91.3,91.1,90.94,90.8,90.8,90.8,90.8,90.12,89.93,89.93,89.63,89.48,89.39,89.19,89.09,88.9,88.75,88.57,88.46,88.26,88.08,87.92,87.83,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,84.45,null,84.28,89.0,89.93,90.27,90.59,90.68,90.68,90.68,90.59,90.59,90.43,90.43,90.34,90.27,90.18,89.99,89.93,89.83,89.75,89.59,89.49,89.39,89.33,89.09,89.0,88.9,88.75,88.66,88.54,88.49,88.27,88.21,88.11,87.99,87.83,87.74,87.64,87.49,87.39,87.25,87.1,87.01,86.92,86.87,86.75,86.63,86.52,86.44,86.28,86.2,86.11,86.04,85.87,85.74,85.63,85.48,85.39,85.3,85.3,85.23,85.13,85.01,85.04,85.01,85.01,85.06,85.06,85.06,85.13,85.62,86.19,86.61,86.85,87.01,87.1,87.25,87.25,87.25,87.25,87.25,87.25,87.14,86.85,87.1,87.01,87.01,87.01,87.01,87.01,87.01,86.95,86.92,86.89,86.85,86.68,86.68,86.61,86.53,86.53,86.44,86.4,86.28,86.21,86.2,86.2,86.17,86.17,86.19,86.19,86.28,86.28,86.28,86.23,86.19,86.19,86.11,86.11,86.04,86.16,86.2,86.39,86.44,86.53,86.53,86.53,86.44,86.44,86.44,86.28,86.19,86.26,86.11,86.11,86.04,85.87,85.81,85.8,85.71,85.63,85.48,85.48,85.31,85.31,85.23,85.23,85.06,84.99,84.91,84.82,84.67,84.58,84.47,84.38,84.18,84.18,84.11,84.07,83.88,83.8,83.72,83.63,83.44,83.35,83.33,83.22,83.17,83.09,83.09,83.17,83.09,83.35,83.72,83.85,83.85,83.93,83.88,83.8,83.8,83.8,83.71,83.63,83.67,83.63,83.44,83.4,83.31,83.28,83.31,83.31,84.87,87.5,88.62,89.83,93.74,95.22,95.92,96.28,96.47,96.73,96.74,96.74,96.74,96.55,96.55,96.47,96.47,96.37,96.28,96.11,96.01,95.91,95.85,95.65,95.55,95.48,95.22,95.07,94.95,94.76,94.59,94.5,94.24,94.12,93.81,93.71,93.45,93.27,93.09,92.91,92.75,92.49,92.3,92.04,91.94,91.72,91.54,91.28,91.12,90.84,90.68,90.53,90.34,90.18,89.93,89.73,89.49,89.34,89.09,88.9,88.66,88.5,88.25,88.08,87.83,87.65,87.36,87.1,86.92,86.68,86.52,86.28,86.11,85.86,85.71,85.43,85.23,85.0,84.81,84.58,84.41,84.12,83.88,83.71,83.45,83.24,83.01,82.86,82.57,82.31,82.07,81.84,81.68,81.46,81.28,81.01,80.78,80.61,80.37,80.17,79.93,79.77,79.49,79.24,79.09,78.8,78.66,78.44,78.28,77.99,77.76,77.62,77.4,77.2,76.96,76.81,76.52,76.27,76.16,75.94,75.74,75.52,75.37,75.14,74.87,74.71,74.49,74.31,74.16,73.95,73.75,73.67,73.44,73.29,73.08,72.92,72.7,72.57,72.36,72.21,72.01,71.88,71.66,71.53,71.3,71.12,70.96,70.75,70.61,70.39,70.26,70.06,69.94,69.72,69.6,69.4,69.26,69.21,69.01,68.94,68.75,68.67,68.55,68.38,68.29,68.1,67.98,67.91,67.77,67.72,67.72,67.65,67.58,67.4,67.32,67.13,67.01,66.95,66.82,66.75,66.67,66.63,66.5,66.44,66.31,66.19,66.11,66.0,65.87,65.8,65.68,65.55,65.43,65.38,65.18,65.13,65.05,64.99,64.92,64.81,64.76,64.63,64.56,64.56,64.47,64.34,64.27,64.34,65.25,65.52,66.95,68.41,69.01,69.26,69.4,69.41,69.47,69.45,69.4,69.4,69.53,70.26,70.66,71.33,71.75,71.95,72.09,72.09,72.2,72.21,72.21,72.11,72.09,72.09,72.01,72.01,71.96,71.88,71.88,71.88,72.06,72.61,72.92,73.05,73.13,73.25,73.25,73.26,73.26,73.22,73.13,73.13,73.05,73.05,72.97,72.97,72.92,72.77,72.7,72.69,72.62,72.57,72.44,72.36,73.64,75.94,76.81,77.18,77.4,77.7,77.98,78.3,78.5,78.7,78.8,78.88,78.97,79.02,79.06,79.1,80.53,83.48,85.79,86.85,87.43,87.8,88.08,88.25,88.48,88.57,88.57,88.69,88.75,88.75,88.75,88.75,88.75,88.75,88.75,88.75,89.04,89.99,90.77,91.12,91.28,91.44,91.53,91.63,91.71,91.68,91.72,91.7,91.72,91.83,91.83,91.77,91.77,91.72,91.72,91.77,91.72,91.72,91.72,92.04,92.58,92.39,92.75,92.84,92.84,92.84,92.84,92.84,92.84,92.84,92.75,92.75,92.58,92.57,92.49,92.4,92.39,92.3,92.14,92.04,91.97,91.88,91.74,91.63,91.53,91.44,91.28,91.19,91.12,91.01,90.83,90.78,90.68,90.59,90.43,90.34,90.27,90.18,90.0,89.93,89.84,89.75,89.59,89.49,89.43,89.48,89.49,89.4,89.09,88.91,88.57,88.64,88.5,88.08,88.08,88.08,87.74,87.67,87.43,87.25,87.1,87.1,86.92,86.69,86.61,86.44,86.2,86.11,85.86,85.71,85.43,85.3,85.0,84.98,84.75,84.58,84.26,83.93,83.89,83.78,83.68,83.39,83.01,82.91,82.69,82.61,82.54,82.46,82.06,81.77,81.54,81.42,81.29,81.14,81.0,80.78,80.53,80.3,79.94,79.77,79.63,79.5,79.24,79.1,78.8,78.66,78.44,78.27,77.98,77.76,77.64,77.33,77.05,76.98,76.81,76.51,76.27,76.19,76.02,75.62,75.37,75.23,75.08,74.83,74.54,74.31,74.17,74.03,73.82,73.47,73.26,73.05,72.76,72.64,72.36,72.21,71.95,71.68,71.37,71.12,71.0,70.92,70.6,70.33,70.06,69.86,69.67,69.53,69.26,69.01,68.77,68.54,68.36,68.22,68.03,67.91,67.71,67.52,67.71,67.56,67.37,67.26,67.06,66.9,66.75,66.58,66.38,66.19,66.05,65.87,65.75,65.56,65.43,65.24,65.09,64.92,64.8,64.61,64.49,64.31,64.2,64.02,63.91,63.7,63.59,63.41,63.3,63.11,63.0,62.82,62.71,62.53,62.42,62.17,62.16,62.05,61.88,61.78,61.61,61.53,61.34,61.23,61.06,61.0,60.9,60.89,60.72,60.62,60.48,60.36,60.28,60.15,60.03,59.92,59.8,59.58,59.52,59.42,59.29,59.23,59.19,59.06,58.96,58.9,58.73,58.67,58.51,58.44,58.35,58.21,58.12,58.0,57.92,57.86,57.7,57.58,57.56,57.42,57.35,57.26,57.16,57.08,57.04,56.91,56.82,56.78,56.78,56.72,56.56,56.51,56.46,56.29,56.24,56.19,56.06,55.98,55.92,55.82,55.87,55.79,55.72,55.66,55.56,55.51,55.45,55.39,55.28,55.2,55.14,55.03,54.94,54.88,54.78,54.68,54.63,54.57,54.48,54.42,54.32,54.21,54.17,54.07,53.97,53.91,53.9,53.86,53.76,53.69,53.7,53.62,53.5,53.5,53.41,53.36,53.21,53.15,53.0,52.91,52.77,52.69,52.62,52.51,52.44,52.37,52.3,52.2,52.15,52.13,52.02,52.02,51.93,51.9,51.79,51.73,51.68,51.61,51.5,51.45,51.4,51.31,51.26,51.2,51.17,51.06,51.02,50.97,50.83,50.78,50.73,50.69,50.59,50.53,50.45,50.36,50.31,50.3,50.22,50.28,51.08,53.46,55.3,57.69,62.05,63.23,63.71,64.27,64.88,69.94,75.2,76.61,77.37,77.92,81.78,86.06,87.21,89.94,94.33,95.84,96.55,97.01,97.37,97.7,97.94,98.19,98.29,98.56,98.56,98.63,98.73,98.73,98.74,98.83,98.83,98.83,98.83,98.85,98.83,99.0,99.1,100.68,102.57,106.28,109.82,111.13,111.75,112.16,112.39,112.69,112.77,112.9,113.42,113.73,113.92,114.04,114.24,114.24,114.24,114.34,114.34,114.35,114.3,114.25,114.24,114.23,114.08,114.04,114.03,113.93,113.82,113.81,113.73,113.5,113.42,113.31,113.19,113.0,112.89,112.79,112.69,112.47,112.38,112.28,112.16,111.97,111.86,111.75,111.67,111.44,111.36,111.25,111.1,110.83,110.72,110.44,110.34,110.23,110.1,109.82,109.71,109.63,109.39,109.22,109.09,108.81,108.62,108.34,108.14,107.93,107.71,107.56,107.31,107.16,106.94,106.72,106.64,106.31,106.14,105.85,105.65,105.45,105.27,105.16,104.88,104.71,104.48,104.3,104.03,103.91,103.7,103.42,103.24,102.95,102.75,102.52,102.39,102.08,101.91,101.62,101.46,101.26,101.04,100.76,100.48,100.32,100.13,99.85,99.65,99.39,99.1,98.86,98.63,98.37,98.21,97.94,97.7,97.44,97.23,97.01,96.74,96.47,96.28,95.98,95.65,95.48,95.22,95.02,94.67,94.5,94.23,94.07,93.78,93.62,93.36,93.17,92.84,92.58,92.38,92.06,91.88,91.63,91.44,91.19,91.03,90.78,90.62,90.34,90.23,89.99,89.83,89.59,89.43,89.16,89.0,88.83,88.66,88.5,88.25,88.09,87.91,87.74,87.5,87.34,87.11,87.0,86.85,86.61,86.44,86.2,86.11,85.87,85.72,85.47,85.39,85.23,85.0,84.83,84.64,84.5,84.26,84.11,83.88,83.71,83.49,83.39,83.25,83.06,82.92,82.86,82.69,82.58,82.46,82.31,82.22,82.07,82.06,81.92,81.83,81.73,81.49,81.37,81.29,81.29,81.15,81.14,81.06,81.0,80.77,80.71,80.61,80.53,80.38,80.24,80.16,79.99,79.93,79.85,79.63,79.55,79.44,79.24,79.4,79.4,79.48,79.4,79.24,79.18,79.1,79.1,79.1,79.02,78.88,78.81,78.8,78.74,78.66,78.5,78.44,78.36,78.27,78.14,78.0,77.92,77.76,77.76,77.54,77.49,77.33,77.24,77.18,77.03,76.92,76.89,76.68,76.59,76.52,76.36,76.24,76.16,76.04,75.87,75.8,75.74,75.53,75.44,75.34,75.16,75.06,74.87,74.81,74.66,74.52,74.43,74.37,74.16,74.03,73.83,73.65,73.45,73.49,73.53,73.57,73.62,73.49,73.37,73.25,73.13,73.13,73.07,73.05,73.05,72.98,72.94,72.92,72.9,72.92,73.05,73.37,73.74,73.82,73.95,74.03,74.03,74.03,74.03,74.03,74.03,73.97,73.95,73.86,73.82,73.83,73.76,73.95,74.31,74.37,74.37,74.37,74.45,74.37,74.46,74.49,74.52,74.45,74.5,74.49,74.37,74.39,74.37,74.42,74.37,74.37,74.31,74.31,74.31,74.09,74.12,74.09,74.03,73.95,73.95,73.85,73.75,73.67,73.63,73.61,73.39,73.39,73.38,73.32,73.26,73.13,73.05,72.98,72.98,72.94,72.77,72.77,72.7,72.7,72.7,72.64,72.7,72.7,72.77,72.77,72.77,72.77,72.7,72.7,72.57,72.64,72.52,72.57,72.57,72.52,72.44,72.55,72.44,72.57,72.64,72.7,72.77,72.92,72.92,72.78,72.77,72.7,72.64,72.64,72.64,72.44,72.45,72.44,72.36,72.34,72.23,72.21,72.08,72.01,71.97,71.9,71.77,71.68,71.68,71.53,71.41,71.33,71.28,71.21,71.06,71.0,70.86,70.73,70.66,70.6,70.39,70.26,70.21,70.19,69.99,69.94,69.86,69.72,69.64,69.53,69.34,69.27,69.21,69.05,68.94,68.87,68.73,68.68,68.61,68.56,68.41,68.41,68.22,68.22,68.04,67.96,67.91,67.77,67.71,67.58,67.45,67.37,67.27,67.26,67.08,66.94,66.82,66.79,66.68,66.63,66.45,66.44,66.38,66.17,66.06,66.05,65.87,65.8,65.68,65.56,65.45,65.35,65.18,65.13,65.06,64.88,64.77,64.63,64.54,64.44,64.27,64.2,64.02,63.94,63.84,63.66,63.53,63.42,63.3,63.24,63.07,62.99,62.84,62.71,62.64,62.47,62.38,62.23,62.12,61.93,61.88,61.75,61.58,61.53,61.34,61.29,61.17,61.0,60.95,60.81,60.72,60.6,60.48,60.38,60.35,60.19,60.15,60.02,59.85,59.81,59.75,59.63,59.52,59.45,59.34,59.25,59.19,59.06,59.02,58.96,58.9,58.79,58.73,58.68,58.63,58.51,58.47,58.41,58.35,58.24,58.13,58.08,57.96,57.92,57.86,57.8,57.7,57.64,57.58,57.53,57.42,57.36,57.3,57.26,57.16,57.1,57.04,56.99,56.88,56.88,56.82,56.8,56.78,56.72,56.62,56.56,56.52,56.5,56.46,56.35,56.35,56.29,56.26,56.19,56.19,56.15,56.09,56.03,55.99,56.03,55.97,55.92,55.89,55.82,55.76,55.76,55.72,55.72,55.65,55.57,55.57,55.51,55.51,55.51,55.51,55.53,55.51,55.45,55.45,55.45,55.4,55.3,55.3,55.24,55.2,55.2,55.14,55.13,55.05,54.98,54.92,54.92,54.88,54.86,54.78,54.72,54.68,54.63,54.65,54.76,54.78,55.31,59.78,67.58,70.7,71.87,72.09,72.28,72.55,72.57,72.69,72.77,72.92,72.92,72.64,72.57,72.7,72.64,72.6,72.56,72.7,72.64,72.67,72.76,72.81,72.97,72.77,72.7,72.77,75.74,77.3,77.7,77.98,78.44,78.82,79.1,79.4,79.77,80.16,80.92,81.14,81.46,81.68,81.8,81.92,82.09,82.23,82.31,82.46,82.23,82.23,82.46,82.61,82.86,82.92,82.68,82.59,82.67,82.78,82.86,82.92,83.04,83.09,83.09,82.92,83.01,83.25,83.26,83.25,83.24,83.12,83.24,83.01,82.97,83.01,82.92,83.33,83.36,83.09,83.39,83.42,83.48,83.61,83.42,83.33,83.24,83.33,83.48,83.65,83.81,83.75,84.02,84.03,83.88,83.86,84.19,84.41,84.28,84.58,84.58,84.44,84.62,84.82,84.5,84.36,84.58,84.62,84.82,84.63,84.87,85.3,85.47,85.47,85.47,85.47,85.47,85.47,85.47,85.28,85.46,85.63,86.53,87.43,87.74,88.08,88.33,88.66,89.0,89.32,89.48,89.59,89.75,89.83,89.92,90.0,90.0,90.02,90.02,90.02,90.0,90.0,90.0,90.0,90.0,90.18,90.18,90.27,90.27,90.43,90.59,90.68,90.84,91.01,91.02,91.03,91.09,91.12,91.12,91.12,91.12,91.12,91.12,91.12,91.12,91.09,91.06,91.03,91.03,91.03,91.03,91.03,91.03,91.03,91.03,91.02,91.02,90.96,91.03,91.03,91.03,91.03,91.03,91.03,91.03,90.98,90.93,90.84,90.78,90.78,90.68,90.68,90.65,90.59,90.52,90.43,90.43,90.27,90.1,89.94,89.75,89.56,89.34,89.16,89.02,88.91,88.8,88.67,88.55,88.41,88.25,88.17,88.05,87.92,87.79,87.66,87.52,87.43,87.34,87.25,87.1,86.97,86.9,86.67,86.61,86.53,86.44,86.28,86.1,85.94,85.74,85.6,85.43,85.28,85.12,85.02,84.93,84.81,84.68,84.49,84.31,84.17,84.06,83.94,83.82,83.7,83.58,83.45,83.31,83.17,83.04,82.9,82.77,82.68,82.59,82.56,82.36,82.18,82.05,81.92,81.78,81.69,81.6,81.49,81.37,81.25,81.16,81.07,80.98,80.9,80.77,80.65,80.54,80.43,80.33,80.24,80.19,80.11,80.0,79.89,79.8,79.67,79.54,79.41,79.24,79.07,78.89,78.72,78.55,78.42,78.3,78.12,78.0,77.83,77.66,77.49,77.32,77.15,77.03,76.9,76.77,76.61,76.44,76.27,76.11,75.94,75.77,75.61,75.61,75.86,75.77,75.69,75.57,75.44,75.32,75.2,75.07,74.95,74.83,74.71,74.58,74.46,74.34,74.18,74.06,74.26,74.96,75.83,76.19,76.4,76.52,76.56,76.56,76.54,76.54,76.48,76.44,76.4,76.31,76.23,76.19,76.15,76.11,76.04,76.2,76.48,76.65,76.73,76.81,76.81,78.81,79.98,80.26,80.5,80.77,81.03,81.2,81.34,81.34,81.38,81.56,81.79,82.33,82.77,83.13,83.35,83.67,84.13,84.44,85.12,85.72,86.25,86.58,86.72,86.86,86.86,86.96,87.0,87.15,87.15,87.15,87.15,87.15,87.1,87.05,87.05,87.05,87.05,87.05,87.0,86.96,86.86,86.86,86.77,86.72,86.67,86.63,86.58,86.49,86.44,86.39,86.44,86.53,86.53,86.63,86.67,86.82,87.06,87.15,87.19,87.24,87.33,87.43,87.48,87.57,88.11,92.69,97.32,100.2,101.58,103.57,104.86,106.01,107.39,108.18,108.73,109.14,109.39,109.63,109.83,109.97,110.1,110.25,110.34,110.42,110.51,110.59,110.98,112.64,113.64,114.13,114.52,114.76,114.93,115.2,116.66,117.62,118.16,118.52,118.82,119.04,119.15,119.28,119.36,119.42,119.48,119.51,119.53,119.51,119.5,119.45,119.42,119.42,119.42,119.36,119.33,119.24,119.2,119.13,119.13,119.02,118.95,118.89,118.8,118.75,118.66,118.6,118.51,118.39,118.27,118.16,118.13,118.04,117.96,117.87,117.78,117.78,117.93,117.88,117.78,117.64,117.64,117.46,117.35,117.27,117.15,117.06,117.07,117.01,117.0,116.92,116.8,116.72,116.58,116.49,116.37,116.26,116.11,116.03,115.92,115.82,115.76,115.68,115.58,115.47,115.34,115.21,115.09,114.94,114.8,114.63,114.5,114.32,114.12,113.94,113.76,113.61,113.47,113.33,113.17,113.0,112.83,112.66,112.51,112.33,112.13,111.91,111.72,111.55,111.36,111.16,110.97,110.78,110.56,110.4,110.25,110.07,109.91,109.74,109.63,109.47,109.3,109.17,109.03,108.87,108.69,108.5,108.33,108.14,107.95,107.76,107.56,107.37,107.17,106.99,106.8,106.62,106.42,106.24,106.04,105.85,105.66,105.49,105.29,105.06,104.85,104.64,104.45,104.29,104.07,103.86,103.62,103.43,103.21,103.02,102.78,102.57,102.36,102.18,101.98,101.75,101.57,101.33,101.13,100.91,100.73,100.53,100.35,100.11,99.9,99.7,99.47,99.28,99.06,98.88,98.67,98.46,98.26,98.03,97.8,97.57,97.35,97.13,96.91,96.69,96.47,96.28,96.08,95.89,95.69,95.5,95.31,95.12,94.95,94.76,94.55,94.37,94.19,94.02,93.83,93.67,93.5,93.36,93.19,93.03,92.91,92.85,92.71,92.49,92.4,92.29,92.05,91.95,91.74,91.63,91.54,91.65,91.54,91.55,91.46,91.29,91.19,91.12,90.99,90.78,90.68,90.59,90.34,90.27,90.19,90.02,89.94,89.77,89.59,89.44,89.34,89.09,88.92,88.76,88.66,88.5,88.32,88.17,88.08,87.92,87.74,87.67,87.48,87.34,87.25,87.01,86.92,86.85,86.8,86.85,86.68,86.61,86.44,86.28,86.19,86.11,86.04,85.8,85.71,85.62,85.47,85.45,85.33,85.3,85.18,85.05,84.97,84.86,84.82,84.68,84.58,84.5,84.46,84.35,84.18,84.11,84.03,83.88,83.79,83.71,83.62,83.51,83.39,83.33,83.24,83.09,83.01,83.0,82.87,82.69,82.69,82.61,82.48,82.38,82.3,82.14,82.06,81.92,81.83,81.8,81.75,81.83,81.83,82.05,82.14,82.23,82.23,82.15,82.06,81.92,81.91,81.83,81.77,81.68,81.54,81.46,81.45,81.37,81.29,81.14,81.06,81.0,80.92,80.77,80.77,80.68,80.61,80.53,80.38,80.3,80.27,80.19,79.99,79.99,79.93,79.85,79.77,79.63,79.55,79.49,79.4,79.24,79.18,79.1,79.02,78.89,78.8,78.78,78.74,78.66,78.49,78.44,78.36,78.3,78.15,78.07,77.98,77.92,77.76,77.7,77.63,77.4,77.32,77.24,77.24,77.18,77.03,76.97,76.89,76.81,76.74,76.67,76.45,76.45,76.27,76.16,76.08,76.14,75.95,75.95,75.87,75.8,75.79,75.74,75.74,75.58,75.53,75.44,75.37,75.23,75.4,75.44,75.37,75.44,75.52,75.58,75.74,75.74,75.58,75.58,75.58,75.52,75.44,75.37,75.23,75.37,75.37,75.23,75.16,75.08,75.02,75.02,75.02,74.87,74.81,74.66,74.53,74.45,74.38,74.31,74.14,74.03,74.09,74.08,74.03,73.95,73.95,73.95,73.82,73.75,73.67,73.61,73.48,73.39,73.33,73.25,73.11,72.97,72.81,72.7,72.57,72.44,72.29,72.21,72.17,72.08,71.95,71.75,71.61,71.41,71.33,71.2,71.06,70.93,70.76,70.61,70.39,70.26,70.19,69.98,69.88,69.72,69.6,69.53,69.4,69.21,69.06,68.94,68.75,68.6,68.41,68.22,68.1,67.91,67.77,67.58,67.45,67.32,67.13,66.94,66.83,66.69,66.49,66.31,66.19,66.05,65.84,65.75,65.56,65.4,65.18,65.08,64.88,64.76,64.56,64.45,64.27,64.15,63.95,63.84,63.59,63.41,63.3,63.11,62.93,62.78,62.53,62.41,62.16,62.05,61.9,61.75,61.51,61.34,61.17,61.0,60.87,60.66,60.42,60.31,60.09,59.92,59.75,59.58,59.35,59.23,59.06,58.9,58.68,58.51,58.35,58.18,58.05,57.92,57.8,57.7,57.53,57.31,57.16,56.99,56.78,56.59,56.46,56.29,56.12,55.92,55.82,55.72,55.45,55.3,55.14,54.94,54.84,54.74,54.63,54.42,54.27,54.12,54.01,53.91,53.76,53.61,53.5,53.35,53.26,53.15,53.15,53.11,53.11,53.0,52.86,52.71,52.66,52.51,52.47,52.37,52.27,52.22,52.13,51.98,51.88,51.74,51.65,51.54,51.45,51.31,51.2,51.06,51.03,50.92,50.78,50.69,50.54,50.45,50.31,50.26,50.21,50.08,49.98,49.9,49.8,49.66,49.61,49.52,49.61,49.57,49.57,49.44,49.39,49.34,49.29,49.15,49.12,49.07,48.98,48.88,48.75,48.83,48.83,48.75,48.7,48.75,48.75,48.83,48.71,48.75,48.71,48.75,48.75,48.75,48.79,48.83,48.83,48.75,48.79,48.78,48.75,48.75,48.83,48.78,48.75,48.75,48.75,48.75,48.75,48.75,48.75,48.75,48.76,48.88,48.97,48.97,49.12,49.16,49.2,50.01,51.17,51.75,52.97,54.38,55.76,56.56,57.04,57.31,57.54,57.8,58.08,58.24,58.47,58.63,58.73,58.9,58.96,59.07,59.14,59.19,59.23,59.35,59.35,59.46,null,59.52,59.57,59.63,59.75,59.75,59.79,59.85,59.92,60.02,60.08,60.15,60.19,60.32,60.36,60.36,60.42,60.48,60.54,60.59,60.59,60.66,60.66,60.72,60.72,60.72,60.72,60.77,60.77,60.77,60.88,60.89,60.89,60.88,60.95,61.0,61.0,61.02,61.06,61.06,61.06,61.23,61.21,61.23,61.23,61.3,61.34,61.34,61.34,61.34,61.34,61.34,61.47,61.47,61.47,61.47,61.53,61.53,61.53,61.53,61.53,61.58,61.64,61.75,61.81,61.8,61.81,61.82,61.88,61.81,61.75,61.64,61.58,61.53,61.47,61.34,61.3,61.23,61.06,61.06,61.06,60.99,60.89,60.77,60.71,60.66,60.48,60.4,60.32,60.25,60.04,60.02,59.79,59.79,59.75,59.58,59.52,59.35,59.29,59.19,59.06,58.96,58.76,58.67,58.51,58.47,58.35,58.18,58.18,58.12,57.96,57.86,57.8,57.7,57.62,57.5,57.31,57.16,57.08,56.99,56.82,56.72,56.62,56.56,56.34,56.2,56.03,55.91,55.72,55.56,55.45,55.3,55.2,55.05,54.99,54.88,54.78,54.68,54.52,54.93,54.88,54.78,54.69,54.59,54.48,54.37,54.21,54.12,53.97,53.86,53.76,53.61,53.5,53.45,53.41,53.35,53.2,53.15,53.0,52.91,52.77,52.71,52.62,52.47,52.37,52.22,52.13,52.02,51.93,51.79,51.69,51.54,51.45,51.4,51.21,51.06,50.95,50.78,50.69,50.5,50.45,50.26,50.12,49.98,49.85,49.74,49.57,49.44,49.31,49.15,48.98,48.88,48.7,48.62,48.33,48.13,48.04,47.84,47.65,47.51,47.34,47.16,47.02,46.87,46.68,46.53,46.39,46.18,46.08,45.91,45.72,45.55,45.34,45.15,45.01,44.97,44.78,44.54,44.4,44.21,44.02,43.85,43.71,43.52,43.34,43.16,43.01,42.83,42.69,42.47,42.32,42.19,42.02,41.92,41.7,41.52,41.34,41.21,41.03,40.9,40.82,40.67,40.46,40.41,40.23,40.2,40.02,39.93,39.77,39.72,39.53,39.46,39.33,39.28,39.16,39.06,38.93,38.85,38.72,38.6,38.5,38.38,38.25,38.17,38.04,37.88,37.78,37.66,37.54,37.41,37.33,37.24,37.24,37.24,37.24,37.24,37.2,37.2,37.2,37.2,37.16,37.16,37.18,37.16,37.16,37.16,37.2,37.2,37.24,37.24,37.24,37.41,37.46,37.53,37.53,37.53,37.53,37.53,37.66,37.75,37.75,37.77,37.78,37.75,37.78,37.78,37.75,37.78,37.78,37.78,37.78,37.78,37.78,37.78,37.78,37.78,37.78,37.78,37.75,37.75,37.74,37.75,37.66,37.66,37.66,37.66,37.66,37.66,37.66,37.71,37.83,37.83,37.94,38.04,38.08,38.21,38.25,38.3,38.38,38.42,38.43,38.47,38.51,38.51,38.51,38.51,38.6,38.6,38.6,38.6,38.6,38.63,38.63,38.63,38.63,38.63,38.64,38.68,38.68,38.68,38.68,38.68,38.68,38.68,38.72,38.81,38.81,38.81,38.81,38.88,38.9,38.93,38.93,38.94,39.03,39.06,39.06,39.23,39.59,40.41,42.78,43.86,44.31,44.54,44.78,44.92,45.11,45.15,45.2,45.25,45.35,45.39,45.44,45.48,45.58,45.58,45.62,45.62,45.67,45.67,46.34,46.84,47.12,47.59,48.62,49.2,49.61,49.85,50.03,50.12,50.26,50.36,50.45,50.5,50.69,50.69,50.73,50.78,50.83,50.92,50.92,50.97,51.03,51.06,51.17,51.17,51.2,51.26,51.31,51.55,52.49,53.67,54.48,54.88,55.2,55.3,55.51,55.66,55.72,55.82,55.92,55.97,56.03,56.09,56.19,56.24,56.29,56.35,56.62,58.8,62.71,64.94,68.29,69.6,70.33,70.73,71.06,71.35,71.61,71.74,71.88,72.08,72.21,72.29,72.36,72.44,72.57,72.64,72.64,72.7,72.75,72.77,72.82,72.92,72.92,72.92,72.92,72.97,72.97,73.05,73.05,73.05,73.05,73.05,73.05,73.05,73.05,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.13,73.03,72.92,72.77,72.64,72.53,72.36,72.29,72.08,72.01,71.88,71.75,71.68,71.53,71.41,71.28,71.15,71.0,70.92,70.73,70.66,70.53,70.39,70.26,70.06,69.99,69.86,69.67,69.53,69.4,69.26,69.21,69.01,68.87,68.75,68.6,68.41,68.29,68.22,68.03,67.91,67.77,67.58,67.45,67.34,67.26,67.08,66.94,66.75,66.63,66.44,66.31,66.12,66.0,65.8,65.68,65.5,65.38,65.19,65.06,64.88,64.8,64.56,64.42,64.2,64.02,63.91,63.73,63.53,63.4,63.3,63.12,62.93,62.73,62.53,62.41,62.2,62.05,61.88,61.75,61.58,61.37,61.17,61.06,60.89,60.76,60.59,60.36,60.19,60.02,59.85,59.73,59.53,59.29,59.19,58.99,58.8,58.63,58.46,58.24,58.12,57.96,57.82,57.64,57.42,57.32,57.12,56.99,56.82,56.72,56.46,56.29,56.09,55.97,55.82,55.76,55.66,55.45,55.3,55.2,55.05,54.94,54.78,54.68,54.52,54.42,54.27,54.17,53.98,53.88,53.76,53.67,53.5,53.41,53.21,53.11,52.97,52.87,52.71,52.62,52.46,52.37,52.22,52.17,52.02,52.16,52.02,51.94,51.79,51.99,51.94,51.79,51.73,51.65,51.5,51.45,51.31,51.2,51.17,51.03,50.92,50.78,50.69,50.59,50.5,50.45,50.36,50.26,50.22,50.21,50.07,49.99,49.9,49.85,49.76,49.61,49.52,49.39,49.34,49.29,49.2,49.2,49.16,49.12,49.12,49.01,48.97,48.88,48.83,48.83,48.7,48.66,48.38,48.33,48.28,48.13,48.08,48.04,47.88,47.84,47.73,47.63,47.59,47.5,47.5,47.4,47.4,47.5,47.5,47.5,47.36,47.4,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.39,47.55,47.55,47.55,47.65,47.59,47.59,47.59,47.65,47.65,47.65,47.55,47.73,47.65,47.65,47.79,49.01,51.87,54.72,56.62,57.36,57.8,58.16,58.63,59.02,59.54,60.36,60.89,61.2,61.34,61.53,61.64,61.75,62.05,62.16,62.23,62.34,62.4,63.59,64.56,65.06,65.43,65.68,65.87,66.0,66.43,66.82,67.01,67.13,67.39,67.65,67.71,67.77,67.91,68.34,68.87,69.07,69.67,70.53,71.21,71.88,72.36,74.74,79.56,82.25,84.83,87.1,88.5,89.92,91.28,92.04,96.04,107.22,111.98,114.72,120.42,124.21,126.47,129.28,130.91,131.89,132.57,133.11,133.57,133.93,134.24,134.54,134.8,135.16,135.98,137.56,138.43,139.43,140.21,140.7,141.1,141.46,141.76,141.94,142.04,142.2,142.31,142.41,142.51,142.66,142.82,142.97,143.12,143.22,143.36,143.47,143.54,143.57,143.65,143.72,143.78,143.85,143.88,144.03,144.19,144.3,144.3,144.22,144.19,144.16,144.13,144.05,143.99,143.91,143.83,143.75,143.64,143.57,143.47,143.34,143.26,143.16,143.02,142.9,142.75,142.62,142.48,142.34,142.2,142.03,141.87,141.72,141.59,141.46,141.22,141.04,140.88,140.71,140.54,140.37,140.17,139.99,139.86,139.7,139.56,139.47,139.21,139.03,138.85,138.7,138.53,138.33,138.16,137.96,137.73,137.56,137.4,137.24,137.06,136.9,136.7,136.53,136.37,136.16,135.97,135.76,135.59,135.4,135.22,135.0,134.8,134.64,134.41,134.27,134.09,133.92,133.7,133.51,133.31,133.07,132.87,132.67,132.48,132.27,132.06,131.87,131.66,131.48,131.29,131.1,130.87,130.69,130.5,130.31,130.08,129.9,129.67,129.46,129.27,129.04,128.83,128.63,128.42,128.23,128.01,127.81,127.58,127.36,127.14,126.95,126.72,126.46,126.22,125.99,125.78,125.54,125.36,125.17,124.96,124.76,124.5,124.32,124.14,123.92,123.74,123.53,123.35,123.2,122.99,122.8,122.63,122.47,122.28,122.08,121.94,121.79,121.62,121.43,121.26,121.06,120.89,120.72,120.56,120.42,120.27,120.06,119.86,119.69,119.53,119.39,119.22,119.06,118.95,118.8,118.69,118.51,118.4,118.25,118.08,117.9,117.78,117.61,117.44,117.28,117.12,116.98,116.83,116.66,116.52,116.37,116.2,116.06,115.89,115.75,115.61,115.51,115.4,115.28,115.14,115.0,114.89,114.77,114.86,114.71,114.63,114.52,114.44,114.32,114.18,114.1,114.08,113.97,113.88,113.76,113.65,113.53,113.45,113.55,113.76,113.83,118.25,119.89,120.18,120.3,120.33,120.33,120.32,120.26,120.17,120.17,120.13,120.06,119.99,119.91,119.88,119.79,119.71,119.68,119.61,119.55,119.48,119.42,119.36,119.29,119.45,119.48,119.62,119.9,120.38,120.6,121.21,122.22,122.69,122.99,123.56,124.23,124.96,125.66,126.58,127.23,127.61,127.86,128.24,129.08,129.68,130.02,130.25,130.5,132.76,137.2,137.98,136.58,135.29,134.51,134.77,135.0,135.2,135.36,135.62,136.71,137.46,138.07,139.2,140.17,140.13,139.77,139.23,138.43,138.92,141.59,141.49,138.29,136.43,140.26,138.56,134.31,131.47,129.11,124.15,117.01,116.61,125.67,123.59,121.52,128.17,128.72,131.32,131.94,131.75,132.45,134.52,135.02,136.22,136.51,136.11,136.01,135.91,136.18,136.53,136.79,137.0,137.22,137.53,137.68,137.39,137.03,136.7,136.74,136.86,137.0,137.06,137.16,137.25,137.3,137.34,137.39,137.43,137.5,137.51,137.51,137.53,137.53,136.1,135.48,136.58,138.28,139.3,139.96,140.34,140.65,140.84,141.01,141.12,141.15,141.22,141.22,141.25,141.25,141.25,141.22,141.15,141.11,141.15,141.16,141.12,141.12,141.14,141.11,141.07,140.98,140.94,140.86,140.78,140.68,140.6,140.54,140.46,140.37,140.3,140.17,140.04,139.94,139.8,139.71,139.6,139.52,139.36,139.26,139.13,139.03,138.92,138.8,138.66,138.56,138.58,138.58,138.53,138.53,138.56,138.49,138.39,138.34,138.19,138.08,137.98,137.86,137.73,137.63,137.51,137.33,137.23,137.07,136.93,136.77,136.6,136.47,136.31,136.14,135.98,135.75,135.59,135.39,135.22,135.06,134.9,134.75,134.56,134.35,134.18,133.99,133.83,133.66,133.57,133.41,133.21,133.04,132.86,132.67,132.48,132.31,132.15,131.96,131.83,131.64,131.48,131.29,131.1,130.88,130.69,130.5,130.37,130.37,129.99,129.83,129.64,129.42,129.24,129.01,128.85,128.7,128.55,128.35,128.2,128.01,127.86,127.67,127.49,127.32,127.15,126.96,126.75,126.56,126.37,126.19,126.01,125.82,125.67,125.48,125.29,125.08,124.89,124.72,124.51,124.35,124.13,123.94,123.74,123.55,123.35,123.15,122.99,122.81,122.63,122.42,122.24,122.06,121.88,121.69,121.52,121.31,121.13,120.98,120.83,120.66,120.51,120.36,120.21,120.07,119.89,119.71,119.52,119.39,119.16,119.07,118.9,118.78,118.6,118.41,118.24,118.04,117.9,117.73,117.61,117.44,117.28,117.12,116.95,116.8,116.63,116.47,116.31,116.17,116.03,115.82,115.68,115.5,115.37,115.23,115.11,114.95,114.8,114.63,114.52,114.36,114.21,114.12,113.98,113.84,113.67,113.53,113.39,113.23,113.11,112.97,112.86,112.72,112.55,112.55,112.44,112.28,112.16,112.0,111.83,111.69,111.53,111.36,111.23,111.08,110.95,110.81,null,null,null,null,null,null,null,null,109.73,null,null,null,null,null,null,111.48]}</script>
+<script src="/dados.js"></script>
+<script src="/albufeira/albufeira.js?v=e6d7ecb4"></script>
+<script src="/script.js"></script>
+<script src="/cookie-consent.js"></script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Barragem do Funcho hoje: nível e água da albufeira | Tiago Felícia</title>
+    <meta name="description" content="Nível da barragem do Funcho: a albufeira tinha 37,5 hm³ a 16/11/2026, 78,5% da capacidade. Comparação com o ano anterior e com a média desde 2011, máximos e mínimos, ano a ano e as centrais. Dados do SNIRH, atualizados todos os dias." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/albufeira/funcho" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Barragem do Funcho hoje — a água guardada na albufeira" />
+    <meta property="og:description" content="Nível da barragem do Funcho: a albufeira tinha 37,5 hm³ a 16/11/2026, 78,5% da capacidade. Comparação com o ano anterior e com a média desde 2011, máximos e mínimos, ano a ano e as centrais. Dados do SNIRH, atualizados todos os dias." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/albufeira/funcho" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-albufeiras.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/albufeira/albufeira.css?v=e6d7ecb4" />
+    <script src="/theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+    <script src="/cores-graficos.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+
+    <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  try {
+    if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  } catch (_) { /* storage bloqueado — mantém o default 'denied' */ }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://www.tiagofelicia.pt/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Albufeiras",
+      "item": "https://www.tiagofelicia.pt/albufeiras"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Funcho",
+      "item": "https://www.tiagofelicia.pt/albufeira/funcho"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "Água guardada na albufeira do Funcho",
+  "description": "O volume de água armazenado na albufeira do Funcho (bacia do Arade), por semana desde 08/01/2007, a partir dos dados de base do SNIRH (Agência Portuguesa do Ambiente), e a percentagem da capacidade.",
+  "url": "https://www.tiagofelicia.pt/albufeira/funcho",
+  "inLanguage": "pt-PT",
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "dateModified": "2026-11-16",
+  "temporalCoverage": "2007-01-08/..",
+  "spatialCoverage": {
+    "@type": "Place",
+    "name": "Albufeira do Funcho",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 37.262333,
+      "longitude": -8.382806
+    }
+  },
+  "variableMeasured": [
+    {
+      "@type": "PropertyValue",
+      "name": "Volume armazenado",
+      "unitText": "hm3"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Percentagem da capacidade",
+      "unitText": "%"
+    }
+  ],
+  "isBasedOn": {
+    "@type": "CreativeWork",
+    "name": "SNIRH — dados de base da rede hidrométrica",
+    "url": "https://snirh.apambiente.pt",
+    "creator": {
+      "@type": "Organization",
+      "name": "Agência Portuguesa do Ambiente",
+      "url": "https://apambiente.pt"
+    }
+  },
+  "creator": {
+    "@type": "Person",
+    "name": "Tiago Felícia",
+    "url": "https://www.tiagofelicia.pt/"
+  },
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "text/csv",
+      "contentUrl": "https://dados.tiagofelicia.pt/data/producao/albufeiras_snirh_diario.csv"
+    }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Quanta água tem o Funcho hoje?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A 16/11/2026, o último valor publicado pelo SNIRH, o Funcho tinha 37,5 hm³ de água, 78,5% da capacidade: 0,3 p.p. acima do mesmo dia de 2025 e 14,2 p.p. acima da média de 2013 a 2025 para este dia. Esta página é atualizada todos os dias."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual é o nível da barragem do Funcho?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A 16/11/2026, a albufeira da barragem do Funcho estava a 78,5% da capacidade, com 37,5 hm³ de água. É esta percentagem do volume guardado que costuma ser dada como o nível da barragem."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual é a capacidade do Funcho?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "47,7 hm³, segundo o boletim semanal de albufeiras da APA. É a 8.ª maior das albufeiras sem central acompanhadas neste site (3,6% da capacidade de todas elas)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual foi o máximo do Funcho?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "46,3 hm³, a 25/05/2026 (97,0% da capacidade), desde o início da série do SNIRH, a 08/01/2007. Desde 2013, o mínimo foi de 4,0 hm³, a 30/09/2012 (8,4%)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "De onde vêm estes dados?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O volume vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: um valor por semana, à segunda-feira. A capacidade é a do boletim semanal de albufeiras da APA."
+      }
+    }
+  ]
+}
+    </script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+<div id="menu-placeholder"></div>
+
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li><a href="/albufeiras">Albufeiras</a></li>
+        <li aria-current="page">Funcho</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <p class="badge-global">Dados desde <strong>08/01/2007</strong> · um valor por semana · Último valor: <strong>16/11/2026</strong></p>
+        <h1>Barragem e albufeira do Funcho: quanta água tem hoje</h1>
+        <p>Bacia do Arade · capacidade 47,7 hm³ · dados do SNIRH (Agência Portuguesa do Ambiente)</p>
+    </div>
+
+    <section class="bloco" id="bloco-resumo">
+        <div class="vista-bar" id="alb-dia">
+            <span class="vista-grupo">
+                <label class="ctrl-label" for="sel-dia">Dia</label>
+                <button type="button" class="btn-nav" id="dia-ant" title="Dia anterior" aria-label="Dia anterior">&#10094;</button>
+                <input type="date" id="sel-dia" value="2026-11-16" min="2007-01-08" max="2026-11-16">
+                <button type="button" class="btn-nav" id="dia-seg" title="Dia seguinte" aria-label="Dia seguinte" disabled>&#10095;</button>
+                <button type="button" class="btn-nav" id="dia-ultimo" title="Voltar ao último dia" hidden>Mais recente</button>
+            </span>
+            <span class="vista-grupo">
+                <label class="ctrl-label" for="sel-comp">Comparar com</label>
+                <select id="sel-comp"><option value="semana">Uma semana antes</option><option value="mes">Um mês antes</option><option value="hidro">Início do ano hidrológico (1 de outubro)</option><option value="jan">Início do ano (1 de janeiro)</option><option value="ano">Um ano antes</option><option value="data">Outra data…</option></select>
+                <input type="date" id="sel-comp-data" aria-label="Data de comparação" hidden>
+            </span>
+        </div>
+        <div class="vista-nota" id="vista-nota" role="note" hidden></div>
+        <p class="resumo-topo" id="resumo-frase">A 16/11/2026, a albufeira do Funcho tinha <strong>37,5 hm³</strong> de água, <strong>78,5%</strong> da capacidade: 0,3 p.p. acima do mesmo dia de 2025 e 14,2 p.p. acima da média de 2013 a 2025 para este dia. De 2013 a 2025, só em 2015 tinha mais água a 16 de novembro.</p>
+        <div class="kpis" id="resumo-kpis"><div class="kpi-card"><div class="kpi-label">💧 Água guardada</div><div class="kpi-value">37,5 hm³</div><div class="kpi-sub">78,5% da capacidade</div></div><div class="kpi-card"><div class="kpi-label">📅 Numa semana</div><div class="kpi-value">+3,3 p.p.</div><div class="kpi-sub">+1,6 hm³ desde 09/11/2026</div></div><div class="kpi-card"><div class="kpi-label">↩️ Há um ano</div><div class="kpi-value">78,2%</div><div class="kpi-sub">37,3 hm³ a 13/11/2025</div></div><div class="kpi-card"><div class="kpi-label">📊 Média 2013–2025 para 16/11</div><div class="kpi-value">64,3%</div><div class="kpi-sub">mín. 35,1% (2023) · máx. 79,5% (2015)</div></div></div>
+    </section>
+
+    <section class="grafico-box" id="bloco-agora" data-albufeira="funcho">
+        <h2>⏱️ Agora</h2>
+        <p class="grafico-intro">Os valores de hora a hora das últimas 48 horas, das estações de tempo real da APA. Último valor: <strong id="agora-quando">21/11/2026 às 12:00</strong><span id="agora-idade"></span> (hora de Portugal continental).</p>
+        <div class="kpis" id="agora-kpis"><div class="kpi-card"><div class="kpi-label">💧 Volume armazenado</div><div class="kpi-value">70,3%</div><div class="kpi-sub">+0,1 p.p. em 24 horas</div></div><div class="kpi-card"><div class="kpi-label">📏 Cota (nível da água)</div><div class="kpi-value">93,01 m</div><div class="kpi-sub">a 2,99 m do nível de pleno armazenamento<br>+0,01 m em 24 horas</div></div></div>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Gráfico</span>
+            <div class="btn-toggle" id="ctrl-agora" role="group" aria-label="O que mostrar no gráfico das últimas 48 horas">
+                <button type="button" data-v="caudais" class="active">Caudais</button>
+                <button type="button" data-v="volume">Volume</button>
+                <button type="button" data-v="cota">Cota</button>
+            </div>
+        </div>
+        <div id="grafico-agora" class="grafico grafico-agora"></div>
+        <p class="nota-bloco">Fonte: APA (InfoÁgua), estações de albufeira de tempo real. A percentagem é a que a APA publica e pode diferir um pouco da do resumo, que usa o valor diário do SNIRH; o caudal afluente nem sempre vem em todas as horas.</p>
+    </section>
+
+    <section class="grafico-box" id="bloco-evol">
+        <h2>📈 Ao longo do ano</h2>
+        <p class="grafico-intro">A percentagem de água guardada, dia a dia, comparada com o ano anterior e com os anos completos desde 2011 (a média e a faixa entre o mínimo e o máximo de cada dia).</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Ano</span>
+            <div class="btn-toggle" id="ctrl-ano" role="group" aria-label="Ano">
+                <button type="button" data-v="civil" class="active">Civil</button>
+                <button type="button" data-v="hidro" title="De 1 de outubro a 30 de setembro">Hidrológico</button>
+            </div>
+        </div>
+        <div id="grafico-evol" class="grafico"></div>
+        <noscript><p class="nota-bloco">O gráfico precisa de JavaScript; os valores estão no resumo acima e na tabela abaixo.</p></noscript>
+    </section>
+
+    <section class="grafico-box" id="bloco-recordes">
+        <h2>🏆 Máximos, mínimos e tamanho</h2>
+        <div class="kpis kpis-3"><div class="kpi-card"><div class="kpi-label">🔝 Máximo registado</div><div class="kpi-value">46,3 hm³</div><div class="kpi-sub">25/05/2026 · 97,0%</div></div><div class="kpi-card"><div class="kpi-label">🔻 Mínimo desde 2013</div><div class="kpi-value">4,0 hm³</div><div class="kpi-sub">30/09/2012 · 8,4%</div></div><div class="kpi-card"><div class="kpi-label">📏 Capacidade</div><div class="kpi-value">47,7 hm³</div><div class="kpi-sub">8.ª maior pela capacidade · 3,6% da capacidade de todas as sem central</div></div></div>
+    </section>
+
+    <section class="grafico-box" id="bloco-anos">
+        <h2>📅 Ano a ano</h2>
+        <p class="grafico-intro">O maior e o menor volume de cada ano, com o dia, o volume no fim do ano (no ano em curso, no último dia) e quanto subiu ou desceu do primeiro ao último valor do ano.</p>
+        <div class="tabela-box"><table class="tabela-alb">
+            <thead><tr><th scope="col" class="esq">Ano</th><th scope="col">Máximo</th><th scope="col">Mínimo</th><th scope="col">No fim do ano</th><th scope="col" class="col-opc">Variação no ano</th></tr></thead>
+            <tbody><tr><td class="esq">2026*</td><td>46,3 hm³<span class="mini">25/05/2026</span></td><td>35,9 hm³<span class="mini">30/10/2026</span></td><td>78,5%<span class="mini">a 16/11/2026</span></td><td class="col-opc desce">−3,7 hm³</td></tr><tr><td class="esq">2025*</td><td>40,4 hm³<span class="mini">30/12/2025</span></td><td>15,8 hm³<span class="mini">20/01/2025</span></td><td>84,7%<span class="mini">a 30/12/2025</span></td><td class="col-opc sobe">+24,2 hm³</td></tr><tr><td class="esq">2024*</td><td>26,3 hm³<span class="mini">15/04/2024</span></td><td>14,1 hm³<span class="mini">12/01/2024</span></td><td>35,8%<span class="mini">a 27/12/2024</span></td><td class="col-opc sobe">+2,9 hm³</td></tr><tr><td class="esq">2023*</td><td>30,5 hm³<span class="mini">02/01/2023</span></td><td>14,5 hm³<span class="mini">29/12/2023</span></td><td>30,4%<span class="mini">a 29/12/2023</span></td><td class="col-opc desce">−16,0 hm³</td></tr><tr><td class="esq">2022*</td><td>32,5 hm³<span class="mini">09/05/2022</span></td><td>26,7 hm³<span class="mini">09/12/2022</span></td><td>64,1%<span class="mini">a 30/12/2022</span></td><td class="col-opc desce">−1,1 hm³</td></tr><tr><td class="esq">2021*</td><td>40,5 hm³<span class="mini">30/04/2021</span></td><td>30,8 hm³<span class="mini">20/12/2021</span></td><td>66,5%<span class="mini">31/12</span></td><td class="col-opc desce">−2,4 hm³</td></tr><tr><td class="esq">2020*</td><td>38,3 hm³<span class="mini">24/04/2020</span></td><td>26,0 hm³<span class="mini">16/10/2020</span></td><td>70,9%<span class="mini">31/12</span></td><td class="col-opc desce">−3,9 hm³</td></tr><tr><td class="esq">2019*</td><td>37,7 hm³<span class="mini">31/12/2019</span></td><td>30,2 hm³<span class="mini">15/11/2019</span></td><td>79,0%<span class="mini">31/12</span></td><td class="col-opc sobe">+1,9 hm³</td></tr><tr><td class="esq">2018*</td><td>43,7 hm³<span class="mini">13/04/2018</span></td><td>30,2 hm³<span class="mini">05/01/2018</span></td><td>75,0%<span class="mini">a 28/12/2018</span></td><td class="col-opc sobe">+5,6 hm³</td></tr><tr><td class="esq">2017*</td><td>39,4 hm³<span class="mini">31/01/2017</span></td><td>30,1 hm³<span class="mini">22/12/2017</span></td><td>63,4%<span class="mini">a 29/12/2017</span></td><td class="col-opc desce">−9,2 hm³</td></tr><tr><td class="esq">2016*</td><td>34,8 hm³<span class="mini">31/12/2016</span></td><td>26,8 hm³<span class="mini">27/04/2016</span></td><td>72,8%<span class="mini">31/12</span></td><td class="col-opc sobe">+1,1 hm³</td></tr><tr><td class="esq">2015*</td><td>40,2 hm³<span class="mini">19/01/2015</span></td><td>35,2 hm³<span class="mini">21/01/2015</span></td><td>74,8%<span class="mini">31/12</span></td><td class="col-opc desce">−1,3 hm³</td></tr><tr><td class="esq">2014*</td><td>39,9 hm³<span class="mini">10/02/2014</span></td><td>35,0 hm³<span class="mini">17/11/2014</span></td><td>77,6%<span class="mini">31/12</span></td><td class="col-opc ">0,4 hm³</td></tr><tr><td class="esq">2013*</td><td>39,5 hm³<span class="mini">30/05/2013</span></td><td>22,0 hm³<span class="mini">01/03/2013</span></td><td>76,1%<span class="mini">31/12</span></td><td class="col-opc sobe">+14,3 hm³</td></tr><tr><td class="esq">2012*</td><td>14,4 hm³<span class="mini">26/12/2012</span></td><td>4,0 hm³<span class="mini">30/09/2012</span></td><td>30,2%<span class="mini">a 26/12/2012</span></td><td class="col-opc sobe">+10,4 hm³</td></tr><tr><td class="esq">2011*</td><td>37,8 hm³<span class="mini">31/05/2011</span></td><td>37,5 hm³<span class="mini">30/04/2011</span></td><td>79,2%<span class="mini">a 31/05/2011</span></td><td class="col-opc ">0,3 hm³</td></tr><tr><td class="esq">2010*</td><td>37,8 hm³<span class="mini">28/02/2010</span></td><td>36,1 hm³<span class="mini">31/01/2010</span></td><td>79,2%<span class="mini">a 28/02/2010</span></td><td class="col-opc sobe">+1,8 hm³</td></tr><tr><td class="esq">2009*</td><td>26,5 hm³<span class="mini">29/05/2009</span></td><td>26,5 hm³<span class="mini">29/05/2009</span></td><td>55,4%<span class="mini">a 29/05/2009</span></td><td class="col-opc ">0,0 hm³</td></tr><tr><td class="esq">2008*</td><td>21,0 hm³<span class="mini">31/08/2008</span></td><td>17,7 hm³<span class="mini">31/10/2008</span></td><td>37,0%<span class="mini">a 31/10/2008</span></td><td class="col-opc desce">−3,4 hm³</td></tr><tr><td class="esq">2007*</td><td>35,4 hm³<span class="mini">08/01/2007</span></td><td>18,2 hm³<span class="mini">28/12/2007</span></td><td>38,0%<span class="mini">a 28/12/2007</span></td><td class="col-opc desce">−17,2 hm³</td></tr></tbody>
+        </table></div>
+        <p class="nota-bloco">* Com menos de 300 valores no ano (nos primeiros anos da série, o SNIRH tem um valor por mês).</p>
+    </section>
+
+    
+
+    <section class="grafico-box" id="bloco-bacia">
+        <h2>🗺️ Na bacia do Arade</h2>
+        <p class="grafico-intro">As outras albufeiras da mesma bacia acompanhadas neste site, com a percentagem do último dia (16/11/2026).</p>
+        <ul class="lista-bacia"><li><a href="/albufeira/odelouca">Odelouca</a> <span class="mini">71,0%</span></li><li><a href="/albufeira/arade">Arade</a> <span class="mini">76,4%</span></li></ul>
+        <p class="nota-bloco"><a id="link-bacia" href="/albufeiras?albufeira=bacia-Arade">Ver a bacia na página das albufeiras</a> · <a id="link-outras" href="/albufeiras?albufeira=funcho">ver o Funcho ao lado das outras</a></p>
+    </section>
+
+    <section class="grafico-box" id="bloco-mapa">
+        <h2>📍 Onde fica</h2>
+        <div class="onde-fica">
+            <div>
+                <div id="mapa-alb" role="region" aria-label="Mapa com a localização da barragem"></div>
+                <p class="nota-bloco">A barragem: 37,262333, -8,382806 (SNIRH; CNPGB nas que lá não estão). Fundo: Natural Earth e <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores do OpenStreetMap</a> (licença ODbL).</p>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="grafico-box" id="bloco-ficha">
+        <h2>🧾 Ficha técnica e limitações</h2>
+        <table class="tabela-alb tabela-ficha"><tbody>
+            <tr><th scope="row" class="esq">Bacia</th><td class="esq">Arade</td></tr>
+            <tr><th scope="row" class="esq">Capacidade total</th><td class="esq">47,7 hm³ (boletim semanal de albufeiras da APA; inclui o volume morto)</td></tr>
+            <tr><th scope="row" class="esq">Código SNIRH</th><td class="esq">30G/01A</td></tr>
+            <tr><th scope="row" class="esq">Usos</th><td class="esq">Irrigação</td></tr>
+            <tr><th scope="row" class="esq">Capacidade útil e volume morto</th><td class="esq">42,8 hm³ de capacidade útil · 5,0 hm³ de volume morto (abaixo do nível mínimo de exploração)</td></tr>
+            <tr><th scope="row" class="esq">Cotas dos níveis de água</th><td class="esq">pleno armazenamento (NPA): 96 m · máxima cheia (NMC): 96,8 m · mínimo de exploração (NmE): 65 m</td></tr>
+            <tr><th scope="row" class="esq">Área inundada</th><td class="esq">360 ha ao nível de pleno armazenamento</td></tr>
+            <tr><th scope="row" class="esq">Barragem</th><td class="esq">Abóbada · 48,8 m de altura acima da fundação · coroamento com 165 m, à cota 99,8 m · em funcionamento desde 1993</td></tr>
+            <tr><th scope="row" class="esq">Descarregador de cheias</th><td class="esq">Sobre a Barragem · 70 m³/s</td></tr>
+            <tr><th scope="row" class="esq">Rio e local</th><td class="esq">Rio Arade · Silves, Silves, Faro</td></tr>
+            <tr><th scope="row" class="esq">Dono da obra</th><td class="esq">Autoridade Nacional da Água</td></tr>
+            <tr><th scope="row" class="esq">Entidade exploradora</th><td class="esq">Instituto da Água, I.P.</td></tr>
+            <tr><th scope="row" class="esq">Projeto</th><td class="esq">COBA</td></tr>
+            <tr><th scope="row" class="esq">Bacia hidrográfica</th><td class="esq">212,59 km² · precipitação média de 744 mm por ano · altitude de 70 a 533 m</td></tr>
+            <tr><th scope="row" class="esq">Série</th><td class="esq">semanal (à segunda-feira), desde 08/01/2007</td></tr>
+            <tr><th scope="row" class="esq">Fonte</th><td class="esq">SNIRH (Agência Portuguesa do Ambiente), dados de base: o volume de cada segunda-feira; a ficha técnica, do inventário de albufeiras do SNIRH</td></tr>
+            <tr><th scope="row" class="esq">Atualização</th><td class="esq">Todos os dias; o SNIRH publica um valor por semana</td></tr>
+            <tr><th scope="row" class="esq">Limitações</th><td class="esq"><ul class="lista-limites"><li>A percentagem conta o volume morto, a água abaixo das tomadas que não se pode usar.</li><li>O SNIRH só tem um valor por semana: a comparação «numa semana» e os gráficos são feitos com esses valores.</li><li>A série só tem anos completos desde 2013: a média, o mínimo e o máximo para o dia só contam esses anos.</li><li>Os valores impossíveis do SNIRH (erros de leitura) são retirados antes das contas.</li><li>O «Agora» vem das estações de tempo real da APA (InfoÁgua), de hora a hora, e não do SNIRH: a percentagem é a que a APA publica e pode diferir um pouco da do resumo.</li></ul></td></tr>
+        </tbody></table>
+        <p class="nota-bloco"><a href="/albufeiras#bloco-fontes">As fontes e as limitações de todos os números</a>.</p>
+    </section>
+
+    <div class="cta-simulador">
+        <h2>E as outras albufeiras?</h2>
+        <p>As 57 albufeiras com uso para energia e as 29 sem central que o site acompanha, no mapa e numa tabela, por bacia, com a energia guardada em Portugal e em Espanha.</p>
+        <div class="botoes"><a href="/albufeiras" class="button-link">Todas as albufeiras</a></div>
+    </div>
+
+    <h2 id="faq" class="faq-titulo">❔ Perguntas Frequentes</h2>
+    <div class="faq-lista">
+<details class="faq-item"><summary><strong>Quanta água tem o Funcho hoje?</strong></summary><div class="faq-content"><p>A 16/11/2026, o último valor publicado pelo SNIRH, o Funcho tinha 37,5 hm³ de água, 78,5% da capacidade: 0,3 p.p. acima do mesmo dia de 2025 e 14,2 p.p. acima da média de 2013 a 2025 para este dia. Esta página é atualizada todos os dias.</p></div></details>
+<details class="faq-item"><summary><strong>Qual é o nível da barragem do Funcho?</strong></summary><div class="faq-content"><p>A 16/11/2026, a albufeira da barragem do Funcho estava a 78,5% da capacidade, com 37,5 hm³ de água. É esta percentagem do volume guardado que costuma ser dada como o nível da barragem.</p></div></details>
+<details class="faq-item"><summary><strong>Qual é a capacidade do Funcho?</strong></summary><div class="faq-content"><p>47,7 hm³, segundo o boletim semanal de albufeiras da APA. É a 8.ª maior das albufeiras sem central acompanhadas neste site (3,6% da capacidade de todas elas).</p></div></details>
+<details class="faq-item"><summary><strong>Qual foi o máximo do Funcho?</strong></summary><div class="faq-content"><p>46,3 hm³, a 25/05/2026 (97,0% da capacidade), desde o início da série do SNIRH, a 08/01/2007. Desde 2013, o mínimo foi de 4,0 hm³, a 30/09/2012 (8,4%).</p></div></details>
+<details class="faq-item"><summary><strong>De onde vêm estes dados?</strong></summary><div class="faq-content"><p>O volume vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: um valor por semana, à segunda-feira. A capacidade é a do boletim semanal de albufeiras da APA.</p></div></details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script type="application/json" id="dados-albufeira">{"nome":"Funcho","do":"do Funcho","o":"o Funcho","ref":47.72,"refMax":false,"inicio":"2007-01-08","ult":"2026-11-16","lat":37.262333,"lon":-8.382806,"npa":96,"v":[35.38,35.36,35.36,35.33,35.3,null,null,35.21,35.18,35.15,35.15,35.12,null,null,35.01,34.98,34.95,34.92,34.89,null,null,34.78,34.75,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,18.15,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,21.04,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,17.67,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,26.46,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.06,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,37.81,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,37.47,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,37.78,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,4.0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,14.43,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,22.02,null,null,22.14,25.31,27.21,28.95,31.85,33.78,34.86,35.5,36.24,37.47,36.66,36.09,null,null,36.78,35.12,35.56,34.23,32.81,null,null,35.27,35.68,38.02,37.6,36.69,null,38.37,38.37,37.96,37.05,37.6,36.51,null,null,37.17,37.44,37.6,37.78,37.9,null,null,38.33,38.43,38.49,38.55,38.65,null,null,38.8,38.33,38.93,null,38.99,null,null,39.05,39.12,null,39.15,39.18,null,null,39.27,39.3,39.3,39.34,39.34,null,null,39.37,39.37,39.37,39.37,39.4,null,null,39.46,39.5,39.5,39.5,39.53,null,null,39.53,39.53,39.53,39.53,39.5,null,null,39.5,39.5,39.5,39.46,39.46,null,null,null,39.43,39.43,39.43,39.4,null,null,39.4,39.37,39.34,39.3,39.3,null,null,39.27,39.24,39.21,39.21,39.18,null,39.15,39.15,39.12,39.12,39.12,39.08,null,null,39.02,38.99,38.99,38.96,38.96,null,null,38.9,38.9,38.86,38.83,38.8,null,null,38.74,38.71,38.71,38.71,38.68,null,null,38.65,38.61,38.58,38.55,38.52,null,null,38.43,38.4,38.37,38.37,38.33,null,null,38.3,38.27,38.27,null,38.21,null,null,38.18,38.18,38.15,38.15,38.15,null,null,38.03,38.02,38.02,37.99,37.96,null,null,37.87,37.87,37.87,37.84,37.84,null,null,37.78,37.78,37.78,37.75,37.75,null,null,37.75,37.72,37.72,37.72,37.69,null,null,37.63,37.63,37.63,37.6,37.6,null,null,37.69,37.72,37.72,37.72,37.72,null,null,37.69,37.69,37.69,37.66,37.66,null,null,37.63,37.63,37.6,37.6,37.6,null,null,37.6,37.66,37.9,36.48,35.07,null,null,35.88,35.91,35.94,35.94,35.94,null,null,35.94,35.94,35.94,35.94,35.94,null,null,35.91,35.91,35.91,35.91,35.91,null,null,35.88,35.88,35.88,35.85,35.85,null,null,35.85,35.85,35.85,35.85,35.85,null,null,35.82,35.82,35.82,35.82,35.82,null,null,35.82,35.8,35.8,35.8,35.8,null,null,35.8,35.8,35.8,35.77,35.77,null,null,35.77,35.77,null,36.21,36.27,null,null,36.33,36.33,null,36.69,36.39,null,null,36.51,36.54,36.54,36.54,36.54,null,null,36.54,36.54,36.63,36.66,36.69,null,null,37.38,36.0,36.18,36.21,36.24,null,null,36.39,36.42,36.45,36.45,36.48,null,null,36.57,36.6,36.81,37.02,37.29,null,null,39.88,38.99,38.27,37.35,36.36,null,null,35.8,35.91,36.03,36.15,36.27,null,null,36.45,36.57,36.63,36.69,36.72,null,null,36.78,36.81,36.84,36.87,36.9,null,null,37.08,37.11,37.14,37.14,37.17,null,null,37.2,37.2,37.23,37.23,37.26,null,null,37.29,37.32,37.32,37.35,37.41,null,null,37.63,38.21,37.81,38.02,37.84,null,null,38.77,37.29,37.41,37.56,37.69,null,null,37.87,37.96,38.06,38.09,null,null,null,38.3,38.33,38.37,38.43,null,null,null,38.52,38.55,38.58,null,38.58,null,null,38.61,38.61,38.61,38.61,38.61,null,null,38.61,38.58,38.58,38.58,38.58,null,null,38.52,38.49,38.55,38.55,38.55,null,null,38.52,38.52,38.49,38.49,38.46,null,null,38.46,38.46,38.46,38.43,38.43,null,null,38.4,null,38.37,38.37,38.37,null,null,38.33,38.33,38.3,38.3,38.27,null,null,38.27,38.27,38.27,38.24,38.24,null,null,38.18,38.12,38.12,38.09,38.09,null,null,38.06,37.99,37.99,37.96,37.93,null,null,37.9,37.87,37.87,37.84,37.84,null,null,37.81,37.78,37.75,37.75,37.72,null,null,37.69,37.66,37.63,37.63,37.6,null,null,37.53,37.53,37.5,37.5,37.47,null,null,37.44,37.44,37.38,37.35,null,null,null,37.26,37.26,37.26,37.23,37.17,null,null,37.14,37.11,37.05,37.05,37.02,null,36.96,36.96,36.93,null,36.84,36.81,null,null,36.81,36.78,36.78,36.78,36.78,null,null,36.84,36.9,36.9,36.96,36.99,null,null,36.96,36.96,36.96,36.96,36.96,null,null,36.93,36.93,36.93,36.9,36.9,null,null,36.87,36.87,36.87,36.87,36.9,null,null,36.9,37.02,37.02,37.02,37.02,null,null,37.02,37.02,37.02,36.99,36.99,null,null,36.93,36.93,36.93,36.9,36.9,null,null,36.84,36.84,36.84,36.84,36.84,null,null,36.87,36.96,36.96,36.99,37.2,null,null,34.98,35.01,35.07,35.18,35.62,null,null,36.75,37.11,37.23,38.06,null,null,35.5,35.5,35.8,35.91,36.0,36.12,null,null,null,36.27,36.3,36.3,36.3,null,null,36.63,36.66,36.66,36.66,36.69,null,null,36.78,36.81,36.9,null,36.99,null,null,37.02,37.02,37.05,null,37.05,null,null,37.14,37.14,37.14,37.14,37.14,null,null,37.23,37.23,37.23,37.26,37.26,null,null,40.17,36.18,35.24,35.47,35.62,null,null,35.91,36.0,36.06,36.09,36.15,null,null,36.36,36.42,36.45,36.45,36.48,null,null,36.63,36.66,36.72,36.75,36.78,null,null,36.84,36.87,36.87,36.9,36.93,null,null,36.96,36.96,36.99,36.99,37.02,null,null,37.05,37.05,37.08,37.11,37.14,null,null,37.2,37.23,37.23,37.26,37.26,null,null,37.29,37.32,37.32,37.35,37.38,null,null,37.53,37.6,37.63,37.66,37.69,null,null,37.69,37.69,37.69,37.69,null,null,null,37.69,37.72,37.72,37.78,37.84,null,null,37.9,37.93,37.93,37.96,37.96,null,null,37.99,37.99,37.96,37.96,37.96,null,null,37.96,37.93,37.93,37.93,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,37.56,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,37.2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.48,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,35.94,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,35.47,null,35.44,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.15,36.84,37.38,37.53,37.69,null,null,37.81,37.87,37.9,37.9,37.93,null,null,37.93,37.96,37.96,37.96,37.96,37.96,37.96,37.96,37.96,36.69,null,35.41,null,null,35.44,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,35.71,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,33.61,null,null,33.78,33.78,33.81,33.84,32.42,null,null,31.48,null,31.51,31.53,31.56,null,null,31.64,31.69,31.75,31.8,31.83,null,null,31.88,31.91,31.93,31.96,31.99,null,null,31.99,32.02,32.02,32.02,32.04,null,null,32.48,32.5,32.53,32.53,32.56,null,null,32.59,32.61,32.61,32.64,32.64,null,null,32.67,32.7,32.75,32.78,32.81,null,null,32.92,32.92,32.94,32.94,32.94,null,null,32.97,33.0,33.0,33.03,33.03,null,null,33.05,33.05,33.08,33.08,33.11,null,null,33.25,32.18,31.03,29.88,28.95,null,null,null,27.98,26.83,26.83,26.86,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,31.4,31.43,31.43,31.45,null,null,31.45,31.45,31.45,31.48,null,null,null,31.48,31.48,31.48,31.45,31.45,null,null,31.43,31.37,31.35,31.35,31.29,null,null,31.19,31.19,31.16,31.16,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,30.71,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,30.37,null,null,null,null,null,null,null,null,null,null,null,null,null,30.11,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,29.75,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,30.04,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,30.35,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,34.75,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,39.4,null,null,null,null,null,null,null,null,null,null,null,null,null,35.06,null,null,null,null,null,null,null,null,null,null,null,null,null,34.63,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.48,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.45,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.87,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,37.05,null,null,null,null,null,null,37.14,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.54,null,null,null,null,null,null,null,null,null,null,null,null,null,36.24,null,null,null,null,null,null,36.12,null,null,null,null,null,null,36.0,null,null,null,null,null,null,null,null,null,35.8,null,null,null,35.68,null,null,null,null,null,null,35.5,null,null,null,null,null,null,35.27,null,null,null,null,null,35.18,null,null,null,null,null,null,null,35.12,null,null,null,null,null,null,35.09,null,null,null,null,null,null,35.07,null,null,null,null,null,null,34.83,null,null,null,null,null,null,null,null,null,null,null,null,null,34.6,null,null,null,null,null,null,34.58,null,null,null,null,null,null,34.52,null,null,null,34.49,null,null,34.49,null,null,null,null,null,null,34.46,null,null,null,null,null,null,34.43,null,null,null,null,null,null,null,null,null,null,null,34.4,null,null,null,null,null,null,34.38,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,30.14,null,null,null,null,null,null,30.24,null,null,null,null,null,null,30.22,null,null,null,null,null,null,30.32,null,null,null,null,null,null,30.32,null,null,null,null,null,null,null,null,null,null,null,30.3,null,null,null,null,null,null,null,null,30.24,null,null,null,null,null,null,30.24,null,null,null,null,null,null,30.22,null,null,null,null,30.4,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,42.16,null,null,null,null,null,null,null,null,null,null,null,null,null,null,43.72,null,null,null,null,null,null,null,null,null,null,null,null,null,42.5,null,null,null,null,null,null,42.87,null,null,null,null,null,null,43.14,null,null,null,null,null,null,43.21,null,null,null,null,null,null,43.28,null,null,null,null,null,null,43.31,null,null,null,null,null,null,null,null,null,null,null,null,null,43.28,null,null,null,null,null,null,43.21,null,null,null,null,null,null,43.41,null,null,null,null,null,null,43.11,null,null,null,null,null,null,43.04,null,null,null,null,null,null,42.84,null,null,null,null,null,null,42.73,null,null,null,null,null,null,null,null,null,null,null,null,null,42.33,null,null,null,null,null,null,null,null,null,42.43,null,null,null,null,null,null,42.26,null,null,null,42.16,null,null,null,null,null,null,null,null,null,null,null,null,null,41.73,null,null,null,null,null,null,41.63,null,null,null,null,null,null,41.53,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.39,null,null,null,null,null,null,null,null,null,null,null,35.27,null,null,null,null,null,null,null,null,35.27,null,null,null,null,null,null,35.3,null,null,null,null,null,null,35.56,null,null,null,null,null,null,35.68,null,null,null,null,null,null,35.71,null,null,null,null,null,null,35.74,null,null,null,null,null,null,36.06,null,null,null,null,null,null,35.8,null,null,null,null,null,null,null,null,null,null,null,null,null,35.77,null,null,null,null,null,null,null,null,null,null,null,null,null,35.71,null,null,null,null,null,35.82,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.09,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,36.54,null,null,null,null,null,null,null,null,null,null,null,null,null,36.45,null,null,null,null,null,null,null,null,null,null,null,null,32.61,null,null,null,null,null,null,32.34,null,null,null,null,null,null,null,null,null,null,null,32.48,null,null,null,null,null,null,null,null,null,32.45,null,null,null,null,null,null,32.42,null,null,null,null,null,null,32.37,null,null,null,null,null,null,32.31,null,null,null,null,null,null,32.26,null,null,null,null,null,null,32.1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,31.72,null,null,null,null,null,null,31.59,null,null,null,null,null,null,31.45,null,null,null,null,31.37,null,31.35,null,null,null,null,null,null,31.21,null,null,null,null,null,null,31.11,null,null,null,null,null,null,31.11,null,null,null,null,null,null,null,null,null,null,null,null,null,30.71,null,null,null,null,null,null,30.61,null,null,null,null,null,null,30.5,null,null,null,null,null,null,null,null,null,30.43,null,null,null,30.4,null,null,null,null,null,null,30.35,null,null,null,null,null,null,30.32,null,null,null,null,null,null,30.3,null,null,null,null,null,null,null,null,null,null,null,null,null,30.22,null,null,null,null,null,null,30.19,null,null,null,null,null,null,30.27,null,null,null,null,null,null,30.27,null,null,null,null,null,null,30.24,null,null,null,null,null,null,null,null,null,null,null,30.84,null,null,null,null,null,null,null,null,null,null,null,null,37.72,null,null,null,null,null,null,null,null,null,37.72,null,null,null,null,null,null,37.69,null,null,null,null,null,null,37.75,null,null,null,null,null,null,38.21,null,null,null,null,null,null,38.12,null,null,null,null,null,null,37.99,null,null,null,null,null,null,null,null,null,null,null,null,null,37.63,null,null,null,null,null,null,37.44,null,null,null,null,null,null,37.08,null,null,null,null,null,null,36.69,null,null,null,null,null,null,36.69,null,null,null,36.63,null,null,36.66,null,null,null,null,null,null,null,null,null,null,null,null,null,37.75,null,null,null,null,null,null,38.27,null,null,null,null,null,38.21,null,null,null,null,null,null,null,37.84,null,null,null,null,null,null,37.47,null,null,null,null,null,null,37.05,null,null,null,null,null,null,36.24,null,null,null,null,null,null,35.44,null,null,null,null,null,null,34.69,null,null,null,null,null,null,33.78,null,null,null,null,null,null,32.94,null,null,32.34,32.34,null,null,null,null,null,null,null,null,null,27.82,null,null,null,null,null,null,27.07,null,null,null,null,null,null,26.98,null,null,null,null,null,null,26.83,null,null,null,null,null,null,26.73,null,null,null,null,null,null,26.62,null,null,null,null,null,null,26.62,null,null,null,null,null,null,26.44,null,null,26.39,null,null,null,26.34,null,null,null,null,null,null,26.23,null,null,null,null,null,null,26.16,null,null,null,null,null,null,26.11,null,null,null,null,26.09,null,null,null,null,null,null,null,null,26.04,null,null,null,null,null,null,25.97,null,null,null,null,null,null,26.13,null,null,null,null,null,null,26.13,null,null,null,null,null,null,26.34,null,null,null,null,null,null,27.77,null,null,null,null,null,null,27.74,null,null,null,null,null,null,28.2,null,null,30.22,null,null,null,null,null,null,null,null,null,null,31.53,null,null,null,null,null,null,31.99,null,null,null,null,null,null,null,null,null,null,null,null,33.84,null,null,null,null,null,null,null,34.15,null,null,null,null,null,null,34.23,null,null,null,null,null,null,34.38,null,null,null,null,null,null,null,null,34.89,null,null,null,null,38.21,null,null,null,null,null,null,37.35,null,null,null,null,null,null,null,null,null,35.21,null,null,null,null,null,37.87,null,null,null,null,null,null,null,38.83,null,null,null,null,null,null,39.46,null,null,null,null,null,null,39.78,null,null,null,null,null,null,40.01,null,40.01,null,null,null,null,40.17,null,null,null,null,null,null,40.23,null,null,null,null,null,null,40.42,null,null,null,null,null,null,40.49,null,null,null,40.49,null,null,null,null,null,null,null,null,null,40.43,null,null,null,null,null,null,40.39,null,null,null,null,null,null,40.36,null,null,null,null,null,null,40.23,null,null,null,null,null,null,40.1,null,null,null,null,null,null,39.97,null,null,null,null,null,null,39.88,null,null,null,null,null,null,39.78,null,39.78,null,null,null,null,39.72,null,null,null,null,null,null,39.53,null,null,null,null,null,null,39.4,null,null,null,null,null,39.21,null,null,null,null,null,39.05,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,38.49,null,null,null,null,null,38.4,null,null,null,null,null,null,38.27,null,null,null,null,null,null,38.24,null,null,null,null,null,null,38.33,null,null,38.27,null,null,null,38.21,null,null,null,null,null,null,38.18,null,null,null,null,null,null,38.06,null,null,null,null,null,null,null,null,null,null,null,null,30.97,null,null,null,null,null,null,null,31.08,null,null,null,null,null,null,31.0,null,null,null,null,null,null,30.95,null,null,null,null,null,null,30.92,null,null,null,null,null,null,30.9,null,null,null,null,null,null,30.87,null,null,null,null,null,null,30.84,null,null,null,null,null,null,31.67,null,null,null,31.75,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,31.69,null,null,null,null,null,null,31.69,null,null,null,null,null,null,31.67,null,null,null,null,null,null,31.64,null,null,null,null,null,null,null,null,null,null,null,null,null,31.59,null,null,null,null,null,null,31.75,null,null,null,null,null,null,31.77,null,null,null,null,null,null,31.8,null,null,null,null,null,null,31.83,null,null,null,32.23,null,null,32.34,null,null,32.37,null,null,null,32.37,null,null,null,null,null,null,32.4,null,null,null,null,null,null,32.45,null,null,null,null,null,null,32.48,null,null,null,null,32.48,null,null,null,null,null,null,null,null,32.48,null,null,null,null,null,null,32.42,null,null,null,null,null,null,32.37,null,null,null,null,null,null,30.82,null,null,null,null,null,null,30.79,null,null,null,null,null,null,30.71,null,null,null,null,null,null,30.61,null,null,null,null,null,null,30.5,null,null,30.45,null,null,null,30.4,null,null,null,null,null,null,30.24,null,null,null,null,null,null,30.09,null,null,null,null,null,null,29.96,null,null,null,null,null,29.83,null,null,null,null,null,null,null,29.73,null,null,null,null,null,null,29.65,null,null,null,null,null,null,29.5,null,null,null,null,null,null,29.4,null,29.37,null,null,null,null,29.3,null,null,null,null,null,null,null,null,null,null,null,null,null,29.25,null,null,null,null,null,null,29.27,null,null,null,29.25,null,null,29.25,null,null,null,null,null,null,29.1,null,null,null,null,null,null,29.07,null,null,null,null,null,null,29.25,null,null,null,null,null,null,29.2,null,null,null,null,null,null,28.72,null,null,null,null,null,null,28.18,null,null,null,27.81,null,null,null,null,null,null,27.36,null,null,27.36,null,null,null,26.81,null,null,null,null,null,null,26.65,null,null,null,null,null,null,30.4,null,null,null,null,null,null,30.87,null,null,null,null,null,null,30.61,null,null,30.53,null,null,null,30.17,null,null,null,null,null,null,null,null,null,null,null,null,null,29.78,null,null,null,null,null,null,29.4,null,null,null,29.2,null,null,29.02,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,27.84,null,null,null,null,null,null,null,null,null,27.33,null,null,null,27.0,null,null,null,null,null,null,26.76,null,null,null,null,null,null,null,null,null,null,null,null,null,26.69,null,null,26.69,null,null,null,26.67,null,null,null,null,null,null,null,null,null,null,null,null,null,26.62,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,21.41,null,null,null,null,null,null,21.3,null,null,null,null,null,null,21.3,null,null,null,null,21.28,null,21.26,null,null,null,null,null,null,21.24,null,null,null,null,null,null,21.26,null,null,null,null,null,null,null,null,null,null,null,null,null,21.6,null,null,null,null,null,null,21.0,null,null,null,null,null,null,20.85,null,null,null,null,null,null,20.73,null,null,null,null,null,null,20.63,null,null,null,null,null,null,20.56,null,null,null,null,null,null,20.48,null,null,null,null,null,null,20.48,null,null,null,null,null,null,20.27,null,null,null,null,null,20.19,20.17,null,null,null,null,null,null,null,null,null,20.08,null,null,null,20.04,null,null,null,null,null,null,20.02,null,null,null,null,null,null,19.98,null,null,null,null,null,null,19.48,null,null,null,null,null,null,18.66,null,null,null,null,null,null,null,null,null,17.91,null,null,null,null,null,null,null,17.38,null,null,null,null,null,null,null,null,null,16.73,null,null,null,null,null,null,16.26,null,null,null,null,null,null,15.77,null,null,null,null,null,null,null,null,null,15.5,null,null,null,null,null,null,15.29,null,null,null,14.98,null,null,null,null,null,null,null,null,null,null,null,null,null,14.49,null,null,null,null,null,null,14.2,null,null,null,null,null,null,14.07,null,null,null,null,null,null,null,null,null,15.89,null,null,null,15.99,null,null,null,null,15.91,null,null,null,null,15.8,null,null,null,null,null,null,18.12,null,null,null,null,null,null,18.97,null,null,null,null,null,null,18.93,null,null,null,18.9,null,null,null,null,null,null,null,null,null,19.59,null,null,null,null,null,null,19.85,null,null,null,19.78,null,null,null,null,null,null,null,null,25.36,null,null,null,null,null,null,null,null,null,null,null,null,null,null,26.25,null,null,null,null,null,null,25.95,null,null,null,null,null,null,25.51,25.51,null,null,25.22,null,null,null,null,null,null,24.69,null,null,null,null,null,null,null,null,null,23.66,null,null,null,null,null,null,23.62,null,null,null,23.6,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,23.36,null,null,null,20.77,null,null,null,null,null,null,20.65,null,null,null,null,null,null,null,null,null,18.05,null,null,null,17.96,null,null,null,null,null,null,null,null,null,17.81,null,null,null,null,null,null,17.67,17.65,null,null,17.6,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,17.14,null,null,null,null,null,null,17.04,null,null,null,null,null,null,null,null,null,16.91,null,null,null,null,null,null,16.81,null,null,null,null,null,null,16.75,null,null,null,null,null,null,16.7,null,null,null,16.71,null,null,null,null,null,null,null,null,null,16.91,null,null,null,null,null,null,16.89,16.89,null,null,null,null,null,null,null,null,null,16.94,null,null,null,null,null,null,null,null,null,17.94,null,null,null,null,null,null,17.98,null,null,null,18.0,null,null,null,null,null,null,null,null,null,18.03,null,null,null,17.81,null,null,null,null,null,null,17.41,null,null,null,null,null,null,17.09,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,16.19,null,null,null,null,null,null,15.81,null,null,null,null,null,null,20.96,null,null,null,22.18,22.18,null,null,null,null,null,null,null,null,22.38,null,null,null,null,null,null,23.73,null,null,null,null,null,null,null,null,null,null,24.12,null,null,24.42,null,null,null,null,null,null,29.02,null,null,null,null,null,null,35.59,null,null,null,null,null,null,39.12,null,null,null,null,null,null,40.42,null,null,null,38.77,null,null,null,null,null,null,null,null,null,39.78,null,null,39.91,null,null,null,null,null,null,null,null,null,null,39.88,null,39.78,null,null,null,null,39.5,null,null,null,null,null,null,39.69,null,null,null,39.72,null,null,null,null,null,null,null,null,null,39.62,null,null,null,null,39.69,null,null,null,null,null,null,null,null,null,null,null,null,39.53,null,null,null,null,null,null,null,null,null,39.37,null,null,null,39.27,null,null,null,null,null,null,null,null,null,39.08,null,null,null,39.05,null,null,null,null,null,null,null,null,null,38.99,null,null,null,null,null,null,38.77,38.74,null,null,38.61,null,null,null,null,null,null,null,null,null,38.4,null,null,null,null,null,null,null,null,null,null,null,null,null,38.18,null,38.08,null,null,null,null,null,null,null,null,null,null,null,37.87,null,null,null,null,null,null,37.75,null,null,null,37.63,null,null,37.56,null,null,null,null,null,null,37.47,null,null,null,null,null,null,37.35,null,null,37.29,null,null,null,null,null,null,null,null,null,null,37.23,null,null,37.2,null,null,null,null,null,null,null,37.29,null,null,null,null,null,37.26,null,null,null,null,null,null,37.32,null,null,null,null,null,null,null,null,null,null,null,null,null,null,37.84,null,null,null,null,null,null,null,null,null,null,37.87,null,null,null,null,null,38.86,null,null,null,null,null,null,null,null,null,null,null,null,null,40.2,40.42,null,null,null,null,null,41.14,null,null,null,null,null,null,null,null,null,null,40.49,null,null,null,null,null,null,null,null,null,42.1,null,null,null,null,38.86,null,38.86,null,null,null,null,null,null,39.12,null,null,null,40.85,null,null,null,null,null,null,null,null,null,43.38,null,null,43.79,null,null,null,null,null,null,null,null,null,null,44.03,null,null,44.2,null,null,null,null,null,43.96,null,null,null,null,null,null,null,null,null,null,null,45.08,null,null,null,null,null,null,45.43,null,null,null,null,null,null,45.78,null,null,null,null,null,null,45.92,null,null,null,null,null,null,46.03,null,46.07,null,null,null,null,46.1,null,46.1,null,null,null,null,null,null,null,null,null,null,null,46.25,null,null,null,null,null,null,46.28,null,null,null,null,null,46.25,null,null,null,null,null,null,null,46.17,null,null,null,null,null,null,45.92,null,null,null,45.82,null,null,null,null,null,null,45.6,null,null,null,45.46,null,null,null,null,null,45.43,null,null,null,null,null,null,45.32,null,null,null,null,null,null,45.22,null,null,null,null,null,null,41.01,40.98,null,null,null,null,null,40.91,null,null,null,null,null,null,40.78,null,null,null,40.65,null,null,null,null,null,null,null,null,null,40.49,null,null,null,null,null,null,40.42,null,null,null,40.29,null,null,null,null,null,null,null,null,null,40.1,null,null,40.07,null,null,null,null,null,null,null,null,null,null,36.3,null,36.3,null,null,null,null,null,36.24,null,null,null,null,null,36.15,null,null,null,null,null,null,36.06,null,36.03,null,null,null,null,null,null,null,null,35.91,null,null,null,null,null,null,null,null,null,35.91,null,null,null,null,null,null,37.47]}</script>
+<script src="/dados.js"></script>
+<script src="/albufeira/albufeira.js?v=e6d7ecb4"></script>
+<script src="/script.js"></script>
+<script src="/cookie-consent.js"></script>
+</body>
+</html>
