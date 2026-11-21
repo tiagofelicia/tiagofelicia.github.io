@@ -62,7 +62,8 @@ ARTIGOS_CSV = os.path.join(AQUI, 'albufeiras_artigos.csv')
 FOTOS_CSV = os.path.join(AQUI, 'albufeiras_fotos.csv')
 # O copyrightNotice das fotografias sem direitos de autor (licenças como estão no albufeiras_fotos.csv)
 DOMINIO_PUBLICO = {'Public domain': 'Domínio público', 'CC0': 'Domínio público (CC0)'}
-ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Tejo', 'Sado', 'Guadiana', 'Arade', 'Ribeiras do Algarve']
+ORDEM_BACIAS = ['Lima', 'Cávado', 'Ave', 'Douro', 'Vouga', 'Mondego', 'Ribeiras do Oeste', 'Tejo', 'Sado', 'Ribeiras do Alentejo',
+                'Mira', 'Guadiana', 'Arade', 'Ribeiras do Algarve']
 INICIO_IDX = '<!-- PAGINAS-ALBUFEIRAS: gerado por scripts/gerar_paginas_albufeiras.py, não editar à mão -->'
 FIM_IDX = '<!-- /PAGINAS-ALBUFEIRAS -->'
 # O endereço de cada página: a coluna do CSV com hífenes (castelo_de_bode → castelo-de-bode)
@@ -126,8 +127,6 @@ def carregar(pasta):
     for r in lista:
         ref = float(r['referencia_hm3'] or 0)
         if not r['coluna'] or ref <= 0 or r['coluna'] not in cab:
-            continue
-        if r.get('energia') == 'não':     # as albufeiras sem central entram numa fase seguinte
             continue
         j = cab.index(r['coluna'])
         bruto = [math.nan] * n
@@ -243,7 +242,95 @@ def ler_agora(pasta):
         return {}
 
 
-def resumo_agora(linhas, agora=None):
+def ler_fichas(pasta):
+    try:
+        return json.loads(texto(pasta, 'albufeiras_fichas.json'))
+    except Exception as e:   # sem o ficheiro, as páginas ficam sem a ficha técnica
+        print(f'  aviso: sem o albufeiras_fichas.json ({type(e).__name__}): as páginas ficam sem a ficha técnica')
+        return {}
+
+
+# As albufeiras que não estão no boletim semanal da APA e têm a capacidade da CNPGB (as «# CNPGB» do ALBUFEIRAS do
+# atualizar_albufeiras_snirh.py, no dados-energia)
+CAP_CNPGB = {'alto_tamega', 'daivoes', 'feiticeiro', 'gouvaes', 'pedrogao'}
+PARTICULAS = {'a', 'o', 'de', 'da', 'do', 'das', 'dos', 'e'}
+SIGLAS = {'EDP', 'EDIA', 'COBA', 'DGADR', 'DGHEA', 'EEM', 'EM', 'REN', 'APA', 'ETA', 'INAG', 'EPAL', 'HP', 'SA'}
+
+
+def nome_proprio(s, siglas=False):
+    """«RIO ZÊZERE» → «Rio Zêzere», «SANTA CLARA-A-VELHA» → «Santa Clara-a-Velha» (o inventário tem muitos em maiúsculas).
+    Com siglas (as entidades), as siglas conhecidas e as palavras com pontos ficam como estão: «ÁGUAS DO ALGARVE S.A.» →
+    «Águas do Algarve S.A.», «COBA», «EDP». Um texto que já tem minúsculas fica como está."""
+    if not s or not s.isupper():
+        return s
+    def palavra(w, primeira):
+        if siglas and (w.strip('.,()') in SIGLAS or '.' in w.strip('.,()')):   # S.A., I.P., Lda., EDP, COBA…
+            return w
+        partes = w.lower().split('-')
+        return '-'.join(x if (j or not primeira) and x in PARTICULAS else x[:1].upper() + x[1:] for j, x in enumerate(partes))
+    return ' '.join(palavra(w, i == 0) for i, w in enumerate(s.split()))
+
+
+def n_curto(x):
+    """121.5 → «121,5», 122 → «122», 1095000 → «1 095 000» (sem zeros à direita)."""
+    s = num(x, 2)
+    return s.rstrip('0').rstrip(',') if ',' in s else s
+
+
+def lista_pt(xs):
+    return xs[0] if len(xs) == 1 else ', '.join(xs[:-1]) + ' e ' + xs[-1]
+
+
+def linhas_ficha(f):
+    """As linhas da ficha técnica (do inventário de albufeiras do SNIRH ou, nas centrais que lá não estão, da CNPGB)
+    para a tabela «Ficha técnica e limitações»."""
+    if not f:
+        return ''
+    al, ba, lo, bh = f.get('albufeira', {}), f.get('barragem', {}), f.get('local', {}), f.get('bacia', {})
+    linhas = []
+    usos = f.get('aproveitamentos')
+    if usos:
+        linhas.append(('Usos', lista_pt([u if i == 0 else u.lower() for i, u in enumerate(usos)])))
+    cu, vm = al.get('capacidade_util_dam3'), al.get('volume_morto_dam3')
+    xs = [f'{fmt_hm3(cu / 1000)} de capacidade útil' if cu else None,
+          f'{fmt_hm3(vm / 1000)} de volume morto (abaixo do nível mínimo de exploração)' if vm else None]
+    if any(xs):
+        linhas.append(('Capacidade útil e volume morto', ' · '.join(x for x in xs if x)))
+    niveis = [(k, al.get(c)) for k, c in (('pleno armazenamento (NPA)', 'npa_m'), ('máxima cheia (NMC)', 'nmc_m'), ('mínimo de exploração (NmE)', 'nme_m'))]
+    if any(v is not None for _, v in niveis):
+        linhas.append(('Cotas dos níveis de água', ' · '.join(f'{k}: {n_curto(v)} m' for k, v in niveis if v is not None)
+                       + ('; num sistema local (subtrair 9,20 m para o sistema altimétrico nacional)' if f.get('referencial_local') else '')))
+    if al.get('area_npa_ha'):
+        linhas.append(('Área inundada', f'{n_curto(al["area_npa_ha"])} ha ao nível de pleno armazenamento'))
+    xs = [ba.get('tipo'), f'{n_curto(ba["altura_m"])} m de altura acima da fundação' if ba.get('altura_m') else None,
+          (f'coroamento com {n_curto(ba["coroamento_m"])} m' + (f', à cota {n_curto(ba["cota_coroamento_m"])} m' if ba.get('cota_coroamento_m') else ''))
+          if ba.get('coroamento_m') else None,
+          f'em funcionamento desde {ba["ano"]}' if ba.get('ano') else
+          f'concluída em {ba["ano_conclusao"]}' if ba.get('ano_conclusao') else None]     # CNPGB: o ano de conclusão da obra
+    if any(xs):
+        linhas.append(('Barragem', ' · '.join(x for x in xs if x)))
+    xs = [ba.get('descarregador'), f'{n_curto(ba["descarregador_m3s"])} m³/s' if ba.get('descarregador_m3s') else None]
+    if any(xs):
+        linhas.append(('Descarregador de cheias', ' · '.join(x for x in xs if x)))
+    sitio = ', '.join(x for x in (nome_proprio(lo.get('freguesia')), nome_proprio(lo.get('concelho')), nome_proprio(lo.get('distrito'))) if x)
+    xs = [nome_proprio(ba.get('curso_agua')), sitio]
+    if any(xs):
+        linhas.append(('Rio e local', ' · '.join(x for x in xs if x)))
+    for rot, c in (('Dono da obra', 'dono_obra'), ('Entidade exploradora', 'entidade_exploradora'), ('Projeto', 'projetista')):
+        if lo.get(c):
+            linhas.append((rot, nome_proprio(lo[c], siglas=True)))
+    xs = [(f'{n_curto(bh["area_total_km2"])} km²' + (f' (bacia própria: {n_curto(bh["area_propria_km2"])} km²)'
+                                                    if bh.get('area_propria_km2') and bh['area_propria_km2'] < bh['area_total_km2'] else ''))
+          if bh.get('area_total_km2') else None,
+          f'precipitação média de {n_curto(bh["precipitacao_mm"])} mm por ano' if bh.get('precipitacao_mm') else None,
+          f'altitude de {n_curto(bh["altitude_min_m"])} a {n_curto(bh["altitude_max_m"])} m'
+          if bh.get('altitude_min_m') is not None and bh.get('altitude_max_m') is not None else None]
+    if any(xs):
+        linhas.append(('Bacia hidrográfica', ' · '.join(x for x in xs if x)))
+    return ''.join(f'            <tr><th scope="row" class="esq">{esc(k)}</th><td class="esq">{esc(v)}</td></tr>\n' for k, v in linhas)
+
+
+def resumo_agora(linhas, agora=None, npa=None):
     """Os quatro cartões e a hora do último volume, ou None (sem volume nas últimas 48 h)."""
     agora = agora or datetime.now(timezone.utc)
     ultimo = lambda k: next(((l[0], l[k]) for l in reversed(linhas) if l[k] is not None), None)
@@ -271,8 +358,14 @@ def resumo_agora(linhas, agora=None):
     if cota:
         c24 = ha24(cota[0], 2)
         d = cota[1] - c24 if c24 is not None else None
-        cartoes += card('📏 Cota (nível da água)', num(cota[1], 2) + ' m',
-                        (('+' if d > 0.005 else '−' if d < -0.005 else '') + num(abs(d), 2) + ' m em 24 horas') if d is not None else '')
+        partes = []
+        if npa is not None:    # a cota do nível de pleno armazenamento, da ficha técnica (o mesmo referencial do InfoÁgua)
+            dn = npa - cota[1]
+            partes.append(f'a {num(dn, 2)} m do nível de pleno armazenamento' if dn > 0.005 else
+                          'no nível de pleno armazenamento' if dn > -0.005 else f'{num(-dn, 2)} m acima do nível de pleno armazenamento')
+        if d is not None:
+            partes.append(('+' if d > 0.005 else '−' if d < -0.005 else '') + num(abs(d), 2) + ' m em 24 horas')
+        cartoes += card('📏 Cota (nível da água)', num(cota[1], 2) + ' m', '<br>'.join(partes))
     else:
         cartoes += card('📏 Cota (nível da água)', '--', '')
     for k, rot in ((3, '⬇️ A entrar (caudal afluente)'), (4, '⬆️ A sair (caudal efluente)')):
@@ -284,8 +377,8 @@ def resumo_agora(linhas, agora=None):
     return dict(cartoes=cartoes, quando=quando, horas=sum(1 for l in linhas if l[1] is not None))
 
 
-def bloco_agora(col, linhas):
-    r = resumo_agora(linhas) if linhas else None
+def bloco_agora(col, linhas, npa=None):
+    r = resumo_agora(linhas, npa=npa) if linhas else None
     if not r:
         return ''
     # Estações com um valor por dia (as de rega do Alentejo, às 07:00): só os cartões, sem o gráfico de 48 h
@@ -317,8 +410,14 @@ def bloco_agora(col, linhas):
     '''
 
 
-def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None):
+def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None, fichas=None):
     nome, col = a['nome'], a['coluna']
+    energia = a.get('energia') != 'não'      # as com central (57) e as sem central (29, desde a fase 2)
+    ficha = (fichas or {}).get(col)
+    npa = (ficha or {}).get('albufeira', {}).get('npa_m')
+    fonte_ficha = ('' if not ficha else
+                   '; a ficha técnica, da CNPGB (Comissão Nacional Portuguesa das Grandes Barragens, da APA)'
+                   if ficha.get('fonte') == 'cnpgb' else '; a ficha técnica, do inventário de albufeiras do SNIRH')
     art = artigos.get(col, '')
     do_ = {'o': 'do ', 'a': 'da ', 'os': 'dos ', 'as': 'das '}.get(art, 'de ') + nome     # «do Alqueva», «de Montargil»
     o_ = (art + ' ' if art else '') + nome                                                # «o Alqueva», «Montargil»
@@ -337,6 +436,32 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     anos = C.por_ano(a)
     refmax = a['referencia'] == 'maximo_registado'
     rot_ref = 'do máximo registado' if refmax else 'da capacidade'
+    # A capacidade é a do boletim semanal da APA ou, nas que lá não estão, a da CNPGB. Com o máximo registado como 100%,
+    # a capacidade publicada (a do boletim ou, sem ela, a da ficha técnica) é menor do que volumes já registados.
+    fonte_cap, fonte_cap_curta = (('a CNPGB (Comissão Nacional Portuguesa das Grandes Barragens, da APA)', 'CNPGB')
+                                  if col in CAP_CNPGB else ('o boletim semanal de albufeiras da APA', 'boletim semanal de albufeiras da APA'))
+    cap_ficha = ((ficha or {}).get('albufeira', {}).get('capacidade_total_dam3') or 0) / 1000 or None
+    ficha_cnpgb = (ficha or {}).get('fonte') == 'cnpgb'
+    cap_baixa = (a['cap'], fonte_cap_curta) if a['cap'] else (cap_ficha, 'CNPGB' if ficha_cnpgb else 'inventário de albufeiras do SNIRH')
+    if not (refmax and cap_baixa[0] and cap_baixa[0] < a['ref']):
+        cap_baixa = (None, None)
+    if a['cap']:
+        txt_cap = f'{fmt_hm3(a["cap"])} ({fonte_cap_curta}; inclui o volume morto)'
+        frase_cap = ('A capacidade é a da CNPGB (Comissão Nacional Portuguesa das Grandes Barragens, da APA): esta albufeira não '
+                     'está no boletim semanal de albufeiras da APA' if col in CAP_CNPGB else 'A capacidade é a do boletim semanal de albufeiras da APA')
+        if cap_baixa[0]:
+            txt_cap += f', menos do que volumes já registados: os 100% são o máximo registado, {fmt_hm3(a["ref"])}'
+            frase_cap += ', menor do que volumes já registados: os 100% são o máximo registado'
+    elif cap_baixa[0]:
+        da_ficha = 'da CNPGB' if ficha_cnpgb else 'do inventário de albufeiras do SNIRH'
+        txt_cap = (f'sem capacidade no boletim semanal de albufeiras da APA; a ficha técnica {da_ficha} dá {fmt_hm3(cap_ficha)}, '
+                   f'menos do que volumes já registados: os 100% são o máximo registado, {fmt_hm3(a["ref"])}')
+        frase_cap = (f'Esta albufeira não está no boletim semanal de albufeiras da APA, e a capacidade que a ficha técnica {da_ficha} '
+                     f'lhe dá, {fmt_hm3(cap_ficha)}, é menor do que volumes já registados: os 100% são o máximo registado')
+    else:
+        txt_cap = ('sem capacidade no boletim semanal de albufeiras da APA' if cap_ficha else 'sem capacidade publicada') \
+            + ': os 100% são o máximo registado'
+        frase_cap = 'Esta albufeira não tem capacidade publicada: os 100% são o máximo registado'
     semanal = a['frequencia'] == 'semanal'
 
     # ---- frase principal
@@ -375,7 +500,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     mn11 = min(desde) if desde else None
     # «desde 2011», ou desde o 1.º ano completo da série, se for depois (Baixo Sabor, Alto Ceira)
     ano_min = max(ANO_COMP, (hist['de'] if hist else ANO_COMP))
-    caps = sorted((x['cap'] for x in todas if x['cap']), reverse=True)
+    caps = sorted((x['cap'] for x in todas if x['cap'] and (x.get('energia') != 'não') == energia), reverse=True)
     rank = caps.index(a['cap']) + 1 if a['cap'] in caps else None
     quota = a['cap'] / sum(caps) * 100 if a['cap'] else None
     fmt_quota = lambda q: 'menos de 0,1%' if q < 0.05 else fmt_pct(q)
@@ -386,7 +511,8 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
         rec.append(card(f'🔻 Mínimo desde {ano_min}', fmt_hm3(mn11[0]), f'{fmt_data(C.dia(mn11[1]))} · {fmt_pct(mn11[0] / a["ref"] * 100)}'))
     if a['cap']:
         rec.append(card('📏 Capacidade', fmt_hm3(a['cap']),
-                        f'{rank}.ª maior pela capacidade · {fmt_quota(quota)} da capacidade de todas'))
+                        f'{rank}.ª maior pela capacidade · {fmt_quota(quota)} da capacidade de todas'
+                        + ('' if energia else ' as sem central')))
 
     # ---- ano a ano
     linhas_ano = ''.join(
@@ -420,7 +546,8 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
                    + (f'; em 2025 {"produziu" if len(cs) == 1 else "produziram"} {mwf(tot_25)} GWh' if tot_25 else '') + ' (APREN, Anuário 2026).')
 
     # ---- a mesma bacia
-    irmas = [x for x in todas if x['bacia'] == a['bacia'] and x['coluna'] != col]
+    # nas com central, as outras com central (como até aqui); nas sem central, todas as da bacia
+    irmas = [x for x in todas if x['bacia'] == a['bacia'] and x['coluna'] != col and (not energia or x.get('energia') != 'não')]
     def pct_hoje(x):
         r = C.valor(x, iv)
         return r[0] / x['ref'] * 100 if r else None
@@ -429,8 +556,14 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
         for x in sorted(irmas, key=lambda x: -x['ref']))
     pct_bacia = None
     vs = [(C.valor(x, iv), x['ref']) for x in irmas + [a]]
-    if all(r for r, _ in vs):
+    if energia and all(r for r, _ in vs):
         pct_bacia = sum(r[0] for r, _ in vs) / sum(ref for _, ref in vs) * 100
+    if irmas:
+        intro_bacia = (('As outras albufeiras com uso para energia da mesma bacia' if energia else 'As outras albufeiras da mesma bacia acompanhadas neste site')
+                       + ', com a percentagem do último dia (' + fmt_data(dv) + ')'
+                       + (f'; no conjunto da bacia, {fmt_pct(pct_bacia)}' if pct_bacia is not None else '') + '.')
+    else:
+        intro_bacia = 'É a única albufeira com uso para energia desta bacia nesta lista.' if energia else 'É a única albufeira desta bacia acompanhada neste site.'
 
     # ---- FAQ (visível e JSON-LD com o mesmo texto)
     faq = [
@@ -443,9 +576,12 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     ]
     if a['cap']:
         faq.append((f'Qual é a capacidade {do_}?',
-                    f'{fmt_hm3(a["cap"])}, segundo o boletim semanal de albufeiras da APA. '
-                    + (f'É a maior das albufeiras com uso para energia em Portugal: sozinha, tem {fmt_quota(quota)} da capacidade de todas.'
-                       if rank == 1 else f'É a {rank}.ª maior das albufeiras com uso para energia em Portugal ({fmt_quota(quota)} da capacidade de todas).')))
+                    f'{fmt_hm3(a["cap"])}, segundo {fonte_cap}. '
+                    + ((f'É a maior das albufeiras com uso para energia em Portugal: sozinha, tem {fmt_quota(quota)} da capacidade de todas.'
+                        if rank == 1 else f'É a {rank}.ª maior das albufeiras com uso para energia em Portugal ({fmt_quota(quota)} da capacidade de todas).')
+                       if energia else
+                       (f'É a maior das albufeiras sem central acompanhadas neste site: sozinha, tem {fmt_quota(quota)} da capacidade de todas elas.'
+                        if rank == 1 else f'É a {rank}.ª maior das albufeiras sem central acompanhadas neste site ({fmt_quota(quota)} da capacidade de todas elas).'))))
     if mx_reg and d_mx:
         faq.append((f'Qual foi o máximo {do_}?',
                     f'{fmt_hm3(mx_reg)}, a {fmt_data(d_mx)} ({fmt_pct(mx_reg / a["ref"] * 100)} {rot_ref}), desde o início da série do SNIRH, a {fmt_data(date.fromisoformat(a["inicio_serie"]))}.'
@@ -455,8 +591,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     faq.append(('De onde vêm estes dados?',
                 'O volume vem do SNIRH, o Sistema Nacional de Informação de Recursos Hídricos da Agência Portuguesa do Ambiente: '
                 + ('um valor por semana, à segunda-feira. ' if semanal else 'o volume armazenado no fim de cada dia, que costuma aparecer na manhã seguinte. ')
-                + 'A capacidade é a do boletim semanal de albufeiras da APA'
-                + (' (sem capacidade publicada, os 100% são o máximo registado)' if refmax else '')
+                + frase_cap
                 + ('; a potência e a produção das centrais, as do Anuário 2026 da APREN.' if cs else '.')))
     faq_html = ''.join(f'<details class="faq-item"><summary><strong>{esc(q)}</strong></summary><div class="faq-content"><p>{esc(r)}</p></div></details>\n'
                        for q, r in faq)
@@ -510,7 +645,9 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     if semanal:
         limites.append('O SNIRH só tem um valor por semana: a comparação «numa semana» e os gráficos são feitos com esses valores.')
     if refmax:
-        limites.append('Sem capacidade publicada: os 100% são o maior volume registado na série.')
+        limites.append(f'A capacidade publicada ({fmt_hm3(cap_baixa[0])}, {cap_baixa[1]}) é menor do que volumes já registados: '
+                       'os 100% são o maior volume registado na série.' if cap_baixa[0] else
+                       'Sem capacidade publicada: os 100% são o maior volume registado na série.')
     if hist and hist['de'] > ANO_COMP:
         limites.append(f'A série só tem anos completos desde {hist["de"]}: a média, o mínimo e o máximo para o dia só contam esses anos.')
     elif not hist:
@@ -519,10 +656,10 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
         falta = sum(1 for i in range(max(0, iv - 364), iv + 1) if math.isnan(a['bruto'][i]))
         if falta > 7:
             limites.append(f'{falta} dias sem valor nos últimos 12 meses: no gráfico, um dia sem valor usa o último dos 31 dias anteriores.')
-    if not cs:
+    if not cs and energia:
         limites.append('Não há centrais com potência publicada (APREN; CNPGB) associadas a esta albufeira.')
     limites.append('Os valores impossíveis do SNIRH (erros de leitura) são retirados antes das contas.')
-    agora_html = bloco_agora(col, (agora_apa or {}).get(col))   # («agora», mais acima, é o último valor do SNIRH)
+    agora_html = bloco_agora(col, (agora_apa or {}).get(col), npa)   # («agora», mais acima, é o último valor do SNIRH)
     if agora_html:
         limites.append('O «Agora» vem das estações de tempo real da APA (InfoÁgua), de hora a hora, e não do SNIRH: '
                        'a percentagem é a que a APA publica e pode diferir um pouco da do resumo.')
@@ -532,7 +669,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     i0 = next(i for i, x in enumerate(a['bruto']) if not math.isnan(x))
     serie = [None if math.isnan(x) else round(x, 2) for x in a['bruto'][i0:iv + 1]]
     dados = {'nome': nome, 'do': do_, 'o': o_, 'ref': a['ref'], 'refMax': refmax, 'inicio': C.dia(i0).isoformat(), 'ult': du.isoformat(),
-             'lat': a['lat'], 'lon': a['lon'], 'v': serie}
+             'lat': a['lat'], 'lon': a['lon'], 'npa': npa, 'v': serie}
 
     opcoes_comp = ''.join(f'<option value="{v}">{t}</option>' for v, t in (
         ('semana', 'Uma semana antes'), ('mes', 'Um mês antes'), ('hidro', 'Início do ano hidrológico (1 de outubro)'),
@@ -600,7 +737,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     <div class="painel-header">
         <p class="badge-global">Dados desde <strong>{fmt_data(date.fromisoformat(a['inicio_serie']))}</strong> · {"um valor por semana" if semanal else "um valor por dia"} · Último valor: <strong>{fmt_data(dv)}</strong></p>
         <h1>Barragem e albufeira {esc(do_)}: quanta água tem hoje</h1>
-        <p>Bacia {esc(da_bacia(a['bacia']))} · {"capacidade " + fmt_hm3(a['cap']) if a['cap'] else "sem capacidade publicada"}{" · " + str(len(cs)) + (" central" if len(cs) == 1 else " centrais") if cs else ""} · dados do SNIRH (Agência Portuguesa do Ambiente)</p>
+        <p>Bacia {esc(da_bacia(a['bacia']))} · {"capacidade " + fmt_hm3(a['cap']) if a['cap'] else "sem capacidade no boletim da APA" if cap_ficha else "sem capacidade publicada"}{" · " + str(len(cs)) + (" central" if len(cs) == 1 else " centrais") if cs else ""} · dados do SNIRH (Agência Portuguesa do Ambiente)</p>
     </div>
 
     <section class="bloco" id="bloco-resumo">
@@ -664,7 +801,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
 
     <section class="grafico-box" id="bloco-bacia">
         <h2>🗺️ Na bacia {esc(da_bacia(a['bacia']))}</h2>
-        <p class="grafico-intro">{"As outras albufeiras com uso para energia da mesma bacia, com a percentagem do último dia (" + fmt_data(dv) + ")" + (f"; no conjunto da bacia, {fmt_pct(pct_bacia)}" if pct_bacia is not None else "") + "." if irmas else "É a única albufeira com uso para energia desta bacia nesta lista."}</p>
+        <p class="grafico-intro">{intro_bacia}</p>
         {f'<ul class="lista-bacia">{bacia_html}</ul>' if irmas else ''}
         <p class="nota-bloco"><a id="link-bacia" href="/albufeiras?albufeira=bacia-{esc(a['bacia'])}">Ver a bacia na página das albufeiras</a> · <a id="link-outras" href="/albufeiras?albufeira={col}">ver {esc(o_)} ao lado das outras</a></p>
     </section>
@@ -681,13 +818,13 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
     </section>""" if a['lat'] else ''}
 
     <section class="grafico-box" id="bloco-ficha">
-        <h2>🧾 Ficha e limitações</h2>
+        <h2>🧾 Ficha técnica e limitações</h2>
         <table class="tabela-alb tabela-ficha"><tbody>
             <tr><th scope="row" class="esq">Bacia</th><td class="esq">{esc(a['bacia'])}</td></tr>
-            <tr><th scope="row" class="esq">Capacidade total</th><td class="esq">{fmt_hm3(a['cap']) + ' (boletim semanal de albufeiras da APA; inclui o volume morto)' if a['cap'] else 'sem capacidade publicada: os 100% são o máximo registado'}</td></tr>
+            <tr><th scope="row" class="esq">Capacidade total</th><td class="esq">{txt_cap}</td></tr>
             <tr><th scope="row" class="esq">Código SNIRH</th><td class="esq">{esc(a['codigo_snirh'])}</td></tr>
-            <tr><th scope="row" class="esq">Série</th><td class="esq">{"semanal (à segunda-feira)" if semanal else "diária"}, desde {fmt_data(date.fromisoformat(a['inicio_serie']))}</td></tr>
-            <tr><th scope="row" class="esq">Fonte</th><td class="esq">SNIRH (Agência Portuguesa do Ambiente), dados de base: {"o volume de cada segunda-feira" if semanal else "o volume no fim de cada dia"}</td></tr>
+{linhas_ficha(ficha)}            <tr><th scope="row" class="esq">Série</th><td class="esq">{"semanal (à segunda-feira)" if semanal else "diária"}, desde {fmt_data(date.fromisoformat(a['inicio_serie']))}</td></tr>
+            <tr><th scope="row" class="esq">Fonte</th><td class="esq">SNIRH (Agência Portuguesa do Ambiente), dados de base: {"o volume de cada segunda-feira" if semanal else "o volume no fim de cada dia"}{fonte_ficha}</td></tr>
             <tr><th scope="row" class="esq">Atualização</th><td class="esq">{"Todos os dias; o SNIRH publica um valor por semana" if semanal else "Todos os dias; o SNIRH publica o valor de cada dia na manhã seguinte"}</td></tr>
             <tr><th scope="row" class="esq">Limitações</th><td class="esq"><ul class="lista-limites">{limites_html}</ul></td></tr>
         </tbody></table>
@@ -696,7 +833,7 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
 
     <div class="cta-simulador">
         <h2>E as outras albufeiras?</h2>
-        <p>As 57 albufeiras com uso para energia, no mapa e numa tabela, por bacia, com a energia guardada em Portugal e em Espanha.</p>
+        <p>As 57 albufeiras com uso para energia e as 29 sem central que o site acompanha, no mapa e numa tabela, por bacia, com a energia guardada em Portugal e em Espanha.</p>
         <div class="botoes"><a href="/albufeiras" class="button-link">Todas as albufeiras</a></div>
     </div>
 
@@ -760,6 +897,7 @@ def main():
     args = p.parse_args()
     todas, centrais, d0, n = carregar(args.dados)
     agora = ler_agora(args.dados)
+    fichas = ler_fichas(args.dados)
     C = Contas(d0, n)
     ULT = n - 1
     cab = cabeca_do_modelo(args.modelo, args.sem_ga)
@@ -777,7 +915,7 @@ def main():
             continue
         if a['coluna'] not in artigos:
             print(f'  aviso: {a["coluna"]} sem linha em {os.path.basename(ARTIGOS_CSV)} (fica «albufeira de {a["nome"]}»)')
-        h = pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, args.base, agora)
+        h = pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, args.base, agora, fichas)
         if h is None:
             print('  sem nenhum valor:', a['coluna'])
             continue
