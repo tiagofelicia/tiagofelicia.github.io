@@ -302,7 +302,8 @@ def linhas_ficha(f):
                        + ('; num sistema local (subtrair 9,20 m para o sistema altimétrico nacional)' if f.get('referencial_local') else '')))
     if al.get('area_npa_ha'):
         linhas.append(('Área inundada', f'{n_curto(al["area_npa_ha"])} ha ao nível de pleno armazenamento'))
-    xs = [ba.get('tipo'), f'{n_curto(ba["altura_m"])} m de altura acima da fundação' if ba.get('altura_m') else None,
+    xs = [(ba.get('tipo') or '').replace('bóboda', 'bóbada') or None,     # o inventário do SNIRH escreve «Abóboda»
+          f'{n_curto(ba["altura_m"])} m de altura acima da fundação' if ba.get('altura_m') else None,
           (f'coroamento com {n_curto(ba["coroamento_m"])} m' + (f', à cota {n_curto(ba["cota_coroamento_m"])} m' if ba.get('cota_coroamento_m') else ''))
           if ba.get('coroamento_m') else None,
           f'em funcionamento desde {ba["ano"]}' if ba.get('ano') else
