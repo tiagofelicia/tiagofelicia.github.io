@@ -1035,9 +1035,27 @@ document.addEventListener('DOMContentLoaded', function () {
     let COMP_MODO = null, COMP_DATA = null;
     const COMP_PADRAO = { dia: 'semana', semana: 'semana', mes: 'mes' };
 
+    // Os campos de uma linha de CSV; os que estão entre aspas podem ter vírgulas («"Abastecimento, energia e rega"»)
+    function camposCSV(l) {
+        if (!l.includes('"')) return l.split(',');
+        const out = [];
+        let campo = '', aspas = false;
+        for (let i = 0; i < l.length; i++) {
+            const ch = l[i];
+            if (aspas) {
+                if (ch !== '"') campo += ch;
+                else if (l[i + 1] === '"') { campo += '"'; i++; }
+                else aspas = false;
+            } else if (ch === '"') aspas = true;
+            else if (ch === ',') { out.push(campo); campo = ''; }
+            else campo += ch;
+        }
+        out.push(campo);
+        return out;
+    }
     function lerCSV(t) {
         const linhas = t.replace(/^﻿/, '').trim().split(/\r?\n/);
-        return { cab: linhas[0].split(','), linhas: linhas.slice(1).map(l => l.split(',')) };
+        return { cab: camposCSV(linhas[0]), linhas: linhas.slice(1).map(camposCSV) };
     }
     function prepararLista(t) {
         const { cab, linhas } = lerCSV(t);
