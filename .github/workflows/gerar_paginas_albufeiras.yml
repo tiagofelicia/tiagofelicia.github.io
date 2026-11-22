@@ -8,7 +8,10 @@
 #
 # Os dados chegam ao dados-energia pela tarefa agendada num PC em Portugal (o SNIRH só
 # aceita ligações de Portugal), às 10:50 e às 18:50 de Lisboa. Este workflow corre depois
-# de cada uma: 12:30 e 20:30 UTC (o GitHub atrasa as corridas agendadas, às vezes horas).
+# de cada uma, às 11:10 e às 19:10 de Lisboa, disparado de fora do GitHub por um
+# agendador externo, pela API (workflow_dispatch). O cron abaixo é só reserva, 1 vez por
+# dia: desde agosto de 2026 o GitHub cria as corridas agendadas 4 a 10 horas depois da
+# hora marcada e às vezes descarta-as.
 # Lê os CSV de https://dados.tiagofelicia.pt.
 #
 # Sem disparo no push de propósito: um envio pela web corre também o atualizar_sitemap.yml
@@ -19,7 +22,7 @@ name: Gerar paginas das albufeiras
 
 on:
   schedule:
-    - cron: '30 12,20 * * *'
+    - cron: '30 20 * * *'
   workflow_dispatch:
 
 permissions:
