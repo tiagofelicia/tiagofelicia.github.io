@@ -134,6 +134,13 @@
         }
       },{
         "@type": "Question",
+        "name": "O que mostra a tabela Cotações por entrega?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cada linha é um período de entrega fixo de Espanha (um mês, um trimestre, uma estação, um ano), com a cotação da última sessão com produtos a prazo e, ao lado, a média, o mínimo e o máximo que essa mesma entrega teve nas sessões dos 12 meses anteriores. Comparar com o histórico da mesma entrega, e não com o de «o próximo mês», evita misturar meses de inverno com meses de verão. Com menos de 5 sessões nesses 12 meses aparece um traço."
+        }
+      },{
+        "@type": "Question",
         "name": "O mercado a prazo do gás acerta?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -313,6 +320,10 @@
         .tabela-fut td.desce { color: var(--txt-verde); }
         .tabela-fut tfoot td { background: #f1f3f5; font-size: 0.9em; }
         .tabela-fut .col-secundaria { color: #6c757d; font-size: 0.92em; }
+        .tabela-fut .col-intervalo { text-align: center; line-height: 1.15; }
+        .tabela-fut .col-intervalo div { white-space: nowrap; }
+        .tabela-fut .col-intervalo .int-faixa { font-size: 0.8em; color: #6c757d; }
+        @media (max-width: 600px) { .tabela-fut .col-tipo { display: none; } }   /* o nome da entrega já diz o tipo */
 
         /* --- Caixas de aviso e de método --- */
         .aviso-box { width: 95%; max-width: 1200px; margin: 22px auto; background: #fff8e1; border-left: 4px solid #f0ad4e; padding: 12px 16px; font-size: 0.9em; border-radius: 0 6px 6px 0; }
@@ -390,6 +401,7 @@
         [data-theme="dark"] .rend-valor { color: #60a5fa; }
         [data-theme="dark"] .tabela-fut tfoot td { background: #334155; color: #cbd5e1; }
         [data-theme="dark"] .tabela-fut .col-secundaria { color: #94a3b8; }
+        [data-theme="dark"] .tabela-fut .col-intervalo .int-faixa { color: #94a3b8; }
         [data-theme="dark"] .aviso-box { background: #422006; border-left-color: #f59e0b; color: #fde68a; }
         [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
         [data-theme="dark"] .metodo-box code { background: #0f172a; color: #e2e8f0; }
@@ -490,6 +502,13 @@
         <div class="bloco-controls" id="curva-controls"></div>
         <div id="grafico-curva" class="grafico"></div>
         <p class="resumo-bloco" id="curva-resumo"></p>
+    </div>
+
+    <!-- ====================== BLOCO 2B — COTAÇÕES E ÚLTIMOS 12 MESES ====================== -->
+    <div class="grafico-box" id="bloco-tabela">
+        <h2>Cotações por entrega — e onde estão face aos últimos 12 meses</h2>
+        <p class="grafico-intro">As cotações da última sessão com produtos a prazo, em tabela. Cada linha é um <strong>período de entrega fixo</strong> de Espanha, com a média, o mínimo e o máximo que <strong>essa mesma entrega</strong> teve nas sessões dos 12 meses anteriores — para ver se o preço de hoje está alto ou baixo face ao que já valeu, sem misturar meses de inverno com meses de verão.</p>
+        <div class="tabela-box" id="tabela-cotacoes"><p class="bloco-estado">A carregar…</p></div>
     </div>
 
     <!-- ====================== BLOCO 3 — EVOLUÇÃO HISTÓRICA ====================== -->
@@ -620,6 +639,13 @@
                 </ul>
                 <p>Nestes dois casos a série que existe — e a que toda a gente usa — é a do produto: <strong>«o preço para o próprio dia»</strong> e <strong>«o preço para amanhã»</strong>, sessão após sessão. Aqui o código não muda de significado: é a definição do produto. O gráfico de evolução e o cartão <em>day-ahead</em> dizem-no no subtítulo sempre que estão nesse modo.</p>
                 <p>O <strong>resto do mês</strong> é um caso intermédio: o rótulo é fixo («Resto de Setembro 2026») mas a janela de entrega encolhe a cada sessão, porque começa sempre no dia seguinte. A série segue o rótulo, e o tooltip mostra a janela de cada ponto.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que mostra a tabela «Cotações por entrega»?</strong></summary>
+            <div class="faq-content">
+                <p>Cada linha é um <strong>período de entrega fixo</strong> de Espanha — um mês, um trimestre, uma estação, um ano — com a cotação da última sessão com produtos a prazo e, ao lado, a <strong>média, o mínimo e o máximo</strong> que essa mesma entrega teve nas sessões dos <strong>12 meses anteriores</strong>.</p>
+                <p>Comparar com o histórico da mesma entrega, e não com o de «o próximo mês», evita misturar meses de inverno com meses de verão. Com menos de 5 sessões nesses 12 meses aparece um traço.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -1574,6 +1600,69 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     // BLOCO 3 — EVOLUÇÃO HISTÓRICA
     // ==================================================================
+    // ==================================================================
+    // BLOCO 2B — COTAÇÕES E ÚLTIMOS 12 MESES
+    // ==================================================================
+    // Por ENTREGA e nunca por código de produto (a armadilha do GMES_M+2): a
+    // média, o mínimo e o máximo são os dessa mesma entrega nas sessões dos 12
+    // meses até à sessão mostrada — não dependem do início do período escolhido.
+    const TAB_HORIZ = ['mes', 'trimestre', 'estacao', 'ano'];
+    const INTERVALO_DIAS = 365, INTERVALO_MIN_SESSOES = 5;
+    function renderTabelaCotacoes() {
+        const alvo = document.getElementById('tabela-cotacoes');
+        if (!alvo) return;
+        const sessao = ultimaSessaoComPrazo();
+        const linhas = sessao ? linhasDaSessao(sessao, TAB_HORIZ, 'ES').slice().sort((a, b) =>
+            (TAB_HORIZ.indexOf(a.horizonte) - TAB_HORIZ.indexOf(b.horizonte))
+            || (a.ini < b.ini ? -1 : a.ini > b.ini ? 1 : 0)) : [];
+        if (!linhas.length) {
+            alvo.innerHTML = '<p class="bloco-estado">Não há nenhuma sessão com produtos a prazo dentro do período escolhido.</p>';
+            return;
+        }
+        const desde = isoDeTs(tsDeISO(sessao) - INTERVALO_DIAS * DIA_MS);
+        let poucas = 0;
+        const corpo = linhas.map(l => {
+            const e = ENTREGAS.get(l.chave);
+            const pts = e ? e.pts.filter(p => p.iso >= desde && p.iso <= sessao) : [];
+            let cel;
+            if (pts.length < INTERVALO_MIN_SESSOES) {
+                poucas++;
+                cel = `<td class="col-intervalo" title="${esc(`Só ${pts.length} ${pts.length === 1 ? 'sessão' : 'sessões'} nos 12 meses anteriores (são precisas pelo menos ${INTERVALO_MIN_SESSOES})`)}">—</td>`;
+            } else {
+                const ys = pts.map(p => p.y);
+                const media = ys.reduce((a, b) => a + b, 0) / ys.length;
+                const min = Math.min.apply(null, ys), max = Math.max.apply(null, ys);
+                const d = l.preco - media;
+                const tit = `${pts.length} sessões desde ${fmtData(pts[0].iso)} · mínimo ${fmt2(min)} · média ${fmt2(media)} · máximo ${fmt2(max)} €/MWh · `
+                          + (Math.abs(d) < 0.005 ? 'a cotação está na média'
+                              : `a cotação está ${fmt2(Math.abs(d))} €/MWh ${d > 0 ? 'acima' : 'abaixo'} da média`);
+                cel = `<td class="col-intervalo" title="${esc(tit)}"><div>${fmt2(media)}</div>`
+                    + `<div class="int-faixa">${fmt2(min)}–${fmt2(max)}</div></td>`;
+            }
+            const fonteTxt = l.fonte === 'fecho' ? 'preço de fecho' : 'preço de referência';
+            const tit = `${l.produto} · entrega ${fmtData(e ? e.ini : l.ini)} a ${fmtData(e ? e.fim : l.fim)} · ${fonteTxt}`;
+            return `<tr title="${esc(tit)}">`
+                 + `<th scope="row">${esc(l.rotulo)}</th>`
+                 + `<td class="col-secundaria col-tipo" style="text-align:left;">${esc(HORIZ_NOME[l.horizonte])}</td>`
+                 + `<td><strong>${fmt2(l.preco)}</strong></td>`
+                 + cel + `</tr>`;
+        }).join('');
+        const rodape = `Média, mínimo e máximo de cada entrega nas sessões de ${fmtData(desde)} a ${fmtData(sessao)}. `
+                     + `Passando o rato por cima, diz quantas sessões entraram e quanto a cotação está acima ou abaixo da média.`
+                     + (poucas ? ` Um traço quer dizer menos de ${INTERVALO_MIN_SESSOES} sessões nesses 12 meses — acontece com entregas que começaram há pouco a ser negociadas.` : '');
+        alvo.innerHTML =
+            `<table class="tabela-fut">`
+          + `<caption>Espanha (PVB) — sessão de ${fmtData(sessao)}</caption>`
+          + `<thead><tr>`
+          + `<th scope="col" style="text-align:left;">Entrega</th>`
+          + `<th scope="col" class="col-tipo" style="text-align:left;">Tipo</th>`
+          + `<th scope="col">Cotação<br><small>€/MWh</small></th>`
+          + `<th scope="col" style="text-align:center;">Últimos 12 meses<br><small>média · mín–máx</small></th>`
+          + `</tr></thead><tbody>${corpo}</tbody>`
+          + `<tfoot><tr><td colspan="4" style="text-align:left; white-space:normal; line-height:1.6;">${rodape}</td></tr></tfoot>`
+          + `</table>`;
+    }
+
     const EV_HORIZONTES = ['mes', 'trimestre', 'estacao', 'ano', 'resto-do-mes', 'fim-de-semana', 'dia', 'intradiario'];
 
     // Dois horizontes não podem ser lidos por entrega, e não é uma limitação
@@ -2537,6 +2626,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderTitulo();
         renderKPIs();
         setupCurva();
+        renderTabelaCotacoes();
         setupEvolucao();
         if (_spotOk) setupComparacao();
         if (_sparkOk) setupSpark();

@@ -164,6 +164,13 @@
         }
       },{
         "@type": "Question",
+        "name": "O que é a coluna 12 meses nas tabelas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Mostra a média das cotações do próprio contrato nas sessões dos últimos 12 meses e, por baixo, o mínimo e o máximo desse período — para ver se o preço de hoje está alto ou baixo face ao que esse mesmo contrato já valeu. Só contam as sessões em que o contrato foi cotado: um contrato que começou a ser negociado há três meses tem três meses de histórico. Com menos de 5 sessões (os diários, por exemplo) aparece um traço. Passando o rato por cima, diz quantas sessões entraram e quanto a cotação atual está acima ou abaixo da média."
+        }
+      },{
+        "@type": "Question",
         "name": "O que mostra a comparação Expectativa vs realizado?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -188,7 +195,8 @@
             max-width: 1200px;
             margin: 20px auto;
         }
-        @media (max-width: 900px) {
+        .futures-grid > .table-group { min-width: 0; }   /* a tabela faz scroll dentro da caixa, não a página */
+        @media (max-width: 1199px) {
             .futures-grid {
                 grid-template-columns: 1fr; /* Uma coluna em ecrãs menores */
             }
@@ -197,13 +205,19 @@
         .table-container { width: 100%; overflow-x: auto; border: 1px solid #ddd; border-radius: 8px; background-color: white; }
         .futures-table { width: 100%; border-collapse: collapse; }
         .futures-table caption { font-size: 1.4em; font-weight: bold; padding: 10px; background-color: #f8f9fa; border-bottom: 1px solid #ddd; caption-side: top; text-align: center; }
-        .futures-table th, .futures-table td { padding: 8px 12px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; font-size: 1.1em; }
-        .futures-table thead th { background-color: #343a40; color: white; position: sticky; top: 0; font-size: 1.2em; }
+        .futures-table th, .futures-table td { padding: 7px 8px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; font-size: 1em; }
+        .futures-table thead th { background-color: #343a40; color: white; position: sticky; top: 0; font-size: 1.05em; }
         .futures-table tbody tr:nth-child(even) { background-color: #f9f9f9; }
         .col-contrato { width: 25%; }
         .col-descricao { width: 50%; }
         .col-valor { width: 18%; text-align: center; font-weight: bold;}
         .col-variacao { width: 7%; text-align: center; }
+        /* Coluna dos últimos 12 meses: média e, por baixo, mínimo–máximo */
+        .col-intervalo { width: 13%; text-align: center; line-height: 1.15; }
+        .col-intervalo .int-media { font-size: 0.9em; }
+        .col-intervalo .int-faixa { font-size: 0.72em; color: #666; }
+        .col-intervalo div { white-space: nowrap; }   /* no telemóvel o intervalo partia-se a meio */
+        [data-theme="dark"] .col-intervalo .int-faixa { color: #94a3b8; }
 
         @media (max-width: 600px) {
             .futures-table th, .futures-table td { padding: 5px 6px; font-size: 0.85em; white-space: normal; }
@@ -459,11 +473,12 @@
                             <th scope="col" class="col-descricao">Descrição</th>
                             <th scope="col" class="col-valor">Valor<br><span style="font-size:0.75em; font-weight:normal;">(€/MWh)</span></th>
                             <th scope="col" class="col-variacao">Var.</th>
+                            <th scope="col" class="col-intervalo" title="Média, mínimo e máximo do próprio contrato nas sessões dos últimos 12 meses">12 meses<br><span style="font-size:0.75em; font-weight:normal;">(média · mín–máx)</span></th>
                             <th scope="col" class="col-tendencia">Tendência<br><span style="font-size:0.75em; font-weight:normal;">(30 sessões)</span></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="5" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
+                        <tr><td colspan="6" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -482,11 +497,12 @@
                             <th scope="col" class="col-descricao">Descrição</th>
                             <th scope="col" class="col-valor">Valor<br><span style="font-size:0.75em; font-weight:normal;">(€/MWh)</span></th>
                             <th scope="col" class="col-variacao">Var.</th>
+                            <th scope="col" class="col-intervalo" title="Média, mínimo e máximo do próprio contrato nas sessões dos últimos 12 meses">12 meses<br><span style="font-size:0.75em; font-weight:normal;">(média · mín–máx)</span></th>
                             <th scope="col" class="col-tendencia">Tendência<br><span style="font-size:0.75em; font-weight:normal;">(30 sessões)</span></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="5" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
+                        <tr><td colspan="6" style="text-align: center; padding: 20px;">A carregar dados...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -619,6 +635,14 @@
                 <div class="faq-content">
                     <p>É um gráfico em miniatura das <strong>últimas 30 sessões</strong> de cada contrato: verde se o preço acabou acima do início do período, vermelho se acabou abaixo. Passando o rato por cima, mostra a variação a <strong>1 semana</strong> e a <strong>1 mês</strong> e os valores mínimo e máximo do período.</p>
                     <p>A coluna <strong>Var.</strong> continua a comparar apenas com a sessão anterior.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary><strong>O que é a coluna "12 meses" nas tabelas?</strong></summary>
+                <div class="faq-content">
+                    <p>Mostra a <strong>média</strong> das cotações do próprio contrato nas sessões dos <strong>últimos 12 meses</strong> e, por baixo, o <strong>mínimo e o máximo</strong> desse período — para ver se o preço de hoje está alto ou baixo face ao que esse mesmo contrato já valeu.</p>
+                    <p>Só contam as sessões em que o contrato foi cotado: um contrato que começou a ser negociado há três meses tem três meses de histórico. Com menos de 5 sessões (os diários, por exemplo) aparece um traço. Passando o rato por cima, diz quantas sessões entraram e quanto a cotação atual está acima ou abaixo da média.</p>
                 </div>
             </details>
 
@@ -1308,6 +1332,25 @@ document.addEventListener('DOMContentLoaded', function () {
         const ys = pontos.map(p => p.y);
         return {
             pontos: pontos, ultimo: ultimo, d5: delta(5), d21: delta(21),
+            min: Math.min.apply(null, ys), max: Math.max.apply(null, ys)
+        };
+    }
+
+    // Média, mínimo e máximo de um contrato nas sessões dos últimos 12 meses
+    // (contados a partir da sessão mais recente do histórico). Só entram as
+    // sessões em que o próprio contrato foi cotado; com menos de
+    // INTERVALO_MIN_SESSOES devolve só a contagem.
+    const INTERVALO_DIAS = 365, INTERVALO_MIN_SESSOES = 5;
+    function intervaloContrato(zona, chave) {
+        const serie = _serie[zona] && _serie[zona].get(chave);
+        if (!serie || !_sessoes.length) return null;
+        const desde = _sessoes[_sessoes.length - 1] - INTERVALO_DIAS * DIA_MS;
+        const pts = serie.filter(p => p.x >= desde);
+        if (pts.length < INTERVALO_MIN_SESSOES) return { n: pts.length };
+        const ys = pts.map(p => p.y);
+        return {
+            n: pts.length, desde: pts[0].x,
+            media: ys.reduce((a, b) => a + b, 0) / ys.length,
             min: Math.min.apply(null, ys), max: Math.max.apply(null, ys)
         };
     }
@@ -2196,6 +2239,31 @@ document.addEventListener('DOMContentLoaded', function () {
             return `<td class="col-tendencia" title="${detalhes.join(' · ')}">${sparklineSVG(t.pontos)}</td>`;
         }
 
+        // Célula dos últimos 12 meses: média e, por baixo, mínimo–máximo das
+        // sessões do próprio contrato. Fica com um traço enquanto o histórico
+        // não chegar (a tabela é refeita quando chegar).
+        function renderIntervalo(zona, contrato, valorAtual) {
+            if (!zona || !_histOk) return '<td class="col-intervalo"><span class="spark-vazio">—</span></td>';
+            const r = intervaloContrato(zona, chaveContrato(contrato));
+            if (!r || r.media === undefined) {
+                const tit = r ? `Só ${r.n} ${r.n === 1 ? 'sessão' : 'sessões'} nos últimos 12 meses (são precisas pelo menos ${INTERVALO_MIN_SESSOES})`
+                              : 'Sem sessões deste contrato no histórico';
+                return `<td class="col-intervalo" title="${tit}"><span class="spark-vazio">—</span></td>`;
+            }
+            const partes = [
+                `Últimos 12 meses: ${r.n} sessões desde ${Highcharts.dateFormat('%d/%m/%Y', r.desde)}`,
+                `mínimo ${formatarValor(r.min)} · média ${formatarValor(r.media)} · máximo ${formatarValor(r.max)} €/MWh`
+            ];
+            if (typeof valorAtual === 'number' && isFinite(valorAtual)) {
+                const d = valorAtual - r.media;
+                partes.push(Math.abs(d) < 0.005 ? 'a cotação atual está na média'
+                    : `a cotação atual está ${formatarValor(Math.abs(d))} €/MWh ${d > 0 ? 'acima' : 'abaixo'} da média`);
+            }
+            return `<td class="col-intervalo" title="${partes.join(' · ')}">`
+                 + `<div class="int-media">${formatarValor(r.media)}</div>`
+                 + `<div class="int-faixa">${formatarValor(r.min)}–${formatarValor(r.max)}</div></td>`;
+        }
+
         function renderVariacao(raw) {
             const [dir, diff] = (raw || 'new:0').split(':');
             const diffNum = parseFloat(diff) || 0;
@@ -2214,7 +2282,7 @@ document.addEventListener('DOMContentLoaded', function () {
         tipos.forEach(tipo => {
             const fData = futurosAgrupados[tipo];
             if (fData.length > 0) {
-                tableHTML += `<tr class="tipo-header"><td colspan="5">${tipo}</td></tr>`;
+                tableHTML += `<tr class="tipo-header"><td colspan="6">${tipo}</td></tr>`;
                 fData.forEach(futuro => {
                     let descricao = futuro['Descricao'] || '';
                     const descricaoOriginal = descricao; // sem HTML, para o tooltip
@@ -2234,12 +2302,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     tableHTML += `<td class="col-descricao">${descricao}</td>`;
                     tableHTML += `<td class="col-valor">${futuro['Valor'] !== undefined ? formatarValor(futuro['Valor']) : ''}</td>`;
                     tableHTML += `<td class="col-variacao">${icone}</td>`;
+                    tableHTML += renderIntervalo(zona, contrato, futuro['Valor']);
                     tableHTML += renderTendencia(zona, contrato);
                     tableHTML += `</tr>`;
                 });
             }
         });
-        return tableHTML || '<tr><td colspan="5" style="text-align: center;">Não foram encontrados dados.</td></tr>';
+        return tableHTML || '<tr><td colspan="6" style="text-align: center;">Não foram encontrados dados.</td></tr>';
     }
 
     // Calcula a data do dia seguinte a uma string DD/MM/YYYY
@@ -2295,7 +2364,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => {
             console.error('Falha ao carregar ou processar os dados OMIP:', error);
-            const errorMsg = '<tr><td colspan="5" style="text-align: center; color: red;">Erro ao carregar os dados.</td></tr>';
+            const errorMsg = '<tr><td colspan="6" style="text-align: center; color: red;">Erro ao carregar os dados.</td></tr>';
             tabelaOmipPtBody.innerHTML = errorMsg;
             tabelaOmipEsBody.innerHTML = errorMsg;
             document.querySelectorAll('.badge-data-omip').forEach(el => { el.textContent = 'Erro'; });
