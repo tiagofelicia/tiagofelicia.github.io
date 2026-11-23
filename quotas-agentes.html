@@ -123,7 +123,7 @@
         "name": "Porque é que estas quotas não são as quotas dos comercializadores?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Porque um agente pode representar vários comercializadores: um comercializador mais pequeno pode estar na carteira de outro agente, e aí o seu consumo conta para esse agente. Também há empresas do mesmo grupo com agentes diferentes. As quotas desta página são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso."
+          "text": "Porque um agente pode representar vários comercializadores: um comercializador mais pequeno pode estar na carteira de outro agente, e aí o seu consumo conta para esse agente. Também há empresas do mesmo grupo com agentes diferentes. As quotas desta página são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso (ou, em «Só mercado livre», sem ele)."
         }
       },{
         "@type": "Question",
@@ -141,10 +141,10 @@
         }
       },{
         "@type": "Question",
-        "name": "O que é a EDP Serviço Universal?",
+        "name": "O que é a SU Eletricidade (EDP Serviço Universal)?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "É o nome com que a REN identifica o comercializador de último recurso, que fornece os clientes com tarifa regulada. A sua quota mostra o peso do comercializador de último recurso no consumo abastecido em mercado."
+          "text": "É o comercializador de último recurso, que fornece os clientes com tarifa regulada. A REN ainda o identifica pelo nome antigo, EDP Serviço Universal. A sua quota mostra o peso da tarifa regulada no consumo abastecido em mercado. Em Só mercado livre, fica de fora das contas e as quotas dos outros agentes passam a ser só do mercado livre."
         }
       },{
         "@type": "Question",
@@ -342,6 +342,7 @@
         }
         .aviso-box { width: 95%; margin: 0 auto 14px auto; background: #fff8e6; border: 1px solid #f1d58a; border-left: 4px solid #eda100; border-radius: 0 6px 6px 0; padding: 10px 14px; font-size: 0.87em; color: #5c4a12; line-height: 1.5; }
         .aviso-box p { margin: 0; }
+        .bloco-mercado { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
         .tabela-erc td .dif { color: #6c757d; font-size: 0.9em; }
         [data-theme="dark"] .aviso-box { background: #3b3216; border-color: #6b5a1e; border-left-color: #c98500; color: #f3e3b3; }
         [data-theme="dark"] .tabela-erc td .dif { color: #94a3b8; }
@@ -395,7 +396,15 @@
     </nav>
 
     <div class="aviso-box">
-        <p><strong>Agente não é o mesmo que marca comercial.</strong> Um agente de mercado (BRP) pode representar vários comercializadores, e há grupos com mais do que um agente. As quotas são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso.</p>
+        <p><strong>Agente não é o mesmo que marca comercial.</strong> Um agente de mercado (BRP) pode representar vários comercializadores, e há grupos com mais do que um agente. As quotas são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso (a SU Eletricidade, que fornece a tarifa regulada). Em «Só mercado livre», a SU Eletricidade fica de fora e as quotas passam a ser só do mercado livre.</p>
+    </div>
+
+    <div class="bloco-controls bloco-mercado">
+        <span class="ctrl-label">Contar</span>
+        <div class="btn-toggle" id="ctrl-mercado" role="group" aria-label="Que consumo contar">
+            <button type="button" data-v="todo" class="active">Todo o consumo</button>
+            <button type="button" data-v="livre">Só mercado livre</button>
+        </div>
     </div>
 
     <div id="estado" class="estado-carregamento">A carregar os dados…</div>
@@ -489,7 +498,7 @@
             <summary><strong>Porque é que estas quotas não são as quotas dos comercializadores?</strong></summary>
             <div class="faq-content">
                 <p>Porque um agente pode representar <strong>vários comercializadores</strong>: um comercializador mais pequeno pode estar na carteira de outro agente, e aí o seu consumo conta para esse agente. Também há empresas do mesmo grupo com agentes diferentes.</p>
-                <p>As quotas desta página são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso.</p>
+                <p>As quotas desta página são do consumo abastecido em mercado por agente, incluindo o do comercializador de último recurso (ou, em «Só mercado livre», sem ele).</p>
             </div>
         </details>
         <details class="faq-item">
@@ -507,9 +516,10 @@
             </div>
         </details>
         <details class="faq-item">
-            <summary><strong>O que é a EDP Serviço Universal?</strong></summary>
+            <summary><strong>O que é a SU Eletricidade (EDP Serviço Universal)?</strong></summary>
             <div class="faq-content">
-                <p>É o nome com que a REN identifica o <strong>comercializador de último recurso</strong>, que fornece os clientes com tarifa regulada. A sua quota mostra o peso do comercializador de último recurso no consumo abastecido em mercado.</p>
+                <p>É o <strong>comercializador de último recurso</strong>, que fornece os clientes com tarifa regulada. A REN ainda o identifica pelo nome antigo, «EDP Serviço Universal».</p>
+                <p>A sua quota mostra o peso da tarifa regulada no consumo abastecido em mercado. Em «Só mercado livre», fica de fora das contas e as quotas dos outros agentes passam a ser só do mercado livre.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -563,6 +573,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const VISTAS_VALIDAS = { quotas: ['quota', 'erc'], evol: ['quota', 'volume'], horas: ['quota', 'perfil'] };
     const VISTA_OMISSAO = { quotas: 'quota', evol: 'quota', horas: 'quota' };
     let _todos = false;
+    let MERCADO = 'todo';             // 'todo' ou 'livre' (sem o comercializador de último recurso)
+    const mercadoTxt = () => MERCADO === 'livre' ? 'mercado livre' : 'mercado';
 
     // ==================================================================
     // FORMATAÇÃO
@@ -685,7 +697,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return Promise.all(anos.map(carregarAno));
     }
     // Somas de um conjunto de dias de mercado
-    function soma(dias) {
+    function soma(dias, todos) {
+        // Em «Só mercado livre», o comercializador de último recurso sai dos totais e da lista (todos=true ignora)
+        const fora = (!todos && MERCADO === 'livre') ? COD_CUR : null;
         const porAg = new Map();
         let mwh = 0, eur = 0, n = 0;
         dias.forEach(d => {
@@ -693,6 +707,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!x) return;
             n++; mwh += x.mwh; eur += x.eur;
             x.a.forEach(([m, e], c) => {
+                if (c === fora) { mwh -= m; eur -= e; return; }
                 const s = porAg.get(c) || { mwh: 0, eur: 0, de: null, ate: null };
                 s.mwh += m; s.eur += e;
                 if (m > 0) { if (!s.de) s.de = d; s.ate = d; }
@@ -702,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return { n, mwh, eur, porAg };
     }
     const ordenados = t => [...t.porAg].filter(([, s]) => s.mwh > 0).sort((a, b) => b[1].mwh - a[1].mwh);
-    const DESTAQUE = () => META.agentes.filter(a => a.cor).sort((a, b) => a.cor - b.cor).map(a => a.codigo);
+    const DESTAQUE = () => META.agentes.filter(a => a.cor && !(MERCADO === 'livre' && a.codigo === COD_CUR)).sort((a, b) => a.cor - b.cor).map(a => a.codigo);
 
     const DIARIO_ATE_DIAS = 92;
     function baldes() {
@@ -721,21 +736,25 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     function renderKPIs() {
         const el = document.getElementById('qa-kpis');
-        const t = soma(diasDe(periodo.inicio, periodo.fim));
+        const dias = diasDe(periodo.inicio, periodo.fim);
+        const t = soma(dias);
         if (!t.n || !t.mwh) { el.innerHTML = '<div class="bloco-vazio" style="grid-column:1/-1">Sem dados neste período.</div>'; return; }
         const lista = ordenados(t);
         const q = s => 100 * s.mwh / t.mwh;
         const cr3 = lista.slice(0, 3).reduce((a, [, s]) => a + q(s), 0);
         const hhi = lista.reduce((a, [, s]) => a + q(s) ** 2, 0);
         const acima1 = lista.filter(([, s]) => q(s) >= 1).length;
-        const cur = t.porAg.get(COD_CUR);
+        // A quota do último recurso é sempre sobre todo o consumo (em «Só mercado livre» está fora das contas)
+        const tt = MERCADO === 'livre' ? soma(dias, true) : t;
+        const cur = tt.porAg.get(COD_CUR);
         const card = (label, valor, sub) => `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value">${valor}</div>${sub ? `<div class="kpi-sub">${sub}</div>` : ''}</div>`;
-        let html = card('Consumo do mercado', fmtEn(t.mwh), `${t.n} dias · ERC médio ${fmtMWh(t.eur / t.mwh)}`);
+        let html = card(MERCADO === 'livre' ? 'Consumo do mercado livre' : 'Consumo do mercado', fmtEn(t.mwh), `${t.n} dias · ERC médio ${fmtMWh(t.eur / t.mwh)}`);
         html += card('Agentes com consumo', fmt0(lista.length), `${acima1} com mais de 1 %`);
         html += card('Maior agente', `${fmtPct(q(lista[0][1]))}`, esc(nomeCurto(lista[0][0])));
         html += card('Os 3 maiores juntos', fmtPct(cr3), lista.slice(0, 3).map(([c]) => esc(nomeCurto(c))).join(', '));
         html += card('Concentração (IHH)', fmt0(hhi), 'soma dos quadrados das quotas: de 0 a 10 000 (um só agente)');
-        html += card('Último recurso', cur ? fmtPct(q(cur)) : '--', 'EDP Serviço Universal');
+        html += card('Último recurso', cur ? fmtPct(100 * cur.mwh / tt.mwh) : '--',
+                     MERCADO === 'livre' ? 'SU Eletricidade · do consumo total, fora das contas' : 'SU Eletricidade (tarifa regulada)');
         el.innerHTML = html;
     }
 
@@ -759,15 +778,17 @@ document.addEventListener('DOMContentLoaded', function () {
             titulo = `€/MWh face ao mercado (${fmt2(ercNac)} €/MWh)`; sufixo = ' €/MWh';
             plotLines = [{ value: 0, color: c.txt, width: 1, zIndex: 5 }];
             const maior = sel[0], menor = sel[sel.length - 1];
-            resumo.innerHTML = sel.length > 1 ? `Entre os agentes com pelo menos 0,5 % do consumo, o ERC médio foi de <strong>${fmtMWh(menor[1].eur / menor[1].mwh)}</strong> (${esc(nomeCurto(menor[0]))}) a <strong>${fmtMWh(maior[1].eur / maior[1].mwh)}</strong> (${esc(nomeCurto(maior[0]))}), contra ${fmtMWh(ercNac)} no conjunto do mercado.` : '';
+            resumo.innerHTML = sel.length > 1 ? `Entre os agentes com pelo menos 0,5 % do consumo, o ERC médio foi de <strong>${fmtMWh(menor[1].eur / menor[1].mwh)}</strong> (${esc(nomeCurto(menor[0]))}) a <strong>${fmtMWh(maior[1].eur / maior[1].mwh)}</strong> (${esc(nomeCurto(maior[0]))}), contra ${fmtMWh(ercNac)} no conjunto do ${mercadoTxt()}.` : '';
             nota.textContent = 'ERC médio = ERC imputado ao agente ÷ consumo do agente; as barras são a diferença face à média do mercado. Só os agentes com pelo menos 0,5 % do consumo no período. Quem tem mais consumo nas horas de sol paga mais (ver «Perfil de consumo», abaixo).';
         } else {
             pontos = lista.map(([cod, s]) => ({ name: nomeCurto(cod), y: 100 * s.mwh / t.mwh, color: corAgente(cod, c), cod }));
             titulo = '% do consumo'; sufixo = ' %';
             const [c1, s1] = lista[0];
-            resumo.innerHTML = `No período, <strong>${esc(nomeCurto(c1))}</strong> abasteceu <strong>${fmtPct(100 * s1.mwh / t.mwh)}</strong> do consumo do mercado (${fmtEn(s1.mwh)}). ` +
+            resumo.innerHTML = `No período, <strong>${esc(nomeCurto(c1))}</strong> abasteceu <strong>${fmtPct(100 * s1.mwh / t.mwh)}</strong> do consumo do ${mercadoTxt()} (${fmtEn(s1.mwh)}). ` +
                 `${lista.length} agentes tiveram consumo; os ${Math.min(5, lista.length)} maiores somaram ${fmtPct(lista.slice(0, 5).reduce((a, [, s]) => a + 100 * s.mwh / t.mwh, 0))}.`;
-            nota.textContent = 'Quota = consumo do agente ÷ consumo do mercado nos mesmos dias de mercado. Os sete maiores da série têm sempre a mesma cor; os restantes, cinzento.';
+            nota.textContent = `Quota = consumo do agente ÷ consumo do ${mercadoTxt()} nos mesmos dias de mercado.` +
+                (MERCADO === 'livre' ? ' Sem a SU Eletricidade (tarifa regulada).' : '') +
+                ' Os sete maiores da série têm sempre a mesma cor; os restantes, cinzento.';
         }
         const alvo = document.getElementById(id);
         alvo.style.height = Math.max(260, pontos.length * 24 + 100) + 'px';
@@ -835,7 +856,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const mwh = pct ? p.y * t.mwh / 100 : p.y * u.div;
                     s += `<br><span style="color:${p.color}">●</span> ${esc(p.series.name)}: ${fmtPct(pct ? p.y : 100 * mwh / t.mwh)} · ${fmtEn(mwh)}`;
                 });
-                return s + `<br><b>Mercado: ${fmtEn(t.mwh)}</b>`;
+                return s + `<br><b>${MERCADO === 'livre' ? 'Mercado livre' : 'Mercado'}: ${fmtEn(t.mwh)}</b>`;
             } }),
             series
         }));
@@ -867,6 +888,7 @@ document.addEventListener('DOMContentLoaded', function () {
             p.nac.forEach((v, h) => { nac[h] += v || 0; });
             p.a.forEach((v, cod) => { const a = por.get(cod) || Array(24).fill(0); v.forEach((x, h) => { a[h] += x || 0; }); por.set(cod, a); });
         });
+        if (MERCADO === 'livre' && por.has(COD_CUR)) { por.get(COD_CUR).forEach((v, h) => { nac[h] -= v; }); por.delete(COD_CUR); }
         const dest = DESTAQUE().filter(cod => por.has(cod));
         const cats = Array.from({ length: 24 }, (_, h) => hora(h));
         let series, titulo;
@@ -874,12 +896,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const totN = nac.reduce((a, b) => a + b, 0);
             series = dest.map(cod => { const a = por.get(cod), tot = a.reduce((x, y) => x + y, 0);
                 return { name: nomeCurto(cod), color: corAgente(cod, c), data: a.map(v => tot ? 100 * v / tot : null) }; });
-            series.push({ name: 'Mercado', color: c.txt, dashStyle: 'ShortDash', lineWidth: 2.5, data: nac.map(v => 100 * v / totN), zIndex: 5 });
+            series.push({ name: MERCADO === 'livre' ? 'Mercado livre' : 'Mercado', color: c.txt, dashStyle: 'ShortDash', lineWidth: 2.5, data: nac.map(v => 100 * v / totN), zIndex: 5 });
             titulo = '% do consumo do dia';
             // Quem tem mais consumo nas horas de sol (10h–17h) face ao mercado
             const sol = a => { const tot = a.reduce((x, y) => x + y, 0); return tot ? 100 * a.slice(10, 17).reduce((x, y) => x + y, 0) / tot : null; };
             const sN = sol(nac), lista = dest.map(cod => ({ cod, s: sol(por.get(cod)) })).sort((a, b) => b.s - a.s);
-            resumo.innerHTML = `Entre as 10h e as 17h fica <strong>${fmt1(sN)} %</strong> do consumo do mercado. Entre os sete maiores agentes, vai de ${fmt1(lista[lista.length - 1].s)} % (${esc(nomeCurto(lista[lista.length - 1].cod))}) a ${fmt1(lista[0].s)} % (${esc(nomeCurto(lista[0].cod))}).`;
+            resumo.innerHTML = `Entre as 10h e as 17h fica <strong>${fmt1(sN)} %</strong> do consumo do ${mercadoTxt()}. Entre os sete maiores agentes, vai de ${fmt1(lista[lista.length - 1].s)} % (${esc(nomeCurto(lista[lista.length - 1].cod))}) a ${fmt1(lista[0].s)} % (${esc(nomeCurto(lista[0].cod))}).`;
         } else {
             series = dest.map(cod => ({ name: nomeCurto(cod), color: corAgente(cod, c), data: por.get(cod).map((v, h) => nac[h] ? 100 * v / nac[h] : null) }));
             titulo = '% do consumo da hora';
@@ -969,7 +991,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const i = iso(ler('inicio')), f = iso(ler('fim'));
         const vistas = {};
         Object.keys(VISTA).forEach(k => { const v = ler(k); if (v && VISTAS_VALIDAS[k].includes(v)) vistas[k] = v; });
-        return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null, vistas };
+        return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null, vistas, livre: ler('mercado') === 'livre' };
     }
     function paramsAtuais(sempreDatas) {
         const p = new URLSearchParams();
@@ -978,6 +1000,7 @@ document.addEventListener('DOMContentLoaded', function () {
             p.set('inicio', periodo.inicio); p.set('fim', periodo.fim);
         }
         Object.keys(VISTA).forEach(k => { if (VISTA[k] !== VISTA_OMISSAO[k]) p.set(k, VISTA[k]); });
+        if (MERCADO === 'livre') p.set('mercado', 'livre');
         return p;
     }
     function atualizarURL() {
@@ -996,7 +1019,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     async function partilharVista() {
         const url = `${window.location.origin}${window.location.pathname}?${paramsAtuais(true).toString()}`;
-        const resumo = `👥 Quotas por agente de mercado — de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}`;
+        const resumo = `👥 Quotas por agente de mercado${MERCADO === 'livre' ? ' (só mercado livre)' : ''} — de ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)}`;
         const texto = `${resumo}\n${url}`;
         if (navigator.share) {
             try { await navigator.share({ title: 'Quotas por Agente — Tiago Felícia', text: resumo, url }); return; }
@@ -1061,6 +1084,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const RENDER = { quotas: renderQuotas, evol: renderEvol, horas: renderHoras };
     Object.keys(VISTA).forEach(k => ligarToggle(VISTA_ID[k], v => { VISTA[k] = v; RENDER[k](); atualizarURL(); }));
     document.getElementById('btn-agentes-todos').addEventListener('click', () => { _todos = !_todos; renderQuotas(); });
+    ligarToggle('ctrl-mercado', v => { MERCADO = v; if (META && periodo.inicio && DIA.size) renderPeriodo(); atualizarURL(); });
     document.addEventListener('themeChanged', () => { if (META && periodo.inicio && DIA.size) renderPeriodo(); });
 
     document.querySelectorAll('.periodo-presets .hh-mode-btn').forEach(btn => {
@@ -1098,12 +1122,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const URL_INICIAL = lerURL();
     Object.entries(URL_INICIAL.vistas).forEach(([k, v]) => { VISTA[k] = v; ativarToggle(VISTA_ID[k], v); });
+    if (URL_INICIAL.livre) { MERCADO = 'livre'; ativarToggle('ctrl-mercado', 'livre'); }
 
     fetchDados(URL_META)
         .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(j => {
             META = j;
             (META.agentes || []).forEach(a => AG.set(a.codigo, a));
+            // A REN ainda dá ao comercializador de último recurso o nome antigo: mostra-se o atual
+            const cur = AG.get(COD_CUR);
+            if (cur) AG.set(COD_CUR, Object.assign({}, cur, { nome: 'SU Eletricidade (EDP Serviço Universal na REN)', curto: 'SU Eletricidade' }));
             MIN_DIA = META.de; FIM_DIA = META.ate;
             document.getElementById('estado').hidden = true;
             document.getElementById('badge-inicio').textContent = fmtData(META.de);
