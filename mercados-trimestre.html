@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Mercados de Energia por Trimestre: OMIE PT, MIBGAS, CO₂ e Futuros | Tiago Felícia</title>
+    <meta name="description" content="Os preços médios de cada trimestre nos mercados de energia — eletricidade (OMIE PT e ES, ERC e futuros OMIP), gás natural (MIBGAS PT e ES e futuros) e CO₂ — com a variação face ao trimestre anterior e ao mesmo trimestre do ano anterior. Atualizado todos os dias." />
+    <meta name="keywords" content="mercados de energia, preço da eletricidade por trimestre, OMIE PT, OMIP, MIBGAS, preço do gás, CO2, licenças de emissão, ERC, futuros, variação trimestral, variação homóloga, Tiago Felícia" />
+    <meta name="author" content="Tiago Felícia" />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/mercados-trimestre" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/mercados-trimestre" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/mercados-trimestre" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Mercados de energia por trimestre" />
+    <meta property="og:description" content="OMIE PT, ERC, OMIP, MIBGAS e CO₂: a média de cada trimestre e a variação face ao trimestre anterior e ao mesmo trimestre do ano anterior." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/mercados-trimestre" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Mercados de energia por trimestre — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Tiago Felícia" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+    <meta name="twitter:title" content="Mercados de energia por trimestre" />
+    <meta name="twitter:description" content="OMIE PT, ERC, OMIP, MIBGAS e CO₂: a média de cada trimestre e a variação face ao anterior e ao do ano anterior." />
+    <meta name="twitter:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+        gtag('consent', 'update', { 'analytics_storage': 'granted' });
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Mercados de energia por trimestre: OMIE PT e ES, ERC, futuros OMIP, MIBGAS PT e ES e futuros, CO2",
+      "description": "Os preços médios de cada trimestre nos mercados de energia ibéricos e europeus, desde 2010: o OMIE PT e o OMIE ES do mercado diário, as horas com o OMIE PT negativo, o ERC da REN pesado pelo consumo, os futuros OMIP PT do trimestre e do ano seguintes, os índices MIBGAS PT e ES do gás natural, os futuros MIBGAS ES do trimestre e do ano seguintes e o preço das licenças de emissão de CO2 (EUA) nos leilões da EEX.",
+      "url": "https://www.tiagofelicia.pt/mercados-trimestre",
+      "inLanguage": "pt-PT",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "keywords": ["OMIE PT", "OMIP", "MIBGAS", "CO2", "EUA", "ERC", "futuros", "preço da eletricidade", "preço do gás natural", "variação trimestral", "variação homóloga"],
+      "spatialCoverage": { "@type": "Place", "name": "Portugal, Espanha e União Europeia" },
+      "temporalCoverage": "2010-01-01/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "OMIE PT e OMIE ES, média do trimestre", "unitText": "EUR/MWh" },
+        { "@type": "PropertyValue", "name": "Horas com o OMIE PT negativo", "unitText": "horas" },
+        { "@type": "PropertyValue", "name": "ERC pesado pelo consumo", "unitText": "EUR/MWh" },
+        { "@type": "PropertyValue", "name": "Futuros OMIP PT do trimestre e do ano seguintes", "unitText": "EUR/MWh" },
+        { "@type": "PropertyValue", "name": "MIBGAS PT e MIBGAS ES e futuros MIBGAS ES", "unitText": "EUR/MWh" },
+        { "@type": "PropertyValue", "name": "Licenças de emissão de CO2 (EUA), leilões da EEX", "unitText": "EUR/t" }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Mercados de energia por trimestre", "contentUrl": "https://dados.tiagofelicia.pt/data/agregados/mercados_trimestral.csv" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Mercados de energia por trimestre", "item": "https://www.tiagofelicia.pt/mercados-trimestre" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "O que mostra esta página?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A média de cada trimestre nos mercados de energia que mais pesam no preço da eletricidade e do gás natural em Portugal: o OMIE PT e o OMIE ES (o mercado diário de eletricidade), o ERC (os custos de regulação da REN), os futuros OMIP do trimestre e do ano seguintes, os índices MIBGAS PT e ES do gás natural e os seus futuros, e o preço das licenças de emissão de CO2. Para cada um, a variação face ao trimestre anterior e face ao mesmo trimestre do ano anterior."
+        }
+      },{
+        "@type": "Question",
+        "name": "Como são calculadas as médias?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O OMIE PT e o OMIE ES são a média simples de todos os quartos de hora do trimestre, com os dias em hora de Portugal. O ERC é pesado pelo consumo: o total de encargos a dividir pelo consumo, por dia de mercado, como a REN calcula. O MIBGAS é a média simples dos índices diários. O CO2 é o preço médio dos leilões de licenças (EUA) da EEX, pesado pelo volume de cada leilão. Os futuros são a média dos fechos diários durante o trimestre."
+        }
+      },{
+        "@type": "Question",
+        "name": "O que são os futuros do trimestre e do ano seguintes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "São os preços a que se negociou, durante o trimestre, a energia a entregar no trimestre seguinte e no ano civil seguinte: no OMIP para a eletricidade em Portugal e no MIBGAS para o gás em Espanha. Mostram o que o mercado esperava nesse momento, não uma previsão própria. O bloco Previsto e real compara o futuro do trimestre seguinte com o que o mercado diário veio a dar."
+        }
+      },{
+        "@type": "Question",
+        "name": "Porque é que os valores do trimestre corrente mudam todos os dias?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Porque o trimestre ainda não acabou: as médias do trimestre corrente usam só os dias já publicados e entram nelas os dias novos à medida que saem. As variações comparam essa média parcial com a média do trimestre anterior completo. O ERC chega com alguns dias de atraso face ao OMIE PT, e a REN corrige dias já publicados."
+        }
+      },{
+        "@type": "Question",
+        "name": "De onde vêm os dados e como os posso descarregar?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O OMIE PT e o OMIE ES vêm do OMIE, os futuros de eletricidade do OMIP, o ERC da REN, o gás e os seus futuros do MIBGAS e o CO2 dos leilões da EEX. As médias por trimestre estão num único ficheiro, atualizado todos os dias, em dados.tiagofelicia.pt, com licença CC BY 4.0."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header h1 .h1-sub { font-size: 0.6em; font-weight: 400; color: #5c636a; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #5c636a; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 10px 0 0 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos --- */
+        .bloco-controlos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; margin: 0 0 10px 0; }
+        .grupo-ctrl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .ctrl-label { font-size: 0.75em; color: #5c636a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; flex-wrap: wrap; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.88em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .sel-tri-box { display: flex; align-items: center; gap: 6px; }
+        .sel-tri-box select { font-size: 0.95em; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #1e293b; min-width: 0; }
+        .btn-seta { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 6px 10px; cursor: pointer; color: #475569; font-size: 0.9em; }
+        .btn-seta:hover:not(:disabled) { background: #f1f5f9; }
+        .btn-seta:disabled { opacity: 0.4; cursor: default; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e, abaixo de 768px,
+           position: sticky !important); um <nav> dentro do <main> apanha-as — por isso são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #5c636a; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 420px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #5c636a; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .nota-bloco { font-size: 0.8em; color: #5c636a; margin: 6px 0 0; line-height: 1.5; }
+        .resumo-frase { font-size: 1em; color: #2c3e50; line-height: 1.6; margin: 0 0 14px 0; }
+
+        /* --- Tabelas --- */
+        .tabela-box { width: 100%; margin: 10px 0 0; overflow-x: auto; }
+        .tabela-mt { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-mt caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-mt th, .tabela-mt td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-mt thead th { background: #f1f3f5; font-weight: 600; vertical-align: bottom; }
+        .tabela-mt th[scope="row"] { text-align: left; font-weight: 600; white-space: normal; min-width: 11em; }
+        .tabela-mt th[scope="row"] .unid { font-weight: 400; color: #5c636a; font-size: 0.9em; }
+        .tabela-mt tr.grupo th { text-align: left; background: #f8fafc; color: #334155; font-size: 0.92em; text-transform: uppercase; letter-spacing: 0.03em; }
+        .tabela-mt td.sel { font-weight: 700; background: #eef6ff; }
+        .tabela-mt td .sub { display: block; font-size: 0.78em; font-weight: 400; color: #5c636a; }
+        .tabela-mt td.var { color: #334155; }
+        .tabela-mt thead .sub { display: block; font-weight: 400; font-size: 0.85em; color: #5c636a; }
+        .tabela-mt tfoot td { text-align: left; white-space: normal; font-size: 0.92em; color: #5c636a; background: #f8fafc; line-height: 1.5; }
+        .tabela-mt tr.atual td, .tabela-mt tr.atual th { background: #eef6ff; }
+        .tabela-mt tr.parcial th, .tabela-mt tr.parcial td { font-style: italic; }
+        .btn-mais { margin-top: 8px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 5px; padding: 6px 12px; font-size: 0.85em; cursor: pointer; }
+        .btn-mais:hover { background: #e2e8f0; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box ul { margin: 0 0 8px 0; padding-left: 20px; }
+        .estado-carregamento { text-align: center; color: #5c636a; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; overflow-wrap: anywhere; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 360px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.82em; }
+            .tabela-mt { font-size: 0.8em; }
+            .tabela-mt th, .tabela-mt td { padding: 4px 5px; }
+            .tabela-mt thead th { white-space: normal; }
+            .tabela-mt th[scope="row"] { min-width: 7em; }
+            .tabela-mt .col-opcional { display: none; }
+            .sel-tri-box { flex-wrap: nowrap; }
+            .sel-tri-box .ctrl-label { display: none; }
+        }
+
+        /* --- Modo escuro --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .cta-simulador h2, [data-theme="dark"] .resumo-frase { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .painel-header h1 .h1-sub, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .ctrl-label, [data-theme="dark"] .nota-bloco { color: #94a3b8; }
+        [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .sel-tri-box select, [data-theme="dark"] .btn-seta { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .btn-seta:hover:not(:disabled) { background: #334155; }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-mt { background: #1e293b; }
+        [data-theme="dark"] .tabela-mt caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-mt th, [data-theme="dark"] .tabela-mt td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-mt thead th { background: #0f172a; }
+        [data-theme="dark"] .tabela-mt tr.grupo th { background: #16202e; color: #cbd5e1; }
+        [data-theme="dark"] .tabela-mt td.sel, [data-theme="dark"] .tabela-mt tr.atual td, [data-theme="dark"] .tabela-mt tr.atual th { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-mt td .sub, [data-theme="dark"] .tabela-mt thead .sub,
+        [data-theme="dark"] .tabela-mt th[scope="row"] .unid { color: #94a3b8; }
+        [data-theme="dark"] .tabela-mt td.var { color: #cbd5e1; }
+        [data-theme="dark"] .tabela-mt tfoot td { background: #16202e; color: #94a3b8; }
+        [data-theme="dark"] .btn-mais { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .btn-mais:hover { background: #334155; }
+
+        @page { size: A4 portrait; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav, .bloco-controlos,
+            .link-section, #btn-voltar-topo, .cta-simulador, .btn-mais,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li>Mercados</li>
+        <li aria-current="page">Mercados por trimestre</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <h1>Mercados de energia por trimestre <span class="h1-sub">(eletricidade, gás natural e CO₂)</span></h1>
+        <p>O preço médio de cada trimestre nos mercados que mais pesam na eletricidade e no gás em Portugal — <strong>OMIE PT</strong>, <strong>ERC</strong>, futuros <strong>OMIP</strong>, <strong>MIBGAS</strong> e <strong>CO₂</strong> — e quanto variou face ao trimestre anterior e ao mesmo trimestre do ano anterior. Valores sem IVA, atualizados todos os dias.</p>
+        <p class="badge-global" id="badge"></p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-quadro" class="mini-nav-chip">📋 Quadro do trimestre</a>
+        <a href="#bloco-previsto" class="mini-nav-chip">🔮 Previsto e real</a>
+        <a href="#bloco-evolucao" class="mini-nav-chip">📈 Evolução</a>
+        <a href="#bloco-historico" class="mini-nav-chip">🗂️ Todos os trimestres</a>
+        <a href="#bloco-metodo" class="mini-nav-chip">🔎 Fontes e método</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados…</div>
+
+    <div id="conteudo" hidden>
+        <!-- ====================== QUADRO DO TRIMESTRE ====================== -->
+        <div class="grafico-box" id="bloco-quadro">
+            <h2>Quadro do trimestre</h2>
+            <div class="bloco-controlos">
+                <div class="grupo-ctrl sel-tri-box">
+                    <label class="ctrl-label" for="sel-tri">Trimestre</label>
+                    <button type="button" class="btn-seta" id="tri-ant" aria-label="Trimestre anterior">◀</button>
+                    <select id="sel-tri" aria-label="Trimestre"></select>
+                    <button type="button" class="btn-seta" id="tri-seg" aria-label="Trimestre seguinte">▶</button>
+                </div>
+            </div>
+            <p class="resumo-frase" id="resumo-frase"></p>
+            <div class="tabela-box" id="tabela-quadro"></div>
+            <p class="nota-bloco" id="nota-quadro"></p>
+        </div>
+
+        <!-- ====================== PREVISTO E REAL ====================== -->
+        <div class="grafico-box" id="bloco-previsto">
+            <h2>Previsto e real: o que o mercado a prazo esperava</h2>
+            <p class="grafico-intro">As colunas são o preço médio de cada trimestre no mercado diário; a linha é o preço a que o <strong>mesmo trimestre</strong> se negociava no mercado a prazo, em média, durante o trimestre anterior. Quando a coluna fica acima da linha, o trimestre saiu mais caro do que o mercado esperava.</p>
+            <div class="bloco-controlos">
+                <div class="grupo-ctrl">
+                    <span class="ctrl-label">Mercado</span>
+                    <div class="btn-toggle" id="ctrl-previsto" role="group" aria-label="Mercado">
+                        <button type="button" data-v="eletricidade" class="active">Eletricidade (OMIE PT e OMIP)</button>
+                        <button type="button" data-v="gas">Gás (MIBGAS ES)</button>
+                    </div>
+                </div>
+            </div>
+            <div id="grafico-previsto" class="grafico"></div>
+            <p class="resumo-frase" id="resumo-previsto" style="margin-top:10px;"></p>
+            <p class="nota-bloco" id="nota-previsto"></p>
+        </div>
+
+        <!-- ====================== EVOLUÇÃO ====================== -->
+        <div class="grafico-box" id="bloco-evolucao">
+            <h2>Evolução por trimestre</h2>
+            <p class="grafico-intro">A média de cada trimestre desde o início de cada série. O trimestre escolhido no quadro aparece destacado.</p>
+            <div class="bloco-controlos">
+                <div class="grupo-ctrl">
+                    <span class="ctrl-label">Mostrar</span>
+                    <div class="btn-toggle" id="ctrl-evolucao" role="group" aria-label="Indicador">
+                        <button type="button" data-v="omie" class="active">OMIE PT e ES</button>
+                        <button type="button" data-v="erc">ERC</button>
+                        <button type="button" data-v="neg">Horas negativas</button>
+                        <button type="button" data-v="gas">MIBGAS PT e ES</button>
+                        <button type="button" data-v="co2">CO₂</button>
+                    </div>
+                </div>
+            </div>
+            <div id="grafico-evolucao" class="grafico"></div>
+            <p class="nota-bloco" id="nota-evolucao"></p>
+        </div>
+
+        <!-- ====================== TODOS OS TRIMESTRES ====================== -->
+        <div class="grafico-box" id="bloco-historico">
+            <h2>Todos os trimestres</h2>
+            <p class="grafico-intro">As médias de cada trimestre, do mais recente para o mais antigo. A tabela completa, com os futuros e as datas de cada média, está no ficheiro de dados (ver «Fontes e método»).</p>
+            <div class="tabela-box" id="tabela-historico"></div>
+            <button type="button" id="btn-historico" class="btn-mais" hidden></button>
+        </div>
+
+        <!-- ====================== MÉTODO E FONTES ====================== -->
+        <div class="grafico-box" id="bloco-metodo">
+            <h2>Fontes e método</h2>
+            <div class="metodo-box">
+                <p><strong>Eletricidade — mercado diário:</strong> o <strong>OMIE PT</strong> e o <strong>OMIE ES</strong> são a média simples de todos os quartos de hora do trimestre (até 30/09/2025 o mercado era horário), com os dias em hora de Portugal. As <strong>horas negativas</strong> são as horas com o preço médio de Portugal abaixo de zero. O <strong>ERC</strong> (custos de regulação da REN) é pesado pelo consumo — o total de encargos a dividir pelo consumo, por dia de mercado, como a REN calcula — e só existe desde 14/03/2024.</p>
+                <p><strong>Futuros:</strong> o <strong>OMIP</strong> (eletricidade, Portugal, carga base) e o <strong>MIBGAS</strong> (gás, Espanha — Portugal não tem futuros a prazo) são a média dos fechos diários, durante o trimestre, do contrato do <strong>trimestre seguinte</strong> e do contrato do <strong>ano seguinte</strong>. Os do OMIP só existem desde 20/10/2025 e os do MIBGAS desde 2018.</p>
+                <p><strong>Gás natural:</strong> os índices de referência <strong>MIBGAS PT</strong> e <strong>MIBGAS ES</strong> (os que os contratos indexados usam), média simples dos dias. O MIBGAS PT existe desde 2021.</p>
+                <p><strong>CO₂:</strong> o preço das licenças de emissão da União Europeia (EUA) nos leilões da EEX, pesado pelo volume de cada leilão, desde 2020. É o preço do leilão, não o dos futuros do mercado secundário.</p>
+                <p>As variações comparam médias: no trimestre corrente, a média dos dias já publicados com a do trimestre anterior completo. Quando uma média não cobre o trimestre todo (o trimestre corrente, ou o início de uma série), o quadro diz que dias entraram.</p>
+                <p id="metodo-dados"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>Ver cada mercado em detalhe</h2>
+        <p>Esta página resume os trimestres. O detalhe de cada mercado, dia a dia e hora a hora, está nestas páginas.</p>
+        <div class="botoes">
+            <a href="omie" class="button-link">⚡ OMIE - Histórico</a>
+            <a href="omip" class="button-link">🔮 OMIP - Futuros</a>
+            <a href="erc" class="button-link">⚖️ ERC - Custos de Regulação</a>
+            <a href="mibgas" class="button-link">🔥 MIBGAS - Gás Natural</a>
+            <a href="mibgas-futuros" class="button-link">📈 MIBGAS - Futuros</a>
+        </div>
+    </div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/mercados-trimestre</p></div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que mostra esta página?</strong></summary>
+            <div class="faq-content">
+                <p>A <strong>média de cada trimestre</strong> nos mercados de energia que mais pesam no preço da eletricidade e do gás natural em Portugal: o OMIE PT e o OMIE ES (o mercado diário de eletricidade), o ERC (os custos de regulação da REN), os futuros OMIP do trimestre e do ano seguintes, os índices MIBGAS PT e ES do gás natural e os seus futuros, e o preço das licenças de emissão de CO₂.</p>
+                <p>Para cada um, a variação face ao <strong>trimestre anterior</strong> e face ao <strong>mesmo trimestre do ano anterior</strong> (a variação homóloga), que tira o efeito das estações do ano.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Como são calculadas as médias?</strong></summary>
+            <div class="faq-content">
+                <p>O <strong>OMIE PT</strong> e o <strong>OMIE ES</strong> são a média simples de todos os quartos de hora do trimestre, com os dias em hora de Portugal. O <strong>ERC</strong> é pesado pelo consumo: o total de encargos a dividir pelo consumo, por dia de mercado, como a REN calcula. O <strong>MIBGAS</strong> é a média simples dos índices diários. O <strong>CO₂</strong> é o preço médio dos leilões de licenças (EUA) da EEX, pesado pelo volume de cada leilão. Os <strong>futuros</strong> são a média dos fechos diários durante o trimestre.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que são os futuros do trimestre e do ano seguintes?</strong></summary>
+            <div class="faq-content">
+                <p>São os preços a que se negociou, durante o trimestre, a energia a entregar no <strong>trimestre seguinte</strong> e no <strong>ano civil seguinte</strong>: no OMIP, para a eletricidade em Portugal, e no MIBGAS, para o gás em Espanha. Mostram o que o mercado esperava nesse momento — não são uma previsão própria.</p>
+                <p>O bloco <a href="#bloco-previsto">«Previsto e real»</a> compara o futuro do trimestre seguinte com o que o mercado diário veio a dar.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que os valores do trimestre corrente mudam todos os dias?</strong></summary>
+            <div class="faq-content">
+                <p>Porque o trimestre ainda não acabou: as médias do trimestre corrente usam só os dias já publicados, e os dias novos entram à medida que saem. As variações comparam essa média parcial com a média do trimestre anterior completo.</p>
+                <p>O ERC chega com alguns dias de atraso face ao OMIE PT, e a REN corrige dias já publicados; por isso o ERC do trimestre corrente pode cobrir menos dias do que o resto.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm os dados e como os posso descarregar?</strong></summary>
+            <div class="faq-content">
+                <p>O OMIE PT e o OMIE ES vêm do <strong>OMIE</strong>, os futuros de eletricidade do <strong>OMIP</strong>, o ERC da <strong>REN</strong>, o gás e os seus futuros do <strong>MIBGAS</strong> e o CO₂ dos leilões da <strong>EEX</strong>. As médias por trimestre estão num único ficheiro, atualizado todos os dias, em <a href="https://dados.tiagofelicia.pt/data/agregados/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, com licença CC BY 4.0.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    try {
+        Highcharts.setOptions({ lang: {
+            decimalPoint: ',', thousandsSep: ' ',
+            months: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+            shortMonths: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
+            weekdays: ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'],
+            contextButtonTitle: 'Menu do gráfico', viewFullscreen: 'Ver em ecrã inteiro', exitFullscreen: 'Sair do ecrã inteiro',
+            printChart: 'Imprimir', downloadPNG: 'Descarregar PNG', downloadJPEG: 'Descarregar JPEG', downloadPDF: 'Descarregar PDF',
+            downloadSVG: 'Descarregar SVG', downloadCSV: 'Descarregar CSV', downloadXLS: 'Descarregar XLS', viewData: 'Ver a tabela de dados',
+            hideData: 'Esconder a tabela de dados'
+        } });
+    } catch (_) {}
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    const URL_DADOS = 'agregados/mercados_trimestral.csv';
+    const URL_PASTA = 'https://dados.tiagofelicia.pt/data/agregados/';
+    // Indicadores, pela ordem do quadro. tol = dias de folga antes de dizer que a média não cobre o
+    // trimestre todo (os futuros não fecham nos últimos dias; os leilões de CO2 param no fim de dezembro).
+    const GRUPOS = [
+        { nome: 'Eletricidade — mercado diário', ind: [
+            { id: 'omie_pt', nome: 'OMIE PT', un: '€/MWh', tol: 2 },
+            { id: 'omie_es', nome: 'OMIE ES', un: '€/MWh', tol: 2 },
+            { id: 'omie_pt_horas_negativas', nome: 'Horas com o OMIE PT negativo', un: 'horas', tol: 2, inteiro: true },
+            { id: 'erc', nome: 'ERC (custos de regulação)', un: '€/MWh', tol: 2 } ] },
+        { nome: 'Eletricidade — futuros OMIP (Portugal)', ind: [
+            { id: 'omip_pt_trimestre', nome: 'Trimestre seguinte', un: '€/MWh', tol: 7 },
+            { id: 'omip_pt_ano', nome: 'Ano seguinte', un: '€/MWh', tol: 7 } ] },
+        { nome: 'Gás natural', ind: [
+            { id: 'mibgas_pt', nome: 'MIBGAS PT', un: '€/MWh', tol: 2 },
+            { id: 'mibgas_es', nome: 'MIBGAS ES', un: '€/MWh', tol: 2 },
+            { id: 'mibgas_es_trimestre', nome: 'Futuro MIBGAS ES, trimestre seguinte', un: '€/MWh', tol: 7 },
+            { id: 'mibgas_es_ano', nome: 'Futuro MIBGAS ES, ano seguinte', un: '€/MWh', tol: 7 } ] },
+        { nome: 'CO₂', ind: [
+            { id: 'co2_eua', nome: 'Licenças de emissão (EUA)', un: '€/t', tol: 20 } ] }
+    ];
+    const IND = Object.fromEntries(GRUPOS.flatMap(g => g.ind).map(i => [i.id, i]));
+    // Cores [tema claro, tema escuro]: Portugal azul e Espanha verde, como no resto do site; o ERC
+    // âmbar, como no /erc; o CO2 e as horas negativas numa só cor cada (são uma série só).
+    const COR = { pt: ['#2563eb', '#60a5fa'], es: ['#16a34a', '#4ade80'], erc: ['#d97706', '#fbbf24'],
+                  co2: ['#475569', '#cbd5e1'], neg: ['#0e7490', '#22d3ee'], prev: ['#1e293b', '#e2e8f0'] };
+    const HIST_INICIAIS = 12;
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const menos = s => s.replace('-', '−');
+    const NB = ' ';
+    const fmtV = (v, ind) => vazio(v) ? '—' : menos((ind && ind.inteiro ? _nf0 : _nf2).format(v));
+    const fmtVU = (v, ind) => vazio(v) ? '—' : fmtV(v, ind) + NB + (ind.inteiro ? 'h' : ind.un);
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const fmtData = iso => { const [a, m, d] = iso.split('-'); return `${d}/${m}/${a}`; };
+    const fmtDM = iso => iso.slice(8, 10) + '/' + iso.slice(5, 7);
+    const tsDe = iso => Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10));
+    const DIA_MS = 86400000;
+
+    // Trimestres: '2026-T3'
+    const triAno = t => +t.slice(0, 4), triN = t => +t.slice(-1);
+    const triDe = (a, n) => `${a}-T${n}`;
+    const triMais = (t, k) => { const i = triAno(t) * 4 + triN(t) - 1 + k; return triDe(Math.floor(i / 4), i % 4 + 1); };
+    const triInicio = t => `${triAno(t)}-${String(3 * triN(t) - 2).padStart(2, '0')}-01`;
+    const triFim = t => new Date(Date.UTC(triAno(t), 3 * triN(t), 0)).toISOString().slice(0, 10);
+    const triDias = t => Math.round((tsDe(triFim(t)) - tsDe(triInicio(t))) / DIA_MS) + 1;
+    const triCurto = t => `${triN(t)}.º T ${triAno(t)}`;
+    const triEixo = t => `${triN(t)}.º T ${String(triAno(t)).slice(2)}`;
+    const triLongo = t => `${triN(t)}.º trimestre de ${triAno(t)}`;
+    const noTri = t => `no ${triLongo(t)}`;
+
+    // Variação: em % nos preços; nas horas negativas, em horas (de 0 para 12 não é «+∞ %»)
+    function variacao(a, b, ind) {
+        if (vazio(a) || vazio(b)) return null;
+        if (ind.inteiro) return a - b;
+        return b > 0 ? 100 * (a / b - 1) : null;
+    }
+    const seta = v => vazio(v) || Math.abs(v) < 0.05 ? '=' : (v > 0 ? '▲' : '▼');
+    function fmtVar(v, ind) {
+        if (vazio(v)) return '—';
+        const s = v > 0 ? '+' : '';
+        return `${seta(v)}${NB}${s}${menos(ind.inteiro ? _nf0.format(v) + NB + 'h' : _nf1.format(v) + NB + '%')}`;
+    }
+    // «mais 85 %» / «menos 12 %» / «tanto como»
+    function fraseVar(v) {
+        if (vazio(v)) return null;
+        if (Math.abs(v) < 0.5) return 'praticamente o mesmo';
+        return `${v > 0 ? 'mais' : 'menos'} ${_nf0.format(Math.abs(v))}${NB}%`;
+    }
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6',
+                 suave: dk ? '#94a3b8' : '#5c636a', banda: dk ? 'rgba(96,165,250,0.16)' : 'rgba(37,99,235,0.09)' };
+    }
+    const corDe = (k, c) => COR[k][c.dk ? 1 : 0];
+    function base(c, nome, fonte) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: true, text: `${fonte} · tiagofelicia.pt`, href: 'https://www.tiagofelicia.pt/mercados-trimestre', style: { color: c.suave } },
+            exporting: { enabled: true, filename: nome,
+                         buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS'] } } },
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { useHTML: true, shared: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    const eixoX = (c, cats, extra) => Object.assign({ categories: cats, labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha }, extra || {});
+    const eixoY = (c, titulo, extra) => Object.assign({ title: { text: titulo, style: { color: c.txt } }, gridLineColor: c.grelha, labels: { style: { color: c.txt } } }, extra || {});
+    function limparGrafico(id) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    const ativarToggle = (id, v) => document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+
+    // ==================================================================
+    // DADOS: D[trimestre][indicador] = { v, n, de, ate }
+    // ==================================================================
+    const D = {};
+    let TRIS = [];             // trimestres com OMIE PT, do mais antigo ao mais recente
+    let ULTIMA = null;         // o dia mais recente do ficheiro
+    function lerCSV(texto) {
+        const linhas = texto.replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim());
+        const cab = linhas.shift().split(',');
+        const i = Object.fromEntries(cab.map((h, k) => [h.trim(), k]));
+        linhas.forEach(l => {
+            const c = l.split(',');
+            const t = c[i.trimestre], ind = c[i.indicador], v = parseFloat(c[i.valor]);
+            if (!/^\d{4}-T[1-4]$/.test(t) || !IND[ind] || !isFinite(v)) return;
+            (D[t] = D[t] || {})[ind] = { v, n: +c[i.n], de: c[i.de], ate: c[i.ate] };
+            if (!ULTIMA || c[i.ate] > ULTIMA) ULTIMA = c[i.ate];
+        });
+        TRIS = Object.keys(D).filter(t => D[t].omie_pt).sort();
+    }
+    const val = (t, id) => (D[t] && D[t][id]) ? D[t][id].v : null;
+    // Até onde vai o trimestre (o último dia com OMIE PT); completo quando chega ao fim
+    const triAte = t => (D[t] && D[t].omie_pt) ? D[t].omie_pt.ate : null;
+    const emCurso = t => { const a = triAte(t); return !!a && a < triFim(t); };
+    // A média de um indicador não cobre o trimestre todo? Devolve a nota («desde 20/10», «até 18/11»)
+    function notaCobertura(t, id) {
+        const x = D[t] && D[t][id];
+        if (!x) return '';
+        const ref = emCurso(t) ? triAte(t) : triFim(t);
+        const tarde = (tsDe(x.de) - tsDe(triInicio(t))) / DIA_MS > IND[id].tol;
+        const cedo = (tsDe(ref) - tsDe(x.ate)) / DIA_MS > IND[id].tol;
+        if (tarde && cedo) return `${fmtDM(x.de)} a ${fmtDM(x.ate)}`;
+        if (tarde) return `desde ${fmtDM(x.de)}`;
+        if (cedo) return `até ${fmtDM(x.ate)}`;
+        return '';
+    }
+
+    // ==================================================================
+    // ESTADO E LINK (?t=2026-T3, ?ver=, ?prev=gas)
+    // ==================================================================
+    const E = { tri: null, ver: 'omie', prev: 'eletricidade', histTodos: false };
+    const URL0 = new URLSearchParams(window.location.search);
+    function triPorOmissao() {
+        // O trimestre corrente, se já tiver pelo menos 30 dias; senão, o anterior
+        const u = TRIS[TRIS.length - 1];
+        if (TRIS.length > 1 && emCurso(u) && D[u].omie_pt.n < 30) return TRIS[TRIS.length - 2];
+        return u;
+    }
+    function atualizarURL() {
+        const p = new URLSearchParams();
+        if (E.tri && E.tri !== triPorOmissao()) p.set('t', E.tri);
+        if (E.ver !== 'omie') p.set('ver', E.ver);
+        if (E.prev !== 'eletricidade') p.set('prev', E.prev);
+        if (URL0.get('source')) p.set('source', URL0.get('source'));
+        const q = p.toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+    }
+
+    // ==================================================================
+    // QUADRO DO TRIMESTRE
+    // ==================================================================
+    function renderSeletor() {
+        const sel = document.getElementById('sel-tri');
+        sel.innerHTML = TRIS.slice().reverse().map(t =>
+            `<option value="${t}"${t === E.tri ? ' selected' : ''}>${triCurto(t)}${emCurso(t) ? ' (em curso)' : ''}</option>`).join('');
+        const i = TRIS.indexOf(E.tri);
+        document.getElementById('tri-ant').disabled = i <= 0;
+        document.getElementById('tri-seg').disabled = i >= TRIS.length - 1;
+    }
+
+    function renderQuadro() {
+        const t = E.tri, ta = triMais(t, -1), th = triMais(t, -4);
+        const cab = (x, rot) => {
+            const sub = !D[x] ? 'sem dados' : (emCurso(x) ? `em curso, até ${fmtDM(triAte(x))}` : rot);
+            return `${triCurto(x)}<span class="sub">${sub}</span>`;
+        };
+        let h = `<table class="tabela-mt"><caption>Médias do trimestre, sem IVA</caption><thead><tr>`
+            + `<th scope="col" style="text-align:left;">Indicador</th>`
+            + `<th scope="col">${cab(t, 'escolhido')}</th>`
+            + `<th scope="col" class="col-opcional">${cab(ta, 'anterior')}</th>`
+            + `<th scope="col">Face ao trimestre anterior</th>`
+            + `<th scope="col" class="col-opcional">${cab(th, 'um ano antes')}</th>`
+            + `<th scope="col">Face ao ano anterior</th></tr></thead><tbody>`;
+        GRUPOS.forEach(g => {
+            const linhas = g.ind.filter(ind => [t, ta, th].some(x => !vazio(val(x, ind.id))));
+            if (!linhas.length) return;
+            h += `<tr class="grupo"><th scope="rowgroup" colspan="6">${esc(g.nome)}</th></tr>`;
+            linhas.forEach(ind => {
+                const cel = (x, cls) => {
+                    const v = val(x, ind.id), n = notaCobertura(x, ind.id);
+                    return `<td class="${cls}">${fmtV(v, ind)}${n ? `<span class="sub">${n}</span>` : ''}</td>`;
+                };
+                h += `<tr><th scope="row">${esc(ind.nome)} <span class="unid">(${ind.inteiro ? 'horas' : ind.un})</span></th>`
+                   + cel(t, 'sel') + cel(ta, 'col-opcional')
+                   + `<td class="var">${fmtVar(variacao(val(t, ind.id), val(ta, ind.id), ind), ind)}</td>`
+                   + cel(th, 'col-opcional')
+                   + `<td class="var">${fmtVar(variacao(val(t, ind.id), val(th, ind.id), ind), ind)}</td></tr>`;
+            });
+        });
+        h += `</tbody><tfoot><tr><td colspan="6">Futuros: a média, durante o trimestre, do preço do contrato do trimestre seguinte e do ano seguinte. Horas negativas: a variação é em horas. «desde» / «até»: a média não cobre o trimestre todo.</td></tr></tfoot></table>`;
+        document.getElementById('tabela-quadro').innerHTML = h;
+        renderResumo();
+    }
+
+    function renderResumo() {
+        const t = E.tri, ta = triMais(t, -1), th = triMais(t, -4);
+        const ind = IND.omie_pt, partes = [];
+        const curso = emCurso(t) ? ` (em curso: até ${fmtData(triAte(t))})` : '';
+        let s = `${noTri(t)[0].toUpperCase() + noTri(t).slice(1)}${curso}, o <strong>OMIE PT</strong> foi em média <strong>${fmtVU(val(t, 'omie_pt'), ind)}</strong>`;
+        const vA = fraseVar(variacao(val(t, 'omie_pt'), val(ta, 'omie_pt'), ind));
+        const vH = fraseVar(variacao(val(t, 'omie_pt'), val(th, 'omie_pt'), ind));
+        if (vA && vH) s += `, ${vA} do que no trimestre anterior e ${vH} do que no mesmo trimestre de ${triAno(th)}`;
+        else if (vA) s += `, ${vA} do que no trimestre anterior`;
+        partes.push(s + '.');
+        const erc = val(t, 'erc'), omie = val(t, 'omie_pt');
+        if (!vazio(erc)) {
+            const peso = (omie > 0) ? ` (${_nf0.format(100 * erc / (omie + erc))}${NB}% de OMIE PT + ERC)` : '';
+            partes.push(`O <strong>ERC</strong> acrescentou ${fmtVU(erc, IND.erc)}${peso}.`);
+        }
+        const neg = val(t, 'omie_pt_horas_negativas');
+        if (!vazio(neg) && neg > 0) partes.push(`Houve <strong>${_nf0.format(neg)} horas</strong> com o OMIE PT negativo.`);
+        const gas = !vazio(val(t, 'mibgas_pt')) ? 'mibgas_pt' : (!vazio(val(t, 'mibgas_es')) ? 'mibgas_es' : null);
+        if (gas) {
+            const vg = fraseVar(variacao(val(t, gas), val(ta, gas), IND[gas]));
+            partes.push(`No gás, o <strong>${IND[gas].nome}</strong> ficou em ${fmtVU(val(t, gas), IND[gas])}${vg ? ` (${vg} do que no trimestre anterior)` : ''}`
+                + (!vazio(val(t, 'co2_eua')) ? `, e o <strong>CO₂</strong> em ${fmtVU(val(t, 'co2_eua'), IND.co2_eua)}.` : '.'));
+        } else if (!vazio(val(t, 'co2_eua'))) {
+            partes.push(`O <strong>CO₂</strong> ficou em ${fmtVU(val(t, 'co2_eua'), IND.co2_eua)}.`);
+        }
+        const fq = val(t, 'omip_pt_trimestre'), fa = val(t, 'omip_pt_ano');
+        if (!vazio(fq) && !vazio(fa)) {
+            const prox = triMais(t, 1);
+            partes.push(`Nos futuros, o OMIP negociou o ${triLongo(prox)} a ${fmtVU(fq, IND.omip_pt_trimestre)} e o ano de ${triAno(t) + 1} a ${fmtVU(fa, IND.omip_pt_ano)}, em média${emCurso(t) ? ' até agora' : ''}.`);
+        }
+        document.getElementById('resumo-frase').innerHTML = partes.join(' ');
+        const notas = [];
+        if (emCurso(t)) notas.push('Trimestre em curso: as médias usam só os dias já publicados e vão mudando até ao fim do trimestre.');
+        if (!D[th]) notas.push(`Não há dados de ${triCurto(th)} para a variação homóloga.`);
+        document.getElementById('nota-quadro').textContent = notas.join(' ');
+    }
+
+    // ==================================================================
+    // PREVISTO E REAL
+    // ==================================================================
+    function renderPrevisto() {
+        const c = _hcDark();
+        const gas = E.prev === 'gas';
+        const real = gas ? 'mibgas_es' : 'omie_pt', fut = gas ? 'mibgas_es_trimestre' : 'omip_pt_trimestre';
+        // Trimestres com o futuro negociado no trimestre anterior
+        const lista = TRIS.filter(t => !vazio(val(triMais(t, -1), fut)));
+        // O trimestre a seguir ao último já negociado ainda não começou: entra só com a linha
+        const ultFut = TRIS.filter(t => !vazio(val(t, fut))).pop();
+        const prox = ultFut ? triMais(ultFut, 1) : null;
+        if (prox && !lista.includes(prox)) lista.push(prox);
+        limparGrafico('grafico-previsto');
+        if (!lista.length) {
+            document.getElementById('grafico-previsto').innerHTML = '<div class="bloco-vazio">Sem dados.</div>';
+            document.getElementById('resumo-previsto').textContent = ''; return;
+        }
+        const nomeReal = gas ? 'MIBGAS ES (média do trimestre)' : 'OMIE PT (média do trimestre)';
+        const nomeFut = gas ? 'Futuro MIBGAS ES, negociado no trimestre anterior' : 'Futuro OMIP PT, negociado no trimestre anterior';
+        const corReal = gas ? corDe('es', c) : corDe('pt', c);
+        const pts = lista.map(t => ({ t, r: val(t, real), f: val(triMais(t, -1), fut) }));
+        const iSel = lista.indexOf(E.tri);
+        Highcharts.chart('grafico-previsto', Object.assign(base(c, gas ? 'mibgas-previsto-e-real' : 'omie-pt-previsto-e-real', gas ? 'MIBGAS' : 'OMIE e OMIP'), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, lista.map(triEixo), iSel >= 0 ? { plotBands: [{ from: iSel - 0.5, to: iSel + 0.5, color: c.banda }] } : {}),
+            yAxis: eixoY(c, '€/MWh', { min: 0 }),
+            plotOptions: { column: { borderWidth: 0, groupPadding: 0.12, pointPadding: 0.04, borderRadius: 3 } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const p = pts[this.points[0].point.index];
+                    let s = `<b>${triCurto(p.t)}</b>${emCurso(p.t) ? ` <span style="color:${c.suave}">(em curso, até ${fmtDM(triAte(p.t))})</span>` : ''}<br>`;
+                    s += `<span style="color:${corDe('prev', c)}">●</span> Previsto no ${triCurto(triMais(p.t, -1))}: ${fmtVU(p.f, IND[fut])}<br>`;
+                    s += `<span style="color:${corReal}">●</span> Real: ${vazio(p.r) ? 'ainda não começou' : fmtVU(p.r, IND[real])}`;
+                    if (!vazio(p.r) && !vazio(p.f) && p.f > 0) s += `<br><b>${fraseVar(100 * (p.r / p.f - 1))} do que o previsto</b>`;
+                    return s;
+                }
+            }),
+            series: [
+                { name: nomeReal, data: pts.map(p => p.r), color: corReal },
+                { type: 'line', name: nomeFut, data: pts.map(p => p.f), color: corDe('prev', c), lineWidth: 2, dashStyle: 'ShortDash',
+                  marker: { enabled: true, radius: 4, symbol: 'diamond' }, zIndex: 3 }
+            ]
+        }));
+        // Resumo: o trimestre escolhido (se tiver previsão) ou o último com previsão e real
+        const alvo = pts.find(p => p.t === E.tri && !vazio(p.f) && !vazio(p.r)) || pts.filter(p => !vazio(p.f) && !vazio(p.r)).pop();
+        let txt = '';
+        if (alvo) {
+            const d = 100 * (alvo.r / alvo.f - 1);
+            txt = `Durante o ${triLongo(triMais(alvo.t, -1))}, o ${gas ? 'futuro do MIBGAS ES' : 'OMIP'} negociava o ${triLongo(alvo.t)} a <strong>${fmtVU(alvo.f, IND[fut])}</strong>, em média; o ${gas ? 'MIBGAS ES' : 'OMIE PT'} ${emCurso(alvo.t) ? 'vai em' : 'acabou em'} <strong>${fmtVU(alvo.r, IND[real])}</strong>, ${fraseVar(d)} do que o previsto.`;
+        }
+        const seg = pts[pts.length - 1];
+        if (seg && vazio(seg.r) && !vazio(seg.f)) txt += ` Para o ${triLongo(seg.t)}, o mercado a prazo aponta, por agora, para ${fmtVU(seg.f, IND[fut])}.`;
+        document.getElementById('resumo-previsto').innerHTML = txt;
+        document.getElementById('nota-previsto').textContent = gas
+            ? 'Futuro do MIBGAS para Espanha (Portugal não tem futuros a prazo), desde 2018; o MIBGAS PT e o ES costumam andar muito perto um do outro.'
+            : 'O OMIP só tem histórico desde 20/10/2025: o primeiro «previsto» é o do 1.º trimestre de 2026, e o do 4.º trimestre de 2025 entra só com as cotações desde essa data.';
+    }
+
+    // ==================================================================
+    // EVOLUÇÃO
+    // ==================================================================
+    const VISTAS = {
+        omie: { series: [['omie_pt', 'OMIE PT', 'pt'], ['omie_es', 'OMIE ES', 'es']], un: '€/MWh', fonte: 'OMIE', tipo: 'line' },
+        erc: { series: [['erc', 'ERC', 'erc']], un: '€/MWh', fonte: 'REN', tipo: 'column' },
+        neg: { series: [['omie_pt_horas_negativas', 'Horas com o OMIE PT negativo', 'neg']], un: 'horas', fonte: 'OMIE', tipo: 'column' },
+        gas: { series: [['mibgas_pt', 'MIBGAS PT', 'pt'], ['mibgas_es', 'MIBGAS ES', 'es']], un: '€/MWh', fonte: 'MIBGAS', tipo: 'line' },
+        co2: { series: [['co2_eua', 'CO₂ (EUA, leilões)', 'co2']], un: '€/t', fonte: 'EEX', tipo: 'column' }
+    };
+    function renderEvolucao() {
+        const c = _hcDark(), V = VISTAS[E.ver];
+        const ids = V.series.map(s => s[0]);
+        const tris = TRIS.filter(t => ids.some(id => !vazio(val(t, id))));
+        limparGrafico('grafico-evolucao');
+        const iSel = tris.indexOf(E.tri);
+        Highcharts.chart('grafico-evolucao', Object.assign(base(c, 'mercados-trimestre-' + E.ver, V.fonte), {
+            chart: { type: V.tipo, backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, tris.map(triEixo), iSel >= 0 ? { plotBands: [{ from: iSel - 0.5, to: iSel + 0.5, color: c.banda }] } : {}),
+            yAxis: eixoY(c, V.un, { plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }] }),
+            legend: Object.assign(base(c).legend, { enabled: V.series.length > 1 }),
+            plotOptions: { column: { borderWidth: 0, groupPadding: 0.06, pointPadding: 0.02, borderRadius: 2 },
+                           line: { lineWidth: 2, marker: { enabled: tris.length < 40, radius: 3, symbol: 'circle' } } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const t = tris[this.points[0].point.index];
+                    let s = `<b>${triCurto(t)}</b>${emCurso(t) ? ` <span style="color:${c.suave}">(em curso, até ${fmtDM(triAte(t))})</span>` : ''}<br>`;
+                    this.points.forEach(p => {
+                        const id = ids[p.series.index], n = notaCobertura(t, id);
+                        s += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtVU(p.y, IND[id])}</b>${n ? ` <span style="color:${c.suave}">(${n})</span>` : ''}<br>`;
+                    });
+                    return s;
+                }
+            }),
+            series: V.series.map(([id, nome, cor]) => ({ name: nome, data: tris.map(t => val(t, id)), color: corDe(cor, c) }))
+        }));
+        const notas = {
+            omie: 'Média simples de todos os quartos de hora do trimestre, com os dias em hora de Portugal. Série desde 2010.',
+            erc: 'Pesado pelo consumo (Σ€ ÷ ΣMWh), por dia de mercado. Série desde 14/03/2024: o 1.º trimestre de 2024 só tem os últimos 18 dias.',
+            neg: 'Horas com o preço médio de Portugal abaixo de zero (até 30/09/2025 o mercado era horário; depois, a média dos quatro quartos de hora).',
+            gas: 'Índices de referência MIBGAS, média dos dias. O MIBGAS ES existe desde 17/12/2015 e o MIBGAS PT desde 2021.',
+            co2: 'Licenças de emissão da UE (EUA) nos leilões da EEX, preço médio pesado pelo volume. Série desde 2020.'
+        };
+        document.getElementById('nota-evolucao').textContent = notas[E.ver];
+    }
+
+    // ==================================================================
+    // TODOS OS TRIMESTRES
+    // ==================================================================
+    function renderHistorico() {
+        const cols = [['omie_pt', 'OMIE PT'], ['omie_es', 'OMIE ES', true], ['erc', 'ERC'], ['omie_pt_horas_negativas', 'Horas negativas', true],
+                      ['mibgas_pt', 'MIBGAS PT'], ['mibgas_es', 'MIBGAS ES', true], ['co2_eua', 'CO₂ (€/t)']];
+        const lista = TRIS.slice().reverse();
+        const vis = E.histTodos ? lista : lista.slice(0, HIST_INICIAIS);
+        let h = `<table class="tabela-mt"><caption>Médias por trimestre, sem IVA (€/MWh, salvo indicação)</caption><thead><tr><th scope="col" style="text-align:left;">Trimestre</th>`
+            + cols.map(([, nome, opc]) => `<th scope="col"${opc ? ' class="col-opcional"' : ''}>${nome}</th>`).join('') + `</tr></thead><tbody>`;
+        vis.forEach(t => {
+            const cls = [t === E.tri ? 'atual' : '', emCurso(t) ? 'parcial' : ''].filter(Boolean).join(' ');
+            h += `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${triCurto(t)}${emCurso(t) ? ' *' : ''}</th>`
+               + cols.map(([id, , opc]) => `<td${opc ? ' class="col-opcional"' : ''}>${fmtV(val(t, id), IND[id])}</td>`).join('') + '</tr>';
+        });
+        h += `</tbody><tfoot><tr><td colspan="${cols.length + 1}">${emCurso(lista[0]) ? `* Em curso, até ${fmtData(triAte(lista[0]))}. ` : ''}Em branco (—): a série ainda não existia. Os primeiros trimestres de cada série podem ser parciais: ver as datas no ficheiro de dados.</td></tr></tfoot></table>`;
+        document.getElementById('tabela-historico').innerHTML = h;
+        const btn = document.getElementById('btn-historico');
+        btn.hidden = lista.length <= HIST_INICIAIS;
+        btn.textContent = E.histTodos ? `Mostrar só os últimos ${HIST_INICIAIS} trimestres` : `Mostrar os ${lista.length} trimestres (desde 2010)`;
+    }
+
+    // ==================================================================
+    // TUDO
+    // ==================================================================
+    function renderBadge() {
+        document.getElementById('badge').innerHTML = `Dados até <strong>${fmtData(ULTIMA)}</strong> · ${TRIS.length} trimestres, desde ${triCurto(TRIS[0])}`;
+        document.getElementById('metodo-dados').innerHTML =
+            `O ficheiro com todas as médias, atualizado todos os dias, está em <a href="${URL_PASTA}" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> (licença CC BY 4.0): `
+            + `<code>mercados_trimestral.csv</code>, uma linha por trimestre e indicador, com os dias que entraram em cada média.`;
+    }
+    function renderTri() { renderSeletor(); renderQuadro(); renderPrevisto(); renderEvolucao(); renderHistorico(); atualizarURL(); }
+    function renderTudo() { renderBadge(); renderTri(); }
+
+    async function carregar() {
+        const r = await fetchDados(URL_DADOS);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        lerCSV(await r.text());
+        if (!TRIS.length) throw new Error('sem dados');
+        const pedido = (URL0.get('t') || '').toUpperCase().replace(/^(\d{4})-?T?([1-4])$/, '$1-T$2');
+        E.tri = TRIS.includes(pedido) ? pedido : triPorOmissao();
+        if (VISTAS[URL0.get('ver')]) { E.ver = URL0.get('ver'); ativarToggle('ctrl-evolucao', E.ver); }
+        if (URL0.get('prev') === 'gas') { E.prev = 'gas'; ativarToggle('ctrl-previsto', 'gas'); }
+        document.getElementById('estado').hidden = true;
+        document.getElementById('conteudo').hidden = false;
+        renderTudo();
+    }
+    function falhou(err) {
+        console.error('Mercados por trimestre:', err);
+        const el = document.getElementById('estado');
+        el.hidden = false; el.className = 'estado-erro'; el.textContent = 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.';
+    }
+
+    const mudarTri = t => { if (TRIS.includes(t) && t !== E.tri) { E.tri = t; renderTri(); } };
+    document.getElementById('sel-tri').addEventListener('change', e => mudarTri(e.target.value));
+    document.getElementById('tri-ant').addEventListener('click', () => mudarTri(TRIS[TRIS.indexOf(E.tri) - 1]));
+    document.getElementById('tri-seg').addEventListener('click', () => mudarTri(TRIS[TRIS.indexOf(E.tri) + 1]));
+    ligarToggle('ctrl-previsto', v => { E.prev = v; renderPrevisto(); atualizarURL(); });
+    ligarToggle('ctrl-evolucao', v => { E.ver = v; renderEvolucao(); atualizarURL(); });
+    document.getElementById('btn-historico').addEventListener('click', () => { E.histTodos = !E.histTodos; renderHistorico(); });
+    document.addEventListener('themeChanged', () => { if (TRIS.length) renderTudo(); });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 600), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.addEventListener('beforeprint', () => document.querySelectorAll('details.faq-item').forEach(d => {
+        if (!d.hasAttribute('open')) { d.setAttribute('open', ''); d.dataset.openedForPrint = '1'; }
+    }));
+    window.addEventListener('afterprint', () => document.querySelectorAll('details.faq-item[data-opened-for-print]').forEach(d => {
+        d.removeAttribute('open'); delete d.dataset.openedForPrint;
+    }));
+
+    carregar().catch(falhou);
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>

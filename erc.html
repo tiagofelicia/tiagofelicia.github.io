@@ -154,6 +154,13 @@
         }
       },{
         "@type": "Question",
+        "name": "Quanto pesa o ERC no preço da energia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Depende sobretudo do OMIE PT, porque o ERC quase não desce quando o mercado desce. Somando os dois, o ERC costuma ficar entre 10 e 20 %; nos meses de OMIE PT baixo (muita chuva, vento e sol) pesa muito mais: em fevereiro de 2026, com o OMIE PT à volta de 11 EUR/MWh e o ERC à volta de 30 EUR/MWh, foi quase três quartos do total. São valores sem perdas, sem acesso às redes e sem margem: no preço final de um tarifário indexado, o peso do ERC é menor."
+        }
+      },{
+        "@type": "Question",
         "name": "Porque é que o valor desta página é diferente do da minha fatura?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -443,6 +450,7 @@
         <a href="#bloco-tipos" class="mini-nav-chip">🧾 De onde vem</a>
         <a href="#bloco-horas" class="mini-nav-chip">🕒 Quando custa mais</a>
         <a href="#bloco-solar" class="mini-nav-chip">☀️ ERC e sol</a>
+        <a href="#bloco-peso" class="mini-nav-chip">⚖️ Peso do ERC</a>
         <a href="#bloco-hoje" class="mini-nav-chip">⚡ OMIE PT + ERC</a>
         <a href="#bloco-previsao" class="mini-nav-chip">🔮 Previsão 14 dias</a>
         <a href="#bloco-periodos" class="mini-nav-chip">🌙 Vazio e fora de vazio</a>
@@ -543,6 +551,24 @@
         <div id="grafico-solar" class="grafico"></div>
         <p class="resumo-bloco" id="solar-resumo"></p>
         <p class="nota-bloco" id="solar-nota"></p>
+    </div>
+
+    <!-- ====================== BLOCO 3C — OMIE PT + ERC NO PERÍODO: O PESO DO ERC ====================== -->
+    <div class="grafico-box" id="bloco-peso">
+        <h2>OMIE PT + ERC mês a mês — quanto pesa o ERC</h2>
+        <p class="grafico-intro">O preço da energia no mercado diário (<strong>OMIE PT</strong>) e o <strong>ERC</strong>, somados, em cada mês do período (em cada dia, até 3 meses), e a parte desse total que é ERC. Quando o OMIE PT desce, o ERC quase não desce com ele: pesa mais nos meses de muita chuva, vento e sol.</p>
+        <div class="bloco-controls">
+            <span class="ctrl-label">Ver</span>
+            <div class="btn-toggle" id="ctrl-peso" role="group" aria-label="Valores em €/MWh ou peso do ERC">
+                <button type="button" data-v="valores" class="active">€/MWh</button>
+                <button type="button" data-v="pct">Peso do ERC (%)</button>
+            </div>
+        </div>
+        <div id="grafico-peso" class="grafico"></div>
+        <p class="resumo-bloco" id="peso-resumo"></p>
+        <div class="tabela-box"><table class="tabela-erc" id="tabela-peso"></table></div>
+        <button type="button" id="btn-peso-todos" class="btn-mais" hidden></button>
+        <p class="nota-bloco" id="peso-nota"></p>
     </div>
 
     <!-- ====================== BLOCO 4 — OMIE PT + ERC, DIA A DIA ====================== -->
@@ -714,6 +740,13 @@
             </div>
         </details>
         <details class="faq-item">
+            <summary><strong>Quanto pesa o ERC no preço da energia?</strong></summary>
+            <div class="faq-content">
+                <p>Depende sobretudo do OMIE PT, porque o ERC quase não desce quando o mercado desce. Somando os dois, o ERC costuma ficar entre <strong>10 e 20 %</strong>; nos meses de OMIE PT baixo (muita chuva, vento e sol) pesa muito mais: em <strong>fevereiro de 2026</strong>, com o OMIE PT à volta de 11 €/MWh e o ERC à volta de 30 €/MWh, foi quase <strong>três quartos</strong> do total.</p>
+                <p>O bloco <a href="#bloco-peso">«Peso do ERC»</a> mostra-o mês a mês para o período escolhido. São valores sem perdas, sem acesso às redes e sem margem: no preço final de um tarifário indexado, o peso do ERC é menor.</p>
+            </div>
+        </details>
+        <details class="faq-item">
             <summary><strong>Porque é que o valor desta página é diferente do da minha fatura?</strong></summary>
             <div class="faq-content">
                 <ul>
@@ -821,6 +854,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let _ciclo = 'BD';
     let _outros = 'agregado';     // bloco 2: "Outros" agregado ou desdobrado
     let _tiposTodos = false;      // bloco "De onde vem": tabela completa ou só as primeiras linhas
+    let _vistaPeso = 'valores';   // bloco "Peso do ERC": gráfico em €/MWh ou em % do total
+    let _pesoTodos = false;       // bloco "Peso do ERC": tabela com todos os meses ou só os últimos
 
     // ==================================================================
     // FORMATAÇÃO
@@ -1082,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const iso = s => (s && /^\d{4}-\d{2}-\d{2}$/.test(s)) ? s : null;
         const i = iso(ler('inicio')), f = iso(ler('fim'));
         return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null,
-                 est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas'), outros: ler('outros'),
+                 est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas'), outros: ler('outros'), peso: ler('peso'),
                  kwh: ler('kwh'), calc: ler('calc'), pv: ler('pv'), pc: ler('pc'), sol: ler('sol') };
     }
     function paramsAtuais(sempreDatas) {
@@ -1096,6 +1131,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (_diaEscolhido && _dia) p.set('dia', _dia);
         if (_perdas !== 'sem') p.set('perdas', _perdas);
         if (_outros !== 'agregado') p.set('outros', _outros);
+        if (_vistaPeso !== 'valores') p.set('peso', _vistaPeso);
         if (_vistaSolar !== 'classes') p.set('sol', _vistaSolar);
         if (CALC.kwh !== CALC_KWH_OMISSAO) p.set('kwh', CALC.kwh);
         if (CALC.ciclo !== 'S') p.set('calc', CALC.ciclo);
@@ -1174,6 +1210,7 @@ document.addEventListener('DOMContentLoaded', function () {
         prepararEstacoes();
         renderHoras();
         renderSolar();
+        renderPeso();
         renderPeriodos();
         renderMapa();
         renderRecordes();
@@ -1861,6 +1898,111 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==================================================================
+    // BLOCO 3C — OMIE PT + ERC NO PERÍODO: O PESO DO ERC
+    // ==================================================================
+    // OMIE PT: média simples dos preços de cada hora (dias em hora de Portugal).
+    // ERC: Σ€ ÷ ΣMWh por dia de mercado, como no resto da página.
+    // Peso = ERC ÷ (OMIE PT + ERC); não se calcula com o OMIE PT médio negativo.
+    const COR_PESO_OMIE = '#2563eb', COR_PESO_ERC = '#f59e0b';
+    const PESO_MESES_INICIAIS = 12;
+    function omieErc(dias) {
+        const omie = media(dias.flatMap(d => (DIAS.get(d) || {}).o || []));
+        const t = totaisMercado(dias);
+        const erc = t ? t.erc : null;
+        const total = (vazio(omie) || vazio(erc)) ? null : omie + erc;
+        const peso = (vazio(total) || omie < 0 || total <= 0) ? null : 100 * erc / total;
+        return { omie, erc, total, peso, n: t ? t.n : 0 };
+    }
+    const fmtPct1 = v => vazio(v) ? '—' : fmt1(v) + ' %';
+
+    function renderPeso() {
+        const resumo = document.getElementById('peso-resumo'), tabela = document.getElementById('tabela-peso');
+        const nota = document.getElementById('peso-nota'), btn = document.getElementById('btn-peso-todos');
+        const B = baldes(periodo.inicio, periodo.fim);
+        const linhas = B.lista.map(b => Object.assign({}, b, { v: omieErc(b.dias) }));
+        if (!linhas.some(l => !vazio(l.v.total))) {
+            limparGrafico('grafico-peso', '<div class="bloco-vazio">Sem dados neste período.</div>');
+            resumo.textContent = ''; tabela.innerHTML = ''; nota.textContent = ''; btn.hidden = true;
+            return;
+        }
+        const c = _hcDark();
+        const pct = _vistaPeso === 'pct';
+        const tot = omieErc(diasDe(periodo.inicio, periodo.fim));
+        const series = pct
+            ? [{ name: 'Peso do ERC', data: linhas.map(l => vazio(l.v.peso) ? null : +l.v.peso.toFixed(1)), color: COR_PESO_ERC, showInLegend: false }]
+            : [{ name: 'ERC', data: linhas.map(l => l.v.erc), color: COR_PESO_ERC },
+               { name: 'OMIE PT', data: linhas.map(l => l.v.omie), color: COR_PESO_OMIE }];
+        const linhaPeriodo = (pct && !vazio(tot.peso)) ? [{
+            value: tot.peso, color: c.suave, width: 1.5, dashStyle: 'Dash', zIndex: 4,
+            label: { text: `Período: ${fmtPct1(tot.peso)}`, align: 'right', x: -4, style: { color: c.txt, fontSize: '11px' } }
+        }] : [];
+
+        limparGrafico('grafico-peso');
+        Highcharts.chart('grafico-peso', Object.assign(base(c, pct ? 'peso-do-erc' : 'omie-pt-mais-erc-por-mes'), {
+            chart: { type: 'column', backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            xAxis: eixoX(c, linhas.map(l => l.rotulo)),
+            yAxis: eixoY(c, pct ? '% de OMIE PT + ERC' : '€/MWh', {
+                min: pct ? 0 : undefined,
+                labels: { style: { color: c.txt }, format: pct ? '{value} %' : undefined },
+                plotLines: [{ value: 0, color: c.suave, width: 1, zIndex: 3 }].concat(linhaPeriodo)
+            }),
+            legend: Object.assign(base(c).legend, { enabled: !pct }),
+            plotOptions: { column: { stacking: pct ? undefined : 'normal', borderWidth: 0, groupPadding: 0.06, pointPadding: 0.02 } },
+            tooltip: Object.assign(base(c).tooltip, {
+                formatter: function () {
+                    const l = linhas[this.points[0].point.index], v = l.v;
+                    if (vazio(v.total)) return `<b>${l.longo}</b><br>Sem dados`;
+                    let s = `<b>${l.longo}</b>`;
+                    if (!B.porDia && v.n < l.total) s += ` <span style="color:${c.suave}">(${v.n} de ${l.total} dias)</span>`;
+                    s += `<br><span style="color:${COR_PESO_OMIE}">●</span> OMIE PT: ${fmtMWh(v.omie)}`;
+                    s += `<br><span style="color:${COR_PESO_ERC}">●</span> ERC: ${fmtMWh(v.erc)}`;
+                    s += `<br><b>OMIE PT + ERC: ${fmtMWh(v.total)}</b>`;
+                    s += `<br>Peso do ERC: <b>${fmtPct1(v.peso)}</b>`;
+                    if (vazio(v.peso)) s += `<br><span style="color:${c.suave}">OMIE PT médio negativo: o peso não se calcula</span>`;
+                    return s;
+                }
+            }),
+            series
+        }));
+
+        // Resumo
+        const validas = linhas.filter(l => !vazio(l.v.peso));
+        const quem = B.porDia ? 'o dia' : 'o mês';
+        let txt = `No período, o OMIE PT foi <strong>${fmtMWh(tot.omie)}</strong> e o ERC <strong>${fmtMWh(tot.erc)}</strong>: somados, ${fmtMWh(tot.total)}`;
+        txt += vazio(tot.peso) ? '.' : `, dos quais <strong>${fmtPct1(tot.peso)}</strong> de ERC.`;
+        if (validas.length > 1) {
+            const mais = validas.reduce((a, l) => l.v.peso > a.v.peso ? l : a);
+            const menos = validas.reduce((a, l) => l.v.peso < a.v.peso ? l : a);
+            txt += ` O ERC pesou mais em ${mais.longo} (${fmtPct1(mais.v.peso)}, com o OMIE PT em ${fmtMWh(mais.v.omie)}) e menos em ${menos.longo} (${fmtPct1(menos.v.peso)}, com o OMIE PT em ${fmtMWh(menos.v.omie)}).`;
+        }
+        resumo.innerHTML = txt;
+
+        // Tabela: sempre por mês, mesmo quando o gráfico é por dia
+        const meses = new Map();
+        diasDe(periodo.inicio, periodo.fim).forEach(d => { const m = d.slice(0, 7); if (!meses.has(m)) meses.set(m, []); meses.get(m).push(d); });
+        const porMes = [...meses].map(([m, ds]) => ({ m, v: omieErc(ds), total: +ultimoDoMes(m + '-01').slice(8) }))
+            .filter(l => !vazio(l.v.total));
+        const visiveis = _pesoTodos ? porMes : porMes.slice(-PESO_MESES_INICIAIS);
+        let incompletos = false;
+        let tb = `<caption>Por mês, em €/MWh, sem perdas</caption><thead><tr><th scope="col" class="esq">Mês</th><th scope="col">OMIE PT</th><th scope="col">ERC</th><th scope="col">OMIE PT + ERC</th><th scope="col">Peso do ERC</th></tr></thead><tbody>`;
+        visiveis.forEach(l => {
+            const inc = l.v.n < l.total;
+            if (inc) incompletos = true;
+            tb += `<tr><td class="esq">${mesLongo(l.m)}${inc ? ' *' : ''}</td><td>${fmt2(l.v.omie)}</td><td>${fmt2(l.v.erc)}</td><td>${fmt2(l.v.total)}</td><td>${fmtPct1(l.v.peso)}</td></tr>`;
+        });
+        tb += `</tbody><tfoot><tr class="hoje"><td class="esq">Período</td><td>${fmt2(tot.omie)}</td><td>${fmt2(tot.erc)}</td><td>${fmt2(tot.total)}</td><td>${fmtPct1(tot.peso)}</td></tr></tfoot>`;
+        tabela.innerHTML = tb;
+        btn.hidden = porMes.length <= PESO_MESES_INICIAIS;
+        btn.textContent = _pesoTodos ? `Mostrar só os últimos ${PESO_MESES_INICIAIS} meses` : `Mostrar os ${porMes.length} meses`;
+
+        const notas = ['OMIE PT: média simples dos preços de cada hora, com os dias em hora de Portugal. ERC: média pesada pelo consumo (Σ€ ÷ ΣMWh), por dia de mercado, como a REN. Por trimestre, com o gás, o CO₂ e os futuros, em «Mercados por trimestre».',
+                       'Sem perdas, sem acesso às redes e sem a margem do comercializador: no preço final de um tarifário indexado, o peso do ERC é menor.'];
+        if (incompletos) notas.push('* Mês incompleto no período (ou ainda sem todos os dias publicados).');
+        if (linhas.some(l => !vazio(l.v.total) && vazio(l.v.peso))) notas.push('Com o OMIE PT médio negativo, o peso não se calcula.');
+        nota.textContent = notas.join(' ');
+    }
+
+    // ==================================================================
     // BLOCO 4 — OMIE PT + ERC, DIA A DIA
     // ==================================================================
     // Hoje e amanhã vêm do CSV dos Preços Horários (o mais fresco: atualiza com
@@ -2363,6 +2505,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('calc-repor').addEventListener('click', () => { CALC.pv = null; CALC.pc = null; redesenharCalc(); });
     ligarToggle('ctrl-perdas', v => { _perdas = v; renderHoje(); atualizarURL(); });
     ligarToggle('ctrl-outros', v => { _outros = v; renderEvolucao(); atualizarURL(); });
+    ligarToggle('ctrl-peso', v => { _vistaPeso = v; renderPeso(); atualizarURL(); });
+    document.getElementById('btn-peso-todos').addEventListener('click', () => { _pesoTodos = !_pesoTodos; renderPeso(); });
     document.getElementById('btn-tipos-todos').addEventListener('click', () => { _tiposTodos = !_tiposTodos; renderTipos(); });
     document.addEventListener('themeChanged', renderTudo);
 
@@ -2403,6 +2547,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const URL_INICIAL = lerURL();
     if (URL_INICIAL.perdas === 'com') { _perdas = 'com'; ativarToggle('ctrl-perdas', 'com'); }
     if (URL_INICIAL.outros === 'detalhe') { _outros = 'detalhe'; ativarToggle('ctrl-outros', 'detalhe'); }
+    if (URL_INICIAL.peso === 'pct') { _vistaPeso = 'pct'; ativarToggle('ctrl-peso', 'pct'); }
     if (['meses', 'dias'].includes(URL_INICIAL.sol)) { _vistaSolar = URL_INICIAL.sol; ativarToggle('ctrl-solar', _vistaSolar); }
     {
         const k = Math.round(+URL_INICIAL.kwh);

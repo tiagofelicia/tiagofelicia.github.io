@@ -190,7 +190,7 @@
         .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
         .grafico-intro { font-size: 0.88em; color: #5c636a; margin: 0 0 12px 0; line-height: 1.5; }
         .grafico { width: 100%; height: 440px; }
-        #mapa { height: 600px; }
+        #mapa { height: 720px; }
         .bloco-vazio { padding: 26px 14px; text-align: center; color: #5c636a; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
         .nota-bloco { font-size: 0.8em; color: #5c636a; margin: 6px 0 0; line-height: 1.5; }
 
@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
             mapaErro: 'Não foi possível carregar o mapa.',
             thPais: 'País', thPct: '% cheio', thTwh: 'Guardado (TWh)', thCap: 'Capacidade (TWh)', thAno: 'Face a há um ano', thMedia: 'Face à média 5 anos', thDia: 'Dia',
             ue: 'União Europeia', semValor: 'sem valor nesse dia', estimado: 'estimado', ren: 'valor da REN',
-            semArmaz: 'Sem armazenamento (ou sem dados na AGSI): {lista}.',
+            semArmaz: 'Sem armazenamento (ou sem dados na AGSI): {lista}.', soAte: 'só até {dia}', soDesde: 'só desde {dia}',
             kpiUE: 'União Europeia', kpiAcima: 'Acima de há um ano', kpiAcimaSub: '{n} de {t} países com reservas mais cheias do que a {dia}',
             faceAno: '{v} face a {dia} ({p})', semAno: 'sem o valor de há um ano',
             frase: 'A {dia}, as reservas de gás da União Europeia estavam a <strong>{ue}</strong> da capacidade ({uet}), {comp} das do mesmo dia de há um ano ({uea}){media}. Portugal estava a {pt}{ptcomp}.',
@@ -534,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function () {
             mapaErro: 'The map could not be loaded.',
             thPais: 'Country', thPct: '% full', thTwh: 'Stored (TWh)', thCap: 'Capacity (TWh)', thAno: 'vs a year ago', thMedia: 'vs 5-year avg.', thDia: 'Day',
             ue: 'European Union', semValor: 'no value on that day', estimado: 'estimate', ren: 'REN figure',
-            semArmaz: 'No storage (or no data in AGSI): {lista}.',
+            semArmaz: 'No storage (or no data in AGSI): {lista}.', soAte: 'only until {dia}', soDesde: 'only from {dia}',
             kpiUE: 'European Union', kpiAcima: 'Fuller than a year ago', kpiAcimaSub: '{n} of {t} countries fuller than on {dia}',
             faceAno: '{v} vs {dia} ({p})', semAno: 'no value a year earlier',
             frase: 'On {dia}, European Union gas storage was <strong>{ue}</strong> full ({uet}), {comp} the same day a year earlier ({uea}){media}. Portugal was at {pt}{ptcomp}.',
@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function paramsAtuais() {
         const q = new URLSearchParams();
         if (E.ver !== 'pct') q.set('ver', E.ver);
-        if (E.dia && META && E.dia !== META.ultima_data) q.set('dia', E.dia);
+        if (E.dia && META && E.dia !== ULTIMO) q.set('dia', E.dia);
         if (E.pais !== 'PT') q.set('pais', E.pais.toLowerCase());
         if (EN) q.set('lang', 'en');
         if (URL0.get('source')) q.set('source', URL0.get('source'));   // o modo de teste do dados.js (?source=fs)
@@ -693,6 +693,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // DADOS: metadata.json (o último dia) e os ficheiros por ano (os outros dias e o gráfico)
     // ==================================================================
     let META = null;
+    // O último dia do mapa: o da UE. O metadata de 23/11/2026 tinha como ultima_data o dia da REN de Portugal,
+    // um dia à frente da AGSI, e a página abria num dia em que só Portugal tinha valor.
+    let ULTIMO = null;
     const ANOS = new Map();                 // ano -> Promise<{primeiro_dia, paises}>
     function ano(a) {
         if (!ANOS.has(a)) {
@@ -720,20 +723,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // O quadro de um dia: por país, o valor, o de há um ano e a média dos 5 anos anteriores
     async function quadroDoDia(iso) {
         const zonas = Object.keys(META.paises);
-        if (iso === META.ultima_data) {
-            const out = {};
+        const out = {}, faltam = [];
+        if (iso === ULTIMO) {
+            // No último dia chega o metadata.json. Um país que já não tem dados nesse dia (o Reino Unido só até
+            // 2020) fica sem valor; um cujo resumo é de um dia depois (Portugal com a REN) vai ao ficheiro do ano.
             zonas.forEach(z => {
                 const p = META.paises[z];
-                if (p.data !== iso) { out[z] = null; return; }
+                if (p.data < iso) { out[z] = null; return; }
+                if (p.data > iso) { faltam.push(z); return; }
                 out[z] = { pct: p.cheio_pct, twh: p.armazenado_twh, cap: p.capacidade_twh, est: p.estado,
                            ano: p.ha_um_ano_pct, anoDia: p.ha_um_ano_data, media: p.media_5a_pct };
             });
-            return out;
+            if (!faltam.length) return out;
+        } else {
+            faltam.push(...zonas);
         }
         const a = +iso.slice(0, 4);
         await Promise.all([0, 1, 2, 3, 4, 5].map(k => ano(a - k)));
-        const out = {};
-        for (const z of zonas) {
+        for (const z of faltam) {
             const v = valorDia(await ano(a), z, iso);
             if (!v) { out[z] = null; continue; }
             const h = await noDia(z, iso, 1);
@@ -782,9 +789,43 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     let TOPO = null, _topoPedido = null;
     function carregarMapa() {
-        if (!_topoPedido) _topoPedido = fetch(MAPA_URL).then(r => { if (!r.ok) throw new Error('mapa: HTTP ' + r.status); return r.json(); }).then(j => { TOPO = j; return j; });
+        if (!_topoPedido) _topoPedido = Promise.all([
+            fetch(MAPA_URL).then(r => { if (!r.ok) throw new Error('mapa: HTTP ' + r.status); return r.json(); }),
+            carregarFundo().catch(err => console.warn(err))
+        ]).then(([j]) => { TOPO = j; return j; });
         return _topoPedido;
     }
+    // O fundo (terra e mar) é o dos mapas de preços e de produção: europe_background.js (Natural Earth).
+    // Por cima vão só os países desta página; os outros (a Rússia, o Norte de África…) ficam no fundo.
+    // Sem o fundo (se falhar), desenha-se como antes: todos os países do ficheiro do mapa.
+    let _fundoPedido = null;
+    function carregarFundo() {
+        if (!_fundoPedido) _fundoPedido = new Promise((ok, erro) => {
+            if (typeof EUROPE_BG_GEOJSON !== 'undefined') { ok(); return; }
+            const s = document.createElement('script');
+            s.src = 'europe_background.js';
+            s.onload = () => ok();
+            s.onerror = () => erro(new Error('fundo do mapa'));
+            document.head.appendChild(s);
+        });
+        return _fundoPedido;
+    }
+    const temFundo = () => typeof EUROPE_BG_GEOJSON !== 'undefined';
+    function fundoMapa(c) {
+        if (!temFundo()) return [];
+        return [{ type: 'map', name: 'fundo', mapData: EUROPE_BG_GEOJSON, data: [], allAreas: true, colorAxis: false,
+                  nullColor: c.dk ? '#1e293b' : '#f4f4f1', borderColor: c.dk ? '#334155' : '#cfd4d8', borderWidth: 0.6,
+                  enableMouseTracking: false, showInLegend: false, includeInDataExport: false, accessibility: { enabled: false },
+                  states: { hover: { enabled: false }, inactive: { enabled: false } } }];
+    }
+    // Os países desta página sem valor, a cinzento por cima do fundo
+    function semValorMapa(dados) {
+        const tem = new Set(dados.map(p => p['hc-key']));
+        return Object.keys(META.paises).concat(META.sem_dados || []).filter(z => z !== 'EU').map(CHAVE_MAPA).filter(k => !tem.has(k)).map(k => ({ 'hc-key': k, value: null }));
+    }
+    // Mercator sem rotação, como os mapas de preços e de produção (o ficheiro do mapa traz uma cónica rodada 10°)
+    const MAPA_VISTA = { projection: { name: 'WebMercator', rotation: [0] },
+                         fitToGeometry: { type: 'MultiPoint', coordinates: [[-10, 34.5], [40, 34.5], [40, 70.5], [-10, 70.5]] } };
     function renderMapa(Q) {
         const c = _hcDark();
         document.getElementById('intro-mapa').textContent = T(E.ver === 'ano' ? 'introAno' : E.ver === 'media' ? 'introMedia' : 'introPct', { dia: fmtData(E.dia) });
@@ -805,7 +846,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (E.ver === 'pct') {
             colorAxis = { min: 0, max: 100, tickInterval: 25,
                           stops: c.dk ? [[0, '#1e3a5f'], [0.5, '#3b82f6'], [1, '#dbeafe']] : [[0, '#dbeafe'], [0.5, '#60a5fa'], [1, '#1e3a8a']],
-                          labels: { format: '{value} %', style: { color: c.txt } } };
+                          labels: { format: '{value} %', overflow: 'allow', style: { color: c.txt, textOverflow: 'clip', whiteSpace: 'nowrap' } } };
         } else {
             // Divergente: laranja abaixo, cinzento no zero, azul acima; escala simétrica arredondada a 10 p.p.
             // (com 10, a meia escala é sempre um número inteiro na legenda)
@@ -816,9 +857,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         limparGrafico('mapa');
         Highcharts.mapChart('mapa', Object.assign(base(c, 'reservas-gas-europa-mapa'), {
-            chart: { map: TOPO, backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
-            mapNavigation: { enabled: true, enableMouseWheelZoom: false, buttonOptions: { verticalAlign: 'bottom', theme: { fill: c.dk ? '#334155' : '#f1f5f9', style: { color: c.txt } } } },
-            mapView: { fitToGeometry: { type: 'MultiPoint', coordinates: [[-24, 35], [40, 35], [40, 70.5], [-24, 70.5]] } },
+            chart: { map: TOPO, backgroundColor: c.bg, plotBackgroundColor: c.dk ? '#1a1f2e' : '#e3e9ec', style: { fontFamily: 'inherit' } },
+            mapNavigation: { enabled: true, enableMouseWheelZoom: false, buttonOptions: { verticalAlign: 'top', theme: { fill: c.dk ? '#334155' : '#f1f5f9', style: { color: c.txt } } } },
+            mapView: MAPA_VISTA,
             colorAxis,
             legend: { title: { text: E.ver === 'pct' ? T('optPct') : (EN ? 'pp' : 'p.p.'), style: { color: c.txt, fontWeight: 'normal' } },
                       layout: 'horizontal', align: 'center', verticalAlign: 'bottom', padding: 14,
@@ -836,11 +877,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             },
             plotOptions: { series: { point: { events: { click() { escolherPais(this.zona); } } }, cursor: 'pointer' } },
-            series: [{
-                name: T(E.ver === 'pct' ? 'optPct' : E.ver === 'ano' ? 'optAno' : 'optMedia'), data: dados, joinBy: 'hc-key', allAreas: true,
-                nullColor: c.dk ? '#334155' : '#e5e7eb', borderColor: c.dk ? '#0f172a' : '#ffffff', borderWidth: 0.6,
+            series: fundoMapa(c).concat([{
+                name: T(E.ver === 'pct' ? 'optPct' : E.ver === 'ano' ? 'optAno' : 'optMedia'), data: dados.concat(semValorMapa(dados)), joinBy: 'hc-key', allAreas: !temFundo(),
+                nullColor: temFundo() ? (c.dk ? '#3b4a5f' : '#d4d8dd') : (c.dk ? '#334155' : '#e5e7eb'),
+                borderColor: c.dk ? '#0f172a' : '#ffffff', borderWidth: 0.6,
                 states: { hover: { brightness: c.dk ? 0.15 : -0.1, borderColor: c.dk ? '#fff' : '#000' } }
-            }]
+            }])
         }));
     }
 
@@ -864,7 +906,14 @@ document.addEventListener('DOMContentLoaded', function () {
             + `<td class="esq">${esc(nome(x.z))}</td><td>${fmtPct(x.pct)}${est(x)}</td>`
             + `<td class="col-opcional">${fmtNum(x.twh)}</td><td class="col-opcional">${fmtNum(x.cap)}</td>`
             + `<td${vazio(x.dAno) ? ' class="vazio"' : ''}>${fmtPp(x.dAno)}</td><td${vazio(x.dMedia) ? ' class="vazio"' : ''}>${fmtPp(x.dMedia)}</td></tr>`;
-        const sem = (META.sem_dados || []).concat(Object.keys(Q).filter(z => !Q[z] && z !== 'EU')).map(nome).sort((a, b) => a.localeCompare(b, LOC));
+        // Quem deixou de ter dados diz até quando (o Reino Unido só até 2020) e quem ainda não tinha, desde quando
+        const comPrazo = z => {
+            const p = META.paises[z];
+            if (p && p.data < E.dia) return `${nome(z)} (${T('soAte', { dia: fmtData(p.data) })})`;
+            if (p && p.primeiro_dia > E.dia) return `${nome(z)} (${T('soDesde', { dia: fmtData(p.primeiro_dia) })})`;
+            return nome(z);
+        };
+        const sem = (META.sem_dados || []).concat(Object.keys(Q).filter(z => !Q[z] && z !== 'EU')).map(comPrazo).sort((a, b) => a.localeCompare(b, LOC));
         const cont = document.getElementById('tabela-paises');
         cont.innerHTML = `<table class="tabela-gas"><thead><tr>${th('pais', T('thPais'), 'esq')}${th('pct', T('thPct'))}${th('twh', T('thTwh'), 'col-opcional')}${th('cap', T('thCap'), 'col-opcional')}${th('ano', T('thAno'))}${th('media', T('thMedia'))}</tr></thead>`
             + `<tbody>${ue.map(tr).join('')}${resto.map(tr).join('')}</tbody>`
@@ -957,8 +1006,8 @@ document.addEventListener('DOMContentLoaded', function () {
     async function renderTudo() {
         Q = await quadroDoDia(E.dia);
         document.getElementById('sel-dia').value = E.dia;
-        document.getElementById('dia-seg').disabled = E.dia >= META.ultima_data;
-        document.getElementById('dia-ultimo').disabled = E.dia === META.ultima_data;
+        document.getElementById('dia-seg').disabled = E.dia >= ULTIMO;
+        document.getElementById('dia-ultimo').disabled = E.dia === ULTIMO;
         document.getElementById('dia-ant').disabled = E.dia <= '2011-01-01';
         renderResumo(Q); renderMapa(Q); renderTabela(Q);
         await renderAno();
@@ -966,7 +1015,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function mudarDia(iso) {
         if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
-        if (iso > META.ultima_data) iso = META.ultima_data;
+        if (iso > ULTIMO) iso = ULTIMO;
         if (iso < '2011-01-01') iso = '2011-01-01';
         E.dia = iso;
         renderTudo().catch(falhou);
@@ -975,15 +1024,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const r = await fetchDados(PASTA + 'metadata.json');
         if (!r.ok) throw new Error('metadata.json: HTTP ' + r.status);
         META = await r.json();
-        E.dia = diaURL && diaURL <= META.ultima_data && diaURL >= '2011-01-01' ? diaURL : META.ultima_data;
+        ULTIMO = (META.paises.EU && META.paises.EU.data) || META.ultima_data;
+        E.dia = diaURL && diaURL <= ULTIMO && diaURL >= '2011-01-01' ? diaURL : ULTIMO;
         if (!META.paises[E.pais]) E.pais = 'EU';
         const sel = document.getElementById('sel-pais');
         const zonas = Object.keys(META.paises).sort((a, b) => a === 'EU' ? -1 : b === 'EU' ? 1 : nome(a).localeCompare(nome(b), LOC));
         sel.innerHTML = zonas.map(z => `<option value="${z}">${esc(nome(z))}</option>`).join('');
         sel.value = E.pais;
         const inp = document.getElementById('sel-dia');
-        inp.min = '2011-01-01'; inp.max = META.ultima_data;
-        document.getElementById('badge').innerHTML = T('badge', { data: fmtData(META.ultima_data) });
+        inp.min = '2011-01-01'; inp.max = ULTIMO;
+        document.getElementById('badge').innerHTML = T('badge', { data: fmtData(ULTIMO) });
         document.getElementById('metodo-dados').innerHTML = T('metodoDados');
         document.getElementById('estado').hidden = true;
         document.getElementById('conteudo').hidden = false;
@@ -1000,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('sel-dia').addEventListener('change', e => mudarDia(e.target.value));
     document.getElementById('dia-ant').addEventListener('click', () => mudarDia(isoDe(tsDe(E.dia) - DIA_MS)));
     document.getElementById('dia-seg').addEventListener('click', () => mudarDia(isoDe(tsDe(E.dia) + DIA_MS)));
-    document.getElementById('dia-ultimo').addEventListener('click', () => mudarDia(META.ultima_data));
+    document.getElementById('dia-ultimo').addEventListener('click', () => mudarDia(ULTIMO));
     document.getElementById('sel-pais').addEventListener('change', e => escolherPais(e.target.value));
     document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
     document.addEventListener('themeChanged', () => { if (Q) { renderMapa(Q); renderAno().catch(falhou); } });

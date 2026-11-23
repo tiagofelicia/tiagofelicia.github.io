@@ -256,7 +256,7 @@
         .grafico-box h3 { font-size: 1em; color: #2c3e50; margin: 18px 0 6px 0; }
         .grafico-intro { font-size: 0.88em; color: #5c636a; margin: 0 0 12px 0; line-height: 1.5; }
         .grafico { width: 100%; height: 420px; }
-        #mapa { height: 560px; }
+        #mapa { height: 700px; }
         .bloco-vazio { padding: 26px 14px; text-align: center; color: #5c636a; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
         .nota-bloco { font-size: 0.8em; color: #5c636a; margin: 6px 0 0; line-height: 1.5; }
         .bloco-controls { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 12px; align-items: center; }
@@ -1097,9 +1097,43 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==================================================================
     let TOPO = null, _topoPedido = null;
     function carregarMapa() {
-        if (!_topoPedido) _topoPedido = fetch(MAPA_URL).then(r => { if (!r.ok) throw new Error('mapa: HTTP ' + r.status); return r.json(); }).then(j => { TOPO = j; return j; });
+        if (!_topoPedido) _topoPedido = Promise.all([
+            fetch(MAPA_URL).then(r => { if (!r.ok) throw new Error('mapa: HTTP ' + r.status); return r.json(); }),
+            carregarFundo().catch(err => console.warn(err))
+        ]).then(([j]) => { TOPO = j; return j; });
         return _topoPedido;
     }
+    // O fundo (terra e mar) é o dos mapas de preços e de produção: europe_background.js (Natural Earth).
+    // Por cima vão só os países desta página; os outros (a Rússia, o Norte de África…) ficam no fundo.
+    // Sem o fundo (se falhar), desenha-se como antes: todos os países do ficheiro do mapa.
+    let _fundoPedido = null;
+    function carregarFundo() {
+        if (!_fundoPedido) _fundoPedido = new Promise((ok, erro) => {
+            if (typeof EUROPE_BG_GEOJSON !== 'undefined') { ok(); return; }
+            const s = document.createElement('script');
+            s.src = 'europe_background.js';
+            s.onload = () => ok();
+            s.onerror = () => erro(new Error('fundo do mapa'));
+            document.head.appendChild(s);
+        });
+        return _fundoPedido;
+    }
+    const temFundo = () => typeof EUROPE_BG_GEOJSON !== 'undefined';
+    function fundoMapa(c) {
+        if (!temFundo()) return [];
+        return [{ type: 'map', name: 'fundo', mapData: EUROPE_BG_GEOJSON, data: [], allAreas: true, colorAxis: false,
+                  nullColor: c.dk ? '#1e293b' : '#f4f4f1', borderColor: c.dk ? '#334155' : '#cfd4d8', borderWidth: 0.6,
+                  enableMouseTracking: false, showInLegend: false, includeInDataExport: false, accessibility: { enabled: false },
+                  states: { hover: { enabled: false }, inactive: { enabled: false } } }];
+    }
+    // Os países desta página sem valor, a cinzento por cima do fundo
+    function semValorMapa(dados) {
+        const tem = new Set(dados.map(p => p['hc-key']));
+        return [...DADOS.paises].filter(p => !REFS.includes(p)).map(CHAVE_MAPA).filter(k => !tem.has(k)).map(k => ({ 'hc-key': k, value: null }));
+    }
+    // Mercator sem rotação, como os mapas de preços e de produção (o ficheiro do mapa traz uma cónica rodada 10°)
+    const MAPA_VISTA = { projection: { name: 'WebMercator', rotation: [0] },
+                         fitToGeometry: { type: 'MultiPoint', coordinates: [[-14, 34.5], [34, 34.5], [34, 70.5], [-14, 70.5]] } };
     function renderMapa() {
         const c = _hcDark();
         document.getElementById('titulo-mapa').textContent = `${T('h2Mapa')} — ${cap(perLongo(E.s))}`;
@@ -1124,10 +1158,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const passo = [0.005, 0.01, 0.02, 0.025, 0.05, 0.1, 0.2, 0.5].find(x => x >= ((max - min) || 0.1) / 4) || 0.5;
         limparGrafico('mapa');
         Highcharts.mapChart('mapa', Object.assign(base(c, 'precos-consumidor-mapa'), {
-            chart: { map: TOPO, backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
-            mapNavigation: { enabled: true, enableMouseWheelZoom: false, buttonOptions: { verticalAlign: 'bottom', theme: { fill: c.dk ? '#334155' : '#f1f5f9', style: { color: c.txt } } } },
+            chart: { map: TOPO, backgroundColor: c.bg, plotBackgroundColor: c.dk ? '#1a1f2e' : '#e3e9ec', style: { fontFamily: 'inherit' } },
+            mapNavigation: { enabled: true, enableMouseWheelZoom: false, buttonOptions: { verticalAlign: 'top', theme: { fill: c.dk ? '#334155' : '#f1f5f9', style: { color: c.txt } } } },
             // Só a Europa da UE e dos vizinhos: a Rússia inteira deixava o resto pequeno
-            mapView: { fitToGeometry: { type: 'MultiPoint', coordinates: [[-24, 35], [34, 35], [34, 70.5], [-24, 70.5]] } },
+            mapView: MAPA_VISTA,
             colorAxis: {
                 min, max, tickInterval: passo, startOnTick: true, endOnTick: true,
                 stops: c.dk ? [[0, '#1e3a5f'], [0.5, '#3b82f6'], [1, '#dbeafe']] : [[0, '#dbeafe'], [0.5, '#60a5fa'], [1, '#1e3a8a']],
@@ -1150,11 +1184,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     return s;
                 }
             },
-            series: [{
-                name: T(E.e === 'ele' ? 'optEle' : 'optGas'), data: dados, joinBy: 'hc-key', allAreas: true,
-                nullColor: c.dk ? '#334155' : '#e5e7eb', borderColor: c.dk ? '#0f172a' : '#ffffff', borderWidth: 0.6,
+            series: fundoMapa(c).concat([{
+                name: T(E.e === 'ele' ? 'optEle' : 'optGas'), data: dados.concat(semValorMapa(dados)), joinBy: 'hc-key', allAreas: !temFundo(),
+                nullColor: temFundo() ? (c.dk ? '#3b4a5f' : '#d4d8dd') : (c.dk ? '#334155' : '#e5e7eb'),
+                borderColor: c.dk ? '#0f172a' : '#ffffff', borderWidth: 0.6,
                 states: { hover: { brightness: c.dk ? 0.15 : -0.1, borderColor: c.dk ? '#fff' : '#000' } }
-            }]
+            }])
         }));
     }
 
