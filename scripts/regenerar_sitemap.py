@@ -43,7 +43,9 @@ RULES = [
       "europe-balance.html", "mibgas.html", "mibgas-futuros.html",
       "precos-horarios.html", "formulas-tarifarios-indexados.html", "erc.html",
       "servicos-sistema.html", "quotas-agentes.html", "albufeiras.html",
-      "ren-vs-entsoe.html", "quem-marca-o-preco.html"}, "daily", "0.8"),
+      "ren-vs-entsoe.html", "quem-marca-o-preco.html", "gas-consumo-reservas.html",
+      "europe-gas-storage.html"},
+     "daily", "0.8"),
     # Preços ao consumidor (Eurostat): os dados mudam duas vezes por ano
     ({"europe-consumer-prices.html"}, "monthly", "0.8"),
     # Regulação eletricidade/gás
@@ -95,6 +97,11 @@ LANG_ALTERNATES = {
         ("pt-pt", "/europe-consumer-prices"),
         ("en", "/europe-consumer-prices?lang=en"),
         ("x-default", "/europe-consumer-prices"),
+    ],
+    "europe-gas-storage.html": [
+        ("pt-pt", "/europe-gas-storage"),
+        ("en", "/europe-gas-storage?lang=en"),
+        ("x-default", "/europe-gas-storage"),
     ],
 }
 
