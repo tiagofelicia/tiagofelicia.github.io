@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Reservas de Gás Natural na Europa — País a País | Tiago Felícia</title>
+    <meta name="description" content="Quanto gás natural está guardado nas reservas subterrâneas de cada país europeu, dia a dia desde 2011: mapa, enchimento face ao ano anterior e à média dos cinco anos anteriores, país a país, com a União Europeia e Portugal. Dados da GIE AGSI." />
+    <meta name="keywords" content="reservas de gás na Europa, armazenamento de gás, gas storage Europe, enchimento das reservas, GIE AGSI, União Europeia, Portugal, Espanha, Alemanha, Itália, Tiago Felícia" />
+    <meta name="author" content="Tiago Felícia" />
+
+    <!-- Canonical por língua: a versão portuguesa e a ?lang=en apontam cada uma para si, e o hreflang
+         liga as duas -->
+    <script>(function () { var l = document.createElement('link'); l.rel = 'canonical'; l.href = 'https://www.tiagofelicia.pt/europe-gas-storage' + (new URLSearchParams(location.search).get('lang') === 'en' ? '?lang=en' : ''); document.head.appendChild(l); })();</script>
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/europe-gas-storage" />
+    <link rel="alternate" hreflang="en" href="https://www.tiagofelicia.pt/europe-gas-storage?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/europe-gas-storage" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Reservas de Gás Natural na Europa" />
+    <meta property="og:description" content="O gás guardado nas reservas de cada país europeu, dia a dia desde 2011, face ao ano anterior e à média de cinco anos. Dados da GIE AGSI." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/europe-gas-storage" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Reservas de Gás Natural na Europa — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Tiago Felícia" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+    <meta name="twitter:title" content="Reservas de Gás Natural na Europa" />
+    <meta name="twitter:description" content="O gás guardado nas reservas de cada país europeu, dia a dia desde 2011. Dados da GIE AGSI." />
+    <meta name="twitter:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/map.js" integrity="sha384-/L1bC1sakpDt5pNXRMvWoIhEHtfIQGNlLmZaM/FLMbHqMWN16TOaukUrzv/50r1V" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+        gtag('consent', 'update', { 'analytics_storage': 'granted' });
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Reservas de gás natural na Europa, país a país",
+      "description": "O gás natural guardado nos armazenamentos subterrâneos de cada país europeu coberto pela GIE AGSI e do conjunto da União Europeia, por dia de gás, desde 2011: enchimento em percentagem da capacidade, gás armazenado e capacidade em TWh, com o mesmo dia do ano anterior e o mínimo, a média e o máximo dos cinco anos anteriores.",
+      "url": "https://www.tiagofelicia.pt/europe-gas-storage",
+      "inLanguage": ["pt-PT", "en"],
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "keywords": ["reservas de gás", "armazenamento de gás", "gas storage", "GIE AGSI", "União Europeia", "Europa"],
+      "spatialCoverage": { "@type": "Place", "name": "Europa" },
+      "temporalCoverage": "2011-01-01/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Enchimento das reservas", "unitText": "%" },
+        { "@type": "PropertyValue", "name": "Gás armazenado", "unitText": "TWh" },
+        { "@type": "PropertyValue", "name": "Capacidade declarada", "unitText": "TWh" }
+      ],
+      "isBasedOn": [
+        { "@type": "CreativeWork", "name": "GIE AGSI — Aggregated Gas Storage Inventory (Gas Infrastructure Europe)", "url": "https://agsi.gie.eu/" },
+        { "@type": "CreativeWork", "name": "REN Data Hub — Gás, balanço do armazenamento subterrâneo (Portugal)", "url": "https://datahub.ren.pt/pt/gas/balanco-diario/" }
+      ],
+      "creator": { "@type": "Person", "name": "Tiago Felícia", "url": "https://www.tiagofelicia.pt/" },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "application/json", "name": "Reservas de gás por país e por dia (um ficheiro por ano) e resumo", "contentUrl": "https://dados.tiagofelicia.pt/data/mapas/reservas-gas/" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Reservas de Gás na Europa", "item": "https://www.tiagofelicia.pt/europe-gas-storage" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que mostra esta página?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Quanto gás natural está guardado nas reservas subterrâneas de cada país europeu, em percentagem da capacidade e em TWh, dia a dia desde 2011, segundo a GIE AGSI (Gas Infrastructure Europe): no mapa, numa tabela com todos os países e, para cada país, num gráfico que compara o ano corrente com o anterior e com os cinco anos anteriores." }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que as reservas enchem no verão e esvaziam no inverno?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No inverno consome-se muito mais gás, sobretudo para aquecimento, do que aquilo que chega pelos gasodutos e pelos terminais de gás natural liquefeito. As reservas compram e guardam gás no verão, quando se consome menos e costuma ser mais barato, e devolvem-no à rede no inverno. Desde 2022 a União Europeia exige que as reservas estejam pelo menos a 90 % no início do inverno, com alguma flexibilidade nas datas." }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que alguns países aparecem a cinzento no mapa?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Porque não têm armazenamento subterrâneo de gás, ou não o declaram à GIE AGSI: é o caso da Finlândia, dos países bálticos que não a Letónia, da Irlanda, do Luxemburgo, de Chipre e de Malta, entre outros. Esses países dependem das reservas dos vizinhos, dos gasodutos e do gás natural liquefeito." }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que algumas reservas passam dos 100 %?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A percentagem é calculada sobre a capacidade que cada operador declara à GIE AGSI, e um armazenamento pode guardar mais gás do que essa capacidade declarada. Portugal, por exemplo, chegou a 109 % em novembro de 2022." }
+        },
+        {
+          "@type": "Question",
+          "name": "De onde vêm os dados?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Da GIE AGSI (Gas Infrastructure Europe), que reúne os valores declarados pelos operadores dos armazenamentos e exige a indicação da fonte. Os dias mais recentes chegam como estimados e são confirmados depois. Para Portugal, nos dias que a AGSI ainda não confirmou, usa-se o valor da REN, que coincide com o da AGSI nos dias confirmados. Os ficheiros estão em dados.tiagofelicia.pt, com licença CC BY 4.0." }
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header h1 .h1-sub { font-size: 0.6em; font-weight: 400; color: #5c636a; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #5c636a; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 10px 0 0 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos --- */
+        .controlos { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .controlos-linha { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; }
+        .bloco-controlos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; margin: 0 0 10px 0; }
+        .grupo-ctrl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .ctrl-label { font-size: 0.75em; color: #5c636a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.88em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+        .controlos select, .controlos input[type="date"], .bloco-controlos select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 0.9em; background: #fff; color: #2c3e50; max-width: 100%; }
+        .btn-nav { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 10px; cursor: pointer; color: #475569; font-size: 0.9em; }
+        .btn-nav:hover:not(:disabled) { background: #f1f5f9; }
+        .btn-nav:disabled { opacity: 0.4; cursor: default; }
+        #btn-partilhar { background: #fff; border: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.9em; cursor: pointer; color: #2c3e50; border-radius: 5px; display: inline-flex; align-items: center; gap: 6px; }
+        #btn-partilhar:hover { background: #e2e8f0; }
+        .lang-switch { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; font-size: 0.82em; }
+        .lang-switch a { padding: 6px 10px; color: #475569; text-decoration: none; font-weight: 600; border-right: 1px solid #cbd5e1; }
+        .lang-switch a:last-child { border-right: none; }
+        .lang-switch a.active { background: #2563eb; color: #fff; }
+        .lang-switch a:not(.active):hover { background: #e2e8f0; }
+        .toast-feedback { position: fixed; top: 20px; right: 20px; background: #15803d; color: white; padding: 11px 18px; border-radius: 6px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-weight: 500; font-size: 0.95em; }
+
+        /* O style.css tem regras genéricas para o <nav> do site; um <nav> dentro do <main> apanha-as */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #5c636a; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 440px; }
+        #mapa { height: 600px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #5c636a; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .nota-bloco { font-size: 0.8em; color: #5c636a; margin: 6px 0 0; line-height: 1.5; }
+
+        .resumo-frase { font-size: 1em; color: #2c3e50; line-height: 1.6; margin: 0 0 14px 0; }
+        #kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 10px 0 6px 0; }
+        @media (max-width: 1000px) { #kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
+        .kpi-value { font-size: 1.3em; font-weight: 700; color: #212529; line-height: 1.25; font-variant-numeric: tabular-nums; }
+        .kpi-sub { font-size: 0.78em; color: #5c636a; margin-top: 5px; line-height: 1.45; }
+
+        .tabela-box { width: 100%; margin: 6px 0 0; overflow-x: auto; }
+        .tabela-gas { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-gas th, .tabela-gas td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-gas thead th { background: #f1f3f5; font-weight: 600; }
+        .tabela-gas th.esq, .tabela-gas td.esq { text-align: left; }
+        .tabela-gas th.ord { cursor: pointer; user-select: none; }
+        .tabela-gas th.ord[aria-sort="ascending"]::after { content: " ▲"; font-size: 0.75em; }
+        .tabela-gas th.ord[aria-sort="descending"]::after { content: " ▼"; font-size: 0.75em; }
+        .tabela-gas tbody tr { cursor: pointer; }
+        .tabela-gas tbody tr:hover { background: #eef4ff; }
+        .tabela-gas tr.ref td { font-weight: 600; background: #f8fafc; }
+        .tabela-gas tr.ativa td { background: #dbeafe; }
+        .tabela-gas td.vazio { color: #94a3b8; }
+        .tabela-gas tfoot td { text-align: left; white-space: normal; font-size: 0.92em; color: #5c636a; background: #f8fafc; line-height: 1.5; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .estado-carregamento { text-align: center; color: #5c636a; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; overflow-wrap: anywhere; }
+
+        /* FAQ nas duas línguas: cada bloco tem a versão PT e a EN, e só se vê a da página */
+        html[lang="en"] [data-lang-block="pt"] { display: none; }
+        html:not([lang="en"]) [data-lang-block="en"] { display: none; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 380px; }
+            #mapa { height: 440px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.82em; }
+            .tabela-gas th, .tabela-gas td { padding: 5px 7px; }
+            .tabela-gas thead th { white-space: normal; }
+            .tabela-gas .col-opcional { display: none; }
+        }
+
+        /* --- Modo escuro --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-value,
+        [data-theme="dark"] .cta-simulador h2, [data-theme="dark"] .resumo-frase { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .painel-header h1 .h1-sub, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub, [data-theme="dark"] .ctrl-label, [data-theme="dark"] .nota-bloco { color: #94a3b8; }
+        [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle, [data-theme="dark"] .lang-switch { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active, [data-theme="dark"] .lang-switch a.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .lang-switch a { color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .lang-switch a:not(.active):hover { background: #334155; }
+        [data-theme="dark"] .controlos select, [data-theme="dark"] .controlos input[type="date"], [data-theme="dark"] .bloco-controlos select,
+        [data-theme="dark"] .btn-nav, [data-theme="dark"] #btn-partilhar { background: #1e293b; border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .controlos input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); }
+        [data-theme="dark"] .btn-nav:hover:not(:disabled), [data-theme="dark"] #btn-partilhar:hover { background: #334155; }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip):not([data-lang]) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-gas { background: #1e293b; }
+        [data-theme="dark"] .tabela-gas th, [data-theme="dark"] .tabela-gas td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-gas thead th { background: #0f172a; }
+        [data-theme="dark"] .tabela-gas tbody tr:hover { background: #334155; }
+        [data-theme="dark"] .tabela-gas tr.ref td { background: #16202e; }
+        [data-theme="dark"] .tabela-gas tr.ativa td { background: #1e3a5f; }
+        [data-theme="dark"] .tabela-gas td.vazio { color: #64748b; }
+        [data-theme="dark"] .tabela-gas tfoot td { background: #16202e; color: #94a3b8; }
+
+        @page { size: A4 portrait; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav, .controlos .grupo-acoes,
+            .toast-feedback, .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link" data-i18n="skip">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/" data-i18n="breadcrumbHome">Início</a></li>
+        <li data-i18n="breadcrumbEuropa">Europa</li>
+        <li aria-current="page" data-i18n="breadcrumbThis">Reservas de Gás na Europa</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <h1><span data-i18n="h1">Reservas de gás natural na Europa</span> <span class="h1-sub" data-i18n="h1sub">(país a país)</span></h1>
+        <p data-i18n-html="subtitle">Quanto gás natural está guardado nas reservas subterrâneas de cada país europeu, dia a dia desde 2011, face ao ano anterior e à média dos cinco anos anteriores. Fonte: <strong>GIE AGSI</strong>.</p>
+        <p class="badge-global" id="badge"></p>
+    </div>
+
+    <div class="controlos" aria-label="Escolhas" data-i18n-aria="ariaControlos">
+        <div class="controlos-linha">
+            <div class="grupo-ctrl">
+                <span class="ctrl-label" data-i18n="lblVer">Mostrar</span>
+                <div class="btn-toggle" id="ctrl-ver" role="group" aria-label="Mostrar" data-i18n-aria="lblVer">
+                    <button type="button" data-v="pct" class="active" data-i18n="optPct">% cheio</button>
+                    <button type="button" data-v="ano" data-i18n="optAno">Face a há um ano</button>
+                    <button type="button" data-v="media" data-i18n="optMedia">Face à média de 5 anos</button>
+                </div>
+            </div>
+            <div class="grupo-ctrl">
+                <label class="ctrl-label" for="sel-dia" data-i18n="lblDia">Dia</label>
+                <button type="button" class="btn-nav" id="dia-ant" title="Dia anterior" data-i18n-title="diaAnt" aria-label="Dia anterior" data-i18n-aria="diaAnt">&#10094;</button>
+                <input type="date" id="sel-dia" />
+                <button type="button" class="btn-nav" id="dia-seg" title="Dia seguinte" data-i18n-title="diaSeg" aria-label="Dia seguinte" data-i18n-aria="diaSeg">&#10095;</button>
+                <button type="button" class="btn-nav" id="dia-ultimo" data-i18n="diaUltimo">Último</button>
+            </div>
+            <div class="grupo-ctrl grupo-acoes">
+                <button type="button" id="btn-partilhar" title="Copiar ou partilhar o link desta vista" data-i18n-title="shareTitle"><span aria-hidden="true">📤</span> <span data-i18n="share">Partilhar</span></button>
+                <span class="lang-switch" role="group" aria-label="Idioma / Language">
+                    <a href="#" data-lang="pt">PT</a><a href="#" data-lang="en">EN</a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página" data-i18n-aria="ariaNav">
+        <a href="#bloco-resumo" class="mini-nav-chip" data-i18n="navResumo">📋 Resumo</a>
+        <a href="#bloco-mapa" class="mini-nav-chip" data-i18n="navMapa">🗺️ Mapa</a>
+        <a href="#bloco-paises" class="mini-nav-chip" data-i18n="navPaises">🌍 País a país</a>
+        <a href="#bloco-ano" class="mini-nav-chip" data-i18n="navAno">📈 Ano a ano</a>
+        <a href="#faq" class="mini-nav-chip" data-i18n="navFaq">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento" data-i18n="loading">A carregar os dados…</div>
+
+    <div id="conteudo" hidden>
+        <div class="grafico-box" id="bloco-resumo">
+            <h2 data-i18n="h2Resumo">Resumo</h2>
+            <p class="resumo-frase" id="resumo-frase"></p>
+            <div id="kpis"></div>
+        </div>
+
+        <div class="grafico-box" id="bloco-mapa">
+            <h2 id="titulo-mapa" data-i18n="h2Mapa">No mapa</h2>
+            <p class="grafico-intro" id="intro-mapa"></p>
+            <div id="mapa" class="grafico"></div>
+        </div>
+
+        <div class="grafico-box" id="bloco-paises">
+            <h2 data-i18n="h2Paises">País a país</h2>
+            <p class="grafico-intro" data-i18n="paisesIntro">Clique num cabeçalho para ordenar e numa linha para ver o país no gráfico ano a ano.</p>
+            <div class="tabela-box" id="tabela-paises"></div>
+        </div>
+
+        <div class="grafico-box" id="bloco-ano">
+            <h2 data-i18n="h2Ano">Ano a ano</h2>
+            <p class="grafico-intro" data-i18n-html="anoIntro">O enchimento em cada dia do ano: a linha forte é o ano do dia escolhido e a outra o ano anterior; a faixa vai do mínimo ao máximo desse dia nos <strong>cinco anos anteriores</strong>, com a média tracejada.</p>
+            <div class="bloco-controlos">
+                <div class="grupo-ctrl">
+                    <label class="ctrl-label" for="sel-pais" data-i18n="lblPais">País</label>
+                    <select id="sel-pais"></select>
+                </div>
+            </div>
+            <div id="grafico-ano" class="grafico"></div>
+            <p class="nota-bloco" id="nota-ano"></p>
+        </div>
+
+        <div class="grafico-box" id="bloco-metodo">
+            <h2 data-i18n="h2Metodo">Fontes e método</h2>
+            <div class="metodo-box">
+                <p data-i18n-html="metodo1">Os dados são da <strong>GIE AGSI</strong> (Gas Infrastructure Europe — Aggregated Gas Storage Inventory), que reúne o que os operadores dos armazenamentos subterrâneos declaram, por dia de gás. O enchimento é o gás guardado em percentagem da <strong>capacidade declarada</strong>, e pode passar dos 100 % quando se guarda mais do que isso. A União Europeia é o agregado da própria AGSI.</p>
+                <p data-i18n-html="metodo2">Os dias mais recentes chegam como <em>estimados</em> e são confirmados depois. Para <strong>Portugal</strong>, nos dias que a AGSI ainda não confirmou, o valor é o da <strong>REN</strong> (balanço do armazenamento subterrâneo do Carriço), que coincide com o da AGSI nos dias confirmados. «Face a há um ano» compara com o mesmo dia do ano anterior; «face à média de 5 anos», com a média desse dia nos cinco anos anteriores. As diferenças são em <strong>pontos percentuais</strong> (p.p.).</p>
+                <p id="metodo-dados"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-simulador">
+        <h2 data-i18n="ctaTitulo">E em Portugal?</h2>
+        <p data-i18n="ctaTexto">Para o consumo de gás em Portugal, as reservas portuguesas em detalhe e o preço do gás no mercado ibérico, use estas páginas.</p>
+        <div class="botoes">
+            <a href="gas-consumo-reservas" class="button-link" data-i18n="ctaGas">🔥 Consumo e reservas de gás em Portugal</a>
+            <a href="mibgas" class="button-link" data-i18n="ctaMibgas">📈 Preço do Gás (MIBGAS)</a>
+            <a href="europe-prices" class="button-link" data-i18n="ctaPrecos">⚡ Preços da eletricidade na Europa</a>
+        </div>
+    </div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/europe-gas-storage</p></div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;" data-i18n="h2Faq">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">O que mostra esta página?</span><span data-lang-block="en">What does this page show?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>Quanto gás natural está guardado nas <strong>reservas subterrâneas</strong> de cada país europeu, em percentagem da capacidade e em TWh, dia a dia desde 2011, segundo a <strong>GIE AGSI</strong> (Gas Infrastructure Europe): no mapa, numa tabela com todos os países e, para cada país, num gráfico que compara o ano corrente com o anterior e com os cinco anos anteriores.</p></div>
+                <div data-lang-block="en"><p>How much natural gas is held in each European country's <strong>underground storage</strong>, as a percentage of capacity and in TWh, day by day since 2011, according to <strong>GIE AGSI</strong> (Gas Infrastructure Europe): on the map, in a table with every country and, for each country, in a chart comparing the current year with the previous one and with the five years before.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">Porque é que as reservas enchem no verão e esvaziam no inverno?</span><span data-lang-block="en">Why does storage fill up in summer and empty in winter?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>No inverno consome-se muito mais gás, sobretudo para aquecimento, do que aquilo que chega pelos gasodutos e pelos terminais de gás natural liquefeito. As reservas compram e guardam gás no verão, quando se consome menos e costuma ser mais barato, e devolvem-no à rede no inverno. Desde 2022 a União Europeia exige que as reservas estejam pelo menos a <strong>90 %</strong> no início do inverno, com alguma flexibilidade nas datas.</p></div>
+                <div data-lang-block="en"><p>In winter much more gas is used, mostly for heating, than arrives through pipelines and liquefied natural gas terminals. Storage buys and holds gas in summer, when demand is lower and gas is usually cheaper, and releases it to the grid in winter. Since 2022 the European Union has required storage to be at least <strong>90%</strong> full at the start of winter, with some flexibility on the dates.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">Porque é que alguns países aparecem a cinzento no mapa?</span><span data-lang-block="en">Why are some countries grey on the map?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>Porque não têm armazenamento subterrâneo de gás, ou não o declaram à GIE AGSI: é o caso da Finlândia, dos países bálticos que não a Letónia, da Irlanda, do Luxemburgo, de Chipre e de Malta, entre outros. Esses países dependem das reservas dos vizinhos, dos gasodutos e do gás natural liquefeito.</p></div>
+                <div data-lang-block="en"><p>Because they have no underground gas storage, or do not report it to GIE AGSI: this is the case of Finland, the Baltic states other than Latvia, Ireland, Luxembourg, Cyprus and Malta, among others. These countries rely on their neighbours' storage, on pipelines and on liquefied natural gas.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">Porque é que algumas reservas passam dos 100 %?</span><span data-lang-block="en">Why do some storage levels go above 100%?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>A percentagem é calculada sobre a <strong>capacidade que cada operador declara</strong> à GIE AGSI, e um armazenamento pode guardar mais gás do que essa capacidade declarada. Portugal, por exemplo, chegou a 109 % em novembro de 2022.</p></div>
+                <div data-lang-block="en"><p>The percentage is calculated against the <strong>capacity each operator declares</strong> to GIE AGSI, and a storage site can hold more gas than that declared capacity. Portugal, for instance, reached 109% in November 2022.</p></div>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong><span data-lang-block="pt">De onde vêm os dados?</span><span data-lang-block="en">Where does the data come from?</span></strong></summary>
+            <div class="faq-content">
+                <div data-lang-block="pt"><p>Da <a href="https://agsi.gie.eu/" target="_blank" rel="noopener">GIE AGSI</a> (Gas Infrastructure Europe), que reúne os valores declarados pelos operadores dos armazenamentos e exige a indicação da fonte. Os dias mais recentes chegam como estimados e são confirmados depois. Para Portugal, nos dias que a AGSI ainda não confirmou, usa-se o valor da <a href="https://datahub.ren.pt/pt/gas/balanco-diario/" target="_blank" rel="noopener">REN</a>, que coincide com o da AGSI nos dias confirmados. Os ficheiros estão em <a href="https://dados.tiagofelicia.pt/data/mapas/reservas-gas/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, com licença CC BY 4.0.</p></div>
+                <div data-lang-block="en"><p>From <a href="https://agsi.gie.eu/" target="_blank" rel="noopener">GIE AGSI</a> (Gas Infrastructure Europe), which gathers the figures reported by the storage operators and requires the source to be credited. The most recent days come in as estimates and are confirmed later. For Portugal, on days AGSI has not yet confirmed, the figure from <a href="https://datahub.ren.pt/pt/gas/balanco-diario/" target="_blank" rel="noopener">REN</a> is used, which matches AGSI's on confirmed days. The files are at <a href="https://dados.tiagofelicia.pt/data/mapas/reservas-gas/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, under a CC BY 4.0 licence.</p></div>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo" data-i18n-title="topo" data-i18n-aria="topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ==================================================================
+    // LÍNGUA (PT / EN): o mesmo ficheiro serve as duas, por ?lang=en
+    // ==================================================================
+    const LANG = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'pt';
+    const EN = LANG === 'en';
+    const LOC = EN ? 'en-GB' : 'pt-PT';
+    try {
+        Highcharts.setOptions({ lang: EN ? { decimalPoint: '.', thousandsSep: ',' } : {
+            decimalPoint: ',', thousandsSep: ' ',
+            months: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+            shortMonths: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
+            contextButtonTitle: 'Menu do gráfico', viewFullscreen: 'Ver em ecrã inteiro', exitFullscreen: 'Sair do ecrã inteiro',
+            printChart: 'Imprimir', downloadPNG: 'Descarregar PNG', downloadJPEG: 'Descarregar JPEG', downloadPDF: 'Descarregar PDF',
+            downloadSVG: 'Descarregar SVG', downloadCSV: 'Descarregar CSV', downloadXLS: 'Descarregar XLS', viewData: 'Ver a tabela de dados',
+            hideData: 'Esconder a tabela de dados', zoomIn: 'Aproximar', zoomOut: 'Afastar', resetZoom: 'Repor o zoom'
+        } });
+    } catch (_) {}
+
+    const I18N = {
+        pt: {
+            htmlLang: 'pt-PT', title: 'Reservas de Gás Natural na Europa — País a País | Tiago Felícia',
+            metaDesc: 'Quanto gás natural está guardado nas reservas subterrâneas de cada país europeu, dia a dia desde 2011: mapa, enchimento face ao ano anterior e à média dos cinco anos anteriores, país a país, com a União Europeia e Portugal. Dados da GIE AGSI.',
+            ogTitle: 'Reservas de Gás Natural na Europa',
+            skip: 'Saltar para o conteúdo', breadcrumbHome: 'Início', breadcrumbEuropa: 'Europa', breadcrumbThis: 'Reservas de Gás na Europa',
+            h1: 'Reservas de gás natural na Europa', h1sub: '(país a país)',
+            subtitle: 'Quanto gás natural está guardado nas reservas subterrâneas de cada país europeu, dia a dia desde 2011, face ao ano anterior e à média dos cinco anos anteriores. Fonte: <strong>GIE AGSI</strong>.',
+            ariaControlos: 'Escolhas', ariaNav: 'Navegação rápida da página',
+            lblVer: 'Mostrar', optPct: '% cheio', optAno: 'Face a há um ano', optMedia: 'Face à média de 5 anos',
+            lblDia: 'Dia', diaAnt: 'Dia anterior', diaSeg: 'Dia seguinte', diaUltimo: 'Último',
+            share: 'Partilhar', shareTitle: 'Copiar ou partilhar o link desta vista', linkCopiado: '✓ Link copiado', copieLink: 'Copie este link:',
+            navResumo: '📋 Resumo', navMapa: '🗺️ Mapa', navPaises: '🌍 País a país', navAno: '📈 Ano a ano', navFaq: '❔ Perguntas',
+            loading: 'A carregar os dados…', erro: 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.',
+            badge: 'Dados até <strong>{data}</strong> · fonte: GIE AGSI (Gas Infrastructure Europe)',
+            h2Resumo: 'Resumo', h2Mapa: 'No mapa', h2Paises: 'País a país', h2Ano: 'Ano a ano', h2Metodo: 'Fontes e método', h2Faq: '❔ Perguntas Frequentes',
+            paisesIntro: 'Clique num cabeçalho para ordenar e numa linha para ver o país no gráfico ano a ano.',
+            anoIntro: 'O enchimento em cada dia do ano: a linha forte é o ano do dia escolhido e a outra o ano anterior; a faixa vai do mínimo ao máximo desse dia nos <strong>cinco anos anteriores</strong>, com a média tracejada.',
+            lblPais: 'País', topo: 'Voltar ao topo',
+            introPct: 'O enchimento das reservas de cada país a {dia}, em percentagem da capacidade declarada. A cinzento, os países sem armazenamento ou sem valor nesse dia. Portugal tem o contorno mais grosso.',
+            introAno: 'A diferença para o mesmo dia do ano anterior, em pontos percentuais: a azul, reservas mais cheias do que há um ano; a laranja, mais vazias.',
+            introMedia: 'A diferença para a média desse dia nos cinco anos anteriores, em pontos percentuais: a azul, acima do habitual para a época; a laranja, abaixo.',
+            mapaErro: 'Não foi possível carregar o mapa.',
+            thPais: 'País', thPct: '% cheio', thTwh: 'Guardado (TWh)', thCap: 'Capacidade (TWh)', thAno: 'Face a há um ano', thMedia: 'Face à média 5 anos', thDia: 'Dia',
+            ue: 'União Europeia', semValor: 'sem valor nesse dia', estimado: 'estimado', ren: 'valor da REN',
+            semArmaz: 'Sem armazenamento (ou sem dados na AGSI): {lista}.',
+            kpiUE: 'União Europeia', kpiAcima: 'Acima de há um ano', kpiAcimaSub: '{n} de {t} países com reservas mais cheias do que a {dia}',
+            faceAno: '{v} face a {dia} ({p})', semAno: 'sem o valor de há um ano',
+            frase: 'A {dia}, as reservas de gás da União Europeia estavam a <strong>{ue}</strong> da capacidade ({uet}), {comp} das do mesmo dia de há um ano ({uea}){media}. Portugal estava a {pt}{ptcomp}.',
+            fraseMedia: ' e {comp} da média dos cinco anos anteriores ({m})',
+            acima: 'acima', abaixo: 'abaixo', igual: 'ao nível',
+            notaAno: 'Capacidade declarada: {cap}. Último dia com dados: {dia}{est}. Fonte: {fonte}.',
+            fonteAgsi: 'GIE AGSI', fontePt: 'GIE AGSI e, nos dias que a AGSI ainda não confirmou, REN',
+            metodoDados: 'Os ficheiros, atualizados todos os dias, estão em <a href="https://dados.tiagofelicia.pt/data/mapas/reservas-gas/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> (licença CC BY 4.0): um por ano, com todos os países, e um <code>metadata.json</code> com o resumo do último dia.',
+            mediaAnos: 'Média {a}–{b}', minMax: 'Mínimo–máximo {a}–{b}', capDecl: 'capacidade declarada',
+            ctaTitulo: 'E em Portugal?', ctaTexto: 'Para o consumo de gás em Portugal, as reservas portuguesas em detalhe e o preço do gás no mercado ibérico, use estas páginas.',
+            ctaGas: '🔥 Consumo e reservas de gás em Portugal', ctaMibgas: '📈 Preço do Gás (MIBGAS)', ctaPrecos: '⚡ Preços da eletricidade na Europa',
+            metodo1: 'Os dados são da <strong>GIE AGSI</strong> (Gas Infrastructure Europe — Aggregated Gas Storage Inventory), que reúne o que os operadores dos armazenamentos subterrâneos declaram, por dia de gás. O enchimento é o gás guardado em percentagem da <strong>capacidade declarada</strong>, e pode passar dos 100 % quando se guarda mais do que isso. A União Europeia é o agregado da própria AGSI.',
+            metodo2: 'Os dias mais recentes chegam como <em>estimados</em> e são confirmados depois. Para <strong>Portugal</strong>, nos dias que a AGSI ainda não confirmou, o valor é o da <strong>REN</strong> (balanço do armazenamento subterrâneo do Carriço), que coincide com o da AGSI nos dias confirmados. «Face a há um ano» compara com o mesmo dia do ano anterior; «face à média de 5 anos», com a média desse dia nos cinco anos anteriores. As diferenças são em <strong>pontos percentuais</strong> (p.p.).'
+        },
+        en: {
+            htmlLang: 'en', title: 'Natural Gas Storage in Europe — Country by Country | Tiago Felícia',
+            metaDesc: 'How much natural gas is held in underground storage in each European country, day by day since 2011: map, filling level against the previous year and the five-year average, country by country, with the European Union and Portugal. Data from GIE AGSI.',
+            ogTitle: 'Natural Gas Storage in Europe',
+            skip: 'Skip to content', breadcrumbHome: 'Home', breadcrumbEuropa: 'Europe', breadcrumbThis: 'Gas Storage in Europe',
+            h1: 'Natural gas storage in Europe', h1sub: '(country by country)',
+            subtitle: 'How much natural gas is held in each European country\'s underground storage, day by day since 2011, against the previous year and the five-year average. Source: <strong>GIE AGSI</strong>.',
+            ariaControlos: 'Options', ariaNav: 'Page quick navigation',
+            lblVer: 'Show', optPct: '% full', optAno: 'vs a year ago', optMedia: 'vs 5-year average',
+            lblDia: 'Day', diaAnt: 'Previous day', diaSeg: 'Next day', diaUltimo: 'Latest',
+            share: 'Share', shareTitle: 'Copy or share the link to this view', linkCopiado: '✓ Link copied', copieLink: 'Copy this link:',
+            navResumo: '📋 Summary', navMapa: '🗺️ Map', navPaises: '🌍 Country by country', navAno: '📈 Year on year', navFaq: '❔ FAQ',
+            loading: 'Loading data…', erro: 'The data could not be loaded. Please try again in a few minutes.',
+            badge: 'Data up to <strong>{data}</strong> · source: GIE AGSI (Gas Infrastructure Europe)',
+            h2Resumo: 'Summary', h2Mapa: 'On the map', h2Paises: 'Country by country', h2Ano: 'Year on year', h2Metodo: 'Sources and method', h2Faq: '❔ Frequently Asked Questions',
+            paisesIntro: 'Click a header to sort and a row to show the country in the year-on-year chart.',
+            anoIntro: 'The filling level on each day of the year: the bold line is the year of the chosen day and the other the previous year; the band spans the minimum to the maximum of that day over the <strong>five previous years</strong>, with the average dashed.',
+            lblPais: 'Country', topo: 'Back to top',
+            introPct: 'Each country\'s storage filling level on {dia}, as a percentage of declared capacity. Grey: countries without storage or without a value on that day. Portugal has the thickest outline.',
+            introAno: 'The difference from the same day a year earlier, in percentage points: blue, fuller than a year ago; orange, emptier.',
+            introMedia: 'The difference from that day\'s average over the five previous years, in percentage points: blue, above the usual for the season; orange, below.',
+            mapaErro: 'The map could not be loaded.',
+            thPais: 'Country', thPct: '% full', thTwh: 'Stored (TWh)', thCap: 'Capacity (TWh)', thAno: 'vs a year ago', thMedia: 'vs 5-year avg.', thDia: 'Day',
+            ue: 'European Union', semValor: 'no value on that day', estimado: 'estimate', ren: 'REN figure',
+            semArmaz: 'No storage (or no data in AGSI): {lista}.',
+            kpiUE: 'European Union', kpiAcima: 'Fuller than a year ago', kpiAcimaSub: '{n} of {t} countries fuller than on {dia}',
+            faceAno: '{v} vs {dia} ({p})', semAno: 'no value a year earlier',
+            frase: 'On {dia}, European Union gas storage was <strong>{ue}</strong> full ({uet}), {comp} the same day a year earlier ({uea}){media}. Portugal was at {pt}{ptcomp}.',
+            fraseMedia: ' and {comp} the five-year average ({m})',
+            acima: 'above', abaixo: 'below', igual: 'level with',
+            notaAno: 'Declared capacity: {cap}. Last day with data: {dia}{est}. Source: {fonte}.',
+            fonteAgsi: 'GIE AGSI', fontePt: 'GIE AGSI and, on days AGSI has not yet confirmed, REN',
+            metodoDados: 'The files, updated daily, are at <a href="https://dados.tiagofelicia.pt/data/mapas/reservas-gas/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> (CC BY 4.0 licence): one per year with every country, and a <code>metadata.json</code> summarising the latest day.',
+            mediaAnos: 'Average {a}–{b}', minMax: 'Minimum–maximum {a}–{b}', capDecl: 'declared capacity',
+            ctaTitulo: 'And in Portugal?', ctaTexto: 'For gas consumption in Portugal, Portuguese storage in detail and the Iberian gas market price, see these pages.',
+            ctaGas: '🔥 Gas consumption and storage in Portugal', ctaMibgas: '📈 Gas price (MIBGAS)', ctaPrecos: '⚡ Electricity prices in Europe',
+            metodo1: 'The data comes from <strong>GIE AGSI</strong> (Gas Infrastructure Europe — Aggregated Gas Storage Inventory), which gathers what underground storage operators report, per gas day. The filling level is the gas stored as a percentage of <strong>declared capacity</strong>, and can exceed 100% when more is stored than that. The European Union is AGSI\'s own aggregate.',
+            metodo2: 'The most recent days come in as <em>estimates</em> and are confirmed later. For <strong>Portugal</strong>, on days AGSI has not yet confirmed, the figure is <strong>REN</strong>\'s (balance of the Carriço underground storage), which matches AGSI\'s on confirmed days. "vs a year ago" compares with the same day a year earlier; "vs 5-year average", with that day\'s average over the five previous years. Differences are in <strong>percentage points</strong> (pp).'
+        }
+    };
+    function T(k, v) {
+        let s = I18N[LANG][k] !== undefined ? I18N[LANG][k] : (I18N.pt[k] !== undefined ? I18N.pt[k] : k);
+        if (v) Object.keys(v).forEach(x => { s = s.split('{' + x + '}').join(v[x]); });
+        return s;
+    }
+    function aplicarLingua() {
+        document.documentElement.lang = T('htmlLang');
+        document.title = T('title');
+        const selfUrl = 'https://www.tiagofelicia.pt/europe-gas-storage' + (EN ? '?lang=en' : '');
+        const canon = document.querySelector('link[rel="canonical"]'); if (canon) canon.href = selfUrl;
+        const meta = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+        meta('meta[property="og:url"]', selfUrl);
+        meta('meta[name="description"]', T('metaDesc'));
+        meta('meta[property="og:title"]', T('ogTitle'));
+        meta('meta[name="twitter:title"]', T('ogTitle'));
+        meta('meta[property="og:locale"]', EN ? 'en_GB' : 'pt_PT');
+        document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.getAttribute('data-i18n')); });
+        document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = T(el.getAttribute('data-i18n-html')); });
+        document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = T(el.getAttribute('data-i18n-title')); });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', T(el.getAttribute('data-i18n-aria'))); });
+        document.querySelectorAll('.lang-switch a').forEach(a => a.classList.toggle('active', a.dataset.lang === LANG));
+    }
+    document.querySelectorAll('.lang-switch a').forEach(a => a.addEventListener('click', ev => {
+        ev.preventDefault();
+        if (a.dataset.lang === LANG) return;
+        const p = paramsAtuais();
+        if (a.dataset.lang === 'en') p.set('lang', 'en'); else p.delete('lang');
+        window.location.search = p.toString();
+    }));
+    aplicarLingua();
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    const PASTA = 'mapas/reservas-gas/';
+    const MAPA_URL = 'https://cdn.jsdelivr.net/npm/@highcharts/map-collection@2.3.3/custom/europe.topo.json';
+    const ANOS_MEDIA = 5;
+    const NOMES = {
+        pt: { EU: 'União Europeia', AT: 'Áustria', BE: 'Bélgica', BG: 'Bulgária', HR: 'Croácia', CY: 'Chipre', CZ: 'Chéquia', DK: 'Dinamarca', EE: 'Estónia',
+              FI: 'Finlândia', FR: 'França', DE: 'Alemanha', GR: 'Grécia', HU: 'Hungria', IE: 'Irlanda', IT: 'Itália', LV: 'Letónia', LT: 'Lituânia',
+              LU: 'Luxemburgo', MT: 'Malta', NL: 'Países Baixos', PL: 'Polónia', PT: 'Portugal', RO: 'Roménia', SK: 'Eslováquia', SI: 'Eslovénia',
+              ES: 'Espanha', SE: 'Suécia', GB: 'Reino Unido', UA: 'Ucrânia', RS: 'Sérvia' },
+        en: { EU: 'European Union', AT: 'Austria', BE: 'Belgium', BG: 'Bulgaria', HR: 'Croatia', CY: 'Cyprus', CZ: 'Czechia', DK: 'Denmark', EE: 'Estonia',
+              FI: 'Finland', FR: 'France', DE: 'Germany', GR: 'Greece', HU: 'Hungary', IE: 'Ireland', IT: 'Italy', LV: 'Latvia', LT: 'Lithuania',
+              LU: 'Luxembourg', MT: 'Malta', NL: 'Netherlands', PL: 'Poland', PT: 'Portugal', RO: 'Romania', SK: 'Slovakia', SI: 'Slovenia',
+              ES: 'Spain', SE: 'Sweden', GB: 'United Kingdom', UA: 'Ukraine', RS: 'Serbia' }
+    };
+    const nome = c => NOMES[LANG][c] || c;
+    // O código do país no mapa (o da AGSI em minúsculas)
+    const CHAVE_MAPA = c => c.toLowerCase();
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const nf = (min, max) => new Intl.NumberFormat(LOC, { minimumFractionDigits: min, maximumFractionDigits: max });
+    const _nf0 = nf(0, 0), _nf1 = nf(1, 1), _nf2 = nf(2, 2);
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const menos = s => s.replace('-', '−');
+    const NB = ' ';
+    const fmtPct = v => vazio(v) ? '--' : menos(_nf1.format(v)) + (EN ? '%' : NB + '%');
+    const fmtPp = v => vazio(v) ? '--' : (v > 0 ? '+' : '') + menos(_nf1.format(v)) + NB + (EN ? 'pp' : 'p.p.');
+    const fmtTWh = v => vazio(v) ? '--' : (Math.abs(v) < 10 ? _nf2 : Math.abs(v) < 100 ? _nf1 : _nf0).format(v) + NB + 'TWh';
+    const fmtNum = v => vazio(v) ? '--' : (Math.abs(v) < 10 ? _nf2 : Math.abs(v) < 100 ? _nf1 : _nf0).format(v);
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const fmtData = iso => { const [a, m, d] = iso.split('-'); return EN ? `${d}/${m}/${a}` : `${d}/${m}/${a}`; };
+    const DIA_MS = 86400000;
+    const tsDe = iso => Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10));
+    const isoDe = ts => new Date(ts).toISOString().slice(0, 10);
+    const seta = v => vazio(v) || Math.abs(v) < 0.05 ? '=' : (v > 0 ? '▲' : '▼');
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6', suave: dk ? '#94a3b8' : '#5c636a' };
+    }
+    function base(c, nomeFich) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: true, text: 'GIE AGSI · tiagofelicia.pt', href: 'https://www.tiagofelicia.pt/europe-gas-storage', style: { color: c.suave } },
+            exporting: { enabled: true, filename: nomeFich,
+                         buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS'] } } },
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    function limparGrafico(id, html) {
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === id);
+        if (g) g.destroy();
+        const alvo = document.getElementById(id);
+        if (alvo) alvo.innerHTML = html || '';
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    const ativarToggle = (id, v) => document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+
+    // ==================================================================
+    // ESTADO E LINK (?ver=ano|media, ?dia=AAAA-MM-DD, ?pais=XX, ?lang=en)
+    // ==================================================================
+    const E = { ver: 'pct', dia: null, pais: 'PT' };
+    const URL0 = new URLSearchParams(window.location.search);
+    if (['ano', 'media'].includes(URL0.get('ver'))) E.ver = URL0.get('ver');
+    const diaURL = /^\d{4}-\d{2}-\d{2}$/.test(URL0.get('dia') || '') ? URL0.get('dia') : null;
+    if (/^[A-Za-z]{2}$/.test(URL0.get('pais') || '')) E.pais = URL0.get('pais').toUpperCase();
+    function paramsAtuais() {
+        const q = new URLSearchParams();
+        if (E.ver !== 'pct') q.set('ver', E.ver);
+        if (E.dia && META && E.dia !== META.ultima_data) q.set('dia', E.dia);
+        if (E.pais !== 'PT') q.set('pais', E.pais.toLowerCase());
+        if (EN) q.set('lang', 'en');
+        if (URL0.get('source')) q.set('source', URL0.get('source'));   // o modo de teste do dados.js (?source=fs)
+        return q;
+    }
+    function atualizarURL() {
+        const q = paramsAtuais().toString();
+        history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+    }
+    function mostrarFeedback(txt) {
+        const t = document.createElement('div'); t.className = 'toast-feedback'; t.textContent = txt;
+        document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
+    }
+    async function partilharVista() {
+        const q = paramsAtuais().toString();
+        const url = `${window.location.origin}${window.location.pathname}${q ? '?' + q : ''}`;
+        const titulo = T('ogTitle') + ' — ' + fmtData(E.dia);
+        if (navigator.share) {
+            try { await navigator.share({ title: titulo + ' — Tiago Felícia', text: titulo, url }); return; }
+            catch (e) { if (e && e.name === 'AbortError') return; }
+        }
+        try { await navigator.clipboard.writeText(`${titulo}\n${url}`); mostrarFeedback(T('linkCopiado')); }
+        catch (e) { prompt(T('copieLink'), url); }
+    }
+
+    // ==================================================================
+    // DADOS: metadata.json (o último dia) e os ficheiros por ano (os outros dias e o gráfico)
+    // ==================================================================
+    let META = null;
+    const ANOS = new Map();                 // ano -> Promise<{primeiro_dia, paises}>
+    function ano(a) {
+        if (!ANOS.has(a)) {
+            ANOS.set(a, fetchDados(`${PASTA}${a}.json`).then(r => r.ok ? r.json() : null).catch(() => null));
+        }
+        return ANOS.get(a);
+    }
+    // [pct, twh, cap, est] de um país num dia, ou null
+    function valorDia(j, zona, iso) {
+        if (!j || !j.paises[zona]) return null;
+        const i = Math.round((tsDe(iso) - tsDe(j.primeiro_dia)) / DIA_MS);
+        return j.paises[zona][i] || null;
+    }
+    // O mesmo dia noutro ano (29/02 -> 28/02), ou até 3 dias antes
+    async function noDia(zona, iso, anosAtras) {
+        const a = +iso.slice(0, 4) - anosAtras, m = +iso.slice(5, 7), d = +iso.slice(8, 10);
+        const baseTs = Date.UTC(a, m - 1, m === 2 && d === 29 ? 28 : d);
+        for (let k = 0; k <= 3; k++) {
+            const x = isoDe(baseTs - k * DIA_MS);
+            const v = valorDia(await ano(+x.slice(0, 4)), zona, x);
+            if (v) return { iso: x, v };
+        }
+        return null;
+    }
+    // O quadro de um dia: por país, o valor, o de há um ano e a média dos 5 anos anteriores
+    async function quadroDoDia(iso) {
+        const zonas = Object.keys(META.paises);
+        if (iso === META.ultima_data) {
+            const out = {};
+            zonas.forEach(z => {
+                const p = META.paises[z];
+                if (p.data !== iso) { out[z] = null; return; }
+                out[z] = { pct: p.cheio_pct, twh: p.armazenado_twh, cap: p.capacidade_twh, est: p.estado,
+                           ano: p.ha_um_ano_pct, anoDia: p.ha_um_ano_data, media: p.media_5a_pct };
+            });
+            return out;
+        }
+        const a = +iso.slice(0, 4);
+        await Promise.all([0, 1, 2, 3, 4, 5].map(k => ano(a - k)));
+        const out = {};
+        for (const z of zonas) {
+            const v = valorDia(await ano(a), z, iso);
+            if (!v) { out[z] = null; continue; }
+            const h = await noDia(z, iso, 1);
+            const ant = [];
+            for (let k = 1; k <= ANOS_MEDIA; k++) { const x = await noDia(z, iso, k); if (x) ant.push(x.v[0]); }
+            out[z] = { pct: v[0], twh: v[1], cap: v[2], est: v[3], ano: h ? h.v[0] : null, anoDia: h ? h.iso : null,
+                       media: ant.length >= 3 ? ant.reduce((t, x) => t + x, 0) / ant.length : null };
+        }
+        return out;
+    }
+    const metrica = q => !q ? null : E.ver === 'ano' ? (vazio(q.ano) ? null : q.pct - q.ano) : E.ver === 'media' ? (vazio(q.media) ? null : q.pct - q.media) : q.pct;
+
+    // ==================================================================
+    // RESUMO
+    // ==================================================================
+    function renderResumo(Q) {
+        const ue = Q.EU, pt = Q.PT;
+        const cmp = (a, b) => vazio(b) ? null : (a > b + 0.05 ? T('acima') : a < b - 0.05 ? T('abaixo') : T('igual'));
+        const frases = [];
+        if (ue) {
+            const mediaTxt = vazio(ue.media) ? '' : T('fraseMedia', { comp: cmp(ue.pct, ue.media), m: fmtPct(ue.media) });
+            frases.push(T('frase', { dia: fmtData(E.dia), ue: fmtPct(ue.pct), uet: fmtTWh(ue.twh), comp: cmp(ue.pct, ue.ano) || '', uea: fmtPct(ue.ano), media: mediaTxt,
+                                     pt: pt ? fmtPct(pt.pct) : '--', ptcomp: pt && !vazio(pt.ano) ? ` (${fmtPp(pt.pct - pt.ano)} ${EN ? 'vs a year ago' : 'face a há um ano'})` : '' }));
+        }
+        document.getElementById('resumo-frase').innerHTML = frases.join(' ');
+        const card = (z) => {
+            const q = Q[z];
+            if (!q) return '';
+            const d = vazio(q.ano) ? null : q.pct - q.ano;
+            const est = q.est === 'E' ? ` · ${T('estimado')}` : q.est === 'R' ? ` · ${T('ren')}` : '';
+            return `<div class="kpi-card"><div class="kpi-label">${esc(nome(z))}</div>`
+                 + `<div class="kpi-value">${fmtPct(q.pct)}</div>`
+                 + `<div class="kpi-sub">${fmtTWh(q.twh)} / ${fmtTWh(q.cap)}${est}</div>`
+                 + `<div class="kpi-sub">${d === null ? T('semAno') : `${seta(d)} ${T('faceAno', { v: fmtPp(d), dia: fmtData(q.anoDia), p: fmtPct(q.ano) })}`}</div></div>`;
+        };
+        const paises = Object.keys(Q).filter(z => z !== 'EU' && Q[z] && !vazio(Q[z].ano));
+        const acima = paises.filter(z => Q[z].pct > Q[z].ano);
+        const anoAnt = Q.EU && Q.EU.anoDia ? fmtData(Q.EU.anoDia) : '';
+        document.getElementById('kpis').innerHTML = card('EU') + card('PT') + card('ES')
+            + `<div class="kpi-card"><div class="kpi-label">${esc(T('kpiAcima'))}</div><div class="kpi-value">${acima.length} / ${paises.length}</div>`
+            + `<div class="kpi-sub">${esc(T('kpiAcimaSub', { n: acima.length, t: paises.length, dia: anoAnt }))}</div></div>`;
+    }
+
+    // ==================================================================
+    // MAPA
+    // ==================================================================
+    let TOPO = null, _topoPedido = null;
+    function carregarMapa() {
+        if (!_topoPedido) _topoPedido = fetch(MAPA_URL).then(r => { if (!r.ok) throw new Error('mapa: HTTP ' + r.status); return r.json(); }).then(j => { TOPO = j; return j; });
+        return _topoPedido;
+    }
+    function renderMapa(Q) {
+        const c = _hcDark();
+        document.getElementById('intro-mapa').textContent = T(E.ver === 'ano' ? 'introAno' : E.ver === 'media' ? 'introMedia' : 'introPct', { dia: fmtData(E.dia) });
+        if (!TOPO) {
+            carregarMapa().then(() => renderMapa(Q)).catch(err => { console.error(err); limparGrafico('mapa', `<div class="bloco-vazio">${esc(T('mapaErro'))}</div>`); });
+            return;
+        }
+        const dados = [];
+        Object.keys(Q).forEach(z => {
+            if (z === 'EU' || !Q[z]) return;
+            const v = metrica(Q[z]);
+            if (vazio(v)) return;
+            const ponto = { 'hc-key': CHAVE_MAPA(z), value: +v.toFixed(2), zona: z };
+            if (z === 'PT') { ponto.borderColor = c.dk ? '#f8fafc' : '#0f172a'; ponto.borderWidth = 2.5; }
+            dados.push(ponto);
+        });
+        let colorAxis;
+        if (E.ver === 'pct') {
+            colorAxis = { min: 0, max: 100, tickInterval: 25,
+                          stops: c.dk ? [[0, '#1e3a5f'], [0.5, '#3b82f6'], [1, '#dbeafe']] : [[0, '#dbeafe'], [0.5, '#60a5fa'], [1, '#1e3a8a']],
+                          labels: { format: '{value} %', style: { color: c.txt } } };
+        } else {
+            // Divergente: laranja abaixo, cinzento no zero, azul acima; escala simétrica arredondada a 10 p.p.
+            // (com 10, a meia escala é sempre um número inteiro na legenda)
+            const lim = Math.max(10, Math.ceil(Math.max(...dados.map(p => Math.abs(p.value)), 0) / 10) * 10);
+            colorAxis = { min: -lim, max: lim, tickInterval: lim / 2,
+                          stops: c.dk ? [[0, '#fb923c'], [0.5, '#475569'], [1, '#60a5fa']] : [[0, '#c2410c'], [0.5, '#e2e8f0'], [1, '#1d4ed8']],
+                          labels: { formatter() { return (this.value > 0 ? '+' : '') + menos(_nf0.format(this.value)); }, style: { color: c.txt } } };
+        }
+        limparGrafico('mapa');
+        Highcharts.mapChart('mapa', Object.assign(base(c, 'reservas-gas-europa-mapa'), {
+            chart: { map: TOPO, backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            mapNavigation: { enabled: true, enableMouseWheelZoom: false, buttonOptions: { verticalAlign: 'bottom', theme: { fill: c.dk ? '#334155' : '#f1f5f9', style: { color: c.txt } } } },
+            mapView: { fitToGeometry: { type: 'MultiPoint', coordinates: [[-24, 35], [40, 35], [40, 70.5], [-24, 70.5]] } },
+            colorAxis,
+            legend: { title: { text: E.ver === 'pct' ? T('optPct') : (EN ? 'pp' : 'p.p.'), style: { color: c.txt, fontWeight: 'normal' } },
+                      layout: 'horizontal', align: 'center', verticalAlign: 'bottom', padding: 14,
+                      symbolWidth: Math.max(160, Math.min(320, document.getElementById('mapa').clientWidth - 60)) },
+            tooltip: {
+                useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt },
+                formatter() {
+                    const q = Q[this.point.zona];
+                    let s = `<b>${esc(nome(this.point.zona))}</b><br>${fmtPct(q.pct)} · ${fmtTWh(q.twh)} / ${fmtTWh(q.cap)}`;
+                    if (!vazio(q.ano)) s += `<br>${esc(T('thAno'))}: ${fmtPp(q.pct - q.ano)} (${fmtPct(q.ano)})`;
+                    if (!vazio(q.media)) s += `<br>${esc(T('thMedia'))}: ${fmtPp(q.pct - q.media)} (${fmtPct(q.media)})`;
+                    if (q.est === 'E') s += `<br><i>${esc(T('estimado'))}</i>`;
+                    if (q.est === 'R') s += `<br><i>${esc(T('ren'))}</i>`;
+                    return s;
+                }
+            },
+            plotOptions: { series: { point: { events: { click() { escolherPais(this.zona); } } }, cursor: 'pointer' } },
+            series: [{
+                name: T(E.ver === 'pct' ? 'optPct' : E.ver === 'ano' ? 'optAno' : 'optMedia'), data: dados, joinBy: 'hc-key', allAreas: true,
+                nullColor: c.dk ? '#334155' : '#e5e7eb', borderColor: c.dk ? '#0f172a' : '#ffffff', borderWidth: 0.6,
+                states: { hover: { brightness: c.dk ? 0.15 : -0.1, borderColor: c.dk ? '#fff' : '#000' } }
+            }]
+        }));
+    }
+
+    // ==================================================================
+    // PAÍS A PAÍS
+    // ==================================================================
+    let ORD = { col: 'pct', dir: -1 };
+    function renderTabela(Q) {
+        const linhas = Object.keys(Q).filter(z => Q[z]).map(z => ({ z, ...Q[z], dAno: vazio(Q[z].ano) ? null : Q[z].pct - Q[z].ano, dMedia: vazio(Q[z].media) ? null : Q[z].pct - Q[z].media }));
+        const chave = x => ({ pais: nome(x.z), pct: x.pct, twh: x.twh, cap: x.cap, ano: x.dAno, media: x.dMedia })[ORD.col];
+        const ue = linhas.filter(x => x.z === 'EU'), resto = linhas.filter(x => x.z !== 'EU');
+        resto.sort((a, b) => {
+            if (ORD.col === 'pais') return nome(a.z).localeCompare(nome(b.z), LOC) * ORD.dir;
+            const ka = chave(a), kb = chave(b);
+            if (vazio(ka) && vazio(kb)) return 0; if (vazio(ka)) return 1; if (vazio(kb)) return -1;
+            return (ka - kb) * ORD.dir;
+        });
+        const th = (col, rot, cls) => `<th scope="col" class="ord${cls ? ' ' + cls : ''}" data-col="${col}" aria-sort="${ORD.col === col ? (ORD.dir > 0 ? 'ascending' : 'descending') : 'none'}">${esc(rot)}</th>`;
+        const est = x => x.est === 'E' ? ` <span title="${esc(T('estimado'))}">*</span>` : x.est === 'R' ? ` <span title="${esc(T('ren'))}">ᴿ</span>` : '';
+        const tr = x => `<tr data-zona="${x.z}" class="${x.z === 'EU' ? 'ref' : ''}${x.z === E.pais ? ' ativa' : ''}">`
+            + `<td class="esq">${esc(nome(x.z))}</td><td>${fmtPct(x.pct)}${est(x)}</td>`
+            + `<td class="col-opcional">${fmtNum(x.twh)}</td><td class="col-opcional">${fmtNum(x.cap)}</td>`
+            + `<td${vazio(x.dAno) ? ' class="vazio"' : ''}>${fmtPp(x.dAno)}</td><td${vazio(x.dMedia) ? ' class="vazio"' : ''}>${fmtPp(x.dMedia)}</td></tr>`;
+        const sem = (META.sem_dados || []).concat(Object.keys(Q).filter(z => !Q[z] && z !== 'EU')).map(nome).sort((a, b) => a.localeCompare(b, LOC));
+        const cont = document.getElementById('tabela-paises');
+        cont.innerHTML = `<table class="tabela-gas"><thead><tr>${th('pais', T('thPais'), 'esq')}${th('pct', T('thPct'))}${th('twh', T('thTwh'), 'col-opcional')}${th('cap', T('thCap'), 'col-opcional')}${th('ano', T('thAno'))}${th('media', T('thMedia'))}</tr></thead>`
+            + `<tbody>${ue.map(tr).join('')}${resto.map(tr).join('')}</tbody>`
+            + `<tfoot><tr><td colspan="6">${esc(T('semArmaz', { lista: sem.join(', ') }))} * ${esc(T('estimado'))} · ᴿ ${esc(T('ren'))}.</td></tr></tfoot></table>`;
+        cont.querySelectorAll('th.ord').forEach(h => h.addEventListener('click', () => {
+            const col = h.dataset.col;
+            ORD = ORD.col === col ? { col, dir: -ORD.dir } : { col, dir: col === 'pais' ? 1 : -1 };
+            renderTabela(Q);
+        }));
+        cont.querySelectorAll('tbody tr').forEach(r => r.addEventListener('click', () => escolherPais(r.dataset.zona)));
+    }
+
+    // ==================================================================
+    // ANO A ANO (um país)
+    // ==================================================================
+    const ANO_REF = 2024;                            // ano bissexto de referência para o eixo «dia do ano»
+    const tsRef = iso => Date.UTC(ANO_REF, +iso.slice(5, 7) - 1, +iso.slice(8, 10));
+    async function renderAno() {
+        const c = _hcDark(), z = E.pais, a = +E.dia.slice(0, 4);
+        const anos = await Promise.all([0, 1, 2, 3, 4, 5].map(k => ano(a - k)));
+        const porAno = new Map();
+        anos.forEach((j, k) => {
+            if (!j || !j.paises[z]) return;
+            const pts = [];
+            j.paises[z].forEach((v, i) => { if (v) { const iso = isoDe(tsDe(j.primeiro_dia) + i * DIA_MS); pts.push([tsRef(iso), v[0]]); } });
+            porAno.set(a - k, pts);
+        });
+        limparGrafico('grafico-ano');
+        if (!porAno.get(a) || !porAno.get(a).length) {
+            limparGrafico('grafico-ano', `<div class="bloco-vazio">${esc(nome(z))}: ${esc(T('semValor'))}</div>`);
+            document.getElementById('nota-ano').textContent = '';
+            return;
+        }
+        const faixa = new Map();
+        for (let k = 1; k <= ANOS_MEDIA; k++) (porAno.get(a - k) || []).forEach(([x, y]) => { if (!faixa.has(x)) faixa.set(x, []); faixa.get(x).push(y); });
+        const xs = [...faixa.keys()].sort((p, q) => p - q).filter(x => faixa.get(x).length >= 3);
+        const anosFaixa = [];
+        for (let k = ANOS_MEDIA; k >= 1; k--) if (porAno.has(a - k)) anosFaixa.push(a - k);
+        const cor = z === 'PT' ? (c.dk ? '#60a5fa' : '#2563eb') : (c.dk ? '#a78bfa' : '#7c3aed');
+        const corAnt = c.dk ? '#94a3b8' : '#64748b';
+        const series = [];
+        if (xs.length) {
+            series.push({ type: 'arearange', name: T('minMax', { a: anosFaixa[0], b: anosFaixa[anosFaixa.length - 1] }), id: 'faixa',
+                          data: xs.map(x => [x, Math.min(...faixa.get(x)), Math.max(...faixa.get(x))]),
+                          color: cor, fillOpacity: c.dk ? 0.22 : 0.15, lineWidth: 0, marker: { enabled: false }, zIndex: 0 });
+            series.push({ type: 'line', name: T('mediaAnos', { a: anosFaixa[0], b: anosFaixa[anosFaixa.length - 1] }), id: 'media',
+                          data: xs.map(x => [x, +(faixa.get(x).reduce((t, v) => t + v, 0) / faixa.get(x).length).toFixed(2)]),
+                          color: corAnt, dashStyle: 'ShortDash', lineWidth: 1.5, marker: { enabled: false }, zIndex: 1 });
+        }
+        if (porAno.get(a - 1)) series.push({ type: 'line', name: String(a - 1), data: porAno.get(a - 1), color: corAnt, lineWidth: 2, marker: { enabled: false }, zIndex: 2 });
+        series.push({ type: 'line', name: String(a), data: porAno.get(a), color: cor, lineWidth: 3, marker: { enabled: false }, zIndex: 3 });
+        const o = base(c, `reservas-gas-${z.toLowerCase()}-ano-a-ano`);
+        Highcharts.chart('grafico-ano', Object.assign(o, {
+            chart: Object.assign(o.chart, { type: 'line', zooming: { type: 'x' } }),
+            xAxis: { type: 'datetime', min: Date.UTC(ANO_REF, 0, 1), max: Date.UTC(ANO_REF, 11, 31), tickInterval: 30 * DIA_MS,
+                     labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true,
+                     plotLines: [{ value: tsRef(E.dia), color: c.suave, width: 1, dashStyle: 'Dot', zIndex: 4 }] },
+            yAxis: { min: 0, softMax: 100, max: null, endOnTick: false, tickInterval: 25, title: { text: null }, gridLineColor: c.grelha,
+                     labels: { style: { color: c.txt }, format: EN ? '{value}%' : '{value} %' },
+                     plotLines: [{ value: 100, color: c.suave, width: 1, dashStyle: 'Dot', zIndex: 4,
+                                   label: { text: T('capDecl'), align: 'right', x: -4, y: -4, style: { color: c.suave, fontSize: '11px' } } }] },
+            tooltip: Object.assign(o.tooltip, { shared: true, formatter() {
+                const d = new Date(this.x);
+                let h = `<b>${Highcharts.dateFormat('%e %b', this.x)}</b> · ${esc(nome(z))}<br>`;
+                this.points.forEach(p => {
+                    if (p.series.options.id === 'faixa') h += `${p.series.name}: ${fmtPct(p.point.low)} – ${fmtPct(p.point.high)}<br>`;
+                    else h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtPct(p.y)}</b><br>`;
+                });
+                return h;
+            } }),
+            series
+        }));
+        const m = META.paises[z];
+        document.getElementById('nota-ano').textContent = m ? T('notaAno', { cap: fmtTWh(m.capacidade_twh), dia: fmtData(m.data),
+            est: m.estado === 'E' ? ` (${T('estimado')})` : m.estado === 'R' ? ` (${T('ren')})` : '', fonte: z === 'PT' ? T('fontePt') : T('fonteAgsi') }) : '';
+    }
+    function escolherPais(z) {
+        if (!z || !META.paises[z]) return;
+        E.pais = z;
+        document.getElementById('sel-pais').value = z;
+        document.querySelectorAll('#tabela-paises tbody tr').forEach(r => r.classList.toggle('ativa', r.dataset.zona === z));
+        atualizarURL();
+        renderAno().catch(falhou);
+    }
+
+    // ==================================================================
+    // TUDO
+    // ==================================================================
+    let Q = null;
+    async function renderTudo() {
+        Q = await quadroDoDia(E.dia);
+        document.getElementById('sel-dia').value = E.dia;
+        document.getElementById('dia-seg').disabled = E.dia >= META.ultima_data;
+        document.getElementById('dia-ultimo').disabled = E.dia === META.ultima_data;
+        document.getElementById('dia-ant').disabled = E.dia <= '2011-01-01';
+        renderResumo(Q); renderMapa(Q); renderTabela(Q);
+        await renderAno();
+        atualizarURL();
+    }
+    function mudarDia(iso) {
+        if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
+        if (iso > META.ultima_data) iso = META.ultima_data;
+        if (iso < '2011-01-01') iso = '2011-01-01';
+        E.dia = iso;
+        renderTudo().catch(falhou);
+    }
+    async function carregar() {
+        const r = await fetchDados(PASTA + 'metadata.json');
+        if (!r.ok) throw new Error('metadata.json: HTTP ' + r.status);
+        META = await r.json();
+        E.dia = diaURL && diaURL <= META.ultima_data && diaURL >= '2011-01-01' ? diaURL : META.ultima_data;
+        if (!META.paises[E.pais]) E.pais = 'EU';
+        const sel = document.getElementById('sel-pais');
+        const zonas = Object.keys(META.paises).sort((a, b) => a === 'EU' ? -1 : b === 'EU' ? 1 : nome(a).localeCompare(nome(b), LOC));
+        sel.innerHTML = zonas.map(z => `<option value="${z}">${esc(nome(z))}</option>`).join('');
+        sel.value = E.pais;
+        const inp = document.getElementById('sel-dia');
+        inp.min = '2011-01-01'; inp.max = META.ultima_data;
+        document.getElementById('badge').innerHTML = T('badge', { data: fmtData(META.ultima_data) });
+        document.getElementById('metodo-dados').innerHTML = T('metodoDados');
+        document.getElementById('estado').hidden = true;
+        document.getElementById('conteudo').hidden = false;
+        ativarToggle('ctrl-ver', E.ver);
+        await renderTudo();
+    }
+    function falhou(err) {
+        console.error('Reservas de gás na Europa:', err);
+        const el = document.getElementById('estado');
+        el.hidden = false; el.className = 'estado-erro'; el.textContent = T('erro');
+    }
+
+    ligarToggle('ctrl-ver', v => { E.ver = v; renderMapa(Q); atualizarURL(); });
+    document.getElementById('sel-dia').addEventListener('change', e => mudarDia(e.target.value));
+    document.getElementById('dia-ant').addEventListener('click', () => mudarDia(isoDe(tsDe(E.dia) - DIA_MS)));
+    document.getElementById('dia-seg').addEventListener('click', () => mudarDia(isoDe(tsDe(E.dia) + DIA_MS)));
+    document.getElementById('dia-ultimo').addEventListener('click', () => mudarDia(META.ultima_data));
+    document.getElementById('sel-pais').addEventListener('change', e => escolherPais(e.target.value));
+    document.getElementById('btn-partilhar').addEventListener('click', partilharVista);
+    document.addEventListener('themeChanged', () => { if (Q) { renderMapa(Q); renderAno().catch(falhou); } });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 600), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    carregarMapa().catch(() => {});
+    carregar().catch(falhou);
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>

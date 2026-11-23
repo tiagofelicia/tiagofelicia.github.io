@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <title>Consumo e Reservas de Gás Natural em Portugal (e em Espanha e na UE) | Tiago Felícia</title>
+    <meta name="description" content="Quanto gás natural se consome em Portugal, mês a mês desde 2014 (nas casas e na indústria e nas centrais elétricas), e quanto está guardado nas reservas de Portugal, de Espanha e da União Europeia, dia a dia, face ao ano anterior. Dados da REN e da GIE AGSI." />
+    <meta name="keywords" content="consumo de gás natural, reservas de gás, armazenamento de gás, Carriço, gás natural Portugal, centrais de ciclo combinado, REN, GIE AGSI, Espanha, União Europeia, Tiago Felícia" />
+    <meta name="author" content="Tiago Felícia" />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/gas-consumo-reservas" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/gas-consumo-reservas" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/gas-consumo-reservas" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gás natural: consumo e reservas" />
+    <meta property="og:description" content="O consumo de gás natural em Portugal, mês a mês desde 2014, e as reservas de gás de Portugal, de Espanha e da UE, dia a dia. Dados da REN e da GIE AGSI." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/gas-consumo-reservas" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Gás natural: consumo e reservas — Tiago Felícia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Tiago Felícia" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+    <meta name="twitter:title" content="Gás natural: consumo e reservas" />
+    <meta name="twitter:description" content="O consumo de gás natural em Portugal desde 2014 e as reservas de Portugal, de Espanha e da UE. Dados da REN e da GIE AGSI." />
+    <meta name="twitter:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+    <script src="/dados.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts.js" integrity="sha384-SGSvmfhCM3hkGxTFp+XUzegWFyvDjY5Fp8XAwYgjU9m/ABGDZP155lxJcur+S8cc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/highcharts-more.js" integrity="sha384-x6/kglvEzn1s2HFbrxjVMd5brYcMbTBmMJ4v3wGouJbNZrTRQmwPlEXAuBiQvcQZ" crossorigin="anonymous"></script>
+    <script src="cores-graficos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/exporting.js" integrity="sha384-TJE9ncU0vXo5KwYXnmu7CAHlkWo/9nOhkrBOhU6kS72Ofi4FzykryDfh+eqxniIc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/export-data.js" integrity="sha384-LyBxgyr7zYolp2N2sb66TW4ia0O2OQgB2LmYesJ++QzVNKqeDDKyHSwuPcTXTp15" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@12.6.0/modules/accessibility.js" integrity="sha384-sS4HBvki1hEKWbZcSkuClp+4/vLJOuzc6ns5B+G8Yuzme2a+hYQ+DZNJMI11XefP" crossorigin="anonymous"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+        gtag('consent', 'update', { 'analytics_storage': 'granted' });
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-J4NWP00S4F');
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Consumo de gás natural em Portugal e reservas de gás de Portugal, de Espanha e da União Europeia",
+      "description": "O consumo de gás natural em Portugal continental por mês, desde janeiro de 2014, no mercado convencional (consumo doméstico e industrial) e no mercado elétrico (centrais de ciclo combinado), segundo a REN; e as reservas de gás natural nos armazenamentos subterrâneos de Portugal, de Espanha e da União Europeia, dia a dia, desde 2011, segundo a GIE AGSI.",
+      "url": "https://www.tiagofelicia.pt/gas-consumo-reservas",
+      "inLanguage": "pt-PT",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "keywords": ["consumo de gás natural", "reservas de gás", "armazenamento subterrâneo", "Carriço", "mercado convencional", "mercado elétrico", "Portugal", "Espanha", "União Europeia"],
+      "spatialCoverage": { "@type": "Place", "name": "Portugal continental, Espanha e União Europeia" },
+      "temporalCoverage": "2011-01-01/..",
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Consumo mensal de gás natural (total, convencional e elétrico)", "unitText": "GWh" },
+        { "@type": "PropertyValue", "name": "Gás armazenado", "unitText": "TWh" },
+        { "@type": "PropertyValue", "name": "Enchimento das reservas", "unitText": "%" }
+      ],
+      "isBasedOn": [
+        { "@type": "CreativeWork", "name": "REN Data Hub — Gás, evolução do consumo", "url": "https://datahub.ren.pt/pt/gas/evolucao-do-consumo/" },
+        { "@type": "CreativeWork", "name": "GIE AGSI — Aggregated Gas Storage Inventory (Gas Infrastructure Europe)", "url": "https://agsi.gie.eu/" }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Tiago Felícia",
+        "url": "https://www.tiagofelicia.pt/"
+      },
+      "distribution": [
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Consumo mensal de gás natural em Portugal", "contentUrl": "https://dados.tiagofelicia.pt/data/gas/consumo_gas_mensal.csv" },
+        { "@type": "DataDownload", "encodingFormat": "text/csv", "name": "Reservas de gás de Portugal, de Espanha e da UE (fonte: GIE AGSI)", "contentUrl": "https://dados.tiagofelicia.pt/data/gas/reservas_gas.csv" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://www.tiagofelicia.pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Gás natural: consumo e reservas", "item": "https://www.tiagofelicia.pt/gas-consumo-reservas" }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que mostra esta página?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Duas coisas: quanto gás natural se consome em Portugal continental, mês a mês desde janeiro de 2014, separado entre o consumo das casas e da indústria e o das centrais elétricas, segundo a REN; e quanto gás está guardado nas reservas subterrâneas de Portugal, de Espanha e do conjunto da União Europeia, dia a dia, segundo a GIE AGSI."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que são o mercado convencional e o mercado elétrico?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "São os dois grandes destinos do gás em Portugal, como a REN os conta. O mercado convencional é o gás consumido nas casas, no comércio e na indústria: o que é entregue nas redes de distribuição, o dos clientes ligados diretamente à rede de alta pressão e o das unidades autónomas de gaseificação. O mercado elétrico é o gás queimado nas centrais de ciclo combinado para produzir eletricidade."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que o consumo das centrais elétricas varia tanto?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Porque as centrais a gás produzem sobretudo o que as outras fontes não chegam a cobrir: trabalham mais em meses com pouca água nas barragens, pouco vento ou pouco sol, e quando é preciso exportar eletricidade para Espanha, e menos nos meses chuvosos e ventosos. O consumo das casas e da indústria é muito mais estável e segue sobretudo o frio e a atividade económica."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Onde fica guardado o gás em Portugal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No armazenamento subterrâneo do Carriço, em Pombal, em cavidades abertas num maciço de sal. É o único de Portugal e tem uma capacidade pequena face à de Espanha e à do resto da Europa, o equivalente a algumas semanas de consumo médio. O gás chega a Portugal sobretudo pelo terminal de gás natural liquefeito de Sines e pelas ligações a Espanha."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que quer dizer face ao ano anterior e o intervalo dos últimos 5 anos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nas reservas, a comparação face ao ano anterior usa o mesmo dia de há um ano. No gráfico ano a ano, a linha mais forte é o ano corrente, a outra é o ano anterior, e a faixa vai do mínimo ao máximo que as reservas tiveram nesse dia do ano nos cinco anos anteriores, com a média tracejada. Serve para ver se as reservas estão dentro do habitual para a época."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que as reservas passam dos 100 %?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A GIE AGSI calcula a percentagem sobre a capacidade que cada operador declara para o armazenamento, e o armazenamento pode guardar mais gás do que essa capacidade declarada. Em Portugal isso aconteceu em várias épocas entre 2019 e 2025, com o máximo de 109 % no fim de novembro de 2022; em Espanha, ligeiramente, em 2023 e 2024. Os valores são os publicados pela AGSI e os gráficos mostram-nos tal como são."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Porque é que os valores mais recentes das reservas podem mudar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A GIE AGSI publica cada dia de gás como estimado e só depois o confirma, e os operadores dos armazenamentos podem corrigir os valores nos dias seguintes. Por isso a recolha volta a pedir os últimos 45 dias todos os dias. No consumo, a REN publica cada mês depois de ele acabar e também pode rever os meses recentes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "De onde vêm os dados e como os posso descarregar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O consumo vem do Data Hub da REN e as reservas da GIE AGSI (Gas Infrastructure Europe), que exige a indicação da fonte; em Portugal, nos dias que a AGSI ainda não confirmou, o valor é o da REN, que coincide com o da AGSI nos dias confirmados. Os dois ficheiros, atualizados todos os dias, estão em dados.tiagofelicia.pt, com licença CC BY 4.0."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        .metodo-box, .grafico-box, .kpi-card, .bloco-vazio, .cta-simulador { box-sizing: border-box; }
+        .metodo-box, .cta-simulador { max-width: min(1200px, 100%); }
+
+        .painel-header { text-align: center; margin-bottom: 16px; }
+        .painel-header h1 { margin: 0 0 8px 0; font-size: 1.4em; color: #2c3e50; }
+        .painel-header h1 .h1-sub { font-size: 0.6em; font-weight: 400; color: #5c636a; }
+        .painel-header p { margin: 4px 0 0; font-size: 0.9em; color: #5c636a; }
+        .badge-global { text-align: center; font-size: 0.82em; color: #555; margin: 10px 0 0 0; }
+        .badge-global strong { color: #2c3e50; }
+
+        /* --- Controlos dos gráficos --- */
+        .bloco-controlos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; margin: 0 0 10px 0; }
+        .grupo-ctrl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .ctrl-label { font-size: 0.75em; color: #5c636a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .btn-toggle { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; }
+        .btn-toggle button { background: #fff; border: none; border-right: 1px solid #cbd5e1; padding: 6px 13px; font-size: 0.88em; cursor: pointer; color: #475569; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+        .btn-toggle button:last-child { border-right: none; }
+        .btn-toggle button:hover:not(.active) { background: #f1f5f9; }
+        .btn-toggle button.active { background: #2563eb; color: #fff; font-weight: 600; }
+
+        /* O style.css tem regras genéricas para o <nav> do site (fundo, padding e, abaixo de 768px,
+           position: sticky !important); um <nav> dentro do <main> apanha-as — por isso são anuladas aqui. */
+        .mini-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px auto 16px auto; width: 95%; max-width: 1200px; padding: 4px 0; background: transparent; position: static !important; z-index: auto; }
+        .mini-nav .mini-nav-chip { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 16px; padding: 5px 12px; font-size: 0.85em; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+        .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
+
+        .grafico-box { width: 95%; max-width: 1200px; margin: 0 auto 14px auto; }
+        .grafico-box h2 { font-size: 1.15em; color: #2c3e50; margin: 30px 0 6px 0; }
+        .grafico-intro { font-size: 0.88em; color: #5c636a; margin: 0 0 12px 0; line-height: 1.5; }
+        .grafico { width: 100%; height: 440px; }
+        .bloco-vazio { padding: 26px 14px; text-align: center; color: #5c636a; font-size: 0.9em; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 8px; }
+        .nota-bloco { font-size: 0.8em; color: #5c636a; margin: 6px 0 0; line-height: 1.5; }
+
+        .resumo-frase { font-size: 1em; color: #2c3e50; line-height: 1.6; margin: 0 0 14px 0; }
+        #kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 10px 0 6px 0; }
+        @media (max-width: 1000px) { #kpis { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 520px) { #kpis { grid-template-columns: 1fr; } }
+        .kpi-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 14px; text-align: center; }
+        .kpi-label { font-size: 0.78em; color: #5c636a; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
+        .kpi-value { font-size: 1.3em; font-weight: 700; color: #212529; line-height: 1.25; font-variant-numeric: tabular-nums; }
+        .kpi-unid { font-size: 0.62em; font-weight: 600; color: #5c636a; }
+        .kpi-sub { font-size: 0.78em; color: #5c636a; margin-top: 5px; line-height: 1.45; }
+        .kpi-cor { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
+
+        .tabela-box { width: 100%; margin: 10px 0 0; overflow-x: auto; }
+        .tabela-gas { border-collapse: collapse; width: 100%; font-size: 0.86em; background: #fff; }
+        .tabela-gas caption { text-align: left; padding: 8px 10px; font-weight: 600; color: #2c3e50; background: #f1f3f5; border: 1px solid #dee2e6; border-bottom: none; }
+        .tabela-gas th, .tabela-gas td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .tabela-gas thead th { background: #f1f3f5; font-weight: 600; }
+        .tabela-gas th[scope="row"] { text-align: left; font-weight: 600; }
+        .tabela-gas tr.parcial td, .tabela-gas tr.parcial th { font-style: italic; }
+        .tabela-gas tfoot td { text-align: left; white-space: normal; font-size: 0.92em; color: #5c636a; background: #f8fafc; line-height: 1.5; }
+
+        .metodo-box { background: #f8f9fa; border: 1px solid #dee2e6; border-left: 4px solid #2563eb; border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.87em; color: #334155; margin: 0 0 14px 0; line-height: 1.55; }
+        .metodo-box p { margin: 0 0 8px 0; }
+        .metodo-box p:last-child { margin-bottom: 0; }
+        .metodo-box ul { margin: 0 0 8px 0; padding-left: 20px; }
+        .estado-carregamento { text-align: center; color: #5c636a; padding: 40px 10px; font-size: 0.95em; }
+        .estado-erro { text-align: center; color: #c0392b; padding: 30px 10px; font-size: 0.95em; }
+
+        .cta-simulador { width: 95%; max-width: 1200px; margin: 30px auto; background: #eef6ff; border: 1px solid #b8daff; border-radius: 8px; padding: 18px 20px; text-align: center; }
+        .cta-simulador h2 { margin: 0 0 8px 0; font-size: 1.12em; color: #2c3e50; }
+        .cta-simulador p { margin: 0 0 14px 0; font-size: 0.92em; color: #555; }
+        .cta-simulador .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .link-section { text-align: center; margin: 22px auto; }
+        .link-section p { font-family: monospace; font-size: 0.9em; color: #555; background-color: #e9ecef; padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 0; overflow-wrap: anywhere; }
+
+        #btn-voltar-topo { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: #2563eb; color: #fff; border: none; font-size: 1.2em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 900; }
+        #btn-voltar-topo.visible { opacity: 1; pointer-events: auto; }
+        #btn-voltar-topo:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        @media (max-width: 700px) {
+            .grafico { height: 380px; }
+            .btn-toggle button { padding: 5px 10px; font-size: 0.82em; }
+            .tabela-gas th, .tabela-gas td { padding: 5px 7px; }
+            .tabela-gas thead th { white-space: normal; }
+            .tabela-gas .col-opcional { display: none; }
+        }
+
+        /* --- Modo escuro --- */
+        [data-theme="dark"] #menu-placeholder { background: #0f172a !important; }
+        [data-theme="dark"] .painel-header h1, [data-theme="dark"] .badge-global strong,
+        [data-theme="dark"] .grafico-box h2, [data-theme="dark"] .kpi-value,
+        [data-theme="dark"] .cta-simulador h2, [data-theme="dark"] .resumo-frase { color: #e2e8f0; }
+        [data-theme="dark"] .painel-header p, [data-theme="dark"] .painel-header h1 .h1-sub, [data-theme="dark"] .badge-global,
+        [data-theme="dark"] .grafico-intro, [data-theme="dark"] .estado-carregamento,
+        [data-theme="dark"] .kpi-label, [data-theme="dark"] .kpi-sub, [data-theme="dark"] .kpi-unid,
+        [data-theme="dark"] .ctrl-label, [data-theme="dark"] .nota-bloco { color: #94a3b8; }
+        [data-theme="dark"] .cta-simulador p { color: #cbd5e1; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip { background: #1e293b; color: #cbd5e1; border-color: #475569; }
+        [data-theme="dark"] .mini-nav .mini-nav-chip:hover { background: #334155; }
+        [data-theme="dark"] .kpi-card { background: #1e293b; border-color: #475569; }
+        [data-theme="dark"] .bloco-vazio { background: #1e293b; border-color: #475569; color: #94a3b8; }
+        [data-theme="dark"] .btn-toggle { border-color: #475569; }
+        [data-theme="dark"] .btn-toggle button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
+        [data-theme="dark"] .btn-toggle button:hover:not(.active) { background: #334155; }
+        [data-theme="dark"] .btn-toggle button.active { background: #2563eb; color: #fff; }
+        [data-theme="dark"] .metodo-box { background: #1e293b; border-color: #475569; border-left-color: #3b82f6; color: #cbd5e1; }
+        [data-theme="dark"] .cta-simulador { background: #1e3a5f; border-color: #3b82f6; }
+        [data-theme="dark"] .link-section p { background-color: #1e293b; color: #cbd5e1; }
+        [data-theme="dark"] main a:not(.button-link):not(.mini-nav-chip) { color: #93c5fd; }
+        [data-theme="dark"] .tabela-gas { background: #1e293b; }
+        [data-theme="dark"] .tabela-gas caption { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        [data-theme="dark"] .tabela-gas th, [data-theme="dark"] .tabela-gas td { border-color: #475569; color: #e2e8f0; }
+        [data-theme="dark"] .tabela-gas thead th { background: #0f172a; }
+        [data-theme="dark"] .tabela-gas tfoot td { background: #16202e; color: #94a3b8; }
+
+        @page { size: A4 portrait; margin: 10mm; }
+        @media print {
+            #menu-placeholder, #footer-placeholder, .breadcrumb, .skip-link, .mini-nav, .bloco-controlos,
+            .link-section, #btn-voltar-topo, .cta-simulador,
+            .highcharts-exporting-group, .highcharts-button { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .grafico-box, .kpi-card, .metodo-box { break-inside: avoid; page-break-inside: avoid; }
+            details.faq-item { display: block !important; }
+            details.faq-item > div { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li>Gás Natural</li>
+        <li aria-current="page">Consumo e reservas</li>
+    </ol>
+</nav>
+
+<main id="main-content">
+    <div class="painel-header">
+        <h1>Gás natural: consumo e reservas <span class="h1-sub">(Portugal, Espanha e UE)</span></h1>
+        <p>Quanto gás natural se consome em Portugal, mês a mês desde 2014 — nas casas e na indústria e nas centrais elétricas — e quanto está guardado nas reservas subterrâneas de Portugal, de Espanha e da União Europeia, dia a dia. Fontes: <strong>REN</strong> (consumo) e <strong>GIE AGSI</strong> (reservas).</p>
+        <p class="badge-global" id="badge"></p>
+    </div>
+
+    <nav class="mini-nav" aria-label="Navegação rápida da página">
+        <a href="#bloco-resumo" class="mini-nav-chip">📋 Resumo</a>
+        <a href="#bloco-reservas-anos" class="mini-nav-chip">🛢️ Reservas ano a ano</a>
+        <a href="#bloco-reservas-evolucao" class="mini-nav-chip">📈 Evolução das reservas</a>
+        <a href="#bloco-consumo-mensal" class="mini-nav-chip">🔥 Consumo mensal</a>
+        <a href="#bloco-consumo-anos" class="mini-nav-chip">📊 Consumo ano a ano</a>
+        <a href="#bloco-metodo" class="mini-nav-chip">🔎 Fontes e método</a>
+        <a href="#faq" class="mini-nav-chip">❔ Perguntas</a>
+    </nav>
+
+    <div id="estado" class="estado-carregamento">A carregar os dados…</div>
+
+    <div id="conteudo" hidden>
+        <!-- ====================== RESUMO ====================== -->
+        <div class="grafico-box" id="bloco-resumo">
+            <h2>Resumo</h2>
+            <p class="resumo-frase" id="resumo-frase"></p>
+            <div id="kpis"></div>
+        </div>
+
+        <!-- ====================== RESERVAS: ANO A ANO ====================== -->
+        <div class="grafico-box" id="bloco-reservas-anos">
+            <h2>Reservas de gás ano a ano</h2>
+            <p class="grafico-intro">O enchimento das reservas em cada dia do ano: a linha forte é o ano corrente e a outra o ano anterior; a faixa vai do mínimo ao máximo que as reservas tiveram nesse dia nos <strong>cinco anos anteriores</strong>, com a média tracejada. As reservas enchem no verão, quando o gás é mais barato e se consome menos, e esvaziam no inverno.</p>
+            <div class="bloco-controlos">
+                <div class="grupo-ctrl">
+                    <span class="ctrl-label">Reservas de</span>
+                    <div class="btn-toggle" id="ctrl-zona" role="group" aria-label="Reservas de">
+                        <button type="button" data-v="PT" class="active">Portugal</button>
+                        <button type="button" data-v="ES">Espanha</button>
+                        <button type="button" data-v="EU">União Europeia</button>
+                    </div>
+                </div>
+            </div>
+            <div id="grafico-reservas-anos" class="grafico"></div>
+            <p class="nota-bloco" id="nota-reservas-anos"></p>
+        </div>
+
+        <!-- ====================== RESERVAS: EVOLUÇÃO ====================== -->
+        <div class="grafico-box" id="bloco-reservas-evolucao">
+            <h2>Evolução das reservas</h2>
+            <p class="grafico-intro">O enchimento das reservas de Portugal, de Espanha e da União Europeia ao longo do tempo, em percentagem da capacidade de cada uma. Passando o rato por cima, vê também o gás guardado em TWh.</p>
+            <div class="bloco-controlos">
+                <div class="grupo-ctrl">
+                    <span class="ctrl-label">Período</span>
+                    <div class="btn-toggle" id="ctrl-per-res" role="group" aria-label="Período">
+                        <button type="button" data-v="1">1 ano</button>
+                        <button type="button" data-v="5" class="active">5 anos</button>
+                        <button type="button" data-v="0">Tudo</button>
+                    </div>
+                </div>
+            </div>
+            <div id="grafico-reservas-evolucao" class="grafico"></div>
+        </div>
+
+        <!-- ====================== CONSUMO MENSAL ====================== -->
+        <div class="grafico-box" id="bloco-consumo-mensal">
+            <h2>Consumo mensal de gás em Portugal</h2>
+            <p class="grafico-intro">O gás consumido em Portugal continental em cada mês, separado entre as <strong>casas, o comércio e a indústria</strong> (o mercado convencional, na linguagem da REN) e as <strong>centrais elétricas</strong> de ciclo combinado (o mercado elétrico). O consumo das centrais é o que mais varia: sobe quando há pouca água, pouco vento ou pouco sol.</p>
+            <div class="bloco-controlos">
+                <div class="grupo-ctrl">
+                    <span class="ctrl-label">Período</span>
+                    <div class="btn-toggle" id="ctrl-per-cons" role="group" aria-label="Período">
+                        <button type="button" data-v="2">2 anos</button>
+                        <button type="button" data-v="5">5 anos</button>
+                        <button type="button" data-v="0" class="active">Desde 2014</button>
+                    </div>
+                </div>
+            </div>
+            <div id="grafico-consumo-mensal" class="grafico"></div>
+        </div>
+
+        <!-- ====================== CONSUMO ANO A ANO ====================== -->
+        <div class="grafico-box" id="bloco-consumo-anos">
+            <h2>Consumo de gás ano a ano</h2>
+            <p class="grafico-intro" id="intro-consumo-anos"></p>
+            <div id="grafico-consumo-anos" class="grafico"></div>
+            <div class="tabela-box" id="tabela-consumo-anos"></div>
+        </div>
+
+        <!-- ====================== MÉTODO E FONTES ====================== -->
+        <div class="grafico-box" id="bloco-metodo">
+            <h2>Fontes e método</h2>
+            <div class="metodo-box">
+                <p><strong>Consumo:</strong> REN, Data Hub (Gás → Evolução do consumo). É o gás consumido em Portugal continental, em GWh, por mês. O <strong>mercado convencional</strong> junta o gás entregue nas redes de distribuição (as casas, o comércio e a pequena indústria), o dos clientes ligados diretamente à rede de alta pressão e o das unidades autónomas de gaseificação; o <strong>mercado elétrico</strong> é o gás queimado nas centrais de ciclo combinado. A REN publica cada mês depois de ele acabar, em GWh inteiros: o total pode diferir 1 GWh da soma das partes.</p>
+                <p><strong>Reservas:</strong> GIE AGSI (Gas Infrastructure Europe — Aggregated Gas Storage Inventory). É o gás guardado nos armazenamentos subterrâneos de cada país, em TWh, e em percentagem da capacidade, por dia de gás. A União Europeia é o agregado da própria AGSI. A percentagem é calculada sobre a capacidade declarada de cada armazenamento, e pode passar dos 100 % quando se guarda mais gás do que essa capacidade. Os dias mais recentes chegam como <em>estimados</em> e são confirmados depois. Portugal tem um único armazenamento subterrâneo, no Carriço (Pombal), com dados na AGSI desde 12/11/2011. Nos dias de Portugal que a AGSI ainda não confirmou, o valor é o da <strong>REN</strong> (balanço do armazenamento subterrâneo): em 2026 a AGSI ficou semanas com o valor de Portugal parado no último dia confirmado, e nos dias confirmados os dois coincidem.</p>
+                <p id="metodo-dados"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-simulador">
+        <h2>E o preço do gás?</h2>
+        <p>Esta página mostra quanto gás se consome e quanto está guardado. Para o preço do gás no mercado ibérico, à vista e a prazo, e para o que isso dá na sua fatura, use estas páginas.</p>
+        <div class="botoes">
+            <a href="mibgas" class="button-link">📈 Preço do Gás (MIBGAS)</a>
+            <a href="mibgas-futuros" class="button-link">🔮 Futuros do Gás</a>
+            <a href="gas-natural-tiagofelicia" class="button-link">🧮 Simulador de gás natural</a>
+            <a href="europe-gas-storage" class="button-link">🗺️ Reservas de gás na Europa</a>
+        </div>
+    </div>
+
+    <div class="link-section"><p>https://www.tiagofelicia.pt/gas-consumo-reservas</p></div>
+
+    <h2 id="faq" style="width:95%; max-width:1200px; margin:30px auto 12px auto; font-size:1.15em;">❔ Perguntas Frequentes</h2>
+    <div style="width:95%; max-width:1200px; margin:0 auto 30px auto;">
+        <details class="faq-item">
+            <summary><strong>O que mostra esta página?</strong></summary>
+            <div class="faq-content">
+                <p>Duas coisas: quanto gás natural se consome em <strong>Portugal continental</strong>, mês a mês desde janeiro de 2014, separado entre o consumo das casas e da indústria e o das centrais elétricas, segundo a <strong>REN</strong>; e quanto gás está guardado nas <strong>reservas subterrâneas</strong> de Portugal, de Espanha e do conjunto da União Europeia, dia a dia, segundo a <strong>GIE AGSI</strong>.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que são o mercado convencional e o mercado elétrico?</strong></summary>
+            <div class="faq-content">
+                <p>São os dois grandes destinos do gás em Portugal, como a REN os conta. O <strong>mercado convencional</strong> é o gás consumido nas casas, no comércio e na indústria: o que é entregue nas redes de distribuição, o dos clientes ligados diretamente à rede de alta pressão e o das unidades autónomas de gaseificação. O <strong>mercado elétrico</strong> é o gás queimado nas centrais de ciclo combinado para produzir eletricidade.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que o consumo das centrais elétricas varia tanto?</strong></summary>
+            <div class="faq-content">
+                <p>Porque as centrais a gás produzem sobretudo o que as outras fontes não chegam a cobrir: trabalham mais em meses com pouca água nas barragens, pouco vento ou pouco sol, e quando é preciso exportar eletricidade para Espanha, e menos nos meses chuvosos e ventosos. O consumo das casas e da indústria é muito mais estável e segue sobretudo o frio e a atividade económica.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Onde fica guardado o gás em Portugal?</strong></summary>
+            <div class="faq-content">
+                <p>No <strong>armazenamento subterrâneo do Carriço</strong>, em Pombal, em cavidades abertas num maciço de sal. É o único de Portugal e tem uma capacidade pequena face à de Espanha e à do resto da Europa, o equivalente a algumas semanas de consumo médio. O gás chega a Portugal sobretudo pelo terminal de gás natural liquefeito de Sines e pelas ligações a Espanha.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>O que quer dizer «face ao ano anterior» e o intervalo dos últimos 5 anos?</strong></summary>
+            <div class="faq-content">
+                <p>Nas reservas, a comparação face ao ano anterior usa o <strong>mesmo dia de há um ano</strong>. No gráfico ano a ano, a linha mais forte é o ano corrente, a outra é o ano anterior, e a faixa vai do mínimo ao máximo que as reservas tiveram nesse dia do ano nos <strong>cinco anos anteriores</strong>, com a média tracejada. Serve para ver se as reservas estão dentro do habitual para a época.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que as reservas passam dos 100 %?</strong></summary>
+            <div class="faq-content">
+                <p>A GIE AGSI calcula a percentagem sobre a <strong>capacidade que cada operador declara</strong> para o armazenamento, e o armazenamento pode guardar mais gás do que essa capacidade declarada. Em Portugal isso aconteceu em várias épocas entre 2019 e 2025, com o máximo de 109 % no fim de novembro de 2022; em Espanha, ligeiramente, em 2023 e 2024. Os valores são os publicados pela AGSI e os gráficos mostram-nos tal como são.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>Porque é que os valores mais recentes das reservas podem mudar?</strong></summary>
+            <div class="faq-content">
+                <p>A GIE AGSI publica cada dia de gás como <em>estimado</em> e só depois o confirma, e os operadores dos armazenamentos podem corrigir os valores nos dias seguintes. Por isso a recolha volta a pedir os últimos 45 dias todos os dias. No consumo, a REN publica cada mês depois de ele acabar e também pode rever os meses recentes.</p>
+            </div>
+        </details>
+        <details class="faq-item">
+            <summary><strong>De onde vêm os dados e como os posso descarregar?</strong></summary>
+            <div class="faq-content">
+                <p>O consumo vem do <a href="https://datahub.ren.pt/pt/gas/evolucao-do-consumo/" target="_blank" rel="noopener">Data Hub da REN</a> e as reservas da <a href="https://agsi.gie.eu/" target="_blank" rel="noopener">GIE AGSI</a> (Gas Infrastructure Europe), que exige a indicação da fonte; em Portugal, nos dias que a AGSI ainda não confirmou, o valor é o da REN, que coincide com o da AGSI nos dias confirmados. Os dois ficheiros, atualizados todos os dias, estão em <a href="https://dados.tiagofelicia.pt/data/gas/" target="_blank" rel="noopener">dados.tiagofelicia.pt</a>, com licença CC BY 4.0.</p>
+            </div>
+        </details>
+    </div>
+</main>
+
+<div id="footer-placeholder"></div>
+<button type="button" id="btn-voltar-topo" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    try {
+        Highcharts.setOptions({ lang: {
+            decimalPoint: ',', thousandsSep: ' ',
+            months: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+            shortMonths: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
+            weekdays: ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'],
+            contextButtonTitle: 'Menu do gráfico', viewFullscreen: 'Ver em ecrã inteiro', exitFullscreen: 'Sair do ecrã inteiro',
+            printChart: 'Imprimir', downloadPNG: 'Descarregar PNG', downloadJPEG: 'Descarregar JPEG', downloadPDF: 'Descarregar PDF',
+            downloadSVG: 'Descarregar SVG', downloadCSV: 'Descarregar CSV', downloadXLS: 'Descarregar XLS', viewData: 'Ver a tabela de dados',
+            hideData: 'Esconder a tabela de dados'
+        } });
+    } catch (_) {}
+
+    // ==================================================================
+    // CONFIGURAÇÃO
+    // ==================================================================
+    const URL_CONSUMO = 'gas/consumo_gas_mensal.csv';
+    const URL_RESERVAS = 'gas/reservas_gas.csv';
+    const URL_PASTA = 'https://dados.tiagofelicia.pt/data/gas/';
+    const ZONAS = ['PT', 'ES', 'EU'];
+    const NOME_ZONA = { PT: 'Portugal', ES: 'Espanha', EU: 'União Europeia' };
+    const DE_ZONA = { PT: 'de Portugal', ES: 'de Espanha', EU: 'da União Europeia' };
+    // Cores [tema claro, tema escuro]: Portugal azul e Espanha verde, como no resto do site; a UE é o
+    // agregado de referência, a violeta e tracejada (o traço distingue-a do azul de Portugal mesmo sem
+    // cor). Não é cinzenta porque no gráfico ano a ano o ano anterior e a média já são cinzentos.
+    const COR_ZONA = { PT: ['#2563eb', '#60a5fa'], ES: ['#16a34a', '#4ade80'], EU: ['#7c3aed', '#a78bfa'] };
+    const TRACO_ZONA = { PT: 'Solid', ES: 'Solid', EU: 'ShortDash' };
+    const COR_CONV = ['#0e7490', '#22d3ee'];      // casas, comércio e indústria
+    const COR_ELET = ['#c2410c', '#fb923c'];      // centrais elétricas
+    const ANOS_FAIXA = 5;                          // anos anteriores na faixa do gráfico ano a ano
+    const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const DIA_MS = 86400000;
+
+    // ==================================================================
+    // FORMATAÇÃO
+    // ==================================================================
+    const _nf0 = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 });
+    const _nf1 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const _nf2 = new Intl.NumberFormat('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const vazio = v => v === null || v === undefined || !isFinite(v);
+    const menos = s => s.replace('-', '−');
+    const NB = ' ';
+    const fmtPct = v => vazio(v) ? '--' : menos(_nf1.format(v)) + NB + '%';
+    const fmtPp = v => vazio(v) ? '--' : (v > 0 ? '+' : '') + menos(_nf1.format(v)) + NB + 'p.p.';
+    const fmtVar = v => vazio(v) ? '--' : (v > 0 ? '+' : '') + menos(_nf1.format(v)) + NB + '%';
+    const fmtGWh = v => vazio(v) ? '--' : _nf0.format(v) + NB + 'GWh';
+    const fmtTWh = v => vazio(v) ? '--' : (Math.abs(v) < 10 ? _nf2 : Math.abs(v) < 100 ? _nf1 : _nf0).format(v) + NB + 'TWh';
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    function fmtData(iso) { const [a, m, d] = iso.split('-'); return `${d}/${m}/${a}`; }
+    const nomeMes = mes => `${MESES[+mes.slice(5, 7) - 1]} de ${mes.slice(0, 4)}`;
+    const tsDe = iso => Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10));
+    const isoDe = ts => new Date(ts).toISOString().slice(0, 10);
+    // Seta e palavra para as variações: a cor nunca é a única pista
+    const seta = v => vazio(v) || Math.abs(v) < 0.05 ? '=' : (v > 0 ? '▲' : '▼');
+
+    function _hcDark() {
+        const dk = document.documentElement.getAttribute('data-theme') === 'dark';
+        return { dk, bg: dk ? '#1e293b' : '#fff', txt: dk ? '#e2e8f0' : '#333', grelha: dk ? '#334155' : '#e6e6e6', suave: dk ? '#94a3b8' : '#5c636a' };
+    }
+    const corDe = (par, c) => par[c.dk ? 1 : 0];
+    function base(c, nome, fonte) {
+        return {
+            chart: { backgroundColor: c.bg, style: { fontFamily: 'inherit' } },
+            title: { text: null },
+            credits: { enabled: true, text: `${fonte} · tiagofelicia.pt`, href: 'https://www.tiagofelicia.pt/gas-consumo-reservas', style: { color: c.suave } },
+            exporting: { enabled: true, filename: nome,
+                         buttons: { contextButton: { menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS'] } } },
+            legend: { itemStyle: { color: c.txt, fontWeight: 'normal' }, itemHoverStyle: { color: c.dk ? '#fff' : '#000' } },
+            tooltip: { useHTML: true, backgroundColor: c.dk ? '#0f172a' : '#fff', style: { color: c.txt } }
+        };
+    }
+    function eixoY(c, extra) {
+        return Object.assign({ title: { text: null }, gridLineColor: c.grelha, labels: { style: { color: c.txt } } }, extra || {});
+    }
+    // O enchimento pode passar dos 100 %: a AGSI divide pela capacidade DECLARADA, e o armazenamento
+    // pode guardar mais do que isso (Portugal chegou a 109 % em 2022). Sem teto no eixo, com a linha dos 100 %.
+    function eixoPct(c) {
+        return eixoY(c, { min: 0, softMax: 100, max: null, endOnTick: false, tickInterval: 25,
+                          labels: { style: { color: c.txt }, format: '{value} %' },
+                          plotLines: [{ value: 100, color: c.suave, width: 1, dashStyle: 'Dot', zIndex: 4,
+                                        label: { text: 'capacidade declarada', align: 'right', x: -4, y: -4, style: { color: c.suave, fontSize: '11px' } } }] });
+    }
+    function ligarToggle(id, aoMudar) {
+        const grupo = document.getElementById(id);
+        grupo.addEventListener('click', e => {
+            const b = e.target.closest('button');
+            if (!b || b.classList.contains('active')) return;
+            grupo.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+            aoMudar(b.dataset.v);
+        });
+    }
+    const ativarToggle = (id, v) => document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b.dataset.v === v));
+
+    // ==================================================================
+    // ESTADO E LINK (?zona=es|ue)
+    // ==================================================================
+    const E = { zona: 'PT', perRes: '5', perCons: '0' };
+    (function lerURL() {
+        const z = (new URLSearchParams(window.location.search).get('zona') || '').toUpperCase();
+        if (z === 'ES') E.zona = 'ES';
+        if (z === 'UE' || z === 'EU') E.zona = 'EU';
+    })();
+    function atualizarURL() {
+        const q = E.zona === 'PT' ? '' : '?zona=' + (E.zona === 'EU' ? 'ue' : 'es');
+        history.replaceState(null, '', window.location.pathname + q + window.location.hash);
+    }
+
+    // ==================================================================
+    // DADOS
+    // ==================================================================
+    let CONS = [];                                   // [{mes, ano, m, total, conv, elet}]
+    const RES = { PT: [], ES: [], EU: [] };          // [{iso, ts, pct, twh, cap, est}]
+    let resOk = false;
+
+    function lerCSV(texto) {
+        const linhas = texto.replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim());
+        const cab = linhas.shift().split(',');
+        const i = Object.fromEntries(cab.map((h, k) => [h.trim(), k]));
+        return { i, linhas: linhas.map(l => l.split(',')) };
+    }
+    const num = s => { const v = parseFloat(s); return isFinite(v) ? v : null; };
+
+    function lerConsumo(texto) {
+        const { i, linhas } = lerCSV(texto);
+        CONS = linhas.map(c => ({ mes: c[i.mes], ano: +c[i.mes].slice(0, 4), m: +c[i.mes].slice(5, 7),
+                                  total: num(c[i.consumo_gwh]), conv: num(c[i.convencional_gwh]), elet: num(c[i.eletrico_gwh]) }))
+                     .filter(x => x.total !== null)
+                     .sort((a, b) => a.mes < b.mes ? -1 : 1);
+    }
+    function lerReservas(texto) {
+        const { i, linhas } = lerCSV(texto);
+        linhas.forEach(c => {
+            const z = c[i.zona], cap = num(c[i.capacidade_twh]), twh = num(c[i.armazenado_twh]), pct = num(c[i.cheio_pct]);
+            // Sem capacidade não há dados (Portugal só entra na AGSI a 12/11/2011)
+            if (!RES[z] || !cap || pct === null) return;
+            RES[z].push({ iso: c[i.data], ts: tsDe(c[i.data]), pct, twh, cap, est: c[i.estado] });
+        });
+        ZONAS.forEach(z => RES[z].sort((a, b) => a.ts - b.ts));
+        resOk = ZONAS.some(z => RES[z].length);
+    }
+
+    // O valor de uma zona no mesmo dia de há um ano (ou no dia anterior mais próximo, até 3 dias)
+    function homologo(z, iso) {
+        const [a, m, d] = iso.split('-').map(Number);
+        let alvo = Date.UTC(a - 1, m - 1, m === 2 && d === 29 ? 28 : d);
+        const serie = RES[z];
+        for (let k = 0; k <= 3; k++) {
+            const t = alvo - k * DIA_MS;
+            const p = serie.find(x => x.ts === t);
+            if (p) return p;
+        }
+        return null;
+    }
+    // Ano bissexto de referência para o eixo «dia do ano» (tem o 29 de fevereiro)
+    const ANO_REF = 2024;
+    const tsRef = iso => Date.UTC(ANO_REF, +iso.slice(5, 7) - 1, +iso.slice(8, 10));
+
+    // ==================================================================
+    // RESUMO
+    // ==================================================================
+    function renderResumo() {
+        const cards = [];
+        const frases = [];
+        if (resOk) {
+            ZONAS.forEach(z => {
+                const s = RES[z];
+                if (!s.length) return;
+                const u = s[s.length - 1], h = homologo(z, u.iso);
+                const d = h ? u.pct - h.pct : null;
+                cards.push(`<div class="kpi-card" title="${esc(`Reservas ${DE_ZONA[z]} a ${fmtData(u.iso)}${u.est === 'E' ? ' (valor estimado)' : ''}. Fonte: ${u.est === 'R' ? 'REN (a AGSI ainda não confirmou este dia)' : 'GIE AGSI'}.`)}">`
+                    + `<div class="kpi-label"><span class="kpi-cor" style="background:${corDe(COR_ZONA[z], _hcDark())}"></span>Reservas · ${esc(NOME_ZONA[z])}</div>`
+                    + `<div class="kpi-value">${fmtPct(u.pct)}</div>`
+                    + `<div class="kpi-sub">${fmtTWh(u.twh)} de ${fmtTWh(u.cap)} · ${fmtData(u.iso)}</div>`
+                    + `<div class="kpi-sub">${h ? `${seta(d)} ${fmtPp(d)} face a ${fmtData(h.iso)} (${fmtPct(h.pct)})` : 'sem o valor de há um ano'}</div></div>`);
+            });
+            const pt = RES.PT[RES.PT.length - 1], hpt = pt ? homologo('PT', pt.iso) : null;
+            if (pt) {
+                frases.push(`As reservas de gás de Portugal estão a <strong>${fmtPct(pt.pct)}</strong> da capacidade (${fmtTWh(pt.twh)}, a ${fmtData(pt.iso)})`
+                    + (hpt ? `, ${pt.pct > hpt.pct + 0.05 ? 'acima' : pt.pct < hpt.pct - 0.05 ? 'abaixo' : 'ao nível'} das de há um ano (${fmtPct(hpt.pct)})` : '')
+                    + (RES.EU.length ? `; as da União Europeia estão a ${fmtPct(RES.EU[RES.EU.length - 1].pct)}` : '') + '.');
+            }
+        }
+        if (CONS.length) {
+            const u = CONS[CONS.length - 1];
+            const h = CONS.find(x => x.ano === u.ano - 1 && x.m === u.m);
+            const v = h ? 100 * (u.total / h.total - 1) : null;
+            const vElet = h && h.elet ? 100 * (u.elet / h.elet - 1) : null;
+            const vConv = h && h.conv ? 100 * (u.conv / h.conv - 1) : null;
+            cards.push(`<div class="kpi-card" title="Consumo de gás natural em Portugal continental. Fonte: REN.">`
+                + `<div class="kpi-label">Consumo · ${esc(nomeMes(u.mes))}</div>`
+                + `<div class="kpi-value">${_nf0.format(u.total)} <span class="kpi-unid">GWh</span></div>`
+                + `<div class="kpi-sub">casas e indústria ${fmtGWh(u.conv)} · centrais ${fmtGWh(u.elet)}</div>`
+                + `<div class="kpi-sub">${h ? `${seta(v)} ${fmtVar(v)} face a ${esc(nomeMes(h.mes))}` : ''}</div></div>`);
+            if (h) {
+                frases.push(`Em ${nomeMes(u.mes)} consumiram-se <strong>${fmtGWh(u.total)}</strong> de gás em Portugal, ${v >= 0 ? 'mais' : 'menos'} ${_nf1.format(Math.abs(v))} % do que em ${nomeMes(h.mes)}`
+                    + ` — ${fmtVar(vConv)} nas casas e na indústria e ${fmtVar(vElet)} nas centrais elétricas.`);
+            }
+        }
+        document.getElementById('kpis').innerHTML = cards.join('');
+        document.getElementById('resumo-frase').innerHTML = frases.join(' ');
+    }
+
+    // ==================================================================
+    // RESERVAS ANO A ANO
+    // ==================================================================
+    function renderReservasAnos() {
+        const alvo = 'grafico-reservas-anos';
+        const c = _hcDark(), z = E.zona, s = RES[z];
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === alvo);
+        if (g) g.destroy();
+        if (!s.length) {
+            document.getElementById(alvo).innerHTML = '<div class="bloco-vazio">Ainda sem dados das reservas.</div>';
+            document.getElementById('nota-reservas-anos').textContent = '';
+            return;
+        }
+        const anoAtual = +s[s.length - 1].iso.slice(0, 4);
+        const porAno = new Map();
+        s.forEach(p => {
+            const a = +p.iso.slice(0, 4);
+            if (!porAno.has(a)) porAno.set(a, []);
+            porAno.get(a).push([tsRef(p.iso), +p.pct.toFixed(2), p]);
+        });
+        // Faixa: para cada dia do ano, mínimo, máximo e média dos 5 anos anteriores com dados nesse dia
+        const faixa = new Map();
+        for (let a = anoAtual - ANOS_FAIXA; a < anoAtual; a++) {
+            (porAno.get(a) || []).forEach(([x, y]) => {
+                if (!faixa.has(x)) faixa.set(x, []);
+                faixa.get(x).push(y);
+            });
+        }
+        const xs = [...faixa.keys()].sort((a, b) => a - b).filter(x => faixa.get(x).length >= 3);
+        const anosNaFaixa = [];
+        for (let a = anoAtual - ANOS_FAIXA; a < anoAtual; a++) if (porAno.has(a)) anosNaFaixa.push(a);
+        const cor = corDe(COR_ZONA[z], c);
+        const corAnt = c.dk ? '#94a3b8' : '#64748b';
+        const series = [
+            { type: 'arearange', name: `Mínimo–máximo ${anosNaFaixa[0]}–${anosNaFaixa[anosNaFaixa.length - 1]}`, id: 'faixa',
+              data: xs.map(x => [x, Math.min(...faixa.get(x)), Math.max(...faixa.get(x))]),
+              color: cor, fillOpacity: c.dk ? 0.22 : 0.15, lineWidth: 0, marker: { enabled: false }, zIndex: 0,
+              enableMouseTracking: true },
+            { type: 'line', name: `Média ${anosNaFaixa[0]}–${anosNaFaixa[anosNaFaixa.length - 1]}`, id: 'media',
+              data: xs.map(x => [x, +(faixa.get(x).reduce((t, v) => t + v, 0) / faixa.get(x).length).toFixed(2)]),
+              color: corAnt, dashStyle: 'ShortDash', lineWidth: 1.5, marker: { enabled: false }, zIndex: 1 },
+            { type: 'line', name: String(anoAtual - 1), id: 'anterior',
+              data: (porAno.get(anoAtual - 1) || []).map(([x, y]) => [x, y]),
+              color: corAnt, lineWidth: 2, marker: { enabled: false }, zIndex: 2 },
+            { type: 'line', name: String(anoAtual), id: 'atual',
+              data: (porAno.get(anoAtual) || []).map(([x, y]) => [x, y]),
+              color: cor, lineWidth: 3, marker: { enabled: false }, zIndex: 3 }
+        ];
+        const o = base(c, `reservas-gas-${z.toLowerCase()}-ano-a-ano`, z === 'PT' ? 'GIE AGSI · REN' : 'GIE AGSI');
+        Highcharts.chart(alvo, Object.assign(o, {
+            chart: Object.assign(o.chart, { type: 'line', zooming: { type: 'x' } }),
+            xAxis: { type: 'datetime', min: Date.UTC(ANO_REF, 0, 1), max: Date.UTC(ANO_REF, 11, 31),
+                     labels: { format: '{value:%b}', style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha,
+                     tickInterval: 30 * DIA_MS, crosshair: true },
+            yAxis: eixoPct(c),
+            tooltip: Object.assign(o.tooltip, { shared: true,
+                formatter: function () {
+                    const d = new Date(this.x);
+                    let h = `<b>${d.getUTCDate()} de ${MESES[d.getUTCMonth()]}</b> · reservas ${DE_ZONA[z]}<br>`;
+                    this.points.forEach(p => {
+                        if (p.series.options.id === 'faixa') h += `${p.series.name}: ${fmtPct(p.point.low)} a ${fmtPct(p.point.high)}<br>`;
+                        else h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtPct(p.y)}</b><br>`;
+                    });
+                    return h;
+                } }),
+            series
+        }));
+        const u = s[s.length - 1];
+        document.getElementById('nota-reservas-anos').innerHTML =
+            `Capacidade ${DE_ZONA[z]}: ${fmtTWh(u.cap)}. Último dia: ${fmtData(u.iso)}${u.est === 'E' ? ' (estimado)' : ''}. Fonte: GIE AGSI (Gas Infrastructure Europe)${z === 'PT' ? '; nos dias que a AGSI ainda não confirmou, a REN' : ''}.`
+            + (z === 'PT' ? ' Portugal tem um único armazenamento subterrâneo, no Carriço, com dados desde 12/11/2011.' : '')
+            + (() => {
+                const acima = s.filter(p => p.pct > 100);
+                if (!acima.length) return '';
+                const max = acima.reduce((m, p) => p.pct > m.pct ? p : m);
+                return ` Em ${_nf0.format(acima.length)} dias as reservas ${DE_ZONA[z]} passaram dos 100 % (o máximo, ${fmtPct(max.pct)}, a ${fmtData(max.iso)}):`
+                     + ' a percentagem é calculada sobre a capacidade declarada, e o armazenamento pode guardar mais do que isso.';
+            })();
+    }
+
+    // ==================================================================
+    // RESERVAS: EVOLUÇÃO
+    // ==================================================================
+    function renderReservasEvolucao() {
+        const alvo = 'grafico-reservas-evolucao';
+        const c = _hcDark();
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === alvo);
+        if (g) g.destroy();
+        if (!resOk) { document.getElementById(alvo).innerHTML = '<div class="bloco-vazio">Ainda sem dados das reservas.</div>'; return; }
+        const fim = Math.max(...ZONAS.filter(z => RES[z].length).map(z => RES[z][RES[z].length - 1].ts));
+        const anos = +E.perRes;
+        const ini = anos ? Date.UTC(new Date(fim).getUTCFullYear() - anos, new Date(fim).getUTCMonth(), new Date(fim).getUTCDate()) : -Infinity;
+        const series = ZONAS.filter(z => RES[z].length).map(z => ({
+            name: NOME_ZONA[z], id: z, color: corDe(COR_ZONA[z], c), dashStyle: TRACO_ZONA[z], lineWidth: z === 'EU' ? 2 : 2.5,
+            marker: { enabled: false },
+            data: RES[z].filter(p => p.ts >= ini).map(p => ({ x: p.ts, y: +p.pct.toFixed(2), twh: p.twh }))
+        }));
+        const o = base(c, 'reservas-gas-pt-es-ue', 'GIE AGSI · REN');
+        Highcharts.chart(alvo, Object.assign(o, {
+            chart: Object.assign(o.chart, { type: 'line', zooming: { type: 'x' } }),
+            xAxis: { type: 'datetime', labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: eixoPct(c),
+            tooltip: Object.assign(o.tooltip, { shared: true,
+                formatter: function () {
+                    let h = `<b>${fmtData(isoDe(this.x))}</b><br>`;
+                    this.points.forEach(p => { h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtPct(p.y)}</b> (${fmtTWh(p.point.twh)})<br>`; });
+                    return h;
+                } }),
+            series
+        }));
+    }
+
+    // ==================================================================
+    // CONSUMO MENSAL
+    // ==================================================================
+    function renderConsumoMensal() {
+        const alvo = 'grafico-consumo-mensal';
+        const c = _hcDark();
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === alvo);
+        if (g) g.destroy();
+        const anos = +E.perCons;
+        const dados = anos ? CONS.slice(-12 * anos) : CONS;
+        const ts = x => Date.UTC(x.ano, x.m - 1, 1);
+        const o = base(c, 'consumo-gas-mensal-portugal', 'REN');
+        Highcharts.chart(alvo, Object.assign(o, {
+            chart: Object.assign(o.chart, { type: 'column', zooming: { type: 'x' } }),
+            xAxis: { type: 'datetime', labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha, crosshair: true },
+            yAxis: eixoY(c, { min: 0, reversedStacks: false, labels: { style: { color: c.txt }, format: '{value:,.0f}' },
+                              title: { text: 'GWh', style: { color: c.suave } } }),
+            plotOptions: { column: { stacking: 'normal', borderWidth: 1, borderColor: c.bg, groupPadding: 0.05, pointPadding: 0 } },
+            tooltip: Object.assign(o.tooltip, { shared: true,
+                formatter: function () {
+                    const d = new Date(this.x), tot = this.points.reduce((t, p) => t + p.y, 0);
+                    let h = `<b>${MESES[d.getUTCMonth()]} de ${d.getUTCFullYear()}</b>: ${fmtGWh(tot)}<br>`;
+                    this.points.forEach(p => { h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${fmtGWh(p.y)}</b> (${_nf0.format(100 * p.y / tot)} %)<br>`; });
+                    return h;
+                } }),
+            series: [
+                { name: 'Casas, comércio e indústria', color: corDe(COR_CONV, c), data: dados.map(x => [ts(x), x.conv]) },
+                { name: 'Centrais elétricas', color: corDe(COR_ELET, c), data: dados.map(x => [ts(x), x.elet]) }
+            ]
+        }));
+    }
+
+    // ==================================================================
+    // CONSUMO ANO A ANO
+    // ==================================================================
+    function renderConsumoAnos() {
+        const c = _hcDark();
+        const ult = CONS[CONS.length - 1];
+        const anoParcial = ult.m < 12 ? ult.ano : null;
+        const somar = (ano, ateMes) => CONS.filter(x => x.ano === ano && x.m <= (ateMes || 12))
+            .reduce((t, x) => ({ total: t.total + x.total, conv: t.conv + x.conv, elet: t.elet + x.elet, n: t.n + 1 }), { total: 0, conv: 0, elet: 0, n: 0 });
+        const anos = [...new Set(CONS.map(x => x.ano))].sort();
+        const linhas = anos.map(a => {
+            const s = somar(a);
+            // O ano em curso compara-se com os mesmos meses do ano anterior
+            const ant = a === anoParcial ? somar(a - 1, ult.m) : somar(a - 1);
+            return { a, s, parcial: a === anoParcial, v: ant.n ? 100 * (s.total / ant.total - 1) : null,
+                     vConv: ant.n ? 100 * (s.conv / ant.conv - 1) : null, vElet: ant.n && ant.elet ? 100 * (s.elet / ant.elet - 1) : null };
+        });
+        const rot = l => l.parcial ? `${l.a} (jan–${MESES_CURTOS[ult.m - 1]})` : String(l.a);
+
+        const completos = linhas.filter(l => !l.parcial);
+        const ultC = completos[completos.length - 1], primC = completos[0];
+        const intro = document.getElementById('intro-consumo-anos');
+        intro.innerHTML = `O consumo de cada ano, separado entre as casas e a indústria e as centrais elétricas, em TWh. `
+            + (ultC ? `Em ${ultC.a} consumiram-se <strong>${_nf1.format(ultC.s.total / 1000)} TWh</strong>, ${_nf0.format(100 * ultC.s.elet / ultC.s.total)} % nas centrais elétricas`
+                + (ultC.v !== null ? ` (${fmtVar(ultC.v)} face a ${ultC.a - 1})` : '') + `; em ${primC.a}, ${_nf1.format(primC.s.total / 1000)} TWh. ` : '')
+            + (anoParcial ? `O ano de ${anoParcial} só tem os meses até ${MESES[ult.m - 1]}, e a variação compara com os mesmos meses de ${anoParcial - 1}.` : '');
+
+        const alvo = 'grafico-consumo-anos';
+        const g = Highcharts.charts.filter(Boolean).find(ch => ch.renderTo && ch.renderTo.id === alvo);
+        if (g) g.destroy();
+        const o = base(c, 'consumo-gas-anual-portugal', 'REN');
+        Highcharts.chart(alvo, Object.assign(o, {
+            chart: Object.assign(o.chart, { type: 'column' }),
+            xAxis: { categories: linhas.map(rot), labels: { style: { color: c.txt } }, lineColor: c.grelha, tickColor: c.grelha },
+            yAxis: eixoY(c, { min: 0, reversedStacks: false, labels: { style: { color: c.txt }, format: '{value:,.0f}' },
+                              title: { text: 'TWh', style: { color: c.suave } } }),
+            plotOptions: { column: { stacking: 'normal', borderWidth: 1, borderColor: c.bg, groupPadding: 0.1, pointPadding: 0.02 } },
+            tooltip: Object.assign(o.tooltip, { shared: true,
+                formatter: function () {
+                    const l = linhas[this.points[0].point.index];
+                    let h = `<b>${esc(rot(l))}</b>: ${_nf2.format(l.s.total / 1000)} TWh`
+                          + (l.v !== null ? ` (${fmtVar(l.v)})` : '') + '<br>';
+                    this.points.forEach(p => { h += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${_nf2.format(p.y)} TWh</b><br>`; });
+                    return h;
+                } }),
+            series: [
+                { name: 'Casas, comércio e indústria', color: corDe(COR_CONV, c), data: linhas.map(l => +(l.s.conv / 1000).toFixed(3)) },
+                { name: 'Centrais elétricas', color: corDe(COR_ELET, c), data: linhas.map(l => +(l.s.elet / 1000).toFixed(3)) }
+            ]
+        }));
+
+        const corpo = linhas.slice().reverse().map(l =>
+            `<tr${l.parcial ? ' class="parcial"' : ''}><th scope="row">${esc(rot(l))}</th>`
+            + `<td>${_nf0.format(l.s.total)}</td><td class="col-opcional">${_nf0.format(l.s.conv)}</td><td class="col-opcional">${_nf0.format(l.s.elet)}</td>`
+            + `<td>${_nf0.format(100 * l.s.elet / l.s.total)} %</td><td>${fmtVar(l.v)}</td></tr>`).join('');
+        document.getElementById('tabela-consumo-anos').innerHTML =
+            `<table class="tabela-gas"><caption>Consumo de gás natural em Portugal continental, por ano (GWh)</caption>`
+            + `<thead><tr><th scope="col" style="text-align:left;">Ano</th><th scope="col">Total</th>`
+            + `<th scope="col" class="col-opcional">Casas e indústria</th><th scope="col" class="col-opcional">Centrais elétricas</th>`
+            + `<th scope="col">Parte das centrais</th><th scope="col">Face ao ano anterior</th></tr></thead>`
+            + `<tbody>${corpo}</tbody>`
+            + (anoParcial ? `<tfoot><tr><td colspan="6">${anoParcial}: só os meses de janeiro a ${MESES[ult.m - 1]}, comparados com os mesmos meses de ${anoParcial - 1}. Fonte: REN.</td></tr></tfoot>` : `<tfoot><tr><td colspan="6">Fonte: REN.</td></tr></tfoot>`)
+            + `</table>`;
+    }
+
+    // ==================================================================
+    // TUDO
+    // ==================================================================
+    function renderBadge() {
+        const partes = [];
+        if (CONS.length) partes.push(`Consumo até <strong>${nomeMes(CONS[CONS.length - 1].mes)}</strong>`);
+        if (resOk) {
+            const u = Math.max(...ZONAS.filter(z => RES[z].length).map(z => RES[z][RES[z].length - 1].ts));
+            partes.push(`reservas até <strong>${fmtData(isoDe(u))}</strong>`);
+        }
+        document.getElementById('badge').innerHTML = partes.join(' · ');
+        document.getElementById('metodo-dados').innerHTML =
+            `Os dois ficheiros, atualizados todos os dias, estão em <a href="${URL_PASTA}" target="_blank" rel="noopener">dados.tiagofelicia.pt</a> (licença CC BY 4.0): `
+            + `<code>consumo_gas_mensal.csv</code> e <code>reservas_gas.csv</code>.`;
+    }
+    function renderTudo() {
+        renderBadge(); renderResumo();
+        const blocosRes = ['bloco-reservas-anos', 'bloco-reservas-evolucao'];
+        blocosRes.forEach(id => { document.getElementById(id).hidden = !resOk; });
+        if (resOk) { renderReservasAnos(); renderReservasEvolucao(); }
+        if (CONS.length) { renderConsumoMensal(); renderConsumoAnos(); }
+        atualizarURL();
+    }
+
+    async function carregar() {
+        // As reservas podem faltar sem que a página deixe de mostrar o consumo (e vice-versa)
+        const [rc, rr] = await Promise.all([
+            fetchDados(URL_CONSUMO).then(r => r.ok ? r.text() : null).catch(() => null),
+            fetchDados(URL_RESERVAS).then(r => r.ok ? r.text() : null).catch(() => null)
+        ]);
+        if (rc) lerConsumo(rc);
+        if (rr) lerReservas(rr);
+        if (!CONS.length && !resOk) throw new Error('sem dados');
+        document.getElementById('estado').hidden = true;
+        document.getElementById('conteudo').hidden = false;
+        renderTudo();
+    }
+    function falhou(err) {
+        console.error('Gás — consumo e reservas:', err);
+        const el = document.getElementById('estado');
+        el.hidden = false; el.className = 'estado-erro'; el.textContent = 'Não foi possível carregar os dados. Tente novamente dentro de alguns minutos.';
+    }
+
+    ligarToggle('ctrl-zona', v => { E.zona = v; renderReservasAnos(); atualizarURL(); });
+    ligarToggle('ctrl-per-res', v => { E.perRes = v; renderReservasEvolucao(); });
+    ligarToggle('ctrl-per-cons', v => { E.perCons = v; renderConsumoMensal(); });
+    document.addEventListener('themeChanged', () => { if (CONS.length || resOk) renderTudo(); });
+
+    const btnTopo = document.getElementById('btn-voltar-topo');
+    window.addEventListener('scroll', () => btnTopo.classList.toggle('visible', window.scrollY > 600), { passive: true });
+    btnTopo.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    ativarToggle('ctrl-zona', E.zona);
+    carregar().catch(falhou);
+});
+</script>
+
+<script src="script.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
