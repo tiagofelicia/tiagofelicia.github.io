@@ -44,7 +44,7 @@ RULES = [
       "precos-horarios.html", "formulas-tarifarios-indexados.html", "erc.html",
       "servicos-sistema.html", "quotas-agentes.html", "albufeiras.html",
       "ren-vs-entsoe.html", "quem-marca-o-preco.html", "gas-consumo-reservas.html",
-      "europe-gas-storage.html"},
+      "europe-gas-storage.html", "mercados-trimestre.html"},
      "daily", "0.8"),
     # Preços ao consumidor (Eurostat): os dados mudam duas vezes por ano
     ({"europe-consumer-prices.html"}, "monthly", "0.8"),
