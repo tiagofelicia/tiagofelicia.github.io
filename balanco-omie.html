@@ -452,9 +452,10 @@
                 <p>O gráfico mostra o <strong>balanço energético</strong> do dia selecionado, em intervalos de 15 minutos, cruzando potência (MW) com o preço:</p>
                 <ul>
                     <li><strong>Áreas positivas (acima de zero):</strong> a <strong>oferta</strong> — potência produzida por cada fonte (Solar, Eólica, Hídrica, Gás, etc.) + Importação + Injeção de Baterias.</li>
-                    <li><strong>Áreas negativas (abaixo de zero):</strong> os <strong>sumidouros</strong> — Bombagem (consumo para bombear água), Exportação e Consumo de Baterias (carregamento). Ocultas por defeito (clique na legenda para mostrar).</li>
+                    <li><strong>Áreas negativas (abaixo de zero):</strong> os <strong>sumidouros</strong> — Bombagem (consumo para bombear água), Exportação e Consumo de Baterias (carregamento). Clique na legenda para esconder ou mostrar cada um.</li>
                     <li><strong>Linha de Consumo:</strong> a procura total de eletricidade.</li>
                     <li><strong>Linha de Consumo + Armazenamento (tracejada):</strong> o consumo mais a energia usada para encher os armazenamentos (bombagem + carregamento de baterias). É a "procura total" da rede, incluindo o que vai para reservas.</li>
+                    <li><strong>Linha de Procura residual (tracejada, roxa):</strong> o consumo menos a eólica e a solar, ou seja, o que as outras centrais (hídrica, gás, biomassa…), as baterias e a importação têm de cobrir. Quanto mais alta, mais centrais caras são precisas e, em regra, mais alto o preço. Escondida por defeito: ative-a na legenda (a Análise do dia resume-a).</li>
                     <li><strong>Linha vermelha (eixo direito, €/MWh):</strong> o preço do Mercado Diário OMIE para Portugal nessa hora.</li>
                 </ul>
                 <p>Permite ver como o mix de produção e os fluxos de armazenamento/intercâmbio influenciam o preço ao longo do dia.</p>
@@ -2319,10 +2320,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     { name: 'Biomassa', type: 'area', yAxis: 0, stack: 'producao', color: '#70AD47', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Biomassa, i)) },
                     { name: 'Ondas', type: 'area', yAxis: 0, stack: 'producao', color: '#00B0F0', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d.Ondas, i)) },
                     { name: 'Injeção de Baterias', type: 'area', yAxis: 0, stack: 'producao', color: '#38578C', data: dadosConjugados.map((d, i) => paraNumeroComCorte(d['Injeção de Baterias'], i)) },
-                    // --- Sumidouros (consumo): áreas negativas, stack próprio, OCULTAS por defeito ---
-                    { name: 'Bombagem (consumo)', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#2E75B6', visible: false, data: dadosConjugados.map((d, i) => negar(d['Bombagem'], i)) },
-                    { name: 'Consumo Baterias', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#D63384', visible: false, data: dadosConjugados.map((d, i) => negar(d['Consumo Baterias'], i)) },
-                    { name: 'Exportação', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#8E44AD', visible: false, data: dadosConjugados.map((d, i) => negar(d['Exportação'], i)) },
+                    // --- Sumidouros (consumo): áreas negativas, stack próprio, VISÍVEIS por defeito ---
+                    { name: 'Bombagem (consumo)', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#2E75B6', data: dadosConjugados.map((d, i) => negar(d['Bombagem'], i)) },
+                    { name: 'Consumo Baterias', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#D63384', data: dadosConjugados.map((d, i) => negar(d['Consumo Baterias'], i)) },
+                    { name: 'Exportação', type: 'area', yAxis: 0, stack: 'sumidouros', color: '#8E44AD', data: dadosConjugados.map((d, i) => negar(d['Exportação'], i)) },
                     // --- Linha de Consumo total (LIGADA por defeito) ---
                     {
                         name: 'Consumo',
