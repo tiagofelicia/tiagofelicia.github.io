@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; connect-src 'self' https://dados.tiagofelicia.pt https://www.googletagmanager.com https://raw.githubusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net https://huggingface.co https://*.hf.co https://docs.google.com https://re.jrc.ec.europa.eu https://pvgis.ec.europa.eu https://formspree.io https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com https://unpkg.com; frame-src https://1drv.ms https://onedrive.live.com https://www.paypal.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io https://www.paypal.com; upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2c3e50" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    
+    <title>Tarifas de Acesso às Redes (TAR) 2026 em BTE, MT, AT e MAT | Tiago Felícia</title>
+    <meta name="description" content="Tabela das Tarifas de Acesso às Redes (TAR) definidas pela ERSE para a Baixa Tensão Especial, a Média, a Alta e a Muito Alta Tensão: potência em horas de ponta e contratada, energia ativa por período e energia reativa, com a comparação entre anos." />
+
+    <link rel="canonical" href="https://www.tiagofelicia.pt/tarifas-acesso-redes-bte-mt-at-mat" />
+    <link rel="alternate" hreflang="pt-pt" href="https://www.tiagofelicia.pt/tarifas-acesso-redes-bte-mt-at-mat" />
+    <link rel="alternate" hreflang="x-default" href="https://www.tiagofelicia.pt/tarifas-acesso-redes-bte-mt-at-mat" />
+    
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="TAR 2026 em BTE, MT, AT e MAT: os valores da ERSE" />
+    <meta property="og:description" content="Tarifas de Acesso às Redes para empresas e indústria: potência, energia ativa e reativa." />
+    <meta property="og:url" content="https://www.tiagofelicia.pt/tarifas-acesso-redes-bte-mt-at-mat" />
+    <meta property="og:image" content="https://www.tiagofelicia.pt/images/social/social-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="Tiago Felícia — Simuladores de Energia" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tiagofelicia" />
+
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/theme.js"></script>
+
+    <style>
+    .tar-wrapper{
+    max-width:900px;
+    margin:30px auto;
+    font-family:Arial, Helvetica, sans-serif;
+    }
+
+    .tar-header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    }
+
+    .tar-title{
+    font-size:26px;
+    font-weight:bold;
+    }
+
+    .tar-brand{
+    text-align:right;
+    font-size:14px;
+    }
+
+    .tar-brand img{
+    height:60px; width:auto;
+    }
+
+    .tar-brand a{
+    color:#1a73e8;
+    text-decoration:none;
+    }
+
+    .tar-date{
+    text-align:center;
+    margin:15px 0;
+    font-size:18px;
+    }
+
+    .tar-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:15px;
+    }
+
+    .tar-table th,
+    .tar-table td{
+    border:2px solid #444;
+    padding:6px;
+    text-align:center;
+    }
+
+    .tar-head{
+    background:#e6e6e6;
+    font-weight:bold;
+    }
+
+    .tar-sub{
+    background:#efefef;
+    font-weight:bold;
+    }
+
+    .tar-gray95{
+    background:#F2F2F2;
+    }
+
+    .tar-green{
+    background:#E2EFDA;
+    }
+
+    .tar-yellow{
+    background:#FFE699;
+    }
+
+    .tar-gray{
+    background:#D0CECE;
+    }
+
+    .tar-pale-blue{
+    background:#DDEBF7;
+    }
+
+    .tar-blue{
+    background:#B4C6E7;
+    }
+
+    .tar-orange{
+    background:#F8CBAD;
+    }
+
+    /* mobile */
+
+    @media(max-width:700px){
+
+    .tar-title{
+    font-size:20px;
+    }
+
+    .tar-table{
+    font-size:13px;
+    }
+
+    .tar-brand img{
+    height:45px;
+    }
+
+    }
+
+    /* === DARK MODE — Estilos específicos desta página === */
+    [data-theme="dark"] .tar-wrapper { color: #e2e8f0; }
+    [data-theme="dark"] .tar-title { color: #e2e8f0; }
+    [data-theme="dark"] .tar-brand a { color: #60a5fa; }
+    [data-theme="dark"] .tar-date { color: #94a3b8; }
+    [data-theme="dark"] .tar-table th, [data-theme="dark"] .tar-table td { border-color: #64748b; color: #e2e8f0; }
+    [data-theme="dark"] .tar-head { background: #334155; color: #e2e8f0; }
+    [data-theme="dark"] .tar-sub { background: #1e293b; color: #cbd5e1; }
+    [data-theme="dark"] .tar-gray95 { background: #283040; }
+    [data-theme="dark"] .tar-green { background: #1a3a2a; }
+    [data-theme="dark"] .tar-yellow { background: #3a3010; }
+    [data-theme="dark"] .tar-gray { background: #334155; }
+    [data-theme="dark"] .tar-pale-blue { background: #1a2a3a; }
+    [data-theme="dark"] .tar-blue { background: #1e3050; }
+    [data-theme="dark"] .tar-orange { background: #3a2518; }
+    </style>
+      
+  <!-- Google Analytics (GA4) + Consent Mode v2 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NWP00S4F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+  if (localStorage.getItem('tf_cookie_consent') === 'accepted') {
+    gtag('consent', 'update', { 'analytics_storage': 'granted' });
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-J4NWP00S4F');
+</script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Tarifas de Acesso às Redes (TAR) 2026 - Eletricidade BTE, MT, AT e MAT",
+    "description": "Valores das Tarifas de Acesso às Redes definidas pela ERSE para a Baixa Tensão Especial, a Média, a Alta e a Muito Alta Tensão.",
+    "author": {
+      "@type": "Person",
+      "@id": "https://www.tiagofelicia.pt/#person",
+      "name": "Tiago Felícia"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Tiago Felícia Simuladores",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.tiagofelicia.pt/images/favicon-96x96.png"
+      }
+    }
+  }
+  </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://www.tiagofelicia.pt/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Tarifas de Acesso às Redes em BTE, MT, AT e MAT",
+      "item": "https://www.tiagofelicia.pt/tarifas-acesso-redes-bte-mt-at-mat"
+    }
+  ]
+}
+    </script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo</a>
+
+
+
+<div id="menu-placeholder"></div>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+        <li><a href="/">Início</a></li>
+        <li>Regulação</li>
+        <li aria-current="page">Tarifas de Acesso às Redes em BTE, MT, AT e MAT</li>
+    </ol>
+</nav>
+
+
+<main id="main-content">
+    <section class="content-section">
+        <h1>Tarifas de Acesso às Redes (TAR) 2025 e 2026 em BTE, MT, AT e MAT</h1>
+
+        <p>As Tarifas de Acesso às Redes (TAR) também se pagam acima da Baixa Tensão Normal: na Baixa Tensão Especial (BTE, potência acima de 41,4 kW), na Média Tensão (MT), na Alta Tensão (AT) e na Muito Alta Tensão (MAT) — sobretudo empresas, serviços e indústria. Os valores são definidos pela ERSE para cada ano.</p>
+        <p>Em vez de um preço por escalão de potência, como na BTN, estas tarifas têm:</p>
+        <ul>
+            <li><strong>Potência em horas de ponta</strong> e <strong>potência contratada</strong>, em EUR por kW e por dia;</li>
+            <li><strong>Energia ativa</strong>, em EUR/kWh, em quatro períodos horários: ponta, cheias, vazio normal e super vazio;</li>
+            <li><strong>Energia reativa</strong>, indutiva e capacitiva, em EUR/kvarh, faturada quando passa os limites do regulamento.</li>
+        </ul>
+        <p>Para a Baixa Tensão Normal (a das casas e dos pequenos negócios), veja as <a href="tarifas-acesso-redes">Tarifas de Acesso às Redes em BTN</a>.</p>
+
+        <div class="anos-reg" data-titulo="Ano" data-ficheiro="TAR_BTE_MT_AT_MAT"></div>
+
+        <div class="ano-bloco" data-ano="2025" data-rotulo="2025" data-de="2025-01-01" data-ate="2025-12-31" hidden>
+
+        <div class="tar-wrapper">
+        
+        <div class="tar-header-top">
+        
+        <div class="tar-title">
+        Tarifas de Acesso às Redes (TAR) em BTE, MT, AT e MAT
+        </div>
+        
+        <div class="tar-brand">
+        <img src="images/Logo_Tiago_Felicia.png" alt="" width="307" height="151">
+        <br>
+        <a href="https://www.tiagofelicia.pt">https://www.tiagofelicia.pt</a>
+        </div>
+        
+        </div>
+        
+        <div class="tar-date">
+        Em vigor de 01/01/2025 a 31/12/2025
+        </div>
+        
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em BTE (Baixa Tensão Especial): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM BTE</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,4964</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0553</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0409</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0369</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0295</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0238</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0318</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0243</td>
+        </tr>
+        
+        </table>
+        <br>
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em MT (Média Tensão): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM MT</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,2291</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0398</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0213</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0195</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0156</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0137</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0252</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0189</td>
+        </tr>
+        
+        </table>
+        <br>
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em AT (Alta Tensão): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM AT</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,1420</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0058</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0131</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0123</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0110</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0102</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0231</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0173</td>
+        </tr>
+        
+        </table>
+        <br>
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em MAT (Muito Alta Tensão): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM MAT</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0653</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0137</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0077</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0073</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0072</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0067</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0231</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0173</td>
+        </tr>
+        
+        </table>
+
+        </div>
+
+        </div>
+
+        <div class="ano-bloco" data-ano="2026" data-rotulo="2026" data-de="2026-01-01" data-ate="2026-12-31">
+
+        <div class="tar-wrapper">
+        
+        <div class="tar-header-top">
+        
+        <div class="tar-title">
+        Tarifas de Acesso às Redes (TAR) em BTE, MT, AT e MAT
+        </div>
+        
+        <div class="tar-brand">
+        <img src="images/Logo_Tiago_Felicia.png" alt="" width="307" height="151">
+        <br>
+        <a href="https://www.tiagofelicia.pt">https://www.tiagofelicia.pt</a>
+        </div>
+        
+        </div>
+        
+        <div class="tar-date">
+        Em vigor a partir de 01/01/2026
+        </div>
+        
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em BTE (Baixa Tensão Especial): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM BTE</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,5521</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0563</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0397</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0353</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0285</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0237</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0325</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0248</td>
+        </tr>
+        
+        </table>
+        <br>
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em MT (Média Tensão): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM MT</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,2435</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0458</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0203</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0182</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0146</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0129</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0257</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0193</td>
+        </tr>
+        
+        </table>
+        <br>
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em AT (Alta Tensão): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM AT</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,1515</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0089</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0125</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0115</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0102</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0094</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0236</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0177</td>
+        </tr>
+        
+        </table>
+        <br>
+        <table class="tar-table">
+        <caption class="sr-only">Tarifa de Acesso às Redes em MAT (Muito Alta Tensão): potência em horas de ponta e contratada (EUR/(kW.dia)), energia ativa por período horário (EUR/kWh) e energia reativa (EUR/kvarh).</caption>
+        
+        <tr class="tar-head">
+        <th scope="colgroup" colspan="2">TARIFA DE ACESSO ÀS REDES EM MAT</th>
+        <th scope="col">PREÇOS</th>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Potência</th>
+        <th scope="col">EUR/(kW.dia)</th>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0716</td>
+        </tr>
+        
+        <tr class="tar-green">
+        <td colspan="2">Contratada</td>
+        <td>0,0126</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia ativa</th>
+        <th scope="col">EUR/kWh</th>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de ponta</td>
+        <td>0,0073</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas cheias</td>
+        <td>0,0069</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de vazio normal</td>
+        <td>0,0067</td>
+        </tr>
+        
+        <tr class="tar-yellow">
+        <td colspan="2">Horas de super vazio</td>
+        <td>0,0063</td>
+        </tr>
+        
+        <tr class="tar-sub">
+        <th scope="colgroup" colspan="2">Energia reativa</th>
+        <th scope="col">EUR/kvarh</th>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Indutiva</td>
+        <td>0,0236</td>
+        </tr>
+        
+        <tr class="tar-gray">
+        <td colspan="2">Capacitiva</td>
+        <td>0,0177</td>
+        </tr>
+        
+        </table>
+
+        </div>
+
+        </div>
+
+        <div class="call-to-action-box">
+            <h4>Tarifas de Acesso às Redes em BTN</h4>
+            <p>Para as casas e os pequenos negócios (até 41,4 kVA), as TAR têm outra estrutura: potência por escalão em EUR/dia e energia nas opções simples, bi-horária e tri-horária.</p>
+            <a href="tarifas-acesso-redes" class="button-link">TAR em BTN</a>
+        </div>
+    </section>
+</main>
+
+<div id="footer-placeholder"></div>
+
+
+
+  <script src="anos-regulados.js"></script>
+<script src="script.js"></script>
+  
+<script src="cookie-consent.js"></script>
+</body>
+
+</html>
