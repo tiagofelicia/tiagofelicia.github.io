@@ -136,7 +136,7 @@
         "name": "Quanto pago de ERC por ano?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Depende do consumo e das horas em que consome. Nos 12 meses até outubro de 2026, um consumo doméstico de 2500 kWh por ano, com o perfil da ERSE, pagou cerca de 47 EUR de ERC sem IVA (cerca de 1,9 cêntimos por kWh, já com perdas). A calculadora desta página faz a conta para o seu consumo anual e ciclo horário, com o ERC de cada quarto de hora do período escolhido."
+          "text": "Depende do consumo e das horas em que consome. Nos 12 meses até outubro de 2026, um consumo doméstico de 2500 kWh por ano, com o perfil da ERSE, pagou cerca de 47 EUR de ERC sem IVA (cerca de 1,9 cêntimos por kWh, já com perdas). A calculadora desta página faz a conta para o seu consumo anual e ciclo horário, com o ERC de cada quarto de hora dos últimos 12 meses (ou do período escolhido)."
         }
       },{
         "@type": "Question",
@@ -185,7 +185,7 @@
         "name": "O que é o ERC previsto?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "É a previsão própria usada nos dias que ainda não têm valor publicado: a média de cada quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo). É a mesma dos Preços Horários e dos simuladores, e esta página mostra-a para os 14 dias seguintes ao último publicado. Testada no último ano, erra em média cerca de 5 EUR/MWh por quarto de hora a 1 a 3 dias e cerca de 6 a 14 dias; na média do dia, entre 3 e 5 EUR/MWh."
+          "text": "É a previsão própria usada nos dias que ainda não têm valor publicado: a média de cada quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo). É a mesma dos Preços Horários e dos simuladores, e esta página mostra-a para os 14 dias seguintes ao último publicado. Testada no último ano, erra em média cerca de 5 EUR/MWh por quarto de hora a 1 a 3 dias e cerca de 6 a 14 dias; na média do dia, entre 3 e 5 EUR/MWh. No resumo do mês corrente, a mesma previsão completa o mês e dá o valor com que deverá fechar, quando já chega ao fim do mês (na segunda quinzena)."
         }
       },{
         "@type": "Question",
@@ -249,6 +249,9 @@
         .mini-nav .mini-nav-chip:hover { background: #e2e8f0; text-decoration: none; }
 
         #erc-kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; width: 95%; max-width: 1200px; margin: 10px auto 22px auto; }
+        /* Com o cartão «deverá fechar em» são 6: numa linha só nos ecrãs largos, senão em 2 linhas de 3 */
+        @media (min-width: 1250px) { #erc-kpis.com-fecho { grid-template-columns: repeat(6, 1fr); } }
+        @media (min-width: 1001px) and (max-width: 1249px) { #erc-kpis.com-fecho { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 1000px) { #erc-kpis { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 700px) { #erc-kpis { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 420px) { #erc-kpis { grid-template-columns: 1fr; } }
@@ -422,11 +425,11 @@
         <div class="periodo-presets">
             <div class="hh-mode-toggle" role="group" aria-label="Período">
                 <button type="button" class="hh-mode-btn" data-preset="7d"><span class="ult">Últimos </span>7 dias</button>
-                <button type="button" class="hh-mode-btn" data-preset="mes">Este mês</button>
+                <button type="button" class="hh-mode-btn active" data-preset="mes">Este mês</button>
                 <button type="button" class="hh-mode-btn" data-preset="mespassado">Mês passado</button>
                 <button type="button" class="hh-mode-btn" data-preset="3m"><span class="ult">Últimos </span>3 meses</button>
                 <button type="button" class="hh-mode-btn" data-preset="6m"><span class="ult">Últimos </span>6 meses</button>
-                <button type="button" class="hh-mode-btn active" data-preset="12m"><span class="ult">Últimos </span>12 meses</button>
+                <button type="button" class="hh-mode-btn" data-preset="12m"><span class="ult">Últimos </span>12 meses</button>
                 <button type="button" class="hh-mode-btn" data-preset="ano">Ano corrente</button>
                 <button type="button" class="hh-mode-btn" data-preset="custom" title="Escolher as datas — abre com a série completa, desde 14/03/2024">Personalizado</button>
             </div>
@@ -621,7 +624,7 @@
     <!-- ====================== CALCULADORA — QUANTO PAGA POR ANO ====================== -->
     <div class="grafico-box" id="bloco-calc">
         <h2>Quanto paga de ERC por ano?</h2>
-        <p class="grafico-intro">Escreva o seu consumo anual e o ciclo horário. O cálculo usa o ERC de cada quarto de hora do período escolhido, pesado pelo perfil de consumo doméstico da ERSE (perfil C) dentro de cada período horário, e as perdas da rede — como aparece na fatura de um tarifário indexado que fatura o ERC ao quarto de hora. Num tarifário de preço fixo, o ERC está diluído no preço da energia.</p>
+        <p class="grafico-intro">Escreva o seu consumo anual e o ciclo horário. O cálculo usa o ERC de cada quarto de hora dos últimos 12 meses (ou, se preferir, do período escolhido no topo da página), pesado pelo perfil de consumo doméstico da ERSE (perfil C) dentro de cada período horário, e as perdas da rede — como aparece na fatura de um tarifário indexado que fatura o ERC ao quarto de hora. Num tarifário de preço fixo, o ERC está diluído no preço da energia.</p>
         <div class="calc-form">
             <div class="calc-campo">
                 <label class="ctrl-label" for="calc-kwh">Consumo anual</label>
@@ -643,6 +646,13 @@
                     <button type="button" data-v="BS">Bi semanal</button>
                     <button type="button" data-v="TD">Tri diário</button>
                     <button type="button" data-v="TS">Tri semanal</button>
+                </div>
+            </div>
+            <div class="calc-campo">
+                <span class="ctrl-label">Com o ERC de</span>
+                <div class="btn-toggle" id="calc-per" role="group" aria-label="Período do ERC usado no cálculo">
+                    <button type="button" data-v="12m" class="active">Últimos 12 meses</button>
+                    <button type="button" data-v="periodo">Período escolhido</button>
                 </div>
             </div>
             <div class="calc-campo" id="calc-repart" hidden>
@@ -716,7 +726,7 @@
             <summary><strong>Quanto pago de ERC por ano?</strong></summary>
             <div class="faq-content">
                 <p>Depende do consumo e das horas em que consome. Nos 12 meses até outubro de 2026, um consumo doméstico de <strong>2500 kWh por ano</strong>, com o perfil da ERSE, pagou cerca de <strong>47 € de ERC sem IVA</strong> — cerca de 1,9 cêntimos por kWh, já com perdas.</p>
-                <p>A <a href="#bloco-calc">calculadora</a> faz a conta para o seu consumo anual e ciclo horário, com o ERC de cada quarto de hora do período escolhido.</p>
+                <p>A <a href="#bloco-calc">calculadora</a> faz a conta para o seu consumo anual e ciclo horário, com o ERC de cada quarto de hora dos últimos 12 meses (ou do período escolhido).</p>
             </div>
         </details>
         <details class="faq-item">
@@ -775,6 +785,7 @@
             <div class="faq-content">
                 <p>É a previsão própria usada nos dias que ainda não têm valor publicado: a média de cada quarto de hora nos últimos 7 dias publicados, ajustada ao tipo de dia (dia útil, sábado ou domingo). Por isso, dois dias úteis seguidos têm a mesma previsão.</p>
                 <p>É a mesma dos <a href="precos-horarios">Preços Horários</a> e dos simuladores, e esta página mostra-a para os 14 dias seguintes ao último publicado. Testada no último ano, erra em média cerca de <strong>5 €/MWh por quarto de hora</strong> a 1 a 3 dias e cerca de 6 a 14 dias — menos do que usar um valor fixo, que erra cerca de 9. Na média do dia, o erro fica entre 3 e 5 €/MWh. O gráfico da previsão mostra o erro medido para cada antecedência.</p>
+                <p>No resumo, quando o período é o mês corrente, a mesma previsão completa o mês: junta à média já publicada a previsão dos dias em falta, pesada pelo consumo de cada hora, e dá o valor com que o mês deverá fechar. Aparece quando a previsão já chega ao fim do mês, na segunda quinzena.</p>
             </div>
         </details>
         <details class="faq-item">
@@ -1044,6 +1055,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const addDias = (iso, n) => isoDeTs(tsDia(iso) + n * DIA_MS);
     function deslocarMeses(iso, n) { const d = new Date(tsDia(iso)); d.setUTCMonth(d.getUTCMonth() + n); return isoDeTs(d.getTime()); }
     const ultimoDoMes = iso => { const [a, m] = iso.split('-').map(Number); return isoDeTs(Date.UTC(a, m, 0)); };
+    // O mesmo dia um ano antes (29/02 → 28/02)
+    const anoAntes = iso => { const u = ultimoDoMes(`${+iso.slice(0, 4) - 1}${iso.slice(4, 8)}01`); return iso.slice(8) > u.slice(8) ? u : `${+iso.slice(0, 4) - 1}${iso.slice(4)}`; };
     const nDias = (a, b) => Math.round((tsDia(b) - tsDia(a)) / DIA_MS) + 1;
     function diasDe(inicio, fim) { const out = []; for (let t = tsDia(inicio); t <= tsDia(fim); t += DIA_MS) out.push(isoDeTs(t)); return out; }
     function tipoDia(iso) { const w = new Date(tsDia(iso)).getUTCDay(); return w === 6 ? 'sab' : (w === 0 ? 'dom' : 'util'); }
@@ -1074,6 +1087,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Botões de período, relativos ao último dia com ERC publicado
     const PRESETS = ['7d', 'mes', 'mespassado', '3m', '6m', '12m', 'ano'];
+    // A página abre em «Este mês»; enquanto o mês corrente tiver menos de DIAS_MIN_MES dias publicados (a REN
+    // publica com cerca de 2 dias de atraso), abre em «Mês passado», para não mostrar só 1 ou 2 dias.
+    const DIAS_MIN_MES = 7;
+    function presetOmissao() {
+        const ini = hojeISO().slice(0, 8) + '01';
+        return (FIM_DIA && FIM_DIA >= ini && nDias(ini, FIM_DIA) >= DIAS_MIN_MES) ? 'mes' : 'mespassado';
+    }
     function getPresetDates(p) {
         if (!FIM_DIA) return null;
         const fim = FIM_DIA, clamp = s => (s < MIN_DIA ? MIN_DIA : s), hoje = hojeISO();
@@ -1118,11 +1138,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const i = iso(ler('inicio')), f = iso(ler('fim'));
         return { datas: (i && f && i <= f) ? { inicio: i, fim: f } : null,
                  est: ler('est'), ciclo: ler('ciclo'), dia: iso(ler('dia')), perdas: ler('perdas'), outros: ler('outros'), peso: ler('peso'),
-                 kwh: ler('kwh'), calc: ler('calc'), pv: ler('pv'), pc: ler('pc'), sol: ler('sol') };
+                 kwh: ler('kwh'), calc: ler('calc'), calcp: ler('calcp'), pv: ler('pv'), pc: ler('pc'), sol: ler('sol') };
     }
     function paramsAtuais(sempreDatas) {
         const p = new URLSearchParams();
-        const d = getPresetDates('12m');
+        const d = getPresetDates(presetOmissao());
         if (sempreDatas || !(d && periodo.inicio === d.inicio && periodo.fim === d.fim)) {
             p.set('inicio', periodo.inicio); p.set('fim', periodo.fim);
         }
@@ -1135,6 +1155,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (_vistaSolar !== 'classes') p.set('sol', _vistaSolar);
         if (CALC.kwh !== CALC_KWH_OMISSAO) p.set('kwh', CALC.kwh);
         if (CALC.ciclo !== 'S') p.set('calc', CALC.ciclo);
+        if (CALC.per !== '12m') p.set('calcp', CALC.per);
         if (CALC.ciclo !== 'S' && CALC.pv !== null) p.set('pv', CALC.pv);
         if ((CALC.ciclo === 'TD' || CALC.ciclo === 'TS') && CALC.pc !== null) p.set('pc', CALC.pc);
         return p;
@@ -1189,11 +1210,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const L = nDias(periodo.inicio, periodo.fim);
         document.getElementById('periodo-titulo').textContent =
             `De ${fmtData(periodo.inicio)} a ${fmtData(periodo.fim)} (${L} ${L === 1 ? 'dia' : 'dias'})`;
-        const antIni = addDias(periodo.inicio, -L);
+        // Além do período: o anterior e o mesmo um ano antes (resumo) e os últimos 12 meses (calculadora)
+        const doze = getPresetDates('12m') || periodo;
+        const ini = [addDias(periodo.inicio, -L), anoAntes(periodo.inicio), doze.inicio].reduce((a, b) => b < a ? b : a);
         // A vista Tipo carrega em paralelo e não atrasa os outros blocos
         _tipoPronto = false;
         const pTipo = carregarIntervaloTipo(periodo.inicio, periodo.fim);
-        await carregarIntervalo(antIni < MIN_DIA ? MIN_DIA : antIni, periodo.fim);
+        await carregarIntervalo(ini < MIN_DIA ? MIN_DIA : ini, doze.fim > periodo.fim ? doze.fim : periodo.fim);
         if (pedido !== _pedidoPeriodo) return;
         renderPeriodo();
         await pTipo;
@@ -1271,13 +1294,54 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>`;
         const ck = fmtCkWh(tot.erc, perdas);
         const d = ant ? tot.erc - ant.erc : null;
+        // O mesmo período um ano antes, que não depende da estação (com 365 dias ou mais, é o período anterior)
+        const aIni = anoAntes(periodo.inicio), aFim = anoAntes(periodo.fim);
+        const homo = (L < 365 && aIni >= MIN_DIA) ? totaisMercado(diasDe(aIni, aFim)) : null;
+        const dA = (homo && homo.n >= 0.9 * L) ? tot.erc - homo.erc : null;
+        const anoA = aIni.slice(0, 4) === aFim.slice(0, 4) ? aIni.slice(0, 4) : `${aIni.slice(0, 4)}/${aFim.slice(2, 4)}`;
+        const delta = (v, txt, tit) => `<div class="kpi-delta" style="color:${corDelta(v)}"${tit ? ` title="${tit}"` : ''}>${v > 0 ? '▲' : v < 0 ? '▼' : '='} ${sinal(v)} €/MWh ${txt}</div>`;
         let html = card('ERC médio no período', fmtMWh(tot.erc), ck ? `≈ ${ck} com perdas` : `${tot.n} dias`,
-            d === null ? '' : `<div class="kpi-delta" style="color:${corDelta(d)}">${d > 0 ? '▲' : d < 0 ? '▼' : '='} ${sinal(d)} €/MWh face ${L === 1 ? 'ao dia anterior' : `aos ${L} dias anteriores`}</div>`);
+            (d === null ? '' : delta(d, `face ${L === 1 ? 'ao dia anterior' : `aos ${L} dias anteriores`}`, `De ${fmtData(addDias(periodo.inicio, -L))} a ${fmtData(addDias(periodo.inicio, -1))}: ${fmtMWh(ant.erc)}`)) +
+            (dA === null ? '' : delta(dA, `face ao mesmo período de ${anoA}`, `De ${fmtData(aIni)} a ${fmtData(aFim)}: ${fmtMWh(homo.erc)}`)));
+        // O mês até ao último dia publicado: com quanto deverá fechar
+        const fecho = fechoDoMes(tot);
+        if (fecho) {
+            const ckF = fmtCkWh(fecho.erc, perdas), mes = MESES_LONGOS[+periodo.fim.slice(5, 7) - 1];
+            html += card(`${mes[0].toUpperCase() + mes.slice(1)} deverá fechar em`, `≈ ${fmtMWh(fecho.erc)}`,
+                `${ckF ? `≈ ${ckF} com perdas<br>` : ''}previsão própria para ${fecho.dias === 1 ? 'o dia que falta' : `os ${fecho.dias} dias que faltam`} (± ${fmt1(fecho.margem)} €/MWh)`);
+        }
+        el.classList.toggle('com-fecho', !!fecho);
         html += caro ? card('Dia mais caro', fmtMWh(caro.v), `${diaSemana(caro.iso)}, ${fmtData(caro.iso)}`) : card('Dia mais caro', '--', '');
         html += barato ? card('Dia mais barato', fmtMWh(barato.v), `${diaSemana(barato.iso)}, ${fmtData(barato.iso)}`) : card('Dia mais barato', '--', '');
         html += hMax >= 0 ? card('Hora mais cara (média)', fmtMWh(ph[hMax]), faixa(hMax)) : card('Hora mais cara (média)', '--', '');
         html += hMin >= 0 ? card('Hora mais barata (média)', fmtMWh(ph[hMin]), faixa(hMin)) : card('Hora mais barata (média)', '--', '');
         el.innerHTML = html;
+    }
+
+    // O mês desde o dia 1 até ao último dia publicado: a média até agora mais a previsão própria dos dias que
+    // faltam, cada hora pesada pelo consumo médio dessa hora nos dias do mesmo tipo (útil, sábado, domingo) já
+    // publicados no mês. Só quando a previsão chega ao fim do mês. A margem é o erro médio da média do dia de
+    // cada antecedência, na proporção do consumo que falta.
+    function fechoDoMes(tot) {
+        const P = R.previsao, fim = periodo.fim, ultimo = ultimoDoMes(fim);
+        if (!P || P.desatualizado || !P.dias || fim !== FIM_DIA || fim >= ultimo || periodo.inicio !== fim.slice(0, 8) + '01') return null;
+        const prev = new Map(P.dias.map(d => [d.dia, d]));
+        const falta = diasDe(addDias(fim, 1), ultimo);
+        if (!falta.every(d => prev.has(d))) return null;
+        const perfil = {};
+        diasLocais(periodo.inicio, fim).forEach(([iso, d]) => {
+            const t = tipoDia(iso), a = perfil[t] || (perfil[t] = { s: Array(24).fill(0), n: Array(24).fill(0) });
+            (d.m || []).forEach((m, h) => { if (!vazio(m) && m > 0) { a.s[h] += m; a.n[h]++; } });
+        });
+        let eur = 0, mwh = 0, erro = 0;
+        for (const iso of falta) {
+            const d = prev.get(iso), a = perfil[tipoDia(iso)] || perfil.util;
+            if (!a) return null;
+            porHora(d.slots, d.qh).forEach((v, h) => { const m = a.n[h] ? a.s[h] / a.n[h] : 0; if (!vazio(v) && m > 0) { eur += v * m; mwh += m; } });
+            erro += (P.erro && P.erro.dia && P.erro.dia[d.h - 1]) || 0;
+        }
+        if (!mwh) return null;
+        return { erc: (tot.eur + eur) / (tot.mwh + mwh), dias: falta.length, margem: mwh / (tot.mwh + mwh) * erro / falta.length };
     }
 
     // ==================================================================
@@ -1287,7 +1351,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // perfil ERSE C (o 'c' de cada dia) e multiplicado pelas perdas médias do dia
     // ('p'); a repartição do consumo entre períodos é a do perfil, ou a que o
     // utilizador escrever. O consumo de cada mês segue o peso do perfil nesse mês.
-    const CALC = { kwh: 2500, ciclo: 'S', pv: null, pc: null };
+    const CALC = { kwh: 2500, ciclo: 'S', pv: null, pc: null, per: '12m' };
+    // Por omissão, os últimos 12 meses: um ano inteiro, sem o peso da estação; ou o período escolhido no topo
+    const periodoCalc = () => CALC.per === 'periodo' ? periodo : (getPresetDates('12m') || periodo);
     const CALC_KWH_OMISSAO = 2500;
     const NOME_CICLO_CALC = { S: 'simples', BD: 'bi-horário diário', BS: 'bi-horário semanal', TD: 'tri-horário diário', TS: 'tri-horário semanal' };
 
@@ -1338,7 +1404,8 @@ document.addEventListener('DOMContentLoaded', function () {
         repart.hidden = CALC.ciclo === 'S';
         document.getElementById('calc-lbl-pc').hidden = !tri;
         const desde = R.diario.periodos_desde;
-        const S = somasCalc(diasLocais(periodo.inicio, periodo.fim), CALC.ciclo);
+        const PC = periodoCalc();
+        const S = somasCalc(diasLocais(PC.inicio, PC.fim), CALC.ciclo);
         if (!S.meses.size) {
             limparGrafico('grafico-calc', `<div class="bloco-vazio">O cálculo precisa do perfil de consumo e das perdas, que só existem desde ${fmtData(desde)}: escolha um período a partir dessa data.</div>`);
             kpis.innerHTML = ''; resumo.textContent = ''; nota.textContent = ''; erro.hidden = true;
@@ -1413,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }));
 
         // Resumo e comparações
-        let txt = `Com <strong>${fmt0(CALC.kwh)} kWh</strong> por ano em ${NOME_CICLO_CALC[CALC.ciclo]}, pagaria cerca de <strong>${fmt2(anual)} €</strong> de ERC por ano sem IVA, ao ERC do período escolhido.`;
+        let txt = `Com <strong>${fmt0(CALC.kwh)} kWh</strong> por ano em ${NOME_CICLO_CALC[CALC.ciclo]}, pagaria cerca de <strong>${fmt2(anual)} €</strong> de ERC por ano sem IVA, ao ERC ${CALC.per === 'periodo' ? 'do período escolhido' : `dos últimos 12 meses (de ${fmtData(PC.inicio)} a ${fmtData(PC.fim)})`}.`;
         const caro = linhas.reduce((a, l) => (!a || l.erc > a.erc) ? l : a, null), barato = linhas.reduce((a, l) => (!a || l.erc < a.erc) ? l : a, null);
         if (linhas.length > 1) txt += ` O mês mais caro por kWh foi ${mesLongo(caro.m)} (${fmt2(caro.erc / 10)} c€/kWh) e o mais barato ${mesLongo(barato.m)} (${fmt2(barato.erc / 10)} c€/kWh).`;
         if (CALC.ciclo !== 'S') {
@@ -1427,7 +1494,7 @@ document.addEventListener('DOMContentLoaded', function () {
                        (eur10 < 0 ? ' — neste período, o ERC do vazio saiu mais caro.' : '.');
             }
         }
-        if (periodo.inicio < desde) txt += ` O perfil e as perdas só existem desde ${fmtData(desde)}: os dias anteriores ficam de fora.`;
+        if (PC.inicio < desde) txt += ` O perfil e as perdas só existem desde ${fmtData(desde)}: os dias anteriores ficam de fora.`;
         resumo.innerHTML = txt;
         nota.textContent = 'Só o ERC: a fatura tem ainda a energia (OMIE ou preço fixo), as tarifas de acesso, a potência, as taxas e os impostos. ' +
             'Consumo de cada mês = consumo anual repartido pelo perfil doméstico da ERSE (perfil C); dentro de cada período horário, o ERC é pesado pelo mesmo perfil e multiplicado pelas perdas médias do dia. ' +
@@ -2495,6 +2562,7 @@ document.addEventListener('DOMContentLoaded', function () {
         CALC.kwh = +b.dataset.v; kwhInput.value = CALC.kwh; marcarRapido(); redesenharCalc();
     });
     ligarToggle('calc-ciclo', v => { CALC.ciclo = v; CALC.pv = null; CALC.pc = null; redesenharCalc(); });
+    ligarToggle('calc-per', v => { CALC.per = v; redesenharCalc(); });
     const lerPct = el => { const t = el.value.trim(); if (t === '') return null; const v = +t; return (v >= 0 && v <= 100) ? v : undefined; };
     ['calc-pv', 'calc-pc'].forEach(id => document.getElementById(id).addEventListener('input', e => {
         const v = lerPct(e.target);
@@ -2554,6 +2622,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (k >= 1 && k <= 1000000) { CALC.kwh = k; document.getElementById('calc-kwh').value = k; }
         document.querySelectorAll('#calc-rapido button').forEach(b => b.classList.toggle('active', +b.dataset.v === CALC.kwh));
         if (['BD', 'BS', 'TD', 'TS'].includes(URL_INICIAL.calc)) { CALC.ciclo = URL_INICIAL.calc; ativarToggle('calc-ciclo', CALC.ciclo); }
+        if (URL_INICIAL.calcp === 'periodo') { CALC.per = 'periodo'; ativarToggle('calc-per', 'periodo'); }
         const pct = t => { const v = +t; return (t !== null && v >= 0 && v <= 100) ? v : null; };
         if (CALC.ciclo !== 'S') { CALC.pv = pct(URL_INICIAL.pv); if (CALC.ciclo[0] === 'T') CALC.pc = pct(URL_INICIAL.pc); }
     }
@@ -2579,7 +2648,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 setDateInputsVisibilidade(p);
                 aplicarPeriodo();
             } else {
-                aplicarPreset('12m');
+                aplicarPreset(presetOmissao());
             }
             renderPrevisao();
         })
