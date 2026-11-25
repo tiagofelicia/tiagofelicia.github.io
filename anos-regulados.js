@@ -11,7 +11,9 @@
  * - «Comparar com …» (desligado por omissão): escolhe-se qualquer bloco anterior (com mais de uma alteração no
  *   mesmo ano, compara-se com a anterior ou com o ano antes). Os preços são as células com 3 ou mais casas
  *   decimais (as potências e os escalões têm menos) e emparelham-se pela ordem; só se oferecem os blocos com o
- *   mesmo número de preços.
+ *   mesmo número de preços. As variações têm cor pelo lado de quem paga: subida a vermelho e descida a verde,
+ *   ao contrário nas tabelas de desconto (o título tem «DESCONTO»); sem alteração, sem cor. O sinal e a seta
+ *   ficam sempre, para não depender só da cor.
  *   Nas tabelas com um preço por linha, na última coluna, a tabela ganha 3 colunas (preço anterior, variação
  *   absoluta e relativa); nas outras (o gás tem termo fixo e energia na mesma linha), a variação vai na célula.
  * - «Guardar imagem»: PNG do bloco à vista (título, logótipo, endereço e tabelas; com a comparação, se ligada),
@@ -47,6 +49,10 @@
         .anos-img:disabled { opacity: 0.6; cursor: wait; }
         .ano-delta { display: block; font-size: 0.74em; font-weight: normal; color: #475569; white-space: nowrap; margin-top: 1px; line-height: 1.35; }
         .anos-col { white-space: nowrap; }
+        .ano-bloco td.anos-pior, .ano-bloco .anos-pior { color: #b42318; font-weight: 600; }
+        .ano-bloco td.anos-melhor, .ano-bloco .anos-melhor { color: #166534; font-weight: 600; }
+        [data-theme="dark"] .ano-bloco td.anos-pior, [data-theme="dark"] .ano-bloco .anos-pior { color: #fca5a5; }   /* o #f87171 do style.css fica a 3,7:1 no cinzento das tabelas */
+        [data-theme="dark"] .ano-bloco td.anos-melhor, [data-theme="dark"] .ano-bloco .anos-melhor { color: var(--txt-verde, #4ade80); }
         .anos-ano { display: block; font-size: 0.85em; }
         .ano-bloco.comparar { overflow-x: auto; }
         [data-theme="dark"] .anos-botoes { border-color: #475569; }
@@ -119,6 +125,14 @@
         return { abs: comSinal(v - a, d), rel: a === 0 ? (v === 0 ? '0,00 %' : '—') : comSinal((v - a) / Math.abs(a) * 100, 2) + ' %' };
     };
 
+    // Classe da cor: pior (subida, ou descida nas tabelas de desconto), melhor, ou nenhuma
+    const eDesconto = tabela => /DESCONTO/i.test((tabela && tabela.rows[0] ? tabela.rows[0].textContent : ''));
+    const classeCor = (v, a, tabela) => {
+        if (!isFinite(v) || !isFinite(a) || v === a) return '';
+        const subiu = v > a;
+        return (subiu !== eDesconto(tabela)) ? 'anos-pior' : 'anos-melhor';
+    };
+
     // ---------- comparação ----------
     function limparComparacao() {
         document.querySelectorAll('.ano-delta, .anos-col, .anos-ano').forEach(e => e.remove());
@@ -136,7 +150,8 @@
                 if (!x) return;
                 const s = document.createElement('span');
                 s.className = 'ano-delta';
-                s.innerHTML = `${rotA}: ${valor(a)}<br>${x.abs} (${x.rel})`;
+                const cor = classeCor(num(td), num(a), td.closest('table'));
+                s.innerHTML = `${rotA}: ${valor(a)}<br><span class="${cor}">${x.abs} (${x.rel})</span>`;
                 td.appendChild(s);
             });
             return;
@@ -171,10 +186,10 @@
                 }
                 if (!ePreco(ult)) return;
                 const a = q[k++], x = variacao(num(ult), num(a), Math.max(casas(ult), casas(a)));
-                const cls = ult.className;
+                const cls = ult.className, cor = classeCor(num(ult), num(a), tabela);
                 tr.append(novo('td', valor(a), cls),
-                          novo('td', x ? `${x.abs} ${unidade}` : '—', cls),
-                          novo('td', x ? x.rel : '—', cls));
+                          novo('td', x ? `${x.abs} ${unidade}` : '—', (cls + ' ' + cor).trim()),
+                          novo('td', x ? x.rel : '—', (cls + ' ' + cor).trim()));
             });
         });
     }
