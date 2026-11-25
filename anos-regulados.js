@@ -16,6 +16,8 @@
  *   ficam sempre, para não depender só da cor.
  *   Nas tabelas com um preço por linha, na última coluna, a tabela ganha 3 colunas (preço anterior, variação
  *   absoluta e relativa); nas outras (o gás tem termo fixo e energia na mesma linha), a variação vai na célula.
+ * - Entre tabelas do mesmo bloco e por baixo da última, o endereço da página (como o .link-section do resto do site), para que quem
+ *   recorte uma tabela leve o endereço; entra também na imagem.
  * - «Guardar imagem»: PNG do bloco à vista (título, logótipo, endereço e tabelas; com a comparação, se ligada),
  *   sempre no tema claro e com a largura do computador, para publicar nas redes sociais. Usa o html2canvas,
  *   carregado só no primeiro clique.
@@ -25,7 +27,7 @@
     const raiz = document.querySelector('.anos-reg');
     const blocos = [...document.querySelectorAll('.ano-bloco')]
         .sort((a, b) => (a.dataset.de < b.dataset.de ? -1 : a.dataset.de > b.dataset.de ? 1 : 0));
-    if (!raiz || blocos.length < 2) return;
+    if (!raiz || !blocos.length) return;   // com um só bloco: sem seletor, mas com o botão da imagem
 
     // ---------- estilos (os mesmos nas 7 páginas) ----------
     const css = document.createElement('style');
@@ -43,7 +45,7 @@
         .anos-acoes { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 22px; margin-top: 12px; font-size: 0.9em; }
         .anos-var { display: inline-flex; align-items: center; gap: 7px; }
         .anos-var select { font: inherit; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 5px; background: #fff; color: #1e293b; }
-        .anos-var[hidden], .anos-img[hidden] { display: none; }
+        .anos-var[hidden], .anos-img[hidden], .anos-botoes[hidden], .anos-acoes[hidden] { display: none; }
         .anos-img { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 12px; cursor: pointer; color: #334155; font: inherit; }
         .anos-img:hover { background: #f1f5f9; }
         .anos-img:disabled { opacity: 0.6; cursor: wait; }
@@ -55,6 +57,7 @@
         [data-theme="dark"] .ano-bloco td.anos-melhor, [data-theme="dark"] .ano-bloco .anos-melhor { color: var(--txt-verde, #4ade80); }
         .anos-ano { display: block; font-size: 0.85em; }
         .ano-bloco.comparar { overflow-x: auto; }
+        .ano-bloco .link-section.anos-link { margin: 16px auto; }
         [data-theme="dark"] .anos-botoes { border-color: #475569; }
         [data-theme="dark"] .anos-botoes button { background: #1e293b; color: #cbd5e1; border-right-color: #475569; }
         [data-theme="dark"] .anos-botoes button:hover:not(.ativo) { background: #334155; }
@@ -209,6 +212,14 @@
         });
         return _h2c;
     }
+    function paraDados(src) {
+        return fetch(src).then(r => (r.ok ? r.blob() : null)).then(b => b && new Promise(ok => {
+            const fr = new FileReader();
+            fr.onload = () => ok(fr.result);
+            fr.onerror = () => ok(null);
+            fr.readAsDataURL(b);
+        })).catch(() => null);
+    }
     async function guardarImagem() {
         const b = atual, ant = comparadoCom();
         const alvo = b.querySelector('[class$="-wrapper"]') || b;
@@ -217,19 +228,30 @@
         btImg.textContent = 'A preparar…';
         try {
             await carregarH2C();
+            // As imagens do bloco (o logótipo) vão embutidas na cópia: em alguns browsers a cópia do html2canvas
+            // ainda não as tinha carregado e o logótipo faltava na imagem
+            const imgs = [...alvo.querySelectorAll('img')];
+            const dados = await Promise.all(imgs.map(i => paraDados(i.currentSrc || i.src)));
             alvo.setAttribute('data-captura', '1');
             const canvas = await window.html2canvas(alvo, {
-                scale: 2, backgroundColor: '#ffffff', windowWidth: 1200, useCORS: true, logging: false,
+                scale: 2, backgroundColor: '#ffffff', windowWidth: Math.max(1200, (+alvo.dataset.largura || 0) + 100), useCORS: true, logging: false,
                 onclone: doc => {
                     doc.documentElement.setAttribute('data-theme', 'light');
                     const w = doc.querySelector('[data-captura]');
                     if (!w) return;
-                    w.style.width = (ant && b.classList.contains('comparar')) ? '1150px' : '900px';
+                    // Largura da imagem: a do wrapper (data-largura) ou 900 px (1150 com as colunas da comparação)
+                    w.style.width = (+w.dataset.largura || ((ant && b.classList.contains('comparar')) ? 1150 : 900)) + 'px';
+                    w.querySelectorAll('[class$="-rolo"]').forEach(e => { e.style.overflow = 'visible'; });
                     w.style.maxWidth = 'none';
                     w.style.margin = '0';
                     w.style.padding = '18px 22px';
                     w.style.background = '#ffffff';
                     w.querySelectorAll('.sr-only').forEach(e => e.remove());
+                    w.querySelectorAll('img').forEach((im, k) => {
+                        if (!dados[k]) return;
+                        im.removeAttribute('srcset'); im.removeAttribute('loading');
+                        im.src = dados[k];
+                    });
                     // O html2canvas pinta o fundo de cada <tr> por cima das células que ocupam várias linhas
                     // (rowspan): o fundo passa da linha para as células dela
                     const vazio = c => !c || c === 'transparent' || c === 'rgba(0, 0, 0, 0)';
@@ -261,6 +283,31 @@
         }
     }
 
+    // ---------- endereço da página entre as tabelas e por baixo da última ----------
+    const canon = document.querySelector('link[rel="canonical"]');
+    const endereco = (canon && canon.href) || (location.origin + location.pathname);
+    const novaLigacao = () => {
+        const d = document.createElement('div');
+        d.className = 'link-section anos-link';
+        const p = document.createElement('p');
+        p.textContent = endereco;
+        d.appendChild(p);
+        return d;
+    };
+    // A tabela, ou a caixa que a faz deslizar no telemóvel (.pp-rolo)
+    const caixaDe = tab => (tab.parentElement && /-rolo\b/.test(tab.parentElement.className) ? tab.parentElement : tab);
+    blocos.forEach(b => {
+        const tabs = [...b.querySelectorAll('table')];
+        tabs.slice(1).forEach(tab => {
+            const c = caixaDe(tab), antes = c.previousElementSibling;
+            if (antes && antes.tagName === 'BR') antes.replaceWith(novaLigacao()); else c.before(novaLigacao());
+        });
+        if (tabs.length) {
+            const c = caixaDe(tabs[tabs.length - 1]), depois = c.nextElementSibling;
+            if (depois && depois.tagName === 'BR') depois.replaceWith(novaLigacao()); else c.after(novaLigacao());
+        }
+    });
+
     // ---------- seletor, aviso, comparação e imagem ----------
     raiz.innerHTML = '';
     const grupo = document.createElement('div');
@@ -291,6 +338,7 @@
     btImg.textContent = '📷 Guardar imagem';
     btImg.title = 'Guardar a tabela à vista como imagem (PNG), para partilhar';
     acoes.append(caixa, btImg);
+    grupo.hidden = blocos.length < 2;
     raiz.append(grupo, aviso, acoes);
 
     let atual = null;

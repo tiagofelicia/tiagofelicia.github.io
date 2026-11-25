@@ -37,9 +37,47 @@
     <script src="/theme.js"></script>
     
     <style>
+        /* === Tabela das médias das perdas (como a imagem de antes: cores da paleta do Excel) === */
+        .pp-wrapper { max-width: 1250px; margin: 20px auto; font-family: Arial, Helvetica, sans-serif; }
+        .pp-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .pp-brand { text-align: center; font-size: 14px; }
+        .pp-brand img { height: 48px; width: auto; display: block; margin: 0 auto 2px auto; }
+        .pp-brand a { color: #1a73e8; text-decoration: none; }
+        .pp-title { text-align: center; font-size: 22px; font-weight: bold; }
+        .pp-formula { font-size: 15px; white-space: nowrap; }
+        .pp-rolo { overflow-x: auto; }
+        .pp-table { width: 100%; min-width: 1050px; border-collapse: collapse; font-size: 15px; }
+        .pp-table th, .pp-table td { border: 1px solid #444; padding: 5px 6px; text-align: center; white-space: nowrap; }
+        .pp-table thead th { font-weight: bold; background: #fff; }
+        .pp-table th.pp-g, .pp-table td.pp-g { border-left: 2px solid #222; }
+        .pp-table tbody th { font-weight: bold; background: #fff; position: sticky; left: 0; }
+        .pp-table tr.pp-media th, .pp-table tr.pp-media td { font-weight: bold; border-top: 3px double #222; padding-top: 9px; padding-bottom: 9px; }
+        .pp-s { background: #d9d9d9 !important; }
+        .pp-bdv { background: #c6e0b4 !important; } .pp-bdf { background: #e2efda !important; }
+        .pp-bsv { background: #b4c6e7 !important; } .pp-bsf { background: #d9e1f2 !important; }
+        .pp-tdv { background: #ffd966 !important; } .pp-tdc { background: #ffe699 !important; } .pp-tdp { background: #fff2cc !important; }
+        .pp-tsv { background: #f4b084 !important; } .pp-tsc { background: #f8cbad !important; } .pp-tsp { background: #fce4d6 !important; }
+        .pp-nota { font-size: 0.9em; color: #555; }
+        @media (max-width: 760px) {
+            .pp-header { grid-template-columns: 1fr; text-align: center; }
+            .pp-title { font-size: 18px; }
+            .pp-formula { white-space: normal; }
+            .pp-table { font-size: 13px; }
+        }
         /* === DARK MODE — Estilos específicos desta página === */
         [data-theme="dark"] div[style*="background-color: #f1f1f1"] { background-color: #1e293b !important; border-left-color: #3b82f6 !important; color: #e2e8f0; }
         [data-theme="dark"] hr[style] { border-top-color: #475569 !important; }
+        [data-theme="dark"] .pp-wrapper, [data-theme="dark"] .pp-title { color: #e2e8f0; }
+        [data-theme="dark"] .pp-brand a { color: #60a5fa; }
+        [data-theme="dark"] .pp-nota { color: #94a3b8; }
+        [data-theme="dark"] .pp-table th, [data-theme="dark"] .pp-table td { border-color: #64748b; color: #e2e8f0; }
+        [data-theme="dark"] .pp-table th.pp-g, [data-theme="dark"] .pp-table td.pp-g, [data-theme="dark"] .pp-table tr.pp-media th, [data-theme="dark"] .pp-table tr.pp-media td { border-left-color: #94a3b8; border-top-color: #94a3b8; }
+        [data-theme="dark"] .pp-table thead th, [data-theme="dark"] .pp-table tbody th { background: #1e293b; }
+        [data-theme="dark"] .pp-s { background: #374151 !important; }
+        [data-theme="dark"] .pp-bdv { background: #1f4029 !important; } [data-theme="dark"] .pp-bdf { background: #1a3323 !important; }
+        [data-theme="dark"] .pp-bsv { background: #1f3354 !important; } [data-theme="dark"] .pp-bsf { background: #1a2a45 !important; }
+        [data-theme="dark"] .pp-tdv { background: #4d3f0f !important; } [data-theme="dark"] .pp-tdc { background: #423712 !important; } [data-theme="dark"] .pp-tdp { background: #362e14 !important; }
+        [data-theme="dark"] .pp-tsv { background: #4f2c17 !important; } [data-theme="dark"] .pp-tsc { background: #442818 !important; } [data-theme="dark"] .pp-tsp { background: #382319 !important; }
     </style>
     
     <!-- Google Analytics (GA4) + Consent Mode v2 -->
@@ -100,13 +138,259 @@
     <section class="content-section">
         <h1>Perfis de Perdas 2026</h1>
         
-        <p>Os perfis de Perdas para 2026 encontram-se publicados e disponíveis para consulta.</p>
+        <p>A E-REDES publica os perfis de perdas de cada ano. Aqui encontra o documento oficial, a tabela das médias (1+PT) por mês e período horário e os dados calculados para BT e MT.</p>
+
+        <div class="anos-reg" data-titulo="Ano" data-ficheiro="Perdas_1+PT_BT"></div>
+
+        <div class="ano-bloco" data-ano="2026" data-rotulo="2026" data-de="2026-01-01" data-ate="2026-12-31">
 
         <div style="margin: 20px 0;">
             <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwww.e-redes.pt%2Fsites%2Feredes%2Ffiles%2F2025-12%2FPerfis_Perdas_E-REDES_2026.xlsx" target="_blank" rel="noopener noreferrer" class="button-link">
-                Ver Documento Oficial (Excel)
+                Ver Documento Oficial 2026 (Excel)
             </a>
         </div>
+        
+        <h2>Médias Perdas (1+PT) 2026</h2>
+        <p class="pp-nota">Média simples dos fatores de perdas (1+PT) em Baixa Tensão dos quartos de hora de cada período horário, em cada mês e no ano. Os valores de cada quarto de hora, em BT e em MT, estão no ficheiro abaixo.</p>
+        
+        <div class="pp-wrapper" data-largura="1300">
+        <div class="pp-header">
+        <div class="pp-brand">
+        <img src="images/Logo_Tiago_Felicia.png" alt="" width="307" height="151">
+        <a href="https://www.tiagofelicia.pt">https://www.tiagofelicia.pt</a>
+        </div>
+        <div class="pp-title">Perdas 2026 → (1+PT) em BT</div>
+        <div class="pp-formula">(1+pAT/RT) x (1+pAT) x (1+pMT) x (1+pBT)</div>
+        </div>
+        <div class="pp-rolo">
+        <table class="pp-table">
+        <caption class="sr-only">Médias das perdas (1+PT) em Baixa Tensão em 2026, por mês e período horário: simples, bi-horário diário e semanal (vazio e fora de vazio) e tri-horário diário e semanal (vazio, cheias e ponta).</caption>
+        <thead>
+        <tr>
+        <td rowspan="3" style="border-top-color: transparent; border-left-color: transparent; background: transparent;"></td>
+        <th scope="col" rowspan="2" class="pp-g">Simples</th>
+        <th scope="colgroup" colspan="4" class="pp-g">Bi-horário</th>
+        <th scope="colgroup" colspan="6" class="pp-g">Tri-horário</th>
+        </tr>
+        <tr>
+        <th scope="colgroup" colspan="2" class="pp-g">Bi-horário Diário</th>
+        <th scope="colgroup" colspan="2" class="pp-g">Bi-horário Semanal</th>
+        <th scope="colgroup" colspan="3" class="pp-g">Tri-horário Diário</th>
+        <th scope="colgroup" colspan="3" class="pp-g">Tri-horário Semanal</th>
+        </tr>
+        <tr>
+        <th scope="col" class="pp-s pp-g">Simples</th>
+        <th scope="col" class="pp-bdv pp-g">Vazio</th>
+        <th scope="col" class="pp-bdf">Fora Vazio</th>
+        <th scope="col" class="pp-bsv pp-g">Vazio</th>
+        <th scope="col" class="pp-bsf">Fora Vazio</th>
+        <th scope="col" class="pp-tdv pp-g">Vazio</th>
+        <th scope="col" class="pp-tdc">Cheia</th>
+        <th scope="col" class="pp-tdp">Ponta</th>
+        <th scope="col" class="pp-tsv pp-g">Vazio</th>
+        <th scope="col" class="pp-tsc">Cheia</th>
+        <th scope="col" class="pp-tsp">Ponta</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <th scope="row">Janeiro</th>
+        <td class="pp-s pp-g">1,1740872</td>
+        <td class="pp-bdv pp-g">1,1489892</td>
+        <td class="pp-bdf">1,1920143</td>
+        <td class="pp-bsv pp-g">1,1507708</td>
+        <td class="pp-bsf">1,1931850</td>
+        <td class="pp-tdv pp-g">1,1489892</td>
+        <td class="pp-tdc">1,1873610</td>
+        <td class="pp-tdp">1,2036476</td>
+        <td class="pp-tsv pp-g">1,1507708</td>
+        <td class="pp-tsc">1,1874790</td>
+        <td class="pp-tsp">1,2086950</td>
+        </tr>
+        <tr>
+        <th scope="row">Fevereiro</th>
+        <td class="pp-s pp-g">1,1650899</td>
+        <td class="pp-bdv pp-g">1,1439300</td>
+        <td class="pp-bdf">1,1802041</td>
+        <td class="pp-bsv pp-g">1,1448577</td>
+        <td class="pp-bsf">1,1818035</td>
+        <td class="pp-tdv pp-g">1,1439300</td>
+        <td class="pp-tdc">1,1758587</td>
+        <td class="pp-tdp">1,1910677</td>
+        <td class="pp-tsv pp-g">1,1448577</td>
+        <td class="pp-tsc">1,1763908</td>
+        <td class="pp-tsp">1,1963095</td>
+        </tr>
+        <tr>
+        <th scope="row">Março</th>
+        <td class="pp-s pp-g">1,1563357</td>
+        <td class="pp-bdv pp-g">1,1395081</td>
+        <td class="pp-bdf">1,1683167</td>
+        <td class="pp-bsv pp-g">1,1396020</td>
+        <td class="pp-bsf">1,1705303</td>
+        <td class="pp-tdv pp-g">1,1395081</td>
+        <td class="pp-tdc">1,1648304</td>
+        <td class="pp-tdp">1,1770325</td>
+        <td class="pp-tsv pp-g">1,1396020</td>
+        <td class="pp-tsc">1,1662593</td>
+        <td class="pp-tsp">1,1824568</td>
+        </tr>
+        <tr>
+        <th scope="row">Abril</th>
+        <td class="pp-s pp-g">1,1471776</td>
+        <td class="pp-bdv pp-g">1,1344603</td>
+        <td class="pp-bdf">1,1562613</td>
+        <td class="pp-bsv pp-g">1,1334305</td>
+        <td class="pp-bsf">1,1580521</td>
+        <td class="pp-tdv pp-g">1,1344603</td>
+        <td class="pp-tdc">1,1527298</td>
+        <td class="pp-tdp">1,1650898</td>
+        <td class="pp-tsv pp-g">1,1334305</td>
+        <td class="pp-tsc">1,1576091</td>
+        <td class="pp-tsp">1,1603074</td>
+        </tr>
+        <tr>
+        <th scope="row">Maio</th>
+        <td class="pp-s pp-g">1,1422016</td>
+        <td class="pp-bdv pp-g">1,1316305</td>
+        <td class="pp-bdf">1,1497523</td>
+        <td class="pp-bsv pp-g">1,1312303</td>
+        <td class="pp-bsf">1,1520533</td>
+        <td class="pp-tdv pp-g">1,1316305</td>
+        <td class="pp-tdc">1,1467776</td>
+        <td class="pp-tdp">1,1571891</td>
+        <td class="pp-tsv pp-g">1,1312303</td>
+        <td class="pp-tsc">1,1516597</td>
+        <td class="pp-tsp">1,1541090</td>
+        </tr>
+        <tr>
+        <th scope="row">Junho</th>
+        <td class="pp-s pp-g">1,1423998</td>
+        <td class="pp-bdv pp-g">1,1317138</td>
+        <td class="pp-bdf">1,1500326</td>
+        <td class="pp-bsv pp-g">1,1305233</td>
+        <td class="pp-bsf">1,1517946</td>
+        <td class="pp-tdv pp-g">1,1317138</td>
+        <td class="pp-tdc">1,1472416</td>
+        <td class="pp-tdp">1,1570104</td>
+        <td class="pp-tsv pp-g">1,1305233</td>
+        <td class="pp-tsc">1,1514147</td>
+        <td class="pp-tsp">1,1537286</td>
+        </tr>
+        <tr>
+        <th scope="row">Julho</th>
+        <td class="pp-s pp-g">1,1477175</td>
+        <td class="pp-bdv pp-g">1,1353452</td>
+        <td class="pp-bdf">1,1565549</td>
+        <td class="pp-bsv pp-g">1,1332938</td>
+        <td class="pp-bsf">1,1589054</td>
+        <td class="pp-tdv pp-g">1,1353452</td>
+        <td class="pp-tdc">1,1538063</td>
+        <td class="pp-tdp">1,1634265</td>
+        <td class="pp-tsv pp-g">1,1332938</td>
+        <td class="pp-tsc">1,1585986</td>
+        <td class="pp-tsp">1,1604618</td>
+        </tr>
+        <tr>
+        <th scope="row">Agosto</th>
+        <td class="pp-s pp-g">1,1468157</td>
+        <td class="pp-bdv pp-g">1,1354104</td>
+        <td class="pp-bdf">1,1549622</td>
+        <td class="pp-bsv pp-g">1,1349562</td>
+        <td class="pp-bsf">1,1574649</td>
+        <td class="pp-tdv pp-g">1,1354104</td>
+        <td class="pp-tdc">1,1522709</td>
+        <td class="pp-tdp">1,1616907</td>
+        <td class="pp-tsv pp-g">1,1349562</td>
+        <td class="pp-tsc">1,1574998</td>
+        <td class="pp-tsp">1,1572827</td>
+        </tr>
+        <tr>
+        <th scope="row">Setembro</th>
+        <td class="pp-s pp-g">1,1456628</td>
+        <td class="pp-bdv pp-g">1,1329347</td>
+        <td class="pp-bdf">1,1547542</td>
+        <td class="pp-bsv pp-g">1,1322834</td>
+        <td class="pp-bsf">1,1562465</td>
+        <td class="pp-tdv pp-g">1,1329347</td>
+        <td class="pp-tdc">1,1519850</td>
+        <td class="pp-tdp">1,1616773</td>
+        <td class="pp-tsv pp-g">1,1322834</td>
+        <td class="pp-tsc">1,1561217</td>
+        <td class="pp-tsp">1,1568815</td>
+        </tr>
+        <tr>
+        <th scope="row">Outubro</th>
+        <td class="pp-s pp-g">1,1465546</td>
+        <td class="pp-bdv pp-g">1,1315100</td>
+        <td class="pp-bdf">1,1573354</td>
+        <td class="pp-bsv pp-g">1,1328485</td>
+        <td class="pp-bsf">1,1578144</td>
+        <td class="pp-tdv pp-g">1,1315100</td>
+        <td class="pp-tdc">1,1545190</td>
+        <td class="pp-tdp">1,1643764</td>
+        <td class="pp-tsv pp-g">1,1328485</td>
+        <td class="pp-tsc">1,1568770</td>
+        <td class="pp-tsp">1,1619219</td>
+        </tr>
+        <tr>
+        <th scope="row">Novembro</th>
+        <td class="pp-s pp-g">1,1551393</td>
+        <td class="pp-bdv pp-g">1,1351373</td>
+        <td class="pp-bdf">1,1694264</td>
+        <td class="pp-bsv pp-g">1,1376368</td>
+        <td class="pp-bsf">1,1703688</td>
+        <td class="pp-tdv pp-g">1,1351373</td>
+        <td class="pp-tdc">1,1655411</td>
+        <td class="pp-tdp">1,1791397</td>
+        <td class="pp-tsv pp-g">1,1376368</td>
+        <td class="pp-tsc">1,1657456</td>
+        <td class="pp-tsp">1,1826973</td>
+        </tr>
+        <tr>
+        <th scope="row">Dezembro</th>
+        <td class="pp-s pp-g">1,1688059</td>
+        <td class="pp-bdv pp-g">1,1452744</td>
+        <td class="pp-bdf">1,1856140</td>
+        <td class="pp-bsv pp-g">1,1471641</td>
+        <td class="pp-bsf">1,1855925</td>
+        <td class="pp-tdv pp-g">1,1452744</td>
+        <td class="pp-tdc">1,1814482</td>
+        <td class="pp-tdp">1,1960286</td>
+        <td class="pp-tsv pp-g">1,1471641</td>
+        <td class="pp-tsc">1,1803868</td>
+        <td class="pp-tsp">1,1993536</td>
+        </tr>
+        <tr class="pp-media">
+        <th scope="row">Média 2026</th>
+        <td class="pp-s pp-g">1,1531276</td>
+        <td class="pp-bdv pp-g">1,1371352</td>
+        <td class="pp-bdf">1,1645507</td>
+        <td class="pp-bsv pp-g">1,1373439</td>
+        <td class="pp-bsf">1,1661431</td>
+        <td class="pp-tdv pp-g">1,1371352</td>
+        <td class="pp-tdc">1,1611517</td>
+        <td class="pp-tdp">1,1730481</td>
+        <td class="pp-tsv pp-g">1,1373439</td>
+        <td class="pp-tsc">1,1632086</td>
+        <td class="pp-tsp">1,1772267</td>
+        </tr>
+        </tbody>
+        </table>
+        </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
+            <a href="https://dados.tiagofelicia.pt/data/regulado/Perdas_calculadas_2026_TF.csv" class="button-link" download>
+                📥 Descarregar Dados Calculados para BT e MT 2026 (.csv)
+            </a>
+        </div>
+
+        </div>
+
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
+
+
 
         <h2>Cálculo de Perdas</h2>
         <p>Para calcular as Perdas em Baixa Tensão (BT) é necessário aplicar a seguinte fórmula:</p>
@@ -126,17 +410,6 @@
             <a href="https://www.erse.pt/media/1s3htdaa/rari_reg818_2023.pdf" target="_blank" rel="noopener noreferrer">Consultar PDF do Regulamento</a>
         </p>
 
-        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
-
-        <h2>Médias Perdas (1+PT) 2026</h2>
-        
-        <img src="https://www.tiagofelicia.pt/images/Perdas_2026.webp" alt="Tabela de Médias de Perdas (1+PT) 2026" class="content-image" loading="lazy" decoding="async" width="1597" height="621">
-        
-        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-            <a href="https://dados.tiagofelicia.pt/data/regulado/Perdas_calculadas_2026_TF.csv" class="button-link" download>
-                📥 Descarregar Dados Calculados para BT e MT (.csv)
-            </a>
-        </div>
 
     </section>
 </main>
@@ -144,6 +417,7 @@
 <div id="footer-placeholder"></div>
 
 
+<script src="anos-regulados.js"></script>
 <script src="script.js"></script>
 
 <script src="cookie-consent.js"></script>
