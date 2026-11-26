@@ -49,7 +49,7 @@ RULES = [
     # Preços ao consumidor (Eurostat): os dados mudam duas vezes por ano
     ({"europe-consumer-prices.html"}, "monthly", "0.8"),
     # Regulação eletricidade/gás
-    ({"periodos-horarios.html", "tarifas-acesso-redes.html", "tarifa-social.html",
+    ({"periodos-horarios.html", "tarifas-acesso-redes.html", "tarifas-acesso-redes-bte-mt-at-mat.html", "tarifa-social.html",
       "tarifa-regulada-eletricidade.html", "perfil-perdas.html",
       "tarifas-acesso-redes-gas.html", "tarifa-social-gas.html",
       "tarifa-regulada-gas-natural.html"}, "yearly", "0.7"),
