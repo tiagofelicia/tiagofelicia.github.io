@@ -362,9 +362,9 @@
         const porPublicar = blocos.find(x => estadoDe(x) === 'futuro' && pendente(x));
         const ver = x => `<button type="button" data-ir="${x.dataset.ano}">Ver ${x.dataset.rotulo}</button>`;
         let html = '';
-        if (pendente(b)) html = `Os valores de <strong>${b.dataset.rotulo}</strong> ainda não foram publicados (previstos para ${b.dataset.pendente}). ${ver(emVigor)}`;
+        if (pendente(b)) html = `Os valores de <strong>${b.dataset.rotulo}</strong> ainda não foram publicados (previstos para ${b.dataset.pendente}). Nesse dia aparecem aqui, com a comparação e a imagem pronta a partilhar. ${ver(emVigor)}`;
         else if (e === 'vigor' && futuro) html = `Já são conhecidos os valores de <strong>${futuro.dataset.rotulo}</strong>, em vigor a partir de ${fmt(futuro.dataset.de)}. ${ver(futuro)}`;
-        else if (e === 'vigor' && porPublicar) html = `Os valores de <strong>${porPublicar.dataset.rotulo}</strong> ainda não foram publicados (previstos para ${porPublicar.dataset.pendente}).`;
+        else if (e === 'vigor' && porPublicar) html = `Os valores de <strong>${porPublicar.dataset.rotulo}</strong> ainda não foram publicados (previstos para ${porPublicar.dataset.pendente}). Nesse dia aparecem aqui, com a comparação e a imagem pronta a partilhar.`;
         else if (e === 'futuro') html = `Estes valores entram em vigor a <strong>${fmt(b.dataset.de)}</strong>. Até lá aplicam-se os de ${emVigor.dataset.rotulo}. ${ver(emVigor)}`;
         else if (e === 'passado') html = `Valores que já não estão em vigor (${textoEstado(b)}). ${ver(emVigor)}`;
         aviso.innerHTML = html;
