@@ -676,10 +676,11 @@ def pagina(a, todas, centrais, artigos, fotos, C, ULT, cab, base, agora_apa=None
         ('semana', 'Uma semana antes'), ('mes', 'Um mês antes'), ('hidro', 'Início do ano hidrológico (1 de outubro)'),
         ('jan', 'Início do ano (1 de janeiro)'), ('ano', 'Um ano antes'), ('data', 'Outra data…')))
 
-    # «barragem» e «nível» são o que mais se pesquisa (Search Console, novembro de 2026); «albufeira» fica nos textos
+    # «barragem» e «nível» são o que mais se pesquisa (Search Console, novembro de 2026); «albufeira» fica nos textos.
+    # Lote 137: descrição curta (o Google corta perto dos 155 caracteres); o essencial (volume, data, %) vem primeiro.
     titulo = f'Barragem {do_} hoje: nível e água da albufeira | Tiago Felícia'
-    desc = (f'Nível da barragem {do_}: a albufeira tinha {fmt_hm3(v)} a {fmt_data(dv)}, {fmt_pct(pct)} {rot_ref}. Comparação com o ano anterior e '
-            f'com a média desde {ANO_COMP}, máximos e mínimos, ano a ano e as centrais. Dados do SNIRH, atualizados todos os dias.')
+    desc = (f'Nível da barragem {do_}: a albufeira tinha {fmt_hm3(v)} a {fmt_data(dv)}, {fmt_pct(pct)} {rot_ref}. '
+            f'Face ao ano anterior e à média desde {ANO_COMP}. Dados do SNIRH.')
     hc = '\n    '.join(cab['hc'])
     return f'''<!DOCTYPE html>
 <html lang="pt-PT">
